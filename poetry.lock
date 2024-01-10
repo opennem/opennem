@@ -1101,19 +1101,18 @@ memcache = ["aiomcache"]
 redis = ["redis (>=4.2.0rc1,<5.0.0)"]
 
 [[package]]
-name = "fastapi-versioning"
-version = "0.10.0"
-description = "api versioning for fastapi web applications"
+name = "fastapi-versionizer"
+version = "3.0.4"
+description = "API versionizer for FastAPI web applications"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "fastapi_versioning-0.10.0-py3-none-any.whl", hash = "sha256:afe0ad7a56383b884c399341260bd3301b40e5a1cf9f6dc4211a349489087e1b"},
-    {file = "fastapi_versioning-0.10.0.tar.gz", hash = "sha256:5c18ea4e9ae1afd39c9e5bed1c240bf1cabdc75217579af78249ccb651c7b5b5"},
+    {file = "fastapi_versionizer-3.0.4.tar.gz", hash = "sha256:54f8b0030afef9d20f9cfb0cac89fe1da43b5680c411979c10d7178584152ea1"},
 ]
 
 [package.dependencies]
-fastapi = ">=0.56.0"
-starlette = "*"
+fastapi = ">=0.86.0"
+natsort = "==8.*"
 
 [[package]]
 name = "filelock"
@@ -1335,16 +1334,6 @@ files = [
 
 [package.dependencies]
 smmap = ">=3.0.1,<6"
-
-[[package]]
-name = "gitignore-parser"
-version = "0.0.8"
-description = "A spec-compliant gitignore parser for Python 3.5+"
-optional = false
-python-versions = "*"
-files = [
-    {file = "gitignore_parser-0.0.8.tar.gz", hash = "sha256:b4e6e63d971810cbd2168bc02deddba719c07da655eaf56336d4bb0233ecef85"},
-]
 
 [[package]]
 name = "gitpython"
@@ -2185,6 +2174,21 @@ files = [
 ]
 
 [[package]]
+name = "natsort"
+version = "8.4.0"
+description = "Simple yet flexible natural sorting in Python."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "natsort-8.4.0-py3-none-any.whl", hash = "sha256:4732914fb471f56b5cce04d7bae6f164a592c7712e1c85f9ef585e197299521c"},
+    {file = "natsort-8.4.0.tar.gz", hash = "sha256:45312c4a0e5507593da193dedd04abb1469253b601ecaf63445ad80f0a1ea581"},
+]
+
+[package.extras]
+fast = ["fastnumbers (>=2.0.0)"]
+icu = ["PyICU (>=1.0.0)"]
+
+[[package]]
 name = "nodeenv"
 version = "1.8.0"
 description = "Node.js virtual environment builder"
@@ -2245,13 +2249,13 @@ files = [
 
 [[package]]
 name = "openai"
-version = "1.6.1"
+version = "1.7.0"
 description = "The official Python library for the openai API"
 optional = false
 python-versions = ">=3.7.1"
 files = [
-    {file = "openai-1.6.1-py3-none-any.whl", hash = "sha256:bc9f774838d67ac29fb24cdeb2d58faf57de8b311085dcd1348f7aa02a96c7ee"},
-    {file = "openai-1.6.1.tar.gz", hash = "sha256:d553ca9dbf9486b08e75b09e8671e4f638462aaadccfced632bf490fc3d75fa2"},
+    {file = "openai-1.7.0-py3-none-any.whl", hash = "sha256:2282e8e15acb05df79cccba330c025b8e84284c7ec1f3fa31f167a8479066333"},
+    {file = "openai-1.7.0.tar.gz", hash = "sha256:f2a8dcb739e8620c9318a2c6304ea72aebb572ba02fa1d586344405e80d567d3"},
 ]
 
 [package.dependencies]
@@ -3146,6 +3150,20 @@ files = [
 ]
 
 [[package]]
+name = "python-multipart"
+version = "0.0.6"
+description = "A streaming multipart parser for Python"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "python_multipart-0.0.6-py3-none-any.whl", hash = "sha256:ee698bab5ef148b0a760751c261902cd096e57e10558e11aca17646b74ee1c18"},
+    {file = "python_multipart-0.0.6.tar.gz", hash = "sha256:e9925a80bb668529f1b67c7fdb0a5dacdd7cbfc6fb0bff3ea443fe22bdd62132"},
+]
+
+[package.extras]
+dev = ["atomicwrites (==1.2.1)", "attrs (==19.2.0)", "coverage (==6.5.0)", "hatch", "invoke (==1.7.3)", "more-itertools (==4.3.0)", "pbr (==4.3.0)", "pluggy (==1.0.0)", "py (==1.11.0)", "pytest (==7.2.0)", "pytest-cov (==4.0.0)", "pytest-timeout (==2.1.0)", "pyyaml (==5.1)"]
+
+[[package]]
 name = "pytoolconfig"
 version = "1.2.6"
 description = "Python tool configuration"
@@ -3257,17 +3275,6 @@ mongodb = ["pymongo (>=3)"]
 redis = ["redis (>=3)"]
 security = ["itsdangerous (>=2.0)"]
 yaml = ["pyyaml (>=5.4)"]
-
-[[package]]
-name = "result"
-version = "0.10.0"
-description = "A Rust-like result type for Python"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "result-0.10.0-py3-none-any.whl", hash = "sha256:a284420d599bd63d6a5bcf60701abf93f479b4aab282379ebadf51b6cafd1ba4"},
-    {file = "result-0.10.0.tar.gz", hash = "sha256:28bc217336c2f1d339b494241ccf3714e36e6bd90abc04df318d65dccb61594f"},
-]
 
 [[package]]
 name = "rfc3986"
@@ -4229,4 +4236,4 @@ postgres = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "27837daeb445fe73eb5fea535ed450c3c6bfc590d53e31cb469d419ef7526eb2"
+content-hash = "59fcde059f916baa9c63eee69f2755d4015b85be2ed1d4d77d4547b40be840ab"
