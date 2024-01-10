@@ -59,9 +59,9 @@ class OpennemSettings(BaseSettings):
 
     export_local: bool = False
 
-    s3_bucket_path: str = "data.opennem.org.au"
-    backup_bucket_path: str = "backups.opennem.org.au"
-    photos_bucket_path: str = "photos.opennem.org.au/"
+    s3_bucket_path: str = Field("data.opennem.org.au", validation_alias=AliasChoices("S3_DATA_BUCKET_PATH"))
+    backup_bucket_path: str = Field("backups.opennem.org.au")
+    photos_bucket_path: str = "photos.opennem.org.au"
 
     # opennem output settings
     interval_default: str = "15m"
