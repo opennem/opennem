@@ -121,7 +121,7 @@ class OpennemDataHistory(BaseConfig):
     # _last_timezone_aware = validator("last", allow_reuse=True, pre=True)(validate_datetime_is_aware)
 
     # format data numbers
-    _data_format = validator("data", allow_reuse=True, pre=True)(format_number_series)
+    # _data_format = validator("data", allow_reuse=True, pre=True)(format_number_series)
 
     # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
     # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
