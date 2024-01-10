@@ -26,6 +26,7 @@ class OpennemDataSetSerializeS3:
     def __init__(self, bucket_name: str, exclude_unset: bool = False, debug: bool = False) -> None:
         self.bucket = boto3.resource("s3").Bucket(bucket_name)
         self.debug = settings.debug
+        self.bucket_name = bucket_name
 
         if debug:
             self.debug = debug
@@ -42,7 +43,7 @@ class OpennemDataSetSerializeS3:
         if settings.debug:
             indent = 4
 
-        stat_set_content = stat_set.json(exclude_unset=self.exclude_unset, indent=indent, exclude=exclude)
+        stat_set_content = stat_set.model_dump_json(exclude_unset=self.exclude_unset, indent=indent, exclude=exclude)
 
         if settings.compact_number_ouput_in_json:
             logger.debug(f"Applying compact number output to {key}")
