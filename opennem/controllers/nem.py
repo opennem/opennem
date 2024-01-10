@@ -143,7 +143,6 @@ def generate_facility_scada(
     is_forecast: bool = False,
 ) -> list[dict[str, Any]]:
     """Optimized facility scada generator"""
-    created_at = datetime.now()
 
     df = pd.DataFrame().from_records(records)
 
@@ -160,9 +159,6 @@ def generate_facility_scada(
 
     df = df.rename(columns=column_renames)
 
-    df["created_by"] = "opennem.controller.v2"
-    df["created_at"] = created_at
-    df["updated_at"] = None
     df["network_id"] = network.code
     df["is_forecast"] = is_forecast
     df["energy_quality_flag"] = 0
@@ -172,11 +168,7 @@ def generate_facility_scada(
     df.generated = pd.to_numeric(df.generated)
 
     # fill in energies
-    if network.interval_size == 30:
-        df["eoi_quantity"] = df.generated / 2
-
-    elif network.interval_size == 15:
-        df["eoi_quantity"] = df.generated / 4
+    df["eoi_quantity"] = df.generated / (network.interval_size / 60)
 
     df = df[FACILITY_SCADA_COLUMN_NAMES]
 
