@@ -207,18 +207,12 @@ def insert_energies(results: list[dict], network: NetworkSchema) -> int:
     esdf = energy_sum(results, network=network)
 
     # Add metadata
-    esdf["created_by"] = "opennem.worker.energy"
-    esdf["created_at"] = ""
-    esdf["updated_at"] = datetime.now()
     esdf["generated"] = None
     esdf["is_forecast"] = False
     esdf["energy_quality_flag"] = 0
 
     # reorder columns
     columns = [
-        "created_by",
-        "created_at",
-        "updated_at",
         "network_id",
         "trading_interval",
         "facility_code",
