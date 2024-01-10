@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from fastapi import APIRouter
-from fastapi_versioning import version
+from fastapi_versionizer.versionizer import api_version
 
 from opennem.recordreactor.schema import MilestoneRecord
 
@@ -37,7 +37,7 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
 
 
 @milestones_router.get("/")
-@version(4)
+@api_version(4)
 def api_get_domains(
     limit: int = 100, page_number: int = 1, date_start: datetime | None = None, date_end: datetime | None = None
 ) -> list[MilestoneRecord]:
