@@ -197,7 +197,7 @@ class Network(Base, BaseModel):
     # record is exported
     export_set = Column(Boolean, default=True, nullable=False)
 
-    regions = relationship("NetworkRegion")
+    regions = relationship("NetworkRegion", primaryjoin="NetworkRegion.network_id == Network.code", lazy="joined")
 
 
 class NetworkRegion(Base, BaseModel):
@@ -746,11 +746,11 @@ class FacilityScada(Base):
 
     network_id = Column(
         Text,
-        ForeignKey("network.code", name="fk_balancing_summary_network_code"),
+        # ForeignKey("network.code", name="fk_balancing_summary_network_code"),
         primary_key=True,
         nullable=False,
     )
-    network = relationship("Network")
+    # network = relationship("Network")
 
     trading_interval = Column(TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False)
 
@@ -773,7 +773,7 @@ class FacilityScada(Base):
             trading_interval.desc(),
         ),
         Index("idx_facility_scada_network_id", network_id),
-        Index("idx_facility_scada_network_id_trading_interval", network_id, trading_interval.desc()),
+        # Index("idx_facility_scada_network_id_trading_interval", network_id, trading_interval.desc()),
         Index("idx_facility_scada_trading_interval_facility_code", trading_interval, facility_code),
         # This index is used by aggregate tables
         # Index(
@@ -789,10 +789,10 @@ class BalancingSummary(Base):
 
     network_id = Column(
         Text,
-        ForeignKey("network.code", name="fk_balancing_summary_network_code"),
+        # ForeignKey("network.code", name="fk_balancing_summary_network_code"),
         primary_key=True,
     )
-    network = relationship("Network")
+    # network = relationship("Network")
 
     trading_interval = Column(TIMESTAMP(timezone=True), index=True, primary_key=True)
     network_region = Column(Text, primary_key=True)
