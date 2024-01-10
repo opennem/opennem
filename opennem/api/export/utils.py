@@ -10,6 +10,7 @@ from pydantic.main import BaseModel
 from opennem import settings
 from opennem.api.stats.schema import OpennemDataSet
 from opennem.exporter.aws import write_statset_to_s3, write_to_s3
+from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.exporter.local import write_to_local
 
 logger = logging.getLogger(__name__)
@@ -26,15 +27,9 @@ def write_output(
     if settings.export_local:
         is_local = True
 
-    if hasattr(stat_set, "json"):
-        indent = None
+    model_dump = stat_set.model_dump(exclude_unset=exclude_unset)
 
-        if settings.debug:
-            indent = 4
-
-        write_content = stat_set.json(exclude_unset=exclude_unset, indent=indent, exclude=exclude)
-    else:
-        write_content = json.dumps(stat_set)
+    write_content = json.dumps(model_dump, indent=4, cls=OpenNEMJSONEncoder)
 
     byte_count = 0
 
@@ -43,7 +38,7 @@ def write_output(
     elif isinstance(stat_set, str):
         byte_count = write_to_s3(stat_set, path)
     elif isinstance(stat_set, OpennemDataSet):
-        byte_count = write_statset_to_s3(stat_set, path, exclude_unset=exclude_unset, exclude=exclude)
+        byte_count = write_statset_to_s3(stat_set, path, exclude_unset=exclude_unset)
     elif isinstance(stat_set, BaseModel):
         byte_count = write_to_s3(write_content, path)
     else:
