@@ -153,7 +153,7 @@ class OpennemSettings(BaseSettings):
     feedback_tag_users: list[str] = ["U047H1T2JJK", "nik"]
 
     # clerk API key
-    clerk_api_key: str | None = None
+    clerk_secret_key: str | None = None
     api_jwks_url: str = "https://clerk.dev/.well-known/jwks.json"
 
     # unkey.dev
@@ -205,20 +205,3 @@ class OpennemSettings(BaseSettings):
     @property
     def is_dev(self) -> bool:
         return self.env.lower() in ("local", "dev", "development", "staging")
-
-    # TODO[pydantic]: The following keys were removed: `fields`.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
-    # model_config = ConfigDict(
-    #     fields={
-    #         "env": {"env": "ENV"},
-    #         "log_level": {"env": "LOG_LEVEL"},
-    #         "_static_folder_path": {"env": "STATIC_PATH"},
-    #         "db_url": {"env": "DATABASE_HOST_URL"},
-    #         "cache_url": {"env": "REDIS_HOST_URL"},
-    #         "slack_hook_url": {"env": "MONITORING_SLACK_HOOK"},
-    #         "s3_bucket_path": {"env": "S3_DATA_BUCKET_PATH"},
-    #         "server_port": {"env": "PORT"},
-    #         "server_host": {"env": "HOST"},
-    #         "cache_scada_values_ttl_sec": {"env": "CACHE_SCADA_TTL"},
-    #     }
-    # )
