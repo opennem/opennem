@@ -41,7 +41,6 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import UniqueConstraint
 
 from opennem.core.dispatch_type import DispatchType
-from opennem.core.oid import get_ocode, get_oid
 from opennem.parsers.aemo.schemas import AEMODataSource
 from opennem.recordreactor.schema import MilestoneType
 from opennem.schema.core import BaseConfig
@@ -597,14 +596,6 @@ class Station(Base, BaseModel):
 
         return cap_reg
 
-    @hybrid_property
-    def oid(self) -> str:
-        return get_oid(self)
-
-    @hybrid_property
-    def ocode(self) -> str:
-        return get_ocode(self)
-
 
 class Facility(Base, BaseModel):
     __tablename__ = "facility"
@@ -730,14 +721,6 @@ class Facility(Base, BaseModel):
     @hybrid_property
     def fueltech_label(self) -> str | None:
         return self.fueltech.label if self.fueltech else None
-
-    @hybrid_property
-    def oid(self) -> str:
-        return get_oid(self)
-
-    @hybrid_property
-    def ocode(self) -> str:
-        return get_ocode(self)
 
 
 class FacilityScada(Base):
