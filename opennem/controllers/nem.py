@@ -5,7 +5,6 @@ Parses MMS tables into OpenNEM derived database
 
 import logging
 from dataclasses import asdict
-from datetime import datetime
 from typing import Any
 
 import pandas as pd
@@ -28,9 +27,6 @@ logger = logging.getLogger("opennem.controllers.nem")
 
 # @TODO could read this from schema
 FACILITY_SCADA_COLUMN_NAMES = [
-    "created_by",
-    "created_at",
-    "updated_at",
     "network_id",
     "trading_interval",
     "facility_code",
@@ -54,7 +50,6 @@ def unit_scada_generate_facility_scada(
     primary_key_track: bool = True,
 ) -> list[dict]:
     """@NOTE method deprecated"""
-    created_at = datetime.now()
     primary_keys = []
     return_records = []
 
@@ -116,9 +111,6 @@ def unit_scada_generate_facility_scada(
             primary_keys.append(pk)
 
         __rec = {
-            "created_by": "opennem.controller",
-            "created_at": created_at,
-            "updated_at": None,
             "network_id": network.code,
             "trading_interval": trading_interval,
             "facility_code": facility_code,
@@ -194,11 +186,8 @@ def generate_balancing_summary(
     network: NetworkSchema = NetworkNEM,
     limit: int = 0,
 ) -> list[dict]:
-    created_at = datetime.now()
     primary_keys = []
     return_records = []
-
-    created_by = ""
 
     for row in records:
         trading_interval = parse_date(row[interval_field], network=network, dayfirst=False)
@@ -224,9 +213,6 @@ def generate_balancing_summary(
                 price = str(float_to_str(price))
 
         __rec = {
-            "created_by": created_by,
-            "created_at": created_at,
-            "updated_at": None,
             "network_id": network.code,
             "network_region": network_region,
             "trading_interval": trading_interval,
@@ -266,7 +252,6 @@ def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerRetu
         records_to_store.append(
             {
                 "network_id": "NEM",
-                "created_by": "opennem.controller",
                 "facility_code": record["interconnectorid"],
                 "trading_interval": record["settlementdate"],
                 "generated": record.get("meteredmwflow", 0),
@@ -328,7 +313,6 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
         records_to_store.append(
             {
                 "network_id": "NEM",
-                "created_by": "opennem.controllers.nem",
                 "network_region": record["regionid"],
                 "trading_interval": trading_interval,
                 price_field: record["rrp"],
@@ -388,7 +372,6 @@ def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
         records_to_store.append(
             {
                 "network_id": "NEM",
-                "created_by": "opennem.controller",
                 "network_region": record["regionid"],
                 "trading_interval": trading_interval,
                 "net_interchange": record["netinterchange"],
@@ -469,7 +452,6 @@ def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
         records_to_store.append(
             {
                 "network_id": "NEM",
-                "created_by": "opennem.controller.nem",
                 "network_region": record["regionid"],
                 "net_interchange_trading": net_interchange,
                 "trading_interval": trading_interval,
