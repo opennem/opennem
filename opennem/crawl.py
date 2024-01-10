@@ -191,7 +191,7 @@ def run_crawl_urls(urls: list[str]) -> None:
         if url.lower().endswith(".zip") or url.lower().endswith(".csv"):
             try:
                 cr = parse_aemo_url_optimized(url)
-                logger.info(f"Parsed {url} and got {cr.inserted_records} inserted")
+                logger.info(f"Parsed {url} and got {cr.inserted_records or 0} inserted")
             except Exception as e:
                 logger.error(e)
 
