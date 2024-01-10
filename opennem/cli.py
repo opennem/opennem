@@ -14,7 +14,6 @@ from opennem.api.export.tasks import export_all_monthly, export_energy, export_p
 from opennem.core.crawlers.cli import cmd_crawl_cli
 from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures, load_fueltechs
 from opennem.exporter.historic import export_historic_intervals
-from opennem.importer.all import run_all
 from opennem.importer.db import import_all_facilities
 from opennem.importer.db import init as db_init
 from opennem.importer.mms import mms_export
@@ -80,11 +79,6 @@ def cmd_import_bom_stations() -> None:
 @click.command()
 def cmd_import_mms() -> None:
     mms_export()
-
-
-@click.command()
-def cmd_import_all() -> None:
-    run_all()
 
 
 @click.command()
@@ -170,7 +164,6 @@ main.add_command(cmd_task, name="task")
 
 cmd_import.add_command(cmd_import_opennem, name="opennem")
 cmd_import.add_command(cmd_import_mms, name="mms")
-cmd_import.add_command(cmd_import_all, name="all")
 cmd_import.add_command(cmd_import_facilities, name="facilities")
 cmd_import.add_command(cmd_import_fueltechs, name="fueltechs")
 cmd_import.add_command(cmd_import_bom_stations, name="bom")
