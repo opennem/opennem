@@ -49,7 +49,7 @@ class ClerkClient:
         self.session = httpx_factory(base_url=self.api_endpoint)
 
         # Set headers for session requests
-        headers = {"Accept": "application/json", "Authorization": f"Bearer {settings.clerk_api_key}"}
+        headers = {"Accept": "application/json", "Authorization": f"Bearer {settings.clerk_secret_key}"}
 
         self.session.headers.update(headers)
 
