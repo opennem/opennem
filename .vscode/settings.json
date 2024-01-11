@@ -2,26 +2,27 @@
   "files.exclude": {
     "**/__pycache__/": true,
     ".venv": true,
-    "**/build": true,
     "dist": true,
-    ".idea": true,
-    ".benchmarks": true,
-    ".ipynb_checkpoints": true,
+    "**/.pynb_checkpoints": true,
     "**/.mypy_cache": true,
-    ".ruff_cache": true,
-    ".pytest_cache": true,
-    ".tox": true
+    "**/.ruff_cache": true,
+    "**/.pytest_cache": true,
   },
   "editor.formatOnSave": true,
   "python.testing.pytestEnabled": true,
-  "python.formatting.provider": "black",
+  "python.languageServer": "Pylance",
   "[python]": {
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": "explicit"
-    }
+    "editor.formatOnSave": true,
   },
-  "python.linting.enabled": true,
-  "python.linting.lintOnSave": true,
-  "python.linting.mypyEnabled": true,
-  "python.analysis.typeshedPaths": ["${workspaceFolder}/opennem/subs"],
+  "editor.insertSpaces": true,
+  "editor.tabSize": 4,
+  "editor.formatOnType": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": true,
+      "source.organizeImports": false,
+      "source.organizeImports.ruff": true,
+
+    },
+    "editor.defaultFormatter": "ms-python.black-formatter",
+  }
 }
