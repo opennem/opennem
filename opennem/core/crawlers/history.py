@@ -178,6 +178,9 @@ def get_crawler_missing_intervals(
     """
     )
 
+    if not days or not isinstance(days, int):
+        raise Exception("Days is required and should be an int")
+
     query = stmt.bindparams(crawler_name=crawler_name, days=f"{days} days", interval_size=interval.interval_sql)
 
     logger.debug(dedent(str(query)))
