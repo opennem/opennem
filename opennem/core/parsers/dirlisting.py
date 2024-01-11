@@ -162,9 +162,12 @@ class DirectoryListing(BaseConfig):
         _entries = sorted(self.get_files(), key=attrgetter("modified_date"), reverse=reverse)
 
         if not limit:
+            self.entries = _entries
             return _entries
 
-        return _entries[:limit]
+        self.entries = _entries[:limit]
+
+        return self.entries
 
     def get_files_modified_in(self, intervals: list[datetime]) -> list[DirlistingEntry]:
         return list(filter(lambda x: x.modified_date in intervals, self.entries))
