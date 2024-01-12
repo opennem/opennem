@@ -3,8 +3,11 @@ Module to handle zip files and nested zip files.
 
 """
 import io
+import json
+import logging
 import os
-from asyncio.log import logger
+import shutil
+import zipfile
 from io import BytesIO
 from pathlib import Path
 from tempfile import mkdtemp
@@ -12,9 +15,10 @@ from typing import IO, Any
 from zipfile import ZipFile
 
 from opennem import settings
+from opennem.utils.http import http
 from opennem.utils.url import get_filename_from_url
 
-from .http import http
+logger = logging.getLogger("opennem.archive.utils")
 
 # limit how many zips within zips we'll parse
 # 0 means all
@@ -213,7 +217,63 @@ def download_and_unzip(url: str) -> str:
     return dest_dir
 
 
+def download_and_parse_json_zip(url: str) -> Any:
+    """
+    Downloads a file from the given URL. If the file is a ZIP archive, it is unzipped.
+    The function then attempts to parse the contained or downloaded file as JSON.
+
+    Args:
+    url (str): The URL of the file to be downloaded.
+
+    Returns:
+    Any: The parsed JSON data.
+
+    Raises:
+    Exception: If the file cannot be downloaded, unzipped, or parsed as JSON.
+    """
+
+    # Create a temporary directory
+    temp_dir = Path(mkdtemp())
+
+    try:
+        # Download the file
+        response = http.get(url)
+        if response.status_code != 200:
+            raise Exception(f"Failed to download file: Status code {response.status_code}")
+
+        # Check the content type of the downloaded file
+        content_type = response.headers.get("Content-Type", "")
+
+        if "zip" in content_type:
+            # If the file is a ZIP, unzip it in the temporary directory
+            with zipfile.ZipFile(io.BytesIO(response.content)) as zip_file:
+                zip_file.extractall(temp_dir)
+                file_name = zip_file.namelist()[0]
+                file_path = temp_dir / file_name
+        else:
+            # If not a ZIP file, treat it as a JSON file
+            file_path = temp_dir / "downloaded_file"
+            with open(file_path, "wb") as file:
+                file.write(response.content)
+
+        # Read and parse the JSON file
+        with open(file_path) as file:
+            try:
+                json_data = json.load(file)
+            except json.JSONDecodeError as e:
+                raise Exception(f"Failed to parse JSON for file {url}") from e
+
+        return json_data
+
+    finally:
+        # Clean up by deleting the temporary directory
+        shutil.rmtree(temp_dir)
+
+
 if __name__ == "__main__":
-    u = "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220612.zip"
-    d = download_and_unzip(u)
-    print(d)
+    # u = "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220612.zip"
+    # d = download_and_unzip(u)
+    # print(d)
+    # Usage example
+    url = "https://data.wa.aemo.com.au/public/market-data/wemde/tradingReport/tradingDayReport/previous/TradingDayReport_20231004.zip"
+    json_data = download_and_parse_json_zip(url)
