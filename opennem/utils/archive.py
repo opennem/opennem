@@ -217,7 +217,7 @@ def download_and_unzip(url: str) -> str:
     return dest_dir
 
 
-def download_and_parse_json_zip(url: str) -> Any:
+def download_and_parse_json_zip(url: str, indent: int | None = None) -> Any:
     """
     Downloads a file from the given URL. If the file is a ZIP archive, it is unzipped.
     The function then attempts to parse the contained or downloaded file as JSON.
@@ -238,7 +238,7 @@ def download_and_parse_json_zip(url: str) -> Any:
     try:
         # Download the file
         response = http.get(url)
-        if response.status_code != 200:
+        if not response.ok:
             raise Exception(f"Failed to download file: Status code {response.status_code}")
 
         # Check the content type of the downloaded file
@@ -259,7 +259,7 @@ def download_and_parse_json_zip(url: str) -> Any:
         # Read and parse the JSON file
         with open(file_path) as file:
             try:
-                json_data = json.load(file)
+                json_data = json.load(file)  # type: ignore
             except json.JSONDecodeError as e:
                 raise Exception(f"Failed to parse JSON for file {url}") from e
 
