@@ -34,17 +34,25 @@ from datetime import datetime
 from pathlib import Path
 from platform import platform
 
-from dotenv import load_dotenv
 from rich.console import Console
 from rich.prompt import Prompt
 
 from opennem.settings_schema import OpennemSettings
 from opennem.utils.log_config import LOGGING_CONFIG
-from opennem.utils.logging import setup_root_logger
+from opennem.utils.logging_setup import setup_root_logger
 from opennem.utils.project_path import get_project_path
 from opennem.utils.security import obfuscate_dsn_password
 from opennem.utils.sentry import setup_sentry
 from opennem.utils.settings import load_env_file
+
+HAVE_DOTENV = False
+
+try:
+    from dotenv import load_dotenv
+
+    HAVE_DOTENV = True
+except ImportError:
+    pass
 
 logger = logging.getLogger("opennem")
 warnings.filterwarnings("ignore", module="openpyxl")
@@ -78,10 +86,11 @@ env_files = load_env_file(ENV)
 if not env_files:
     console.print(" * No env files found. Using system environment only.")
 
-for _env_file in env_files:
-    _env_full_path = Path(_env_file).resolve()
-    console.print(f" * Loading env file: {_env_full_path}")
-    load_dotenv(dotenv_path=_env_file, override=True)
+if HAVE_DOTENV:
+    for _env_file in env_files:
+        _env_full_path = Path(_env_file).resolve()
+        console.print(f" * Loading env file: {_env_full_path}")
+        load_dotenv(dotenv_path=_env_file, override=True)
 
 settings: OpennemSettings = OpennemSettings()
 
