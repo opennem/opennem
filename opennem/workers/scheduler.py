@@ -13,7 +13,7 @@ from huey import PriorityRedisHuey, crontab
 from opennem import settings
 from opennem.aggregates.network_demand import run_demand_aggregates_for_latest_interval  # noqa: F401
 from opennem.api.export.map import PriorityType
-from opennem.api.export.tasks import export_electricitymap, export_flows, export_metadata, export_power
+from opennem.api.export.tasks import export_electricitymap, export_flows, export_power
 from opennem.core.profiler import cleanup_database_task_profiles_basedon_retention
 from opennem.core.startup import worker_startup_alert
 from opennem.crawl import run_crawl
@@ -30,7 +30,7 @@ from opennem.pipelines.nem import (
 )
 from opennem.pipelines.wem import wem_per_interval_check
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
-from opennem.workers.daily import daily_catchup_runner
+from opennem.workers.daily import daily_catchup_runner, energy_runner_hours
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 from opennem.workers.network_data_range import run_network_data_range_update
 from opennem.workers.system import clean_tmp_dir
@@ -124,16 +124,8 @@ def schedule_export_geojson() -> None:
         export_facility_geojson()
 
 
-# metadata
-@huey.periodic_task(crontab(hour="*/12", minute="30"), priority=30)
-@huey.lock_task("schedule_export_metadata")
-def schedule_export_metadata() -> None:
-    if settings.workers_run:
-        export_metadata()
-
-
 # worker tasks
-@huey.periodic_task(crontab(hour="*/4", minute="45"))
+@huey.periodic_task(crontab(hour="20", minute="45"))
 @huey.lock_task("schedule_facility_first_seen_check")
 def schedule_facility_first_seen_check() -> None:
     """Check for new DUIDS"""
@@ -152,8 +144,7 @@ def run_run_network_data_range_update() -> None:
 @huey.periodic_task(crontab(hour="*/1", minute="10"))
 @huey.lock_task("run_energy_runner_hours")
 def run_energy_runner_hours() -> None:
-    # energy_runner_hours(hours=1)
-    pass
+    energy_runner_hours(hours=1)
 
 
 # system tasks
