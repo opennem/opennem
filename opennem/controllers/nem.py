@@ -28,9 +28,6 @@ logger = logging.getLogger("opennem.controllers.nem")
 
 # @TODO could read this from schema
 FACILITY_SCADA_COLUMN_NAMES = [
-    "created_by",
-    "created_at",
-    "updated_at",
     "network_id",
     "trading_interval",
     "facility_code",
@@ -54,7 +51,6 @@ def unit_scada_generate_facility_scada(
     primary_key_track: bool = True,
 ) -> list[dict]:
     """@NOTE method deprecated"""
-    created_at = datetime.now()
     primary_keys = []
     return_records = []
 
@@ -116,9 +112,6 @@ def unit_scada_generate_facility_scada(
             primary_keys.append(pk)
 
         __rec = {
-            "created_by": "opennem.controller",
-            "created_at": created_at,
-            "updated_at": None,
             "network_id": network.code,
             "trading_interval": trading_interval,
             "facility_code": facility_code,
@@ -194,11 +187,9 @@ def generate_balancing_summary(
     network: NetworkSchema = NetworkNEM,
     limit: int = 0,
 ) -> list[dict]:
-    created_at = datetime.now()
+    datetime.now()
     primary_keys = []
     return_records = []
-
-    created_by = ""
 
     for row in records:
         trading_interval = parse_date(row[interval_field], network=network, dayfirst=False)
@@ -224,9 +215,6 @@ def generate_balancing_summary(
                 price = str(float_to_str(price))
 
         __rec = {
-            "created_by": created_by,
-            "created_at": created_at,
-            "updated_at": None,
             "network_id": network.code,
             "network_region": network_region,
             "trading_interval": trading_interval,
