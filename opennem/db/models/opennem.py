@@ -721,7 +721,7 @@ class Facility(Base, BaseModel):
         return get_ocode(self)
 
 
-class FacilityScada(Base, BaseModel):
+class FacilityScada(Base):
     """
     Facility Scada
     """
@@ -784,7 +784,7 @@ class FacilityScada(Base, BaseModel):
     )
 
 
-class BalancingSummary(Base, BaseModel):
+class BalancingSummary(Base):
     __tablename__ = "balancing_summary"
 
     network_id = Column(
