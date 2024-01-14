@@ -293,5 +293,5 @@ if __name__ == "__main__":
     date_max = datetime.fromisoformat("2023-05-01T00:00:00+08:00")
     network = NetworkNEM
     # exec_aggregates_facility_daily_query(date_min=date_min, date_max=date_max, network=network)
-    run_aggregates_facility_year(year=2023, network=network)
+    run_aggregates_facility_year(year=2024, network=network)
     # run_aggregates_facility_year(network=NetworkAEMORooftop, year=2023)
