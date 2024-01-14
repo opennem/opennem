@@ -14,9 +14,17 @@ class SchemaFacilityScada(BaseModel):
 
 
 class SchemaBalancingSummary(BaseModel):
-    trading_interval: datetime
     network_id: str
-    network_region: str
+    trading_interval: datetime
+    forecast_load: float | None = None
+    generation_scheduled: float | None = None
+    generation_non_scheduled: float | None = None
+    generation_total: float | None = None
     price: float | None
-    price_dispatch: float | None
+    network_region: str
     is_forecast: bool = False
+    net_interchange: float | None = None
+    demand_total: float | None = None
+    price_dispatch: float | None
+    net_interchange_trading: float | None
+    demand: float | None = None

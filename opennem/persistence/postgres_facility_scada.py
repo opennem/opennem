@@ -8,9 +8,9 @@ from sqlalchemy.dialects.postgresql import insert
 from opennem.controllers.schema import ControllerReturn
 from opennem.db import get_database_engine, get_scoped_session
 from opennem.db.bulk_insert_csv import bulkinsert_mms_items
-from opennem.db.models.opennem import FacilityScada
+from opennem.db.models.opennem import BalancingSummary, FacilityScada
 
-from .schema import SchemaFacilityScada
+from .schema import SchemaBalancingSummary, SchemaFacilityScada
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +45,9 @@ def persist_postgres_facility_scada(records: list[SchemaFacilityScada]) -> int:
     return len(records_to_store)
 
 
-def persist_facility_scada_bulk(records: list[SchemaFacilityScada], update_fields: list[str] | None = None) -> None:
+def persist_facility_scada_bulk(
+    records: list[SchemaFacilityScada | SchemaBalancingSummary], update_fields: list[str] | None = None
+) -> None:
     """Takes a lits of records and persists them to the database"""
 
     records_to_store = [dict(i) for i in records]
@@ -53,6 +55,11 @@ def persist_facility_scada_bulk(records: list[SchemaFacilityScada], update_field
     if not update_fields:
         update_fields = ["trading_interval", "network_id", "facility_code", "is_forecast"]
 
-    bulkinsert_mms_items(table=FacilityScada, records=records_to_store, update_fields=update_fields)  # type: ignore
+    table = FacilityScada
+
+    if isinstance(records[0], SchemaBalancingSummary):
+        table = BalancingSummary
+
+    bulkinsert_mms_items(table=table, records=records_to_store, update_fields=update_fields)  # type: ignore
 
     return None
