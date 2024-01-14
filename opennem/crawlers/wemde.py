@@ -118,13 +118,13 @@ def run_wemde_crawl(
     return ControllerReturn(status=200, count=len(entries_to_fetch))
 
 
-def run_all_wem_crawlers() -> None:
+def run_all_wem_crawlers(latest: bool = True) -> None:
     for crawler in [
         AEMOWEMDETradingReport,
         AEMOWEMDEFacilityScadaHistory,
         AEMOWEMDETradingReportHistory,
     ]:
-        run_wemde_crawl(crawler, latest=True)
+        run_wemde_crawl(crawler, latest=latest)
 
 
 AEMOWEMDEFacilityScadaHistory = CrawlerDefinition(
@@ -160,4 +160,4 @@ AEMOWEMDETradingReport = CrawlerDefinition(
 if __name__ == "__main__":
     # backdate_date = datetime.fromisoformat("2024-01-12T00:00:00")
     # crawler_set_meta(AEMOWEMDEFacilityScadaHistory.name, CrawlStatTypes.server_latest, backdate_date)
-    pass
+    run_all_wem_crawlers()
