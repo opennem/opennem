@@ -113,7 +113,7 @@ def run_wemde_crawl(
     if latest_aemo_interval_date:
         crawler_set_meta(crawler.name, CrawlStatTypes.server_latest, latest_aemo_interval_date)
 
-    crawler_set_meta(crawler.name, CrawlStatTypes.latest_processed, get_today_opennem())
+    crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, get_today_opennem())
 
     return ControllerReturn(status=200, count=len(entries_to_fetch))
 
