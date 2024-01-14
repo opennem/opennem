@@ -161,7 +161,7 @@ def generate_facility_scada(
     df.generated = pd.to_numeric(df.generated)
 
     # fill in energies
-    df["eoi_quantity"] = df.generated / (network.interval_size / 60)
+    df["eoi_quantity"] = df.generated / (60 / network.interval_size)
 
     df = df[FACILITY_SCADA_COLUMN_NAMES]
 
