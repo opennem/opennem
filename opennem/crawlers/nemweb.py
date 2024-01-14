@@ -98,7 +98,7 @@ def run_nemweb_aemo_crawl(
             if not controller_returns.last_modified or max_date > controller_returns.last_modified:
                 controller_returns.last_modified = max_date
 
-            if entry.aemo_interval_date:
+            if entry.aemo_interval_date and controller_returns.processed_records:
                 ch = CrawlHistoryEntry(interval=entry.aemo_interval_date, records=controller_returns.processed_records)
                 set_crawler_history(crawler_name=crawler.name, histories=[ch])
 
