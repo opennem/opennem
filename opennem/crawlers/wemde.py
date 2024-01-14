@@ -160,4 +160,4 @@ AEMOWEMDETradingReport = CrawlerDefinition(
 if __name__ == "__main__":
     # backdate_date = datetime.fromisoformat("2024-01-12T00:00:00")
     # crawler_set_meta(AEMOWEMDEFacilityScadaHistory.name, CrawlStatTypes.server_latest, backdate_date)
-    run_all_wem_crawlers()
+    run_all_wem_crawlers(latest=False)
