@@ -201,7 +201,7 @@ class DirectoryListing(BaseConfig):
 
             modified_since = list(
                 filter(
-                    lambda x: x.modified_date.replace(tzinfo=ZoneInfo(self.timezone)) > modified_date,
+                    lambda x: x.modified_date > modified_date,
                     self.get_files(),
                 )
             )
@@ -237,10 +237,6 @@ def parse_dirlisting_line(dirlisting_line: str) -> DirlistingEntry | None:
         model = DirlistingEntry(**matches.groupdict())
     except ValidationError as e:
         logger.error(f"Error in validating dirlisting line: {e}")
-        print("*******************")
-        print(dirlisting_line)
-        print(matches.groupdict())
-        print("*******************")
     except ValueError as e:
         logger.error(f"Error parsing dirlisting line: {e}")
 
