@@ -21,7 +21,7 @@ from typing import Any
 from urllib.parse import urljoin
 from zoneinfo import ZoneInfo
 
-from pydantic import ValidationError, validator
+from pydantic import ValidationError, field_validator, validator
 from pyquery import PyQuery as pq
 
 from opennem.core.downloader import url_downloader
@@ -89,8 +89,8 @@ class DirlistingEntry(BaseConfig):
     filename: Path
     link: str
     modified_date: datetime
-    aemo_interval_date: datetime | None
-    file_size: int | None
+    aemo_interval_date: datetime | None = None
+    file_size: int | None = None
     entry_type: DirlistingEntryType = DirlistingEntryType.file
 
     _validate_modified_date = validator("modified_date", allow_reuse=True, pre=True)(parse_dirlisting_datetime)
@@ -117,7 +117,8 @@ class DirlistingEntry(BaseConfig):
 
         return aemo_dt.date
 
-    @validator("file_size", allow_reuse=True, pre=True)
+    @field_validator("file_size", mode="before")
+    @classmethod
     def _parse_dirlisting_filesize(cls, value: str | int | float) -> str | int | float | None:
         if is_number(value):
             return value

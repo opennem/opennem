@@ -20,11 +20,11 @@ class SchemaBalancingSummary(BaseModel):
     generation_scheduled: float | None = None
     generation_non_scheduled: float | None = None
     generation_total: float | None = None
-    price: float | None
+    price: float | None = None
     network_region: str
     is_forecast: bool = False
     net_interchange: float | None = None
     demand_total: float | None = None
-    price_dispatch: float | None
-    net_interchange_trading: float | None
+    price_dispatch: float | None = None
+    net_interchange_trading: float | None = None
     demand: float | None = None
