@@ -11,18 +11,15 @@ import logging
 from huey import PriorityRedisHuey, crontab
 
 from opennem import settings
-from opennem.aggregates.facility_daily import run_facility_aggregates_for_latest_interval
 from opennem.aggregates.network_demand import run_demand_aggregates_for_latest_interval  # noqa: F401
 from opennem.api.export.map import PriorityType
-from opennem.api.export.tasks import export_electricitymap, export_flows, export_metadata, export_power
+from opennem.api.export.tasks import export_electricitymap, export_flows, export_power
 from opennem.core.profiler import cleanup_database_task_profiles_basedon_retention
 from opennem.core.startup import worker_startup_alert
 from opennem.crawl import run_crawl
 from opennem.crawlers.bom import BOMCapitals
 from opennem.exporter.geojson import export_facility_geojson
-from opennem.monitors.emissions import alert_missing_emission_factors
 from opennem.monitors.facility_seen import facility_first_seen_check
-from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.pipelines.crontab import network_interval_crontab
 from opennem.pipelines.nem import (
     nem_dispatch_is_crawl,
@@ -32,11 +29,9 @@ from opennem.pipelines.nem import (
     nem_trading_is_crawl,
 )
 from opennem.pipelines.wem import wem_per_interval_check
-from opennem.schema.network import NetworkAEMORooftop, NetworkNEM, NetworkWEM
+from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
 from opennem.workers.daily import daily_catchup_runner, energy_runner_hours
-from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.facility_data_ranges import update_facility_seen_range
-from opennem.workers.facility_status import update_opennem_facility_status
 from opennem.workers.network_data_range import run_network_data_range_update
 from opennem.workers.system import clean_tmp_dir
 
@@ -78,7 +73,7 @@ def crawler_run_nem_rooftop_per_interval() -> None:
     nem_rooftop_crawl()
 
 
-@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=5, retry_delay=15)
+@huey.periodic_task(crontab(hour="*/1"), priority=50, retries=5, retry_delay=15)
 @huey.lock_task("crawler_run_wem_per_interval")
 def crawler_run_wem_per_interval() -> None:
     wem_per_interval_check()
@@ -88,18 +83,6 @@ def crawler_run_wem_per_interval() -> None:
 @huey.lock_task("crawler_run_bom_capitals")
 def crawler_run_bom_capitals() -> None:
     run_crawl(BOMCapitals)
-
-
-# Run energy runner for per-interval processing
-@huey.periodic_task(crontab(minute="7"), priority=1)
-@huey.lock_task("run_hourly_task_runner")
-def run_hourly_task_runner() -> None:
-    if settings.per_interval_aggregate_processing:
-        energy_runner_hours(hours=1)
-
-        for network in [NetworkNEM, NetworkWEM]:
-            run_facility_aggregates_for_latest_interval(network=network)
-            run_demand_aggregates_for_latest_interval(network=network)
 
 
 # Checks for the overnights from aemo and then runs the daily runner
@@ -113,19 +96,6 @@ def nem_overnight_check() -> None:
 @huey.lock_task("daily_catchup_runner_worker")
 def daily_catchup_runner_worker() -> None:
     daily_catchup_runner()
-
-
-# run summary
-@huey.periodic_task(crontab(hour="10", minute="40"), retries=3, retry_delay=120)
-@huey.lock_task("run_daily_fueltech_summary")
-def nem_summary_schedule_crawl() -> None:
-    run_daily_fueltech_summary(network=NetworkNEM)
-
-
-@huey.periodic_task(crontab(hour="10", minute="50"), retries=3, retry_delay=120)
-@huey.lock_task("run_update_opennem_facility_status")
-def run_update_opennem_facility_status() -> None:
-    update_opennem_facility_status()
 
 
 # export tasks
@@ -154,33 +124,8 @@ def schedule_export_geojson() -> None:
         export_facility_geojson()
 
 
-# metadata
-@huey.periodic_task(crontab(hour="*/12", minute="30"), priority=30)
-@huey.lock_task("schedule_export_metadata")
-def schedule_export_metadata() -> None:
-    if settings.workers_run:
-        export_metadata()
-
-
-# Monitoring tasks
-@huey.periodic_task(crontab(minute="*/60"), priority=80)
-@huey.lock_task("monitor_opennem_intervals")
-def monitor_opennem_intervals() -> None:
-    if settings.env != "production":
-        return None
-
-    for network_code in ["NEM", "WEM"]:
-        check_opennem_interval_delays(network_code)
-
-
-@huey.periodic_task(crontab(hour="21", minute="15"), priority=10)
-@huey.lock_task("monitor_emission_factors")
-def monitor_emission_factors() -> None:
-    alert_missing_emission_factors()
-
-
 # worker tasks
-@huey.periodic_task(crontab(hour="*/4", minute="45"))
+@huey.periodic_task(crontab(hour="20", minute="45"))
 @huey.lock_task("schedule_facility_first_seen_check")
 def schedule_facility_first_seen_check() -> None:
     """Check for new DUIDS"""

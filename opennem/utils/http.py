@@ -84,7 +84,7 @@ class TimeoutHTTPAdapter(HTTPAdapter):
             del kwargs["timeout"]
         super().__init__(*args, **kwargs)
 
-    def send(self, request: Request, **kwargs) -> Any:
+    def send(self, request: Request, **kwargs) -> Any:  # Add type annotation for return value
         timeout = kwargs.get("timeout")
         if timeout is None:
             kwargs["timeout"] = self.timeout

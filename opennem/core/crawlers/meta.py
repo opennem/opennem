@@ -25,6 +25,9 @@ class CrawlStatTypes(Enum):
     # last crawl run time
     last_crawled = "last_crawled"
 
+    # latest interval
+    latest_interval = "latest_interval"
+
     # last time it was processed (success on insert)
     latest_processed = "latest_processed"
 

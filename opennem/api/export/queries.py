@@ -241,7 +241,7 @@ def price_network_query(
         select
             time_bucket_gapfill('{trunc}', bs.trading_interval) as trading_interval,
             {group_field},
-            coalesce(avg(bs.price_dispatch), avg(bs.price)) as price
+            coalesce(avg(bs.price), avg(bs.price_dispatch)) as price
         from balancing_summary bs
         where
             bs.trading_interval <= '{date_max}' and
@@ -377,9 +377,9 @@ def power_network_fueltech_query(
         select
             time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
             ft.code as fueltech_code,
-            coalesce(avg(fs.generated), 0) as fueltech_power,
-            coalesce(avg(fs.generated), 0) / (60 / max(n.interval_size)) as fueltech_energy,
-            max(f.emissions_factor_co2) * avg(fs.generated) /  (60 / max(n.interval_size)) as fueltech_emissions
+            coalesce(sum(fs.generated), 0) as fueltech_power,
+            coalesce(sum(fs.generated), 0) / (60 / max(n.interval_size)) as fueltech_energy,
+            max(f.emissions_factor_co2) * sum(fs.generated) /  (60 / max(n.interval_size)) as fueltech_emissions
         from facility_scada fs
         join facility f on fs.facility_code = f.code
         join fueltech ft on f.fueltech_id = ft.code

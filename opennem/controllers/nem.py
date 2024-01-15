@@ -4,7 +4,7 @@ Parses MMS tables into OpenNEM derived database
 """
 
 import logging
-from dataclasses import asdict
+from datetime import datetime
 from typing import Any
 
 import pandas as pd
@@ -37,92 +37,6 @@ FACILITY_SCADA_COLUMN_NAMES = [
 ]
 
 # Helpers
-
-
-def unit_scada_generate_facility_scada(
-    records: list[dict[str, Any] | MMSBaseClass],
-    network: NetworkSchema = NetworkNEM,
-    interval_field: str = "settlementdate",
-    facility_code_field: str = "duid",
-    power_field: str = "scadavalue",
-    energy_field: str | None = None,
-    is_forecast: bool = False,
-    primary_key_track: bool = True,
-) -> list[dict]:
-    """@NOTE method deprecated"""
-    primary_keys = []
-    return_records = []
-
-    if not records:
-        return []
-
-    fields = ""
-
-    first_record = records[0]
-
-    if isinstance(first_record, MMSBaseClass):
-        first_record = asdict(first_record)  # type: ignore
-
-    try:
-        fields = ", ".join([f"'{i}'" for i in list(first_record.keys())])
-    except Exception as e:
-        logger.error(f"Fields error: {e}")
-        pass
-
-    for row in records:
-        # cast it all to dicts
-        if isinstance(row, MMSBaseClass):
-            row = asdict(row)  # type: ignore
-
-        if interval_field not in row:
-            raise Exception(f"No such field: '{interval_field}'. Fields: {fields}. Data: {row}")
-
-        trading_interval = row[interval_field]
-
-        if facility_code_field not in row:
-            raise Exception(f"No such facility field: {facility_code_field}. Fields: {fields}")
-
-        facility_code = row[facility_code_field]
-
-        energy_quantity: float | None = None
-
-        if energy_field:
-            if energy_field not in row:
-                raise Exception(f"No energy field: {energy_field}. Fields: {fields}")
-
-            energy_quantity = clean_float(row[energy_field])
-
-        power_quantity: float | None = None
-
-        if power_field not in row:
-            raise Exception(f"No suck power field: {power_field}. Fields: {fields}")
-
-        power_quantity = clean_float(row[power_field])
-
-        # should we track primary keys to remove duplicates?
-        # @NOTE this does occur sometimes especially on large
-        # imports of data from large sets
-        if primary_key_track:
-            pk = (trading_interval, network.code, facility_code)
-
-            if pk in primary_keys:
-                continue
-
-            primary_keys.append(pk)
-
-        __rec = {
-            "network_id": network.code,
-            "trading_interval": trading_interval,
-            "facility_code": facility_code,
-            "generated": power_quantity,
-            "eoi_quantity": energy_quantity,
-            "is_forecast": is_forecast,
-            "energy_quality_flag": 0,
-        }
-
-        return_records.append(__rec)
-
-    return return_records
 
 
 def generate_facility_scada(
@@ -160,7 +74,7 @@ def generate_facility_scada(
     df.generated = pd.to_numeric(df.generated)
 
     # fill in energies
-    df["eoi_quantity"] = df.generated / (network.interval_size / 60)
+    df["eoi_quantity"] = df.generated / (60 / network.interval_size)
 
     df = df[FACILITY_SCADA_COLUMN_NAMES]
 
@@ -186,6 +100,7 @@ def generate_balancing_summary(
     network: NetworkSchema = NetworkNEM,
     limit: int = 0,
 ) -> list[dict]:
+    datetime.now()
     primary_keys = []
     return_records = []
 
@@ -313,7 +228,7 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
         records_to_store.append(
             {
                 "network_id": "NEM",
-                "network_region": record["regionid"],
+                "network_region": record.get("regionid"),
                 "trading_interval": trading_interval,
                 price_field: record["rrp"],
             }
@@ -489,23 +404,6 @@ def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
         session.rollback()
         session.close()
         engine.dispose()
-
-    return cr
-
-
-def process_unit_scada(table: AEMOTableSchema) -> ControllerReturn:
-    cr = ControllerReturn(total_records=len(table.records))
-
-    records = unit_scada_generate_facility_scada(
-        table.records,  # type:ignore
-        interval_field="settlementdate",
-        facility_code_field="duid",
-        power_field="scadavalue",
-    )
-
-    cr.processed_records = len(records)
-    cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])  # type: ignore
-    cr.server_latest = max([i["trading_interval"] for i in records if i["trading_interval"]])
 
     return cr
 

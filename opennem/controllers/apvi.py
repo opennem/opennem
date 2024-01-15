@@ -29,7 +29,7 @@ def store_apvi_forecastset(forecast_set: APVIForecastSet) -> ControllerReturn:
     cr.total_records = len(forecast_set.intervals)
 
     for _rec in forecast_set.intervals:
-        records_to_store.append({**_rec.dict(exclude={"state"}), "created_by": "apvi.controller", "is_forecast": False})
+        records_to_store.append({**_rec.dict(exclude={"state"}), "is_forecast": False})
         cr.processed_records += 1
 
     if not records_to_store:
@@ -42,7 +42,6 @@ def store_apvi_forecastset(forecast_set: APVIForecastSet) -> ControllerReturn:
         set_={
             "generated": stmt.excluded.generated,
             "eoi_quantity": stmt.excluded.eoi_quantity,
-            "created_by": stmt.excluded.created_by,
         },
     )
 

@@ -21,7 +21,7 @@ from typing import Any
 from urllib.parse import urljoin
 from zoneinfo import ZoneInfo
 
-from pydantic import ValidationError, field_validator, validator
+from pydantic import ValidationError, validator
 from pyquery import PyQuery as pq
 
 from opennem.core.downloader import url_downloader
@@ -37,6 +37,15 @@ __iis_line_match = re.compile(
     r"<a href=['\"]?(?P<link>[^'\" >]+)['\"]>(?P<filename>[^\<]+)"
 )
 
+__nemweb_line_match = re.compile(
+    r"(?P<modified_date>\d{1,2}/\d{1,2}/\d{4} \d{1,2}:\d{2} [AP]M)\s{2,}(?P<file_size>\d+)\s+"
+    r"<a href=\"(?P<link>[^\"]+)\">(?P<filename>[^<]+)"
+)
+
+__nemweb_line_match_2 = re.compile(
+    r"(?P<modified_date>\d{1,2}/\d{1,2}/\d{4}\s+\d{1,2}:\d{2}\s+[AP]M)\s+(?P<file_size>\d+)"
+    r"\s+<a href=\"(?P<link>[^\"]+)\">(?P<filename>[^<]+)"
+)
 
 # AEMO files have a created timestamp in their filenames. This extracts it.
 _aemo_created_date_match = re.compile(r"\_(?P<date_created>\d{12})\_")
@@ -55,7 +64,7 @@ def parse_dirlisting_datetime(datetime_string: str | datetime) -> datetime | Non
         logger.error("No dirlisting datetime string")
 
     # Wednesday, December 28, 2022 9:10
-    _FORMAT_STRINGS = ["%A, %B %d, %Y %I:%M %p", "%A, %B %d, %Y %I:%M"]
+    _FORMAT_STRINGS = ["%A, %B %d, %Y %I:%M %p", "%A, %B %d, %Y %I:%M", "%m/%d/%Y %I:%M %p", ""]
 
     datetime_parsed: datetime | None = None
 
@@ -79,9 +88,9 @@ class DirlistingEntryType(Enum):
 class DirlistingEntry(BaseConfig):
     filename: Path
     link: str
-    modified_date: datetime | None = None
-    aemo_interval_date: datetime | None = None
-    file_size: int | None = None
+    modified_date: datetime
+    aemo_interval_date: datetime | None
+    file_size: int | None
     entry_type: DirlistingEntryType = DirlistingEntryType.file
 
     _validate_modified_date = validator("modified_date", allow_reuse=True, pre=True)(parse_dirlisting_datetime)
@@ -97,7 +106,7 @@ class DirlistingEntry(BaseConfig):
         _filename_value: Path = values["filename"]
         aemo_dt = None
 
-        if _filename_value.suffix not in [".zip", ".csv"]:
+        if _filename_value.suffix.lower() not in [".zip", ".csv"]:
             return None
 
         try:
@@ -108,9 +117,8 @@ class DirlistingEntry(BaseConfig):
 
         return aemo_dt.date
 
-    @field_validator("file_size", mode="before")
-    @classmethod
-    def _parse_dirlisting_filesize(cls, value: str | int | float) -> int | None:
+    @validator("file_size", allow_reuse=True, pre=True)
+    def _parse_dirlisting_filesize(cls, value: str | int | float) -> str | int | float | None:
         if is_number(value):
             return value
 
@@ -174,12 +182,20 @@ class DirectoryListing(BaseConfig):
         return list(filter(lambda x: x.entry_type == DirlistingEntryType.directory, self.entries))
 
     def get_most_recent_files(self, reverse: bool = True, limit: int | None = None) -> list[DirlistingEntry]:
-        _entries = sorted(self.get_files(), key=attrgetter("modified_date"), reverse=reverse)
+        obtained_files = self.get_files()
+
+        if not obtained_files:
+            return []
+
+        _entries = sorted(obtained_files, key=attrgetter("modified_date"), reverse=reverse)
 
         if not limit:
+            self.entries = _entries
             return _entries
 
-        return _entries[:limit]
+        self.entries = _entries[:limit]
+
+        return self.entries
 
     def get_files_modified_in(self, intervals: list[datetime]) -> list[DirlistingEntry]:
         return list(filter(lambda x: x.modified_date in intervals, self.entries))
@@ -199,7 +215,7 @@ class DirectoryListing(BaseConfig):
 
             modified_since = list(
                 filter(
-                    lambda x: x.modified_date.replace(tzinfo=ZoneInfo(self.timezone)) > modified_date,
+                    lambda x: x.modified_date > modified_date,
                     self.get_files(),
                 )
             )
@@ -214,7 +230,16 @@ def parse_dirlisting_line(dirlisting_line: str) -> DirlistingEntry | None:
     if not dirlisting_line:
         return None
 
-    matches = re.search(__iis_line_match, dirlisting_line)
+    for _match in [__iis_line_match, __nemweb_line_match_2]:
+        matches = _match.search(dirlisting_line)
+
+        if not matches:
+            continue
+
+        not_empty = len([i for i in matches.groupdict() if i]) == 4
+
+        if not_empty:
+            break
 
     model: DirlistingEntry | None = None
 
@@ -256,7 +281,9 @@ def get_dirlisting(url: str, timezone: str | None = None) -> DirectoryListing:
         if "To Parent Directory" in i:
             continue
 
-        model = parse_dirlisting_line(html.unescape(i.strip()))
+        dirlisting_line = html.unescape(i.strip())
+
+        model = parse_dirlisting_line(dirlisting_line)
 
         if model:
             # append the base URL to the model link
@@ -269,3 +296,12 @@ def get_dirlisting(url: str, timezone: str | None = None) -> DirectoryListing:
     logger.debug(f"Got back {len(listing_model.entries)} models")
 
     return listing_model
+
+
+# debug entry point
+if __name__ == "__main__":
+    url = "https://data.wa.aemo.com.au/public/market-data/wemde/tradingReport/tradingDayReport/previous/"
+
+    dirlisting = get_dirlisting(url, timezone="Australia/Perth")
+
+    print(dirlisting.entries[0])

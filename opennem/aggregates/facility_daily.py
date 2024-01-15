@@ -56,7 +56,7 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
                 end as energy,
                 case
                     when sum(fs.eoi_quantity) > 0 then
-                        sum(fs.eoi_quantity) * coalesce(avg(bs.price_dispatch), avg(bs.price), 0)
+                        sum(fs.eoi_quantity) * coalesce(avg(bs.price), avg(bs.price_dispatch), 0)
                     else 0
                 end as market_value,
                 case
@@ -289,9 +289,11 @@ def run_aggregate_facility_daily_all(networks: list[NetworkSchema]) -> None:
 
 # debug entry point
 if __name__ == "__main__":
-    date_min = datetime.fromisoformat("2023-04-29T00:00:00+08:00")
-    date_max = datetime.fromisoformat("2023-05-01T00:00:00+08:00")
+    date_min = datetime.fromisoformat("2015-01-01T00:00:00+10:00")
+    date_max = datetime.fromisoformat("2016-01-01T00:00:00+10:00")
     network = NetworkNEM
     # exec_aggregates_facility_daily_query(date_min=date_min, date_max=date_max, network=network)
-    run_aggregates_facility_year(year=2023, network=network)
-    # run_aggregates_facility_year(network=NetworkAEMORooftop, year=2023)
+    # run_aggregates_facility_year(year=2015, network=network)
+    for year in range(2004, 2009):
+        run_aggregates_facility_year(network=network, year=year, run_by_month=False)
+    # run_aggregate_facility_all_by_year(network=NetworkNEM, run_by_month=True)

@@ -183,7 +183,7 @@ def bulkinsert_mms_items(
     if not records:
         return 0
 
-    sql_query = build_insert_query(table, update_fields)
+    sql_query = build_insert_query(table=table, update_cols=update_fields)
     csv_content = generate_bulkinsert_csv_from_records(table, records, column_names=list(records[0].keys()))
 
     # @TODO check the scoping here
@@ -200,6 +200,7 @@ def bulkinsert_mms_items(
         if hasattr(generic_error, "hide_parameters"):
             generic_error.hide_parameters = True  # type: ignore
         logger.error(generic_error)
+        raise generic_error
     finally:
         engine.dispose()
         conn.close()
