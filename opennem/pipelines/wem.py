@@ -1,7 +1,6 @@
 """ WEM pipelines """
 import logging
 
-from opennem.controllers.schema import ControllerReturn
 from opennem.core.profiler import profile_task
 from opennem.crawl import run_crawl
 from opennem.crawlers.apvi import APVIRooftopLatestCrawler
@@ -19,7 +18,7 @@ logger = logging.getLogger("opennem.pipelines.wem")
         " `{run_task_output.inserted_records}` new records for interval `{run_task_output.server_latest}`"
     ),
 )
-def wem_per_interval_check() -> ControllerReturn:
+def wem_per_interval_check() -> None:
     """This task runs per interval and checks for new data"""
     _ = run_crawl(APVIRooftopLatestCrawler)
 
