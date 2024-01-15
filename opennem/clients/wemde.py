@@ -66,7 +66,7 @@ def wemde_parse_facilityscada(url: str) -> list[SchemaFacilityScada]:
                     "trading_interval": entry.get("dispatchInterval"),
                     "facility_code": entry.get("code"),
                     "generated": entry.get("quantity", 0),
-                    "eoi_quantity": entry.get("quantity", 0) / 12,
+                    "eoi_quantity": entry.get("quantity", 0),
                 }
             )
             models.append(m)
