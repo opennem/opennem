@@ -228,8 +228,7 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
         records_to_store.append(
             {
                 "network_id": "NEM",
-                "created_by": "opennem.controllers.nem",
-                "network_region": record["regionid"],
+                "network_region": record.get("regionid"),
                 "trading_interval": trading_interval,
                 price_field: record["rrp"],
             }
@@ -288,7 +287,6 @@ def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
         records_to_store.append(
             {
                 "network_id": "NEM",
-                "created_by": "opennem.controller",
                 "network_region": record["regionid"],
                 "trading_interval": trading_interval,
                 "net_interchange": record["netinterchange"],
@@ -369,7 +367,6 @@ def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
         records_to_store.append(
             {
                 "network_id": "NEM",
-                "created_by": "opennem.controller.nem",
                 "network_region": record["regionid"],
                 "net_interchange_trading": net_interchange,
                 "trading_interval": trading_interval,
