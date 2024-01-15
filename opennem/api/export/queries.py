@@ -241,7 +241,7 @@ def price_network_query(
         select
             time_bucket_gapfill('{trunc}', bs.trading_interval) as trading_interval,
             {group_field},
-            coalesce(avg(bs.price_dispatch), avg(bs.price)) as price
+            coalesce(avg(bs.price), avg(bs.price_dispatch)) as price
         from balancing_summary bs
         where
             bs.trading_interval <= '{date_max}' and
