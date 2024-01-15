@@ -92,10 +92,10 @@ def daily_catchup_runner(days: int = 2) -> None:
     # 2. facilities
     for network in [NetworkNEM, NetworkWEM, NetworkAEMORooftop, NetworkAPVI]:
         run_aggregates_facility_year(year=current_year, network=network)
+        run_aggregates_facility_year(year=current_year - 1, network=network)
 
     # 3. network demand
     run_aggregates_demand_network()
-
     #  flows and flow emissions
     if not settings.flows_and_emissions_v3:
         run_emission_update_day(days=days)
