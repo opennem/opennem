@@ -30,7 +30,7 @@ from opennem.pipelines.nem import (
 )
 from opennem.pipelines.wem import wem_per_interval_check
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
-from opennem.workers.daily import daily_catchup_runner, energy_runner_hours
+from opennem.workers.daily import daily_catchup_runner
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 from opennem.workers.network_data_range import run_network_data_range_update
 from opennem.workers.system import clean_tmp_dir
@@ -138,13 +138,6 @@ def run_run_network_data_range_update() -> None:
     """Updates network data_range"""
     run_network_data_range_update()
     update_facility_seen_range()
-
-
-# energy worker tasks
-@huey.periodic_task(crontab(hour="*/1", minute="10"))
-@huey.lock_task("run_energy_runner_hours")
-def run_energy_runner_hours() -> None:
-    energy_runner_hours(hours=1)
 
 
 # system tasks
