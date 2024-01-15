@@ -405,8 +405,6 @@ def run_flows_by_month() -> None:
         day=1, hour=0, minute=0, second=0, microsecond=0
     )
     period_start = datetime.fromisoformat("2009-06-01T00:00:00+10:00")
-    # period_end = datetime.fromisoformat("2009-08-01T00:00:00+10:00")
-    # period_start = datetime.fromisoformat("2017-04-01T00:00:00+10:00")
     from opennem.utils.dates import month_series
 
     for month in month_series(period_start, period_end, reverse=False):
