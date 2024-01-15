@@ -24,7 +24,6 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
-    LargeBinary,
     Numeric,
     String,
     Text,
@@ -238,14 +237,14 @@ class NetworkRegion(Base, BaseModel):
     export_set = Column(Boolean, default=True, nullable=False)
 
 
-class FacilityStatus(Base, BaseModel):
+class FacilityStatus(Base):
     __tablename__ = "facility_status"
 
     code = Column(Text, primary_key=True)
     label = Column(Text)
 
 
-class Participant(Base, BaseModel):
+class Participant(Base):
     __tablename__ = "participant"
 
     id = Column(
@@ -265,57 +264,6 @@ class Participant(Base, BaseModel):
     approved = Column(Boolean, default=False)
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
-
-
-class Photo(Base):
-    __tablename__ = "photo"
-
-    __table_args__ = (
-        Index(
-            "idx_photo_station_id",
-            "station_id",
-            postgresql_using="btree",
-        ),
-    )
-
-    hash_id = Column(Text, nullable=False, primary_key=True, index=True)
-
-    station_id = Column(
-        Integer,
-        ForeignKey("station.id", name="fk_photos_station_id"),
-        nullable=True,
-    )
-    station = relationship("Station", back_populates="photos")
-
-    name = Column(Text)
-    mime_type = Column(Text)
-    original_url = Column(Text, nullable=True)
-    data = Column(LargeBinary, nullable=True)
-    width = Column(Integer)
-    height = Column(Integer)
-
-    license_type = Column(Text, nullable=True)
-    license_link = Column(Text, nullable=True)
-    author = Column(Text, nullable=True)
-    author_link = Column(Text, nullable=True)
-
-    processed = Column(Boolean, default=False)
-    processed_by = Column(Text)
-    processed_at = Column(DateTime(timezone=True), nullable=True)
-
-    is_primary = Column(Boolean, default=False)
-    order = Column(Integer, default=1)
-
-    approved = Column(Boolean, default=False)
-    approved_by = Column(Text)
-    approved_at = Column(DateTime(timezone=True), nullable=True)
-
-    @hybrid_property
-    def photo_url(self) -> str | None:
-        if self.name:
-            return f"https://photos.opennem.org.au/{self.name}"
-
-        return None
 
 
 class BomStation(Base):
@@ -503,13 +451,6 @@ class Station(Base, BaseModel):
 
     facilities = relationship(
         "Facility",
-        lazy="joined",
-        innerjoin=False,
-        cascade="all, delete",
-    )
-
-    photos = relationship(
-        "Photo",
         lazy="joined",
         innerjoin=False,
         cascade="all, delete",
