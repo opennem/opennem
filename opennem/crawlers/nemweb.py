@@ -49,14 +49,14 @@ def run_nemweb_aemo_crawl(
     if not crawler.network or not crawler.network.interval_size:
         raise Exception("Require an interval size for network for this crawler")
 
+    entries_to_fetch: list[DirlistingEntry] = dirlisting.get_files()
+
     # 2 years is default backfill
     # @TODO make this dynamic based on NetworkSchema
     backfill_days = 365 * 2
 
     if crawler.backfill_days:
         backfill_days = crawler.backfill_days
-
-    entries_to_fetch: list[DirlistingEntry] = dirlisting.get_files()
 
     if latest:
         time_interval = get_time_interval_for_crawler(crawler)
