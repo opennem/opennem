@@ -405,7 +405,7 @@ def run_flows_by_month() -> None:
         day=1, hour=0, minute=0, second=0, microsecond=0
     )
     period_start = datetime.fromisoformat("2009-06-01T00:00:00+10:00")
-    period_end = datetime.fromisoformat("2009-08-01T00:00:00+10:00")
+    # period_end = datetime.fromisoformat("2009-08-01T00:00:00+10:00")
     # period_start = datetime.fromisoformat("2017-04-01T00:00:00+10:00")
     from opennem.utils.dates import month_series
 
@@ -534,7 +534,8 @@ def run_aggregate_flow_for_interval_v3(
 if __name__ == "__main__":
     # run_flows_for_last_days(days=1)
     # run_flows_by_month()
-    run_flows_for_last_intervals(interval_number=12 * 24 * 3, network=NetworkNEM)
+    # run_flows_for_last_intervals(interval_number=12 * 24 * , network=NetworkNEM)
+    run_flows_by_month()
 
     # from_interval = datetime.fromisoformat("2023-02-05T14:50:00+10:00")
     # run_flows_for_last_intervals(interval_number=12 * 24 * 1, network=NetworkNEM)
