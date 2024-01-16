@@ -8,10 +8,9 @@ from opennem.core.parsers.aemo.filenames import AEMODataBucketSize
 from opennem.core.parsers.aemo.mms import parse_aemo_url
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized, parse_aemo_url_optimized_bulk
 from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
+from opennem.crawlers.utils import get_time_interval_for_crawler
 from opennem.schema.date_range import CrawlDateRange
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
-
-from .utils import get_time_interval_for_crawler
 
 logger = logging.getLogger("opennem.crawler.nemweb")
 
@@ -49,9 +48,6 @@ def run_nemweb_aemo_crawl(
         dirlisting.apply_limit(limit)
 
     logger.debug(f"Got {dirlisting.count} entries, {dirlisting.file_count} files and {dirlisting.directory_count} directories")
-
-    for entry in dirlisting.get_files():
-        logger.debug(f"Got file: {entry.link}")
 
     if not crawler.network or not crawler.network.interval_size:
         raise Exception("Require an interval size for network for this crawler")
@@ -272,4 +268,6 @@ AEMONEMNextDayDispatchArchvie = CrawlerDefinition(
 )
 
 if __name__ == "__main__":
-    pass
+    from opennem.crawl import run_crawl
+
+    run_crawl(AEMONemwebTradingIS)
