@@ -129,9 +129,6 @@ def daily_runner(days: int = 2) -> None:
     if datetime.now().month == 1 and datetime.now().day == 1:
         current_year = current_year - 1
 
-    # Energy
-    energy_runner(days=days)
-
     # aggregates
     # 1. flows
     if settings.flows_and_emissions_v3:
