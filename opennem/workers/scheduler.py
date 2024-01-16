@@ -43,21 +43,21 @@ worker_startup_alert()
 
 
 # crawler tasks live per interval for each network
-@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=5, retry_delay=10)
+@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=2, retry_delay=10)
 @huey.lock_task("crawler_run_nem_dispatch_scada_crawl")
 def crawler_run_nem_dispatch_scada_crawl() -> None:
     """dispatch_scada for NEM crawl"""
     nem_dispatch_scada_crawl()
 
 
-@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=5, retry_delay=10)
+@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=2, retry_delay=10)
 @huey.lock_task("crawler_run_nem_dispatch_is_crawl")
 def crawler_run_nem_dispatch_is_crawl() -> None:
     """dispatch_is for NEM crawl"""
     nem_dispatch_is_crawl()
 
 
-@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=5, retry_delay=10)
+@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=2, retry_delay=10)
 @huey.lock_task("crawler_run_nem_trading_is_crawl")
 def crawler_run_nem_trading_is_crawl() -> None:
     """dispatch_is for NEM crawl"""
@@ -65,7 +65,7 @@ def crawler_run_nem_trading_is_crawl() -> None:
 
 
 @huey.periodic_task(
-    network_interval_crontab(network=NetworkAEMORooftop, number_minutes=1), priority=50, retries=5, retry_delay=15
+    network_interval_crontab(network=NetworkAEMORooftop, number_minutes=1), priority=50, retries=2, retry_delay=15
 )
 @huey.lock_task("crawler_run_nem_rooftop_per_interval")
 def crawler_run_nem_rooftop_per_interval() -> None:
