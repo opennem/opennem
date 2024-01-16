@@ -11,7 +11,6 @@ import logging
 from huey import PriorityRedisHuey, crontab
 
 from opennem import settings
-from opennem.aggregates.network_demand import run_demand_aggregates_for_latest_interval  # noqa: F401
 from opennem.api.export.map import PriorityType
 from opennem.api.export.tasks import export_electricitymap, export_flows, export_power
 from opennem.core.profiler import cleanup_database_task_profiles_basedon_retention
