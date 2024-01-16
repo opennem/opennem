@@ -47,7 +47,7 @@ def nem_dispatch_is_crawl() -> None:
     if dispatch_is and dispatch_is.crawls_run:
         # switch between v3 and v2 for flows here
         if settings.flows_and_emissions_v3:
-            run_flows_for_last_intervals(interval_number=2, network=NetworkWEM)
+            run_flows_for_last_intervals(interval_number=2, network=NetworkNEM)
         else:
             # run old flows
             run_flow_update_for_interval(interval=dispatch_is.server_latest, network=NetworkNEM)
