@@ -48,9 +48,10 @@ class OpennemSettings(BaseSettings):
 
     # Slack notifications
     slack_notifications: bool = True
+
     slack_hook_url: str | None = None
     slack_hook_new_facilities: str | None = None
-
+    slack_hook_monitoring: str | None = None
     # web hook for data channel
     slack_data_webhook: str | None = None
 

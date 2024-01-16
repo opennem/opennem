@@ -34,6 +34,7 @@ x-app: &default-app
     - FEEDBACK_SEND_TO_SLACK
     - FEEDBACK_SLACK_HOOK_URL
     - SLACK_HOOK_NEW_FACILITIES
+    - SLACK_HOOK_MONITORING
     # feature flags
     - WORKERS_RUN
     - RUN_CRAWLERS

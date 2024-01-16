@@ -261,8 +261,8 @@ def profile_task(
                 except Exception as e:
                     logger.error(e)
 
-            if send_slack:
-                slack_message(profile_message)
+            if send_slack and settings.slack_hook_monitoring:
+                slack_message(profile_message, alert_webhook_url=settings.slack_hook_monitoring)
 
             logger.info(profile_message)
 
