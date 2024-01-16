@@ -17,6 +17,7 @@ test:
 
 .PHONY: format
 format:
+	poetry run ruff format $(projectname)
 	$(ruff) --fix
 
 .PHONY: lint
