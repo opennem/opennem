@@ -59,7 +59,7 @@ image:
 	docker build \
 		--tag opennem/base:latest \
 		--build-arg BUILDKIT_INLINE_CACHE=1 \
-		--cache-from pagecog/base:latest \
+		--cache-from opennem/base:latest \
 		.
 
 .PHONY: clean
