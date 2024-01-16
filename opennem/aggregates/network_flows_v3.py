@@ -53,9 +53,9 @@ def load_interconnector_intervals(
     if not interval_end:
         interval_end = interval_start
 
-    query = """
+    query = f"""
         select
-            fs.trading_interval at time zone '{timezone}' as trading_interval,
+            fs.trading_interval at time zone '{network.timezone_database}' as trading_interval,
             f.interconnector_region_from,
             f.interconnector_region_to,
             coalesce(sum(fs.generated), 0) as generated,
@@ -64,20 +64,15 @@ def load_interconnector_intervals(
         left join facility f
             on fs.facility_code = f.code
         where
-            fs.trading_interval >= '{date_start}'
-            and fs.trading_interval <= '{date_end}'
+            fs.trading_interval >= '{interval_start}'
+            and fs.trading_interval <= '{interval_end}'
             and f.interconnector is True
-            and f.network_id = '{network_id}'
+            and f.network_id = '{network.code}'
         group by 1, 2, 3
         order by
             1 asc;
 
-    """.format(
-        date_start=interval_start,
-        date_end=interval_end,
-        timezone=network.timezone_database,
-        network_id=network.code,
-    )
+    """
 
     logger.debug(query)
 
@@ -139,10 +134,10 @@ def load_energy_and_emissions_for_intervals(
     if not interval_end:
         interval_end = interval_start
 
-    query = """
+    query = f"""
         select
             generated_intervals.trading_interval,
-            '{network_id}' as network_id,
+            '{network.code}' as network_id,
             generated_intervals.network_region,
             sum(generated_intervals.generated) as generated,
             sum(generated_intervals.energy) as energy,
@@ -166,7 +161,7 @@ def load_energy_and_emissions_for_intervals(
             where
                 fs.trading_interval >= '{interval_start}'
                 and fs.trading_interval <= '{interval_end}'
-                and f.network_id IN ('{network_id}', 'AEMO_ROOFTOP', 'OPENNEM_ROOFTOP_BACKFILL')
+                and f.network_id IN ('{network.code}', 'AEMO_ROOFTOP', 'OPENNEM_ROOFTOP_BACKFILL')
                 and f.fueltech_id not in ('battery_charging')
                 and f.interconnector is False
                 and fs.generated > 0
@@ -174,9 +169,7 @@ def load_energy_and_emissions_for_intervals(
         ) as generated_intervals
         group by 1, 2, 3
         order by 1 asc;
-    """.format(
-        interval_start=interval_start, interval_end=interval_end, network_id=network.code
-    )
+    """
 
     logger.debug(query)
 
@@ -253,7 +246,9 @@ def calculate_total_import_and_export_per_region_for_interval(interconnector_dat
     # imports sum should equal exports sum always
     if round(energy_flows.energy_exports.sum(), 0) - round(energy_flows.energy_imports.sum(), 0) > 1:
         raise FlowWorkerException(
-            f"Energy import and export totals do not match: {energy_flows.energy_exports.sum()} and {energy_flows.energy_imports.sum()}"
+            "Energy import and export totals do not match: "
+            f"{energy_flows.energy_exports.sum()} and "
+            f"{energy_flows.energy_imports.sum()}"
         )
 
     energy_flows["network_id"] = "NEM"

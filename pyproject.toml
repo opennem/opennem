@@ -111,10 +111,13 @@ select = [
   "B",   # flake8-bugbear
   "UP",  # pyupgrade
   "T",   # mypy
-  "C90" # mccabe
 ]
 ignore = [
     "B008",  # do not perform function calls in argument defaults
+    "T201",  # ignore print
+    "T203",  # ignore pprint
+    "C901",  # ignore function too complex
+    "E721",  # igmpre unsafe type comparison
 ]
 exclude = [
   "var",

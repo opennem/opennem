@@ -28,7 +28,9 @@ logger = logging.getLogger("opennem.utils.http")
 DEFAULT_TIMEOUT = settings.http_timeout
 DEFAULT_RETRIES = settings.http_retries
 
-USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36"  # noqa: 501
+USER_AGENT = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36"  # noqa: 501
+)
 
 CHROME_AGENT_HEADERS = {
     "user-agent": USER_AGENT,

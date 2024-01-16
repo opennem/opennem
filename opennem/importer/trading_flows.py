@@ -59,9 +59,7 @@ def setup_network_flow_stations(network: NetworkSchema = NetworkNEM) -> None:
         if not flow_station.location:
             flow_station.location = Location(state=state_from_network_region(network_region.code))
 
-        flow_station.name = "Flows for {} state {}".format(
-            network.code.upper(), state_from_network_region(network_region.code.upper())
-        )
+        flow_station.name = f"Flows for {network.code.upper()} state {state_from_network_region(network_region.code.upper())}"
 
         flow_facilities = [(i, generated_flow_station_id(network, network_region, i)) for i in FlowDirection]
 

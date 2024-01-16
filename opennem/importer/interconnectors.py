@@ -80,7 +80,8 @@ def import_nem_interconnects() -> None:
             continue
 
         interconnector_station = (
-            session.query(Station).filter_by(code=interconnector.interconnectorid)
+            session.query(Station)
+            .filter_by(code=interconnector.interconnectorid)
             # .filter_by(network_code="NEM")
             .one_or_none()
         )

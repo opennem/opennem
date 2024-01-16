@@ -4,8 +4,8 @@ UPGRADE_ARGS ?= --upgrade
 projectname = opennem
 
 # tools
-ruff = poetry run ruff $(projectname) tests
-mypy = poetry run mypy $(projectname) tests
+ruff = poetry run ruff $(projectname)
+mypy = poetry run mypy $(projectname)
 pytest = poetry run pytest tests -v
 pyright = poetry run pyright -v $(poetry env info -p) $(projectname)
 version_file = $(projectname)/__init__.py

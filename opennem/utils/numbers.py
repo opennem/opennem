@@ -79,9 +79,9 @@ def sigfig_compact(n: float | int, precision: int = DEFAULT_PRECISION) -> float 
 
 def human2bytes(s: str) -> int | None:
     """
-    >>> human2bytes('1M')
+    >>> human2bytes("1M")
     1048576
-    >>> human2bytes('1G')
+    >>> human2bytes("1G")
     1073741824
     """
     if s is None:

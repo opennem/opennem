@@ -11,20 +11,18 @@ from opennem.schema.network import NetworkSchema
 
 
 def facility_capacity_network_region_fueltech_query(network: NetworkSchema, network_region: str) -> str:
-    query = """
+    query = f"""
     select
         f.fueltech_id,
         sum(f.capacity_registered)
     from facility f
     where
-        f.network_id='{network_id}'
+        f.network_id='{network.code}'
         and f.network_region='{network_region}'
         and f.active is True
     group by 1
     order by 1;
-    """.format(
-        network_id=network.code, network_region=network_region
-    )
+    """
 
     return dedent(query)
 

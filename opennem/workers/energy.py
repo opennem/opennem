@@ -100,7 +100,7 @@ def get_flows_query(
 
     facility_code = generated_flow_station_id(NetworkNEM, network_region, flow)
 
-    query = """
+    query = f"""
     select
         bs.trading_interval at time zone 'AEST' as trading_interval,
         '{facility_code}' as facility_code,
@@ -112,19 +112,12 @@ def get_flows_query(
         end as generated
     from balancing_summary bs
     where
-        bs.network_id='{network_id}'
+        bs.network_id='{network.code}'
         and bs.network_region='{network_region}'
-        and bs.trading_interval >= '{date_min}'
-        and bs.trading_interval <= '{date_max}'
+        and bs.trading_interval >= '{date_min - timedelta(minutes=10)}'
+        and bs.trading_interval <= '{date_max + timedelta(minutes=10)}'
     order by trading_interval asc;
-    """.format(
-        facility_code=facility_code,
-        flow_direction=flow_direction,
-        network_id=network.code,
-        network_region=network_region,
-        date_min=date_min - timedelta(minutes=10),
-        date_max=date_max + timedelta(minutes=10),
-    )
+    """
 
     return dedent(query)
 

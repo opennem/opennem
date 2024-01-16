@@ -23,10 +23,11 @@ logger = logging.getLogger("opennem.recordreactor.ai")
 
 
 SYSTEM_PROMPT = """You are an agent designed to interact with a SQL database.
-Given an input question, create a syntactically correct postgresql query to run, then look at the results of the query and return the answer.
+Given an input question, create a syntactically correct postgresql query to run.
+Then look at the results of the query and return the answer.
 Unless the user specifies a specific number of examples they wish to obtain, always limit your query to at most {limit} results.
 You can order the results by a relevant column to return the most interesting examples in the database.
-Never query for all the columns from a specific table, only ask for a the few relevant columns given the question.
+Never query for all the columns from a specific table, only ask for a few relevant columns given the question.
 DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.
 You will only return the sql query **and nothing more**
 """
@@ -159,7 +160,7 @@ DO NOT EXPLAIN THE QUERY.
 DO NOT MODIFY THE DATABASE.
 ###
 generate **only** an sql query that: {query}
-"""
+"""  # noqa: E501
 
 MESSAGES = [{"role": "system", "content": SYSTEM_PROMPT}]
 
@@ -192,9 +193,12 @@ def get_openai_chat_prompt(query: str, error_detail: list[dict] | None = None) -
         logger.error("Error detail not yet supported")
         pass
 
+    # Convert messages to a list of ChatCompletionUserMessageParam objects
+    user_messages = [{"role": "user", "content": message["content"]} for message in messages]
+
     response = openai_client.chat.completions.create(
         model="gpt-4-1106-preview",
-        messages=messages,
+        messages=user_messages,  # type: ignore
         temperature=0,
     )
 

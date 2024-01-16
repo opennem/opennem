@@ -28,6 +28,7 @@ logger = logging.getLogger("opennem.core.flow_solver")
 
 class FlowSolverException(Exception):
     "Raised on issue with flow solver"
+
     pass
 
 
@@ -160,7 +161,9 @@ class NetworkInterconnectorEnergyEmissions:
             avaliable_options = ", ".join([x.region_flow for x in self.data])
 
             raise FlowSolverException(
-                f"Interconnector {interval} {region_flow} not found in network {self.network.code}. Available options: {avaliable_options}"
+                "Interconnector {} {} not found in network {}. Available options: {}".format(
+                    interval, region_flow, self.network.code, avaliable_options
+                )
             )
 
         if len(interconnector_result) > 1:
