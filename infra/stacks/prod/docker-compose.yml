@@ -40,7 +40,6 @@ x-app: &default-app
     - RUN_CRAWLERS
     - FLOWS_AND_EMISSIONS_V3
     - REDIRECT_API_STATIC
-    - PER_INTERVAL_AGGREGATE_PROCESSING
     - SHOW_EMISSIONS_IN_POWER_OUTPUTS
 
 services:
@@ -93,16 +92,17 @@ services:
   api:
     <<: *default-app
     image: ghcr.io/opennem/opennem:$VERSION
-    command: [
-      "uvicorn",
-      "--host",
-      "0.0.0.0",
-      "--port",
-      "8000",
-      "--workers",
-      "4",
-      "opennem.api.app:app"
-    ]
+    command:
+      [
+        "uvicorn",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--workers",
+        "4",
+        "opennem.api.app:app"
+      ]
     healthcheck:
       test: curl --fail http://127.0.0.1:8000/networks || exit 1
       interval: 5s
@@ -136,7 +136,7 @@ services:
         "-f",
         "-k",
         "process",
-        "opennem.workers.scheduler.huey",
+        "opennem.workers.scheduler.huey"
       ]
     labels:
       - "traefik.enable=false"
@@ -167,6 +167,7 @@ services:
 
 networks:
   frontend:
+
 
 volumes:
   traefik_acme:

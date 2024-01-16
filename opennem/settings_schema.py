@@ -135,7 +135,6 @@ class OpennemSettings(BaseSettings):
     workers_run: bool = True
     flows_and_emissions_v3: bool = False  #
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
-    per_interval_aggregate_processing: bool = False  # process per interval aggregates
     show_emissions_in_power_outputs: bool = False  # show emissions in power outputs
     show_emission_factors_in_power_outputs: bool = False  # show emissions in power outputs
     compact_number_ouput_in_json: bool = False  # compact number output in json

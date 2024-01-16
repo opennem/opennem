@@ -10,7 +10,6 @@ from huey.exceptions import RetryTask
 from opennem import settings
 from opennem.aggregates.network_flows import run_flow_update_for_interval
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_intervals
-from opennem.api.export.tasks import export_all_daily, export_all_monthly
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.profiler import profile_task
 from opennem.crawl import run_crawl
@@ -24,7 +23,7 @@ from opennem.crawlers.nemweb import (
     AEMONNemwebDispatchScada,
 )
 from opennem.exporter.historic import export_historic_intervals
-from opennem.pipelines.export import run_export_all, run_export_current_year, run_export_power_latest_for_network
+from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.workers.daily import daily_runner
 
@@ -105,33 +104,25 @@ def nem_rooftop_crawl() -> None:
 def nem_per_day_check() -> ControllerReturn:
     """This task is run daily for NEM"""
     dispatch_actuals = run_crawl(AEMONEMDispatchActualGEN)
-    dispatch_gen = run_crawl(AEMONEMNextDayDispatch)
+    run_crawl(AEMONEMNextDayDispatch)
 
     if not dispatch_actuals or not dispatch_actuals.inserted_records:
         raise RetryTask("No new dispatch actuals data")
 
-    if (dispatch_actuals and dispatch_actuals.inserted_records) or (dispatch_gen and dispatch_gen.inserted_records):
-        total_records = dispatch_actuals.inserted_records if dispatch_actuals and dispatch_actuals.inserted_records else 0
-        total_records += dispatch_gen.inserted_records if dispatch_gen and dispatch_gen.inserted_records else 0
+    daily_runner()
+    # run_export_current_year()
+    # run_export_all()
 
-        if not settings.per_interval_aggregate_processing:
-            daily_runner()
-        else:
-            run_export_current_year()
-            run_export_all()
+    # export_all_daily()
+    # export_all_monthly()
 
-            export_all_daily()
-            export_all_monthly()
+    # export historic intervals
+    for network in [NetworkNEM, NetworkWEM]:
+        export_historic_intervals(limit=2, networks=[network])
 
-            # export historic intervals
-            for network in [NetworkNEM, NetworkWEM]:
-                export_historic_intervals(limit=2, networks=[network])
-
-        return ControllerReturn(
-            server_latest=dispatch_actuals.server_latest,
-            total_records=total_records,
-            inserted_records=total_records,
-            last_modified=None,
-        )
-
-    raise RetryTask("No new dispatch actuals data")
+    return ControllerReturn(
+        server_latest=dispatch_actuals.server_latest,
+        # total_records=total_records,
+        # inserted_records=total_records,
+        last_modified=None,
+    )

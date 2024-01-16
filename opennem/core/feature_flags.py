@@ -6,7 +6,6 @@ FEATURE_FLAG_LIST = [
     "run_crawlers",
     "flows_and_emissions_v3",
     "redirect_api_static",
-    "per_interval_aggregate_processing",
     "show_emissions_in_power_outputs",
     "show_emission_factors_in_power_outputs",
     "compact_number_ouput_in_json",
