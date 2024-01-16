@@ -17,8 +17,11 @@ down_revision = "4e4fb94633e6"
 branch_labels = None
 depends_on = None
 
-
 def upgrade() -> None:
+    # milestone_enum.create(op.get_bind(), checkfirst=True)
+    op.execute("DROP TYPE if exists milestonetype cascade")
+    op.execute("drop table if exists milestones cascade")
+
     op.execute('CREATE EXTENSION if not exists "uuid-ossp"')
     op.create_table(
         "milestones",
@@ -32,7 +35,12 @@ def upgrade() -> None:
         sa.Column("dtime", sa.DateTime(), nullable=False),
         sa.Column(
             "record_type",
-            sa.Enum("low", "average", "high", name="milestonetype"),
+            sa.Enum(
+                "low",
+                "average",
+                "high",
+                name="milestonetype",
+            ),
             nullable=False,
         ),
         sa.Column("significance", sa.Integer(), nullable=False),
@@ -64,17 +72,8 @@ def upgrade() -> None:
         ["station_id"],
         ["id"],
     )
-    op.create_index(
-        "idx_location_boundary",
-        "location",
-        ["boundary"],
-        unique=False,
-        postgresql_using="gist",
-    )
     op.drop_index("ix_station_code", table_name="station")
     op.create_index(op.f("ix_station_code"), "station", ["code"], unique=True)
-    op.drop_index("ix_stats_country_type", table_name="stats")
-    op.drop_index("ix_stats_date", table_name="stats")
 
 
 def downgrade() -> None:
@@ -87,7 +86,6 @@ def downgrade() -> None:
     )
     op.drop_index(op.f("ix_station_code"), table_name="station")
     op.create_index("ix_station_code", "station", ["code"], unique=False)
-    op.drop_index("idx_location_boundary", table_name="location", postgresql_using="gist")
     op.drop_constraint("fk_facility_station_code", "facility", type_="foreignkey")
     op.create_foreign_key(
         "fk_facility_station_code",
@@ -99,3 +97,4 @@ def downgrade() -> None:
     )
     op.drop_index(op.f("ix_milestones_dtime"), table_name="milestones")
     op.drop_table("milestones")
+    op.execute("DROP TYPE if exists milestonetype cascade")
