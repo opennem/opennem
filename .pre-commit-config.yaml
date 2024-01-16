@@ -1,34 +1,26 @@
 default_language_version:
-  python: python3.11
+    python: python3.11
 
 default_stages: [commit, push]
 
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
-    hooks:
-      - id: check-added-large-files
-      - id: check-yaml
-      - id: check-toml
-      - id: end-of-file-fixer
-        exclude: LICENSE
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v4.4.0
+      hooks:
+          - id: check-added-large-files
+          - id: check-yaml
+          - id: check-toml
+          - id: end-of-file-fixer
+            exclude: LICENSE
 
-  - repo: local
-    hooks:
-      - id: black
-        name: black
-        entry: poetry run black --config pyproject.toml
-        types: [python]
-        language: system
+    - repo: https://github.com/charliermarsh/ruff-pre-commit
+      rev: v0.0.277
+      hooks:
+          - id: ruff
+            args:
+                - --fix
 
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.0.277
-    hooks:
-      - id: ruff
-        args:
-          - --fix
-
-  # - repo: https://github.com/RobertCraigie/pyright-python
-  #   rev: v1.1.295
-  #   hooks:
-  #     - id: pyright
+    # - repo: https://github.com/RobertCraigie/pyright-python
+    #   rev: v1.1.295
+    #   hooks:
+    #     - id: pyright
