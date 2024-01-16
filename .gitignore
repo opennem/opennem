@@ -121,3 +121,4 @@ binrun_export.py
 scheduler_dev.py
 run_test.py
 notebooks/
+.opennem_requests_cache.sqlite
