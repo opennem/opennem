@@ -147,39 +147,42 @@ def log_task_profile_to_database(
     id = uuid.uuid4()
 
     with engine.connect() as conn:
-        conn.execute(
-            sql_text(
-                """
-                    INSERT INTO task_profile (
-                        id,
-                        task_name,
-                        time_start,
-                        time_end,
-                        errors,
-                        retention_period,
-                        level,
-                        invokee_name
-                    ) VALUES (
-                        :id,
-                        :task_name,
-                        :time_start,
-                        :time_end,
-                        :errors,
-                        :retention_period,
-                        :level,
-                        :invokee_name
-                    ) returning id
+        try:
+            conn.execute(
+                sql_text(
                     """
-            ),
-            id=id,
-            task_name=task_name,
-            time_start=time_start,
-            time_end=time_end,
-            errors=0,
-            retention_period=retention_period.value if retention_period else "",
-            level=level.name.lower() if level else "",
-            invokee_name=invokee_name.lower() if invokee_name else "",
-        )
+                        INSERT INTO task_profile (
+                            id,
+                            task_name,
+                            time_start,
+                            time_end,
+                            errors,
+                            retention_period,
+                            level,
+                            invokee_name
+                        ) VALUES (
+                            :id,
+                            :task_name,
+                            :time_start,
+                            :time_end,
+                            :errors,
+                            :retention_period,
+                            :level,
+                            :invokee_name
+                        ) returning id
+                        """
+                ),
+                id=id,
+                task_name=task_name,
+                time_start=time_start,
+                time_end=time_end,
+                errors=0,
+                retention_period=retention_period.value if retention_period else "",
+                level=level.name.lower() if level else "",
+                invokee_name=invokee_name.lower() if invokee_name else "",
+            )
+        except Exception as e:
+            logger.error(f"Error logging task profile: {e}")
 
     return id
 
