@@ -111,28 +111,24 @@ select = [
   "B",   # flake8-bugbear
   "UP",  # pyupgrade
   "T",   # mypy
-  "C90", # mccabe
+  "C90" # mccabe
 ]
 ignore = [
     "B008",  # do not perform function calls in argument defaults
 ]
 exclude = [
-  ".git",
-  ".venv",
   "var",
-  "bin",
   "opennem/db/migrations",
   "build",
   "notebooks",
-  "opennem/stubs",
   ".ipython",
   ".jupyter",
 ]
 
 [tool.ruff.format]
 quote-style = "single"
-indent-style = "space"
 docstring-code-format = true
+docstring-code-line-length = 100
 
 [tool.pyright]
 include = ["opennem/**/*.py"]
