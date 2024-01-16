@@ -29,7 +29,6 @@ import logging
 import logging.config
 import os
 import sys
-import warnings
 from datetime import datetime
 from pathlib import Path
 from platform import platform
@@ -55,7 +54,6 @@ except ImportError:
     pass
 
 logger = logging.getLogger("opennem")
-warnings.filterwarnings("ignore", module="openpyxl")
 
 # Module variables
 __version__ = "4.0.0a35"
