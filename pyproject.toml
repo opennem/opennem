@@ -126,7 +126,7 @@ exclude = [
 ]
 
 [tool.ruff.format]
-quote-style = "single"
+quote-style = "double"
 docstring-code-format = true
 docstring-code-line-length = 100
 
