@@ -140,6 +140,18 @@ python_version = "3.11"
 reportMissingImports = "error"
 reportMissingTypeStubs = false
 
+[tool.pytest.ini_options]
+log_cli = true
+log_level = "DEBUG"
+log_format = "%(asctime)s %(levelname)s %(message)s"
+log_date_format = "%Y-%m-%d %H:%M:%S"
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests",
+]
+
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
