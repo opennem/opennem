@@ -69,11 +69,9 @@ fastapi-versionizer = "^3.0.4"
 
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.1.0"
 rope = "^1.0.0"
 pytest = "^7.0.1"
 pytest-watch = "^4.2.0"
-mypy = "^1.0.0"
 mdutils = "^1.2.2"
 sqlalchemy-stubs = "^0.4"
 pytest-benchmark = "^4.0.0"
@@ -104,18 +102,19 @@ postgres = ["psycopg2"]
 target-version = "py311"
 line-length = 130
 select = [
-  "E",  # pycodestyle errors
-  "W",  # pycodestyle warnings
-  "F",  # pyflakes
-  "I",  # isort
-  "C",  # flake8-comprehensions
-  "B",  # flake8-bugbear
-  "UP", # pyupgrade
+  "F",   # flake8
+  "E",   # pycodestyle errors
+  "W",   # pycodestyle warnings
+  "F",   # pyflakes
+  "I",   # isort
+  "C",   # flake8-comprehensions
+  "B",   # flake8-bugbear
+  "UP",  # pyupgrade
+  "T",   # mypy
+  "C90", # mccabe
 ]
 ignore = [
-    "E501",  # line too long, handled by black
     "B008",  # do not perform function calls in argument defaults
-    "C901",  # too complex
 ]
 exclude = [
   ".git",
@@ -130,41 +129,10 @@ exclude = [
   ".jupyter",
 ]
 
-[tool.black]
-line-length = 130
-target_version = ['py311']
-include = '\.pyi?$'
-exclude = '''
-/(\.git/
-  |\.eggs
-  |__pycache__
-  |\.cache
-  |\.ipynb_checkpoints
-  |\.mypy_cache
-  |\.pytest_cache
-  |\.tox
-  |\.venv
-  |node_modules
-  |_build
-  |buck-out
-  |build
-  |dist
-  |media
-  |infrastructure
-  |templates
-  |locale
-)/
-'''
-
-[tool.mypy]
-python_version = "3.11"
-plugins = "sqlmypy,pydantic.mypy"
-ignore_missing_imports = true
-disallow_untyped_defs = true
-pretty = true
-show_column_numbers = true
-show_error_codes = true
-show_error_context = true
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+docstring-code-format = true
 
 [tool.pyright]
 include = ["opennem/**/*.py"]

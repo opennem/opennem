@@ -13,16 +13,13 @@
   "python.languageServer": "Pylance",
   "[python]": {
     "editor.formatOnSave": true,
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    }
   },
   "editor.insertSpaces": true,
   "editor.tabSize": 4,
   "editor.formatOnType": false,
-    "editor.codeActionsOnSave": {
-      "source.fixAll": true,
-      "source.organizeImports": false,
-      "source.organizeImports.ruff": true,
-
-    },
-    "editor.defaultFormatter": "ms-python.black-formatter",
-  }
 }
