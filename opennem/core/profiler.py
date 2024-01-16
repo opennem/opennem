@@ -214,7 +214,7 @@ def profile_task(
                 invokee_method_name = profile_retrieve_caller_name()
                 logger.info(f"Invoked by: {invokee_method_name}")
             except Exception as e:
-                logger.error(e)
+                logger.error(f"Error getting invokee: {e}")
 
             # time_start = time.perf_counter()
             dtime_start = get_now()
@@ -262,7 +262,7 @@ def profile_task(
                     custom_message = message_fmt.format(**combined_arg_and_env_dict)
                     profile_message = f"[{settings.env}] " + custom_message + f" in {wall_clock_human}"
                 except Exception as e:
-                    logger.error(e)
+                    logger.info(f"Error formatting custom message: {e}")
 
             if send_slack:
                 slack_message(profile_message)
