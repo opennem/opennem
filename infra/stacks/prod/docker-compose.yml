@@ -93,16 +93,17 @@ services:
   api:
     <<: *default-app
     image: ghcr.io/opennem/opennem:$VERSION
-    command: [
-      "uvicorn",
-      "--host",
-      "0.0.0.0",
-      "--port",
-      "8000",
-      "--workers",
-      "4",
-      "opennem.api.app:app"
-    ]
+    command:
+      [
+        "uvicorn",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--workers",
+        "4",
+        "opennem.api.app:app"
+      ]
     healthcheck:
       test: curl --fail http://127.0.0.1:8000/networks || exit 1
       interval: 5s
@@ -136,14 +137,14 @@ services:
         "-f",
         "-k",
         "process",
-        "opennem.workers.scheduler.huey",
+        "opennem.workers.scheduler.huey"
       ]
     labels:
       - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=true"
 
   redis:
-    image: redis:6-alpine
+    image: redis:alpine
     restart: unless-stopped
     networks:
       - frontend
@@ -152,21 +153,9 @@ services:
     labels:
       - "traefik.enable=false"
 
-  autoheal:
-    image: willfarrell/autoheal:latest
-    tty: true
-    restart: always
-    environment:
-      - AUTOHEAL_INTERVAL=60
-      - AUTOHEAL_START_PERIOD=300
-      - AUTOHEAL_DEFAULT_STOP_TIMEOUT=10
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    labels:
-      - traefik.enable=false
-
 networks:
   frontend:
+
 
 volumes:
   traefik_acme:
