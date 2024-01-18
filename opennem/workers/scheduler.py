@@ -140,7 +140,7 @@ def run_run_network_data_range_update() -> None:
 
 
 # system tasks
-@huey.periodic_task(crontab(hour="*/2", minute="55"))
+@huey.periodic_task(crontab(hour="*/1", minute="55"))
 @huey.lock_task("run_clean_tmp_dir")
 def run_clean_tmp_dir() -> None:
     clean_tmp_dir()
