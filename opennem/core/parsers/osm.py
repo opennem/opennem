@@ -7,7 +7,7 @@ import logging
 import osm2geojson
 from geoalchemy2.elements import WKBElement
 from geoalchemy2.shape import from_shape
-from shapely.geometry import asShape
+from shapely.geometry import shape
 
 from opennem.utils.http import http
 
@@ -63,6 +63,6 @@ def get_osm_geom(way_id: str, srid: int = 4326) -> WKBElement:
     if not poly:
         return None
 
-    geom = from_shape(asShape(poly), srid=srid)
+    geom = from_shape(shape(poly), srid=srid)
 
     return geom
