@@ -19,9 +19,9 @@ LOGGING_CONFIG = {
             "encoding": "utf8",
         },
     },
-    "root": {"level": "ERROR", "handlers": ["console", "file_debug"]},
+    "root": {"level": "ERROR", "handlers": ["console"]},
     "loggers": {
-        "opennem": {"level": "ERROR", "handlers": ["console", "file_debug"], "propagate": False},
+        "opennem": {"level": "ERROR", "handlers": ["console"], "propagate": False},
         "opennem.cli": {"level": "INFO", "handlers": ["console"], "propagate": False},
         "opennem.diff": {"level": "DEBUG", "handlers": ["console"], "propagate": False},
         "shapely.geos": {"level": "INFO"},

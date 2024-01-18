@@ -9,11 +9,10 @@ from shutil import rmtree
 from tempfile import gettempdir
 
 from opennem import settings
-from opennem.core.profiler import profile_task
 
 logger = logging.getLogger("opennem.workers.system")
 
-CLEAN_OLDER_THAN_HOURS = 2
+CLEAN_OLDER_THAN_HOURS = 1
 
 
 def _find_temporary_directory() -> Path | None:
@@ -23,6 +22,7 @@ def _find_temporary_directory() -> Path | None:
 
     try:
         temp_dir = Path(gettempdir())
+        return temp_dir
     except FileNotFoundError as e:
         logger.error(f"Could not get temp dir: {e}")
 
@@ -34,7 +34,6 @@ def _find_temporary_directory() -> Path | None:
     return temp_dir
 
 
-@profile_task(send_slack=False)
 def clean_tmp_dir(dry_run: bool = False) -> None:
     """Cleans up the temp directory for files older than CLEAN_OLDER_THAN_HOURS hours"""
     tmp_dir = _find_temporary_directory()

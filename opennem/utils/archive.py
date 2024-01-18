@@ -175,10 +175,10 @@ def stream_zip_contents(file_obj: IO[bytes], mode: str = "w"):  # type: ignore
         return chain_streams(c)
 
 
-def download_and_unzip(url: str) -> str:
-    """Download and unzip a multi-zip file"""
+def download_and_unzip(url: str) -> Path:
+    """Download and unzip a multi-zip file into a temporary directory"""
 
-    dest_dir = mkdtemp(prefix=f"{settings.tmp_file_prefix}")
+    dest_dir = Path(mkdtemp(prefix=f"{settings.tmp_file_prefix}"))
 
     logger.info(f"Saving to {dest_dir}")
 
@@ -188,6 +188,14 @@ def download_and_unzip(url: str) -> str:
         response = http.get(url)
     except Exception as e:
         logger.error(e)
+
+    if not response.ok:
+        raise Exception(f"Failed to download file: Status code {response.status_code}")
+
+    content_type = response.headers.get("Content-Type", None)
+
+    if not content_type or "zip" not in content_type:
+        raise Exception(f"Invalid content type: {content_type}")
 
     save_path = Path(dest_dir) / filename
 

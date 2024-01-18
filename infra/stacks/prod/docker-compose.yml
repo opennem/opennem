@@ -143,7 +143,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
 
   redis:
-    image: redis:6-alpine
+    image: redis:alpine
     restart: unless-stopped
     networks:
       - frontend
@@ -151,19 +151,6 @@ services:
       - TZ
     labels:
       - "traefik.enable=false"
-
-  autoheal:
-    image: willfarrell/autoheal:latest
-    tty: true
-    restart: always
-    environment:
-      - AUTOHEAL_INTERVAL=60
-      - AUTOHEAL_START_PERIOD=300
-      - AUTOHEAL_DEFAULT_STOP_TIMEOUT=10
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    labels:
-      - traefik.enable=false
 
 networks:
   frontend:
