@@ -36,7 +36,7 @@ huey = "^2.2.0"
 redis = "^4.3.4"
 geojson = "^2.5.0"
 fastapi = "^0.109.0"
-shapely = "^1.7.0"
+shapely = "^2.0.2"
 python-dotenv = "^1.0.0"
 validators = "^0.18.1"
 python-magic = "^0.4.18"
@@ -95,9 +95,6 @@ types-redis = "^4.6.0.11"
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'
 
-[tool.poetry.extras]
-postgres = ["psycopg2"]
-
 [tool.ruff]
 target-version = "py311"
 line-length = 130
@@ -150,7 +147,6 @@ addopts = "-ra -q"
 testpaths = [
     "tests",
 ]
-
 
 [build-system]
 requires = ["poetry>=0.12"]
