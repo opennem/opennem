@@ -124,3 +124,4 @@ notebooks/
 .opennem_requests_cache.sqlite
 .ipython/
 .jupyter/
+infra/backups/
