@@ -3248,13 +3248,13 @@ jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
 
 [[package]]
 name = "rope"
-version = "1.11.0"
+version = "1.12.0"
 description = "a python refactoring library..."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "rope-1.11.0-py3-none-any.whl", hash = "sha256:62c9028353d1f020653bd1b090d659031539842ede6bd65985f86db3d6430932"},
-    {file = "rope-1.11.0.tar.gz", hash = "sha256:ac0cbdcda5a546e1e56c54976df07ea2cb04c806f65459bc213536c5d1bc073e"},
+    {file = "rope-1.12.0-py3-none-any.whl", hash = "sha256:01f06624159e6b2ec9b94412d519e8877a19eeabe392f469c36f7236df05d443"},
+    {file = "rope-1.12.0.tar.gz", hash = "sha256:93a1bb991fbf0426e8d415102d1c092ccc42e826ce9a42c4d61ce53d7786d9d9"},
 ]
 
 [package.dependencies]
@@ -4166,10 +4166,7 @@ cffi = {version = ">=1.11", markers = "platform_python_implementation == \"PyPy\
 [package.extras]
 cffi = ["cffi (>=1.11)"]
 
-[extras]
-postgres = []
-
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "8fc31752caf6350300398b077efeefde25f080f14f56e722dc79ea52f475739d"
+content-hash = "71bfcd77d02f33df62c6d6bec06d5a334f4db8e0e071e4cc56d6fdc7dc474819"
