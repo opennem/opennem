@@ -497,6 +497,14 @@ def skip_clean_for_matching(subject: str, skip_matches: list[str] = STATION_SKIP
     return False
 
 
+def cast_float_or_none(value: float | None) -> float | None:
+    """Cast a float or None"""
+    if value is None:
+        return None
+
+    return float(value)
+
+
 def clean_capacity(capacity: str | int | float, round_to: int = 6) -> float | None:
     """
     Takes a capacity and cleans it up into a float
