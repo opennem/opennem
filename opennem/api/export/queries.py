@@ -18,93 +18,29 @@ def weather_observation_query(time_series: OpennemExportSeries, station_codes: l
     date_start = time_series_range.start
     date_end = time_series_range.end
 
-    if time_series.interval.interval >= 1440:
-        # @TODO replace with mv
-        __query = """
-        select
-            date_trunc('{trunc}', t.observation_hour at time zone '{tz}') as observation_time,
-            t.station_id,
-            avg(t.temp_avg),
-            min(t.temp_min),
-            max(t.temp_max)
-        from (
-            select
-                time_bucket_gapfill('1 hour', observation_time) as observation_hour,
-                fs.station_id,
+    __query = """
+    select
+        time_bucket_gapfill('{interval}', fs.observation_time) as ot,
+        fs.station_id as station_id,
+        fs.temp_air,
+        fs.temp_min,
+        fs.temp_max
+    from mv_weather_observations fs
+    where
+        fs.station_id in ({station_codes}) and
+        fs.observation_time <= '{date_end}' and
+        fs.observation_time >= '{date_start}'
+    group by 1, 2
+    order by 1 desc;
+    """
 
-                case
-                    when avg(fs.temp_air) is not null
-                        then avg(fs.temp_air)
-                    when max(fs.temp_max) is not null and max(fs.temp_min) is not null
-                        then ((max(fs.temp_max) + min(fs.temp_min)) / 2)
-                    else NULL
-                end as temp_avg,
-
-                case when min(fs.temp_min) is not null
-                    then min(fs.temp_min)
-                    else min(fs.temp_air)
-                end as temp_min,
-
-                case when max(fs.temp_max) is not null
-                    then max(fs.temp_max)
-                    else max(fs.temp_air)
-                end as temp_max
-
-            from bom_observation fs
-            where
-                fs.station_id in ({station_codes}) and
-                fs.observation_time <= '{date_end}' and
-                fs.observation_time >= '{date_start}'
-            group by 1, 2
-        ) as t
-        group by 1, 2
-        order by 1 asc;
-        """
-
-        query = __query.format(
-            trunc=time_series.interval.trunc,
-            tz=time_series.network.timezone_database,
-            station_codes=",".join([f"'{i}'" for i in station_codes]),
-            date_start=date_start,
-            date_end=date_end,
-        )
-
-    else:
-        __query = """
-        select
-            time_bucket_gapfill('30 minutes', fs.observation_time) as ot,
-            fs.station_id as station_id,
-
-            case when min(fs.temp_air) is not null
-                then avg(fs.temp_air)
-                else NULL
-            end as temp_air,
-
-            case when min(fs.temp_min) is not null
-                then min(fs.temp_min)
-                else min(fs.temp_air)
-            end as temp_min,
-
-            case when max(fs.temp_max) is not null
-                then max(fs.temp_max)
-                else max(fs.temp_air)
-            end as temp_max
-
-        from bom_observation fs
-        where
-            fs.station_id in ({station_codes}) and
-            fs.observation_time <= '{date_end}' and
-            fs.observation_time >= '{date_start}'
-        group by 1, 2
-        order by 1 desc;
-        """
-
-        query = __query.format(
-            station_codes=",".join([f"'{i}'" for i in station_codes]),
-            date_start=date_start,
-            date_end=date_end - fence_post_delta,
-            tz=time_series.network.timezone_database,
-        )
+    query = __query.format(
+        station_codes=",".join([f"'{i}'" for i in station_codes]),
+        date_start=date_start,
+        date_end=date_end - fence_post_delta,
+        tz=time_series.network.timezone_database,
+        interval=time_series.interval.interval_sql,
+    )
 
     return dedent(query)
 
