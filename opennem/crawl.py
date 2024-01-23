@@ -8,7 +8,7 @@ from pydantic import ValidationError
 from opennem import settings
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_set_meta, crawlers_get_all_meta
-from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSchedule, CrawlerSet
+from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSet
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
 from opennem.crawlers.apvi import (
     APVIRooftopAllCrawler,
@@ -202,35 +202,6 @@ def run_crawl_urls(urls: list[str]) -> None:
 _CRAWLER_SET: CrawlerSet | None = None
 
 
-def run_crawls_all(last_crawled: bool = True) -> None:
-    """Runs all the crawl definitions"""
-    cs = get_crawl_set()
-
-    for crawler in cs.crawlers:
-        try:
-            run_crawl(crawler, last_crawled=last_crawled)
-        except Exception as e:
-            logger.error(f"Error running crawl {crawler.name}: {e}")
-
-
-def run_crawls_by_schedule(schedule: CrawlerSchedule, last_crawled: bool = True) -> None:
-    """Gets the crawlers by schedule and runs them"""
-    cs = get_crawl_set()
-
-    for crawler in cs.get_crawlers_by_schedule(schedule):
-        try:
-            logger.debug(f"run_crawls_by_schedule running crawler {crawler.name}")
-            run_crawl(crawler, last_crawled=last_crawled)
-        except Exception as e:
-            logger.error(f"Error running crawl {crawler.name}: {e}")
-
-
-def get_crawler_names() -> list[str]:
-    """Get a list of crawler names"""
-    cs = get_crawl_set()
-    return [i.name for i in cs.crawlers]
-
-
 def get_crawl_set() -> CrawlerSet:
     """Access method for crawler set"""
     global _CRAWLER_SET
@@ -242,4 +213,4 @@ def get_crawl_set() -> CrawlerSet:
 
 
 if __name__ == "__main__":
-    run_crawls_by_schedule(CrawlerSchedule.frequent)
+    pass
