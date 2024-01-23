@@ -66,7 +66,7 @@ def run_nemweb_aemo_crawl(
 
         missing_intervals = get_crawler_missing_intervals(crawler_name=crawler.name, days=backfill_days, interval=time_interval)
 
-        logger.debug(f"Have {len(missing_intervals)} missing intervals")
+        logger.debug(f"Have {len(missing_intervals)} missing intervals for {crawler.name} since {time_interval}")
 
         if not missing_intervals:
             logger.info("Nothing to do")
@@ -74,7 +74,7 @@ def run_nemweb_aemo_crawl(
         entries_to_fetch = dirlisting.get_files_aemo_intervals(missing_intervals)
 
     if not entries_to_fetch:
-        logger.info("Nothing to do")
+        logger.info("Nothing to do - no entries to fetch")
         return None
 
     logger.info(f"Fetching {latest=} {len(entries_to_fetch)} entries")
