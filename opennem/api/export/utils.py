@@ -21,13 +21,12 @@ def write_output(
     stat_set: BaseModel,
     is_local: bool = False,
     exclude_unset: bool = True,
-    exclude: set | None = None,
 ) -> int:
     """Writes output of stat sets either locally or to s3"""
     if settings.export_local:
         is_local = True
 
-    model_dump = stat_set.model_dump(exclude_unset=exclude_unset)
+    model_dump = stat_set.model_dump(mode="json", exclude_unset=exclude_unset)
 
     write_content = json.dumps(model_dump, indent=4, cls=OpenNEMJSONEncoder)
 

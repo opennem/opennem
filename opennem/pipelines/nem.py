@@ -126,3 +126,7 @@ def nem_per_day_check() -> ControllerReturn:
         # inserted_records=total_records,
         last_modified=None,
     )
+
+
+if __name__ == "__main__":
+    nem_rooftop_crawl()

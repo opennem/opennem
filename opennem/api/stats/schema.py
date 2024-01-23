@@ -6,18 +6,19 @@ from collections import Counter
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 from zoneinfo import ZoneInfo
 
 import pydantic
 import requests
 from datedelta import datedelta
-from pydantic import ValidationError, field_validator, validator
+from pydantic import PlainSerializer, ValidationError, field_validator, validator
 
 from opennem import settings
 from opennem.core.compat.utils import translate_id_v3_to_v2
 from opennem.core.feature_flags import get_list_of_enabled_features
 from opennem.core.fueltechs import map_v3_fueltech
+from opennem.core.normalizers import cast_float_or_none
 from opennem.core.validators.data import validate_data_outputs
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
@@ -101,7 +102,7 @@ def get_data_id(
 def validate_datetime_is_aware(value: datetime) -> datetime:
     """Validate that a datetime is timezone aware"""
     if not value.tzinfo:
-        raise ValidationError("Datetime is not timezone aware", model=OpennemDataHistory)
+        raise ValidationError("Datetime is not timezone aware")
 
     return value
 
@@ -110,7 +111,10 @@ class OpennemDataHistory(BaseConfig):
     start: datetime
     last: datetime
     interval: str
-    data: list[ValidNumber] = pydantic.Field(..., description="Data values")
+    data: Annotated[
+        list[float | None],
+        PlainSerializer(lambda x: [cast_float_or_none(i) for i in x], return_type=float, when_used="json"),
+    ] = pydantic.Field(..., description="Data values")
 
     # link the parent id
     # _parent_id: str | None
@@ -126,11 +130,9 @@ class OpennemDataHistory(BaseConfig):
     # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
     # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator("data", pre=True, always=True)
-    def validate_data(
-        cls, field_value: list[ValidNumber], values: dict[str, datetime | str | list[ValidNumber]]
-    ) -> list[ValidNumber]:
+    def validate_data(cls, field_value: list[float], values: dict[str, datetime | str | list[float]]) -> list[ValidNumber]:
         if not field_value:
-            return field_value
+            return None
 
         interval: str | None = values.get("interval")
         start: datetime | None = values.get("start", None)
@@ -344,7 +346,7 @@ class RegionFlowEmissionsResult(BaseConfig):
 
 class DataQueryResult(BaseConfig):
     interval: datetime
-    result: float | int | None | Decimal
+    result: float | None = None
     group_by: str | None = None
 
 

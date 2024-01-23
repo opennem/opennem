@@ -12,6 +12,7 @@ from starlette import status
 from opennem import settings
 from opennem.api.time import human_to_interval
 from opennem.core.feature_flags import get_list_of_enabled_features
+from opennem.core.normalizers import cast_float_or_none
 from opennem.db import get_database_engine
 from opennem.queries.utils import duid_to_case
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkSchema
@@ -19,7 +20,7 @@ from opennem.schema.time import TimeInterval
 from opennem.schema.units import UnitDefinition
 from opennem.utils.cache import cache_scada_result
 from opennem.utils.dates import get_last_completed_interval_for_network
-from opennem.utils.numbers import cast_trailing_nulls, trim_nulls
+from opennem.utils.numbers import cast_trailing_nulls
 from opennem.utils.timezone import is_aware, make_aware
 from opennem.utils.version import get_version
 
@@ -92,7 +93,7 @@ def stats_factory(
 
         data_trimmed = dict(zip(data_sorted.keys(), data_value, strict=True))
 
-        data_trimmed = trim_nulls(data_trimmed)
+        # data_trimmed = trim_nulls(data_trimmed)
 
         # Find start/end dates
         dates = list(data_trimmed.keys())
@@ -141,7 +142,7 @@ def stats_factory(
             start=start,
             last=end,
             interval=interval.interval_human,
-            data=data_trimmed.values(),
+            data=[cast_float_or_none(i) for i in data_trimmed.values()],
         )
 
         data = OpennemData(
