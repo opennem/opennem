@@ -147,9 +147,14 @@ def get_crawler_history(crawler_name: str, interval: TimeInterval, days: int = 3
 def get_crawler_missing_intervals(
     crawler_name: str,
     interval: TimeInterval,
-    days: int = 365 * 3,
+    days: int = 14,
 ) -> list[datetime]:
-    """Gets the crawler missing intervals going back a period of days"""
+    """Gets the crawler missing intervals going back a period of days
+
+    :param crawler_name: The crawler name
+    :param interval: The interval to check
+    :param days: The number of days to check back
+    """
     engine = get_database_engine()
 
     stmt = sql(
@@ -183,8 +188,6 @@ def get_crawler_missing_intervals(
 
     query = stmt.bindparams(crawler_name=crawler_name, days=f"{days} days", interval_size=interval.interval_sql)
 
-    logger.debug(dedent(str(query)))
-
     with engine.connect() as c:
         results = list(c.execute(query))
 
@@ -195,10 +198,12 @@ def get_crawler_missing_intervals(
     if interval.interval >= 60:
         models = [date_trunc(i, interval.trunc) for i in models]
 
+    logger.debug(f"Got {len(models)} missing intervals for crawler {crawler_name}")
+
     return models
 
 
 if __name__ == "__main__":
-    m = get_crawler_missing_intervals("au.nemweb.trading_is", interval=get_interval("5m"), days=100)
+    m = get_crawler_missing_intervals("au.nemweb.current.trading_is", interval=get_interval("5m"), days=3)
     for i in m[:5]:
         print(i)
