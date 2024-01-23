@@ -55,7 +55,6 @@ def weather_daily(
     )
 
     with engine.connect() as c:
-        logger.debug(query)
         row = list(c.execute(query))
 
     localize = bool(network)
