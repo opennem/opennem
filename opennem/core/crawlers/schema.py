@@ -65,6 +65,15 @@ class CrawlerSet(BaseConfig):
 
     crawlers: list[CrawlerDefinition]
 
+    def crawler_exists(self, name: str) -> bool:
+        """Return if a crawler exists by name"""
+        _crawler_lookup = list(filter(lambda x: x.name == name, self.crawlers))
+
+        if not _crawler_lookup:
+            return False
+
+        return True
+
     def get_crawler(self, name: str) -> CrawlerDefinition:
         """Get a crawler by name"""
         _crawler_lookup = list(filter(lambda x: x.name == name, self.crawlers))
