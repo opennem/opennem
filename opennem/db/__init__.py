@@ -50,6 +50,10 @@ def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int
         "keepalives_count": 5,
     }
 
+    if settings.db_debug:
+        debug = True
+        logger.info("Database debug mode enabled")
+
     try:
         return create_engine(
             db_conn_str,
