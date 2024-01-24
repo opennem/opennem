@@ -85,6 +85,12 @@ def crawler_run_bom_capitals() -> None:
 
 
 # Checks for the overnights from aemo and then runs the daily runner
+@huey.periodic_task(crontab(hour="4", minute="20"))
+@huey.lock_task("nem_overnight_check_always")
+def nem_overnight_check_always() -> None:
+    nem_per_day_check(always_run=True)
+
+
 @huey.periodic_task(crontab(hour="8", minute="20"), retries=10, retry_delay=60, priority=50)
 @huey.lock_task("nem_overnight_check")
 def nem_overnight_check() -> None:
