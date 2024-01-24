@@ -74,9 +74,7 @@ def load_interconnector_intervals(
 
     """
 
-    logger.debug(query)
-
-    df_gen = pd.read_sql(query, con=engine, index_col=["trading_interval"])
+    df_gen = pd.read_sql(query, con=engine.raw_connection(), index_col=["trading_interval"])
 
     if df_gen.empty:
         raise FlowWorkerException("No results from load_interconnector_intervals")
@@ -171,9 +169,9 @@ def load_energy_and_emissions_for_intervals(
         order by 1 asc;
     """
 
-    logger.debug(query)
+    db_connection = engine.raw_connection()
 
-    df_gen = pd.read_sql(query, con=engine, index_col=["trading_interval"])
+    df_gen = pd.read_sql(query, con=db_connection, index_col=["trading_interval"])
 
     if df_gen.empty:
         raise FlowWorkerException("No results from load_interconnector_intervals")
@@ -484,8 +482,7 @@ def run_aggregate_flow_for_interval_v3(
             network=network, interval_start=interval_start, interval_end=interval_end
         )
     except Exception as e:
-        logger.error(e)
-        return 0
+        raise Exception(f"Error loading energy and emissions for interval range {interval_start} => {interval_end}: {e}") from e
 
     # 2. get interconnector data and calculate region imports/exports net
     try:
@@ -493,8 +490,7 @@ def run_aggregate_flow_for_interval_v3(
             network=network, interval_start=interval_start, interval_end=interval_end
         )
     except Exception as e:
-        logger.error(e)
-        return 0
+        raise Exception(f"Error loading interconnector data for interval range {interval_start} => {interval_end}: {e}") from e
 
     interconnector_data_net = invert_interconnectors_invert_all_flows(interconnector_data)
 
@@ -528,7 +524,8 @@ if __name__ == "__main__":
     # run_flows_for_last_days(days=1)
     # run_flows_by_month()
     # run_flows_for_last_intervals(interval_number=12 * 24 * , network=NetworkNEM)
-    run_flows_by_month()
+    # run_flows_by_month()
 
     # from_interval = datetime.fromisoformat("2023-02-05T14:50:00+10:00")
-    # run_flows_for_last_intervals(interval_number=12 * 24 * 1, network=NetworkNEM)
+    run_flows_for_last_intervals(interval_number=12 * 1, network=NetworkNEM)
+    run_aggregate_flow_for_interval_v3(network=NetworkNEM)
