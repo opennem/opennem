@@ -149,7 +149,9 @@ def export_power(
                     network=power_stat.network,
                 )
                 stat_set.append_set(weather_set)
+
         write_output(power_stat.path, stat_set)
+
         output_count += 1
 
 

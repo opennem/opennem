@@ -2,7 +2,6 @@
     Utility functions for API exporter
 
 """
-import json
 import logging
 
 from pydantic.main import BaseModel
@@ -10,7 +9,6 @@ from pydantic.main import BaseModel
 from opennem import settings
 from opennem.api.stats.schema import OpennemDataSet
 from opennem.exporter.aws import write_statset_to_s3, write_to_s3
-from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.exporter.local import write_to_local
 
 logger = logging.getLogger(__name__)
@@ -26,9 +24,7 @@ def write_output(
     if settings.export_local:
         is_local = True
 
-    model_dump = stat_set.model_dump(mode="json", exclude_unset=exclude_unset)
-
-    write_content = json.dumps(model_dump, indent=4, cls=OpenNEMJSONEncoder)
+    write_content = stat_set.model_dump_json(exclude_unset=exclude_unset)
 
     byte_count = 0
 
