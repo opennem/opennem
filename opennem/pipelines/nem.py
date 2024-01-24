@@ -101,20 +101,15 @@ def nem_rooftop_crawl() -> None:
         " `{run_task_output.inserted_records}` new records for day `{run_task_output.server_latest}`"
     ),
 )
-def nem_per_day_check() -> ControllerReturn:
+def nem_per_day_check(always_run: bool = False) -> ControllerReturn:
     """This task is run daily for NEM"""
     dispatch_actuals = run_crawl(AEMONEMDispatchActualGEN)
     run_crawl(AEMONEMNextDayDispatch)
 
-    if not dispatch_actuals or not dispatch_actuals.inserted_records:
+    if not always_run or not dispatch_actuals or not dispatch_actuals.inserted_records:
         raise RetryTask("No new dispatch actuals data")
 
     daily_runner()
-    # run_export_current_year()
-    # run_export_all()
-
-    # export_all_daily()
-    # export_all_monthly()
 
     # export historic intervals
     for network in [NetworkNEM, NetworkWEM]:
@@ -122,8 +117,6 @@ def nem_per_day_check() -> ControllerReturn:
 
     return ControllerReturn(
         server_latest=dispatch_actuals.server_latest,
-        # total_records=total_records,
-        # inserted_records=total_records,
         last_modified=None,
     )
 
