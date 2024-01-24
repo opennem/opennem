@@ -1,5 +1,4 @@
 """" OpenNEM Facility and Station Importer """
-import json
 import logging
 from dataclasses import dataclass
 from datetime import datetime
@@ -9,7 +8,6 @@ from opennem.core.dispatch_type import DispatchType
 from opennem.core.loader import load_data
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Facility, Location, Station
-from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.schema.stations import StationSet
 
 logger = logging.getLogger("opennem.importer.facilities")
@@ -318,61 +316,6 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
 
         session.add(station_model)
         session.commit()
-
-
-def dump_facilities() -> None:
-    """Dump facilities to JSON"""
-
-    station_map = []
-
-    with SessionLocal() as sess:
-        stations = (
-            sess.query(Station)
-            .join(Facility, Location)
-            .filter(Facility.network_id.in_(["NEM", "WEM"]))
-            .order_by(Facility.network_id, Facility.network_region, Station.code)
-            .all()
-        )
-
-        logger.debug(f"Got {len(stations)} stations")
-
-        for station in stations:
-            station_dict = clean_station_model_keys(station.__dict__)
-            station_dict["facilities"] = []
-            station_dict["location"] = None
-
-            if station.location:
-                location_dict = clean_location_model_keys(station.location.__dict__)
-
-                # @NOTE hardcoded as it's WEM/NEM for now
-                location_dict["country"] = "AU"
-
-                # @NOTE lat and lng set as they're props
-                location_dict["lat"] = None
-                location_dict["lng"] = None
-
-                if station.location.lat:
-                    location_dict["lat"] = station.location.lat
-
-                if station.location.lng:
-                    location_dict["lng"] = station.location.lng
-
-                location_model = LocationSchema(**location_dict)
-                station_dict["location"] = location_model
-
-            for facility in station.facilities:
-                logger.debug(f"{facility.network.code} - Station {station.name} - {facility.code}")
-                facility_model = FacilitySchema(**clean_facility_model_keys(facility.__dict__))
-                station_dict["facilities"].append(facility_model)
-
-            station_model = StationSchema(**station_dict)
-            # print(station.code)
-
-            station_map.append(station_model)
-
-        with open("stations.json", "w+") as fh:
-            # fh.write()
-            json.dump(station_map, fh, cls=OpenNEMJSONEncoder, indent=4)
 
 
 def import_facilities() -> None:
