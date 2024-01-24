@@ -97,6 +97,9 @@ if settings.dry_run:
 elif settings.db_url:
     console.print(f" * Using database connection: [red bold encircle]{obfuscate_dsn_password(settings.db_url)}[/]")
 
+if settings.redis_url:
+    console.print(f" * Using redis connection: [red bold encircle]{obfuscate_dsn_password(str(settings.redis_url))}[/]")
+
 # skip if logging not configed
 if LOGGING_CONFIG:
     logging.config.dictConfig(LOGGING_CONFIG)
