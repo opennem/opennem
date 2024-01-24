@@ -11,7 +11,10 @@ from opennem.schema.stats import StatTypes
 
 
 def weather_observation_query(time_series: OpennemExportSeries, station_codes: list[str]) -> str:
-    # Get the time range using either the old way or the new v4 way
+    """
+    Get weather observations for a list of stations and a date range.
+    """
+
     fence_post_delta: timedelta = timedelta(minutes=0)
 
     time_series_range = time_series.get_range()
@@ -20,11 +23,11 @@ def weather_observation_query(time_series: OpennemExportSeries, station_codes: l
 
     __query = """
     select
-        time_bucket_gapfill('{interval}', fs.observation_time) as ot,
+        time_bucket_gapfill('{interval}', fs.observation_time, '{timezone}') as ot,
         fs.station_id as station_id,
-        fs.temp_air,
-        fs.temp_min,
-        fs.temp_max
+        avg(fs.temp_air),
+        min(fs.temp_min),
+        max(fs.temp_max)
     from mv_weather_observations fs
     where
         fs.station_id in ({station_codes}) and
@@ -40,6 +43,7 @@ def weather_observation_query(time_series: OpennemExportSeries, station_codes: l
         date_end=date_end - fence_post_delta,
         tz=time_series.network.timezone_database,
         interval=time_series.interval.interval_sql,
+        timezone=time_series.network.timezone_database,
     )
 
     return dedent(query)
