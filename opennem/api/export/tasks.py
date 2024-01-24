@@ -146,7 +146,6 @@ def export_power(
                     network_region=power_stat.network_region,
                     include_min_max=False,
                     unit_name="temperature",
-                    network=power_stat.network,
                 )
                 stat_set.append_set(weather_set)
 
