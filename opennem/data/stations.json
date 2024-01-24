@@ -31712,5 +31712,57 @@
             "geocode_approved": true,
             "geocode_skip": false
         }
+    },
+    {
+        "code": "TALWB",
+        "name": "Tallawarra B",
+        "network_name": "Tallawarra B",
+        "description": "Located on the shores of Lake Illawarra at EnergyAustralia's existing Tallawarra power station, Tallawarra B is Australia’s first peaking power station to be powered by a blend of gas and green hydrogen with direct emissions offset. The Tallawarra B began operation in January 2024, providing a new energy source following the retirement of the Liddell power station and the expected closure of the Eraring power station in 2025.",
+        "wikipedia_link": null,
+        "wikidata_id": null,
+        "website_url": "https://www.energyaustralia.com.au/about-us/what-we-do/new-energy-projects/tallawarra-b-project",
+        "approved": true,
+        "approved_by": "opennem.registry",
+        "facilities": [
+            {
+                "network_id": "NEM",
+                "fueltech_id": "gas_ocgt",
+                "status_id": "operating",
+                "code": "TALWB1",
+                "network_code": "NEM",
+                "network_region": "NSW1",
+                "network_name": null,
+                "dispatch_type": "GENERATOR",
+                "interconnector": false,
+                "interconnector_region_to": null,
+                "interconnector_region_from": null,
+                "capacity_registered": 320.0,
+                "expected_closure_date": null,
+                "expected_closure_year": null,
+                "registered": null,
+                "deregistered": null,
+                "unit_id": null,
+                "unit_number": null,
+                "unit_alias": null,
+                "unit_capacity": null,
+                "emissions_factor_co2": 0.44753472
+            }
+        ],
+        "location": {
+            "address1": "",
+            "address2": "",
+            "locality": "",
+            "state": "NSW",
+            "postcode": "",
+            "country": "AU",
+            "geocode_processed_at": null,
+            "lat": -34.5230894452804,
+            "lng": 150.808566045493,
+            "osm_way_id": null,
+            "place_id": null,
+            "geocode_by": "opennem.registry",
+            "geocode_approved": true,
+            "geocode_skip": false
+        }
     }
 ]
