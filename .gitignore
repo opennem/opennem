@@ -128,3 +128,4 @@ terraform.tfvars
 pyrightconfig.json
 opennem/core/flows_old.py
 notebooks/
+infra/backups/
