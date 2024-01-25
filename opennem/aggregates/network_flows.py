@@ -68,7 +68,7 @@ def load_energy_emission_mv_intervals(date_start: datetime, date_end: datetime, 
     if not is_aware(date_end):
         date_end = date_end.astimezone(tz=network.get_fixed_offset())
 
-    query = """
+    query = f"""
         select
             t.trading_interval,
             t.network_region,
@@ -93,16 +93,16 @@ def load_energy_emission_mv_intervals(date_start: datetime, date_end: datetime, 
                     bs.network_region,
                     bs.price as price
                 from balancing_summary bs
-                    where bs.network_id='{network_id}'
+                    where bs.network_id='{network.code}'
             ) as  bsn on
                 bsn.trading_interval = fs.trading_interval
                 and bsn.network_id = n.network_price
                 and bsn.network_region = f.network_region
-                and f.network_id = '{network_id}'
+                and f.network_id = '{network.code}'
             where
                 fs.is_forecast is False and
                 f.interconnector = False and
-                f.network_id = '{network_id}' and
+                f.network_id = '{network.code}' and
                 fs.generated > 0
             group by
                 1, f.code, 2
@@ -112,9 +112,7 @@ def load_energy_emission_mv_intervals(date_start: datetime, date_end: datetime, 
             t.trading_interval < '{date_end}'
         group by 1, 2
         order by 1 asc, 2;
-    """.format(
-        date_start=date_start, date_end=date_end, network_id=network.code
-    )
+    """
 
     logger.debug(query)
 

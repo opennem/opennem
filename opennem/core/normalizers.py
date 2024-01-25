@@ -487,7 +487,7 @@ def strip_station_name_numbering(sub: str) -> str:
 
 def station_name_hyphenate(sub: str) -> str:
     """Hyphenates names like 'Dapto to Wollongong' as 'Dapto-Wollongong'."""
-    return re.sub(r"\ To\ ", "-", sub, re.IGNORECASE)
+    return re.sub(r"\ To\ ", "-", sub, flags=re.IGNORECASE)
 
 
 def skip_clean_for_matching(subject: str, skip_matches: list[str] = STATION_SKIP_CLEANING_MATCHES) -> bool:

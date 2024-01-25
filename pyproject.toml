@@ -116,7 +116,6 @@ ignore = [
     "B008",  # do not perform function calls in argument defaults
     "C901",  # too complex
     "E721",  # do not compare types, use 'isinstance()'
-    "B034",  # f-string is missing placeholders
 ]
 exclude = [
   ".git",

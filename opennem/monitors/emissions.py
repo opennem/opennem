@@ -32,7 +32,7 @@ def get_facility_no_emission_factor(only_operating: bool = False) -> list[Facili
     if only_operating:
         operating_filter = "and f.status_id='operating'"
 
-    __query = """
+    __query = f"""
         select
             s.name,
             f.network_id,
@@ -49,9 +49,7 @@ def get_facility_no_emission_factor(only_operating: bool = False) -> list[Facili
             (f.emissions_factor_co2 is null or f.emissions_factor_co2 = 0)
             {operating_filter}
         order by network_region desc;
-    """.format(
-        operating_filter=operating_filter
-    )
+    """
 
     with engine.connect() as c:
         logger.debug(__query)

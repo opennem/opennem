@@ -11,7 +11,7 @@ logger = logging.getLogger("opennem.queries.flows")
 
 def get_interconnector_intervals_query(date_start: datetime, date_end: datetime, network: NetworkSchema) -> str:
     """Load interconenctor intervals v1"""
-    query = """
+    query = f"""
         select
             time_bucket_gapfill('5min', fs.trading_interval) as trading_interval,
             f.interconnector_region_from,
@@ -24,16 +24,12 @@ def get_interconnector_intervals_query(date_start: datetime, date_end: datetime,
             fs.trading_interval >= '{date_start}'
             and fs.trading_interval < '{date_end}'
             and f.interconnector is True
-            and f.network_id = '{network_id}'
+            and f.network_id = '{network.code}'
         group by 1, 2, 3
         order by
             1 asc;
 
-    """.format(
-        date_start=date_start,
-        date_end=date_end,
-        network_id=network.code,
-    )
+    """
 
     logger.debug(query)
 
