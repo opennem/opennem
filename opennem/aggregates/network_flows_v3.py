@@ -542,10 +542,13 @@ def run_aggregate_flow_for_interval_v3(
         interval (datetime): _description_
         network (NetworkSchema): _description_
     """
-
     # 0. support single interval
     if not interval_end:
         interval_end = interval_start
+
+    # If intervals are inverted set them back the right way around
+    if interval_start > interval_end:
+        interval_start, interval_end = interval_end, interval_start
 
     # 1. get
     try:
@@ -613,20 +616,43 @@ def run_aggregate_flow_for_interval_v3(
     # 7. Persist to database aggregate table
     inserted_records = persist_network_flows_and_emissions_for_interval(network=network, flow_results=network_flow_records)
 
-    logger.info(f"Inserted {inserted_records} records for interval {interval_start} and network {network.code}")
+    logger.info(
+        f"{network.code} flow records: Inserted {inserted_records} records for interval {interval_start} => {interval_end}"
+    )
 
     return inserted_records
 
 
+def run_aggregate_flows_per_interval_block(date_start: datetime, date_end: datetime, network: NetworkSchema) -> None:
+    """Run aggregate flows for a month"""
+    interval_start = date_start
+    interval_end = date_start - timedelta(days=1)
+
+    while interval_start > date_end:
+        logger.info(f"Running aggregate flows for interval {interval_start} to {interval_end}")
+
+        try:
+            run_aggregate_flow_for_interval_v3(
+                network=network, interval_start=interval_start, interval_end=interval_end, validate_results=True
+            )
+        except Exception as e:
+            logger.error(f"Error running aggregate flows for interval {interval_start} to {interval_end}: {e}")
+
+        interval_start = interval_end
+        interval_end -= timedelta(days=7)
+
+        if interval_end < date_end:
+            interval_end = date_end
+
+    logger.info("Completed.")
+
+
 # debug entry point
 if __name__ == "__main__":
-    interval_end = datetime.fromisoformat("2023-09-05T08:00:00+10:00")
-    interval_start = interval_end - timedelta(hours=1)
+    interval_end = datetime.fromisoformat("2024-01-24T12:00:00+10:00")
+    interval_start = interval_end - timedelta(days=7)
     run_aggregate_flow_for_interval_v3(
         network=NetworkNEM,
         interval_start=interval_start,
         interval_end=interval_end,
     )
-
-    # from_interval = datetime.fromisoformat("2023-02-05T14:50:00+10:00")
-    # run_flows_for_last_intervals(interval_number=12 * 24 * 1, network=NetworkNEM)
