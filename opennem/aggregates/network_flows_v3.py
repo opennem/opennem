@@ -59,9 +59,9 @@ def load_interconnector_intervals(
     if not interval_end:
         interval_end = interval_start
 
-    query = """
+    query = f"""
         select
-            fs.trading_interval at time zone '{timezone}' as trading_interval,
+            fs.trading_interval at time zone '{network.timezone_database}' as trading_interval,
             f.interconnector_region_from,
             f.interconnector_region_to,
             coalesce(sum(fs.generated), 0) as generated,
@@ -70,24 +70,19 @@ def load_interconnector_intervals(
         left join facility f
             on fs.facility_code = f.code
         where
-            fs.trading_interval >= '{date_start}'
-            and fs.trading_interval <= '{date_end}'
+            fs.trading_interval >= '{interval_start}'
+            and fs.trading_interval <= '{interval_end}'
             and f.interconnector is True
-            and f.network_id = '{network_id}'
+            and f.network_id = '{network.code}'
         group by 1, 2, 3
         order by
             1 asc;
 
-    """.format(
-        date_start=interval_start,
-        date_end=interval_end,
-        timezone=network.timezone_database,
-        network_id=network.code,
-    )
+    """
 
     logger.debug(query)
 
-    df_gen = pd.read_sql(query, con=engine, index_col=["trading_interval"])
+    df_gen = pd.read_sql(query, con=engine.raw_connection(), index_col=["trading_interval"])
 
     if df_gen.empty:
         raise FlowWorkerException("No results from load_interconnector_intervals")
@@ -145,10 +140,10 @@ def load_energy_and_emissions_for_intervals(
     if not interval_end:
         interval_end = interval_start
 
-    query = """
+    query = f"""
         select
             generated_intervals.trading_interval,
-            '{network_id}' as network_id,
+            '{network.code}' as network_id,
             generated_intervals.network_region,
             sum(generated_intervals.generated) as generated,
             sum(generated_intervals.energy) as energy,
@@ -172,7 +167,7 @@ def load_energy_and_emissions_for_intervals(
             where
                 fs.trading_interval >= '{interval_start}'
                 and fs.trading_interval <= '{interval_end}'
-                and f.network_id IN ('{network_id}', 'AEMO_ROOFTOP', 'OPENNEM_ROOFTOP_BACKFILL')
+                and f.network_id IN ('{network.code}', 'AEMO_ROOFTOP', 'OPENNEM_ROOFTOP_BACKFILL')
                 and f.fueltech_id not in ('battery_charging')
                 and f.interconnector is False
                 and fs.generated > 0
@@ -180,13 +175,11 @@ def load_energy_and_emissions_for_intervals(
         ) as generated_intervals
         group by 1, 2, 3
         order by 1 asc;
-    """.format(
-        interval_start=interval_start, interval_end=interval_end, network_id=network.code
-    )
+    """
 
     logger.debug(query)
 
-    df_gen = pd.read_sql(query, con=engine, index_col=["trading_interval"])
+    df_gen = pd.read_sql(query, con=engine.raw_connection(), index_col=["trading_interval"])
 
     if df_gen.empty:
         raise FlowWorkerException("No results from load_interconnector_intervals")
