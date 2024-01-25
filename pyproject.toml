@@ -90,7 +90,7 @@ types-cachetools = "^5.0.0"
 types-PyYAML = "^6.0.4"
 freezegun = "^1.2.2"
 pyright = "^1.1.299"
-ruff = "^0.0.272"
+ruff = "^0.1.14"
 hatch = "^1.7.0"
 
 [tool.poetry.scripts]
