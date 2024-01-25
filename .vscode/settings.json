@@ -23,6 +23,5 @@
       "source.organizeImports.ruff": true,
 
     },
-    "editor.defaultFormatter": "ms-python.black-formatter",
-  }
+    "editor.defaultFormatter": "charliermarsh.ruff",
 }
