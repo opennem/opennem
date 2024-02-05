@@ -16,8 +16,6 @@ from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures, load
 from opennem.exporter.historic import export_historic_intervals
 from opennem.importer.db import import_all_facilities
 from opennem.importer.db import init as db_init
-from opennem.importer.mms import mms_export
-from opennem.importer.opennem import opennem_import
 from opennem.parsers.aemo.cli import cmd_data_cli
 from opennem.workers.daily import all_runner, daily_runner
 from opennem.workers.energy import run_energy_update_archive, run_energy_update_days
@@ -57,11 +55,6 @@ def cmd_export() -> None:
 
 
 @click.command()
-def cmd_import_opennem() -> None:
-    opennem_import()
-
-
-@click.command()
 def cmd_import_facilities() -> None:
     import_all_facilities()
 
@@ -74,11 +67,6 @@ def cmd_import_fueltechs() -> None:
 @click.command()
 def cmd_import_bom_stations() -> None:
     load_bom_stations_json()
-
-
-@click.command()
-def cmd_import_mms() -> None:
-    mms_export()
 
 
 @click.command()
@@ -162,8 +150,6 @@ main.add_command(cmd_export, name="export")
 main.add_command(cmd_weather, name="weather")
 main.add_command(cmd_task, name="task")
 
-cmd_import.add_command(cmd_import_opennem, name="opennem")
-cmd_import.add_command(cmd_import_mms, name="mms")
 cmd_import.add_command(cmd_import_facilities, name="facilities")
 cmd_import.add_command(cmd_import_fueltechs, name="fueltechs")
 cmd_import.add_command(cmd_import_bom_stations, name="bom")
