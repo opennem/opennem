@@ -22,4 +22,10 @@
   "editor.insertSpaces": true,
   "editor.tabSize": 4,
   "editor.formatOnType": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "never",
+    "source.organizeImports.ruff": "explicit"
+  },
+  "editor.defaultFormatter": "charliermarsh.ruff",
 }
