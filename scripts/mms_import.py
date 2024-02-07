@@ -33,13 +33,10 @@ def find_available_mms_sets() -> List[str]:
     pass
 
 
-MMS_MODELS = [
-    getattr(mms, item) for item in dir(mms) if hasattr(getattr(mms, item), "__tablename__")
-]
+MMS_MODELS = [getattr(mms, item) for item in dir(mms) if hasattr(getattr(mms, item), "__tablename__")]
 
 
 def get_mms_model(table: AEMOTableSchema) -> Optional[mms.Base]:
-
     table_lookup = list(
         filter(
             lambda x: x.__tablename__ == table.full_name or x.__tablename__ == table.name,
@@ -55,7 +52,6 @@ def get_mms_model(table: AEMOTableSchema) -> Optional[mms.Base]:
 
 
 def store_mms_table(table: AEMOTableSchema) -> int:
-
     if not table.name:
         logger.error("Table has no name!: {}".format(table))
         return 0
@@ -83,7 +79,7 @@ def store_mms_table(table: AEMOTableSchema) -> int:
     conn = get_database_engine().raw_connection()
     cursor = conn.cursor()
 
-    csv_content = ""
+    csv_content = None
 
     try:
         csv_content = generate_csv_from_records(
@@ -125,7 +121,6 @@ def import_file(filepath: Path, namespace: Optional[str] = None) -> None:
     logger.debug("Loaded {} tables".format(len(ts.table_names)))
 
     for table in ts.tables:
-
         if namespace and table.namespace != namespace:
             continue
 
@@ -172,7 +167,6 @@ def cmd_import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
 @click.option("--namespace", type=str, required=False)
 @click.option("--debug", is_flag=True, default=False)
 def all(namespace: Optional[str] = None, debug: Optional[bool] = False) -> None:
-
     logging.getLogger().setLevel(logging.INFO)
     logging.getLogger("opennem.pipelines.bulk_insert").setLevel(logging.INFO)
     logger.setLevel(logging.INFO)

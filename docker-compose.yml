@@ -23,5 +23,23 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/
 
+  mysql:
+    image: mariadb:latest
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - TZ
+      - MYSQL_DATABASE=opennem
+      - MYSQL_USER=opennem
+      - MYSQL_PASSWORD=opennem
+      - MYSQL_ROOT_PASSWORD=opennem
+    ports:
+      - ${HOST:-127.0.0.1}:13306:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+
 volumes:
   db_data:
+    driver: local
+  mysql_data:
+    driver: local
