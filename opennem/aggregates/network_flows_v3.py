@@ -642,10 +642,12 @@ def run_aggregate_flows_per_interval_block(date_start: datetime, date_end: datet
 
 # debug entry point
 if __name__ == "__main__":
-    interval_end = datetime.fromisoformat("2024-01-24T12:00:00+10:00")
-    interval_start = interval_end - timedelta(days=7)
-    run_aggregate_flow_for_interval_v3(
+    # run_flows_for_last_intervals(interval_number=24 * 12, network=NetworkNEM)
+
+    interval_start = datetime.fromisoformat("2011-01-10T00:00:00+10:00")
+    interval_end = datetime.fromisoformat("2009-06-01T00:00:00+10:00")
+    run_aggregate_flows_per_interval_block(
         network=NetworkNEM,
-        interval_start=interval_start,
-        interval_end=interval_end,
+        date_start=interval_start,
+        date_end=interval_end,
     )
