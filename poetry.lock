@@ -718,6 +718,17 @@ files = [
 ]
 
 [[package]]
+name = "datetype"
+version = "2024.2.8"
+description = "A type wrapper for the standard library `datetime` that supplies stricter checks, such as making 'datetime' not substitutable for 'date', and separating out Naive and Aware datetimes into separate, mutually-incompatible types."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "datetype-2024.2.8-py3-none-any.whl", hash = "sha256:a2581da77e9abfe903049a6835c84ec9e67d45f46ec5248958a260cf333b14c7"},
+    {file = "datetype-2024.2.8.tar.gz", hash = "sha256:e1613949725ceffe7ba9265404cb1d7015db17454cb11cd662e5b6274a3c8ed0"},
+]
+
+[[package]]
 name = "decorator"
 version = "5.1.1"
 description = "Decorators for Humans"
@@ -4083,4 +4094,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "360d44610306e4a7e32ababe4d307cf18a048e7a300eded768066de470d5951c"
+content-hash = "27d44ee9ea1747b720176b8f1d5ed876aabe209cb7f25396cc65eed79128c818"
