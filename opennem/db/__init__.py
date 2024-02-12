@@ -171,7 +171,7 @@ def get_database_session() -> Generator[Session, None, None]:
             s.close()
 
 
-async def get_database_session_async() -> AsyncGenerator[Session, None, None]:
+async def get_database_session_async() -> AsyncGenerator[Session, None]:
     """
     Gets a database session
 
