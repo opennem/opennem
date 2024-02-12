@@ -3,6 +3,7 @@ from datetime import datetime
 from fastapi import APIRouter
 from fastapi_versionizer.versionizer import api_version
 
+from opennem.api.schema import APIV4ResponseSchema
 from opennem.recordreactor.schema import MilestoneRecord
 
 from .queries import get_milestones
@@ -36,18 +37,29 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
     return milestone_records
 
 
-@milestones_router.get("/")
+@milestones_router.get("/", response_model=APIV4ResponseSchema, response_model_exclude_unset=True)
 @api_version(4)
 def api_get_domains(
     limit: int = 100, page_number: int = 1, date_start: datetime | None = None, date_end: datetime | None = None
-) -> list[MilestoneRecord]:
+) -> APIV4ResponseSchema:
     """Get a list of milestones
 
     @TODO date filter
 
     """
-    db_records = get_milestones(limit=limit, page_number=page_number)
 
-    milestone_records = map_milestone_records_from_db(db_records)
+    try:
+        db_records = get_milestones(limit=limit, page_number=page_number)
+    except Exception as e:
+        response_schema = APIV4ResponseSchema(success=False, errors=[str(e)])
+        return response_schema
 
-    return milestone_records
+    try:
+        milestone_records = map_milestone_records_from_db(db_records)
+    except Exception as e:
+        response_schema = APIV4ResponseSchema(success=False, errors=[str(e)])
+        return response_schema
+
+    response_schema = APIV4ResponseSchema(success=True, data=milestone_records)
+
+    return response_schema

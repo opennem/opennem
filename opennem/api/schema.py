@@ -1,5 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field
 
+from opennem.utils.version import get_version
+
 
 class ApiBase(BaseModel):
     model_config = ConfigDict(
@@ -36,3 +38,10 @@ class APINetworkSchema(ApiBase):
     regions: list[APINetworkRegion] | None = None
     timezone: str | None = Field(None, description="Network timezone")
     interval_size: int = Field(..., description="Size of network interval in minutes")
+
+
+class APIV4ResponseSchema(ApiBase):
+    version: str = get_version()
+    success: bool = True
+    errors: list | None = None
+    data: list = []
