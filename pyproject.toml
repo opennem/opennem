@@ -66,6 +66,7 @@ pydantic-settings = "^2.1.0"
 python-multipart = "^0.0.6"
 fastapi-versionizer = "^3.0.4"
 psycopg = {extras = ["binary"], version = "^3.1.18"}
+psycopg2-binary = "^2.9.9"
 
 
 [tool.poetry.group.dev.dependencies]
