@@ -39,7 +39,8 @@ class OpennemBaseDataSchema(OpennemBaseSchema):
 
 class OpennemErrorSchema(OpennemBaseSchema):
     response_status: ResponseStatus = ResponseStatus.ERROR
-    detail: str
+    error: str
+    success: bool = False
 
 
 class FueltechSchema(BaseConfig):

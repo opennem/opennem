@@ -64,6 +64,8 @@ origins = [
     "https://*.opennem-fe.pages.dev",
     "https://*.pages.dev",
     "https://*.netlify.app",
+    "https://*.openelectricity.org.au",
+    "http://localhost:5173",
 ]
 
 app.add_middleware(
@@ -82,7 +84,7 @@ async def intercept_maintenance_mode(request: Request, call_next):  # type: igno
     if settings.maintenance_mode:
         logger.debug("Maintenance mode")
 
-        resp_content = OpennemErrorSchema(detail="Maintenance Mode")
+        resp_content = OpennemErrorSchema(error="Maintenance Mode")
 
         return OpennemExceptionResponse(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, response_class=resp_content)
 
@@ -93,7 +95,7 @@ async def intercept_maintenance_mode(request: Request, call_next):  # type: igno
 # Custom exception handler
 @app.exception_handler(OpennemBaseHttpException)
 async def opennem_exception_handler(request: Request, exc: OpennemBaseHttpException) -> OpennemExceptionResponse:
-    resp_content = OpennemErrorSchema(detail=exc.detail)
+    resp_content = OpennemErrorSchema(error=exc.detail)
 
     return OpennemExceptionResponse(
         status_code=exc.status_code,
@@ -103,7 +105,9 @@ async def opennem_exception_handler(request: Request, exc: OpennemBaseHttpExcept
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException) -> OpennemExceptionResponse:
-    resp_content = OpennemErrorSchema(detail=exc.detail)
+    logger.debug(f"HTTP Exception: {exc.status_code} {exc.detail}")
+
+    resp_content = OpennemErrorSchema(error=exc.detail, success=False)
 
     return OpennemExceptionResponse(
         status_code=exc.status_code,
@@ -114,7 +118,7 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> Openne
 @app.exception_handler(401)
 @app.exception_handler(403)
 async def http_type_exception_handler(request: Request, exc: HTTPException) -> OpennemExceptionResponse:
-    resp_content = OpennemErrorSchema(detail=exc.detail)
+    resp_content = OpennemErrorSchema(error=exc.detail)
 
     return OpennemExceptionResponse(
         status_code=exc.status_code,

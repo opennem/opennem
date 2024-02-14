@@ -43,5 +43,6 @@ class APINetworkSchema(ApiBase):
 class APIV4ResponseSchema(ApiBase):
     version: str = get_version()
     success: bool = True
-    errors: list | None = None
+    error: str | None = None
     data: list = []
+    total_records: int | None = None
