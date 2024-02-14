@@ -21,12 +21,12 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
     milestone_records = []
 
     for db_record in db_records:
-        milestone_dtime = db_record["dtime"].astimezone(ZoneInfo("Australia/Brisbane"))
+        milestone_interval = db_record["interval"].astimezone(ZoneInfo("Australia/Brisbane"))
 
         milestone_record = {
             "instance_id": db_record["instance_id"],
             "record_id": db_record["record_id"].lower(),
-            "dtime": milestone_dtime,
+            "interval": milestone_interval,
             "record_type": db_record["record_type"],
             "significance": db_record["significance"],
             "value": float(db_record["value"]),
@@ -51,6 +51,8 @@ async def get_milestones(
     limit: int = 100, page: int = 1, date_start: datetime | None = None, date_end: datetime | None = None
 ) -> APIV4ResponseSchema:
     """Get a list of milestones"""
+
+    logger.debug(f"Date start is {date_start} of type {type(date_start)}")
 
     if limit > 1000:
         raise HTTPException(status_code=400, detail="Limit must be less than 1000")

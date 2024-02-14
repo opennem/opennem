@@ -22,7 +22,7 @@ class MilestoneType(Enum):
 class MilestoneRecord(BaseModel):
     instance_id: UUID4
     record_id: str
-    dtime: datetime
+    interval: datetime
     record_type: MilestoneType
     significance: int
     value: int | float
@@ -34,7 +34,7 @@ class MilestoneRecord(BaseModel):
 
     @property
     def network_code(self) -> str:
-        return self.network.code
+        return self.network.code if self.network else ""
 
     @property
     def country(self) -> str:
@@ -42,7 +42,7 @@ class MilestoneRecord(BaseModel):
 
     @property
     def fueltech_code(self) -> str:
-        return self.fueltech.code
+        return self.fueltech.code if self.fueltech else ""
 
     @property
     def unit_code(self) -> str | None:

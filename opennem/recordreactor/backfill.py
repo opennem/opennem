@@ -88,7 +88,7 @@ def backfill_records_to_milestones(backfill_records: list[ReactorBackfillRecord]
             milestones.append(
                 Milestones(
                     record_id=record_id,
-                    dtime=record.highest_output_interval,
+                    interval=record.highest_output_interval,
                     record_type=MilestoneType.high,
                     significance=1,
                     value=record.highest_output,
