@@ -31,6 +31,7 @@ class MilestoneRecord(BaseModel):
     network_region: str | None = None
     fueltech: FueltechSchema | str | None = None
     description: str | None = None
+    period: str | None = None
 
     @property
     def network_code(self) -> str:

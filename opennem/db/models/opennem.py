@@ -970,6 +970,7 @@ class Milestones(Base):
     fueltech_id = Column(Text, ForeignKey("fueltech.code"), nullable=True)
     fueltech_group_id = Column(Text, ForeignKey("fueltech_group.code"), nullable=True)
     description = Column(String, nullable=True)
+    period = Column(String, nullable=True)
 
     # Relationships
     # unit = relationship("UnitDefinition")
