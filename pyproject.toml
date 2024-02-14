@@ -37,7 +37,6 @@ redis = "^4.3.4"
 geojson = "^3.1.0"
 fastapi = "^0.109.0"
 shapely = "^2.0.2"
-python-dotenv = "^1.0.0"
 validators = "^0.18.1"
 python-magic = "^0.4.18"
 cachetools = "^5.0.0"
@@ -69,6 +68,7 @@ psycopg2-binary = "^2.9.9"
 
 
 [tool.poetry.group.dev.dependencies]
+python-dotenv = "^1.0.0"
 rope = "^1.0.0"
 pytest = "^8.0.0"
 pytest-watch = "^4.2.0"
@@ -97,7 +97,7 @@ requests-cache = "^1.1.1"
 opennem = 'opennem.cli:main'
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py312"
 line-length = 130
 exclude = [
   "var",
@@ -108,7 +108,7 @@ exclude = [
   ".jupyter",
 ]
 
-[too.ruff.lint]
+[tool.ruff.lint]
 select = [
   "F",   # flake8
   "E",   # pycodestyle errors
