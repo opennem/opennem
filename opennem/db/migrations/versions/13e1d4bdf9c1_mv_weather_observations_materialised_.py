@@ -20,6 +20,8 @@ depends_on = None
 
 
 def upgrade() -> None:
+    op.execute("commit")
+
     op.execute("""
 CREATE MATERIALIZED VIEW IF NOT EXISTS mv_weather_observations
 with (timescaledb.continuous) as
