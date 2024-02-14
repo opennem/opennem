@@ -69,7 +69,12 @@ async def get_milestones(
         response_schema = APIV4ResponseSchema(success=False, error="Error mapping milestone records")
         return response_schema
 
-    total_records = await get_total_milestones(date_start=date_start, date_end=date_end)
+    try:
+        total_records = await get_total_milestones(date_start=date_start, date_end=date_end)
+    except Exception as e:
+        logger.error(f"Error getting total milestone records: {e}")
+        response_schema = APIV4ResponseSchema(success=False, error="Error getting total milestone records")
+        return response_schema
 
     response_schema = APIV4ResponseSchema(success=True, data=milestone_records, total_records=total_records)
 
