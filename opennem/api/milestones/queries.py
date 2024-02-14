@@ -34,8 +34,6 @@ def get_milestone_records(
         if offset and offset > 0:
             select_query = select_query.offset(offset)
 
-        logger.debug(select_query)
-
         query = session.scalars(select_query)
         results = query.all()
         records = []
