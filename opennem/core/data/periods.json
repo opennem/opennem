@@ -47,6 +47,6 @@
     {
         "period": 10512000,
         "period_human": "all",
-        "period_sql": "20 years"
+        "period_sql": "200 years"
     }
 ]
