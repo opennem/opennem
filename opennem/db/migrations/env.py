@@ -18,9 +18,8 @@ from opennem.db import db_connect  # noqa: E402
 from opennem.db.models import opennem  # noqa: E402
 
 config = context.config  # type: ignore
-fileConfig(config.config_file_name)
+fileConfig(config.config_file_name) # type: ignore
 logger = logging.getLogger("alembic.env")
-config.transaction_per_migration = True # type: ignore
 
 config.set_main_option("sqlalchemy.url", str(settings.db_url))
 
