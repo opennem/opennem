@@ -97,6 +97,8 @@ def run_migrations_online() -> None:
             transaction_per_migration=True
         )
 
+        connection.execution_options(isolation_level="AUTOCOMMIT")
+
         try:
             with context.begin_transaction():
                 context.run_migrations()
