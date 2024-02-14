@@ -13,7 +13,7 @@ logger = logging.getLogger("opennem.api.milestones.queries")
 
 
 def get_milestone_records(
-    limit: int = 100, page_number: int = 1, date_from: datetime | None = None, date_to: datetime | None = None
+    limit: int = 100, page_number: int = 1, date_start: datetime | None = None, date_end: datetime | None = None
 ) -> list[dict]:
     """Get a list of all milestones ordered by date with a limit, pagination and optional significance filter"""
     with SessionLocal() as session:
@@ -21,11 +21,11 @@ def get_milestone_records(
 
         select_query = select(Milestones)
 
-        if date_from:
-            select_query = select_query.where(Milestones.interval >= date_from)
+        if date_start:
+            select_query = select_query.where(Milestones.interval >= date_start)
 
-        if date_to:
-            select_query = select_query.where(Milestones.interval <= date_to)
+        if date_end:
+            select_query = select_query.where(Milestones.interval <= date_end)
 
         offset = page_number * limit
 
@@ -46,10 +46,17 @@ def get_milestone_records(
         return records
 
 
-async def get_total_milestones() -> int:
+async def get_total_milestones(date_start: datetime | None = None, date_end: datetime | None = None) -> int:
     """Get total number of milestone records"""
     with SessionLocal() as session:
         select_query = select(Milestones)
+
+        if date_start:
+            select_query = select_query.where(Milestones.interval >= date_start)
+
+        if date_end:
+            select_query = select_query.where(Milestones.interval <= date_end)
+
         count_stmt = select(func.count()).select_from(select_query)
         num_records = session.scalar(count_stmt)
 

@@ -56,7 +56,7 @@ async def get_milestones(
         raise HTTPException(status_code=400, detail="Limit must be less than 1000")
 
     try:
-        db_records = get_milestone_records(limit=limit, page_number=page, date_from=date_start, date_to=date_end)
+        db_records = get_milestone_records(limit=limit, page_number=page, date_start=date_start, date_end=date_end)
     except Exception as e:
         logger.error(f"Error getting milestone records: {e}")
         response_schema = APIV4ResponseSchema(success=False, error="Error getting milestone records")
@@ -69,7 +69,7 @@ async def get_milestones(
         response_schema = APIV4ResponseSchema(success=False, error="Error mapping milestone records")
         return response_schema
 
-    total_records = await get_total_milestones()
+    total_records = await get_total_milestones(date_start=date_start, date_end=date_end)
 
     response_schema = APIV4ResponseSchema(success=True, data=milestone_records, total_records=total_records)
 
