@@ -52,8 +52,6 @@ async def get_milestones(
 ) -> APIV4ResponseSchema:
     """Get a list of milestones"""
 
-    logger.debug(f"Date start is {date_start} of type {type(date_start)}")
-
     if limit > 1000:
         raise HTTPException(status_code=400, detail="Limit must be less than 1000")
 
