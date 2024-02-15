@@ -17,7 +17,6 @@ from pydantic import BaseModel
 
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Milestones, MilestoneType
-from opennem.utils.timezone import is_aware
 
 logger = logging.getLogger("opennem.recordreactor.initstate")
 
@@ -75,25 +74,36 @@ def load_backfill_from_file(file_path: Path) -> list[ReactorBackfillRecord]:
     return models
 
 
+def get_aware_interval_for_record(record: ReactorBackfillRecord, record_type: MilestoneType) -> datetime:
+    """Get an aware interval for a record"""
+    milestone_type_attribute = "highest_output_interval" if record_type == MilestoneType.high else "lowest_output_interval"
+
+    if not hasattr(record, milestone_type_attribute):
+        raise Exception(f"Record does not have attribute {milestone_type_attribute}")
+
+    if record.network_id != "WEM":
+        interval = getattr(record, milestone_type_attribute).astimezone(ZoneInfo("Australia/Sydney"))
+        interval += timedelta(hours=10)
+    else:
+        interval = getattr(record, milestone_type_attribute).astimezone(ZoneInfo("Australia/Perth"))
+        interval += timedelta(hours=8)
+
+    return interval
+
+
 def backfill_records_to_milestones(backfill_records: list[ReactorBackfillRecord]) -> list[Milestones]:
     """Converts backfill records to milestones"""
 
     milestones: list[Milestones] = []
 
     for record in backfill_records:
-        if not is_aware(record.highest_output_interval):
-            if record.network_id != "WEM":
-                interval = record.highest_output_interval.astimezone(ZoneInfo("Australia/Brisbane"))
-                interval += timedelta(hours=10)
-            else:
-                interval = record.highest_output_interval.astimezone(ZoneInfo("Australia/Perth"))
-                interval += timedelta(hours=8)
-
         if record.highest_output:
             record_id = f"{record.network_id}.{record.network_region}.{record.fueltech_id}.high".lower()
 
             if not record.highest_output_interval:
                 continue
+
+            interval = get_aware_interval_for_record(record, MilestoneType.high)
 
             milestones.append(
                 Milestones(
@@ -113,6 +123,8 @@ def backfill_records_to_milestones(backfill_records: list[ReactorBackfillRecord]
 
             if not record.lowest_output_interval:
                 continue
+
+            interval = get_aware_interval_for_record(record, MilestoneType.low)
 
             milestones.append(
                 Milestones(
