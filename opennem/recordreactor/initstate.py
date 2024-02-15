@@ -1,25 +1,27 @@
 """
-OpenNEM API Reactor Backfill Records
+OpenNEM API Reactor Initial State Records
 
 Generates records for the OpenNEM API Reactor Backfill project and will
 run queries for all records back to a date defined as a parameter.
 
-For testing on dev we run back ~6 months.
+
 """
 
 import csv
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel
 
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Milestones, MilestoneType
+from opennem.utils.timezone import is_aware
 
-logger = logging.getLogger("opennem.recordreactor.backfill")
+logger = logging.getLogger("opennem.recordreactor.initstate")
 
-BACKFILL_FILE_PATH = Path(__file__).parent / "backfill.csv"
+BACKFILL_FILE_PATH = Path(__file__).parent / "state" / "power.csv"
 
 
 class ReactorBackfillRecord(BaseModel):
@@ -79,8 +81,16 @@ def backfill_records_to_milestones(backfill_records: list[ReactorBackfillRecord]
     milestones: list[Milestones] = []
 
     for record in backfill_records:
+        if not is_aware(record.highest_output_interval):
+            if record.network_id != "WEM":
+                interval = record.highest_output_interval.astimezone(ZoneInfo("Australia/Brisbane"))
+                interval += timedelta(hours=10)
+            else:
+                interval = record.highest_output_interval.astimezone(ZoneInfo("Australia/Perth"))
+                interval += timedelta(hours=8)
+
         if record.highest_output:
-            record_id = f"{record.network_id}.{record.network_region}.{record.fueltech_id}.high"
+            record_id = f"{record.network_id}.{record.network_region}.{record.fueltech_id}.high".lower()
 
             if not record.highest_output_interval:
                 continue
@@ -88,9 +98,9 @@ def backfill_records_to_milestones(backfill_records: list[ReactorBackfillRecord]
             milestones.append(
                 Milestones(
                     record_id=record_id,
-                    interval=record.highest_output_interval,
+                    interval=interval,
                     record_type=MilestoneType.high,
-                    significance=1,
+                    significance=8,
                     value=record.highest_output,
                     network_id=record.network_id,
                     network_region=record.network_region,
@@ -99,10 +109,23 @@ def backfill_records_to_milestones(backfill_records: list[ReactorBackfillRecord]
             )
 
         if record.lowest_output:
-            record_id = f"{record.network_id}.{record.network_region}.{record.fueltech_id}.low"
+            record_id = f"{record.network_id}.{record.network_region}.{record.fueltech_id}.low".lower()
 
             if not record.lowest_output_interval:
                 continue
+
+            milestones.append(
+                Milestones(
+                    record_id=record_id,
+                    interval=interval,
+                    record_type=MilestoneType.low,
+                    significance=1,
+                    value=record.highest_output,
+                    network_id=record.network_id,
+                    network_region=record.network_region,
+                    fueltech_group_id=record.fueltech_id,
+                )  #  type: ignore
+            )
 
     return milestones
 
