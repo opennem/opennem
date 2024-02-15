@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter
@@ -8,6 +8,7 @@ from starlette.exceptions import HTTPException
 
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.recordreactor.schema import MilestoneRecord
+from opennem.utils.timezone import is_aware
 
 from .queries import get_milestone_records, get_total_milestones
 
@@ -21,7 +22,16 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
     milestone_records = []
 
     for db_record in db_records:
-        milestone_interval = db_record["interval"].astimezone(ZoneInfo("Australia/Brisbane"))
+        milestone_interval: datetime = db_record["interval"]
+        network_id: str = db_record["network_id"]
+
+        if not is_aware(milestone_interval):
+            if network_id != "WEM":
+                milestone_interval = milestone_interval.astimezone(ZoneInfo("Australia/Brisbane"))
+                milestone_interval += timedelta(hours=10)
+            else:
+                interval = milestone_interval.astimezone(ZoneInfo("Australia/Perth"))
+                interval += timedelta(hours=8)
 
         milestone_record = {
             "instance_id": db_record["instance_id"],
@@ -34,6 +44,7 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
             "description": db_record["description"],
             "fueltech": db_record["fueltech_group_id"],
             "network": db_record["network_id"],
+            "period": db_record["period"],
         }
 
         if db_record["network_region"]:
