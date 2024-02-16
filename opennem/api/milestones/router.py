@@ -75,7 +75,7 @@ async def get_milestones(
     elif date_end and date_end.utcoffset() == timedelta(0):
         date_end = date_end.astimezone(ZoneInfo("Australia/Brisbane"))
 
-    if date_start == date_end:
+    if date_start and date_end and date_start == date_end:
         raise HTTPException(status_code=400, detail="Date start and date end cannot be the same")
 
     try:
