@@ -959,7 +959,7 @@ class Milestones(Base):
     __tablename__ = "milestones"
 
     record_id = Column(Text, primary_key=True)
-    interval = Column(DateTime(timezone=True), primary_key=True, index=True)
+    interval = Column(DateTime(timezone=False), primary_key=True, index=True)
     instance_id = Column(UUID(as_uuid=True), server_default=sql("uuid_generate_v4()"))
     record_type = Column(Enum(MilestoneType), nullable=False)
     significance = Column(Integer, nullable=False, default=0)

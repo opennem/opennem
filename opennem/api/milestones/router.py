@@ -25,11 +25,9 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
         network_id: str = db_record["network_id"]
 
         if network_id != "WEM":
-            milestone_interval = milestone_interval.astimezone(ZoneInfo("Australia/Brisbane"))
-            milestone_interval += timedelta(hours=10)
+            milestone_interval = milestone_interval.replace(tzinfo=ZoneInfo("Australia/Brisbane"))
         else:
-            interval = milestone_interval.astimezone(ZoneInfo("Australia/Perth"))
-            interval += timedelta(hours=8)
+            milestone_interval = milestone_interval.replace(tzinfo=ZoneInfo("Australia/Perth"))
 
         milestone_record = {
             "instance_id": db_record["instance_id"],
