@@ -8,9 +8,8 @@ from starlette.exceptions import HTTPException
 
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.recordreactor.schema import MilestoneRecord
-from opennem.utils.timezone import is_aware
 
-from .queries import get_milestone_records, get_total_milestones
+from .queries import get_milestone_records
 
 logger = logging.getLogger("opennem.api.milestones.router")
 
@@ -25,13 +24,12 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
         milestone_interval: datetime = db_record["interval"]
         network_id: str = db_record["network_id"]
 
-        if not is_aware(milestone_interval):
-            if network_id != "WEM":
-                milestone_interval = milestone_interval.astimezone(ZoneInfo("Australia/Brisbane"))
-                milestone_interval += timedelta(hours=10)
-            else:
-                interval = milestone_interval.astimezone(ZoneInfo("Australia/Perth"))
-                interval += timedelta(hours=8)
+        if network_id != "WEM":
+            milestone_interval = milestone_interval.astimezone(ZoneInfo("Australia/Brisbane"))
+            milestone_interval += timedelta(hours=10)
+        else:
+            interval = milestone_interval.astimezone(ZoneInfo("Australia/Perth"))
+            interval += timedelta(hours=8)
 
         milestone_record = {
             "instance_id": db_record["instance_id"],
@@ -66,8 +64,22 @@ async def get_milestones(
     if limit > 1000:
         raise HTTPException(status_code=400, detail="Limit must be less than 1000")
 
+    # if date_start and date_end have no timezone, default to NEM time
+    if date_start and not date_start.tzinfo:
+        date_start = date_start.astimezone(ZoneInfo("Australia/Brisbane"))
+    elif date_start and date_start.utcoffset() == timedelta(0):
+        date_start = date_start.astimezone(ZoneInfo("Australia/Brisbane"))
+
+    if date_end and not date_end.tzinfo:
+        date_end = date_end.astimezone(ZoneInfo("Australia/Brisbane"))
+    elif date_end and date_end.utcoffset() == timedelta(0):
+        date_end = date_end.astimezone(ZoneInfo("Australia/Brisbane"))
+
+    if date_start == date_end:
+        raise HTTPException(status_code=400, detail="Date start and date end cannot be the same")
+
     try:
-        db_records = get_milestone_records(limit=limit, page_number=page, date_start=date_start, date_end=date_end)
+        db_records, total_records = get_milestone_records(limit=limit, page_number=page, date_start=date_start, date_end=date_end)
     except Exception as e:
         logger.error(f"Error getting milestone records: {e}")
         response_schema = APIV4ResponseSchema(success=False, error="Error getting milestone records")
@@ -78,13 +90,6 @@ async def get_milestones(
     except Exception as e:
         logger.error(f"Error mapping milestone records: {e}")
         response_schema = APIV4ResponseSchema(success=False, error="Error mapping milestone records")
-        return response_schema
-
-    try:
-        total_records = await get_total_milestones(date_start=date_start, date_end=date_end)
-    except Exception as e:
-        logger.error(f"Error getting total milestone records: {e}")
-        response_schema = APIV4ResponseSchema(success=False, error="Error getting total milestone records")
         return response_schema
 
     response_schema = APIV4ResponseSchema(success=True, data=milestone_records, total_records=total_records)
