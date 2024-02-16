@@ -22,10 +22,10 @@ def get_milestone_records(
         select_query = select(Milestones)
 
         if date_start:
-            select_query = select_query.where(Milestones.interval >= date_start)
+            select_query = select_query.where(Milestones.interval <= date_start)
 
         if date_end:
-            select_query = select_query.where(Milestones.interval <= date_end)
+            select_query = select_query.where(Milestones.interval >= date_end)
 
         offset = page_number * limit
 
