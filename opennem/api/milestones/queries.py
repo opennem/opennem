@@ -26,8 +26,11 @@ def get_milestone_records(
         if date_start:
             select_query = select_query.where(Milestones.interval >= date_start)
 
-        if date_end:
+        if date_end and date_start != date_end:
             select_query = select_query.where(Milestones.interval <= date_end)
+
+        if date_end and date_start == date_end:
+            select_query = select_query.where(Milestones.interval < date_end)
 
         total_query = select(func.count()).select_from(select_query)
         total_records = session.scalar(total_query)
