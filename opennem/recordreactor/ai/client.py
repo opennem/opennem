@@ -197,7 +197,7 @@ def get_openai_chat_prompt(query: str, error_detail: list[dict] | None = None) -
     user_messages = [{"role": "user", "content": message["content"]} for message in messages]
 
     response = openai_client.chat.completions.create(
-        model="gpt-4-1106-preview",
+        model="gpt-4-turbo-preview",
         messages=user_messages,  # type: ignore
         temperature=0,
     )
