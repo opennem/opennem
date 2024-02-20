@@ -103,7 +103,7 @@ def persist_unit_record(unit_record: dict) -> None:
         unit.capacity_registered = unit_record["capacity_registered"]
         unit.dispatch_type = unit_record["dispatch_type"]
         unit.emissions_factor_co2 = unit_record["emissions_factor_co2"]
-        unit.status = unit_record["status"]
+        unit.status_id = unit_record["status"]
 
         session.add(unit)
         session.commit()

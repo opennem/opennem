@@ -32,8 +32,10 @@ async def get_milestones(webhook_secret: str, request: Request) -> str:
     if "_type" not in request_json:
         raise HTTPException(status_code=400, detail="Invalid request no _type field present")
 
+    parse_sanity_webhook(request_json)
+
     try:
-        parse_sanity_webhook(request_json)
+        pass
     except Exception as e:
         logger.error(f"Error parsing webhook: {e}")
         raise HTTPException(status_code=500, detail="Server Error") from e
