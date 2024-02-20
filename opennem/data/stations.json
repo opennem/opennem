@@ -31700,7 +31700,7 @@
                 "fueltech_id": "gas_ocgt",
                 "status_id": "operating",
                 "code": "SHOAL1",
-                "network_code": "NEM",
+                "network_code": "SHOAL1",
                 "network_region": "NSW1",
                 "network_name": null,
                 "dispatch_type": "GENERATOR",
