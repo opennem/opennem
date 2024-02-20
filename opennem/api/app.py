@@ -28,6 +28,7 @@ from opennem.api.security import api_key_auth
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
 from opennem.api.weather.router import router as weather_router
+from opennem.api.webhooks.router import router as webhooks_router
 from opennem.core.time import INTERVALS, PERIODS
 from opennem.core.units import UNITS
 from opennem.db import get_database_session
@@ -147,6 +148,7 @@ app.include_router(weather_router, tags=["Weather"], prefix="/weather")
 app.include_router(feedback_router, tags=["Feedback"], prefix="/feedback", include_in_schema=False)
 app.include_router(dash_router, tags=["Dashboard"], prefix="/dash", include_in_schema=False)
 app.include_router(milestones_router, tags=["Milestones"], prefix="/v4/milestones", include_in_schema=True)
+app.include_router(webhooks_router, tags=["Webhooks"], prefix="/v4/webhooks", include_in_schema=False)
 
 
 try:

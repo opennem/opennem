@@ -173,6 +173,9 @@ class OpennemSettings(BaseSettings):
     # API Dev key
     api_dev_key: str | None = None
 
+    # webhooks
+    webhook_secret: str | None = None
+
     # pylint: disable=no-self-argument
     @field_validator("log_level")
     @classmethod
