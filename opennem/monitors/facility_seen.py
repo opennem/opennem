@@ -123,9 +123,12 @@ def facility_first_seen_check(only_generation: bool = True, filter_ignored_duids
 
     for fac in facs:
         if only_generation and fac.generated is not None and fac.generated > 0:
-            generated_out = round(fac.generated / 6, 2)
+            generated_out = round(fac.generated / 6, 2)  # noqa: F841
 
-            msg = f"Found new facility on network {fac.network_id} with DUID: {fac.code}. Generated: {generated_out}MW"
+            msg = (
+                f"[{settings.env.upper()}] Found new facility on network {fac.network_id} with DUID: "
+                "{fac.code}. Generated: {generated_out}MW"
+            )
 
             # send a slack message and log
             slack_message(msg, alert_webhook_url=settings.slack_hook_new_facilities, tag_users=["@nik"])
@@ -133,7 +136,10 @@ def facility_first_seen_check(only_generation: bool = True, filter_ignored_duids
 
             facs_out.append(fac)
         else:
-            msg = f"Found new facility on network {fac.network_id} with DUID: {fac.code}. No generation data"
+            msg = (
+                f"[{settings.env.upper()}] Found new facility on network {fac.network_id} with DUID: "
+                "{fac.code}. No generation data"
+            )
             logger.info(msg)
 
     return facs_out
