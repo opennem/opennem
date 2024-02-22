@@ -6,6 +6,8 @@ import logging
 from datetime import datetime
 from textwrap import dedent
 
+from sqlalchemy import text as sql
+
 from opennem.db import get_database_engine
 from opennem.schema.core import BaseConfig
 
@@ -25,7 +27,8 @@ def crawlers_get_crawl_metadata() -> list[CrawlMetadata]:
     """Get a return of metadata schemas for all crawlers from the database"""
     engine = get_database_engine()
 
-    __query = """
+    __query = sql(
+        """
         select
             cm.spider_name as name,
             cm.data->>'version' as version,
@@ -36,6 +39,7 @@ def crawlers_get_crawl_metadata() -> list[CrawlMetadata]:
         from crawl_meta cm
         order by last_crawled desc;
     """
+    )
     _crawler_metas = []
 
     with engine.connect() as c:
