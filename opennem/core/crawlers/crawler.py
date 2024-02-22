@@ -48,7 +48,19 @@ def crawlers_get_crawl_metadata() -> list[CrawlMetadata]:
     if not _crawler_metas:
         return []
 
-    _crawler_meta_models = [CrawlMetadata(**i) for i in _crawler_metas]
+    _crawler_meta_models = [
+        CrawlMetadata(
+            **{
+                "name": i[0],
+                "version": i[1],
+                "last_crawled": i[2],
+                "last_processed": i[3],
+                "server_latest": i[4],
+                "force_run": i[5],
+            }
+        )
+        for i in _crawler_metas
+    ]
 
     return _crawler_meta_models
 
