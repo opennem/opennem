@@ -350,12 +350,12 @@ def persist_network_flows_and_emissions_for_interval_as_dataframe(flow_results: 
     return flow_results.to_sql("at_network_flows_v3", engine, if_exists="append", index=False, method="multi", chunksize=5000)
 
 
-@profile_task(
-    send_slack=False,
-    message_fmt="Running flow v3 for {interval_number} intervals",
-    level=ProfilerLevel.INFO,
-    retention_period=ProfilerRetentionTime.FOREVER,
-)
+# @profile_task(
+#     send_slack=False,
+#     message_fmt="Running flow v3 for {interval_number} intervals",
+#     level=ProfilerLevel.INFO,
+#     retention_period=ProfilerRetentionTime.FOREVER,
+# )
 def run_flows_for_last_intervals(interval_number: int, network: NetworkSchema = NetworkNEM) -> None:
     """ " Run flow processor for last x interval starting from now"""
 
@@ -460,12 +460,12 @@ def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = T
     return None
 
 
-@profile_task(
-    send_slack=True,
-    message_fmt="Running aggregate flow v3 for interval {interval_start} for {network.code}",
-    level=ProfilerLevel.INFO,
-    retention_period=ProfilerRetentionTime.FOREVER,
-)
+# @profile_task(
+#     send_slack=True,
+#     message_fmt="Running aggregate flow v3 for interval {interval_start} for {network.code}",
+#     level=ProfilerLevel.INFO,
+#     retention_period=ProfilerRetentionTime.FOREVER,
+# )
 def run_aggregate_flow_for_interval_v3(
     network: NetworkSchema, interval_start: datetime, interval_end: datetime | None = None, validate_results: bool = False
 ) -> int | None:
@@ -528,4 +528,4 @@ if __name__ == "__main__":
 
     # from_interval = datetime.fromisoformat("2023-02-05T14:50:00+10:00")
     run_flows_for_last_intervals(interval_number=12 * 1, network=NetworkNEM)
-    run_aggregate_flow_for_interval_v3(network=NetworkNEM)
+    # run_aggregate_flow_for_interval_v3(network=NetworkNEM)
