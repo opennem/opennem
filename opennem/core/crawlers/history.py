@@ -121,7 +121,7 @@ def get_crawler_history(crawler_name: str, interval: TimeInterval, days: int = 3
                 case when sum(ch.inserted_records) is NULL then FALSE else TRUE end as has_record
             from crawl_history ch
             where
-                ch.interval >= now() at time zone 'AEST' - interval :days
+                ch.interval >= now() at time zone 'AEST' - interval '3 days'
                 and ch.interval <= now()
                 and ch.crawler_name = :crawler_name
             group by 1, 2
@@ -158,14 +158,14 @@ def get_crawler_missing_intervals(
     engine = get_database_engine()
 
     stmt = sql(
-        """
+        f"""
         with intervals as (
             select
                 interval
             from generate_series(
-                nemweb_latest_interval() - interval :days,
+                nemweb_latest_interval() - interval '14 days',
                 nemweb_latest_interval(),
-                interval  :interval_size
+                interval '{interval.interval_sql} minutes'
             ) AS interval
         )
 
@@ -176,7 +176,7 @@ def get_crawler_missing_intervals(
         left join (
             select * from crawl_history
             where crawler_name = :crawler_name
-            and interval <= nemweb_latest_interval() and interval >= nemweb_latest_interval() - interval :days
+            and interval <= nemweb_latest_interval() and interval >= nemweb_latest_interval() - interval '14 days'
         ) as ch on ch.interval = intervals.interval
         where ch.inserted_records is null
         order by 1 desc;
@@ -186,7 +186,7 @@ def get_crawler_missing_intervals(
     if not days or not isinstance(days, int):
         raise Exception("Days is required and should be an int")
 
-    query = stmt.bindparams(crawler_name=crawler_name, days=f"{days} days", interval_size=interval.interval_sql)
+    query = stmt.bindparams(crawler_name=crawler_name)
 
     with engine.connect() as c:
         results = list(c.execute(query))
