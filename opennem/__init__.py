@@ -25,6 +25,7 @@ Environments:
   * staging
   * production
 """
+
 import logging
 import logging.config
 import os
@@ -56,7 +57,7 @@ except ImportError:
 logger = logging.getLogger("opennem")
 
 # Module variables
-__version__ = "4.0.0a62"
+__version__ = "4.0.0a63"
 __env__ = "prod"
 __package__ = "opennem"
 
