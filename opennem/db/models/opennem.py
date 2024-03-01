@@ -591,7 +591,7 @@ class Facility(Base, BaseModel):
 
     active = Column(Boolean, default=True)
 
-    dispatch_type = Column(Enum(DispatchType), nullable=False, default=DispatchType.GENERATOR)
+    dispatch_type: DispatchType = Column(Enum(DispatchType), nullable=False, default=DispatchType.GENERATOR)
 
     # @TODO remove when ref count is 0
     capacity_registered = Column(Numeric, nullable=True)
