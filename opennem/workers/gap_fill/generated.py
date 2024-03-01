@@ -126,7 +126,7 @@ def check_generated_gaps(days: int = 3) -> None:
             if gaps:
                 slack_message(
                     webhook_url=settings.slack_hook_monitoring,
-                    msg=f"Found {len(gaps)} generation gaps in {network.code} for {gap_type}",
+                    message=f"Found {len(gaps)} generation gaps in {network.code} for {gap_type}",
                     tag_users=settings.slack_admin_alert,
                 )
                 logger.error(f"Found {len(gaps)} generation gaps in {network.code} for {gap_type}")
