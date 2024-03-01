@@ -192,7 +192,7 @@ def bulkinsert_mms_items(
 
     try:
         cursor = conn.cursor()
-        cursor.copy_expert(sql_query, csv_content)
+        cursor.copy(sql_query, csv_content)
         conn.commit()
         num_records = len(records)
         logger.info(f"Bulk inserted {len(records)} records")
