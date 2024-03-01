@@ -107,9 +107,8 @@ def daily_catchup_runner_worker() -> None:
 @huey.periodic_task(crontab(minute="*/15"), priority=90)
 @huey.lock_task("schedule_custom_tasks")
 def schedule_custom_tasks() -> None:
-    if settings.workers_run:
-        export_electricitymap()
-        export_flows()
+    export_electricitymap()
+    export_flows()
 
 
 @huey.periodic_task(crontab(hour="2", minute="19"))
@@ -125,8 +124,7 @@ def schedule_power_weeklies() -> None:
 @huey.periodic_task(crontab(minute="*/30"), priority=50)
 @huey.lock_task("schedule_export_geojson")
 def schedule_export_geojson() -> None:
-    if settings.workers_run:
-        export_facility_geojson()
+    export_facility_geojson()
 
 
 # worker tasks

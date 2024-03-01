@@ -58,8 +58,10 @@ def check_opennem_interval_delays(network_code: str) -> bool:
 
     if time_delta > timedelta(minutes=alert_threshold):
         slack_message(
-            f"[{settings.env}] *WARNING*: OpenNEM {network.code} " f"interval delay on {settings.env} currently: {time_delta}.\n",
-            tag_users=settings.monitoring_alert_slack_user,
+            webhook_url=settings.slack_hook_monitoring,
+            message=f"[{settings.env}] *WARNING*: OpenNEM {network.code} "
+            f"interval delay on {settings.env} currently: {time_delta}.\n",
+            tag_users=settings.slack_admin_alert,
         )
 
     return True

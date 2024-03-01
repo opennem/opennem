@@ -23,12 +23,12 @@ def deploy_banner_message() -> str:
 
 def worker_startup_alert() -> None:
     """This is fired when the worker starts"""
-    slack_message(startup_banner_message())
+    slack_message(webhook_url=settings.slack_hook_monitoring, message=startup_banner_message())
 
 
 def deploy_banner_alert() -> None:
     """This is fired when the worker starts"""
-    slack_message(deploy_banner_message())
+    slack_message(webhook_url=settings.slack_hook_monitoring, message=deploy_banner_message())
 
 
 def console_startup_banner() -> None:

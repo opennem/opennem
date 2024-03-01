@@ -4,6 +4,7 @@ OpenNEM Monitor emission factors for facilities
 """
 import logging
 
+from opennem import settings
 from opennem.clients.slack import slack_message
 from opennem.db import get_database_engine
 from opennem.schema.core import BaseConfig
@@ -75,13 +76,15 @@ def alert_missing_emission_factors() -> None:
 
     for rec in missing_factors:
         slack_message(
-            "{} ({}) in {} {} with fueltech {} is missing factor".format(
+            webhook_url=settings.slack_hook_feedback,
+            message="{} ({}) in {} {} with fueltech {} is missing factor".format(
                 rec.facility_code,
                 rec.station_name,
                 rec.network_id,
                 rec.network_region,
                 rec.fueltech_id,
-            )
+            ),
+            tag_users=settings.slack_admin_alert,
         )
 
 

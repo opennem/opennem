@@ -57,44 +57,37 @@ def _slack_tag_list(user_list: list[str]) -> str:
 
 
 def slack_message(
-    msg: str | None = None,
+    webhook_url: str | None = None,
+    message: str | None = None,
     text: str | None = None,
     tag_users: list[str] | None = None,
     image_url: str | None = None,
     image_alt: str | None = None,
-    alert_webhook_url: str | None = None,
 ) -> bool:
     """
     Post a slack message to the watchdog channel
 
     supports markdown and tagging users
 
+    :param alert_webhook_url: the webhook url
     :param msg: Message to send
     :param text: Text to send
     :param tag_users: List of users to tag
     :param image_url: Image url to send
     :param image_alt: Image alt text
-    :param alert_webhook_url: Override the webhook url
     :return: True if sent
     """
 
-    if not settings.slack_notifications and not alert_webhook_url:
-        logger.info(f"Slack endpoint not enabled on {settings.env}. See SLACK_NOTIFICATIONS env var")
+    if not webhook_url:
+        logger.error(f"No slack notification endpoint configured for environment {settings.env}")
         return False
 
-    if not alert_webhook_url:
-        alert_webhook_url = settings.slack_hook_url
-
-    if not alert_webhook_url:
-        logger.error(f"No slack notification endpoint configured in environment {settings.env}")
-        return False
-
-    if isinstance(valid_url(alert_webhook_url), ValidationFailure):
-        logger.error(f"No slack notification endpoint configured bad url: {alert_webhook_url}")
+    if isinstance(valid_url(webhook_url), ValidationFailure):
+        logger.error(f"Invalid slack notification endpoint configured bad url: {webhook_url}")
         return False
 
     tag_list = _slack_tag_list(tag_users) if tag_users else ""
-    text_block: str = f"{msg} {tag_list}" if msg else ""
+    text_block: str = f"{message} {tag_list}" if message else ""
 
     blocks: list[SlackMessageBlock | SlackMessageBlockImage] = []
 
@@ -115,7 +108,7 @@ def slack_message(
     # as dict and exclude empty fields
     slack_body = dataclasses.asdict(slack_message, dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
 
-    resp = requests.post(alert_webhook_url, json=slack_body)
+    resp = requests.post(webhook_url, json=slack_body)
 
     if resp.status_code != 200:
         logger.error(f"Error sending slack message: {resp.status_code}: {resp.text}")

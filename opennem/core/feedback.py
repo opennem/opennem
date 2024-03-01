@@ -51,7 +51,7 @@ def persist_and_alert_user_feedback(
     try:
         slack_message_format = serve_template(template_name="feedback_slack_message.md", **{"feedback": feedback})
         slack_message(
-            msg=slack_message_format, alert_webhook_url=settings.feedback_slack_hook_url, tag_users=settings.feedback_tag_users
+            message=slack_message_format, webhook_url=settings.slack_hook_feedback, tag_users=settings.slack_admin_alert
         )
     except Exception as e:
         logger.error(f"Error sending slack feedback message: {e}")

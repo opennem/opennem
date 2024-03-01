@@ -131,7 +131,7 @@ def facility_first_seen_check(only_generation: bool = True, filter_ignored_duids
             )
 
             # send a slack message and log
-            slack_message(msg, alert_webhook_url=settings.slack_hook_new_facilities, tag_users=["@nik"])
+            slack_message(webhook_url=settings.slack_hook_new_facilities, tag_users=settings.slack_admin_alert, message=msg)
             logger.info(msg)
 
             facs_out.append(fac)

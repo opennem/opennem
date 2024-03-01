@@ -5,6 +5,7 @@ import logging
 from datetime import datetime
 from operator import attrgetter
 
+from opennem import settings
 from opennem.clients.slack import slack_message
 from opennem.core.templates import serve_template
 from opennem.db import get_database_engine
@@ -79,7 +80,7 @@ def run_daily_fueltech_summary(network: NetworkSchema) -> None:
 
     logger.debug(_render)
 
-    slack_sent = slack_message(_render)
+    slack_sent = slack_message(webhook_url=settings.slack_hook_monitoring, message=_render)
 
     if slack_sent:
         logger.info("Sent slack message")

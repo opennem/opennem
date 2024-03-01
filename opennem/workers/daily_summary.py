@@ -168,7 +168,7 @@ def run_daily_fueltech_summary(network: NetworkSchema) -> None:
     if settings.dry_run:
         return None
 
-    if slack_message(msg=summary_text, image_url=cfimage.url, image_alt="Daily Summary"):
+    if slack_message(message=summary_text, image_url=cfimage.url, image_alt="Daily Summary"):
         logger.info("Sent slack message")
 
     else:

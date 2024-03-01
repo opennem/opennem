@@ -265,7 +265,10 @@ def profile_task(
                     logger.info(f"Error formatting custom message: {e}")
 
             if send_slack and settings.slack_hook_monitoring:
-                slack_message(profile_message, alert_webhook_url=settings.slack_hook_monitoring)
+                slack_message(
+                    webhook_url=settings.slack_hook_monitoring,
+                    message=profile_message,
+                )
 
             logger.info(profile_message)
 

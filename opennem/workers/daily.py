@@ -17,7 +17,6 @@ from opennem.aggregates.network_flows import (
 from opennem.aggregates.network_flows_v3 import run_aggregate_flow_for_interval_v3
 from opennem.api.export.map import PriorityType, StatType, get_export_map
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
-from opennem.clients.slack import slack_message
 from opennem.core.profiler import profile_task
 from opennem.exporter.historic import export_historic_intervals
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkOpenNEMRooftopBackfill, NetworkWEM
@@ -164,9 +163,6 @@ def all_runner() -> None:
 
     export_all_daily()
     export_all_monthly()
-
-    # send slack message when done
-    slack_message(f"ran all_runner on {settings.env}")
 
 
 if __name__ == "__main__":

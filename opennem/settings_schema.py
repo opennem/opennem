@@ -42,18 +42,13 @@ class OpennemSettings(BaseSettings):
     # This is the module where crawlers are found
     crawlers_module: str = "opennem.crawlers"
 
-    google_places_api_key: str | None = None
-
     requests_cache_path: str = ".requests"
 
     # Slack notifications
-    slack_notifications: bool = True
-
-    slack_hook_url: str | None = None
     slack_hook_new_facilities: str | None = None
     slack_hook_monitoring: str | None = None
-    # web hook for data channel
-    slack_data_webhook: str | None = None
+    slack_hook_feedback: str | None = None
+    slack_admin_alert: list[str] | None = ["nik"]
 
     # APVI
     apvi_token: str | None = None
@@ -61,7 +56,6 @@ class OpennemSettings(BaseSettings):
     export_local: bool = False
 
     s3_bucket_path: str = Field("data.opennem.org.au", validation_alias=AliasChoices("S3_DATA_BUCKET_PATH"))
-    backup_bucket_path: str = Field("backups.opennem.org.au")
 
     # opennem output settings
     interval_default: str = "15m"
@@ -103,15 +97,13 @@ class OpennemSettings(BaseSettings):
     # templates folder relative to opennem module root
     templates_dir: str = "templates"
 
-    # monitoring
-    monitoring_alert_sms: str | None = None
-    monitoring_alert_slack_user: list[str] | None = None
-
     # api key cookie settings
     api_app_auth_name: str = "onau"
     api_user_auth_name: str = "onuu"
     api_app_auth_key_length: int = 24
     api_auth_cookie_domain: str = "opennem.org.au"
+
+    # API Keys
 
     # willy weather client
     willyweather_api_key: str | None = None
@@ -122,21 +114,15 @@ class OpennemSettings(BaseSettings):
 
     tmp_file_prefix: str | None = "opennem_"
 
-    slack_admin_alert: list[str] | None = ["nik"]
-
     # alert threshold level in minutes for interval delay monitoring
     monitor_interval_alert_threshold: int | None = 10
 
-    # network flows table name
-    network_flows_table_name: str = "at_network_flows"
-
     # feature flags
     run_crawlers: bool = True  # do we enable the crawlers
-    workers_run: bool = True
-    flows_and_emissions_v3: bool = False  #
+    flows_and_emissions_v3: bool = True  #
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
-    show_emissions_in_power_outputs: bool = False  # show emissions in power outputs
-    show_emission_factors_in_power_outputs: bool = False  # show emissions in power outputs
+    show_emissions_in_power_outputs: bool = True  # show emissions in power outputs
+    show_emission_factors_in_power_outputs: bool = True  # show emissions in power outputs
     compact_number_ouput_in_json: bool = False  # compact number output in json
 
     # send daily fueltech summary
@@ -144,12 +130,6 @@ class OpennemSettings(BaseSettings):
 
     # profiler options
     profiler_level: str = "NOISY"
-
-    # feedback
-    feedback_send_to_github: bool = False
-    feedback_send_to_slack: bool = True
-    feedback_slack_hook_url: str | None = None
-    feedback_tag_users: list[str] = ["U047H1T2JJK", "nik"]
 
     # clerk API key
     clerk_secret_key: str | None = None
