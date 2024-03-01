@@ -110,6 +110,9 @@ def process_mms_url(crawler: CrawlerDefinition) -> ControllerReturn | None:
                 ts = parse_aemo_url(entry.link)
                 controller_returns = store_aemo_tableset(ts)
 
+            if not controller_returns.inserted_records:
+                continue
+
             max_date = max(i.modified_date for i in entries_to_fetch if i.modified_date)
 
             if not controller_returns.last_modified or max_date > controller_returns.last_modified:

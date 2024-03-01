@@ -96,6 +96,10 @@ def run_nemweb_aemo_crawl(
             if not isinstance(controller_returns, ControllerReturn):
                 raise Exception("Controller returns not a ControllerReturn")
 
+            # don't update crawl time if it fails
+            if not controller_returns.inserted_records:
+                continue
+
             max_date = max([i.modified_date for i in entries_to_fetch if i.modified_date])
 
             if not controller_returns.last_modified or max_date > controller_returns.last_modified:
