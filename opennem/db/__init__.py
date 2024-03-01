@@ -1,4 +1,4 @@
-""" OpenNEM Database Module
+"""OpenNEM Database Module
 
 
 Provides database engine connections and sessions across the entire
@@ -6,6 +6,7 @@ project
 
 
 """
+
 import logging
 from collections.abc import AsyncGenerator, Generator
 

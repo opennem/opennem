@@ -1,4 +1,5 @@
-""" Utilities used in unit tests """
+"""Utilities used in unit tests"""
+
 import json
 from pathlib import Path
 from typing import Any

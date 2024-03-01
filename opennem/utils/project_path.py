@@ -1,4 +1,5 @@
-""" Utilities for the project path """
+"""Utilities for the project path"""
+
 import sys
 from pathlib import Path
 

@@ -1,8 +1,5 @@
-""" OpenNEM output price module
+"""OpenNEM output price module"""
 
-
-
-"""
 import logging
 from datetime import datetime
 

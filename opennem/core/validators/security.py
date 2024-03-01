@@ -4,7 +4,6 @@ OpenNEM Security Validators
 Functions to validate security fields and schemas
 """
 
-
 from opennem.api.auth.exceptions import UnauthorizedRequest
 from opennem.core.normalizers import string_is_urlsafe
 

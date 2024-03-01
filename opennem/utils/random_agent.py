@@ -4,6 +4,7 @@ an external file.
 
 This replaces unreliable external libraries that don't get updated.
 """
+
 from random import choice
 
 from opennem.core.loader import load_data

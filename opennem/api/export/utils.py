@@ -1,7 +1,8 @@
 """
-    Utility functions for API exporter
+Utility functions for API exporter
 
 """
+
 import logging
 
 from pydantic.main import BaseModel

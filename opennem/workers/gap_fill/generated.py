@@ -1,5 +1,4 @@
-"""OpenNEM Gapfill for all intervals
-"""
+"""OpenNEM Gapfill for all intervals"""
 
 import enum
 import logging

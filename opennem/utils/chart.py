@@ -1,4 +1,4 @@
-""" Utility to generate simple charts """
+"""Utility to generate simple charts"""
 
 import logging
 from dataclasses import dataclass, field

@@ -2,6 +2,7 @@
 Module to handle zip files and nested zip files.
 
 """
+
 import io
 import json
 import logging

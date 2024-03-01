@@ -1,4 +1,5 @@
-""" Runs queries to populate the aggregate tables with facility data"""
+"""Runs queries to populate the aggregate tables with facility data"""
+
 import logging
 from datetime import date, datetime, timedelta
 from textwrap import dedent

@@ -1,12 +1,13 @@
 """
-    HTTP module with custom timeout and retry adaptors
+HTTP module with custom timeout and retry adaptors
 
-    usage:
+usage:
 
-    from opennem.utils.http import http
-    http.get(`url`) etc.
+from opennem.utils.http import http
+http.get(`url`) etc.
 
 """
+
 import logging
 from pathlib import Path
 from typing import Any

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""AEMO 5MIN Data Parser from vizualizations page
-"""
+"""AEMO 5MIN Data Parser from vizualizations page"""
 
 import logging
 from datetime import datetime

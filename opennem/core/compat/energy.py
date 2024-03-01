@@ -3,6 +3,7 @@
 OpenNEM v2 Energy Methods
 
 """
+
 from datetime import date, datetime, timedelta
 
 import pandas as pd

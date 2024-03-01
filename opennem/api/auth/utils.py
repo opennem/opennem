@@ -2,6 +2,7 @@
 OpenNEM Auth Utils
 
 """
+
 import secrets
 
 from fastapi import HTTPException

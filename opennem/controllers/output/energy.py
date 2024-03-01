@@ -1,4 +1,4 @@
-""" Main module responsible for exporting (to static files) energy data
+"""Main module responsible for exporting (to static files) energy data
 
 called from the controller and initiated by the scheduler
 """

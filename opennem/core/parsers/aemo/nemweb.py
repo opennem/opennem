@@ -1,4 +1,4 @@
-""" NEMWeb optimized parsers """
+"""NEMWeb optimized parsers"""
 
 import logging
 from shutil import rmtree

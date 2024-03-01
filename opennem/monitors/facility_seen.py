@@ -5,6 +5,7 @@ Scheduled process that checks for new DUIDs found in generation data
 and alerts about them
 
 """
+
 import logging
 from datetime import datetime
 

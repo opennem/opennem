@@ -1,4 +1,4 @@
-""" API Stats utilities """
+"""API Stats utilities"""
 
 from datetime import datetime
 

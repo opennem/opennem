@@ -1,10 +1,10 @@
 """
-    OpenNEM primary schema adapted to support multiple energy sources
+OpenNEM primary schema adapted to support multiple energy sources
 
-    Currently supported:
+Currently supported:
 
-    - NEM
-    - WEM
+- NEM
+- WEM
 """
 
 import enum

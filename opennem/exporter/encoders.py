@@ -6,6 +6,7 @@ in the data store as well
 
 :see_also: opennem/db/__init__.py
 """
+
 import dataclasses
 import decimal
 import json

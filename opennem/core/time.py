@@ -1,4 +1,5 @@
-""" Interval and time period definitions """
+"""Interval and time period definitions"""
+
 import logging
 
 from opennem.core.loader import load_data

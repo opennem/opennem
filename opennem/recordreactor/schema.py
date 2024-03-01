@@ -1,4 +1,4 @@
-""" OpenNEM Schema class for a milestone
+"""OpenNEM Schema class for a milestone
 
 see matching ORM schema in database. This applies within record reactor and the API output
 """

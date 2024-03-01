@@ -1,4 +1,5 @@
-""" Core loaders that handle files """
+"""Core loaders that handle files"""
+
 import csv
 import json
 import logging

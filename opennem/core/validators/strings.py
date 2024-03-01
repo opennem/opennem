@@ -4,7 +4,6 @@ OpenNEM String Validators
 Used in Pydantic schemas
 """
 
-
 from opennem.core.normalizers import string_is_urlsafe
 
 

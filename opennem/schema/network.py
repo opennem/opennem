@@ -1,7 +1,5 @@
-""" Defines a schema for different supported energy networks
+"""Defines a schema for different supported energy networks"""
 
-
-"""
 from datetime import datetime, timedelta, timezone, tzinfo
 from typing import Any
 from zoneinfo import ZoneInfo

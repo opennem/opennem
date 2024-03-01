@@ -7,6 +7,7 @@ that run per-interval and eventually per-day
 ie. replace the export sets and export_power and export_energy which was all
 a bit too abstract.
 """
+
 import logging
 
 from opennem.api.export.map import PriorityType, StatType, get_export_map

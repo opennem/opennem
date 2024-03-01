@@ -1,4 +1,5 @@
-""" API security  """
+"""API security"""
+
 import logging
 
 from authlib.jose import JsonWebKey, JsonWebToken, JWTClaims, KeySet, errors

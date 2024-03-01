@@ -7,6 +7,7 @@ pydantic schemas that can be output by the api
 Customisation is that our Facility Schemas have optional geometries
 rather than required.
 """
+
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict

@@ -3,6 +3,7 @@ OpenNEM API
 
 Primary Router. All the main setup of the API is here.
 """
+
 import logging
 
 from fastapi import Depends, FastAPI, HTTPException, status

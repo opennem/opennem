@@ -3,6 +3,7 @@
 Update facility intervals for APVI rooftop data, update capacities
 and various other methods for persisting APVI data
 """
+
 import logging
 
 from sqlalchemy.dialects.postgresql import insert

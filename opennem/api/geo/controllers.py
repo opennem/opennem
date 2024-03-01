@@ -1,7 +1,8 @@
-""" OpenNEM v4 Stations Output
+"""OpenNEM v4 Stations Output
 
 Output controller for stations that is both v3 and v4 comparible.
 """
+
 from pydantic_geojson import PointModel
 
 from opennem.db.models.opennem import Station

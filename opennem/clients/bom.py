@@ -1,6 +1,5 @@
-"""OpenNEM BoM Client
+"""OpenNEM BoM Client"""
 
-"""
 import logging
 from datetime import UTC, datetime
 from typing import Any

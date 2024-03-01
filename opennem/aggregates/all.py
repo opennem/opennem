@@ -1,4 +1,4 @@
-""" Runs all aggregates """
+"""Runs all aggregates"""
 
 from opennem.aggregates.facility_daily import run_aggregate_facility_all_by_year, run_aggregate_facility_days
 from opennem.aggregates.network_demand import run_aggregates_demand_network, run_aggregates_demand_network_days

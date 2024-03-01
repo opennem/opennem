@@ -2,6 +2,7 @@
 OpenNEM Monitor emission factors for facilities
 
 """
+
 import logging
 
 from opennem import settings

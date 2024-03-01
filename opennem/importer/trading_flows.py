@@ -1,6 +1,6 @@
 """
-    Create stations on NEM for import/export series
-    and facility for one each of import/export
+Create stations on NEM for import/export series
+and facility for one each of import/export
 """
 
 import logging

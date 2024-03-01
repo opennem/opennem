@@ -1,4 +1,4 @@
-""" clerk.dev client """
+"""clerk.dev client"""
 
 import logging
 from typing import Any

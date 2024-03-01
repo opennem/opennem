@@ -1,4 +1,4 @@
-""" Runs a query against OpenNEM"""
+"""Runs a query against OpenNEM"""
 
 import logging
 import re

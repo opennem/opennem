@@ -1,7 +1,8 @@
-""" Dashboard API Router
+"""Dashboard API Router
 
 Interval for OpenNEM frontends
 """
+
 import logging
 from datetime import timedelta
 

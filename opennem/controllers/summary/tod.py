@@ -1,6 +1,7 @@
 """
 Time of Day Summary Controller
 """
+
 import logging
 from datetime import datetime
 from operator import attrgetter

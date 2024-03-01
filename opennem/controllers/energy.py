@@ -1,5 +1,4 @@
-""" Energy controllers """
-
+"""Energy controllers"""
 
 import logging
 

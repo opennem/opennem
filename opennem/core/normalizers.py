@@ -5,6 +5,7 @@ This module provides a set of utilities to normalize, clean and parse passed
 in data from various sources.
 
 """
+
 import itertools
 import logging
 import re

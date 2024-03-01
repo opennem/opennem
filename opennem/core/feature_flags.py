@@ -1,4 +1,5 @@
-"""" OpenNEM Feature Flags  """
+""" " OpenNEM Feature Flags"""
+
 from opennem import settings
 
 FEATURE_FLAG_LIST = [

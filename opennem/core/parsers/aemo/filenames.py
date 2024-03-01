@@ -1,4 +1,4 @@
-""" Parse MMS filenames """
+"""Parse MMS filenames"""
 
 import enum
 import logging

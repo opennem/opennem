@@ -1,4 +1,5 @@
-""" Dispatch Types """
+"""Dispatch Types"""
+
 import enum
 
 

@@ -1,4 +1,5 @@
-""" Flow controllers """
+"""Flow controllers"""
+
 from datetime import datetime
 
 from opennem.db import get_database_engine

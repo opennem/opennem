@@ -1,5 +1,5 @@
 """
-    Loads database fixtures that are required.
+Loads database fixtures that are required.
 
 """
 

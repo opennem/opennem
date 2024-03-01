@@ -1,4 +1,5 @@
-""" Module to upload images to cloudflare. Requires settings.cloudflare_api_key and settings.cloudflare_account_id """
+"""Module to upload images to cloudflare. Requires settings.cloudflare_api_key and settings.cloudflare_account_id"""
+
 import logging
 from datetime import datetime
 from io import BytesIO

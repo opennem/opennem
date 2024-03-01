@@ -1,8 +1,7 @@
 """
-    Parse facility codes facility ids
+Parse facility codes facility ids
 
 """
-
 
 WEM_CODE_SUFFIXES = ["plant"]
 

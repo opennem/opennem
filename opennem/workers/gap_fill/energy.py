@@ -1,5 +1,4 @@
-"""OpenNEM Gapfill
-"""
+"""OpenNEM Gapfill"""
 
 import logging
 from datetime import datetime, timedelta

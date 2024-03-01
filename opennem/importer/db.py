@@ -1,4 +1,5 @@
-""" Database import and init methods """
+"""Database import and init methods"""
+
 import logging
 
 from opennem.core.stats.store import init_stats

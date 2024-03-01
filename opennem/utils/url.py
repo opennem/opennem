@@ -1,4 +1,5 @@
-""" URL utility methods """
+"""URL utility methods"""
+
 import urllib
 from pathlib import Path
 

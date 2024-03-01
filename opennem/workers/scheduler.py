@@ -6,6 +6,7 @@ Primary scheduler runs:
  * monitoring tasks
 
 """
+
 import logging
 
 from huey import PriorityRedisHuey, crontab

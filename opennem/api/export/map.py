@@ -1,8 +1,9 @@
 """
-    Generates the map of queries and paths to export to S3 buckets
-    for opennem.org.au
+Generates the map of queries and paths to export to S3 buckets
+for opennem.org.au
 
 """
+
 from __future__ import annotations
 
 import logging

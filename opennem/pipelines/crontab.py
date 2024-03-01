@@ -1,4 +1,4 @@
-""" OpenNEM contrab tools for timing tasks """
+"""OpenNEM contrab tools for timing tasks"""
 
 import logging
 from collections.abc import Callable

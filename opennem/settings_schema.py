@@ -3,6 +3,7 @@ OpenNEM Settings Schema
 
 Everything that can be changed is set here and can be overwritten with ENV settings
 """
+
 from datetime import UTC
 from datetime import timezone as pytimezone
 from pathlib import Path

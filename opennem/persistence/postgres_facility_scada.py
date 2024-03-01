@@ -1,6 +1,5 @@
-"""Persistence methods to facility_scada
+"""Persistence methods to facility_scada"""
 
-"""
 import logging
 
 from sqlalchemy.dialects.postgresql import insert

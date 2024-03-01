@@ -2,6 +2,7 @@
 Module that takes a natural language query and asks OpenAPI for a sql statement
 in return
 """
+
 import logging
 import sys
 from pathlib import Path

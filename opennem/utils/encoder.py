@@ -1,5 +1,4 @@
-""" Utility functions for encoding and decoding data."""
-
+"""Utility functions for encoding and decoding data."""
 
 import dataclasses
 import json

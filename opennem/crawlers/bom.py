@@ -1,6 +1,5 @@
-"""BoM Crawler
+"""BoM Crawler"""
 
-"""
 import logging
 from datetime import datetime
 from time import sleep

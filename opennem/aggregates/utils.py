@@ -1,4 +1,5 @@
-""" Utilities for aggregate methods """
+"""Utilities for aggregate methods"""
+
 from datetime import datetime
 
 from opennem.schema.network import NetworkNEM, NetworkSchema

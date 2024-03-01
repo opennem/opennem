@@ -1,4 +1,5 @@
-""" Defined AEMO data source structures """
+"""Defined AEMO data source structures"""
+
 import enum
 import logging
 from datetime import date

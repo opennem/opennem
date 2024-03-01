@@ -1,6 +1,4 @@
-"""APVI Rooftop Data Crawler
-
-"""
+"""APVI Rooftop Data Crawler"""
 
 import logging
 from datetime import date

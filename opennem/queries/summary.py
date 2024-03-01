@@ -2,6 +2,7 @@
 Daily summary - fueltechs as proportion of demand
 and other stats per network query
 """
+
 import logging
 from datetime import datetime, timedelta
 from textwrap import dedent

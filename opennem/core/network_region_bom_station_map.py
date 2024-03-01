@@ -1,7 +1,6 @@
 """
-    Map network regions to BOM stations
+Map network regions to BOM stations
 """
-
 
 from opennem.core.loader import load_data
 

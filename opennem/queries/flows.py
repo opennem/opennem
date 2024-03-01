@@ -1,4 +1,5 @@
-""" Flow queries """
+"""Flow queries"""
+
 import logging
 from datetime import datetime
 from textwrap import dedent

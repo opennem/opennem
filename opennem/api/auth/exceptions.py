@@ -2,6 +2,7 @@
 OpenNEM Auth Exceptions
 
 """
+
 from opennem.api.exceptions import OpennemBaseHttpException
 
 

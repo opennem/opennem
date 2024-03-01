@@ -1,4 +1,5 @@
-""" OpenNEM Price Queries """
+"""OpenNEM Price Queries"""
+
 from datetime import datetime
 from textwrap import dedent
 

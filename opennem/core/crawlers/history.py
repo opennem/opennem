@@ -1,4 +1,5 @@
-"""" Reads and stores crawler history """
+""" " Reads and stores crawler history"""
+
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime

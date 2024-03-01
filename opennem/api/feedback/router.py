@@ -1,4 +1,5 @@
-""" Feedback API endpoint """
+"""Feedback API endpoint"""
+
 import logging
 
 from fastapi import APIRouter, Header, HTTPException, Request

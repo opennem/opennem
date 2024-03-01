@@ -1,8 +1,9 @@
 """
-    Set of stations
+Set of stations
 
 
 """
+
 from collections import UserList
 from typing import Self
 

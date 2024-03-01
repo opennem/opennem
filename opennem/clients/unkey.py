@@ -1,4 +1,5 @@
-""" unkney client for validating api keys """
+"""unkney client for validating api keys"""
+
 import asyncio
 
 import unkey

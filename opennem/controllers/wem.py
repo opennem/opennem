@@ -2,6 +2,7 @@
 
 Update facility intervals and balancing summary for WEM
 """
+
 import logging
 from datetime import datetime
 

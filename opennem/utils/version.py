@@ -1,7 +1,8 @@
-""" Reads the project version
+"""Reads the project version
 
 @NOTE updated to dynamically update with build scripts
 """
+
 from dataclasses import dataclass
 
 from opennem import __version__ as version

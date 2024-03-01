@@ -7,6 +7,7 @@ Uses an average in 30 minute buckets
 @TODO variable bucket sizes
 
 """
+
 import logging
 from collections.abc import Generator
 from datetime import date, datetime, timedelta

@@ -1,4 +1,5 @@
-""" OpenNEM Timedelta utilities """
+"""OpenNEM Timedelta utilities"""
+
 from datetime import timedelta
 
 

@@ -2,6 +2,7 @@
 OpenNEM Open Street Map Parser
 
 """
+
 import logging
 
 import osm2geojson

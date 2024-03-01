@@ -1,4 +1,5 @@
-""" Module to send slack messages """
+"""Module to send slack messages"""
+
 import dataclasses
 import logging
 import sys

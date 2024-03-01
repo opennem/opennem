@@ -1,7 +1,8 @@
-""" Runs queries to populate the aggregate tables with facility data
+"""Runs queries to populate the aggregate tables with facility data
 
 This populated the at_network_demand aggregate table with demand data.
 """
+
 import logging
 from datetime import datetime, timedelta
 from textwrap import dedent

@@ -5,6 +5,7 @@ Takes a stat set or data history from exports in Dict form and returns
 schemas.
 
 """
+
 from typing import Any
 
 from opennem.api.stats.schema import OpennemDataSet

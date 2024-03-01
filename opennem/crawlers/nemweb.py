@@ -1,4 +1,5 @@
-""" Nemweb crawlers """
+"""Nemweb crawlers"""
+
 import logging
 
 from opennem.controllers.nem import ControllerReturn, store_aemo_tableset

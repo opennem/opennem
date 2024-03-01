@@ -1,4 +1,4 @@
-""" Utilities for exporters """
+"""Utilities for exporters"""
 
 from opennem.controllers.output.schema import StatType
 from opennem.schema.network import NetworkSchema

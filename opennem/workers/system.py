@@ -1,4 +1,4 @@
-""" System worker for admin tasks """
+"""System worker for admin tasks"""
 
 import logging
 import os

@@ -1,6 +1,7 @@
 """
 OpenNEM v2 schema loader
 """
+
 import logging
 from datetime import timedelta
 

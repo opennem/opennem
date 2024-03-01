@@ -1,4 +1,5 @@
-""" MMS crawler """
+"""MMS crawler"""
+
 import logging
 from datetime import datetime
 

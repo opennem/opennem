@@ -5,6 +5,7 @@ OpenNEM Bulk Insert Pipeline
 Bulk inserts records using temporary tables and CSV imports with copy_from
 
 """
+
 import csv
 import logging
 from datetime import datetime

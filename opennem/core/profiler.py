@@ -1,4 +1,4 @@
-""" OpenNEM module for tasks and their analytics
+"""OpenNEM module for tasks and their analytics
 
 This will track the tasks that are run and their status and output
 as well as the time taken to run them.

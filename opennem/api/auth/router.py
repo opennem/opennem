@@ -4,7 +4,6 @@ OpenNEM API Auth Router
 
 """
 
-
 from fastapi import APIRouter, Depends
 
 from opennem.api.auth.key import get_api_key

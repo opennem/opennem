@@ -1,7 +1,7 @@
 """AEMO MMS Client
 
- * Can download a particular table for any time range
- * Understands the MMS schema and parses records
+* Can download a particular table for any time range
+* Understands the MMS schema and parses records
 """
 
 MMS_DOWNLOAD_URL_TEMPLATE = (

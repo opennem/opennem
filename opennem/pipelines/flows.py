@@ -1,4 +1,4 @@
-""" OpenNEM flows pipelines
+"""OpenNEM flows pipelines
 
 
 Runs the flows process per-interval as part of flows v2

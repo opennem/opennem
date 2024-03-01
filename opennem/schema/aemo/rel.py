@@ -8,7 +8,6 @@ https://aemo.com.au/en/energy-systems/electricity/national-electricity-market-ne
 Released every month with updates on stations. The parser for the format is at opennem.core.parsers.aemo.rel
 """
 
-
 from pydantic import validator
 
 from opennem.core.dispatch_type import DispatchType, parse_dispatch_type

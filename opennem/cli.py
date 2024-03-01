@@ -1,9 +1,10 @@
-""" OpenNEM cli interface
+"""OpenNEM cli interface
 
 run with either the opennem entry point or:
 
 $ python -m opennem.cli
 """
+
 import logging
 
 import click

@@ -1,4 +1,5 @@
-""" Crawl commands cli """
+"""Crawl commands cli"""
+
 import logging
 
 import click

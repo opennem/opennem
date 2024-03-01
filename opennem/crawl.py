@@ -1,6 +1,5 @@
-"""Primary OpenNEM crawler
+"""Primary OpenNEM crawler"""
 
-"""
 import logging
 
 from pydantic import ValidationError

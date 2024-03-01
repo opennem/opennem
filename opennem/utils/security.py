@@ -1,4 +1,4 @@
-""" Security Module """
+"""Security Module"""
 
 import random
 import string

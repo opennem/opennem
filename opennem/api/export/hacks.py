@@ -3,6 +3,7 @@ OpenNEM Nasty Hacks
 
 @TODO Eventually factor all of this out
 """
+
 import logging
 
 from opennem.api.stats.schema import OpennemDataSet

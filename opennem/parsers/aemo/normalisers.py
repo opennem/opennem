@@ -1,4 +1,5 @@
-""" Data cleaners and normalizers for AEMO source data """
+"""Data cleaners and normalizers for AEMO source data"""
+
 import logging
 import re
 

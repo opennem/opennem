@@ -2,7 +2,6 @@
 Runs daily export task JSONs for OpenNEM website
 """
 
-
 import logging
 from datetime import datetime, timedelta
 

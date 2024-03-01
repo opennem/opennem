@@ -3,6 +3,7 @@ OpenNEM S3 Bucket Module
 
 Writes OpennemDataSet's to AWS S3 buckets
 """
+
 import json
 import logging
 from typing import Any

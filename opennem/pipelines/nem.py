@@ -1,8 +1,9 @@
-""" OpenNEM NEM processing pipeline
+"""OpenNEM NEM processing pipeline
 
 
 All the processing pipelines for the NEM network
 """
+
 import logging
 
 from huey.exceptions import RetryTask

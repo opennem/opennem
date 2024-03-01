@@ -1,5 +1,5 @@
 """
-    mime module - get mime types from url (filename) or bytes
+mime module - get mime types from url (filename) or bytes
 
 
 """

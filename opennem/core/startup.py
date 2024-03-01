@@ -1,4 +1,4 @@
-""" OpenNEM Startup Methods """
+"""OpenNEM Startup Methods"""
 
 import sys
 from platform import node, platform

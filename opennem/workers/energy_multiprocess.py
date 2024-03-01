@@ -2,6 +2,7 @@
 Multiprocessor for energy workers
 
 """
+
 import logging
 import multiprocessing
 import sys

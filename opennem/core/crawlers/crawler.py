@@ -1,6 +1,4 @@
-"""Get crawl metadata info from storage
-
-"""
+"""Get crawl metadata info from storage"""
 
 import logging
 from datetime import datetime

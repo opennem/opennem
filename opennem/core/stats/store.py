@@ -1,6 +1,7 @@
 """
 Methods to store and persist stats in the database or to JSON
 """
+
 import logging
 
 from sqlalchemy.dialects.postgresql import insert

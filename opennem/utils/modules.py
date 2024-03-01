@@ -1,4 +1,4 @@
-""" Utilities for loading modules """
+"""Utilities for loading modules"""
 
 from importlib import import_module
 from pkgutil import iter_modules

@@ -6,6 +6,7 @@ for most recent this is the last active date
 
 @TODO move the utility functions into core/facility use this as only the worker
 """
+
 import logging
 from datetime import datetime, timedelta
 from textwrap import dedent

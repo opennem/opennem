@@ -1,4 +1,5 @@
-""" Crawl commands cli """
+"""Crawl commands cli"""
+
 import logging
 from pathlib import Path
 

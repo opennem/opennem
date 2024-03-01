@@ -8,7 +8,6 @@ require the API
 
 """
 
-
 import contextlib
 import logging
 from datetime import datetime, timedelta

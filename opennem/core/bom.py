@@ -2,6 +2,7 @@
 
 Get a list of stations from the local database
 """
+
 from datetime import date, datetime
 from random import shuffle
 

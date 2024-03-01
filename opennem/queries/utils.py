@@ -1,4 +1,5 @@
-""" Query utilities """
+"""Query utilities"""
+
 from opennem.core.normalizers import normalize_duid
 from opennem.schema.network import NetworkSchema
 

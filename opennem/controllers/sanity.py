@@ -1,6 +1,7 @@
 """
 Takes Sanity webhook responses and parses into structured format for persistance and updates
 """
+
 import logging
 
 from opennem.db import SessionLocal

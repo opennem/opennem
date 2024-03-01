@@ -1,7 +1,7 @@
 """
-    Queries for network data
+Queries for network data
 
-    @TODO use sqlalchemy text() compiled queries
+@TODO use sqlalchemy text() compiled queries
 """
 
 from datetime import datetime, timedelta

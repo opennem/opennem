@@ -1,6 +1,5 @@
-"""APVI Client for Rooftop Data
+"""APVI Client for Rooftop Data"""
 
-"""
 import logging
 import urllib.parse as urlparse
 from datetime import date, datetime

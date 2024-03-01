@@ -1,4 +1,5 @@
-""" Crawls and parses new WEMDE format """
+"""Crawls and parses new WEMDE format"""
+
 import logging
 from datetime import datetime
 

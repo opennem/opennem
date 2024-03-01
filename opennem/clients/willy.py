@@ -1,6 +1,7 @@
-""" Willy Weather client for OpenNEM
+"""Willy Weather client for OpenNEM
 
 BoM source alternative used as a backup"""
+
 import logging
 from pprint import pprint
 from typing import Any

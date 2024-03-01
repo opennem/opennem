@@ -1,4 +1,5 @@
-""" WEM pipelines """
+"""WEM pipelines"""
+
 import logging
 
 from opennem.core.profiler import profile_task
