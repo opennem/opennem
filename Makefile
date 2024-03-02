@@ -4,7 +4,7 @@ UPGRADE_ARGS ?= --upgrade
 projectname = opennem
 
 # tools
-ruff = poetry run ruff $(projectname)
+ruff-check = poetry run ruff check $(projectname)
 mypy = poetry run mypy $(projectname)
 pytest = poetry run pytest tests -v
 pyright = poetry run pyright -v $(poetry env info -p) $(projectname)
@@ -18,11 +18,11 @@ test:
 .PHONY: format
 format:
 	poetry run ruff format $(projectname)
-	$(ruff) --fix
+	$(ruff-check) --fix
 
 .PHONY: lint
 lint:
-	$(ruff) --exit-zero
+	$(ruff-check) --exit-zero
 
 .PHONY: check
 check:
