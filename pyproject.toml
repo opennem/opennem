@@ -65,7 +65,6 @@ python-multipart = "^0.0.6"
 fastapi-versionizer = "^3.0.4"
 psycopg = {extras = ["binary"], version = "^3.1.18"}
 datetype = "^2024.2.8"
-psycopg2 = "^2.9.9"
 
 
 [tool.poetry.group.dev.dependencies]
