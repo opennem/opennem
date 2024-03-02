@@ -31,8 +31,6 @@ check:
 .PHONE: requirements
 requirements:
 	poetry export -o requirements.txt
-	git add requirements.txt
-	git ci -m "META: Update requirements.txt"
 
 .PHONY: build
 build:
@@ -51,7 +49,7 @@ version:
 	else \
 		sed -i "s/__version__ = \".*\"/__version__ = \"$$new_version\"/g" $(version_file); \
 	fi; \
-	git add $(version_file) pyproject.toml; \
+	git add $(version_file) pyproject.toml requirements.txt; \
 	git commit -m "Bump version: $$new_version"; \
 	git tag $$new_version; \
 	git push origin $$current_branch; \
