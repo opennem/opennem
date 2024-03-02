@@ -172,14 +172,16 @@ def log_task_profile_to_database(
                         ) returning id
                         """
                 ),
-                id=id,
-                task_name=task_name,
-                time_start=time_start,
-                time_end=time_end,
-                errors=0,
-                retention_period=retention_period.value if retention_period else "",
-                level=level.name.lower() if level else "",
-                invokee_name=invokee_name.lower() if invokee_name else "",
+                {
+                    "id": id,
+                    "task_name": task_name,
+                    "time_start": time_start,
+                    "time_end": time_end,
+                    "errors": 0,
+                    "retention_period": retention_period.value if retention_period else "forever",
+                    "level": level.value if level else ProfilerLevel.NOISY.value,
+                    "invokee_name": invokee_name,
+                },
             )
         except Exception as e:
             logger.error(f"Error logging task profile: {e}")
@@ -239,7 +241,7 @@ def profile_task(
 
             wall_clock_human = f"{wall_clock_time_seconds}s"
 
-            id = log_task_profile_to_database(
+            log_task_profile_to_database(
                 task_name=task.__name__,
                 time_start=dtime_start,
                 time_end=dtime_end,
