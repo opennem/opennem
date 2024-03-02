@@ -28,6 +28,12 @@ lint:
 check:
 	$(pyright)
 
+.PHONE: requirements
+requirements:
+	poetry export -o requirements.txt
+	git add requirements.txt
+	git ci -m "META: Update requirements.txt"
+
 .PHONY: build
 build:
 	pip install wheel
@@ -52,14 +58,13 @@ version:
 	git push origin $$new_version
 
 .PHONY: release-pre
-release-pre: format lint
+release-pre: format lint requirements
 
 .PHONY: image
 image:
-	docker build \
+	docker buildx build \
 		--tag opennem/base:latest \
 		--build-arg BUILDKIT_INLINE_CACHE=1 \
-		--cache-from opennem/base:latest \
 		.
 
 .PHONY: clean

@@ -40,3 +40,4 @@ data/
 notebooks/
 .ipython/
 .jupyter/
+infra/backups/

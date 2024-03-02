@@ -1,4 +1,4 @@
-FROM python:3.12 as python-base
+FROM python:3.12-bullseye as python-base
 
 # python
 ENV PROJECT_NAME="opennem" \
@@ -13,17 +13,6 @@ ENV PROJECT_NAME="opennem" \
   PIP_NO_CACHE_DIR=off \
   PIP_DISABLE_PIP_VERSION_CHECK=on \
   PIP_DEFAULT_TIMEOUT=100 \
-  \
-  # poetry
-  # https://python-poetry.org/docs/configuration/#using-environment-variables
-  POETRY_VERSION=1.6.1 \
-  # make poetry install to this location
-  POETRY_HOME="/opt/poetry" \
-  # make poetry create the virtual environment in the project's root
-  # it gets named `.venv`
-  POETRY_VIRTUALENVS_IN_PROJECT=true \
-  # do not ask any interactive question
-  POETRY_NO_INTERACTION=1 \
   \
   # paths
   # this is where our requirements + virtual environment will live
@@ -40,29 +29,24 @@ ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 FROM python-base as builder-base
 RUN apt-get update \
   && apt-get install --no-install-recommends -y \
-  # deps for installing poetry
-  curl \
   # deps for building python deps
   build-essential \
   && rm -rf /var/lib/apt/lists/*
 
-# install poetry - respects $POETRY_VERSION & $POETRY_HOME
-# The --mount will mount the buildx cache directory to where
-# Poetry and Pip store their cache so that they can re-use it
-RUN curl -sSL https://install.python-poetry.org | python3 -
-
-RUN poetry config installer.max-workers 10
+# install uv
+ADD https://astral.sh/uv/install.sh /install.sh
+RUN chmod -R 655 /install.sh && /install.sh && rm /install.sh
 
 # copy project requirement files here to ensure they will be cached.
 WORKDIR $PYSETUP_PATH
-COPY poetry.lock pyproject.toml ./
+COPY requirements.txt pyproject.toml ./
 
 # workaround for if you have packages-include in your pyproject.toml
 RUN mkdir ${PROJECT_NAME} && touch ${PROJECT_NAME}/__init__.py
 
-# install runtime deps - uses $POETRY_VIRTUALENVS_IN_PROJECT internally
-RUN poetry install --without=dev --no-interaction --no-ansi -v
-
+# install runtime deps - using UV
+RUN /root/.cargo/bin/uv venv ${VENV_PATH}
+RUN /root/.cargo/bin/uv pip install --no-cache -r requirements.txt
 
 # `development` image is used during development / testing
 FROM python-base as development
@@ -70,11 +54,7 @@ ENV FASTAPI_ENV=development
 WORKDIR $PYSETUP_PATH
 
 # copy in our built poetry + venv
-COPY --from=builder-base $POETRY_HOME $POETRY_HOME
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
-
-# quicker install as runtime deps are already installed
-RUN poetry install --no-interaction --no-ansi -v
 
 # will become mountpoint of our code
 WORKDIR /app
