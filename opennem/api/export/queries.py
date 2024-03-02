@@ -1,7 +1,7 @@
 from datetime import timedelta
 from textwrap import dedent
 
-from sqlalchemy import sql
+from sqlalchemy import sql, text
 from sqlalchemy.sql.elements import TextClause
 
 from opennem.api.stats.controllers import networks_to_in
@@ -10,7 +10,7 @@ from opennem.schema.network import NetworkAPVI, NetworkAU, NetworkNEM, NetworkSc
 from opennem.schema.stats import StatTypes
 
 
-def weather_observation_query(time_series: OpennemExportSeries, station_codes: list[str]) -> str:
+def weather_observation_query(time_series: OpennemExportSeries, station_codes: list[str]) -> TextClause:
     """
     Get weather observations for a list of stations and a date range.
     """
@@ -87,10 +87,10 @@ def interconnector_power_flow(time_series: OpennemExportSeries, network_region: 
         date_end=date_max,
     )
 
-    return dedent(query)
+    return text(query)
 
 
-def interconnector_flow_network_regions_query(time_series: OpennemExportSeries, network_region: str | None = None) -> str:
+def interconnector_flow_network_regions_query(time_series: OpennemExportSeries, network_region: str | None = None) -> TextClause:
     """ """
 
     __query = """
@@ -143,7 +143,7 @@ def interconnector_flow_network_regions_query(time_series: OpennemExportSeries, 
         date_end=date_max,
     )
 
-    return dedent(query)
+    return text(query)
 
 
 def country_stats_query(stat_type: StatTypes, country: str = "au") -> TextClause:
@@ -170,7 +170,7 @@ def price_network_query(
     group_field: str = "bs.network_id",
     network_region: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
-) -> str:
+) -> TextClause:
     if not networks_query:
         networks_query = [time_series.network]
 
@@ -210,7 +210,7 @@ def price_network_query(
     date_max = time_series_range.end
     date_min = time_series_range.start
 
-    return dedent(
+    return text(
         __query.format(
             network_query=network_query,
             trunc=time_series.interval.interval_sql,
@@ -227,7 +227,7 @@ def network_demand_query(
     time_series: OpennemExportSeries,
     network_region: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
-) -> str:
+) -> TextClause:
     if not networks_query:
         networks_query = [time_series.network]
 
@@ -284,14 +284,14 @@ def network_demand_query(
         groups_additional=groups_additional,
     )
 
-    return dedent(query)
+    return text(query)
 
 
 def power_network_fueltech_query(
     time_series: OpennemExportSeries,
     network_region: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
-) -> str:
+) -> TextClause:
     """Query power stats"""
 
     if not networks_query:
@@ -383,14 +383,14 @@ def power_network_fueltech_query(
         )
     )
 
-    return query
+    return text(query)
 
 
 def power_network_rooftop_query(
     time_series: OpennemExportSeries,
     network_region: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
-) -> str:
+) -> TextClause:
     """Query power stats"""
 
     if not networks_query:
@@ -459,7 +459,7 @@ def power_network_rooftop_query(
         # @TODO move to purely in get_range()
         date_max = date_min + timedelta(hours=12)
 
-    return dedent(
+    return text(
         __query.format(
             network_query=network_query,
             network_region_query=network_region_query,
@@ -478,7 +478,7 @@ def power_network_rooftop_query(
 def power_and_emissions_network_fueltech_query(
     time_series: OpennemExportSeries,
     network_region: str | None = None,
-) -> str:
+) -> TextClause:
     """Query emission stats for each network and fueltech"""
 
     __query = """
@@ -539,7 +539,7 @@ def power_and_emissions_network_fueltech_query(
 
     fueltechs_exclude = ", ".join(f"'{i}'" for i in fueltechs_excluded)
 
-    query = dedent(
+    query = text(
         __query.format(
             network_query=network_query,
             trunc=time_series.interval.interval_sql,
@@ -560,7 +560,7 @@ def power_network_interconnector_emissions_query(
     time_series: OpennemExportSeries,
     network_region: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
-) -> str:
+) -> TextClause:
     """
     Get emissions for a network or network + region
     based on a year
@@ -632,7 +632,7 @@ def power_network_interconnector_emissions_query(
             t.network_region = '{network_region}'
         """
 
-    query = dedent(
+    query = text(
         __query.format(
             energy_scale=energy_scale,
             emissions_scale=emissions_scale,
@@ -655,7 +655,7 @@ Demand queries
 
 def demand_network_region_query(
     time_series: OpennemExportSeries, network_region: str | None, networks: list[NetworkSchema] | None = None
-) -> str:
+) -> TextClause:
     """Get the network demand energy and market_value"""
 
     ___query = """
@@ -694,7 +694,7 @@ def demand_network_region_query(
 
     network_query = f"network_id IN ({networks_list}) and "
 
-    return dedent(
+    return text(
         ___query.format(
             trunc=time_series.interval.trunc,
             date_min=date_min,
@@ -718,7 +718,7 @@ def energy_network_fueltech_query(
     network_region: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
     coalesce_with: int | None = None,
-) -> str:
+) -> TextClause:
     """
     Get Energy for a network or network + region
     based on a year
@@ -785,7 +785,7 @@ def energy_network_fueltech_query(
 
     network_query = f"(t.network_id IN ({networks_list}) {network_apvi_wem}) and "
 
-    return dedent(
+    return text(
         __query.format(
             trunc=trunc,
             date_min=date_min,
@@ -801,7 +801,7 @@ def energy_network_interconnector_emissions_query(
     time_series: OpennemExportSeries,
     network_region: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
-) -> str:
+) -> TextClause:
     """
     Get emissions for a network or network + region
     based on a year
@@ -859,7 +859,7 @@ def energy_network_interconnector_emissions_query(
             t.network_region = '{network_region}'
         """
 
-    return dedent(
+    return text(
         __query.format(
             timezone=timezone,
             trunc=interval_trunc,

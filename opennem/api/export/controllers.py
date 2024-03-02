@@ -53,7 +53,7 @@ def weather_daily(
         station_codes=[station_code],
     )
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         row = list(c.execute(query))
 
     temp_avg = [DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None) for i in row]
@@ -111,7 +111,7 @@ def gov_stats_cpi() -> OpennemDataSet | None:
 
     query = country_stats_query(StatTypes.CPI)
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
         row = list(c.execute(query))
 
@@ -149,7 +149,7 @@ def power_flows_region_week(
         network_region=network_region_code,
     )
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
         rows = list(c.execute(query))
 
@@ -203,7 +203,7 @@ def network_flows_for_region(
         network_region=network_region_code,
     )
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
         rows = list(c.execute(query))
 
@@ -312,7 +312,7 @@ def power_flows_network_week(
 
     logging.info(query)
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
         row = list(c.execute(query))
 
@@ -353,7 +353,7 @@ def demand_week(
         networks_query=networks_query,
     )
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
         row = list(c.execute(query))
 
@@ -396,7 +396,7 @@ def power_week(
         network_region=network_region_code,
     )
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
         row = list(c.execute(query))
 
@@ -469,7 +469,7 @@ def power_week(
         network_region=network_region_code,
     )
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
         row = list(c.execute(query))
 
@@ -504,7 +504,7 @@ def power_week(
         network_region=network_region_code,
     )
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
         row = list(c.execute(query))
 
@@ -535,7 +535,7 @@ def power_week(
             time_series=time_series_rooftop_forecast, networks_query=networks_query, network_region=network_region_code
         )
 
-        with engine.connect() as c:
+        with engine.begin() as c:
             logger.debug(query)
             row = list(c.execute(query))
 
@@ -576,7 +576,7 @@ def price_for_network_interval(
         networks_query=networks_query,
     )
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
         row = list(c.execute(query))
 
@@ -609,7 +609,7 @@ def power_and_emissions_for_network_interval(
         network_region=network_region_code,
     )
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
         row = list(c.execute(query))
 
@@ -677,7 +677,7 @@ def demand_network_region_daily(
 
     query = demand_network_region_query(time_series=time_series, network_region=network_region_code, networks=networks)
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
         row = list(c.execute(query))
 
@@ -730,7 +730,7 @@ def energy_fueltech_daily(
         networks_query=networks_query,
     )
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
         row = list(c.execute(query))
 
@@ -795,7 +795,7 @@ def energy_interconnector_flows_and_emissions_v2(
 
     query = get_network_flows_emissions_market_value_query(time_series=time_series, network_region_code=network_region_code)
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
         row = list(c.execute(query))
 

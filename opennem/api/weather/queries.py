@@ -1,4 +1,5 @@
-from textwrap import dedent
+from sqlalchemy import text
+from sqlalchemy.sql.elements import TextClause
 
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.core.normalizers import normalize_duid
@@ -18,7 +19,7 @@ def observation_query(
     period: TimePeriod | None = None,
     scada_range: ScadaDateRange | None = None,
     year: str | int | None = None,
-) -> str:
+) -> TextClause:
     if isinstance(year, int):
         year = str(year)
 
@@ -62,7 +63,7 @@ def observation_query(
 
         date_start_condition = f"'{scada_range.get_start()}'"
 
-    query = dedent(
+    query = text(
         __query.format(
             station_codes=station_id_case(station_codes),
             trunc=interval.interval_sql,
@@ -79,7 +80,7 @@ def observation_query_all(
     station_codes: list[str],
     scada_range: ScadaDateRange,
     network: NetworkSchema = NetworkNEM,
-) -> str:
+) -> TextClause:
     #
 
     timezone = network.timezone_database
@@ -123,4 +124,4 @@ def observation_query_all(
         date_end=date_end,
     )
 
-    return query
+    return text(query)

@@ -2,7 +2,9 @@
 
 import logging
 from datetime import datetime
-from textwrap import dedent
+
+from sqlalchemy import text
+from sqlalchemy.sql.elements import TextClause
 
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.schema.network import NetworkSchema
@@ -10,7 +12,7 @@ from opennem.schema.network import NetworkSchema
 logger = logging.getLogger("opennem.queries.flows")
 
 
-def get_interconnector_intervals_query(date_start: datetime, date_end: datetime, network: NetworkSchema) -> str:
+def get_interconnector_intervals_query(date_start: datetime, date_end: datetime, network: NetworkSchema) -> TextClause:
     """Load interconenctor intervals v1"""
     query = f"""
         select
@@ -34,10 +36,10 @@ def get_interconnector_intervals_query(date_start: datetime, date_end: datetime,
 
     logger.debug(query)
 
-    return query
+    return text(query)
 
 
-def power_network_flow_query(time_series: OpennemExportSeries, network_region: str) -> str:
+def power_network_flow_query(time_series: OpennemExportSeries, network_region: str) -> TextClause:
     """Get interconnector region flows using the aggregate tables"""
 
     ___query = """
@@ -88,12 +90,12 @@ def power_network_flow_query(time_series: OpennemExportSeries, network_region: s
         unit_scale_emissions=1,
     )
 
-    return dedent(query)
+    return text(query)
 
 
 def get_network_flows_emissions_market_value_query(
     time_series: OpennemExportSeries, network_region_code: str | None = None
-) -> str:
+) -> TextClause:
     """Gets the flow energy (in GWh) and the market value (in $) and emissions
     for a given network and network region
 
@@ -185,7 +187,7 @@ def get_network_flows_emissions_market_value_query(
     if run_optimized and date_range.interval.trunc.lower() in ["hour", "day", "month", "year"]:
         __query = __query_optimized
 
-    return dedent(
+    return text(
         __query.format(
             timezone=time_series.network.timezone_database,
             trunc=date_range.interval.trunc,
