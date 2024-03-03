@@ -19,7 +19,7 @@ from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfil
 from opennem.schema.time import TimeInterval
 from opennem.schema.units import UnitDefinition
 from opennem.utils.cache import cache_scada_result
-from opennem.utils.dates import get_last_completed_interval_for_network
+from opennem.utils.dates import get_last_completed_interval_for_network, get_today_for_network
 from opennem.utils.numbers import cast_trailing_nulls
 from opennem.utils.timezone import is_aware, make_aware
 from opennem.utils.version import get_version
@@ -326,7 +326,7 @@ def get_scada_range_optimized(network: NetworkSchema) -> ScadaDateRange:
 
 @cache_scada_result
 def get_scada_range(
-    network: NetworkSchema | None = None,
+    network: NetworkSchema,
     networks: list[NetworkSchema] | None = None,
     network_region: str | None = None,
     facilities: list[str] | None = None,
@@ -380,7 +380,7 @@ def get_scada_range(
         field_name = "eoi_quantity"
 
     # Only look back 7 days because the query is more optimized
-    date_min = datetime.now() - timedelta(days=7)
+    date_min = get_today_for_network(network=network) - timedelta(days=7)
 
     if network:
         network_query = f"f.network_id = '{network.code}' and"
