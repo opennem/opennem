@@ -134,8 +134,8 @@ def run_wemde_crawl(
 def run_all_wem_crawlers(latest: bool = True) -> None:
     for crawler in [
         AEMOWEMDETradingReport,
-        AEMOWEMDEFacilityScadaHistory,
-        AEMOWEMDETradingReportHistory,
+        # AEMOWEMDEFacilityScadaHistory,
+        # AEMOWEMDETradingReportHistory,
     ]:
         run_wemde_crawl(crawler, latest=latest)
 
