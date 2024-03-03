@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 from sqlalchemy.dialects.postgresql import insert
 
+from opennem import settings
 from opennem.core.flow_solver import (
     solve_flow_emissions_with_pandas,
 )
@@ -18,7 +19,7 @@ from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_
 from opennem.db import get_database_engine, get_scoped_session
 from opennem.db.models.opennem import AggregateNetworkFlows
 from opennem.schema.network import NetworkNEM, NetworkSchema
-from opennem.utils.dates import get_last_completed_interval_for_network
+from opennem.utils.dates import day_series, get_last_completed_interval_for_network
 
 logger = logging.getLogger("opennem.aggregates.flows_v3")
 
@@ -392,24 +393,32 @@ def run_flows_for_last_days(days: int, network: NetworkSchema = NetworkNEM) -> N
     )
 
 
-def run_flows_by_month() -> None:
+def run_flows_by_day_for_range(
+    period_start: datetime | None = None, period_end: datetime | None = None, network: NetworkSchema = NetworkNEM
+) -> None:
     """Run the entire archive"""
-    period_end = get_last_completed_interval_for_network(network=NetworkNEM).replace(
-        day=1, hour=0, minute=0, second=0, microsecond=0
-    )
-    period_start = datetime.fromisoformat("2009-06-01T00:00:00+10:00")
-    from opennem.utils.dates import month_series
+    if not period_start:
+        # this is the earliest interconnector data date
+        period_start = datetime.fromisoformat("2009-06-01T00:00:00+10:00")
 
-    for month in month_series(period_start, period_end, reverse=False):
-        next_month = month.replace(day=28) + timedelta(days=4)
-        res = next_month - timedelta(days=next_month.day) + timedelta(days=1) - timedelta(seconds=1)
-
-        print(f"Running for {month} to {res}")
-        run_aggregate_flow_for_interval_v3(
-            network=NetworkNEM,
-            interval_start=month,
-            interval_end=res,
+    if not period_end:
+        period_end = get_last_completed_interval_for_network(network=network).replace(
+            day=1, hour=0, minute=0, second=0, microsecond=0
         )
+
+    logger.info(f"run_flows_by_day_for_range for {period_start} to {period_end}")
+
+    for day in day_series(date_start=period_start, date_end=period_end):
+        day_next = day + timedelta(days=1)
+
+        logger.debug(f"Running for {day} to {day_next}")
+
+        if not settings.dry_run:
+            run_aggregate_flow_for_interval_v3(
+                network=NetworkNEM,
+                interval_start=day,
+                interval_end=day_next,
+            )
 
 
 def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = True) -> None:
@@ -527,5 +536,9 @@ if __name__ == "__main__":
     # run_flows_by_month()
 
     # from_interval = datetime.fromisoformat("2023-02-05T14:50:00+10:00")
-    run_flows_for_last_intervals(interval_number=12 * 1, network=NetworkNEM)
+    # run_flows_for_last_intervals(interval_number=12 * 1, network=NetworkNEM)
+    run_flows_by_day_for_range(
+        period_start=datetime.fromisoformat("2024-01-29T00:00:00+10:00"),
+        period_end=get_last_completed_interval_for_network(network=NetworkNEM),
+    )
     # run_aggregate_flow_for_interval_v3(network=NetworkNEM)
