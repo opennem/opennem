@@ -210,6 +210,12 @@ def month_series(
         yield datetime(y, m + 1, 1)
 
 
+def day_series(date_start: datetime, date_end: datetime) -> Generator[datetime, None, None]:
+    """Generate a series of (midnight) days for a date range"""
+    for n in range(int((date_end - date_start).days) + 1):
+        yield date_start + timedelta(n)
+
+
 def week_series(
     start: datetime | date,
     end: datetime | date,
