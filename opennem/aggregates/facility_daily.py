@@ -212,9 +212,6 @@ def run_aggregates_facility_year(year: int, network: NetworkSchema, run_by_month
     month_max = 12  # @NOTE make this a param so we can run custom ranges
 
     if year == today.year:
-        if today.month > 1:
-            month_min = today.month - 1
-
         month_max = today.month
 
     for month in range(month_min, month_max + 1):
@@ -222,7 +219,8 @@ def run_aggregates_facility_year(year: int, network: NetworkSchema, run_by_month
 
         logger.info(f"Running for month {month} - range : {date_min} {date_max}")
 
-        exec_aggregates_facility_daily_query(date_min, date_max, network)
+        if not settings.dry_run:
+            exec_aggregates_facility_daily_query(date_min, date_max, network)
 
 
 @profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
@@ -295,6 +293,7 @@ if __name__ == "__main__":
     network = NetworkNEM
     # exec_aggregates_facility_daily_query(date_min=date_min, date_max=date_max, network=network)
     # run_aggregates_facility_year(year=2015, network=network)
-    for year in range(2004, 2009):
-        run_aggregates_facility_year(network=network, year=year, run_by_month=False)
+    # for year in range(2004, 2009):
+    # run_aggregates_facility_year(network=network, year=year, run_by_month=False)
     # run_aggregate_facility_all_by_year(network=NetworkNEM, run_by_month=True)
+    run_aggregates_facility_year(year=2024, network=NetworkNEM, run_by_month=True)
