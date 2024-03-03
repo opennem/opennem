@@ -5,7 +5,8 @@ This populated the at_network_demand aggregate table with demand data.
 
 import logging
 from datetime import datetime, timedelta
-from textwrap import dedent
+
+from sqlalchemy import text
 
 from opennem import settings
 from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
@@ -76,7 +77,7 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
         intervals_per_hour=network.intervals_per_hour * 1000,
     )
 
-    return dedent(query)
+    return text(query)
 
 
 def exec_aggregates_network_demand_query(date_min: datetime, date_max: datetime, network: NetworkSchema) -> bool:
