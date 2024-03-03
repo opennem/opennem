@@ -30,5 +30,6 @@ LOGGING_CONFIG = {
         "botocore": {"level": "ERROR"},
         "parso": {"level": "ERROR", "propagate": False},
         "matplotlib": {"level": "WARNING"},
+        "psycopg.pq": {"level": "INFO"},
     },
 }
