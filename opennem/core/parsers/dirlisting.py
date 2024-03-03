@@ -171,10 +171,11 @@ class DirectoryListing(BaseConfig):
         self.entries = list(filter(lambda x: re.match(pattern, x.link), self.entries))
 
     def get_files(self) -> list[DirlistingEntry]:
+        accepted_extensions = [".zip", ".csv", ".json"]
+
         return list(
             filter(
-                lambda x: x.entry_type == DirlistingEntryType.file
-                and (str(x.filename).lower().endswith(".zip") or str(x.filename).lower().endswith(".csv")),
+                lambda x: x.entry_type == DirlistingEntryType.file and x.filename.suffix.lower() in accepted_extensions,
                 self.entries,
             )
         )
