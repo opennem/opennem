@@ -118,7 +118,7 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
 
 def run_rooftop_fix() -> None:
     """Fixes overlap in rooftop backfill and backfill"""
-    query = "delete from at_facility_daily where trading_day < '2018-03-01 00:00:00+00' and network_id='AEMO_ROOFTOP';"
+    query = sql("delete from at_facility_daily where trading_day < '2018-03-01 00:00:00+00' and network_id='AEMO_ROOFTOP';")
 
     engine = get_database_engine()
 
