@@ -414,7 +414,7 @@ def get_scada_range(
 
     with engine.connect() as c:
         logger.debug(scada_range_query)
-        scada_range_result = list(c.execute(scada_range_query))
+        scada_range_result = list(c.execute(sql(scada_range_query)))
 
         if len(scada_range_result) < 1:
             raise HTTPException(
