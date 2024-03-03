@@ -13,7 +13,7 @@ from dateutil.relativedelta import relativedelta
 
 from opennem.core.networks import NetworkSchema
 from opennem.core.normalizers import normalize_whitespace
-from opennem.schema.network import NetworkNEM
+from opennem.schema.network import NetworkNEM, NetworkWEM
 from opennem.utils.timezone import is_aware, make_aware
 
 logger = logging.getLogger(__name__)
@@ -458,6 +458,34 @@ def get_today_nem() -> datetime:
 
     # NEM is fixed offset at +10
     nem_tz = NetworkNEM.get_fixed_offset()
+
+    nem_dt = now_no_microseconds.astimezone(nem_tz)
+
+    return nem_dt
+
+
+def get_today_wem() -> datetime:
+    """Gets today in NEM time"""
+    now = datetime.now()
+
+    now_no_microseconds = now.replace(microsecond=0)
+
+    # NEM is fixed offset at +10
+    nem_tz = NetworkWEM.get_fixed_offset()
+
+    nem_dt = now_no_microseconds.astimezone(nem_tz)
+
+    return nem_dt
+
+
+def get_today_for_network(network: NetworkSchema) -> datetime:
+    """Gets today in NEM time"""
+    now = datetime.now()
+
+    now_no_microseconds = now.replace(microsecond=0)
+
+    # NEM is fixed offset at +10
+    nem_tz = network.get_fixed_offset()
 
     nem_dt = now_no_microseconds.astimezone(nem_tz)
 
