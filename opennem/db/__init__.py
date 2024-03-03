@@ -12,7 +12,7 @@ from collections.abc import AsyncGenerator, Generator
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, scoped_session, sessionmaker
 
@@ -79,7 +79,7 @@ def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int
         raise exc
 
 
-async def db_connect_async(db_conn_str: str | None = None, debug: bool = False, timeout: int = 10) -> Engine:
+def db_connect_async(db_conn_str: str | None = None, debug: bool = False, timeout: int = 10) -> AsyncEngine:
     """
     Returns async sqlalchemy engine instance
 
@@ -133,7 +133,6 @@ async def db_connect_async(db_conn_str: str | None = None, debug: bool = False, 
 
 
 engine = db_connect()
-engine_async = db_connect_async()
 
 
 def get_database_engine() -> Engine:
@@ -148,7 +147,7 @@ def get_database_engine() -> Engine:
 
 
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
-SessionLocalAsync = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine_async))
+async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 
 def get_scoped_session() -> Session:
@@ -180,7 +179,7 @@ async def get_database_session_async() -> AsyncGenerator[Session, None]:
     s = None
 
     try:
-        s = get_scoped_session()
+        s = async_session
         yield s
     except Exception as e:
         raise e
