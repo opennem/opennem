@@ -10,6 +10,7 @@ from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, Cra
 from opennem.core.parsers.dirlisting import get_dirlisting
 from opennem.persistence.postgres_facility_scada import persist_facility_scada_bulk
 from opennem.persistence.schema import SchemaBalancingSummary, SchemaFacilityScada
+from opennem.schema.date_range import CrawlDateRange
 from opennem.schema.network import NetworkWEM
 from opennem.utils.dates import get_today_opennem
 
@@ -17,7 +18,12 @@ logger = logging.getLogger("opennem.crawlers.wemde")
 
 
 def run_wemde_crawl(
-    crawler: CrawlerDefinition, latest: bool = True, limit: int | None = None, backfill_days: int | None = None
+    crawler: CrawlerDefinition,
+    latest: bool = True,
+    limit: int | None = None,
+    backfill_days: int | None = None,
+    last_crawled: datetime | None = None,
+    date_range: CrawlDateRange | None = None,
 ) -> ControllerReturn:
     logger.info("Starting WEMDE crawl")
 
@@ -116,7 +122,13 @@ def run_wemde_crawl(
 
     crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, get_today_opennem())
 
-    return ControllerReturn(status=200, count=len(entries_to_fetch))
+    cr = ControllerReturn(
+        last_modified=get_today_opennem(),
+        server_latest=latest_interval,
+        total_records=len(data),
+    )
+
+    return cr
 
 
 def run_all_wem_crawlers(latest: bool = True) -> None:
