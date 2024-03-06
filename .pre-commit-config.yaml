@@ -1,5 +1,5 @@
 default_language_version:
-    python: python3.11
+    python: python3.12
 
 default_stages: [commit, push]
 
@@ -16,9 +16,9 @@ repos:
     - repo: https://github.com/charliermarsh/ruff-pre-commit
       rev: v0.3.0
       hooks:
-          - id: ruff
-            args:
-                - --fix
+        - id: ruff
+          args: [ --fix ]
+        - id: ruff-format
 
     # - repo: https://github.com/RobertCraigie/pyright-python
     #   rev: v1.1.295
