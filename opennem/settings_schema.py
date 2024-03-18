@@ -8,7 +8,7 @@ from datetime import UTC
 from datetime import timezone as pytimezone
 from pathlib import Path
 
-from pydantic import AliasChoices, Field, RedisDsn, field_validator
+from pydantic import AliasChoices, AnyUrl, Field, RedisDsn, field_validator
 from pydantic_settings import BaseSettings
 
 SUPPORTED_LOG_LEVEL_NAMES = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
@@ -33,6 +33,11 @@ class OpennemSettings(BaseSettings):
     redis_url: RedisDsn = Field(
         "redis://127.0.0.1",
         validation_alias=AliasChoices("REDIS_HOST_URL", "cache_url"),
+    )
+
+    clickhouse_url: AnyUrl = Field(
+        "http://127.0.0.1:8123/opennem",
+        description="Clickhouse URL",
     )
 
     # if we're doing a dry run
