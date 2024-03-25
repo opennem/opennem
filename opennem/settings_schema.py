@@ -90,7 +90,7 @@ class OpennemSettings(BaseSettings):
     # cache http requests locally
     http_cache_local: bool = False
     http_verify_ssl: bool = True
-    https_proxy_url: str | None = None  # @note don't let it confict with env HTTP_PROXY
+    http_proxy_url: str | None = None  # @note don't let it confict with env HTTP_PROXY
 
     _static_folder_path: str = "opennem/static/"
 

@@ -4,9 +4,9 @@ import logging
 
 import chardet
 import httpx
-from httpx import AsyncClient
+from httpx import AsyncClient, AsyncHTTPTransport
 
-from opennem import settings
+from opennem import __version__, settings
 
 logger = logging.getLogger("opennem.utils.httpx")
 
@@ -52,7 +52,7 @@ def httpx_factory(mimic_browser: bool = False, debug: bool = True, *args, **kwar
         headers.setdefault("user-agent", DEFAULT_USER_AGENT)
         headers.update(DEFAULT_BROWSER_HEADERS)
     else:
-        headers.setdefault("user-agent", "PageCog/1.0")
+        headers.setdefault("user-agent", f"OpenNEM/{__version__}")
 
     kwargs["headers"] = headers
 
@@ -81,7 +81,10 @@ def httpx_factory(mimic_browser: bool = False, debug: bool = True, *args, **kwar
     )
 
 
-http = httpx_factory(debug=settings.is_dev)
+http_transport = AsyncHTTPTransport(retries=settings.http_retries)
+http = httpx_factory(
+    debug=settings.is_dev, timeout=settings.http_timeout, transport=http_transport, proxy=settings.http_proxy_url
+)
 
 
 async def get_http(*args, **kwargs) -> AsyncClient:
