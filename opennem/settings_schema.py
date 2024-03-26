@@ -11,6 +11,8 @@ from pathlib import Path
 from pydantic import AliasChoices, AnyUrl, Field, RedisDsn, field_validator
 from pydantic_settings import BaseSettings
 
+from opennem.utils.url import change_url_path
+
 SUPPORTED_LOG_LEVEL_NAMES = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
 
@@ -193,3 +195,13 @@ class OpennemSettings(BaseSettings):
     @property
     def is_dev(self) -> bool:
         return self.env.lower() in ("local", "dev", "development", "staging")
+
+    @property
+    def celery_broker(self) -> str:
+        broker_url = change_url_path(str(self.redis_url), "/1")
+        return str(broker_url)
+
+    @property
+    def celery_backend(self) -> str:
+        broker_url = change_url_path(str(self.redis_url), "/2")
+        return str(broker_url)
