@@ -18,11 +18,9 @@ def _sentry_before_send(event, hint):
 def setup_sentry(sentry_url: str, environment: str = "development") -> None:
     sentry_sdk.init(
         sentry_url,
-        traces_sample_rate=1.0,
+        traces_sample_rate=0.1,
         environment=environment,
         before_send=_sentry_before_send,
         integrations=[RedisIntegration(), SqlalchemyIntegration()],
-        _experiments={
-            "profiles_sample_rate": 1.0,
-        },
+        profiles_sample_rate=0.1,
     )
