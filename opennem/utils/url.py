@@ -13,6 +13,26 @@ urllib.parse.uses_netloc.append("s3")
 urllib.parse.uses_relative.append("s3")
 
 
+def change_url_path(url: str, new_path: str) -> str:
+    # Parse the URL into its components
+    parsed_url = urlparse(url)
+
+    # Create a new tuple with the updated path
+    updated_url_components = (
+        parsed_url.scheme,
+        parsed_url.netloc,
+        new_path,
+        parsed_url.params,
+        parsed_url.query,
+        parsed_url.fragment,
+    )
+
+    # Reconstruct the URL with the updated path
+    updated_url = urlunparse(updated_url_components)
+
+    return updated_url
+
+
 def bucket_to_website(bucket_path: str, to_scheme: str = "https") -> str:
     """
     Converts a bucket path to a website path
