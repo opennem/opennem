@@ -40,6 +40,7 @@ class OpennemSettings(BaseSettings):
     clickhouse_url: AnyUrl = Field(
         "http://127.0.0.1:8123/opennem",
         description="Clickhouse URL",
+        validation_alias=AliasChoices("CLICKHOUSE_HOST_URL"),
     )
 
     # if we're doing a dry run
