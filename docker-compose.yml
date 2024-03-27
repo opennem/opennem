@@ -1,10 +1,10 @@
 version: "3.3"
 services:
   redis:
-    image: redis:6-alpine
+    image: redis:7-alpine
     hostname: redis
     ports:
-      - ${HOST:-127.0.0.1}:6379:6379
+      - ${HOST:-127.0.0.1}:${REDIS_LOCAL_PORT:-6379}:6379
     env_file:
       - ./.env
     restart: on-failure
@@ -19,9 +19,19 @@ services:
       - TIMESCALEDB_TELEMETRY=off
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-      - ${HOST:-127.0.0.1}:15433:5432
+      - ${HOST:-127.0.0.1}:${POSTGRES_LOCAL_PORT:-5432}:5432
     volumes:
       - db_data:/var/lib/postgresql/
 
+  clickhouse:
+    image: clickhouse/clickhouse-server
+    restart: unless-stopped
+    ports:
+      - ${HOST:-127.0.0.1}:${CLICKHOUSE_LOCAL_PORT:-9000}:9000
+      - ${HOST:-127.0.0.1}:${CLICKHOUSE_LOCAL_HTTP_PORT:-8123}:8123
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+
 volumes:
   db_data:
+  clickhouse_data:
