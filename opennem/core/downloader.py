@@ -3,25 +3,23 @@ from io import BytesIO
 from pathlib import Path
 from zipfile import ZipFile
 
-from opennem import settings
 from opennem.utils.archive import _handle_zip, chain_streams
-from opennem.utils.http import http
+from opennem.utils.httpx import http
 from opennem.utils.mime import mime_from_content, mime_from_url
 
 logger = logging.getLogger("opennem.downloader")
 
 
-def url_downloader(url: str) -> bytes:
+async def url_downloader(url: str) -> bytes:
     """Downloads a URL and returns content, handling embedded zips and other MIME's"""
 
     logger.debug(f"Downloading: {url}")
 
-    r = http.get(url, verify=settings.http_verify_ssl)
+    response = await http.get(url)
 
-    if not r.ok:
-        raise Exception(f"Bad link returned {r.status_code}: {url}")
+    response.raise_for_status()
 
-    content = BytesIO(r.content)
+    content = BytesIO(response.content)
 
     file_mime = mime_from_content(content)
 
@@ -87,3 +85,12 @@ def file_opener(path: Path) -> bytes:
             return chain_streams(c).read()
 
     return content.getvalue()
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    url = "https://data.wa.aemo.com.au/public/market-data/wemde/tradingReport/tradingDayReport/previous/"
+
+    content = asyncio.run(url_downloader(url))
+    print(content)
