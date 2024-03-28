@@ -17,18 +17,18 @@ from datetime import datetime
 from enum import Enum
 from operator import attrgetter
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 from urllib.parse import urljoin
 from zoneinfo import ZoneInfo
 
-from pydantic import ValidationError, field_validator, validator
+from pydantic import BaseModel, BeforeValidator, ValidationError, field_validator
 from pyquery import PyQuery as pq
 
-from opennem.core.downloader import url_downloader
 from opennem.core.normalizers import is_number, strip_double_spaces
 from opennem.core.parsers.aemo.filenames import parse_aemo_filename
 from opennem.schema.core import BaseConfig
 from opennem.schema.date_range import CrawlDateRange
+from opennem.utils.httpx import http
 
 logger = logging.getLogger("opennem.parsers.dirlisting")
 
@@ -38,20 +38,12 @@ __iis_line_match = re.compile(
 )
 
 __nemweb_line_match = re.compile(
-    r"(?P<modified_date>\d{1,2}/\d{1,2}/\d{4} \d{1,2}:\d{2} [AP]M)\s{2,}(?P<file_size>\d+)\s+"
-    r"<a href=\"(?P<link>[^\"]+)\">(?P<filename>[^<]+)"
-)
-
-__nemweb_line_match_2 = re.compile(
     r"(?P<modified_date>\d{1,2}/\d{1,2}/\d{4}\s+\d{1,2}:\d{2}\s+[AP]M)\s+(?P<file_size>\d+)"
     r"\s+<a href=\"(?P<link>[^\"]+)\">(?P<filename>[^<]+)"
 )
 
-# AEMO files have a created timestamp in their filenames. This extracts it.
-_aemo_created_date_match = re.compile(r"\_(?P<date_created>\d{12})\_")
 
-
-def parse_dirlisting_datetime(datetime_string: str | datetime) -> datetime | None:
+def parse_dirlisting_datetime(datetime_string: str | datetime) -> str:
     """Parses dates from directory listings. Primarily used for modified time"""
 
     # sometimes it already parses via pydantic
@@ -74,10 +66,13 @@ def parse_dirlisting_datetime(datetime_string: str | datetime) -> datetime | Non
         except ValueError:
             pass
 
-    if not datetime_string:
-        logger.error(f"Error parsing dirlisting datetime string: {datetime_string}")
+    if not datetime_parsed:
+        raise ValidationError(f"Error parsing dirlisting datetime string: {datetime_string}")
 
-    return datetime_parsed
+    return str(datetime_parsed)
+
+
+DirlistingModifiedDate = Annotated[str, BeforeValidator(parse_dirlisting_datetime)]
 
 
 class DirlistingEntryType(Enum):
@@ -88,20 +83,13 @@ class DirlistingEntryType(Enum):
 class DirlistingEntry(BaseConfig):
     filename: Path
     link: str
-    modified_date: datetime
+    modified_date: DirlistingModifiedDate
     aemo_interval_date: datetime | None = None
     file_size: int | None = None
     entry_type: DirlistingEntryType = DirlistingEntryType.file
 
-    _validate_modified_date = validator("modified_date", allow_reuse=True, pre=True)(parse_dirlisting_datetime)
-
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator("aemo_interval_date", always=True)
-    def _validate_aemo_created_date(cls, value: Any, values: dict[str, Any]) -> datetime | None:
-        if value:
-            raise Exception("aemGo_interval_date is derived, not set")
-
+    @field_validator("aemo_interval_date", mode="before")
+    def _validate_aemo_created_date(cls, values: dict[str, Any]) -> datetime | None:
         # no need to check if this exists since ValidationError will occur if not
         _filename_value: Path = values["filename"]
         aemo_dt = None
@@ -125,10 +113,8 @@ class DirlistingEntry(BaseConfig):
 
         return None
 
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator("entry_type", always=True)
-    def _validate_entry_type(cls, value: Any, values: dict[str, Any]) -> DirlistingEntryType:
+    @field_validator("entry_type", mode="before")
+    def _validate_entry_type(cls, values: dict[str, Any]) -> DirlistingEntryType:
         if not values["file_size"]:
             return DirlistingEntryType.directory
 
@@ -138,7 +124,7 @@ class DirlistingEntry(BaseConfig):
         return DirlistingEntryType.file
 
 
-class DirectoryListing(BaseConfig):
+class DirectoryListing(BaseModel):
     url: str
     timezone: str | None = None
     entries: list[DirlistingEntry] = []
@@ -232,7 +218,7 @@ def parse_dirlisting_line(dirlisting_line: str) -> DirlistingEntry | None:
     if not dirlisting_line:
         return None
 
-    for _match in [__iis_line_match, __nemweb_line_match_2]:
+    for _match in [__iis_line_match, __nemweb_line_match]:
         matches = _match.search(dirlisting_line)
 
         if not matches:
@@ -259,11 +245,11 @@ def parse_dirlisting_line(dirlisting_line: str) -> DirlistingEntry | None:
     return model
 
 
-def get_dirlisting(url: str, timezone: str | None = None) -> DirectoryListing:
+async def get_dirlisting(url: str, timezone: str | None = None) -> DirectoryListing:
     """Parse a directory listng into a list of DirlistingEntry models"""
-    dirlisting_content = url_downloader(url)
+    dirlisting_content = await http.get(url)
 
-    resp = pq(dirlisting_content.decode("utf-8"))
+    resp = pq(dirlisting_content.text)
 
     _dirlisting_models: list[DirlistingEntry] = []
 
@@ -272,7 +258,7 @@ def get_dirlisting(url: str, timezone: str | None = None) -> DirectoryListing:
     if not pre_area:
         raise Exception("Invalid directory listing: no pre or bad html")
 
-    for i in [i for i in pre_area.html().split("<br/>") if i]:
+    for i in [i for i in pre_area.html().split("<br/>") if pre_area.html() and isinstance(pre_area.html(), str) and i]:
         # it catches the containing block so skip those
         if not i:
             continue
@@ -302,8 +288,10 @@ def get_dirlisting(url: str, timezone: str | None = None) -> DirectoryListing:
 
 # debug entry point
 if __name__ == "__main__":
+    import asyncio
+
     url = "https://data.wa.aemo.com.au/public/market-data/wemde/tradingReport/tradingDayReport/previous/"
 
-    dirlisting = get_dirlisting(url, timezone="Australia/Perth")
+    dirlisting = asyncio.run(get_dirlisting(url, timezone="Australia/Perth"))
 
     print(dirlisting.entries[0])
