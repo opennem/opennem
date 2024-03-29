@@ -9,6 +9,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from opennem.db import SessionLocal
@@ -40,15 +41,17 @@ class CrawlStatTypes(Enum):
     data = "data"
 
 
-def crawlers_get_all_meta() -> dict[str, Any] | None:
+async def crawlers_get_all_meta() -> dict[str, Any]:
     """Get all crawler metadata"""
     crawler_meta_dict = {}
 
-    with SessionLocal() as session:
-        spider_meta = session.query(CrawlMeta).all()
+    async with SessionLocal() as session:
+        stmt = select(CrawlMeta)
+        result = await session.execute(stmt)
+        spider_meta = result.scalars().all()
 
         if not spider_meta:
-            return None
+            return {}
 
         for spider in spider_meta:
             if not spider.data:

@@ -16,7 +16,7 @@ from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
 logger = logging.getLogger("opennem.crawler.nemweb")
 
 
-def run_nemweb_aemo_crawl(
+async def run_nemweb_aemo_crawl(
     crawler: CrawlerDefinition,
     run_fill: bool = True,
     last_crawled: bool = True,
@@ -32,7 +32,7 @@ def run_nemweb_aemo_crawl(
         raise Exception("Require a URL to run AEMO MMS crawlers")
 
     try:
-        dirlisting = get_dirlisting(crawler.url, timezone="Australia/Brisbane")
+        dirlisting = await get_dirlisting(crawler.url, timezone="Australia/Brisbane")
     except Exception as e:
         logger.error(f"Could not fetch directory listing: {crawler.url}. {e}")
         return None
