@@ -1,5 +1,6 @@
 """Primary OpenNEM crawler"""
 
+import asyncio
 import logging
 
 from pydantic import ValidationError
@@ -47,7 +48,7 @@ from opennem.utils.modules import load_all_crawler_definitions
 logger = logging.getLogger("opennem.crawler")
 
 
-def load_crawlers(live_load: bool = False) -> CrawlerSet:
+async def load_crawlers(live_load: bool = False) -> CrawlerSet:
     """Loads all the crawler definitions from a module and returns a CrawlSet"""
     crawlers = []
     crawler_definitions: list[CrawlerDefinition] = []
@@ -97,7 +98,7 @@ def load_crawlers(live_load: bool = False) -> CrawlerSet:
             AEMOMMSTradingRegionsum,
         ]
 
-    crawler_meta = crawlers_get_all_meta()
+    crawler_meta = await crawlers_get_all_meta()
 
     for crawler_inst in crawler_definitions:
         if crawler_inst.name not in crawler_meta:
@@ -205,7 +206,7 @@ def get_crawl_set() -> CrawlerSet:
     global _CRAWLER_SET
 
     if not _CRAWLER_SET:
-        _CRAWLER_SET = load_crawlers()
+        _CRAWLER_SET = asyncio.run(load_crawlers())
 
     return _CRAWLER_SET
 
