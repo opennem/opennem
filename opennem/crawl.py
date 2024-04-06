@@ -144,9 +144,8 @@ def run_crawl(
         return None
 
     logger.info(
-        "Crawling: {}. (Last Crawled: {}. Limit: {}. Server latest: {})".format(
-            crawler.name, crawler.last_crawled, limit or crawler.limit, crawler.server_latest
-        )
+        f"Crawling: {crawler.name}. (Last Crawled: {crawler.last_crawled}. "
+        f"Limit: {limit or crawler.limit}. Server latest: {crawler.server_latest})"
     )
 
     # now in opennem time which is Australia/Sydney

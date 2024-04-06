@@ -49,9 +49,8 @@ def crawl_cli_run(name: str, all: bool = False, limit: int | None = None) -> Non
 
     for c in crawlers_filtered:
         console.log(
-            "Running crawler {} (Version: {})\n\tlast_crawled: {}\n\tlast_processed: {}\n\tserver_latest: {}".format(
-                c.name, c.version, c.last_crawled, c.last_processed, c.server_latest
-            )
+            f"Running crawler {c.name} (Version: {c.version})\n\tlast_crawled: {c.last_crawled}\n\tlast_processed: "
+            f"{c.last_processed}\n\tserver_latest: {c.server_latest}"
         )
         try:
             run_crawl(c, latest=not all, limit=limit)

@@ -78,12 +78,9 @@ def alert_missing_emission_factors() -> None:
     for rec in missing_factors:
         slack_message(
             webhook_url=settings.slack_hook_feedback,
-            message="{} ({}) in {} {} with fueltech {} is missing factor".format(
-                rec.facility_code,
-                rec.station_name,
-                rec.network_id,
-                rec.network_region,
-                rec.fueltech_id,
+            message=(
+                f"{rec.facility_code} ({rec.station_name}) in {rec.network_id}"
+                f" {rec.network_region} with fueltech {rec.fueltech_id} is missing factor"
             ),
             tag_users=settings.slack_admin_alert,
         )
@@ -96,11 +93,6 @@ if __name__ == "__main__":
 
     for rec in missing_factors:
         print(
-            "{} - {} in {} {} with fueltech {} is missing factor".format(
-                rec.facility_code,
-                rec.station_name,
-                rec.network_id,
-                rec.network_region,
-                rec.fueltech_id,
-            )
+            f"{rec.facility_code} - {rec.station_name} in {rec.network_id} {rec.network_region}"
+            f" with fueltech {rec.fueltech_id} is missing factor"
         )

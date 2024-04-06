@@ -161,9 +161,8 @@ class NetworkInterconnectorEnergyEmissions:
             avaliable_options = ", ".join([x.region_flow for x in self.data])
 
             raise FlowSolverException(
-                "Interconnector {} {} not found in network {}. Available options: {}".format(
-                    interval, region_flow, self.network.code, avaliable_options
-                )
+                f"Interconnector {interval} {region_flow} not found in network {self.network.code}."
+                f"Available options: {avaliable_options}"
             )
 
         if len(interconnector_result) > 1:
