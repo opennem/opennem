@@ -877,12 +877,12 @@ redis = ["redis (>=4.2.0rc1,<5.0.0)"]
 
 [[package]]
 name = "fastapi-versionizer"
-version = "3.0.4"
+version = "4.0.1"
 description = "API versionizer for FastAPI web applications"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "fastapi_versionizer-3.0.4.tar.gz", hash = "sha256:54f8b0030afef9d20f9cfb0cac89fe1da43b5680c411979c10d7178584152ea1"},
+    {file = "fastapi_versionizer-4.0.1.tar.gz", hash = "sha256:ced631ebefa4aa9774da3d1b77731ea6d3e622fd0d6a6544aac5928d3f1440f4"},
 ]
 
 [package.dependencies]
@@ -4119,4 +4119,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "97b600d122307ef827dcb1e51defc50b7b596d15356d75eb88d3a05d261bd738"
+content-hash = "81c9a9515572b87cd56327219a716675f27b45214c6bc6003280612c915578a4"
