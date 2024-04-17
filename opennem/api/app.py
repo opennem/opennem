@@ -3,6 +3,7 @@ OpenNEM API
 
 Primary Router. All the main setup of the API is here.
 """
+
 import logging
 
 from fastapi import Depends, FastAPI, HTTPException
@@ -58,6 +59,9 @@ origins = [
     "https://*.opennem-fe.pages.dev",
     "https://*.pages.dev",
     "https://*.netlify.app",
+    "https://*.openelectricity.org.au",
+    "https://explore.openelectricity.org.au",
+    "https://openelectricity.org.au",
 ]
 
 app.add_middleware(
