@@ -377,7 +377,7 @@ def power_network_fueltech_query(
         select
             time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
             ft.code as fueltech_code,
-            coalesce(sum(fs.generated), 0) as fueltech_power,
+            coalesce(sum(fs.generated), 0) * {power_scale} as fueltech_power,
             coalesce(sum(fs.generated), 0) / (60 / max(n.interval_size)) as fueltech_energy,
             max(f.emissions_factor_co2) * sum(fs.generated) /  (60 / max(n.interval_size)) as fueltech_emissions
         from facility_scada fs
@@ -403,6 +403,7 @@ def power_network_fueltech_query(
     fueltech_filter: str = ""
     wem_apvi_case: str = ""
     timezone: str = time_series.network.timezone_database
+    power_scale = 1
 
     fueltechs_excluded = ["exports", "imports", "interconnector"]
 
@@ -417,6 +418,9 @@ def power_network_fueltech_query(
         # APVI network is used to provide rooftop for WEM so we require it
         # in country-wide totals
         wem_apvi_case = "or (f.network_id='APVI' and f.network_region='WEM')"
+
+        # @NOTE this is so fucking hacky. perm fix for WEM transition to 5m intervals required.
+        power_scale = 2
 
     network_query = f"(f.network_id IN ({networks_to_in(networks_query)}) {wem_apvi_case}) and "
 
@@ -440,6 +444,7 @@ def power_network_fueltech_query(
             fueltech_filter=fueltech_filter,
             wem_apvi_case=wem_apvi_case,
             fueltechs_exclude=fueltechs_exclude,
+            power_scale=power_scale,
         )
     )
 
