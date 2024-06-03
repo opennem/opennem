@@ -12,7 +12,7 @@ from opennem.workers.facility_data_ranges import update_facility_seen_range
 logger = logging.getLogger(__name__)
 
 
-def import_all_facilities() -> None:
+async def import_all_facilities() -> None:
     import_facilities()
     logger.info("OpenNEM stations imported")
 
@@ -23,14 +23,14 @@ def import_all_facilities() -> None:
     logger.info("Interconnectors initialized")
 
 
-def init() -> None:
+async def init() -> None:
     """
     These are all the init steps required after a db has been initialized
     """
     load_fixtures()
     logger.info("Fixtures loaded")
 
-    import_all_facilities()
+    await import_all_facilities()
 
     init_stats()
     logger.info("Stats data initialized")

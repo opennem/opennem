@@ -5,6 +5,7 @@ run with either the opennem entry point or:
 $ python -m opennem.cli
 """
 
+import asyncio
 import logging
 
 import click
@@ -36,7 +37,7 @@ def cmd_db() -> None:
 
 @click.command()
 def cmd_db_init() -> None:
-    db_init()
+    asyncio.run(db_init())
 
 
 @click.command()
@@ -57,7 +58,7 @@ def cmd_export() -> None:
 
 @click.command()
 def cmd_import_facilities() -> None:
-    import_all_facilities()
+    asyncio.run(import_all_facilities())
 
 
 @click.command()

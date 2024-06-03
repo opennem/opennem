@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
 
+from sqlalchemy import select
+
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.loader import load_data
 from opennem.db import SessionLocal
@@ -174,13 +176,14 @@ def clean_facility_model_keys(facility_dict: dict[str, Any]) -> dict[str, Any]:
     return facility_dict
 
 
-def import_station_set(stations: StationSet, only_insert_facilities: bool = False) -> None:
+async def import_station_set(stations: StationSet, only_insert_facilities: bool = False) -> None:
     session = SessionLocal()
 
     for station in stations:
         add_or_update: str = "Updating"
 
-        station_model = session.query(Station).filter_by(code=station.code).one_or_none()
+        station_model_result = await session.execute(select(Station).where(code=station.code))
+        station_model = station_model_result.one_or_none()
 
         if not station_model:
             add_or_update = "Adding"
@@ -319,16 +322,18 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
         session.commit()
 
 
-def import_facilities() -> None:
+async def import_facilities() -> None:
     station_data = load_data("stations.json", from_project=True)
     stations = StationSet()
 
     for s in station_data:
         stations.add_dict(s)
 
-    import_station_set(stations)
+    await import_station_set(stations)
 
 
 if __name__ == "__main__":
-    import_facilities()
+    import asyncio
+
+    asyncio.run(import_facilities())
     # dump_facilities()
