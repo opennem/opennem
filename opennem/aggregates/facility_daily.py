@@ -41,7 +41,7 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
             f.network_region,
             f.code as facility_code,
             f.fueltech_id,
-            sum(fs.energy) as energy,
+            sum(coalesce(fs.energy, 0)) as energy,
             sum(fs.market_value) as market_value,
             sum(fs.emissions) as emissions
         from (
