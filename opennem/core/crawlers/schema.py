@@ -57,7 +57,7 @@ class CrawlerDefinition(BaseConfig):
     server_latest: datetime | None = None
 
     processor: Callable
-    parser: Callable | None
+    parser: Callable | None = None
 
 
 class CrawlerSet(BaseConfig):
