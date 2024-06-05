@@ -71,7 +71,9 @@ def generate_facility_scada(
 
     # cast dates
     df.trading_interval = pd.to_datetime(df.trading_interval)
+
     df.generated = pd.to_numeric(df.generated)
+    df["generated"] = df["generated"].fillna(0)
 
     # fill in energies
     df["eoi_quantity"] = df.generated / (60 / network.interval_size)
@@ -186,7 +188,7 @@ def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerRetu
         session.execute(stmt)
         session.commit()
         cr.inserted_records = cr.processed_records
-        cr.server_latest = max(i["trading_interval"] for i in records_to_store)
+        cr.server_latest = max(i["trading_interval"] for i in records_to_store) if records_to_store else None
     except Exception as e:
         logger.error("Error inserting records")
         logger.error(e)
@@ -247,7 +249,7 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
         session.execute(stmt)
         session.commit()
         cr.inserted_records = cr.processed_records
-        cr.server_latest = max([i["trading_interval"] for i in records_to_store])
+        cr.server_latest = max([i["trading_interval"] for i in records_to_store]) if records_to_store else None
     except Exception as e:
         logger.error("Error inserting NEM price records")
         logger.error(e)
@@ -312,7 +314,7 @@ def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
         session.execute(stmt)
         session.commit()
         cr.inserted_records = cr.processed_records
-        cr.server_latest = max([i["trading_interval"] for i in records_to_store])
+        cr.server_latest = max([i["trading_interval"] for i in records_to_store]) if records_to_store else None
     except Exception as e:
         logger.error("Error inserting records")
         logger.error(e)
@@ -394,7 +396,7 @@ def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
         session.execute(stmt)
         session.commit()
         cr.inserted_records = cr.processed_records
-        cr.server_latest = max([i["trading_interval"] for i in records_to_store])
+        cr.server_latest = max([i["trading_interval"] for i in records_to_store]) if records_to_store else None
     except Exception as e:
         logger.error("Error inserting records")
         logger.error(e)
@@ -497,7 +499,7 @@ def process_rooftop_forecast(table: AEMOTableSchema) -> ControllerReturn:
 
     cr.processed_records = len(records)
     cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])  # type: ignore
-    cr.server_latest = max([i["trading_interval"] for i in records])
+    cr.server_latest = max([i["trading_interval"] for i in records]) if records else None
 
     return cr
 
@@ -542,7 +544,7 @@ def store_aemo_tableset(tableset: AEMOTableSet) -> ControllerReturn:
             logger.info(f"Stored {record_item.inserted_records} records for table {table.full_name}")
         except Exception as e:
             logger.error(f"Error processing {table.full_name}: {e}")
-            continue
+            raise e
 
         if record_item:
             cr.processed_records += record_item.processed_records
