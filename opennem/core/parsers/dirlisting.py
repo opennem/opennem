@@ -64,7 +64,7 @@ def parse_dirlisting_datetime(datetime_string: str | datetime) -> datetime | Non
         logger.error("No dirlisting datetime string")
 
     # Wednesday, December 28, 2022 9:10
-    _FORMAT_STRINGS = ["%A, %B %d, %Y %I:%M %p", "%A, %B %d, %Y %I:%M", "%m/%d/%Y %I:%M %p", ""]
+    _FORMAT_STRINGS = ["%A, %B %d, %Y %I:%M %p", "%A, %B %d, %Y %I:%M", "%m/%d/%Y %I:%M %p"]
 
     datetime_parsed: datetime | None = None
 
