@@ -6846,7 +6846,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "commissioning",
+                "status_id": "operating",
                 "code": "WELNSF1",
                 "network_code": null,
                 "network_region": "NSW1",
