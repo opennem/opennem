@@ -9357,7 +9357,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "commissioning",
+                "status_id": "operating",
                 "code": "GANGARR1",
                 "network_code": null,
                 "network_region": "QLD1",
@@ -10298,7 +10298,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "commissioning",
+                "status_id": "operating",
                 "code": "LILYSF1",
                 "network_code": "NEM",
                 "network_region": "QLD1",
@@ -11014,7 +11014,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "commissioning",
+                "status_id": "operating",
                 "code": "OAKEY2SF",
                 "network_code": "NEM",
                 "network_region": "QLD1",
