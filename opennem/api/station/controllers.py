@@ -1,10 +1,11 @@
-from sqlalchemy.orm.session import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 from opennem.db.models.opennem import Facility, Station
 
 
-def get_stations(
-    session: Session,
+async def get_stations(
+    session: AsyncSession,
     only_approved: bool = True,
     name: str | None = None,
     limit: int | None = None,
@@ -12,34 +13,33 @@ def get_stations(
 ) -> list[Station]:
     """
     API controller that gets all stations sorted and joined
-
     """
+    async with session.begin():
+        stmt = (
+            select(Station)
+            .join(Station.facilities)
+            .join(Station.location)
+            .join(Facility.fueltech)
+            .filter(Facility.fueltech_id.isnot(None))
+            .filter(Facility.status_id.isnot(None))
+        )
 
-    stations = (
-        session.query(Station)
-        .join(Station.facilities)
-        .join(Station.location)
-        .join(Facility.fueltech)
-        .filter(Facility.fueltech_id.isnot(None))
-        .filter(Facility.status_id.isnot(None))
-    )
+        if name:
+            stmt = stmt.filter(Station.name.like(f"%{name}%"))
+        if only_approved:
+            stmt = stmt.filter(Station.approved.is_(True))
 
-    if name:
-        stations = stations.filter(Station.name.like(f"%{name}%"))
+        stmt = stmt.order_by(
+            Facility.network_region,
+            Station.name,
+            Facility.network_code,
+            Facility.code,
+        )
 
-    if only_approved:
-        stations = stations.filter(Station.approved.is_(True))
+        if limit:
+            stmt = stmt.limit(limit)
 
-    stations = stations.order_by(
-        Facility.network_region,
-        Station.name,
-        Facility.network_code,
-        Facility.code,
-    )
-
-    if limit:
-        stations = stations.limit(limit)
-
-    stations = stations.all()
+        result = await session.execute(stmt)
+        stations = result.scalars().unique().all()
 
     return stations

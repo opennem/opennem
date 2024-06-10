@@ -10,7 +10,7 @@ from opennem.db.models.opennem import Station
 from .schema import FacilityFeature, FacilityGeo
 
 
-def stations_to_geojson(stations: list[Station]) -> FacilityGeo:
+async def stations_to_geojson(stations: list[Station]) -> FacilityGeo:
     """Takes a list of station models and returns a GeoJSON FeatureCollection"""
     features = []
 
@@ -47,7 +47,7 @@ def stations_to_geojson(stations: list[Station]) -> FacilityGeo:
             feature_dict["properties"]["duid_data"].append(
                 {
                     # "oid": facility.oid,
-                    # "duid": facility.duid,
+                    "duid": facility.duid,
                     "fuel_tech": facility.fueltech.code,
                     "fuel_tech_label": facility.fueltech.label,
                     "fuel_tech_renewable": facility.fueltech.renewable,
