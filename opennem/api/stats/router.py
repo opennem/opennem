@@ -16,7 +16,7 @@ from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
 from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
-from opennem.db import get_database_engine, get_database_session
+from opennem.db import get_database_engine, get_scoped_session
 from opennem.db.models.opennem import Facility, Station
 from opennem.queries.emissions import get_emission_factor_region_query
 from opennem.queries.price import get_network_region_price_query
@@ -51,7 +51,7 @@ async def power_station(
     interval_human: str | None = None,
     period_human: str | None = None,
     period: str | None = None,  # type: ignore
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(get_scoped_session),
     engine: Engine = Depends(get_database_engine),  # type: ignore
 ) -> OpennemDataSet:
     if not network_code:
@@ -175,7 +175,7 @@ async def power_station(
 @cache(expire=60 * 60 * 12)
 async def energy_station(
     engine: Engine = Depends(get_database_engine),  # type: ignore
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(get_scoped_session),
     date_min: datetime | None = None,
     date_max: datetime | None = None,
     network_code: str | None = None,

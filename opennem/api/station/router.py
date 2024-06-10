@@ -7,7 +7,7 @@ from starlette.responses import Response
 
 from opennem.api.exceptions import OpennemBaseHttpException
 from opennem.core.dispatch_type import DispatchType
-from opennem.db import get_database_session
+from opennem.db import get_scoped_session
 from opennem.db.models.opennem import Facility, FuelTech, Location, Network, Station
 from opennem.schema.opennem import StationOutputSchema
 
@@ -38,7 +38,7 @@ class StationNoFacilities(OpennemBaseHttpException):
 )
 def stations(
     response: Response,
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(get_scoped_session),
     facilities_include: bool | None = True,
     only_approved: bool | None = False,
     name: str | None = None,
@@ -83,7 +83,7 @@ def stations(
 def station_record(
     response: Response,
     id: int,
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(get_scoped_session),
 ) -> StationResponse:
     logger.debug(f"get {id}")
 
@@ -113,7 +113,7 @@ async def station(
     network_id: str,
     station_code: str,
     only_generators: bool | None = True,
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(get_scoped_session),
 ) -> Station:
     # quick check for network and early escape before db
     if network_id.upper() not in ["NEM", "WEM"]:

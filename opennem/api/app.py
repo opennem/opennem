@@ -32,7 +32,7 @@ from opennem.api.weather.router import router as weather_router
 from opennem.api.webhooks.router import router as webhooks_router
 from opennem.core.time import INTERVALS, PERIODS
 from opennem.core.units import UNITS
-from opennem.db import get_database_session
+from opennem.db import get_scoped_session
 from opennem.db.models.opennem import FuelTech, Network, NetworkRegion
 from opennem.schema.opennem import FueltechSchema, OpennemErrorSchema
 from opennem.schema.time import TimeInterval, TimePeriod
@@ -183,7 +183,7 @@ def robots_txt() -> str:
     response_model_exclude_unset=True,
 )
 def networks(
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(get_scoped_session),
 ) -> list[APINetworkSchema]:
     networks = session.query(Network).join(NetworkRegion, NetworkRegion.network_id == Network.code).all()
 
@@ -200,7 +200,7 @@ def networks(
     response_model_exclude_unset=True,
 )
 def network_regions(
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(get_scoped_session),
     network_code: str = Query(..., description="Network code"),
 ) -> list[APINetworkRegion]:
     network_id = network_code.upper()
@@ -219,7 +219,7 @@ def network_regions(
 
 @app.get("/fueltechs", response_model=list[FueltechSchema])
 def fueltechs(
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(get_scoped_session),
 ) -> list[FueltechSchema]:
     fueltechs = session.query(FuelTech).all()
 

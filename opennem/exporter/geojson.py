@@ -8,7 +8,7 @@ def export_facility_geojson() -> None:
     with SessionLocal() as session:
         facility_geo = geo_facilities_api(only_approved=True, session=session)
 
-    write_to_s3(facility_geo.json(exclude_unset=True), "/v3/geo/au_facilities.json")
+    write_to_s3(facility_geo.model_dump_json(exclude_unset=True), "/v3/geo/au_facilities.json")
 
 
 if __name__ == "__main__":

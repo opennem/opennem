@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
 
-from opennem.db import get_database_session
+from opennem.db import get_scoped_session
 from opennem.db.models.opennem import Facility
 
 from .schema import FacilityModification, FacilityModificationTypes, FacilityRecord, FacilityUpdateResponse
@@ -19,7 +19,7 @@ router = APIRouter()
     response_model=list[FacilityRecord],
 )
 def facilities(
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(get_scoped_session),
 ) -> FacilityRecord:
     facilities = session.query(Facility).all()
 
@@ -33,7 +33,7 @@ def facilities(
 )
 def facility(
     facility_code: str,
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(get_scoped_session),
 ) -> FacilityRecord:
     facility = session.query(Facility).filter_by(code=facility_code).one_or_none()
 
@@ -47,7 +47,7 @@ def facility(
 def facility_update(
     facility_id: int,
     data: FacilityModification,
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(get_scoped_session),
 ) -> dict:
     raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Not implemented")
 

@@ -9,7 +9,7 @@ from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.api.weather.queries import observation_query
 from opennem.core.units import get_unit
-from opennem.db import get_database_engine, get_database_session
+from opennem.db import get_database_engine, get_scoped_session
 from opennem.db.models.opennem import BomStation
 from opennem.utils.timezone import get_fixed_timezone
 
@@ -25,7 +25,7 @@ router = APIRouter()
     response_model_exclude_unset=True,
 )
 def station(
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(get_scoped_session),
 ) -> list[WeatherStation]:
     """
     Get a list of all stations
@@ -45,7 +45,7 @@ def station(
 )
 def station_record(
     station_code: str,
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(get_scoped_session),
 ) -> WeatherStation:
     """
     Get a single weather station by code
