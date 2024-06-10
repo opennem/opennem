@@ -47,7 +47,7 @@ async def stations_to_geojson(stations: list[Station]) -> FacilityGeo:
             feature_dict["properties"]["duid_data"].append(
                 {
                     # "oid": facility.oid,
-                    "duid": facility.duid,
+                    "duid": facility.code,
                     "fuel_tech": facility.fueltech.code,
                     "fuel_tech_label": facility.fueltech.label,
                     "fuel_tech_renewable": facility.fueltech.renewable,
@@ -63,6 +63,8 @@ async def stations_to_geojson(stations: list[Station]) -> FacilityGeo:
                     "capacity_registered": facility.capacity_registered,
                     # "capacity_aggregate": facility.capacity_aggregate,
                     # network specific fields (DUID is one)
+                    "data_first_seen": facility.data_first_seen,
+                    "data_last_seen": facility.data_last_seen,
                     "network_region": facility.network_region,
                 }
             )

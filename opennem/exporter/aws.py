@@ -25,7 +25,12 @@ class OpennemDataSetSerializeS3:
     exclude_unset: bool = False
 
     def __init__(self, bucket_name: str, exclude_unset: bool = False, debug: bool = False) -> None:
-        self.bucket = boto3.resource("s3").Bucket(bucket_name)
+        self.bucket = boto3.resource(
+            "s3",
+            endpoint_url="https://17399e149aeaa08c0c7bbb15382fa5c3.r2.cloudflarestorage.com",
+            aws_access_key_id=settings.aws_access_key_id,
+            aws_secret_access_key=settings.aws_secret_access_key,
+        ).Bucket(bucket_name)
         self.debug = settings.debug
         self.bucket_name = bucket_name
 

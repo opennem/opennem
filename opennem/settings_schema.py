@@ -165,6 +165,10 @@ class OpennemSettings(BaseSettings):
     # webhooks
     webhook_secret: str | None = None
 
+    r2_token: str | None = None
+    aws_access_key_id: str | None = None
+    aws_secret_access_key: str | None = None
+
     # pylint: disable=no-self-argument
     @field_validator("log_level")
     @classmethod
