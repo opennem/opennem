@@ -145,8 +145,8 @@ class OpennemSettings(BaseSettings):
     api_jwks_url: str = "https://clerk.dev/.well-known/jwks.json"
 
     # unkey.dev
-    unkey_root_key: str | None = None
-    unkey_api_id: str | None = None
+    unkey_root_key: str
+    unkey_app_id: str
 
     # openai
     openai_api_key: str | None = None
