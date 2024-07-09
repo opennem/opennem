@@ -89,6 +89,7 @@ freezegun = "^1.2.2"
 pyright = "^1.1.299"
 ruff = "^0.1.14"
 hatch = "^1.7.0"
+pre-commit = "^3.7.1"
 
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'
