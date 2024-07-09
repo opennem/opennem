@@ -1,9 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 
 from opennem.api.stats.utils import get_time_series_for_station
-from opennem.api.time import human_to_interval, human_to_period
+from opennem.api.time import human_to_period  # human_to_interval
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
@@ -50,6 +50,4 @@ def test_get_time_series_for_station(
 
     if period:
         assert subject.end == nem_latest_network_interval, "End is latest interval"
-        assert subject.start == nem_latest_network_interval - human_to_interval(
-            period.period_human
-        ), "Start is latest interval minus period"
+        assert subject.start == nem_latest_network_interval - timedelta(period.period), "Start is latest interval minus period"

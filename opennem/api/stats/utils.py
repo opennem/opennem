@@ -1,6 +1,6 @@
 """ API Stats utilities """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from fastapi import HTTPException
 from starlette import status
@@ -27,7 +27,7 @@ def get_time_series_for_station(
     """
 
     # validate that we have enough information to get a time series
-    if not (date_min and date_max) or not period:
+    if (not (date_min and date_max)) and (not period):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="No time range specified. Require either date_min and date_max or period",
@@ -49,7 +49,11 @@ def get_time_series_for_station(
     # if specified a period
     if period:
         date_max = latest_network_interval
-        date_min = latest_network_interval - period
+        date_min = latest_network_interval - timedelta(days=period.period)
+
+    # OpennemExportSeries requires a defined interval, pull from network if not given
+    if not interval:
+        interval = network.get_interval()
 
     time_series = OpennemExportSeries(start=date_min, end=date_max, network=network, interval=interval, period=period)
 
