@@ -1,4 +1,5 @@
 """ Crawls and parses new WEMDE format """
+
 import logging
 from datetime import datetime
 
@@ -16,7 +17,7 @@ logger = logging.getLogger("opennem.crawlers.wemde")
 
 
 def run_wemde_crawl(
-    crawler: CrawlerDefinition, latest: bool = True, limit: int | None = None, backfill_days: int | None = None
+    crawler: CrawlerDefinition, latest: bool = True, limit: int | None = None, backfill_days: int | None = None, **kwargs
 ) -> ControllerReturn:
     logger.info("Starting WEMDE crawl")
 
