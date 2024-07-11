@@ -155,11 +155,15 @@ def attach_proxy(session: requests.Session) -> requests.Session:
 
 def test_proxy() -> None:
     """Display test proxy output"""
+    if not settings.https_proxy_url:
+        logger.debug("Attempting to test proxy with no settings set")
+        return None
+
     req = requests.Session()
     req = attach_proxy(req)
     url = "http://lumtest.com/myip.json"
 
-    resp = req.get(url)
+    resp = req.get(url, verify=False)
 
     if not resp.ok:
         logger.error("Error in test_proxy")
