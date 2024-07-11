@@ -52,8 +52,8 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
     return milestone_records
 
 
-@milestones_router.get("/", response_model=APIV4ResponseSchema, response_model_exclude_unset=True, description="Get milestones")
 @api_version(4)
+@milestones_router.get("/", response_model=APIV4ResponseSchema, response_model_exclude_unset=True, description="Get milestones")
 async def get_milestones(
     limit: int = 100, page: int = 1, date_start: datetime | None = None, date_end: datetime | None = None
 ) -> APIV4ResponseSchema:

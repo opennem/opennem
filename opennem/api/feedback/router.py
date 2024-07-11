@@ -3,6 +3,7 @@
 import logging
 
 from fastapi import APIRouter, Header, HTTPException, Request
+from fastapi_versionizer import api_version
 
 from opennem.core.feedback import UserFeedbackSubmission, persist_and_alert_user_feedback
 from opennem.schema.opennem import OpennemBaseSchema
@@ -12,6 +13,7 @@ logger = logging.getLogger("opennem.api.feedback")
 router = APIRouter()
 
 
+@api_version(3)
 @router.post("")
 @router.post("/")
 def feedback_submissions(

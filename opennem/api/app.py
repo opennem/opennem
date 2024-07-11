@@ -157,8 +157,8 @@ app.include_router(facility_router, tags=["Facilities"], prefix="/facility")
 app.include_router(weather_router, tags=["Weather"], prefix="/weather")
 app.include_router(feedback_router, tags=["Feedback"], prefix="/feedback", include_in_schema=False)
 app.include_router(dash_router, tags=["Dashboard"], prefix="/dash", include_in_schema=False)
-app.include_router(milestones_router, tags=["Milestones"], prefix="/v4/milestones", include_in_schema=True)
-app.include_router(webhooks_router, tags=["Webhooks"], prefix="/v4/webhooks", include_in_schema=False)
+app.include_router(milestones_router, tags=["Milestones"], prefix="milestones", include_in_schema=True)
+app.include_router(webhooks_router, tags=["Webhooks"], prefix="/webhooks", include_in_schema=False)
 
 
 try:

@@ -12,6 +12,7 @@ logger = logging.getLogger("opennem.api.webhooks.router")
 router = APIRouter(tags=["Webhooks"], include_in_schema=False)
 
 
+@api_version(4)
 @router.post(
     "/sanity/{webhook_secret}",
     # response_model=APIV4ResponseSchema,

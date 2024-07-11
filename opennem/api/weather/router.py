@@ -1,6 +1,7 @@
 from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi_versionizer import api_version
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -18,6 +19,7 @@ from .schema import WeatherStation
 router = APIRouter()
 
 
+@api_version(3)
 @router.get(
     "/station",
     description="List of weather stations",
@@ -36,6 +38,7 @@ def station(
     return stations
 
 
+@api_version(3)
 @router.get(
     "/station/{station_code}",
     description="Weather station record",
@@ -59,6 +62,7 @@ def station_record(
     return station
 
 
+@api_version(3)
 @router.get(
     "/station/observation/{station_code}",
     description="Observations from a station",

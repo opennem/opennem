@@ -7,6 +7,7 @@ import logging
 from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi_versionizer import api_version
 from sqlalchemy.engine.base import Engine
 from starlette import status
 
@@ -24,6 +25,7 @@ logger = logging.getLogger("opennem.api.now")
 router = APIRouter()
 
 
+@api_version(3)
 @router.get(
     "/now",
     name="Live Dashboard view results",
