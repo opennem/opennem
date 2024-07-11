@@ -12,6 +12,7 @@ from opennem import settings
 from opennem.api.export.controllers import power_week
 from opennem.api.export.queries import interconnector_flow_network_regions_query
 from opennem.api.time import human_to_interval, human_to_period, valid_database_interval
+from opennem.controllers.output.flows import power_flows_per_interval
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
 from opennem.core.networks import network_from_network_code
@@ -512,6 +513,10 @@ def power_network_region_fueltech(
 
     if not stat_set:
         raise Exception("No results")
+
+    # Add import/export
+    if flow_set := power_flows_per_interval(time_series=time_series, network_region_code=network_region_code):
+        stat_set.append_set(flow_set)
 
     return stat_set
 
