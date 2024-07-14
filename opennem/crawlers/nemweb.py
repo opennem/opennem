@@ -20,7 +20,8 @@ async def run_nemweb_aemo_crawl(
     crawler: CrawlerDefinition,
     run_fill: bool = True,
     last_crawled: bool = True,
-    limit: int | None = None,
+    limit: bool = False,
+    reverse: bool = True,
     latest: bool = True,
     date_range: CrawlDateRange | None = None,
 ) -> ControllerReturn | None:
@@ -82,6 +83,9 @@ async def run_nemweb_aemo_crawl(
 
     controller_returns: ControllerReturn | None = None
 
+    if reverse:
+        entries_to_fetch.reverse()
+
     for entry in entries_to_fetch:
         try:
             # @NOTE optimization - if we're dealing with a large file unzip
@@ -106,7 +110,7 @@ async def run_nemweb_aemo_crawl(
             if not controller_returns.last_modified or max_date > controller_returns.last_modified:
                 controller_returns.last_modified = max_date
 
-            if entry.aemo_interval_date and controller_returns.processed_records:
+            if controller_returns.processed_records > 0:
                 ch = CrawlHistoryEntry(interval=entry.aemo_interval_date, records=controller_returns.processed_records)
                 set_crawler_history(crawler_name=crawler.name, histories=[ch])
 
@@ -128,6 +132,7 @@ AEMONemwebTradingIS = CrawlerDefinition(
     url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
     network=NetworkNEM,
     backfill_days=14,
+    limit=12 * 24 * 2,
     processor=run_nemweb_aemo_crawl,
 )
 
@@ -142,6 +147,7 @@ AEMONemwebDispatchIS = CrawlerDefinition(
     url="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
     network=NetworkNEM,
     backfill_days=2,
+    limit=12 * 24 * 2,
     processor=run_nemweb_aemo_crawl,
 )
 
