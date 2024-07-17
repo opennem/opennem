@@ -11,8 +11,7 @@ import logging
 from datetime import datetime, timedelta
 from textwrap import dedent
 
-from opennem.core.profiler import profile_task
-from opennem.db import get_database_engine
+from opennem.db import db_connect, get_database_engine
 from opennem.queries.utils import duid_to_case
 from opennem.schema.core import BaseConfig
 from opennem.utils.dates import get_today_nem
@@ -23,9 +22,12 @@ logger = logging.getLogger("opennem.workers.facility_data_ranges")
 def get_update_seen_query(
     include_first_seen: bool = False,
     facility_codes: list[str] | None = None,
-    interval_window_days: int = 7,
+    interval_window_days: int | None = 7,
 ) -> str:
-    date_min = get_today_nem() - timedelta(days=interval_window_days)
+    date_min: datetime | None = None
+
+    if interval_window_days:
+        date_min = get_today_nem() - timedelta(days=interval_window_days)
 
     __query = """
     update facility f set
@@ -50,16 +52,19 @@ def get_update_seen_query(
     facility_codes_query = f"and f.code in ({duid_to_case(facility_codes)})" if facility_codes else ""
 
     trading_interval_window = ""
+
     if not include_first_seen:
         trading_interval_window = f"and fs.trading_interval > '{date_min}'"
 
     query = __query.format(fs=fs, facility_codes_query=facility_codes_query, trading_interval_window=trading_interval_window)
 
+    print(query)
+
     return dedent(query)
 
 
-@profile_task(send_slack=True)
-def update_facility_seen_range(
+# @profile_task(send_slack=True)
+async def update_facility_seen_range(
     include_first_seen: bool = False,
     facility_codes: list[str] | None = None,
 ) -> bool:
@@ -74,11 +79,11 @@ def update_facility_seen_range(
         bool: Ran successfuly
     """
 
-    engine = get_database_engine()
+    engine = db_connect()
 
     __query = get_update_seen_query(include_first_seen=include_first_seen, facility_codes=facility_codes)
 
-    with engine.begin() as c:
+    async with engine.begin() as c:
         logger.debug(__query)
         c.exec_driver_sql(__query)
 
@@ -135,4 +140,6 @@ def get_facility_seen_range(facility_codes: list[str]) -> FacilitySeenRange:
 
 
 if __name__ == "__main__":
-    update_facility_seen_range()
+    import asyncio
+
+    asyncio.run(update_facility_seen_range(include_first_seen=True))
