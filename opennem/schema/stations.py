@@ -4,11 +4,16 @@ Set of stations
 
 """
 
+import logging
 from collections import UserList
 from typing import Self
 
+from pydantic import ValidationError
+
 from opennem.exporter.encoders import opennem_serialize
 from opennem.schema.opennem import StationImportSchema
+
+logger = logging.getLogger("opennem.schema.stations")
 
 
 class StationSet(UserList):
@@ -47,9 +52,14 @@ class StationSet(UserList):
         return self
 
     def add_dict(self, station_dict: dict) -> None:
-        station = StationImportSchema(**station_dict)
-
-        self.add(station)
+        try:
+            station = StationImportSchema(**station_dict)
+            self.add(station)
+        except ValidationError as e:
+            logger.error(f"Validation error for record: {station_dict}")
+            for error in e.errors():
+                logger.debug(f"Error: {error['msg']}")
+                logger.debug(f"Field: {error['loc']}")
 
     def as_list(self) -> list[StationImportSchema]:
         return self.data
