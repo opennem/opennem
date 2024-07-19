@@ -13,10 +13,10 @@ logger = logging.getLogger(__name__)
 
 
 async def import_all_facilities() -> None:
-    import_facilities()
+    await import_facilities()
     logger.info("OpenNEM stations imported")
 
-    rooftop_facilities()
+    await rooftop_facilities()
     logger.info("Rooftop stations initialized")
 
     import_nem_interconnects()
@@ -35,5 +35,5 @@ async def init() -> None:
     init_stats()
     logger.info("Stats data initialized")
 
-    update_facility_seen_range()
+    await update_facility_seen_range()
     logger.info("Ran seen range")
