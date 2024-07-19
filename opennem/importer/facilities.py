@@ -182,6 +182,10 @@ async def import_station_set(stations: StationSet, only_insert_facilities: bool 
     for station in stations:
         add_or_update: str = "Updating"
 
+        if not station.code:
+            logger.error(f"Skipping station: {station.code} - {station.name} (network name: {station.network_name})")
+            continue
+
         station_model_result = await session.execute(select(Station).where(code=station.code))
         station_model = station_model_result.one_or_none()
 
