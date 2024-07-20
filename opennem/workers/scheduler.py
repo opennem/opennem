@@ -31,6 +31,7 @@ from opennem.pipelines.nem import (
 )
 from opennem.pipelines.wem import wem_per_interval_check
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
+from opennem.utils.sync import run_async_task_reusable
 from opennem.workers.daily import daily_catchup_runner
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 from opennem.workers.network_data_range import run_network_data_range_update
@@ -132,17 +133,19 @@ def schedule_export_geojson() -> None:
 # worker tasks
 @huey.periodic_task(crontab(hour="20", minute="45"))
 @huey.lock_task("schedule_facility_first_seen_check")
-def schedule_facility_first_seen_check() -> None:
+@run_async_task_reusable
+async def schedule_facility_first_seen_check() -> None:
     """Check for new DUIDS"""
-    facility_first_seen_check()
+    await facility_first_seen_check()
 
 
 @huey.periodic_task(crontab(hour="*/1", minute="15"))
 @huey.lock_task("run_run_network_data_range_update")
-def run_run_network_data_range_update() -> None:
+@run_async_task_reusable
+async def run_run_network_data_range_update() -> None:
     """Updates network data_range"""
     run_network_data_range_update()
-    update_facility_seen_range()
+    await update_facility_seen_range()
 
 
 # system tasks
