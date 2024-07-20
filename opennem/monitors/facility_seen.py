@@ -13,7 +13,7 @@ from sqlalchemy import text
 
 from opennem import settings
 from opennem.clients.slack import slack_message
-from opennem.db import get_database_engine
+from opennem.db import db_connect
 from opennem.schema.core import BaseConfig
 
 logger = logging.getLogger("opennem.monitors.facility_seen")
@@ -73,17 +73,17 @@ def ignored_duids(fac_records: list[FacilitySeen]) -> list[FacilitySeen]:
     return fac_filtered
 
 
-def get_facility_first_seen(period: str) -> list[FacilitySeen]:
+async def get_facility_first_seen(period: str) -> list[FacilitySeen]:
     """Run this and it'll check if there are new facilities in
     scada data and let you know which ones
 
     The query can be an expensive one so don't run to often.
     """
 
-    engine = get_database_engine()
+    engine = db_connect()
 
     query = text(
-        """
+        f"""
         select
             fs.facility_code,
             fs.network_id,
@@ -91,21 +91,21 @@ def get_facility_first_seen(period: str) -> list[FacilitySeen]:
         from facility_scada fs
         where
             fs.facility_code not in (select distinct code from facility)
-            and fs.trading_interval > now() - interval :period
+            and fs.trading_interval > now() - interval '{period}'
         group by 1, 2
-    """
+        """
     )
 
-    with engine.begin() as c:
+    async with engine.begin() as conn:
         logger.debug(query)
-        row = list(c.execute(query, {"period": period}))
+        row = await conn.execute(query)
 
     records: list[FacilitySeen] = [FacilitySeen(code=r[0], network_id=r[1], generated=r[2]) for r in row]
 
     return records
 
 
-def facility_first_seen_check(only_generation: bool = True, filter_ignored_duids: bool = False) -> list[FacilitySeen]:
+async def facility_first_seen_check(only_generation: bool = True, filter_ignored_duids: bool = False) -> list[FacilitySeen]:
     """Find new DUIDs and alert on them
 
     Args:
@@ -115,7 +115,7 @@ def facility_first_seen_check(only_generation: bool = True, filter_ignored_duids
     Returns:
         list[FacilitySeen]: a list of FacilitySeen models
     """
-    facs = get_facility_first_seen("7 days")
+    facs = await get_facility_first_seen("7 days")
 
     if filter_ignored_duids:
         facs = ignored_duids(facs)
@@ -128,7 +128,7 @@ def facility_first_seen_check(only_generation: bool = True, filter_ignored_duids
 
             msg = (
                 f"[{settings.env.upper()}] Found new facility on network {fac.network_id} with DUID: "
-                "{fac.code}. Generated: {generated_out}MW"
+                f"{fac.code}. Generated: {generated_out}MW"
             )
 
             # send a slack message and log
@@ -139,7 +139,7 @@ def facility_first_seen_check(only_generation: bool = True, filter_ignored_duids
         else:
             msg = (
                 f"[{settings.env.upper()}] Found new facility on network {fac.network_id} with DUID: "
-                "{fac.code}. No generation data"
+                f"{fac.code}. No generation data"
             )
             logger.info(msg)
 
@@ -148,7 +148,9 @@ def facility_first_seen_check(only_generation: bool = True, filter_ignored_duids
 
 # debug entry point
 if __name__ == "__main__":
-    seen_facilities = facility_first_seen_check()
+    import asyncio
+
+    seen_facilities = asyncio.run(facility_first_seen_check())
 
     for f in seen_facilities:
         logger.info(f"Unmapped: {f.network_id} {f.code} {f.generated}")
