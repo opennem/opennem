@@ -142,5 +142,10 @@
         "code": "interconnector",
         "label": "Interconnector",
         "renewable": false
+    },
+    {
+        "code": "battery",
+        "label": "Battery",
+        "renewable": true
     }
 ]
