@@ -9189,7 +9189,7 @@
         "facilities": [
             {
                 "network_id": "NEM",
-                "fueltech_id": null,
+                "fueltech_id": "aggregator_vpp",
                 "status_id": "operating",
                 "code": "ASQENC1",
                 "network_code": null,
