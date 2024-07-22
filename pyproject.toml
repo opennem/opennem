@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opennem-backend"
-version = "4.0.0a79"
+version = "4.0.0a80"
 description = "OpenNEM Australian Energy Data Backend"
 authors = ["Dylan McConnell <dylan.mcconnell@unimelb.edu.au>", "Nik Cubrilovic <nik@infotorch.org>"]
 packages = [
