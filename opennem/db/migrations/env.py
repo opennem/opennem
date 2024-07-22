@@ -1,4 +1,5 @@
 # pylint: disable=no-member
+import asyncio
 import logging
 import sys
 from logging.config import fileConfig
@@ -6,6 +7,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from alembic import context
+from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.schema import SchemaItem
 
 BASE_DIR = str(Path(__file__).parent.parent.parent.parent)
@@ -48,17 +50,7 @@ def include_object(object: SchemaItem, name: str, type_: str, reflected: bool, c
 
 
 def run_migrations_offline() -> None:
-    """Run migrations in 'offline' mode.
-
-    This configures the context with just a URL
-    and not an Engine, though an Engine is acceptable
-    here as well.  By skipping the Engine creation
-    we don't even need a DBAPI to be available.
-
-    Calls to context.execute() here emit the given string to the
-    script output.
-
-    """
+    """Run migrations in 'offline' mode."""
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -73,39 +65,32 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
-def run_migrations_online() -> None:
-    """Run migrations in 'online' mode.
-
-    In this scenario we need to create an Engine
-    and associate a connection with the context.
-
-    """
-    # connectable = engine_from_config(
-    #     config.get_section(config.config_ini_section),
-    #     prefix="sqlalchemy.",
-    #     # poolclass=pool.Pool(),
-    # )
-
+async def run_migrations_online() -> None:
+    """Run migrations in 'online' mode."""
     engine = db_connect(timeout=600)
 
-    with engine.connect() as connection:
-        context.configure(
-            include_object=include_object,
-            connection=connection,
-            target_metadata=target_metadata,
-            transaction_per_migration=True
-        )
+    if not isinstance(engine, AsyncEngine):
+        raise TypeError("Expected AsyncEngine, got {}".format(type(engine).__name__))
 
-        connection.execution_options(isolation_level="AUTOCOMMIT")
+    async with engine.connect() as connection:
+        await connection.run_sync(do_run_migrations)
 
-        try:
-            with context.begin_transaction():
-                context.run_migrations()
-        finally:
-            connection.close()
+    await engine.dispose()
+
+
+def do_run_migrations(connection):
+    context.configure(
+        connection=connection,
+        target_metadata=target_metadata,
+        include_object=include_object,
+        transaction_per_migration=True,
+    )
+
+    with context.begin_transaction():
+        context.run_migrations()
 
 
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    run_migrations_online()
+    asyncio.run(run_migrations_online())
