@@ -298,10 +298,7 @@ async def import_station_set(stations: StationSet, only_insert_facilities: bool 
                         facility_model.created_by = "opennem.init"
 
                     session.add(facility_model)
-
-                    # Explicitly append the facility to the station's facilities collection
-                    station_model_facilities = await session.merge(station_model.facilities)
-                    station_model_facilities.append(facility_model)
+                    station_model.facilities.append(facility_model)  # Directly append to the list
 
                     logger.debug(
                         " => {} facility {} to {} {}".format(
