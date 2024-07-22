@@ -15,7 +15,8 @@ logger = logging.getLogger("opennem.clients.unkey")
 
 class UnkneyUser(BaseModel):
     valid: bool
-    owner_id: str
+    id: str
+    owner_id: str | None = None
     meta: dict | None = None
     error: str | None = None
 
@@ -48,8 +49,20 @@ async def unkey_validate(api_key: str) -> None | UnkneyUser:
             logger.info("API key not found")
             return None
 
+        if not data.valid:
+            logger.info("API key is not valid")
+            return None
+
+        if data.error:
+            logger.info(f"API key error: {data.error}")
+            return None
+
+        if not data.id:
+            logger.info("API key id is not valid no id")
+            return None
+
         try:
-            model = UnkneyUser(valid=data.valid, owner_id=data.owner_id, meta=data.meta, error=data.error)
+            model = UnkneyUser(id=data.id, valid=data.valid, owner_id=data.owner_id, meta=data.meta, error=data.error)
             return model
         except ValidationError as ve:
             logger.error(f"Pydantic validation error: {ve}")
@@ -67,7 +80,7 @@ async def unkey_validate(api_key: str) -> None | UnkneyUser:
 
 # debug entry point
 if __name__ == "__main__":
-    test_key = "ondev_123123123"
+    test_key = "on_3ZixTh7Z8gqgW5gF3VoxN4PZ"
     model = asyncio.run(unkey_validate(api_key=test_key))
 
     print(f"Validation result: {model}")
