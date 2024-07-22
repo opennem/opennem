@@ -178,138 +178,137 @@ def clean_facility_model_keys(facility_dict: dict[str, Any]) -> dict[str, Any]:
 
 async def import_station_set(stations: StationSet, only_insert_facilities: bool = False) -> None:
     async with SessionLocal() as session:
-        for station in stations:
-            add_or_update: str = "Updating"
+        async with session.begin():  # Wrap whole function within a single transaction
+            for station in stations:
+                add_or_update: str = "Updating"
 
-            if not station.code:
-                logger.error(f"Skipping station: {station.code} - {station.name} (network name: {station.network_name})")
-                continue
-
-            station_model_result = await session.execute(select(Station).where(Station.code == station.code))
-            station_model = station_model_result.unique().scalar_one_or_none()
-
-            if not station_model:
-                add_or_update = "Adding"
-                station_model = Station(code=station.code)
-                station_model.created_by = "opennem.importer.facilities"
-
-            logger.debug(f"{add_or_update} station: {station.code} - {station.name} (network name: {station.network_name})")
-
-            if station.description:
-                station_model.description = station.description
-
-            if station.name:
-                station_model.name = station.name
-
-            if station.network_name:
-                station_model.network_name = station.network_name
-
-            station_model.approved = station.approved
-
-            if station.approved:
-                station_model.approved = True
-                station_model.approved_at = datetime.now()
-                station_model.approved_by = "opennem.importer.facilities"
-            else:
-                station_model.approved_at = None
-                station_model.approved_by = None
-
-            if station.website_url:
-                station_model.website_url = station.website_url
-
-            if station.network_name:
-                station_model.network_name = station.network_name
-
-            if not station_model.location_id:
-                station_model.location = Location()
-
-            if station.location:
-                station_model.location.locality = station.location.locality
-                station_model.location.state = station.location.state
-                station_model.location.postcode = station.location.postcode
-                station_model.location.country = station.location.country
-
-            if station.location.lat and station.location.lng:
-                station_model.location.geom = f"SRID=4326;POINT({station.location.lng} {station.location.lat})"
-
-            session.add(station_model)
-            await session.commit()
-
-            for fac in station.facilities:
-                facility_added = False
-
-                facility_model_result = await session.execute(
-                    select(Facility).where(Facility.code == fac.code).where(Facility.network_id == fac.network_id)
-                )
-                facility_model = facility_model_result.unique().scalar_one_or_none()
-
-                if facility_model and only_insert_facilities:
-                    logger.debug(f" => skip updating {facility_model.code}")
+                if not station.code:
+                    logger.error(f"Skipping station: {station.code} - {station.name} (network name: {station.network_name})")
                     continue
 
-                if not facility_model:
-                    logger.debug(f" => no facility for {fac.code} and {fac.network_id}")
-                    facility_model = Facility(code=fac.code, network_id=fac.network.code)
-                    facility_added = True
+                station_model_result = await session.execute(select(Station).where(Station.code == station.code))
+                station_model = station_model_result.unique().scalar_one_or_none()
 
-                if fac.fueltech_id:
-                    facility_model.fueltech_id = fac.fueltech_id
+                if not station_model:
+                    add_or_update = "Adding"
+                    station_model = Station(code=station.code)
+                    station_model.created_by = "opennem.importer.facilities"
 
-                if fac.network_id:
-                    facility_model.network_id = fac.network_id
+                logger.debug(f"{add_or_update} station: {station.code} - {station.name} (network name: {station.network_name})")
 
-                if fac.status_id:
-                    facility_model.status_id = fac.status_id
+                if station.description:
+                    station_model.description = station.description
 
-                if fac.dispatch_type:
-                    facility_model.dispatch_type = fac.dispatch_type
+                if station.name:
+                    station_model.name = station.name
 
-                if fac.capacity_registered:
-                    facility_model.capacity_registered = fac.capacity_registered
+                if station.network_name:
+                    station_model.network_name = station.network_name
 
-                if fac.registered:
-                    facility_model.registered = fac.registered
+                station_model.approved = station.approved
 
-                if fac.network_region:
-                    facility_model.network_region = fac.network_region
-
-                facility_model.unit_id = fac.unit_id
-                facility_model.unit_number = fac.unit_number
-                facility_model.unit_alias = fac.unit_alias
-                facility_model.unit_capacity = fac.unit_capacity
-
-                if fac.emissions_factor_co2:
-                    facility_model.emissions_factor_co2 = fac.emissions_factor_co2
+                if station.approved:
+                    station_model.approved = True
+                    station_model.approved_at = datetime.now()
+                    station_model.approved_by = "opennem.importer.facilities"
                 else:
-                    facility_model.emissions_factor_co2 = 0.0  # type: ignore
+                    station_model.approved_at = None
+                    station_model.approved_by = None
 
-                if fac.emission_factor_source:
-                    facility_model.emission_factor_source = fac.emission_factor_source
+                if station.website_url:
+                    station_model.website_url = station.website_url
 
-                if fac.approved:
-                    facility_model.approved = fac.approved
+                if station.network_name:
+                    station_model.network_name = station.network_name
 
-                if fac.approved:
-                    facility_model.approved_by = "opennem.importer"  # type: ignore
-                else:
-                    facility_model.approved_by = None  # type: ignore
+                if not station_model.location_id:
+                    station_model.location = Location()
 
-                if not facility_model.created_by:
-                    facility_model.created_by = "opennem.init"
+                if station.location:
+                    station_model.location.locality = station.location.locality
+                    station_model.location.state = station.location.state
+                    station_model.location.postcode = station.location.postcode
+                    station_model.location.country = station.location.country
 
-                session.add(facility_model)
-                station_model.facilities.append(facility_model)
-                logger.debug(
-                    " => {} facility {} to {} {}".format(
-                        "Added" if facility_added else "Updated",
-                        fac.code,
-                        facility_model.network_id,
-                        facility_model.network_region,
+                if station.location.lat and station.location.lng:
+                    station_model.location.geom = f"SRID=4326;POINT({station.location.lng} {station.location.lat})"
+
+                session.add(station_model)
+
+                for fac in station.facilities:
+                    facility_added = False
+
+                    facility_model_result = await session.execute(
+                        select(Facility).where(Facility.code == fac.code).where(Facility.network_id == fac.network_id)
                     )
-                )
+                    facility_model = facility_model_result.unique().scalar_one_or_none()
 
-            session.add(station_model)
-            await session.commit()
+                    if facility_model and only_insert_facilities:
+                        logger.debug(f" => skip updating {facility_model.code}")
+                        continue
+
+                    if not facility_model:
+                        logger.debug(f" => no facility for {fac.code} and {fac.network_id}")
+                        facility_model = Facility(code=fac.code, network_id=fac.network.code)
+                        facility_added = True
+
+                    if fac.fueltech_id:
+                        facility_model.fueltech_id = fac.fueltech_id
+
+                    if fac.network_id:
+                        facility_model.network_id = fac.network_id
+
+                    if fac.status_id:
+                        facility_model.status_id = fac.status_id
+
+                    if fac.dispatch_type:
+                        facility_model.dispatch_type = fac.dispatch_type
+
+                    if fac.capacity_registered:
+                        facility_model.capacity_registered = fac.capacity_registered
+
+                    if fac.registered:
+                        facility_model.registered = fac.registered
+
+                    if fac.network_region:
+                        facility_model.network_region = fac.network_region
+
+                    facility_model.unit_id = fac.unit_id
+                    facility_model.unit_number = fac.unit_number
+                    facility_model.unit_alias = fac.unit_alias
+                    facility_model.unit_capacity = fac.unit_capacity
+
+                    if fac.emissions_factor_co2:
+                        facility_model.emissions_factor_co2 = fac.emissions_factor_co2
+                    else:
+                        facility_model.emissions_factor_co2 = 0.0  # type: ignore
+
+                    if fac.emission_factor_source:
+                        facility_model.emission_factor_source = fac.emission_factor_source
+
+                    if fac.approved:
+                        facility_model.approved = fac.approved
+
+                    if fac.approved:
+                        facility_model.approved_by = "opennem.importer"  # type: ignore
+                    else:
+                        facility_model.approved_by = None  # type: ignore
+
+                    if not facility_model.created_by:
+                        facility_model.created_by = "opennem.init"
+
+                    session.add(facility_model)
+                    station_model.facilities.append(facility_model)
+                    logger.debug(
+                        " => {} facility {} to {} {}".format(
+                            "Added" if facility_added else "Updated",
+                            fac.code,
+                            facility_model.network_id,
+                            facility_model.network_region,
+                        )
+                    )
+
+                session.add(station_model)
 
 
 async def import_facilities() -> None:
@@ -326,4 +325,3 @@ if __name__ == "__main__":
     import asyncio
 
     asyncio.run(import_facilities())
-    # dump_facilities()
