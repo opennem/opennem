@@ -178,7 +178,7 @@ def clean_facility_model_keys(facility_dict: dict[str, Any]) -> dict[str, Any]:
 
 async def import_station_set(stations: StationSet, only_insert_facilities: bool = False) -> None:
     async with SessionLocal() as session:
-        async with session.begin():  # Wrap whole function within a single transaction
+        async with session.begin():  # Begin a single transaction for the entire session
             for station in stations:
                 add_or_update: str = "Updating"
 
@@ -298,7 +298,11 @@ async def import_station_set(stations: StationSet, only_insert_facilities: bool 
                         facility_model.created_by = "opennem.init"
 
                     session.add(facility_model)
-                    station_model.facilities.append(facility_model)
+
+                    # Explicitly append the facility to the station's facilities collection
+                    station_model_facilities = await session.merge(station_model.facilities)
+                    station_model_facilities.append(facility_model)
+
                     logger.debug(
                         " => {} facility {} to {} {}".format(
                             "Added" if facility_added else "Updated",
