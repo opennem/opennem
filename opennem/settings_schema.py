@@ -146,7 +146,7 @@ class OpennemSettings(BaseSettings):
 
     # unkey.dev
     unkey_root_key: str | None = None
-    unkey_app_id: str | None = None
+    unkey_api_id: str | None = None
 
     # openai
     openai_api_key: str | None = None
