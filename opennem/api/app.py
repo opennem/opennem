@@ -7,6 +7,7 @@ Primary Router. All the main setup of the API is here.
 import logging
 from contextlib import asynccontextmanager
 
+import fastapi
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.param_functions import Query
@@ -24,13 +25,14 @@ from opennem.api.dash.router import router as dash_router
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
 from opennem.api.facility.router import router as facility_router
 from opennem.api.feedback.router import router as feedback_router
-from opennem.api.keys import unkey_client, verify_api_key
+from opennem.api.keys import protected, unkey_client
 from opennem.api.milestones.router import milestones_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
 from opennem.api.weather.router import router as weather_router
 from opennem.api.webhooks.router import router as webhooks_router
+from opennem.clients.unkey import UnkneyUser
 from opennem.core.time import INTERVALS, PERIODS
 from opennem.core.units import UNITS
 from opennem.db import get_scoped_session
@@ -64,15 +66,6 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="OpenNEM", debug=settings.debug, version=get_version(), redoc_url="/docs", docs_url=None, lifespan=lifespan)
-
-versions = Versionizer(
-    app=app,
-    prefix_format="/v{major}",
-    semantic_version_format="{major}",
-    latest_prefix="/latest",
-    sort_routes=True,
-    # default_version="v{major}",
-).versionize()
 
 
 # @TODO put CORS available/permissions in settings
@@ -272,7 +265,23 @@ def health_check() -> str:
 
 
 @app.get("/me")
-async def user_profile(key_data: dict = Depends(verify_api_key)):
-    logger.debug(key_data)
-    return key_data
-    return {"message": "Access granted", "owner_id": key_data.owner_id}
+@protected()
+async def user_me(
+    *,
+    authorization: str = fastapi.Header(None),
+    user: UnkneyUser | None = None,
+) -> UnkneyUser:
+    if not user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid API key")
+
+    return user
+
+
+versions = Versionizer(
+    app=app,
+    prefix_format="/v{major}",
+    semantic_version_format="{major}.{minor}",
+    latest_prefix="",
+    sort_routes=False,
+    # default_version="v{major}",
+).versionize()
