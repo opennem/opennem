@@ -226,17 +226,19 @@ async def import_station_set(stations: StationSet, only_insert_facilities: bool 
                 await session.flush()
 
                 # Process facilities
-                existing_facilities = {f.code: f for f in station_model.facilities}
+                existing_facilities = {(f.code, f.network_id): f for f in station_model.facilities}
 
                 for fac in station.facilities:
-                    if fac.code in existing_facilities:
+                    facility_key = (fac.code, fac.network_id)
+                    if facility_key in existing_facilities:
                         if only_insert_facilities:
                             logger.debug(f" => skip updating facility {fac.code}")
                             continue
-                        facility_model = existing_facilities[fac.code]
+                        facility_model = existing_facilities[facility_key]
+                        logger.debug(f" => Updating existing facility {fac.code} in {station_model.code}")
                     else:
                         facility_model = Facility(code=fac.code, network_id=fac.network_id)
-                        logger.debug(f" => Adding facility {fac.code} to {station_model.code}")
+                        logger.debug(f" => Adding new facility {fac.code} to {station_model.code}")
 
                     # Update facility details
                     facility_model.fueltech_id = fac.fueltech_id
