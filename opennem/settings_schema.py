@@ -116,6 +116,8 @@ class OpennemSettings(BaseSettings):
     api_app_auth_key_length: int = 24
     api_auth_cookie_domain: str = "opennem.org.au"
 
+    api_throttle_rate: float = 1.0
+
     # API Keys
 
     # willy weather client
