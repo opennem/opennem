@@ -1,10 +1,13 @@
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 from starlette import status
 from starlette.responses import Response
 
+from opennem.api import throttle
 from opennem.api.exceptions import OpennemBaseHttpException
 from opennem.core.dispatch_type import DispatchType
 from opennem.db import get_scoped_session
@@ -30,42 +33,42 @@ class StationNoFacilities(OpennemBaseHttpException):
     detail = "Station has no facilities"
 
 
+@throttle.throttle_request()
 @router.get(
     "/",
     response_model=StationsResponse,
     description="Get a list of all stations",
     response_model_exclude_none=True,
 )
-def stations(
+async def get_stations(
     response: Response,
-    session: Session = Depends(get_scoped_session),
+    session: AsyncSession = Depends(get_scoped_session),
     facilities_include: bool | None = True,
     only_approved: bool | None = False,
     name: str | None = None,
     limit: int | None = None,
     page: int = 1,
 ) -> StationsResponse:
-    stations = session.query(Station).join(Location).enable_eagerloads(True)
+    query = select(Station).join(Location)
 
     if facilities_include:
-        stations = stations.outerjoin(Facility, Facility.station_id == Station.id).outerjoin(
+        query = query.outerjoin(Facility, Facility.station_id == Station.id).outerjoin(
             FuelTech, Facility.fueltech_id == FuelTech.code
         )
 
     if only_approved:
-        stations = stations.filter(Station.approved == True)  # noqa: E712
+        query = query.where(Station.approved == True)  # noqa: E712
 
     if name:
-        stations = stations.filter(Station.name.like(f"%{name}%"))
+        query = query.where(Station.name.like(f"%{name}%"))
 
-    stations = stations.order_by(
-        Station.name,
-    )
+    query = query.order_by(Station.name)
 
     if limit:
-        stations = stations.limit(limit)
+        query = query.limit(limit)
 
-    stations = stations.all()
+    result = await session.execute(query)
+    stations = result.unique().scalars().all()
 
     resp = StationsResponse(data=stations, total_records=len(stations))
 
@@ -80,14 +83,15 @@ def stations(
     description="Get a single station record",
     response_model_exclude_none=False,
 )
-def station_record(
+async def station_record(
     response: Response,
     id: int,
-    session: Session = Depends(get_scoped_session),
+    session: AsyncSession = Depends(get_scoped_session),
 ) -> StationResponse:
     logger.debug(f"get {id}")
 
-    station = session.query(Station).get(id)
+    result = await session.execute(select(Station).where(Station.id == id))
+    station = result.scalar_one_or_none()
 
     if not station:
         raise StationNotFound()
@@ -106,33 +110,31 @@ def station_record(
     response_model=StationOutputSchema,
     response_model_exclude_none=True,
 )
-# @NOTE this isn't correctly caching the WKB field in location
-# @TODO fix this ;)
-# @cache(expire=60 * 60 * 1)
 async def station(
     network_id: str,
     station_code: str,
     only_generators: bool | None = True,
-    session: Session = Depends(get_scoped_session),
+    session: AsyncSession = Depends(get_scoped_session),
 ) -> Station:
-    # quick check for network and early escape before db
     if network_id.upper() not in ["NEM", "WEM"]:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Network not found")
 
-    station_query = (
-        session.query(Station)
+    query = (
+        select(Station)
         .join(Facility, Facility.station_id == Station.id)
         .join(Network, Network.code == Facility.network_id)
         .join(Location, Location.id == Station.location_id)
-        .filter(Station.code == station_code)
-        .filter(Network.code == network_id)
-        .filter(Facility.dispatch_type == DispatchType.GENERATOR)
+        .where(Station.code == station_code)
+        .where(Network.code == network_id)
+        .where(Facility.dispatch_type == DispatchType.GENERATOR)
+        .options(joinedload(Station.facilities))
     )
 
     if only_generators:
-        station_query = station_query.filter(Facility.dispatch_type == DispatchType.GENERATOR)
+        query = query.where(Facility.dispatch_type == DispatchType.GENERATOR)
 
-    station: Station | None = station_query.one_or_none()
+    result = await session.execute(query)
+    station = result.unique().scalar_one_or_none()
 
     if not station:
         raise StationNotFound()
