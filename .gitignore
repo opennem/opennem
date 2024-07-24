@@ -126,3 +126,4 @@ notebooks/
 .jupyter/
 infra/backups/
 sanity_response.py
+test.db
