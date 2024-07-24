@@ -35,7 +35,8 @@ async def unkey_validate(api_key: str) -> None | UnkneyUser:
     await client.start()
 
     try:
-        result = await client.keys.verify_key(key=api_key, api_id=settings.unkey_api_id)
+        async with unkey.client.Client() as c:
+            result = await c.keys.verify_key(key=api_key, api_id=settings.unkey_api_id)  # type: ignore
 
         if not result.is_ok:
             logger.warning("Unkey verification failed")
