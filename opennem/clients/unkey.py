@@ -42,6 +42,12 @@ async def unkey_validate(api_key: str) -> None | UnkneyUser:
             logger.warning("Unkey verification failed")
             return None
 
+        if result.is_err:
+            err = result.unwrap_err()
+            code = (err.code or unkey.models.ErrorCode.Unknown).value
+            logger.info(f"Unkey verification failed: {code}")
+            return None
+
         data = result.unwrap()
         logger.debug(f"Unkey response data: {data}")
 
