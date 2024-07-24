@@ -32,6 +32,10 @@ class OpennemSettings(BaseSettings):
 
     db_url: str = Field("postgresql://user:pass@127.0.0.1:15444/opennem", validation_alias=AliasChoices("DATABASE_HOST_URL"))
 
+    db_test_url: str = Field(
+        "postgresql://user:pass@127.0.0.1:15444/opennem_test", validation_alias=AliasChoices("DATABASE_TEST_URL")
+    )
+
     redis_url: RedisDsn = Field(
         "redis://127.0.0.1",
         validation_alias=AliasChoices("REDIS_HOST_URL", "cache_url"),
