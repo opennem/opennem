@@ -1,0 +1,1885 @@
+{
+    "date_created": "2022-07-18T20:30:40.996251",
+    "version": "3.10.6-alpha.0",
+    "resources": [
+        {
+            "stat_type": "power",
+            "priority": 1,
+            "country": "au",
+            "network": {
+                "code": "AU",
+                "country": "au",
+                "label": "AU",
+                "timezone": "Australia/Sydney",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 30,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "WEM",
+                    "country": "au",
+                    "label": "WEM",
+                    "timezone": "Australia/Perth",
+                    "timezone_database": "AWST",
+                    "offset": 480,
+                    "interval_size": 30,
+                    "data_first_seen": "2006-09-20T02:00:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                },
+                {
+                    "code": "AU",
+                    "country": "au",
+                    "label": "AU",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            ],
+            "date_range": {
+                "start": "2022-01-01T10:00:00+10:00",
+                "end": "2022-07-19T06:25:00+10:00",
+                "network": {
+                    "code": "AU",
+                    "country": "au",
+                    "label": "AU",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "period": {
+                "period": 10080,
+                "period_human": "7d",
+                "period_sql": "7 days"
+            },
+            "interval": {
+                "interval": 30,
+                "interval_human": "30m",
+                "interval_sql": "30 minutes",
+                "trunc": "hour"
+            },
+            "file_path": "v3/stats/au/AU/power/7d.json"
+        },
+        {
+            "stat_type": "energy",
+            "priority": 2,
+            "country": "au",
+            "network": {
+                "code": "AU",
+                "country": "au",
+                "label": "AU",
+                "timezone": "Australia/Sydney",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 30,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "WEM",
+                    "country": "au",
+                    "label": "WEM",
+                    "timezone": "Australia/Perth",
+                    "timezone_database": "AWST",
+                    "offset": 480,
+                    "interval_size": 30,
+                    "data_first_seen": "2006-09-20T02:00:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                },
+                {
+                    "code": "AU",
+                    "country": "au",
+                    "label": "AU",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            ],
+            "date_range": {
+                "start": "2022-01-01T10:00:00+10:00",
+                "end": "2022-07-19T06:25:00+10:00",
+                "network": {
+                    "code": "AU",
+                    "country": "au",
+                    "label": "AU",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "year": 2022,
+            "period": {
+                "period": 525600,
+                "period_human": "1Y",
+                "period_sql": "1 year"
+            },
+            "interval": {
+                "interval": 1440,
+                "interval_human": "1d",
+                "interval_sql": "1 day",
+                "trunc": "day"
+            },
+            "file_path": "v3/stats/au/AU/energy/2022.json"
+        },
+        {
+            "stat_type": "energy",
+            "priority": 3,
+            "country": "au",
+            "network": {
+                "code": "AU",
+                "country": "au",
+                "label": "AU",
+                "timezone": "Australia/Sydney",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 30,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "WEM",
+                    "country": "au",
+                    "label": "WEM",
+                    "timezone": "Australia/Perth",
+                    "timezone_database": "AWST",
+                    "offset": 480,
+                    "interval_size": 30,
+                    "data_first_seen": "2006-09-20T02:00:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                },
+                {
+                    "code": "APVI",
+                    "country": "au",
+                    "label": "APVI",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 15,
+                    "data_first_seen": "2015-03-20T06:15:00+10:00"
+                }
+            ],
+            "date_range": {
+                "start": "2022-01-01T10:00:00+10:00",
+                "end": "2022-07-19T06:25:00+10:00",
+                "network": {
+                    "code": "AU",
+                    "country": "au",
+                    "label": "AU",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "period": {
+                "period": 10512000,
+                "period_human": "all",
+                "period_sql": "20 years"
+            },
+            "interval": {
+                "interval": 43800,
+                "interval_human": "1M",
+                "interval_sql": "1 month",
+                "trunc": "month"
+            },
+            "file_path": "v3/stats/au/AU/energy/all.json"
+        },
+        {
+            "stat_type": "power",
+            "priority": 1,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": null,
+            "period": {
+                "period": 10080,
+                "period_human": "7d",
+                "period_sql": "7 days"
+            },
+            "interval": {
+                "interval": 5,
+                "interval_human": "5m",
+                "interval_sql": "5 minutes",
+                "trunc": "hour"
+            },
+            "file_path": "v3/stats/au/NEM/power/7d.json"
+        },
+        {
+            "stat_type": "energy",
+            "priority": 2,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": null,
+            "year": 2022,
+            "period": {
+                "period": 525600,
+                "period_human": "1Y",
+                "period_sql": "1 year"
+            },
+            "interval": {
+                "interval": 1440,
+                "interval_human": "1d",
+                "interval_sql": "1 day",
+                "trunc": "day"
+            },
+            "file_path": "v3/stats/au/NEM/energy/2022.json"
+        },
+        {
+            "stat_type": "energy",
+            "priority": 3,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": null,
+            "period": {
+                "period": 10512000,
+                "period_human": "all",
+                "period_sql": "20 years"
+            },
+            "interval": {
+                "interval": 43800,
+                "interval_human": "1M",
+                "interval_sql": "1 month",
+                "trunc": "month"
+            },
+            "file_path": "v3/stats/au/NEM/energy/all.json"
+        },
+        {
+            "stat_type": "power",
+            "priority": 1,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "network_region": "NSW1",
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": "066214",
+            "period": {
+                "period": 10080,
+                "period_human": "7d",
+                "period_sql": "7 days"
+            },
+            "interval": {
+                "interval": 5,
+                "interval_human": "5m",
+                "interval_sql": "5 minutes",
+                "trunc": "hour"
+            },
+            "file_path": "v3/stats/au/NEM/NSW1/power/7d.json"
+        },
+        {
+            "stat_type": "energy",
+            "priority": 2,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "network_region": "NSW1",
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": "066214",
+            "year": 2022,
+            "period": {
+                "period": 525600,
+                "period_human": "1Y",
+                "period_sql": "1 year"
+            },
+            "interval": {
+                "interval": 1440,
+                "interval_human": "1d",
+                "interval_sql": "1 day",
+                "trunc": "day"
+            },
+            "file_path": "v3/stats/au/NEM/NSW1/energy/2022.json"
+        },
+        {
+            "stat_type": "energy",
+            "priority": 3,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "network_region": "NSW1",
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": "066214",
+            "period": {
+                "period": 10512000,
+                "period_human": "all",
+                "period_sql": "20 years"
+            },
+            "interval": {
+                "interval": 43800,
+                "interval_human": "1M",
+                "interval_sql": "1 month",
+                "trunc": "month"
+            },
+            "file_path": "v3/stats/au/NEM/NSW1/energy/all.json"
+        },
+        {
+            "stat_type": "power",
+            "priority": 1,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "network_region": "QLD1",
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": "040913",
+            "period": {
+                "period": 10080,
+                "period_human": "7d",
+                "period_sql": "7 days"
+            },
+            "interval": {
+                "interval": 5,
+                "interval_human": "5m",
+                "interval_sql": "5 minutes",
+                "trunc": "hour"
+            },
+            "file_path": "v3/stats/au/NEM/QLD1/power/7d.json"
+        },
+        {
+            "stat_type": "energy",
+            "priority": 2,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "network_region": "QLD1",
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": "040913",
+            "year": 2022,
+            "period": {
+                "period": 525600,
+                "period_human": "1Y",
+                "period_sql": "1 year"
+            },
+            "interval": {
+                "interval": 1440,
+                "interval_human": "1d",
+                "interval_sql": "1 day",
+                "trunc": "day"
+            },
+            "file_path": "v3/stats/au/NEM/QLD1/energy/2022.json"
+        },
+        {
+            "stat_type": "energy",
+            "priority": 3,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "network_region": "QLD1",
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": "040913",
+            "period": {
+                "period": 10512000,
+                "period_human": "all",
+                "period_sql": "20 years"
+            },
+            "interval": {
+                "interval": 43800,
+                "interval_human": "1M",
+                "interval_sql": "1 month",
+                "trunc": "month"
+            },
+            "file_path": "v3/stats/au/NEM/QLD1/energy/all.json"
+        },
+        {
+            "stat_type": "power",
+            "priority": 1,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "network_region": "VIC1",
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": "086338",
+            "period": {
+                "period": 10080,
+                "period_human": "7d",
+                "period_sql": "7 days"
+            },
+            "interval": {
+                "interval": 5,
+                "interval_human": "5m",
+                "interval_sql": "5 minutes",
+                "trunc": "hour"
+            },
+            "file_path": "v3/stats/au/NEM/VIC1/power/7d.json"
+        },
+        {
+            "stat_type": "energy",
+            "priority": 2,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "network_region": "VIC1",
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": "086338",
+            "year": 2022,
+            "period": {
+                "period": 525600,
+                "period_human": "1Y",
+                "period_sql": "1 year"
+            },
+            "interval": {
+                "interval": 1440,
+                "interval_human": "1d",
+                "interval_sql": "1 day",
+                "trunc": "day"
+            },
+            "file_path": "v3/stats/au/NEM/VIC1/energy/2022.json"
+        },
+        {
+            "stat_type": "energy",
+            "priority": 3,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "network_region": "VIC1",
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": "086338",
+            "period": {
+                "period": 10512000,
+                "period_human": "all",
+                "period_sql": "20 years"
+            },
+            "interval": {
+                "interval": 43800,
+                "interval_human": "1M",
+                "interval_sql": "1 month",
+                "trunc": "month"
+            },
+            "file_path": "v3/stats/au/NEM/VIC1/energy/all.json"
+        },
+        {
+            "stat_type": "power",
+            "priority": 1,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "network_region": "TAS1",
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": "094029",
+            "period": {
+                "period": 10080,
+                "period_human": "7d",
+                "period_sql": "7 days"
+            },
+            "interval": {
+                "interval": 5,
+                "interval_human": "5m",
+                "interval_sql": "5 minutes",
+                "trunc": "hour"
+            },
+            "file_path": "v3/stats/au/NEM/TAS1/power/7d.json"
+        },
+        {
+            "stat_type": "energy",
+            "priority": 2,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "network_region": "TAS1",
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": "094029",
+            "year": 2022,
+            "period": {
+                "period": 525600,
+                "period_human": "1Y",
+                "period_sql": "1 year"
+            },
+            "interval": {
+                "interval": 1440,
+                "interval_human": "1d",
+                "interval_sql": "1 day",
+                "trunc": "day"
+            },
+            "file_path": "v3/stats/au/NEM/TAS1/energy/2022.json"
+        },
+        {
+            "stat_type": "energy",
+            "priority": 3,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "network_region": "TAS1",
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": "094029",
+            "period": {
+                "period": 10512000,
+                "period_human": "all",
+                "period_sql": "20 years"
+            },
+            "interval": {
+                "interval": 43800,
+                "interval_human": "1M",
+                "interval_sql": "1 month",
+                "trunc": "month"
+            },
+            "file_path": "v3/stats/au/NEM/TAS1/energy/all.json"
+        },
+        {
+            "stat_type": "power",
+            "priority": 1,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "network_region": "SA1",
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": "023000",
+            "period": {
+                "period": 10080,
+                "period_human": "7d",
+                "period_sql": "7 days"
+            },
+            "interval": {
+                "interval": 5,
+                "interval_human": "5m",
+                "interval_sql": "5 minutes",
+                "trunc": "hour"
+            },
+            "file_path": "v3/stats/au/NEM/SA1/power/7d.json"
+        },
+        {
+            "stat_type": "energy",
+            "priority": 2,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "network_region": "SA1",
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": "023000",
+            "year": 2022,
+            "period": {
+                "period": 525600,
+                "period_human": "1Y",
+                "period_sql": "1 year"
+            },
+            "interval": {
+                "interval": 1440,
+                "interval_human": "1d",
+                "interval_sql": "1 day",
+                "trunc": "day"
+            },
+            "file_path": "v3/stats/au/NEM/SA1/energy/2022.json"
+        },
+        {
+            "stat_type": "energy",
+            "priority": 3,
+            "country": "au",
+            "network": {
+                "code": "NEM",
+                "country": "au",
+                "label": "NEM",
+                "timezone": "Australia/Brisbane",
+                "timezone_database": "AEST",
+                "offset": 600,
+                "interval_size": 5,
+                "interval_shift": 5,
+                "data_first_seen": "1998-12-07T01:50:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP",
+                    "country": "au",
+                    "label": "AEMO Rooftop",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30,
+                    "data_first_seen": "2016-08-01T00:30:00+10:00"
+                },
+                {
+                    "code": "AEMO_ROOFTOP_BACKFILL",
+                    "country": "au",
+                    "label": "AEMO Rooftop Backfill",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 30
+                }
+            ],
+            "network_region": "SA1",
+            "date_range": {
+                "start": "2022-01-31T17:25:00+10:00",
+                "end": "2022-07-19T02:15:00+10:00",
+                "network": {
+                    "code": "NEM",
+                    "country": "au",
+                    "label": "NEM",
+                    "regions": null,
+                    "timezone": "Australia/Brisbane",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 5,
+                    "interval_shift": 5,
+                    "data_first_seen": "1998-12-07T01:50:00+10:00"
+                }
+            },
+            "bom_station": "023000",
+            "period": {
+                "period": 10512000,
+                "period_human": "all",
+                "period_sql": "20 years"
+            },
+            "interval": {
+                "interval": 43800,
+                "interval_human": "1M",
+                "interval_sql": "1 month",
+                "trunc": "month"
+            },
+            "file_path": "v3/stats/au/NEM/SA1/energy/all.json"
+        },
+        {
+            "stat_type": "power",
+            "priority": 1,
+            "country": "au",
+            "network": {
+                "code": "WEM",
+                "country": "au",
+                "label": "WEM",
+                "timezone": "Australia/Perth",
+                "timezone_database": "AWST",
+                "offset": 480,
+                "interval_size": 30,
+                "data_first_seen": "2006-09-20T02:00:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "WEM",
+                    "country": "au",
+                    "label": "WEM",
+                    "timezone": "Australia/Perth",
+                    "timezone_database": "AWST",
+                    "offset": 480,
+                    "interval_size": 30,
+                    "data_first_seen": "2006-09-20T02:00:00+10:00"
+                }
+            ],
+            "network_region_query": "WEM",
+            "date_range": {
+                "start": "2022-01-01T08:00:00+08:00",
+                "end": "2022-07-19T03:30:00+08:00",
+                "network": {
+                    "code": "WEM",
+                    "country": "au",
+                    "label": "WEM",
+                    "regions": null,
+                    "timezone": "Australia/Perth",
+                    "timezone_database": "AWST",
+                    "offset": 480,
+                    "interval_size": 30,
+                    "interval_shift": 0,
+                    "data_first_seen": "2006-09-20T02:00:00+10:00"
+                }
+            },
+            "bom_station": "009021",
+            "period": {
+                "period": 10080,
+                "period_human": "7d",
+                "period_sql": "7 days"
+            },
+            "interval": {
+                "interval": 30,
+                "interval_human": "30m",
+                "interval_sql": "30 minutes",
+                "trunc": "hour"
+            },
+            "file_path": "v3/stats/au/WEM/power/7d.json"
+        },
+        {
+            "stat_type": "energy",
+            "priority": 2,
+            "country": "au",
+            "network": {
+                "code": "WEM",
+                "country": "au",
+                "label": "WEM",
+                "timezone": "Australia/Perth",
+                "timezone_database": "AWST",
+                "offset": 480,
+                "interval_size": 30,
+                "data_first_seen": "2006-09-20T02:00:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "WEM",
+                    "country": "au",
+                    "label": "WEM",
+                    "timezone": "Australia/Perth",
+                    "timezone_database": "AWST",
+                    "offset": 480,
+                    "interval_size": 30,
+                    "data_first_seen": "2006-09-20T02:00:00+10:00"
+                },
+                {
+                    "code": "APVI",
+                    "country": "au",
+                    "label": "APVI",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 15,
+                    "data_first_seen": "2015-03-20T06:15:00+10:00"
+                }
+            ],
+            "network_region_query": "WEM",
+            "date_range": {
+                "start": "2022-01-01T08:00:00+08:00",
+                "end": "2022-07-19T03:30:00+08:00",
+                "network": {
+                    "code": "WEM",
+                    "country": "au",
+                    "label": "WEM",
+                    "regions": null,
+                    "timezone": "Australia/Perth",
+                    "timezone_database": "AWST",
+                    "offset": 480,
+                    "interval_size": 30,
+                    "interval_shift": 0,
+                    "data_first_seen": "2006-09-20T02:00:00+10:00"
+                }
+            },
+            "bom_station": "009021",
+            "year": 2022,
+            "period": {
+                "period": 525600,
+                "period_human": "1Y",
+                "period_sql": "1 year"
+            },
+            "interval": {
+                "interval": 1440,
+                "interval_human": "1d",
+                "interval_sql": "1 day",
+                "trunc": "day"
+            },
+            "file_path": "v3/stats/au/WEM/energy/2022.json"
+        },
+        {
+            "stat_type": "energy",
+            "priority": 3,
+            "country": "au",
+            "network": {
+                "code": "WEM",
+                "country": "au",
+                "label": "WEM",
+                "timezone": "Australia/Perth",
+                "timezone_database": "AWST",
+                "offset": 480,
+                "interval_size": 30,
+                "data_first_seen": "2006-09-20T02:00:00+10:00"
+            },
+            "networks": [
+                {
+                    "code": "WEM",
+                    "country": "au",
+                    "label": "WEM",
+                    "timezone": "Australia/Perth",
+                    "timezone_database": "AWST",
+                    "offset": 480,
+                    "interval_size": 30,
+                    "data_first_seen": "2006-09-20T02:00:00+10:00"
+                },
+                {
+                    "code": "APVI",
+                    "country": "au",
+                    "label": "APVI",
+                    "timezone": "Australia/Sydney",
+                    "timezone_database": "AEST",
+                    "offset": 600,
+                    "interval_size": 15,
+                    "data_first_seen": "2015-03-20T06:15:00+10:00"
+                }
+            ],
+            "network_region_query": "WEM",
+            "date_range": {
+                "start": "2022-01-01T08:00:00+08:00",
+                "end": "2022-07-19T03:30:00+08:00",
+                "network": {
+                    "code": "WEM",
+                    "country": "au",
+                    "label": "WEM",
+                    "regions": null,
+                    "timezone": "Australia/Perth",
+                    "timezone_database": "AWST",
+                    "offset": 480,
+                    "interval_size": 30,
+                    "interval_shift": 0,
+                    "data_first_seen": "2006-09-20T02:00:00+10:00"
+                }
+            },
+            "bom_station": "009021",
+            "period": {
+                "period": 10512000,
+                "period_human": "all",
+                "period_sql": "20 years"
+            },
+            "interval": {
+                "interval": 43800,
+                "interval_human": "1M",
+                "interval_sql": "1 month",
+                "trunc": "month"
+            },
+            "file_path": "v3/stats/au/WEM/energy/all.json"
+        }
+    ]
+}
