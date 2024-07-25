@@ -4,25 +4,17 @@ import asyncio
 import logging
 
 import unkey
-from cachetools.func import ttl_cache
-from pydantic import BaseModel, ValidationError
+from pydantic import ValidationError
 from unkey import ErrorCode
 
 from opennem import settings
+from opennem.users.schema import OpenNEMRoles, OpenNEMUser, OpenNEMUserRateLimit
 
 logger = logging.getLogger("opennem.clients.unkey")
 
 
-class UnkneyUser(BaseModel):
-    valid: bool
-    id: str
-    owner_id: str | None = None
-    meta: dict | None = None
-    error: str | None = None
-
-
-@ttl_cache(maxsize=100, ttl=60 * 5)
-async def unkey_validate(api_key: str) -> None | UnkneyUser:
+# @ttl_cache(maxsize=100, ttl=60 * 5)
+async def unkey_validate(api_key: str) -> None | OpenNEMUser:
     """Validate a key with unkey"""
 
     if not settings.unkey_root_key:
@@ -69,7 +61,18 @@ async def unkey_validate(api_key: str) -> None | UnkneyUser:
             return None
 
         try:
-            model = UnkneyUser(id=data.id, valid=data.valid, owner_id=data.owner_id, meta=data.meta, error=data.error)
+            model = OpenNEMUser(id=data.id, valid=data.valid, owner_id=data.owner_id, meta=data.meta, error=data.error)
+
+            if data.ratelimit:
+                model.rate_limit = OpenNEMUserRateLimit(
+                    limit=data.ratelimit.limit, remaining=data.ratelimit.remaining, reset=data.ratelimit.reset
+                )
+
+            if data.meta:
+                if "roles" in data.meta:
+                    for role in data.meta["roles"]:
+                        model.roles.append(OpenNEMRoles(role))
+
             return model
         except ValidationError as ve:
             logger.error(f"Pydantic validation error: {ve}")
@@ -87,7 +90,16 @@ async def unkey_validate(api_key: str) -> None | UnkneyUser:
 
 # debug entry point
 if __name__ == "__main__":
-    test_key = "on_3ZixTh7Z8gqgW5gF3VoxN4PZ"
+    import os
+
+    test_key = os.environ.get("OPENNEM_UNKEY_TEST_KEY", None)
+
+    if not test_key:
+        raise Exception("No test key set")
+
     model = asyncio.run(unkey_validate(api_key=test_key))
 
-    print(f"Validation result: {model}")
+    if not model:
+        print("No model")
+    else:
+        print(model)
