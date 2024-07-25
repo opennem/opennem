@@ -16,7 +16,6 @@ from opennem.core.dispatch_type import DispatchType
 from opennem.core.networks import datetime_add_network_timezone
 from opennem.core.normalizers import clean_capacity, string_to_title
 from opennem.schema.response import ResponseStatus
-from opennem.utils.dates import chop_datetime_microseconds, optionally_parse_string_datetime
 from opennem.utils.version import get_version
 
 from .core import BaseConfig
@@ -27,10 +26,7 @@ logger = logging.getLogger(__name__)
 
 class OpennemBaseSchema(BaseConfig):
     version: str = get_version()
-    created_at: datetime = chop_datetime_microseconds(datetime.now())
     response_status: ResponseStatus = ResponseStatus.OK
-
-    _version_fromstr = validator("created_at", allow_reuse=True, pre=True)(optionally_parse_string_datetime)
 
 
 class OpennemBaseDataSchema(OpennemBaseSchema):
