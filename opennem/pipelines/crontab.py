@@ -7,7 +7,6 @@ from datetime import datetime
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.pipelines.cron")
-# from opennem.utils.dates import get_last_completed_interval_for_network
 
 
 def network_interval_crontab(network: NetworkSchema, number_minutes: int = 2) -> Callable[[datetime], bool]:
@@ -22,7 +21,7 @@ def network_interval_crontab(network: NetworkSchema, number_minutes: int = 2) ->
         _, _, _, _, M, s, _, _, _ = timestamp.timetuple()
 
         if M % network.interval_size in set(range(0, number_minutes)):
-            logging.debug(f"Running crontab for {network.code} at {timestamp}")
+            logger.debug(f"Running crontab for {network.code} at {timestamp}")
             return True
 
         return False
