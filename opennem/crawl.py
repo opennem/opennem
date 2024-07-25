@@ -1,6 +1,7 @@
 """Primary OpenNEM crawler"""
 
 import asyncio
+import inspect
 import logging
 
 from pydantic import ValidationError
@@ -155,9 +156,16 @@ async def run_crawl(
     await crawler_set_meta(crawler.name, CrawlStatTypes.version, crawler.version)
     await crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, now_opennem_time)
 
-    cr: ControllerReturn | None = crawler.processor(
-        crawler=crawler, last_crawled=last_crawled, limit=limit or crawler.limit, latest=latest, date_range=date_range
-    )
+    cr: ControllerReturn | None = None
+
+    if inspect.iscoroutinefunction(crawler.processor):
+        cr = await crawler.processor(
+            crawler=crawler, last_crawled=last_crawled, limit=limit or crawler.limit, latest=latest, date_range=date_range
+        )
+    else:
+        cr = crawler.processor(
+            crawler=crawler, last_crawled=last_crawled, limit=limit or crawler.limit, latest=latest, date_range=date_range
+        )
 
     if not cr:
         return None
