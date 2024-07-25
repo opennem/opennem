@@ -116,7 +116,7 @@ class OpennemSettings(BaseSettings):
     api_app_auth_key_length: int = 24
     api_auth_cookie_domain: str = "opennem.org.au"
 
-    api_throttle_rate: float = 1.0
+    api_throttle_rate: float = 1
 
     # API Keys
 
@@ -159,7 +159,7 @@ class OpennemSettings(BaseSettings):
 
     # api messages
     api_messages: list[str] = [
-        "OpenNEM API will be moving behind a login soon. Please see the discssion at https://github.com/opennem/opennem/discussions/243"
+        "OpenNEM API has migrated to require authentication. Please see the discssion at https://github.com/opennem/opennem/discussions/243"
     ]
 
     # percentage of old API requests to return deprecation messages
