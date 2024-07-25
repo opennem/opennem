@@ -65,6 +65,19 @@ image:
 		--build-arg BUILDKIT_INLINE_CACHE=1 \
 		.
 
+.PHONY: test-worker
+test-worker:
+	docker run --rm -it --env-file .env.test opennem/base:latest huey_consumer -w4 -f -k process opennem.workers.scheduler.huey
+
+.PHONY: test-api
+test-api:
+	docker run --rm -it -P --env-file .env.test opennem/base:latest uvicorn --host 0.0.0.0 --port 8000 opennem.api.app:app
+
+.PHONY: image-shell
+image-shell:
+	docker run --rm -it --env-file .env.test opennem/base:latest bash
+
+
 .PHONY: clean
 clean:
 	ruff clean
