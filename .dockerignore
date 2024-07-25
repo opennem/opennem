@@ -41,3 +41,9 @@ notebooks/
 .ipython/
 .jupyter/
 infra/backups/
+sanity_response.py
+TODO
+.ruff_cache/
+.coverage
+.opennem_requests_cache.sqlite
+scores.csv
