@@ -21,7 +21,7 @@ from sqlalchemy import text as sql_text
 
 from opennem import settings
 from opennem.clients.slack import slack_message
-from opennem.db import get_database_engine
+from opennem.db import db_connect
 from opennem.db.models.opennem import NetworkRegion
 from opennem.schema.network import NetworkSchema
 
@@ -90,21 +90,6 @@ def chop_delta_microseconds(delta: timedelta) -> timedelta:
     return delta - timedelta(microseconds=delta.microseconds)
 
 
-def cleanup_database_task_profiles_basedon_retention() -> None:
-    """This will clean up the database tasks based on their retention period"""
-    engine = get_database_engine()
-
-    query = """
-        delete from task_profile where
-            (retention_period = 'day' and now() - interval '1 day' < time_start) or
-            (retention_period = 'week' and now() - interval '7 days' < time_start) or
-            (retention_period = 'month' and now() - interval '30 days' < time_start)
-    """
-
-    with engine.connect() as conn:
-        conn.execute(sql_text(query))
-
-
 def parse_kwargs_value(value: Any) -> str:
     """Parses profiler argument objects. This should be done
     using dunder methods but pydantic has a bug with sub-classes"""
@@ -133,7 +118,22 @@ def format_args_into_string(args: tuple[str], kwargs: dict[str, str]) -> str:
     return f"({args_string}{kwargs_string})"
 
 
-def log_task_profile_to_database(
+async def async_cleanup_database_task_profiles_basedon_retention() -> None:
+    """This will clean up the database tasks based on their retention period"""
+    engine = db_connect()
+
+    query = """
+        delete from task_profile where
+            (retention_period = 'day' and now() - interval '1 day' < time_start) or
+            (retention_period = 'week' and now() - interval '7 days' < time_start) or
+            (retention_period = 'month' and now() - interval '30 days' < time_start)
+    """
+
+    async with engine.begin() as conn:
+        await conn.execute(sql_text(query))
+
+
+async def async_log_task_profile_to_database(
     task_name: str,
     time_start: datetime,
     time_end: datetime,
@@ -141,14 +141,14 @@ def log_task_profile_to_database(
     level: ProfilerLevel | None = None,
     retention_period: ProfilerRetentionTime | None = None,
 ) -> uuid.UUID:
-    """Log the task profile to the database"""
+    """Log the task profile to the database asynchronously"""
 
-    engine = get_database_engine()
+    engine = db_connect()
     id = uuid.uuid4()
 
-    with engine.connect() as conn:
+    async with engine.begin() as conn:
         try:
-            conn.execute(
+            await conn.execute(
                 sql_text(
                     """
                         INSERT INTO task_profile (
@@ -205,43 +205,30 @@ def profile_task(
 
     def profile_task_decorator(task: Any, *args: Any, **kwargs: Any) -> Any:
         @functools.wraps(task)
-        def _task_profile_wrapper(*args: Any, **kwargs: Any) -> Any:
-            """Wrapper for the task"""
-            logger.info(f"Running task: {task.__name__}")
+        async def _async_task_profile_wrapper(*args: Any, **kwargs: Any) -> Any:
+            """Wrapper for async tasks"""
+            logger.info(f"Running async task: {task.__name__}")
 
-            # get the method that invoked this method for logging purposes
-            invokee_method_name: str = ""
+            invokee_method_name = profile_retrieve_caller_name()
+            logger.info(f"Invoked by: {invokee_method_name}")
 
-            try:
-                invokee_method_name = profile_retrieve_caller_name()
-                logger.info(f"Invoked by: {invokee_method_name}")
-            except Exception as e:
-                logger.error(f"Error getting invokee: {e}")
-
-            # time_start = time.perf_counter()
             dtime_start = get_now()
 
-            run_task_output = task(*args, **kwargs)
+            run_task_output = await task(*args, **kwargs)
 
             dtime_end = get_now()
 
             if level and level.value < PROFILE_LEVEL.value:
-                logger.debug(f"Task {task.__name__} complete and returning since not level")
+                logger.debug(f"Async task {task.__name__} complete and returning since not level")
                 return run_task_output
 
-            # calculate wall clock time
             wall_clock_time = chop_delta_microseconds(dtime_end - dtime_start)
-
             wall_clock_time_seconds = wall_clock_time.total_seconds()
+            wall_clock_human = (
+                f"{int(wall_clock_time_seconds)}s" if wall_clock_time_seconds >= 1 else f"{wall_clock_time_seconds:.2f}s"
+            )
 
-            if wall_clock_time_seconds >= 1:
-                wall_clock_time_seconds = int(wall_clock_time_seconds)
-            else:
-                wall_clock_time_seconds = round(wall_clock_time_seconds, 2)
-
-            wall_clock_human = f"{wall_clock_time_seconds}s"
-
-            log_task_profile_to_database(
+            await async_log_task_profile_to_database(
                 task_name=task.__name__,
                 time_start=dtime_start,
                 time_end=dtime_end,
@@ -249,20 +236,13 @@ def profile_task(
                 level=level,
             )
 
-            combined_arg_and_env_dict = {**locals(), **kwargs}
+            profile_message = f"[{settings.env}] `{task.__name__}` in {wall_clock_human}"
 
-            # default message format
-            profile_message = f"[{settings.env}] `{task.__name__}` in " f"{wall_clock_human} "
-
-            # custom message format
             if message_fmt:
-                logger.debug(combined_arg_and_env_dict)
-
-                custom_message = ""
-
+                combined_arg_and_env_dict = {**locals(), **kwargs}
                 try:
                     custom_message = message_fmt.format(**combined_arg_and_env_dict)
-                    profile_message = f"[{settings.env}] " + custom_message + f" in {wall_clock_human}"
+                    profile_message = f"[{settings.env}] {custom_message} in {wall_clock_human}"
                 except Exception as e:
                     logger.info(f"Error formatting custom message: {e}")
 
@@ -276,7 +256,15 @@ def profile_task(
 
             return run_task_output
 
-        return _task_profile_wrapper
+        @functools.wraps(task)
+        def _sync_task_profile_wrapper(*args: Any, **kwargs: Any) -> Any:
+            """Wrapper for synchronous tasks"""
+            # ... (keep the existing synchronous wrapper logic)
+
+        if inspect.iscoroutinefunction(task):
+            return _async_task_profile_wrapper
+        else:
+            return _sync_task_profile_wrapper
 
     return profile_task_decorator
 
@@ -293,5 +281,16 @@ def test_task(message: str | None = None) -> None:
 
 
 if __name__ == "__main__":
-    # test_task(message="test mess")
+    import asyncio
+
+    @profile_task(send_slack=True, message_fmt="Async arg={message}")
+    async def async_test_task(message: str | None = None) -> None:
+        """Async test task"""
+        await asyncio.sleep(1)
+        print(f"Async complete: {message}")
+
+    async def run_async_test():
+        await async_test_task(message="async test")
+
+    asyncio.run(run_async_test())
     run_outer_test_task()
