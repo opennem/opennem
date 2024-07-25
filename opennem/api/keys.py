@@ -12,7 +12,8 @@ from fastapi.security import APIKeyHeader
 from unkey import models
 
 from opennem import settings
-from opennem.clients.unkey import UnkneyUser, unkey_validate
+from opennem.clients.unkey import OpenNEMUser, unkey_validate
+from opennem.users.schema import OpenNEMRoles
 
 logger = logging.getLogger("opennem.api.keys")
 
@@ -38,6 +39,12 @@ api_key_header = APIKeyHeader(name="X-API-Key")
 
 
 async def verify_api_key(api_key: str = Depends(api_key_header)):
+    if not api_key:
+        raise HTTPException(status_code=403, detail="Invalid API key")
+
+    if not settings.unkey_api_id:
+        raise HTTPException(status_code=403, detail="Invalid API key")
+
     result = await unkey_client.keys.verify_key(api_key, settings.unkey_api_id)
     if not result.is_ok or not result.unwrap().valid:
         raise HTTPException(status_code=403, detail="Invalid API key")
@@ -45,6 +52,7 @@ async def verify_api_key(api_key: str = Depends(api_key_header)):
 
 
 def protected(
+    roles: list[OpenNEMRoles] | None = None,
     on_invalid_key: InvalidKeyHandlerT | None = None,
     on_exc: ExcHandlerT | None = None,
 ) -> DecoratorT:
@@ -66,9 +74,6 @@ def protected(
         raise exc
 
     def _key_extractor(*args: Any, **kwargs: Any) -> str | None:
-        print("HERE")
-        logger.debug(args)
-        logger.debug(kwargs)
         if isinstance(auth := kwargs.get("authorization"), str):
             return auth.split(" ")[-1]
 
@@ -76,20 +81,39 @@ def protected(
 
     def wrapper(
         func: CallableT[T],
-    ) -> CallableT[Coroutine[Any, Any, UnkneyUser]]:
+    ) -> CallableT[Coroutine[Any, Any, OpenNEMUser]]:
         @functools.wraps(func)
-        async def inner(*args: Any, **kwargs: Any) -> UnkneyUser:
+        async def inner(*args: Any, **kwargs: Any) -> Any:
             try:
                 if not (key := _key_extractor(*args, **kwargs)):
                     message = "Failed to get API key"
                     raise HTTPException(status_code=403, detail=message)
 
+                # dev key bypasses unkey
+                if key == settings.api_dev_key:
+                    verification = OpenNEMUser(
+                        valid=True,
+                        id="dev",
+                        owner_id="dev",
+                        roles=[OpenNEMRoles.admin, OpenNEMRoles.user, OpenNEMRoles.anonymous],
+                    )
+                    kwargs["user"] = verification
+                    if inspect.iscoroutinefunction(func):
+                        value = await func(*args, **kwargs)
+                    else:
+                        value = func(*args, **kwargs)
+                    return value
+
                 verification = await unkey_validate(api_key=key)
+
+                if not verification:
+                    raise HTTPException(status_code=403, detail="Permission denied")
 
                 kwargs["user"] = verification
 
-                if not verification:
-                    raise HTTPException(status_code=403, detail="Invalid API key")
+                if roles:
+                    if not any(r in verification.roles for r in roles):
+                        raise HTTPException(status_code=403, detail="Permission denied")
 
                 if inspect.iscoroutinefunction(func):
                     value = await func(*args, **kwargs)

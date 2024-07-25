@@ -42,6 +42,7 @@ from opennem.db.models.opennem import FuelTech, Network, NetworkRegion
 from opennem.schema.opennem import FueltechSchema, OpennemErrorSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
+from opennem.users.schema import OpenNEMRoles
 from opennem.utils.version import get_version
 
 logger = logging.getLogger("opennem.api")
@@ -327,6 +328,7 @@ async def user_me(
 
 @app.get("/throttle_test", include_in_schema=False)
 @throttle.throttle_request()
+@protected(roles=[OpenNEMRoles.admin])
 async def throttle_test() -> str:
     return "OK"
 
