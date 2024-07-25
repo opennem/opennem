@@ -15,12 +15,14 @@ from fastapi.responses import FileResponse
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.backends.redis import RedisBackend
+from fastapi_versionizer import api_version
 from fastapi_versionizer.versionizer import Versionizer
 from redis import asyncio as aioredis
 from sqlalchemy.orm import Session
 from starlette.requests import Request
 
 from opennem import settings
+from opennem.api import throttle
 from opennem.api.dash.router import router as dash_router
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
 from opennem.api.facility.router import router as facility_router
@@ -32,7 +34,7 @@ from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
 from opennem.api.weather.router import router as weather_router
 from opennem.api.webhooks.router import router as webhooks_router
-from opennem.clients.unkey import UnkneyUser
+from opennem.clients.unkey import OpenNEMUser
 from opennem.core.time import INTERVALS, PERIODS
 from opennem.core.units import UNITS
 from opennem.db import get_scoped_session
@@ -178,11 +180,14 @@ def robots_txt() -> str:
     return f"{settings.static_folder_path}/robots.txt"
 
 
+@api_version(3)
 @app.get(
     "/networks",
     response_model=list[APINetworkSchema],
     response_model_exclude_none=True,
     response_model_exclude_unset=True,
+    tags=["Core"],
+    description="Get networks",
 )
 def networks(
     session: Session = Depends(get_scoped_session),
@@ -195,11 +200,14 @@ def networks(
     return networks
 
 
+@api_version(3)
 @app.get(
     "/networks/regions",
     response_model=list[APINetworkRegion],
     response_model_exclude_none=True,
     response_model_exclude_unset=True,
+    tags=["Core"],
+    description="Get network regions",
 )
 def network_regions(
     session: Session = Depends(get_scoped_session),
@@ -219,7 +227,15 @@ def network_regions(
     return response
 
 
-@app.get("/fueltechs", response_model=list[FueltechSchema])
+@api_version(3)
+@app.get(
+    "/fueltechs",
+    response_model=list[FueltechSchema],
+    response_model_exclude_none=True,
+    response_model_exclude_unset=True,
+    tags=["Core"],
+    description="Get all fueltechs",
+)
 def fueltechs(
     session: Session = Depends(get_scoped_session),
 ) -> list[FueltechSchema]:
@@ -243,38 +259,76 @@ def fueltechs(
     return models
 
 
-@app.get("/intervals", response_model=list[TimeInterval])
+@api_version(3)
+@app.get(
+    "/intervals",
+    response_model=list[TimeInterval],
+    response_model_exclude_none=True,
+    response_model_exclude_unset=True,
+    tags=["Core"],
+    description="Get all intervals",
+)
 def intervals() -> list[TimeInterval]:
     return INTERVALS
 
 
-@app.get("/periods", response_model=list[TimePeriod])
+@api_version(3)
+@app.get(
+    "/periods",
+    response_model=list[TimePeriod],
+    response_model_exclude_none=True,
+    response_model_exclude_unset=True,
+    tags=["Core"],
+    description="Get all periods",
+)
 def periods() -> list[TimePeriod]:
     return PERIODS
 
 
-@app.get("/units", response_model=list[UnitDefinition])
+@api_version(3)
+@app.get(
+    "/units",
+    response_model=list[UnitDefinition],
+    response_model_exclude_none=True,
+    response_model_exclude_unset=True,
+    tags=["Core"],
+    description="Get all units",
+)
 def units() -> list[UnitDefinition]:
     return UNITS
 
 
-@app.get("/health")
+@app.get("/health", include_in_schema=False)
 def health_check() -> str:
     """Health check"""
     return "OK"
 
 
-@app.get("/me")
+@api_version(4)
+@app.get(
+    "/me",
+    response_model=OpenNEMUser,
+    response_model_exclude_none=True,
+    response_model_exclude_unset=True,
+    tags=["User"],
+    description="Get the current user",
+)
 @protected()
 async def user_me(
     *,
     authorization: str = fastapi.Header(None),
-    user: UnkneyUser | None = None,
-) -> UnkneyUser:
+    user: OpenNEMUser | None = None,
+) -> OpenNEMUser:
     if not user:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid API key")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized")
 
     return user
+
+
+@app.get("/throttle_test", include_in_schema=False)
+@throttle.throttle_request()
+async def throttle_test() -> str:
+    return "OK"
 
 
 versions = Versionizer(
@@ -282,6 +336,6 @@ versions = Versionizer(
     prefix_format="/v{major}",
     semantic_version_format="{major}.{minor}",
     latest_prefix="",
-    sort_routes=False,
+    sort_routes=True,
     # default_version="v{major}",
 ).versionize()
