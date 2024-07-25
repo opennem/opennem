@@ -37,7 +37,7 @@ def get_mms_archive_url(year: int, month: int) -> str:
     return MMS_ARCHIVE_URL_FORMAT.format(year=year, month=month)
 
 
-def run_aemo_mms_crawl(
+async def run_aemo_mms_crawl(
     crawler: CrawlerDefinition,
     run_fill: bool = True,
     last_crawled: bool = True,
@@ -62,7 +62,7 @@ def run_aemo_mms_crawl(
             return crawler_return
 
         crawler.url = get_mms_archive_url(mms_crawl_date.year, mms_crawl_date.month)
-        cr = process_mms_url(crawler)
+        cr = await process_mms_url(crawler)
 
         if not crawler_return:
             crawler_return = cr
@@ -75,15 +75,18 @@ def run_aemo_mms_crawl(
     return crawler_return
 
 
-def process_mms_url(crawler: CrawlerDefinition) -> ControllerReturn | None:
+async def process_mms_url(crawler: CrawlerDefinition) -> ControllerReturn | None:
     logger.info(f"Crawling url: {crawler.url}")
 
     """Runs the AEMO MMS crawlers"""
     if not crawler.url and not crawler.urls:
         raise AEMOCrawlerMMSException("Require a URL to run AEMO MMS crawlers")
 
+    if not crawler.url:
+        raise AEMOCrawlerMMSException("Require a URL to run AEMO MMS crawlers")
+
     try:
-        dirlisting = get_dirlisting(crawler.url, timezone="Australia/Brisbane")
+        dirlisting = await get_dirlisting(crawler.url, timezone="Australia/Brisbane")
     except Exception as e:
         logger.error(f"Could not fetch directory listing: {crawler.url}. {e}")
         return None
@@ -103,6 +106,8 @@ def process_mms_url(crawler: CrawlerDefinition) -> ControllerReturn | None:
         try:
             # @NOTE optimization - if we're dealing with a large file unzip
             # to disk and parse rather than in-memory. 100,000kb
+            controller_returns: ControllerReturn | None = None
+
             if crawler.bulk_insert:
                 controller_returns = parse_aemo_url_optimized_bulk(entry.link, persist_to_db=True)
             elif entry.file_size and entry.file_size > 100_000:
@@ -110,6 +115,9 @@ def process_mms_url(crawler: CrawlerDefinition) -> ControllerReturn | None:
             else:
                 ts = parse_aemo_url(entry.link)
                 controller_returns = store_aemo_tableset(ts)
+
+            if not controller_returns:
+                continue
 
             if not controller_returns.inserted_records:
                 continue
@@ -121,7 +129,11 @@ def process_mms_url(crawler: CrawlerDefinition) -> ControllerReturn | None:
 
             if entry.aemo_interval_date:
                 ch = CrawlHistoryEntry(interval=entry.aemo_interval_date, records=controller_returns.processed_records)
-                set_crawler_history(crawler_name=crawler.name, histories=[ch])
+
+                try:
+                    await set_crawler_history(crawler_name=crawler.name, histories=[ch])
+                except Exception as e:
+                    logger.error(f"Could not set crawler history: {e}")
 
         except Exception as e:
             logger.error(f"Processing error: {e}")

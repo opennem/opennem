@@ -10,7 +10,7 @@ from sqlalchemy import text as sql
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.core.time import get_interval
-from opennem.db import get_database_engine, get_scoped_session
+from opennem.db import SessionLocal, db_connect
 from opennem.db.models.opennem import CrawlHistory
 from opennem.schema.time import TimeInterval
 from opennem.utils.dates import get_today_opennem
@@ -29,10 +29,9 @@ class CrawlHistoryGap:
     interval: datetime
 
 
-def set_crawler_history(crawler_name: str, histories: list[CrawlHistoryEntry]) -> int:
+async def set_crawler_history(crawler_name: str, histories: list[CrawlHistoryEntry]) -> int:
     """Sets the crawler history"""
-    engine = get_database_engine()
-    session = get_scoped_session()
+    engine = db_connect()
 
     history_intervals = [i.interval for i in histories]
 
@@ -56,8 +55,9 @@ def set_crawler_history(crawler_name: str, histories: list[CrawlHistoryEntry]) -
 
     query = stmt.bindparams(date_max=date_max, date_min=date_min)
 
-    with engine.connect() as c:
-        results = list(c.execute(query))
+    async with engine.connect() as conn:
+        result = await conn.execute(query)
+        results = list(result.fetchall())
 
     existing_intervals = [i[0] for i in results]
 
@@ -91,38 +91,35 @@ def set_crawler_history(crawler_name: str, histories: list[CrawlHistoryEntry]) -
         },
     )
 
-    try:
-        session.execute(stmt)
-        session.commit()
-    except Exception as e:
-        logger.error(f"set_crawler_history error updating records: {e}")
-    finally:
-        session.rollback()
-        session.close()
-        engine.dispose()
+    async with SessionLocal() as session:
+        try:
+            session.execute(stmt)
+            session.commit()
+        except Exception as e:
+            logger.error(f"set_crawler_history error updating records: {e}")
 
     return len(histories)
 
 
-def get_crawler_history(crawler_name: str, interval: TimeInterval, days: int = 3) -> list[datetime]:
+async def get_crawler_history(crawler_name: str, interval: TimeInterval, days: int = 3) -> list[datetime]:
     """Gets the crawler history"""
-    engine = get_database_engine()
+    engine = db_connect()
 
     stmt = sql(
-        """
+        f"""
         select
             t.trading_interval at time zone 'AEST' as interval,
             t.has_record
         from
         (
             select
-                time_bucket_gapfill(:bucket_size, ch.interval) as trading_interval,
+                time_bucket_gapfill('{interval.interval_sql}', ch.interval) as trading_interval,
                 ch.crawler_name,
                 coalesce(sum(ch.inserted_records), 0) as records_inserted,
                 case when sum(ch.inserted_records) is NULL then FALSE else TRUE end as has_record
             from crawl_history ch
             where
-                ch.interval >= now() at time zone 'AEST' - interval '3 days'
+                ch.interval >= now() at time zone 'AEST' - interval '{days} days'
                 and ch.interval <= now()
                 and ch.crawler_name = :crawler_name
             group by 1, 2
@@ -133,19 +130,20 @@ def get_crawler_history(crawler_name: str, interval: TimeInterval, days: int = 3
     """
     )
 
-    query = stmt.bindparams(crawler_name=crawler_name, bucket_size=interval.interval_sql, days=f"{days} days")
+    query = stmt.bindparams(crawler_name=crawler_name)
 
     logger.debug(dedent(str(query)))
 
-    with engine.connect() as c:
-        results = list(c.execute(query))
+    async with engine.begin() as conn:
+        result = await conn.execute(query)
+        results = result.fetchall()
 
     models = [i[0] for i in results]
 
     return models
 
 
-def get_crawler_missing_intervals(
+async def get_crawler_missing_intervals(
     crawler_name: str,
     interval: TimeInterval,
     days: int = 14,
@@ -156,7 +154,7 @@ def get_crawler_missing_intervals(
     :param interval: The interval to check
     :param days: The number of days to check back
     """
-    engine = get_database_engine()
+    engine = db_connect()
 
     stmt = sql(
         f"""
@@ -189,15 +187,16 @@ def get_crawler_missing_intervals(
 
     query = stmt.bindparams(crawler_name=crawler_name)
 
-    with engine.connect() as c:
-        results = list(c.execute(query))
+    async with engine.begin() as conn:
+        result = await conn.execute(query)
+        results = result.fetchall()
 
-    models = [i[0] for i in results]
+    models: list[datetime] = [i[0] for i in results]
 
     # truncate
     # @NOTE specific >= as we trunc hour or greater
     if interval.interval >= 60:
-        models = [date_trunc(i, interval.trunc) for i in models]
+        models = [date_trunc(i, interval.trunc) for i in models]  # type: ignore
 
     logger.debug(f"Got {len(models)} missing intervals for crawler {crawler_name}")
 
@@ -205,6 +204,12 @@ def get_crawler_missing_intervals(
 
 
 if __name__ == "__main__":
-    m = get_crawler_missing_intervals("au.nemweb.current.trading_is", interval=get_interval("5m"), days=3)
-    for i in m[:5]:
-        print(i)
+    import asyncio
+
+    async def main():
+        # m = await get_crawler_missing_intervals("au.nemweb.current.trading_is", interval=get_interval("5m"), days=3)
+        m = await get_crawler_history("au.nemweb.current.trading_is", interval=get_interval("5m"))
+        for i in m[:5]:
+            print(i)
+
+    asyncio.run(main())

@@ -113,7 +113,11 @@ async def run_nemweb_aemo_crawl(
 
             if controller_returns.processed_records > 0:
                 ch = CrawlHistoryEntry(interval=entry.aemo_interval_date, records=controller_returns.processed_records)
-                set_crawler_history(crawler_name=crawler.name, histories=[ch])
+
+                try:
+                    await set_crawler_history(crawler_name=crawler.name, histories=[ch])
+                except Exception as e:
+                    logger.error(f"Error updating crawl history: {e}")
 
         except Exception as e:
             logger.error(f"Processing error: {e}")
