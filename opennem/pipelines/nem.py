@@ -4,6 +4,7 @@
 All the processing pipelines for the NEM network
 """
 
+import asyncio
 import logging
 
 from huey.exceptions import RetryTask
@@ -38,9 +39,9 @@ class NemPipelineNoNewData(Exception):
 
 
 # Crawler tasks
-def nem_dispatch_is_crawl() -> None:
+async def nem_dispatch_is_crawl() -> None:
     """Runs the dispatch_is crawl"""
-    dispatch_is = run_crawl(AEMONemwebDispatchIS)
+    dispatch_is = await run_crawl(AEMONemwebDispatchIS)
 
     if not dispatch_is or not dispatch_is.inserted_records:
         raise RetryTask("No new dispatch is data")
@@ -54,9 +55,9 @@ def nem_dispatch_is_crawl() -> None:
             run_flow_update_for_interval(interval=dispatch_is.server_latest, network=NetworkNEM)
 
 
-def nem_trading_is_crawl() -> None:
+async def nem_trading_is_crawl() -> None:
     """Runs the trading_is crawl"""
-    cr = run_crawl(AEMONemwebTradingIS)
+    cr = await run_crawl(AEMONemwebTradingIS)
 
     if not cr or not cr.inserted_records:
         raise RetryTask("No new dispatch is data")
@@ -69,9 +70,9 @@ def nem_trading_is_crawl() -> None:
         " `{run_task_output.inserted_records}` new records for interval `{run_task_output.server_latest}`"
     ),
 )
-def nem_dispatch_scada_crawl() -> ControllerReturn:
+async def nem_dispatch_scada_crawl() -> ControllerReturn:
     """This task runs per interval and checks for new data"""
-    dispatch_scada = run_crawl(AEMONNemwebDispatchScada)
+    dispatch_scada = await run_crawl(AEMONNemwebDispatchScada)
 
     if not dispatch_scada or not dispatch_scada.inserted_records:
         raise RetryTask("No new dispatch scada data")
@@ -82,10 +83,10 @@ def nem_dispatch_scada_crawl() -> ControllerReturn:
     return dispatch_scada
 
 
-def nem_rooftop_crawl() -> None:
+async def nem_rooftop_crawl() -> None:
     """Runs the NEM rooftop crawler every rooftop interval (30 min)"""
-    rooftop = run_crawl(AEMONemwebRooftop)
-    _ = run_crawl(AEMONemwebRooftopForecast)
+    rooftop = await run_crawl(AEMONemwebRooftop)
+    _ = await run_crawl(AEMONemwebRooftopForecast)
 
     if not rooftop or not rooftop.inserted_records:
         raise RetryTask("No new rooftop data")
@@ -102,10 +103,10 @@ def nem_rooftop_crawl() -> None:
         " `{run_task_output.inserted_records}` new records for day `{run_task_output.server_latest}`"
     ),
 )
-def nem_per_day_check(always_run: bool = False) -> ControllerReturn:
+async def nem_per_day_check(always_run: bool = False) -> ControllerReturn:
     """This task is run daily for NEM"""
     dispatch_actuals = run_crawl(AEMONEMDispatchActualGEN)
-    run_crawl(AEMONEMNextDayDispatch)
+    await run_crawl(AEMONEMNextDayDispatch)
 
     if not always_run or not dispatch_actuals or not dispatch_actuals.inserted_records:
         raise RetryTask("No new dispatch actuals data")
@@ -123,4 +124,4 @@ def nem_per_day_check(always_run: bool = False) -> ControllerReturn:
 
 
 if __name__ == "__main__":
-    nem_rooftop_crawl()
+    asyncio.run(nem_rooftop_crawl())

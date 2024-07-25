@@ -130,7 +130,7 @@ async def load_crawlers(live_load: bool = False) -> CrawlerSet:
     return cs
 
 
-def run_crawl(
+async def run_crawl(
     crawler: CrawlerDefinition,
     last_crawled: bool = True,
     limit: int | None = None,
@@ -152,8 +152,8 @@ def run_crawl(
     # now in opennem time which is Australia/Sydney
     now_opennem_time = get_today_opennem()
 
-    crawler_set_meta(crawler.name, CrawlStatTypes.version, crawler.version)
-    crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, now_opennem_time)
+    await crawler_set_meta(crawler.name, CrawlStatTypes.version, crawler.version)
+    await crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, now_opennem_time)
 
     cr: ControllerReturn | None = crawler.processor(
         crawler=crawler, last_crawled=last_crawled, limit=limit or crawler.limit, latest=latest, date_range=date_range
@@ -174,8 +174,8 @@ def run_crawl(
 
     if not has_errors:
         if cr.server_latest:
-            crawler_set_meta(crawler.name, CrawlStatTypes.latest_processed, cr.server_latest)
-            crawler_set_meta(crawler.name, CrawlStatTypes.server_latest, cr.server_latest)
+            await crawler_set_meta(crawler.name, CrawlStatTypes.latest_processed, cr.server_latest)
+            await crawler_set_meta(crawler.name, CrawlStatTypes.server_latest, cr.server_latest)
         else:
             logger.debug(f"{crawler.name} has no server_latest return")
 

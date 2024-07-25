@@ -21,14 +21,16 @@ class ClerkResponseError(BaseModel):
     meta: Any | None = None
 
 
-class ClerkNewUser(BaseModel):
-    first_name: str
+class ClerkCreateUser(BaseModel):
+    first_name: str | None = None
     last_name: str | None = None
     email_address: list[str]
     skip_password_checks: bool = False
     skip_password_requirement: bool = False
     password: str | None = None
     external_id: str | None = None
+    public_metadata: dict | None = None
+    private_metadata: dict | None = None
 
 
 # Exceptions
@@ -102,7 +104,7 @@ class ClerkClient:
         res = await self.get("users")
         return res.json()
 
-    async def user_create(self, user: ClerkNewUser) -> dict:
+    async def user_create(self, user: ClerkCreateUser) -> dict:
         """Create a new user"""
         res = await self.post("users", data=user)
         return res.json()
@@ -122,7 +124,7 @@ if __name__ == "__main__":
         return users
 
     async def test_create_user() -> None:
-        user = ClerkNewUser(
+        user = ClerkCreateUser(
             first_name="Test",
             last_name="User",
             email_address=["tes2t@test.com"],

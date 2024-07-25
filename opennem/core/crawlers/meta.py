@@ -75,9 +75,9 @@ def crawler_get_all_meta(crawler_name: str, session: Session) -> dict[str, Any] 
     return spider_meta.data
 
 
-def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> str | datetime | None:
+async def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> str | datetime | None:
     """Crawler get specific stat type from metadata for crawler name"""
-    with SessionLocal() as session:
+    async with SessionLocal() as session:
         spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
 
         if not spider_meta:
@@ -102,9 +102,9 @@ def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> str | datetime |
         return _val
 
 
-def crawler_set_meta(crawler_name: str, key: CrawlStatTypes, value: Any) -> None:
+async def crawler_set_meta(crawler_name: str, key: CrawlStatTypes, value: Any) -> None:
     """Set a crawler metadata stat type by name"""
-    with SessionLocal() as session:
+    async with SessionLocal() as session:
         if key == CrawlStatTypes.server_latest:
             current_value = crawler_get_meta(crawler_name, key)
 

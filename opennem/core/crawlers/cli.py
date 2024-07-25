@@ -1,5 +1,6 @@
 """Crawl commands cli"""
 
+import asyncio
 import logging
 from pathlib import Path
 
@@ -53,7 +54,7 @@ def crawl_cli_run(name: str, all: bool = False, limit: int | None = None) -> Non
             f"{c.last_processed}\n\tserver_latest: {c.server_latest}"
         )
         try:
-            run_crawl(c, latest=not all, limit=limit)
+            asyncio.run(run_crawl(c, latest=not all, limit=limit))
         except Exception as e:
             console.log(f"[red]Error running crawler[/red]: {e}")
 

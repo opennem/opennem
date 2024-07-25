@@ -1,5 +1,6 @@
 """Nemweb crawlers"""
 
+import asyncio
 import logging
 
 from opennem.controllers.nem import ControllerReturn, store_aemo_tableset
@@ -281,4 +282,4 @@ AEMONEMNextDayDispatchArchvie = CrawlerDefinition(
 if __name__ == "__main__":
     from opennem.crawl import run_crawl
 
-    run_crawl(AEMONemwebTradingIS)
+    asyncio.run(run_crawl(AEMONemwebTradingIS))

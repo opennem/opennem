@@ -19,13 +19,15 @@ logger = logging.getLogger("opennem.pipelines.wem")
         " `{run_task_output.inserted_records}` new records for interval `{run_task_output.server_latest}`"
     ),
 )
-def wem_per_interval_check() -> None:
+async def wem_per_interval_check() -> None:
     """This task runs per interval and checks for new data"""
-    _ = run_crawl(APVIRooftopLatestCrawler)
+    _ = await run_crawl(APVIRooftopLatestCrawler)
 
     run_all_wem_crawlers()
     run_export_power_latest_for_network(network=NetworkWEM)
 
 
 if __name__ == "__main__":
-    wem_per_interval_check()
+    import asyncio
+
+    asyncio.run(wem_per_interval_check())

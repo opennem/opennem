@@ -48,56 +48,64 @@ worker_startup_alert()
 # crawler tasks live per interval for each network
 @huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=2, retry_delay=10)
 @huey.lock_task("crawler_run_nem_dispatch_scada_crawl")
-def crawler_run_nem_dispatch_scada_crawl() -> None:
+@run_async_task_reusable
+async def crawler_run_nem_dispatch_scada_crawl() -> None:
     """dispatch_scada for NEM crawl"""
-    nem_dispatch_scada_crawl()
+    await nem_dispatch_scada_crawl()
 
 
 @huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=2, retry_delay=10)
 @huey.lock_task("crawler_run_nem_dispatch_is_crawl")
-def crawler_run_nem_dispatch_is_crawl() -> None:
+@run_async_task_reusable
+async def crawler_run_nem_dispatch_is_crawl() -> None:
     """dispatch_is for NEM crawl"""
-    nem_dispatch_is_crawl()
+    await nem_dispatch_is_crawl()
 
 
 @huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=2, retry_delay=10)
 @huey.lock_task("crawler_run_nem_trading_is_crawl")
-def crawler_run_nem_trading_is_crawl() -> None:
+@run_async_task_reusable
+async def crawler_run_nem_trading_is_crawl() -> None:
     """dispatch_is for NEM crawl"""
-    nem_trading_is_crawl()
+    await nem_trading_is_crawl()
 
 
 @huey.periodic_task(
     network_interval_crontab(network=NetworkAEMORooftop, number_minutes=1), priority=50, retries=2, retry_delay=15
 )
 @huey.lock_task("crawler_run_nem_rooftop_per_interval")
-def crawler_run_nem_rooftop_per_interval() -> None:
-    nem_rooftop_crawl()
+@run_async_task_reusable
+async def crawler_run_nem_rooftop_per_interval() -> None:
+    await nem_rooftop_crawl()
 
 
 @huey.periodic_task(crontab(hour="*/1"), priority=50, retries=5, retry_delay=15)
 @huey.lock_task("crawler_run_wem_per_interval")
-def crawler_run_wem_per_interval() -> None:
-    wem_per_interval_check()
+@run_async_task_reusable
+async def crawler_run_wem_per_interval() -> None:
+    await wem_per_interval_check()
 
 
 @huey.periodic_task(crontab(minute="*/10"), priority=1)
 @huey.lock_task("crawler_run_bom_capitals")
-def crawler_run_bom_capitals() -> None:
-    run_crawl(BOMCapitals)
+@run_async_task_reusable
+async def crawler_run_bom_capitals() -> None:
+    await run_crawl(BOMCapitals)
 
 
 # Checks for the overnights from aemo and then runs the daily runner
 @huey.periodic_task(crontab(hour="4", minute="20"))
 @huey.lock_task("nem_overnight_check_always")
-def nem_overnight_check_always() -> None:
-    nem_per_day_check(always_run=True)
+@run_async_task_reusable
+async def nem_overnight_check_always() -> None:
+    await nem_per_day_check(always_run=True)
 
 
 @huey.periodic_task(crontab(hour="8", minute="20"), retries=10, retry_delay=60, priority=50)
 @huey.lock_task("nem_overnight_check")
-def nem_overnight_check() -> None:
-    nem_per_day_check()
+@run_async_task_reusable
+async def nem_overnight_check() -> None:
+    await nem_per_day_check()
 
 
 @huey.periodic_task(crontab(hour="10", minute="20"), retries=10, retry_delay=60, priority=50)
