@@ -116,8 +116,6 @@ class OpennemSettings(BaseSettings):
     api_app_auth_key_length: int = 24
     api_auth_cookie_domain: str = "opennem.org.au"
 
-    api_throttle_rate: float = 1
-
     # API Keys
 
     # willy weather client
@@ -164,6 +162,9 @@ class OpennemSettings(BaseSettings):
 
     # percentage of old API requests to return deprecation messages
     api_deprecation_proportion: int = 0
+
+    # throttle rate of api
+    api_throttle_rate: float = 0
 
     # API Dev key
     api_dev_key: str | None = None
