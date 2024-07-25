@@ -8,7 +8,7 @@ ${invite.api_key}
 
 Please keep this key safe. You can view the API docs at:
 
-https://api.opennem.org.au/docs
+https://api.${invite.domain}/docs
 
 and developer documentation at:
 
@@ -20,11 +20,11 @@ Your API access level is: ${invite.access_level} and you have a limit of ${invit
 
 To check your API usage you can access the endpoint at:
 
-https://api.opennem.org.au/v4/me
+https://api.${invite.domain}/v4/me
 
 Example curl request:
 
-curl -X GET -H "Content-Type:application/json" -H "Authorization: Bearer ${invite.api_key}" https://api.opennem.org.au/v4/me
+curl -X GET -H "Content-Type:application/json" -H "Authorization: Bearer ${invite.api_key}" https://api.${invite.domain}/v4/me
 
 If you would like to join the OpenNEM slack, click on the following invite link:
 

@@ -47,3 +47,4 @@ class OpenNEMAPIInvite(BaseModel):
     access_level: str
     limit: int
     limit_interval: str
+    domain: str = "opennem.org.au"

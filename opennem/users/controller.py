@@ -4,6 +4,7 @@ Use unkey to authenticate users and create users
 
 import logging
 
+from opennem import settings
 from opennem.clients.mailgun import send_email_mailgun
 from opennem.clients.unkey import unkey_create_key
 from opennem.core.templates import serve_template
@@ -43,11 +44,14 @@ async def create_user(email: str, name: str, roles: list[OpenNEMRoles]) -> None 
         limit_interval=limit_interval,
     )
 
+    if settings.is_dev:
+        invite.domain = "dev.opennem.org.au"
+
     email_text = serve_template(template_name="api_invite.md", **{"invite": invite})
 
     await send_email_mailgun(
         to_email=email,
-        subject="OpenNEM API Invitation",
+        subject="OpenNEM API Invitation" if not settings.is_dev else "[DEV] OpenNEM API Invitation",
         text=email_text,
     )
 
