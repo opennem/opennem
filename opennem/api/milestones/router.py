@@ -2,11 +2,13 @@ import logging
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi_versionizer.versionizer import api_version
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.exceptions import HTTPException
 
 from opennem.api.schema import APIV4ResponseSchema
+from opennem.db import get_scoped_session
 from opennem.recordreactor.schema import MilestoneRecord
 
 from .queries import get_milestone_records
@@ -55,7 +57,11 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
 @api_version(4)
 @milestones_router.get("/", response_model=APIV4ResponseSchema, response_model_exclude_unset=True, description="Get milestones")
 async def get_milestones(
-    limit: int = 100, page: int = 1, date_start: datetime | None = None, date_end: datetime | None = None
+    limit: int = 100,
+    page: int = 1,
+    date_start: datetime | None = None,
+    date_end: datetime | None = None,
+    db: AsyncSession = Depends(get_scoped_session),
 ) -> APIV4ResponseSchema:
     """Get a list of milestones"""
 
@@ -77,7 +83,9 @@ async def get_milestones(
         raise HTTPException(status_code=400, detail="Date start and date end cannot be the same")
 
     try:
-        db_records, total_records = get_milestone_records(limit=limit, page_number=page, date_start=date_start, date_end=date_end)
+        db_records, total_records = await get_milestone_records(
+            db, limit=limit, page_number=page, date_start=date_start, date_end=date_end
+        )
     except Exception as e:
         logger.error(f"Error getting milestone records: {e}")
         response_schema = APIV4ResponseSchema(success=False, error="Error getting milestone records")
