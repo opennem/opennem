@@ -74,7 +74,8 @@ profiles/
 .benchmarks/
 
 # static generated files
-opennem/static/
+opennem/static/v3/
+opennem/static/v4/
 
 # infra data files
 infra/prometheus/.data/
