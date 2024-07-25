@@ -8,6 +8,8 @@ from opennem.utils.dates import chop_datetime_microseconds
 
 class OpenNEMRoles(Enum):
     admin = "admin"
+    pro = "pro"
+    acedemic = "academic"
     user = "user"
     anonymous = "anonymous"
 
@@ -37,3 +39,11 @@ class OpenNEMUser(BaseModel):
     error: str | None = None
     rate_limit: OpenNEMUserRateLimit | None = None
     roles: list[OpenNEMRoles] = [OpenNEMRoles.anonymous]
+
+
+class OpenNEMAPIInvite(BaseModel):
+    name: str
+    api_key: str
+    access_level: str
+    limit: int
+    limit_interval: str
