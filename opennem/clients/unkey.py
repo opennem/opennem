@@ -5,9 +5,10 @@ import logging
 
 import unkey
 from pydantic import ValidationError
-from unkey import ErrorCode
+from unkey import ApiKey, ErrorCode
 
 from opennem import settings
+from opennem.users.ratelimit import OPENNEM_RATELIMIT_ADMIN, OPENNEM_RATELIMIT_PRO, OPENNEM_RATELIMIT_USER
 from opennem.users.schema import OpenNEMRoles, OpenNEMUser, OpenNEMUserRateLimit
 
 logger = logging.getLogger("opennem.clients.unkey")
@@ -86,6 +87,54 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
 
     finally:
         await client.close()
+
+
+async def unkey_create_key(
+    email: str, name: str, roles: list[OpenNEMRoles], ratelimit: unkey.Ratelimit | None = None
+) -> ApiKey | None:
+    """Create a key with unkey"""
+    if not settings.unkey_root_key:
+        raise Exception("No unkey root key set")
+
+    if not settings.unkey_api_id:
+        raise Exception("No unkey app id set")
+
+    prefix = "on"
+
+    if settings.is_dev:
+        prefix = "on_dev"
+
+    meta = {"roles": [role.value for role in roles], "email": email, "name": name}
+
+    if not ratelimit:
+        ratelimit = OPENNEM_RATELIMIT_USER
+
+        if "pro" in roles:
+            ratelimit = OPENNEM_RATELIMIT_PRO
+
+        if "admin" in roles:
+            ratelimit = OPENNEM_RATELIMIT_ADMIN
+
+    try:
+        async with unkey.client.Client(api_key=settings.unkey_root_key) as c:
+            result = await c.keys.create_key(
+                api_id=settings.unkey_api_id, name=name, prefix=prefix, meta=meta, owner_id=email, ratelimit=ratelimit
+            )
+
+            if not result.is_ok:
+                error = result.unwrap_err()
+                logger.error(f"Unkey key creation failed: {error}")
+                return None
+
+    except Exception as e:
+        logger.exception(f"Unexpected error in unkey_create_key: {e}")
+        return None
+
+    data = result.unwrap()
+
+    logger.info(f"Unkey key created: {data.key} {data.key_id}")
+
+    return data
 
 
 # debug entry point
