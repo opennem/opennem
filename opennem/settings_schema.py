@@ -155,6 +155,9 @@ class OpennemSettings(BaseSettings):
     # openai
     openai_api_key: str | None = None
 
+    # mailgun
+    mailgun_api_key: str | None = None
+
     # api messages
     api_messages: list[str] = [
         "OpenNEM API has migrated to require authentication. Please see the discssion at https://github.com/opennem/opennem/discussions/243"
