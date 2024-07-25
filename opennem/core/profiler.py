@@ -118,7 +118,7 @@ def format_args_into_string(args: tuple[str], kwargs: dict[str, str]) -> str:
     return f"({args_string}{kwargs_string})"
 
 
-async def async_cleanup_database_task_profiles_basedon_retention() -> None:
+async def cleanup_database_task_profiles_basedon_retention() -> None:
     """This will clean up the database tasks based on their retention period"""
     engine = db_connect()
 
@@ -133,7 +133,7 @@ async def async_cleanup_database_task_profiles_basedon_retention() -> None:
         await conn.execute(sql_text(query))
 
 
-async def async_log_task_profile_to_database(
+async def log_task_profile_to_database(
     task_name: str,
     time_start: datetime,
     time_end: datetime,
@@ -228,7 +228,7 @@ def profile_task(
                 f"{int(wall_clock_time_seconds)}s" if wall_clock_time_seconds >= 1 else f"{wall_clock_time_seconds:.2f}s"
             )
 
-            await async_log_task_profile_to_database(
+            await log_task_profile_to_database(
                 task_name=task.__name__,
                 time_start=dtime_start,
                 time_end=dtime_end,
