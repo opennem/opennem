@@ -8,6 +8,7 @@ import logging
 
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.orm import selectinload
 
 from opennem.clients.apvi import APVIForecastSet
 from opennem.controllers.schema import ControllerReturn
@@ -67,12 +68,17 @@ async def update_apvi_facility_capacities(forecast_set: APVIForecastSet) -> None
 
     async with SessionLocal() as session:
         for state_capacity in forecast_set.capacities:
-            stmt = select(Facility).filter_by(code=state_capacity.facility_code)
+            stmt = (
+                select(Facility)
+                .options(selectinload(Facility.network))  # Add any other relationships you need to load
+                .filter_by(code=state_capacity.facility_code)
+            )
             result = await session.execute(stmt)
-            state_facility: Facility = result.scalar_one_or_none()
+            state_facility: Facility | None = result.unique().scalar_one_or_none()
 
             if not state_facility:
-                raise Exception("Could not find rooftop facility for %s", state_capacity.facility_code)
+                logger.warning(f"Could not find rooftop facility for {state_capacity.facility_code}")
+                continue
 
             state_facility.capacity_registered = state_capacity.capacity_registered
             state_facility.unit_number = state_capacity.unit_number
