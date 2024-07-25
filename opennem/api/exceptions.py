@@ -45,6 +45,14 @@ class OpenNEMNoResults(OpennemBaseHttpException):
     detail = "No Results"
 
 
+class OpenNEMThrottleMigrateResponse(OpennemBaseHttpException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    detail = (
+        "Throttled: OpenNEM API is migrating to require authentication. "
+        "Please see the discssion at https://github.com/opennem/opennem/discussions/243"
+    )
+
+
 class OpennemExceptionResponse(Response):
     media_type = "application/json"
     response_class: OpennemErrorSchema
@@ -61,4 +69,4 @@ class OpennemExceptionResponse(Response):
         super().__init__(content=b"", status_code=status_code, headers=headers)
 
     def render(self, content: Any) -> bytes:
-        return self.response_class.json().encode("utf-8")  # type: ignore
+        return self.response_class.model_dump_json().encode("utf-8")  # type: ignore
