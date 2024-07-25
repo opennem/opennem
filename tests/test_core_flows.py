@@ -35,7 +35,7 @@ def test_generated_flow_station_id(
     flow_direction: FlowDirection,
     code_expected: str,
 ) -> None:
-    code = generated_flow_station_id(network=network, network_region=network_region, flow_direction=flow_direction)
+    code = generated_flow_station_id(network=network, network_region_code=network_region.code, flow_direction=flow_direction)
     assert code == code_expected, "Code return matches"
 
 

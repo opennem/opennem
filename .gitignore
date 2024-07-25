@@ -127,3 +127,6 @@ notebooks/
 infra/backups/
 sanity_response.py
 test.db
+
+*/debug-run.log
+*/opennem.log
