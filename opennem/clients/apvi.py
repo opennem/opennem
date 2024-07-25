@@ -15,7 +15,7 @@ from opennem.importer.rooftop import ROOFTOP_CODE
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_today_opennem, parse_date
-from opennem.utils.http import http
+from opennem.utils.httpx import httpx_factory
 from opennem.utils.version import get_version
 
 logger = logging.getLogger(__name__)
@@ -166,21 +166,21 @@ class APVIForecastSet(BaseConfig):
     capacities: list[APVIStateRooftopCapacity] | None = None
 
 
-_apvi_request_session = http
+_apvi_request_session = httpx_factory()
 
 _apvi_request_session.headers.update({"User-Agent": f"OpenNEM/{get_version()}"})
 
 
-def get_apvi_rooftop_data(day: date | None = None) -> APVIForecastSet | None:
+async def get_apvi_rooftop_data(day: date | None = None) -> APVIForecastSet | None:
     """Obtains and parses APVI forecast data"""
 
     apvi_endpoint_url = get_apvi_uri(date=day)
 
     logger.info(f"Getting APVI data for day {day} from {apvi_endpoint_url}")
 
-    _resp = _apvi_request_session.get(apvi_endpoint_url, data={"day": day})
+    _resp = await _apvi_request_session.request("GET", apvi_endpoint_url, data={"day": day})
 
-    if not _resp.ok:
+    if _resp.is_error:
         logger.error(f"Invalid APVI Return: {_resp.status_code}")
         return None
 
@@ -259,7 +259,7 @@ def get_apvi_rooftop_data(day: date | None = None) -> APVIForecastSet | None:
     if trading_intervals:
         apvi_server_latest = max(trading_intervals)
 
-    apvi_forecast_set = APVIForecastSet(crawled=_run_at, intervals=_interval_records, capacities=_state_capacity_models)
+    apvi_forecast_set = APVIForecastSet(crawled_at=_run_at, intervals=_interval_records, capacities=_state_capacity_models)
 
     try:
         apvi_forecast_set.server_latest = apvi_server_latest
@@ -270,10 +270,12 @@ def get_apvi_rooftop_data(day: date | None = None) -> APVIForecastSet | None:
 
 
 if __name__ == "__main__":
-    cr = get_apvi_rooftop_data()
+    import asyncio
+
+    cr = asyncio.run(get_apvi_rooftop_data())
 
     if not cr:
         raise Exception("Invalid APVI Data")
 
     with open("apvi.json", "w") as fh:
-        fh.write(cr.json(indent=4))
+        fh.write(cr.model_dump_json(indent=4))

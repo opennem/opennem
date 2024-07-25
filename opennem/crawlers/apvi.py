@@ -20,7 +20,7 @@ class APVICrawlerException(Exception):
     pass
 
 
-def crawl_apvi_forecasts(
+async def crawl_apvi_forecasts(
     crawler: CrawlerDefinition,
     last_crawled: bool = True,
     limit: bool = False,
@@ -31,12 +31,12 @@ def crawl_apvi_forecasts(
     apvi_return = ControllerReturn()
 
     if crawler.latest:
-        return run_apvi_crawl()
+        return await run_apvi_crawl()
 
     # run the entire date range
     elif crawler.limit:
         for day_run in date_series(get_today_nem().date(), length=crawler.limit, reverse=True):
-            apvi_forecast_return = run_apvi_crawl(day_run)
+            apvi_forecast_return = await run_apvi_crawl(day_run)
 
             if not apvi_forecast_return:
                 raise APVICrawlerException("Bad run_apvi_crawl return none or no server_latest")
@@ -74,20 +74,20 @@ def crawl_apvi_forecasts(
     return apvi_return
 
 
-def run_apvi_crawl(day: date | None = None) -> ControllerReturn:
+async def run_apvi_crawl(day: date | None = None) -> ControllerReturn:
     """Run the APVI crawl for a given day"""
 
     apvi_forecast_set: APVIForecastSet | None = None
 
     logger.info(f"Getting APVI data for day {day}")
-    apvi_forecast_set = get_apvi_rooftop_data(day)
+    apvi_forecast_set = await get_apvi_rooftop_data(day=day)
 
     if not apvi_forecast_set:
         raise Exception("Could not get APVI forecast set")
 
-    cr = store_apvi_forecastset(apvi_forecast_set)
+    cr = await store_apvi_forecastset(apvi_forecast_set)
 
-    update_apvi_facility_capacities(apvi_forecast_set)
+    await update_apvi_facility_capacities(apvi_forecast_set)
 
     cr.server_latest = apvi_forecast_set.server_latest
 
