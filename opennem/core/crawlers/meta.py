@@ -10,12 +10,12 @@ from enum import Enum
 from typing import Any
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import CrawlMeta
 
-logger = logging.getLogger("opennem.spider.meta")
+logger = logging.getLogger("opennem.crawler.meta")
 
 
 class CrawlStatTypes(Enum):
@@ -62,9 +62,11 @@ async def crawlers_get_all_meta() -> dict[str, Any]:
     return crawler_meta_dict
 
 
-def crawler_get_all_meta(crawler_name: str, session: Session) -> dict[str, Any] | None:
+async def crawler_get_all_meta(crawler_name: str, session: AsyncSession) -> dict[str, Any] | None:
     """Get crawler metadata by crawler name"""
-    spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
+    stmt = select(CrawlMeta).filter_by(spider_name=crawler_name)
+    result = await session.execute(stmt)
+    spider_meta = result.scalar_one_or_none()
 
     if not spider_meta:
         return None
@@ -78,7 +80,9 @@ def crawler_get_all_meta(crawler_name: str, session: Session) -> dict[str, Any] 
 async def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> str | datetime | None:
     """Crawler get specific stat type from metadata for crawler name"""
     async with SessionLocal() as session:
-        spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
+        stmt = select(CrawlMeta).filter_by(spider_name=crawler_name)
+        result = await session.execute(stmt)
+        spider_meta = result.scalar_one_or_none()
 
         if not spider_meta:
             return None
@@ -106,7 +110,7 @@ async def crawler_set_meta(crawler_name: str, key: CrawlStatTypes, value: Any) -
     """Set a crawler metadata stat type by name"""
     async with SessionLocal() as session:
         if key == CrawlStatTypes.server_latest:
-            current_value = crawler_get_meta(crawler_name, key)
+            current_value = await crawler_get_meta(crawler_name, key)
 
             try:
                 if current_value and current_value >= value:
@@ -114,7 +118,9 @@ async def crawler_set_meta(crawler_name: str, key: CrawlStatTypes, value: Any) -
             except TypeError:
                 logger.error(f"Error comparing {current_value} ({type(current_value)}) and {value} ({type(value)})")
 
-        spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
+        stmt = select(CrawlMeta).filter_by(spider_name=crawler_name)
+        result = await session.execute(stmt)
+        spider_meta = result.scalar_one_or_none()
 
         if not spider_meta:
             spider_meta = CrawlMeta(spider_name=crawler_name, data={})
@@ -124,9 +130,14 @@ async def crawler_set_meta(crawler_name: str, key: CrawlStatTypes, value: Any) -
         logger.debug(f"Spider {crawler_name} meta: Set {key.value} to {value}")
 
         session.add(spider_meta)
-        session.commit()
+        await session.commit()
 
 
 if __name__ == "__main__":
-    # crawler_set_meta("au.nem.latest.dispatch_scada", CrawlStatTypes.last_crawled, datetime.now())
-    print(crawlers_get_all_meta())
+    import asyncio
+
+    async def main():
+        # await crawler_set_meta("au.nem.latest.dispatch_scada", CrawlStatTypes.last_crawled, datetime.now())
+        print(await crawlers_get_all_meta())
+
+    asyncio.run(main())
