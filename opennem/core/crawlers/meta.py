@@ -125,6 +125,9 @@ async def crawler_set_meta(crawler_name: str, key: CrawlStatTypes, value: Any) -
         if not spider_meta:
             spider_meta = CrawlMeta(spider_name=crawler_name, data={})
 
+        if isinstance(value, datetime):
+            value = value.isoformat()
+
         spider_meta.data[key.value] = value
 
         logger.debug(f"Spider {crawler_name} meta: Set {key.value} to {value}")
