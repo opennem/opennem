@@ -67,7 +67,9 @@ async def run_nemweb_aemo_crawl(
     if latest:
         time_interval = get_time_interval_for_crawler(crawler)
 
-        missing_intervals = get_crawler_missing_intervals(crawler_name=crawler.name, days=backfill_days, interval=time_interval)
+        missing_intervals = await get_crawler_missing_intervals(
+            crawler_name=crawler.name, days=backfill_days, interval=time_interval
+        )
 
         logger.debug(f"Have {len(missing_intervals)} missing intervals for {crawler.name} since {time_interval}")
 
