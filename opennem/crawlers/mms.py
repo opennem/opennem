@@ -1,4 +1,5 @@
 """ MMS crawler """
+
 import logging
 from datetime import datetime
 
@@ -42,6 +43,7 @@ def run_aemo_mms_crawl(
     last_crawled: bool = True,
     limit: bool = False,
     latest: bool = True,
+    **kwargs,
 ) -> ControllerReturn | None:
     """Run the MMS crawl"""
 

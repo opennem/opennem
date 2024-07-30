@@ -48,7 +48,7 @@ def crawlers_get_all_meta() -> dict[str, Any] | None:
         spider_meta = session.query(CrawlMeta).all()
 
         if not spider_meta:
-            return None
+            return {}
 
         for spider in spider_meta:
             if not spider.data:

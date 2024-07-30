@@ -5,6 +5,7 @@ This module provides a set of utilities to normalize, clean and parse passed
 in data from various sources.
 
 """
+
 import itertools
 import logging
 import re
@@ -556,7 +557,8 @@ def station_name_cleaner(station_name: str) -> str:
             comp = "Mc" + comp[2:].capitalize()
 
         elif isinstance(comp, str) and comp != "":
-            comp = comp.capitalize()
+            # This handles any hyphenated names like 'Morgan-Whyalla'
+            comp = comp.title()
 
         # strip numbers greater than 5
         if comp:
