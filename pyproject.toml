@@ -99,6 +99,7 @@ ruff = "^0.3.0"
 hatch = "^1.7.0"
 types-redis = "^4.6.0.11"
 requests-cache = "^1.1.1"
+hypothesis = "^6.108.5"
 
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'
