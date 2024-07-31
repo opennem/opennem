@@ -72,7 +72,7 @@ def get_database_engine() -> AsyncEngine:
     return engine
 
 
-SessionLocal = async_sessionmaker(engine, expire_on_commit=False)
+SessionLocal: AsyncSession = async_sessionmaker(engine, expire_on_commit=False)
 
 
 async def get_scoped_session() -> AsyncGenerator[AsyncSession, None]:
