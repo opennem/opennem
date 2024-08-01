@@ -34,14 +34,11 @@ def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int
     if not db_conn_str:
         db_conn_str = str(settings.db_url)
 
-    if settings.db_debug:
-        debug = True
-
     try:
         return create_async_engine(
             db_conn_str,
             query_cache_size=1200,
-            echo=debug,
+            echo=settings.db_debug,
             future=True,
             pool_size=30,
             max_overflow=20,
