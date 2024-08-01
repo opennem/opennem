@@ -17,7 +17,7 @@ class StatTypes(Enum):
     Inflation = "INFLATION"
 
     def __str__(self) -> str:
-        return "%s" % self.value
+        return f"{self.value}"
 
 
 class StatDatabase(BaseModel):
