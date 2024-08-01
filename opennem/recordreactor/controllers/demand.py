@@ -10,7 +10,7 @@ from sqlalchemy import select, text
 from opennem import settings
 from opennem.db import AsyncSession, SessionLocal
 from opennem.db.models.opennem import Milestones
-from opennem.recordreactor.schema import MilestoneType
+from opennem.recordreactor.schema import MilestoneAggregate
 from opennem.recordreactor.utils.buckets import BUCKET_SIZES, get_bucket_sql, get_period_start_end, is_end_of_period
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network, make_aware_for_network
@@ -119,7 +119,7 @@ async def persist_demand_and_price_milestones(session, network_id: str, bucket_s
             demand_high_milestone = Milestones(
                 record_id=demand_high_milestone_id,
                 interval=data["bucket"],
-                record_type=MilestoneType.high,
+                record_type=MilestoneAggregate.high,
                 significance=1,
                 value=data["max_demand"],
                 network_id=network_id,
@@ -142,7 +142,7 @@ async def persist_demand_and_price_milestones(session, network_id: str, bucket_s
             demand_low_milestone = Milestones(
                 record_id=demand_low_milestone_id,
                 interval=data["bucket"],
-                record_type=MilestoneType.low,
+                record_type=MilestoneAggregate.low,
                 significance=1,
                 value=data["min_demand"],
                 network_id=network_id,
@@ -165,7 +165,7 @@ async def persist_demand_and_price_milestones(session, network_id: str, bucket_s
             price_low_milestone = Milestones(
                 record_id=price_low_milestone_id,
                 interval=data["bucket"],
-                record_type=MilestoneType.low,
+                record_type=MilestoneAggregate.low,
                 significance=1,
                 value=data["min_price"],
                 network_id=network_id,
@@ -186,7 +186,7 @@ async def persist_demand_and_price_milestones(session, network_id: str, bucket_s
             price_high_milestone = Milestones(
                 record_id=price_high_milestone_id,
                 interval=data["bucket"],
-                record_type=MilestoneType.high,
+                record_type=MilestoneAggregate.high,
                 significance=1,
                 value=data["max_price"],
                 network_id=network_id,

@@ -8,7 +8,8 @@ from sqlalchemy.sql import func
 
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Milestones
-from opennem.recordreactor.schema import MilestoneType
+from opennem.recordreactor.schema import MilestoneAggregate, MilestoneMetric, MilestonePeriods
+from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.api.milestones.queries")
 
@@ -21,7 +22,11 @@ async def get_milestone_records(
     date_end: datetime | None = None,
     significance: int | None = None,
     fueltech: list[str] | None = None,
-    record_type: MilestoneType | None = None,
+    record_type: MilestoneAggregate | None = None,
+    metric: MilestoneMetric | None = None,
+    networks: list[NetworkSchema] | None = None,
+    network_regions: list[str] | None = None,
+    periods: list[MilestonePeriods] | None = None,
 ) -> tuple[list[dict], int]:
     """Get a list of all milestones ordered by date with a limit, pagination and optional significance filter"""
     page_number -= 1
@@ -45,6 +50,18 @@ async def get_milestone_records(
 
     if record_type:
         select_query = select_query.where(Milestones.record_type == record_type)
+
+    if metric:
+        select_query = select_query.where(Milestones.record_field == metric)
+
+    if networks:
+        select_query = select_query.where(Milestones.network_id.in_([network.code for network in networks]))
+
+    if network_regions:
+        select_query = select_query.where(Milestones.network_region.in_(network_regions))
+
+    if periods:
+        select_query = select_query.where(Milestones.period.in_(periods))
 
     total_query = select(func.count()).select_from(select_query.subquery())
     total_records = await session.scalar(total_query)

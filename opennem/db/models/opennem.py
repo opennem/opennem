@@ -41,7 +41,7 @@ from sqlalchemy.sql.schema import UniqueConstraint
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.parsers.aemo.schemas import AEMODataSource
-from opennem.recordreactor.schema import MilestoneType
+from opennem.recordreactor.schema import MilestoneAggregate
 from opennem.schema.core import BaseConfig
 
 Base = declarative_base()
@@ -961,7 +961,7 @@ class Milestones(Base):
     record_id: Mapped[str] = Column(Text, primary_key=True)
     interval = Column(DateTime(timezone=False), primary_key=True, index=True)
     instance_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), server_default=sql("uuid_generate_v4()"))
-    record_type = Column(Enum(MilestoneType), nullable=False)
+    record_type = Column(Enum(MilestoneAggregate), nullable=False)
     significance = Column(Integer, nullable=False, default=0)
     value = Column(Float, nullable=False)
 

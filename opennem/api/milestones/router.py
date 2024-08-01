@@ -11,7 +11,14 @@ from starlette.exceptions import HTTPException
 from opennem.api.keys import api_protected
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.db import get_scoped_session
-from opennem.recordreactor.schema import MilestoneRecord, MilestoneType
+from opennem.recordreactor.schema import (
+    MILESTONE_SUPPORTED_NETWORKS,
+    MilestoneAggregate,
+    MilestoneMetric,
+    MilestonePeriods,
+    MilestoneRecord,
+)
+from opennem.schema.network import NetworkSchema
 
 from .queries import get_milestone_record, get_milestone_records
 
@@ -37,7 +44,7 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
             "instance_id": db_record["instance_id"],
             "record_id": db_record["record_id"].lower(),
             "interval": milestone_interval,
-            "record_type": db_record["record_type"],
+            "aggregate": MilestoneAggregate(db_record["record_type"]) if db_record["record_type"] else None,
             "significance": db_record["significance"],
             "value": float(db_record["value"]),
             "unit": "MW",
@@ -46,7 +53,7 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
             "network": db_record["network_id"],
             "period": db_record["period"],
             "previous_record_id": db_record["previous_record_id"],
-            "record_field": db_record["record_field"],
+            "metric": MilestoneMetric(db_record["record_field"]) if db_record["record_field"] else None,
         }
 
         if db_record["network_region"]:
@@ -66,8 +73,12 @@ async def get_milestones(
     page: int = 1,
     date_start: datetime | None = None,
     date_end: datetime | None = None,
-    record_type: MilestoneType | None = None,
+    aggregate: MilestoneAggregate | None = None,
+    metric: MilestoneMetric | None = None,
     fueltech: list[str] | None = Query(None),
+    networks: list[NetworkSchema] | None = Query(None),
+    network_regions: list[str] | None = Query(None),
+    periods: list[MilestonePeriods] | None = Query(None),
     db: AsyncSession = Depends(get_scoped_session),
 ) -> APIV4ResponseSchema:
     """Get a list of milestones"""
@@ -89,11 +100,39 @@ async def get_milestones(
     if date_start and date_end and date_start == date_end:
         raise HTTPException(status_code=400, detail="Date start and date end cannot be the same")
 
-    if record_type:
-        if record_type not in MilestoneType.__members__.values():
-            raise HTTPException(status_code=400, detail="Invalid record type")
+    if aggregate:
+        if aggregate not in MilestoneAggregate.__members__.values():
+            raise HTTPException(status_code=400, detail="Invalid aggregate type")
 
-        record_type = MilestoneType[record_type]
+        aggregate = MilestoneAggregate[aggregate]
+
+    if metric:
+        if metric not in MilestoneMetric.__members__.values():
+            raise HTTPException(status_code=400, detail="Invalid metric type")
+
+        metric = MilestoneMetric[metric]
+
+    if networks:
+        if not all(network in MILESTONE_SUPPORTED_NETWORKS for network in networks):
+            raise HTTPException(status_code=400, detail="Invalid network")
+
+        networks = [network for network in networks if network in MILESTONE_SUPPORTED_NETWORKS]
+    else:
+        networks = MILESTONE_SUPPORTED_NETWORKS
+
+    if network_regions:
+        if not all(network_region in network.regions for network in networks for network_region in network_regions):
+            raise HTTPException(status_code=400, detail="Invalid network region")
+
+        network_regions = [
+            network_region for network in networks for network_region in network_regions if network_region in network.regions
+        ]
+
+    if periods:
+        if not all(period in MilestonePeriods.__members__.values() for period in periods):
+            raise HTTPException(status_code=400, detail="Invalid period")
+
+        periods = [MilestonePeriods[period] for period in periods]
 
     try:
         db_records, total_records = await get_milestone_records(
@@ -102,8 +141,12 @@ async def get_milestones(
             page_number=page,
             date_start=date_start,
             date_end=date_end,
-            record_type=record_type,
+            record_type=aggregate,
             fueltech=fueltech,
+            metric=metric,
+            networks=networks,
+            network_regions=network_regions,
+            periods=periods,
         )
     except Exception as e:
         logger.error(f"Error getting milestone records: {e}")

@@ -9,21 +9,41 @@ from enum import Enum
 from pydantic import UUID4, BaseModel
 
 from opennem.schema.fueltech import FueltechSchema
-from opennem.schema.network import NetworkSchema
+from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.units import UnitDefinition
 
+MILESTONE_SUPPORTED_NETWORKS = [NetworkNEM, NetworkWEM]
 
-class MilestoneType(str, Enum):
+
+class MilestoneAggregate(str, Enum):
     low = "low"
     average = "average"
     high = "high"
+
+
+class MilestoneMetric(str, Enum):
+    demand = "demand"
+    price = "price"
+    generation = "generation"
+    energy = "energy"
+    emissions = "emissions"
+
+
+class MilestonePeriods(str, Enum):
+    interval = "interval"
+    day = "day"
+    week = "week"
+    month = "month"
+    quarter = "quarter"
+    year = "year"
+    financial_year = "financial_year"
 
 
 class MilestoneRecord(BaseModel):
     instance_id: UUID4
     record_id: str
     interval: datetime
-    record_type: MilestoneType
+    aggregate: MilestoneAggregate
     significance: int
     value: int | float
     unit: UnitDefinition | str | None = None
@@ -33,7 +53,7 @@ class MilestoneRecord(BaseModel):
     description: str | None = None
     period: str | None = None
     previous_record_id: str | None = None
-    record_field: str | None = None
+    metric: MilestoneMetric | None = None
 
     @property
     def network_code(self) -> str:

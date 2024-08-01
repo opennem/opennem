@@ -16,7 +16,7 @@ from zoneinfo import ZoneInfo
 from pydantic import BaseModel
 
 from opennem.db import SessionLocal
-from opennem.db.models.opennem import Milestones, MilestoneType
+from opennem.db.models.opennem import MilestoneAggregate, Milestones
 
 logger = logging.getLogger("opennem.recordreactor.initstate")
 
@@ -74,9 +74,9 @@ def load_backfill_from_file(file_path: Path) -> list[ReactorBackfillRecord]:
     return models
 
 
-def get_aware_interval_for_record(record: ReactorBackfillRecord, record_type: MilestoneType) -> datetime:
+def get_aware_interval_for_record(record: ReactorBackfillRecord, record_type: MilestoneAggregate) -> datetime:
     """Get an aware interval for a record"""
-    milestone_type_attribute = "highest_output_interval" if record_type == MilestoneType.high else "lowest_output_interval"
+    milestone_type_attribute = "highest_output_interval" if record_type == MilestoneAggregate.high else "lowest_output_interval"
 
     if not hasattr(record, milestone_type_attribute):
         raise Exception(f"Record does not have attribute {milestone_type_attribute}")
@@ -107,7 +107,7 @@ def get_network_id_map(network_id: str) -> str:
 def get_record_id(
     record: ReactorBackfillRecord,
     network_id: str,
-    record_type: MilestoneType,
+    record_type: MilestoneAggregate,
     record_unit: str | None = None,
     record_period: str | None = None,
 ) -> str:
@@ -131,7 +131,7 @@ def get_record_id(
 def get_record_description(
     record: ReactorBackfillRecord,
     network_id: str,
-    record_type: MilestoneType,
+    record_type: MilestoneAggregate,
     record_unit: str | None = None,
     record_period: str | None = None,
 ) -> str:
@@ -166,23 +166,31 @@ def backfill_records_to_milestones(backfill_records: list[ReactorBackfillRecord]
 
         if record.highest_output:
             record_id = get_record_id(
-                record=record, network_id=network_id, record_type=MilestoneType.high, record_unit="power", record_period="all"
+                record=record,
+                network_id=network_id,
+                record_type=MilestoneAggregate.high,
+                record_unit="power",
+                record_period="all",
             )
 
             description = get_record_description(
-                record=record, network_id=network_id, record_type=MilestoneType.high, record_unit="power", record_period="all"
+                record=record,
+                network_id=network_id,
+                record_type=MilestoneAggregate.high,
+                record_unit="power",
+                record_period="all",
             )
 
             if not record.highest_output_interval:
                 continue
 
-            interval = get_aware_interval_for_record(record, MilestoneType.high)
+            interval = get_aware_interval_for_record(record, MilestoneAggregate.high)
 
             milestones.append(
                 Milestones(
                     record_id=record_id,
                     interval=interval,
-                    record_type=MilestoneType.high,
+                    record_type=MilestoneAggregate.high,
                     significance=8,
                     value=record.highest_output,
                     network_id=network_id,
@@ -195,23 +203,23 @@ def backfill_records_to_milestones(backfill_records: list[ReactorBackfillRecord]
 
         if record.lowest_output:
             record_id = get_record_id(
-                record=record, network_id=network_id, record_type=MilestoneType.low, record_unit="power", record_period="all"
+                record=record, network_id=network_id, record_type=MilestoneAggregate.low, record_unit="power", record_period="all"
             )
 
             description = get_record_description(
-                record=record, network_id=network_id, record_type=MilestoneType.low, record_unit="power", record_period="all"
+                record=record, network_id=network_id, record_type=MilestoneAggregate.low, record_unit="power", record_period="all"
             )
 
             if not record.lowest_output_interval:
                 continue
 
-            interval = get_aware_interval_for_record(record, MilestoneType.low)
+            interval = get_aware_interval_for_record(record, MilestoneAggregate.low)
 
             milestones.append(
                 Milestones(
                     record_id=record_id,
                     interval=interval,
-                    record_type=MilestoneType.low,
+                    record_type=MilestoneAggregate.low,
                     significance=1,
                     value=record.highest_output,
                     network_id=network_id,
