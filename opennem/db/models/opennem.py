@@ -36,7 +36,7 @@ from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP, UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql.schema import UniqueConstraint
 
 from opennem.core.dispatch_type import DispatchType
@@ -958,9 +958,9 @@ class AggregateNetworkDemand(Base):
 class Milestones(Base):
     __tablename__ = "milestones"
 
-    record_id = Column(Text, primary_key=True)
+    record_id: Mapped[str] = Column(Text, primary_key=True)
     interval = Column(DateTime(timezone=False), primary_key=True, index=True)
-    instance_id = Column(UUID(as_uuid=True), server_default=sql("uuid_generate_v4()"))
+    instance_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), server_default=sql("uuid_generate_v4()"))
     record_type = Column(Enum(MilestoneType), nullable=False)
     significance = Column(Integer, nullable=False, default=0)
     value = Column(Float, nullable=False)

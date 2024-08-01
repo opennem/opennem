@@ -1,4 +1,5 @@
 import logging
+import uuid
 from datetime import datetime
 
 from sqlalchemy import or_, select
@@ -69,15 +70,17 @@ async def get_milestone_records(
 
 async def get_milestone_record(
     session: AsyncSession,
-    record_id: str,
+    instance_id: uuid.UUID,
 ) -> dict | None:
     """Get a single milestone record"""
-    select_query = select(Milestones).where(Milestones.record_id == record_id)
+    select_query = select(Milestones).where(Milestones.instance_id == instance_id)
     result = await session.execute(select_query)
     record = result.scalar_one_or_none()
 
     if not record:
         return None
+
+    logger.debug(record)
 
     return record.__dict__
 

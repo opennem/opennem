@@ -1,4 +1,5 @@
 import logging
+import uuid
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
@@ -124,16 +125,16 @@ async def get_milestones(
 @api_version(4)
 @api_protected()
 @milestones_router.get(
-    "/{record_id}", response_model=APIV4ResponseSchema, response_model_exclude_unset=True, description="Get a single milestone"
+    "/{instance_id}", response_model=APIV4ResponseSchema, response_model_exclude_unset=True, description="Get a single milestone"
 )
 async def get_milestone(
-    record_id: str,
+    instance_id: uuid.UUID,
     db: AsyncSession = Depends(get_scoped_session),
 ) -> APIV4ResponseSchema:
     """Get a single milestone"""
 
     try:
-        db_record = await get_milestone_record(db, record_id)
+        db_record = await get_milestone_record(session=db, instance_id=instance_id)
     except Exception as e:
         logger.error(f"Error getting milestone record: {e}")
         response_schema = APIV4ResponseSchema(success=False, error="Error getting milestone record")
