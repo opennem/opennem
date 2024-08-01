@@ -972,6 +972,9 @@ class Milestones(Base):
     description = Column(String, nullable=True)
     period = Column(String, nullable=True)
 
+    record_field = Column(String, nullable=True)
+    previous_record_id = Column(Text, nullable=True)
+
     # Relationships
     # unit = relationship("UnitDefinition")
     # network = relationship("NetworkSchema")

@@ -7,6 +7,7 @@ from sqlalchemy.sql import func
 
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Milestones
+from opennem.recordreactor.schema import MilestoneType
 
 logger = logging.getLogger("opennem.api.milestones.queries")
 
@@ -17,6 +18,9 @@ async def get_milestone_records(
     page_number: int = 1,
     date_start: datetime | None = None,
     date_end: datetime | None = None,
+    significance: int | None = None,
+    fueltech: list[str] | None = None,
+    record_type: MilestoneType | None = None,
 ) -> tuple[list[dict], int]:
     """Get a list of all milestones ordered by date with a limit, pagination and optional significance filter"""
     page_number -= 1
@@ -31,6 +35,15 @@ async def get_milestone_records(
 
     if date_end and date_start == date_end:
         select_query = select_query.where(Milestones.interval < date_end)
+
+    if significance:
+        select_query = select_query.where(Milestones.significance >= significance)
+
+    if fueltech:
+        select_query = select_query.where(Milestones.fueltech.in_(fueltech))
+
+    if record_type:
+        select_query = select_query.where(Milestones.record_type == record_type)
 
     total_query = select(func.count()).select_from(select_query.subquery())
     total_records = await session.scalar(total_query)
@@ -52,6 +65,21 @@ async def get_milestone_records(
         records.append(res_dict)
 
     return records, total_records
+
+
+async def get_milestone_record(
+    session: AsyncSession,
+    record_id: str,
+) -> dict | None:
+    """Get a single milestone record"""
+    select_query = select(Milestones).where(Milestones.record_id == record_id)
+    result = await session.execute(select_query)
+    record = result.scalar_one_or_none()
+
+    if not record:
+        return None
+
+    return record.__dict__
 
 
 async def get_total_milestones(

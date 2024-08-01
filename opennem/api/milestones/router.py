@@ -7,11 +7,12 @@ from fastapi_versionizer.versionizer import api_version
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.exceptions import HTTPException
 
+from opennem.api.keys import api_protected
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.db import get_scoped_session
-from opennem.recordreactor.schema import MilestoneRecord
+from opennem.recordreactor.schema import MilestoneRecord, MilestoneType
 
-from .queries import get_milestone_records
+from .queries import get_milestone_record, get_milestone_records
 
 logger = logging.getLogger("opennem.api.milestones.router")
 
@@ -43,6 +44,8 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
             "fueltech": db_record["fueltech_group_id"],
             "network": db_record["network_id"],
             "period": db_record["period"],
+            "previous_record_id": db_record["previous_record_id"],
+            "record_field": db_record["record_field"],
         }
 
         if db_record["network_region"]:
@@ -55,12 +58,15 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
 
 
 @api_version(4)
+@api_protected()
 @milestones_router.get("/", response_model=APIV4ResponseSchema, response_model_exclude_unset=True, description="Get milestones")
 async def get_milestones(
     limit: int = 100,
     page: int = 1,
     date_start: datetime | None = None,
     date_end: datetime | None = None,
+    record_type: MilestoneType | None = None,
+    fueltech: list[str] | None = None,
     db: AsyncSession = Depends(get_scoped_session),
 ) -> APIV4ResponseSchema:
     """Get a list of milestones"""
@@ -82,9 +88,21 @@ async def get_milestones(
     if date_start and date_end and date_start == date_end:
         raise HTTPException(status_code=400, detail="Date start and date end cannot be the same")
 
+    if record_type:
+        if record_type not in MilestoneType.__members__.values():
+            raise HTTPException(status_code=400, detail="Invalid record type")
+
+        record_type = MilestoneType[record_type]
+
     try:
         db_records, total_records = await get_milestone_records(
-            db, limit=limit, page_number=page, date_start=date_start, date_end=date_end
+            db,
+            limit=limit,
+            page_number=page,
+            date_start=date_start,
+            date_end=date_end,
+            record_type=record_type,
+            fueltech=fueltech,
         )
     except Exception as e:
         logger.error(f"Error getting milestone records: {e}")
@@ -99,5 +117,38 @@ async def get_milestones(
         return response_schema
 
     response_schema = APIV4ResponseSchema(success=True, data=milestone_records, total_records=total_records)
+
+    return response_schema
+
+
+@api_version(4)
+@api_protected()
+@milestones_router.get(
+    "/{record_id}", response_model=APIV4ResponseSchema, response_model_exclude_unset=True, description="Get a single milestone"
+)
+async def get_milestone(
+    record_id: str,
+    db: AsyncSession = Depends(get_scoped_session),
+) -> APIV4ResponseSchema:
+    """Get a single milestone"""
+
+    try:
+        db_record = await get_milestone_record(db, record_id)
+    except Exception as e:
+        logger.error(f"Error getting milestone record: {e}")
+        response_schema = APIV4ResponseSchema(success=False, error="Error getting milestone record")
+        return response_schema
+
+    if not db_record:
+        raise HTTPException(status_code=404, detail="Milestone record not found")
+
+    try:
+        milestone_record = map_milestone_records_from_db([db_record])
+    except Exception as e:
+        logger.error(f"Error mapping milestone record: {e}")
+        response_schema = APIV4ResponseSchema(success=False, error="Error mapping milestone record")
+        return response_schema
+
+    response_schema = APIV4ResponseSchema(success=True, data=milestone_record)
 
     return response_schema

@@ -13,7 +13,7 @@ from opennem.schema.network import NetworkSchema
 from opennem.schema.units import UnitDefinition
 
 
-class MilestoneType(Enum):
+class MilestoneType(str, Enum):
     low = "low"
     average = "average"
     high = "high"
@@ -32,6 +32,8 @@ class MilestoneRecord(BaseModel):
     fueltech: FueltechSchema | str | None = None
     description: str | None = None
     period: str | None = None
+    previous_record_id: str | None = None
+    record_field: str | None = None
 
     @property
     def network_code(self) -> str:

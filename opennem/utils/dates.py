@@ -503,3 +503,16 @@ def get_today_opennem() -> datetime:
     opennem_dt = now_no_microseconds.astimezone(opennem_tz)
 
     return opennem_dt
+
+
+def make_aware_for_network(dt: datetime, network: NetworkSchema) -> datetime:
+    """Make a datetime aware for a network"""
+    if not dt:
+        raise ValueError("dt cannot be None")
+
+    if not network:
+        raise ValueError("network cannot be None")
+
+    dt_aware = dt.replace(tzinfo=network.get_fixed_offset())
+
+    return dt_aware

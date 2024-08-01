@@ -14,7 +14,6 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel
-from sqlalchemy import text as sql
 
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Milestones, MilestoneType
@@ -226,7 +225,7 @@ def backfill_records_to_milestones(backfill_records: list[ReactorBackfillRecord]
     return milestones
 
 
-if __name__ == "__main__":
+async def backfill_from_csv() -> None:
     logger.info("OpenNEM API Reactor Backfill")
     logger.info("Generating records for all facilities")
 
@@ -234,13 +233,17 @@ if __name__ == "__main__":
     backfill_records = load_backfill_from_file(BACKFILL_FILE_PATH)
     milestone_records = backfill_records_to_milestones(backfill_records)
 
-    with SessionLocal() as session:
-        session.execute(sql("DELETE FROM milestones"))
-
+    async with SessionLocal() as session:
         for record in milestone_records:
             try:
                 session.add(record)
-                session.commit()
+                await session.commit()
             except Exception as e:
                 logger.error(f"Error adding record: {e}")
                 session.rollback()
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    asyncio.run(backfill_from_csv())

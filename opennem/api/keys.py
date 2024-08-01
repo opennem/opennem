@@ -17,7 +17,7 @@ from opennem.users.schema import OpenNEMRoles
 
 logger = logging.getLogger("opennem.api.keys")
 
-__all__ = ("protected",)
+__all__ = ("api_protected",)
 
 T = TypeVar("T")
 CallableT = Callable[..., T]
@@ -51,7 +51,7 @@ async def verify_api_key(api_key: str = Depends(api_key_header)):
     return result.unwrap()
 
 
-def protected(
+def api_protected(
     roles: list[OpenNEMRoles] | None = None,
     on_invalid_key: InvalidKeyHandlerT | None = None,
     on_exc: ExcHandlerT | None = None,

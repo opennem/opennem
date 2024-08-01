@@ -6,7 +6,7 @@ OpenNEM Milestone Records Reactor Database Persistence
 
 import logging
 
-from opennem.db import get_database_engine
+from opennem.db import db_connect
 from opennem.db.models.opennem import Milestones
 
 logger = logging.getLogger("opennem.milestones.reactor")
@@ -15,10 +15,7 @@ logger = logging.getLogger("opennem.milestones.reactor")
 def persist_milestones(milestons: list[Milestones]) -> int:
     """Persist milestones to database with upsert query"""
 
-    engine = get_database_engine()
-
-    if not engine:
-        raise Exception("No engine")
+    engine = db_connect()
 
     conn = engine.connect()
 

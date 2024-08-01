@@ -27,7 +27,7 @@ from opennem.api.dash.router import router as dash_router
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
 from opennem.api.facility.router import router as facility_router
 from opennem.api.feedback.router import router as feedback_router
-from opennem.api.keys import protected, unkey_client
+from opennem.api.keys import api_protected, unkey_client
 from opennem.api.milestones.router import milestones_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
 from opennem.api.station.router import router as station_router
@@ -314,7 +314,7 @@ def health_check() -> str:
     tags=["User"],
     description="Get the current user",
 )
-@protected()
+@api_protected()
 async def user_me(
     *,
     authorization: str = fastapi.Header(None),
@@ -328,7 +328,7 @@ async def user_me(
 
 @app.get("/throttle_test", include_in_schema=False)
 @throttle.throttle_request()
-@protected(roles=[OpenNEMRoles.admin])
+@api_protected(roles=[OpenNEMRoles.admin])
 async def throttle_test() -> str:
     return "OK"
 
