@@ -57,7 +57,7 @@ def make_aware(value: datetime, timezone: pytimezone | None = None) -> datetime:
 
     # Check that we won't overwrite the timezone of an aware datetime.
     if is_aware(value):
-        raise ValueError("make_aware expects a naive datetime, got %s" % value)
+        raise ValueError(f"make_aware expects a naive datetime, got {value}")
 
     # This may be wrong around DST changes!
     return value.replace(tzinfo=timezone)
