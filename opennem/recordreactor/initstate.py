@@ -113,7 +113,7 @@ def get_record_id(
 ) -> str:
     """Get a record id"""
     record_id_components = [
-        "ms",
+        "au",
         network_id,
         record.network_region,
         record.fueltech_id,
