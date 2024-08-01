@@ -76,9 +76,9 @@ async def get_milestones(
     aggregate: MilestoneAggregate | None = None,
     metric: MilestoneMetric | None = None,
     fueltech: list[str] | None = Query(None),
-    networks: list[NetworkSchema] | None = Query(None),
-    network_regions: list[str] | None = Query(None),
-    periods: list[MilestonePeriods] | None = Query(None),
+    network: list[str] | None = Query(None),
+    network_region: list[str] | None = Query(None),
+    period: list[MilestonePeriods] | None = Query(None),
     db: AsyncSession = Depends(get_scoped_session),
 ) -> APIV4ResponseSchema:
     """Get a list of milestones"""
@@ -112,27 +112,39 @@ async def get_milestones(
 
         metric = MilestoneMetric[metric]
 
-    if networks:
-        if not all(network in MILESTONE_SUPPORTED_NETWORKS for network in networks):
-            raise HTTPException(status_code=400, detail="Invalid network")
+    network_schemas: list[NetworkSchema] = []
+    network_supported_ids = [network.code for network in MILESTONE_SUPPORTED_NETWORKS]
 
-        networks = [network for network in networks if network in MILESTONE_SUPPORTED_NETWORKS]
+    if network:
+        if not all(network in network_supported_ids for network in network):
+            raise HTTPException(status_code=400, detail=f"Invalid network: {', '.join(network)}")
+
+        network_schemas = [n for n in MILESTONE_SUPPORTED_NETWORKS if n.code in network]
     else:
-        networks = MILESTONE_SUPPORTED_NETWORKS
+        network_schemas = MILESTONE_SUPPORTED_NETWORKS
 
-    if network_regions:
-        if not all(network_region in network.regions for network in networks for network_region in network_regions):
-            raise HTTPException(status_code=400, detail="Invalid network region")
+    # get a flat list of all network regions
+    network_supported_regions: list[str] = []
+    for n in network_schemas:
+        network_supported_regions.extend(n.regions if n.regions else [])
 
-        network_regions = [
-            network_region for network in networks for network_region in network_regions if network_region in network.regions
-        ]
+    logger.debug(f"Networks: {network_schemas}")
+    logger.debug(f"Network regions: {network_supported_regions}")
 
-    if periods:
-        if not all(period in MilestonePeriods.__members__.values() for period in periods):
+    if network_region:
+        if not network:
+            raise HTTPException(status_code=400, detail="Networks must be provided when network regions are provided")
+
+        network_region = [n.upper() for n in network_region]
+
+        if not all(network_region in network_supported_regions for network_region in network_region):
+            raise HTTPException(status_code=400, detail=f"Invalid network region: {", ".join(network_region)}")
+
+    if period:
+        if not all(period in MilestonePeriods.__members__.values() for period in period):
             raise HTTPException(status_code=400, detail="Invalid period")
 
-        periods = [MilestonePeriods[period] for period in periods]
+        period = [MilestonePeriods[period] for period in period]
 
     try:
         db_records, total_records = await get_milestone_records(
@@ -144,9 +156,9 @@ async def get_milestones(
             record_type=aggregate,
             fueltech=fueltech,
             metric=metric,
-            networks=networks,
-            network_regions=network_regions,
-            periods=periods,
+            networks=network_schemas,
+            network_regions=network_region,
+            periods=period,
         )
     except Exception as e:
         logger.error(f"Error getting milestone records: {e}")
