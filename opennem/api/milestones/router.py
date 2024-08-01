@@ -67,7 +67,13 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
 
 @api_version(4)
 @api_protected()
-@milestones_router.get("/", response_model=APIV4ResponseSchema, response_model_exclude_unset=True, description="Get milestones")
+@milestones_router.get(
+    "/",
+    response_model=APIV4ResponseSchema,
+    response_model_exclude_unset=True,
+    response_model_exclude_none=True,
+    description="Get milestones",
+)
 async def get_milestones(
     limit: int = 100,
     page: int = 1,
@@ -75,7 +81,7 @@ async def get_milestones(
     date_end: datetime | None = None,
     aggregate: MilestoneAggregate | None = None,
     metric: MilestoneMetric | None = None,
-    fueltech: list[str] | None = Query(None),
+    fuel_tech: list[str] | None = Query(None),
     network: list[str] | None = Query(None),
     network_region: list[str] | None = Query(None),
     period: list[MilestonePeriods] | None = Query(None),
@@ -154,7 +160,7 @@ async def get_milestones(
             date_start=date_start,
             date_end=date_end,
             record_type=aggregate,
-            fueltech=fueltech,
+            fueltech=fuel_tech,
             metric=metric,
             networks=network_schemas,
             network_regions=network_region,
@@ -180,7 +186,11 @@ async def get_milestones(
 @api_version(4)
 @api_protected()
 @milestones_router.get(
-    "/{instance_id}", response_model=APIV4ResponseSchema, response_model_exclude_unset=True, description="Get a single milestone"
+    "/{instance_id}",
+    response_model=APIV4ResponseSchema,
+    response_model_exclude_unset=True,
+    response_model_exclude_none=True,
+    description="Get a single milestone",
 )
 async def get_milestone(
     instance_id: uuid.UUID,
