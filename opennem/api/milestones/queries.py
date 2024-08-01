@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import func
 
@@ -40,7 +40,7 @@ async def get_milestone_records(
         select_query = select_query.where(Milestones.significance >= significance)
 
     if fueltech:
-        select_query = select_query.where(Milestones.fueltech.in_(fueltech))
+        select_query = select_query.where(or_(Milestones.fueltech_group_id.in_(fueltech), Milestones.fueltech_id.in_(fueltech)))
 
     if record_type:
         select_query = select_query.where(Milestones.record_type == record_type)

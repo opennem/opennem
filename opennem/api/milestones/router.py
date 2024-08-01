@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from fastapi_versionizer.versionizer import api_version
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.exceptions import HTTPException
@@ -66,7 +66,7 @@ async def get_milestones(
     date_start: datetime | None = None,
     date_end: datetime | None = None,
     record_type: MilestoneType | None = None,
-    fueltech: list[str] | None = None,
+    fueltech: list[str] | None = Query(None),
     db: AsyncSession = Depends(get_scoped_session),
 ) -> APIV4ResponseSchema:
     """Get a list of milestones"""
