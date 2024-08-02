@@ -1,5 +1,5 @@
 """
-RecordReactor demand methods
+RecordReactor generation methods
 """
 
 import logging
@@ -17,44 +17,57 @@ from opennem.recordreactor.state import get_current_milestone_state
 from opennem.recordreactor.utils import check_milestone_is_new
 from opennem.schema.network import NetworkSchema
 
-logger = logging.getLogger("opennem.recordreactor.controllers.demand")
+logger = logging.getLogger("opennem.recordreactor.controllers.generation")
 
 
-async def aggregate_demand_and_price_data(
+async def aggregate_generation_and_emissions_data(
     session: AsyncSession, network_id: str, bucket_size: str, start_date: datetime, end_date: datetime
 ) -> list[dict]:
-    bucket_sql = get_bucket_sql(bucket_size)
+    bucket_sql = get_bucket_sql(bucket_size, extra="AT TIME ZONE 'Australia/Brisbane'")
 
-    logger.info(f"Aggregating demand data for {network_id} bucket size {bucket_size} from {start_date} to {end_date}")
+    logger.info(
+        f"Aggregating generation and emissions data for {network_id} bucket size {bucket_size} from {start_date} to {end_date}"
+    )
 
     query = text(f"""
-        WITH time_zone_data AS (
-            SELECT
-                {bucket_sql} AS bucket,
-                network_region,
-                demand_total,
-                price
-            FROM
-                balancing_summary
-            WHERE
-                network_id = :network_id
-                AND trading_interval BETWEEN :start_date AND :end_date
+        WITH timezone_data AS (
+            SELECT 'Australia/Brisbane'::text AS timezone
         )
         SELECT
-            :start_date AS bucket,
-            network_region,
-            MIN(demand_total) AS min_demand,
-            MAX(demand_total) AS max_demand,
-            SUM(demand_total) AS total_demand,
-            MIN(price) AS min_price,
-            MAX(price) AS max_price,
-            SUM(price) AS total_price
+            {bucket_sql} AS trading_interval,
+            f.network_region,
+            ft.code AS fueltech_code,
+            sum(fs.generated) as fueltech_generated,
+            sum(fs.generated * n.interval_size / 60.0) AS fueltech_energy,
+            CASE
+                WHEN sum(fs.generated) > 0 THEN sum(f.emissions_factor_co2 * fs.generated * n.interval_size / 60.0)
+                ELSE 0
+            END AS fueltech_emissions,
+            CASE
+                WHEN sum(fs.generated) > 0 THEN
+                    round(
+                        sum(f.emissions_factor_co2 * fs.generated * n.interval_size / 60.0) /
+                        sum(fs.generated * n.interval_size / 60.0), 4
+                    )
+                ELSE 0
+            END AS fueltech_emissions_intensity
         FROM
-            time_zone_data
+            facility_scada fs
+            JOIN facility f ON fs.facility_code = f.code
+            JOIN fueltech ft ON f.fueltech_id = ft.code
+            JOIN network n ON f.network_id = n.code
+            CROSS JOIN timezone_data tz
+        WHERE
+            fs.is_forecast IS FALSE AND
+            f.fueltech_id IS NOT NULL AND
+            f.fueltech_id NOT IN ('imports', 'exports', 'interconnector') AND
+            f.network_id IN ('NEM', 'AEMO_ROOFTOP', 'AEMO_ROOFTOP_BACKFILL') AND
+            fs.trading_interval >= :date_start::timestamp AT TIME ZONE tz.timezone AND
+            fs.trading_interval < :date_end::timestamp AT TIME ZONE tz.timezone
         GROUP BY
-            network_region
+            1, 2, 3
         ORDER BY
-            network_region
+            1 DESC, 2, 3;
     """)
 
     result = await session.execute(
@@ -72,18 +85,18 @@ async def aggregate_demand_and_price_data(
         {
             "bucket": row.bucket,
             "network_region": row.network_region,
-            "demand_low": row.min_demand,
-            "demand_high": row.max_demand,
-            "demand_sum": row.total_demand,
-            "price_low": row.min_price,
-            "price_high": row.max_price,
-            "price_sum": row.total_price,
+            "generation_low": row.min_generation,
+            "generation_high": row.max_generation,
+            "generation_sum": row.total_generation,
+            "emissions_low": row.min_emissions,
+            "emissions_high": row.max_emissions,
+            "emissions_sum": row.total_emissions,
         }
         for row in rows
     ]
 
 
-async def persist_demand_and_price_milestones(session, network_id: str, bucket_size: str, aggregated_data: list[dict]):
+async def persist_generation_milestones(session, network_id: str, bucket_size: str, aggregated_data: list[dict]):
     """
     Persists the demand and price milestones for the given network and bucket size
 
@@ -105,7 +118,8 @@ async def persist_demand_and_price_milestones(session, network_id: str, bucket_s
         milestone_schemas = []
 
         for metric, aggregate in product(
-            [MilestoneMetric.demand, MilestoneMetric.price], [MilestoneAggregate.high, MilestoneAggregate.low]
+            [MilestoneMetric.energy, MilestoneMetric.emissions, MilestoneMetric.power],
+            [MilestoneAggregate.high, MilestoneAggregate.low],
         ):
             milestone_map = await get_milestone_map_by_record_id(
                 f"au.{network_id.lower()}.{data['network_region'].lower()}.{metric.value}.{bucket_size}.{aggregate.value}"
@@ -146,11 +160,11 @@ async def persist_demand_and_price_milestones(session, network_id: str, bucket_s
     await session.flush()
 
 
-async def run_price_demand_milestone_for_interval(
+async def run_fueltech_generation_milestone_for_interval(
     network: NetworkSchema, bucket_size: str, period_start: datetime, period_end: datetime
 ):
     async with SessionLocal() as session:
-        aggregated_data = await aggregate_demand_and_price_data(
+        aggregated_data = await aggregate_generation_and_emissions_data(
             session=session,
             network_id=network.code,
             bucket_size=bucket_size,
@@ -158,7 +172,7 @@ async def run_price_demand_milestone_for_interval(
             end_date=period_end,
         )
 
-        await persist_demand_and_price_milestones(
+        await persist_generation_milestones(
             session=session,
             network_id=network.code,
             bucket_size=bucket_size,

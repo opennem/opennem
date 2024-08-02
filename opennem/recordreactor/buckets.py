@@ -80,13 +80,9 @@ def get_period_start_end(dt: datetime, bucket_size: str) -> tuple[datetime, date
         raise ValueError(f"Invalid bucket_size: {bucket_size}")
 
     return start, end
-    if not start or not end:
-        raise ValueError(f"Invalid bucket_size: {bucket_size}")
-
-    return start, end
 
 
-def get_bucket_sql(bucket_size: str) -> str:
+def get_bucket_sql(bucket_size: str, field_name: str | None = None, extra: str = "") -> str:
     """
     Method to get the SQL expression for a given bucket size.
 
@@ -102,6 +98,9 @@ def get_bucket_sql(bucket_size: str) -> str:
     if bucket_size not in BUCKET_SIZES:
         raise ValueError(f"Invalid bucket_size: {bucket_size}")
 
+    if not field_name:
+        field_name = "trading_interval"
+
     if bucket_size == "interval":
         return "trading_interval"
-    return f"date_trunc('{bucket_size}', trading_interval)"
+    return f"date_trunc('{bucket_size}', {field_name} {extra})"

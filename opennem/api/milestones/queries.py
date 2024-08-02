@@ -8,7 +8,7 @@ from sqlalchemy.sql import func
 
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Milestones
-from opennem.recordreactor.schema import MilestoneAggregate, MilestoneMetric, MilestonePeriods
+from opennem.recordreactor.schema import MilestoneAggregate, MilestoneMetric, MilestonePeriod
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.api.milestones.queries")
@@ -26,7 +26,7 @@ async def get_milestone_records(
     metric: MilestoneMetric | None = None,
     networks: list[NetworkSchema] | None = None,
     network_regions: list[str] | None = None,
-    periods: list[MilestonePeriods] | None = None,
+    periods: list[MilestonePeriod] | None = None,
 ) -> tuple[list[dict], int]:
     """Get a list of all milestones ordered by date with a limit, pagination and optional significance filter"""
     page_number -= 1

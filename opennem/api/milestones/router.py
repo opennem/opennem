@@ -16,7 +16,7 @@ from opennem.recordreactor.schema import (
     MILESTONE_SUPPORTED_NETWORKS,
     MilestoneAggregate,
     MilestoneMetric,
-    MilestonePeriods,
+    MilestonePeriod,
     MilestoneRecord,
 )
 from opennem.schema.network import NetworkSchema
@@ -85,7 +85,7 @@ async def get_milestones(
     fuel_tech: list[str] | None = Query(None),
     network: list[str] | None = Query(None),
     network_region: list[str] | None = Query(None),
-    period: list[MilestonePeriods] | None = Query(None),
+    period: list[MilestonePeriod] | None = Query(None),
     db: AsyncSession = Depends(get_scoped_session),
 ) -> APIV4ResponseSchema:
     """Get a list of milestones"""
@@ -148,10 +148,10 @@ async def get_milestones(
             raise HTTPException(status_code=400, detail=f"Invalid network region: {", ".join(network_region)}")
 
     if period:
-        if not all(period in MilestonePeriods.__members__.values() for period in period):
+        if not all(period in MilestonePeriod.__members__.values() for period in period):
             raise HTTPException(status_code=400, detail="Invalid period")
 
-        period = [MilestonePeriods[period] for period in period]
+        period = [MilestonePeriod[period] for period in period]
 
     try:
         db_records, total_records = await get_milestone_records(
