@@ -18,7 +18,7 @@ from opennem.utils.dates import get_today_opennem
 logger = logging.getLogger("opennem.pipelines.export")
 
 
-def run_export_power_latest_for_network(network: NetworkSchema, network_region_code: str | None = None) -> None:
+async def run_export_power_latest_for_network(network: NetworkSchema, network_region_code: str | None = None) -> None:
     """Run export for latest year"""
     export_map = get_export_map()
     latest_power_exports = (
@@ -30,10 +30,10 @@ def run_export_power_latest_for_network(network: NetworkSchema, network_region_c
 
     logger.info(f"Running {len(latest_power_exports.resources)} exports")
 
-    export_power(stats=latest_power_exports.resources)
+    await export_power(stats=latest_power_exports.resources)
 
 
-def run_export_all(network_region_code: str | None = None) -> None:
+async def run_export_all(network_region_code: str | None = None) -> None:
     # run exports for all
     export_map = get_export_map()
     energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.monthly)
@@ -41,19 +41,19 @@ def run_export_all(network_region_code: str | None = None) -> None:
     if network_region_code:
         energy_exports = energy_exports.get_by_network_region(network_region_code)
 
-    export_energy(energy_exports.resources)
+    await export_energy(energy_exports.resources)
 
 
-def run_export_power_for_region(region_code: str) -> None:
+async def run_export_power_for_region(region_code: str) -> None:
     # run exports for all
     export_map = get_export_map()
     power_exports = (
         export_map.get_by_stat_type(StatType.power).get_by_priority(PriorityType.live).get_by_network_region(region_code)
     )
-    export_power(power_exports.resources)
+    await export_power(power_exports.resources)
 
 
-def run_export_current_year(network_region: str | None = None) -> None:
+async def run_export_current_year(network_region: str | None = None) -> None:
     """Run export for latest year"""
     export_map = get_export_map()
     current_year = get_today_opennem().year
@@ -64,4 +64,4 @@ def run_export_current_year(network_region: str | None = None) -> None:
         energy_exports = energy_exports.get_by_network_region(network_region)
 
     logger.info(f"Running {len(energy_exports.resources)} exports")
-    export_energy(energy_exports.resources)
+    await export_energy(energy_exports.resources)

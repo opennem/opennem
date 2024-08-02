@@ -1,6 +1,8 @@
 import logging
 import re
 
+from sqlalchemy import TextClause
+
 from opennem import settings
 from opennem.api.exceptions import OpennemBaseHttpException, OpenNEMInvalidNetworkRegion
 from opennem.api.export.queries import (
@@ -23,7 +25,7 @@ from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.api.time import human_to_interval
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.units import get_unit
-from opennem.db import get_database_engine
+from opennem.db import db_connect, get_database_engine
 from opennem.queries.flows import get_network_flows_emissions_market_value_query
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM, NetworkSchema
 from opennem.schema.stats import StatTypes
@@ -38,7 +40,7 @@ class NoResults(OpennemBaseHttpException):
     detail = "No results"
 
 
-def weather_daily(
+async def weather_daily(
     time_series: OpennemExportSeries,
     station_code: str,
     unit_name: str = "temperature_mean",
@@ -53,8 +55,9 @@ def weather_daily(
         station_codes=[station_code],
     )
 
-    with engine.begin() as c:
-        row = list(c.execute(query))
+    async with engine.begin() as conn:
+        result = await conn.execute(query)
+        row = result.fetchall()
 
     temp_avg = [DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None) for i in row]
 
@@ -106,14 +109,15 @@ def weather_daily(
     return stats
 
 
-def gov_stats_cpi() -> OpennemDataSet | None:
+async def gov_stats_cpi() -> OpennemDataSet | None:
     engine = get_database_engine()
 
     query = country_stats_query(StatTypes.CPI)
 
-    with engine.begin() as c:
+    async with engine.begin() as conn:
         logger.debug(query)
-        row = list(c.execute(query))
+        result = await conn.execute(query)
+        row = result.fetchall()
 
     stats = [DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None) for i in row]
 
@@ -133,7 +137,7 @@ def gov_stats_cpi() -> OpennemDataSet | None:
     return result
 
 
-def power_flows_region_week(
+async def power_flows_region_week(
     time_series: OpennemExportSeries,
     network_region_code: str,
 ) -> OpennemDataSet | None:
@@ -149,9 +153,10 @@ def power_flows_region_week(
         network_region=network_region_code,
     )
 
-    with engine.begin() as c:
+    async with engine.begin() as conn:
         logger.debug(query)
-        rows = list(c.execute(query))
+        result = await conn.execute(query)
+        rows = result.fetchall()
 
     if not rows:
         logger.error(f"No results from interconnector_power_flow query for {time_series.interval}")
@@ -187,7 +192,7 @@ def power_flows_region_week(
     return result
 
 
-def network_flows_for_region(
+async def network_flows_for_region(
     time_series: OpennemExportSeries,
     network_region_code: str,
     include_emissions: bool = False,
@@ -203,9 +208,10 @@ def network_flows_for_region(
         network_region=network_region_code,
     )
 
-    with engine.begin() as c:
+    async with engine.begin() as conn:
         logger.debug(query)
-        rows = list(c.execute(query))
+        result = await conn.execute(query)
+        rows = result.fetchall()
 
     if not rows:
         logger.error(f"No results from interconnector_power_flow query for {time_series.interval}")
@@ -302,7 +308,7 @@ def network_flows_for_region(
     return result
 
 
-def power_flows_network_week(
+async def power_flows_network_week(
     time_series: OpennemExportSeries,
     network_region_code: str | None = None,
 ) -> OpennemDataSet | None:
@@ -312,9 +318,10 @@ def power_flows_network_week(
 
     logging.info(query)
 
-    with engine.begin() as c:
+    async with engine.begin() as conn:
         logger.debug(query)
-        row = list(c.execute(query))
+        result = await conn.execute(query)
+        row = result.fetchall()
 
     if not row:
         logger.warning(f"No results from interconnector_flow_network_regions_query with {time_series}")
@@ -340,12 +347,12 @@ def power_flows_network_week(
     return result
 
 
-def demand_week(
+async def demand_week(
     time_series: OpennemExportSeries,
     network_region_code: str | None,
     networks_query: list[NetworkSchema] | None = None,
 ) -> OpennemDataSet | None:
-    engine = get_database_engine()
+    engine = db_connect()
 
     query = network_demand_query(
         time_series=time_series,
@@ -353,9 +360,10 @@ def demand_week(
         networks_query=networks_query,
     )
 
-    with engine.begin() as c:
+    async with engine.begin() as conn:
         logger.debug(query)
-        row = list(c.execute(query))
+        result = await conn.execute(query)
+        row = result.fetchall()
 
     if not row:
         logger.error(f"No results from network_demand_query with {time_series}")
@@ -379,13 +387,13 @@ def demand_week(
     return result
 
 
-def power_week(
+async def power_week(
     time_series: OpennemExportSeries,
     network_region_code: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
     include_capacities: bool = False,
 ) -> OpennemDataSet | None:  # sourcery skip: use-fstring-for-formatting
-    engine = get_database_engine()
+    engine = db_connect()
 
     if network_region_code and not re.match(_valid_region, network_region_code):
         raise OpenNEMInvalidNetworkRegion()
@@ -396,9 +404,9 @@ def power_week(
         network_region=network_region_code,
     )
 
-    with engine.begin() as c:
-        logger.debug(query)
-        row = list(c.execute(query))
+    async with engine.begin() as conn:
+        result = await conn.execute(query)
+        row = result.fetchall()
 
     stats = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
 
@@ -463,15 +471,16 @@ def power_week(
     # adjust the interval size
     time_series_price = time_series.copy()
 
-    query = price_network_query(
+    query: TextClause = price_network_query(
         time_series=time_series_price,
         networks_query=networks_query,
         network_region=network_region_code,
     )
 
-    with engine.begin() as c:
+    async with engine.begin() as conn:
         logger.debug(query)
-        row = list(c.execute(query))
+        result_rooftop = await conn.execute(query)
+        row = result_rooftop.fetchall()
 
     stats_price = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
 
@@ -504,9 +513,10 @@ def power_week(
         network_region=network_region_code,
     )
 
-    with engine.begin() as c:
+    async with engine.begin() as conn:
         logger.debug(query)
-        row = list(c.execute(query))
+        result_rooftop = await conn.execute(query)
+        row = result_rooftop.fetchall()
 
     rooftop_power = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
 
@@ -535,9 +545,10 @@ def power_week(
             time_series=time_series_rooftop_forecast, networks_query=networks_query, network_region=network_region_code
         )
 
-        with engine.begin() as c:
+        async with engine.begin() as conn:
             logger.debug(query)
-            row = list(c.execute(query))
+            result_rooftop = await conn.execute(query)
+            row = result_rooftop.fetchall()
 
         rooftop_forecast_power = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
 
@@ -548,7 +559,6 @@ def power_week(
             units=get_unit("power"),
             region=network_region_code,
             fueltech_group=True,
-            cast_nulls=False,
         )
 
     if rooftop and rooftop_forecast:
@@ -562,7 +572,7 @@ def power_week(
     return result
 
 
-def price_for_network_interval(
+async def price_for_network_interval(
     time_series: OpennemExportSeries,
     network_region_code: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
@@ -576,9 +586,10 @@ def price_for_network_interval(
         networks_query=networks_query,
     )
 
-    with engine.begin() as c:
+    with engine.begin() as conn:
         logger.debug(query)
-        row = list(c.execute(query))
+        result = await conn.execute(query)
+        row = result.fetchall()
 
     price_data = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
 
@@ -667,7 +678,7 @@ def power_and_emissions_for_network_interval(
     return power_result
 
 
-def demand_network_region_daily(
+async def demand_network_region_daily(
     time_series: OpennemExportSeries,
     network_region_code: str | None = None,
     networks: list[NetworkSchema] | None = None,
@@ -677,9 +688,10 @@ def demand_network_region_daily(
 
     query = demand_network_region_query(time_series=time_series, network_region=network_region_code, networks=networks)
 
-    with engine.begin() as c:
+    async with engine.begin() as conn:
         logger.debug(query)
-        row = list(c.execute(query))
+        result = await conn.execute(query)
+        row = result.fetchall()
 
     results_energy = [DataQueryResult(interval=i[0], group_by=i[2], result=i[3] if len(i) > 1 else None) for i in row]
 
@@ -716,12 +728,12 @@ def demand_network_region_daily(
     return stats
 
 
-def energy_fueltech_daily(
+async def energy_fueltech_daily(
     time_series: OpennemExportSeries,
     network_region_code: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
 ) -> OpennemDataSet | None:
-    engine = get_database_engine()
+    engine = db_connect()
     units = get_unit("energy_giga")
 
     query = energy_network_fueltech_query(
@@ -730,9 +742,10 @@ def energy_fueltech_daily(
         networks_query=networks_query,
     )
 
-    with engine.begin() as c:
+    async with engine.begin() as conn:
         logger.debug(query)
-        row = list(c.execute(query))
+        result = await conn.execute(query)
+        row = result.fetchall()
 
     results_energy = [DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None) for i in row]
 
@@ -786,7 +799,7 @@ def energy_fueltech_daily(
     return stats
 
 
-def energy_interconnector_flows_and_emissions_v2(
+async def energy_interconnector_flows_and_emissions_v2(
     time_series: OpennemExportSeries, network_region_code: str, include_emission_factor: bool = True
 ) -> OpennemDataSet | None:
     engine = get_database_engine()
@@ -795,9 +808,10 @@ def energy_interconnector_flows_and_emissions_v2(
 
     query = get_network_flows_emissions_market_value_query(time_series=time_series, network_region_code=network_region_code)
 
-    with engine.begin() as c:
+    async with engine.begin() as conn:
         logger.debug(query)
-        row = list(c.execute(query))
+        result = await conn.execute(query)
+        row = result.fetchall()
 
     if not row:
         logger.error(

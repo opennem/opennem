@@ -7,7 +7,6 @@ Primary scheduler runs:
 
 """
 
-import asyncio
 import logging
 
 from huey import PriorityRedisHuey, crontab
@@ -110,32 +109,36 @@ async def nem_overnight_check() -> None:
 
 @huey.periodic_task(crontab(hour="10", minute="20"), retries=10, retry_delay=60, priority=50)
 @huey.lock_task("daily_catchup_runner_worker")
-def daily_catchup_runner_worker() -> None:
-    daily_catchup_runner()
+@run_async_task_reusable
+async def daily_catchup_runner_worker() -> None:
+    await daily_catchup_runner()
 
 
 # export tasks
 @huey.periodic_task(crontab(minute="*/15"), priority=90)
 @huey.lock_task("schedule_custom_tasks")
-def schedule_custom_tasks() -> None:
-    export_electricitymap()
-    export_flows()
+@run_async_task_reusable
+async def schedule_custom_tasks() -> None:
+    await export_electricitymap()
+    await export_flows()
 
 
 @huey.periodic_task(crontab(hour="2", minute="19"))
 @huey.lock_task("schedule_power_weeklies")
-def schedule_power_weeklies() -> None:
+@run_async_task_reusable
+async def schedule_power_weeklies() -> None:
     """
     Run weekly power outputs
     """
-    export_power(priority=PriorityType.history, latest=False)
+    await export_power(priority=PriorityType.history, latest=False)
 
 
 # geojson maps
 @huey.periodic_task(crontab(minute="*/30"), priority=50)
 @huey.lock_task("schedule_export_geojson")
-def schedule_export_geojson() -> None:
-    asyncio.run(export_facility_geojson())
+@run_async_task_reusable
+async def schedule_export_geojson() -> None:
+    await export_facility_geojson()
 
 
 # worker tasks
@@ -165,5 +168,6 @@ def run_clean_tmp_dir() -> None:
 
 @huey.periodic_task(crontab(hour="22", minute="55"))
 @huey.lock_task("run_cleanup_database_task_profiles_basedon_retention")
-def run_cleanup_database_task_profiles_basedon_retention() -> None:
-    cleanup_database_task_profiles_basedon_retention()
+@run_async_task_reusable
+async def run_cleanup_database_task_profiles_basedon_retention() -> None:
+    await cleanup_database_task_profiles_basedon_retention()

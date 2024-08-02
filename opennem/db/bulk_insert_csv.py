@@ -14,7 +14,7 @@ from typing import Any, TypeVar
 
 from sqlalchemy.sql.schema import Column, Table
 
-from opennem.db import get_database_engine
+from opennem.db import db_connect
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
 
 logger = logging.getLogger("opennem.db.bulk_insert_csv")
@@ -188,7 +188,7 @@ def bulkinsert_mms_items(
     csv_content = generate_bulkinsert_csv_from_records(table, records, column_names=list(records[0].keys()))
 
     # @TODO check the scoping here
-    engine = get_database_engine()
+    engine = db_connect()
     conn = engine.raw_connection()
 
     try:

@@ -11,7 +11,7 @@ from opennem.queries.flows import power_network_flow_query
 logger = logging.getLogger("opennem.controllers.flows")
 
 
-def power_flows_per_interval(
+async def power_flows_per_interval(
     time_series: OpennemExportSeries,
     network_region_code: str,
     include_emissions_and_factors: bool = True,
@@ -28,9 +28,10 @@ def power_flows_per_interval(
         network_region=network_region_code,
     )
 
-    with engine.connect() as c:
+    with engine.connect() as conn:
         logger.debug(query)
-        rows = list(c.execute(query))
+        result = await conn.execute(query)
+        rows = result.fetchall()
 
     if not rows:
         logger.error(f"No results from interconnector_power_flow query for {time_series.interval}")

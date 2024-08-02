@@ -17,7 +17,7 @@ def run_aggregates_all_days(days: int = 1) -> None:
     run_emission_update_day(days=days)
 
 
-def run_aggregates_all() -> None:
+async def run_aggregates_all() -> None:
     """Run every aggregate for every network"""
     for network in [NetworkNEM]:
         run_energy_update_all(network=network)
@@ -31,8 +31,8 @@ def run_aggregates_all() -> None:
     run_aggregates_demand_network()
 
     # run the exports for all
-    export_power(latest=False)
-    export_energy(latest=False)
+    await export_power(latest=False)
+    await export_energy(latest=False)
 
-    export_all_daily()
-    export_all_monthly()
+    await export_all_daily()
+    await export_all_monthly()

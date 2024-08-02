@@ -24,7 +24,7 @@ async def wem_per_interval_check() -> None:
     _ = await run_crawl(APVIRooftopLatestCrawler)
 
     run_all_wem_crawlers()
-    run_export_power_latest_for_network(network=NetworkWEM)
+    await run_export_power_latest_for_network(network=NetworkWEM)
 
 
 if __name__ == "__main__":

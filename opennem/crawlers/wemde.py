@@ -115,12 +115,12 @@ def run_wemde_crawl(
     logger.debug(f"Latest interval: {latest_interval} for {crawler.name} and {len(data)} records")
 
     if latest_interval:
-        crawler_set_meta(crawler.name, CrawlStatTypes.latest_interval, latest_interval)
+        await crawler_set_meta(crawler.name, CrawlStatTypes.latest_interval, latest_interval)
 
     if latest_aemo_interval_date:
-        crawler_set_meta(crawler.name, CrawlStatTypes.server_latest, latest_aemo_interval_date)
+        await crawler_set_meta(crawler.name, CrawlStatTypes.server_latest, latest_aemo_interval_date)
 
-    crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, get_today_opennem())
+    await crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, get_today_opennem())
 
     cr = ControllerReturn(
         last_modified=get_today_opennem(),

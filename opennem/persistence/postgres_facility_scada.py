@@ -2,10 +2,11 @@
 
 import logging
 
+from numpy import deprecate
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.controllers.schema import ControllerReturn
-from opennem.db import get_database_engine, get_scoped_session
+from opennem.db import SessionLocal, get_database_engine
 from opennem.db.bulk_insert_csv import bulkinsert_mms_items
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
 
@@ -14,10 +15,10 @@ from .schema import SchemaBalancingSummary, SchemaFacilityScada
 logger = logging.getLogger(__name__)
 
 
-def persist_postgres_facility_scada(records: list[SchemaFacilityScada]) -> int:
+@deprecate(message="Use async persist_facility_scada_bulk instead")
+async def persist_postgres_facility_scada(records: list[SchemaFacilityScada]) -> int:
     """Persist WEM facility intervals"""
     engine = get_database_engine()
-    session = get_scoped_session()
     cr = ControllerReturn()
 
     records_to_store = [dict(i) for i in records]
@@ -31,20 +32,21 @@ def persist_postgres_facility_scada(records: list[SchemaFacilityScada]) -> int:
         },
     )
 
-    try:
-        session.execute(stmt)
-        session.commit()
-        cr.inserted_records = len(records_to_store)
-    except Exception as e:
-        logger.error(f"Error: {e}")
-    finally:
-        session.close()
-        engine.dispose()
+    async with SessionLocal() as session:
+        try:
+            session.execute(stmt)
+            session.commit()
+            cr.inserted_records = len(records_to_store)
+        except Exception as e:
+            logger.error(f"Error: {e}")
+        finally:
+            session.close()
+            engine.dispose()
 
     return len(records_to_store)
 
 
-def persist_facility_scada_bulk(
+async def persist_facility_scada_bulk(
     records: list[SchemaFacilityScada | SchemaBalancingSummary], update_fields: list[str] | None = None
 ) -> None:
     """Takes a lits of records and persists them to the database"""

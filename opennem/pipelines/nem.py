@@ -13,7 +13,6 @@ from opennem import settings
 from opennem.aggregates.network_flows import run_flow_update_for_interval
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_intervals
 from opennem.controllers.schema import ControllerReturn
-from opennem.core.profiler import profile_task
 from opennem.crawl import run_crawl
 from opennem.crawlers.nemweb import (
     AEMONEMDispatchActualGEN,
@@ -63,13 +62,6 @@ async def nem_trading_is_crawl() -> None:
         raise RetryTask("No new dispatch is data")
 
 
-@profile_task(
-    send_slack=True,
-    message_fmt=(
-        "`NEM`: per_interval pipeline processed"
-        " `{run_task_output.inserted_records}` new records for interval `{run_task_output.server_latest}`"
-    ),
-)
 async def nem_dispatch_scada_crawl() -> ControllerReturn:
     """This task runs per interval and checks for new data"""
     dispatch_scada = await run_crawl(AEMONNemwebDispatchScada)
@@ -77,8 +69,8 @@ async def nem_dispatch_scada_crawl() -> ControllerReturn:
     if not dispatch_scada or not dispatch_scada.inserted_records:
         raise RetryTask("No new dispatch scada data")
 
-    run_export_power_latest_for_network(network=NetworkNEM)
-    run_export_power_latest_for_network(network=NetworkAU)
+    await run_export_power_latest_for_network(network=NetworkNEM)
+    await run_export_power_latest_for_network(network=NetworkAU)
 
     return dispatch_scada
 
@@ -91,18 +83,13 @@ async def nem_rooftop_crawl() -> None:
     if not rooftop or not rooftop.inserted_records:
         raise RetryTask("No new rooftop data")
 
-    run_export_power_latest_for_network(network=NetworkNEM)
-    run_export_power_latest_for_network(network=NetworkAU)
+    await run_export_power_latest_for_network(network=NetworkNEM)
+    await run_export_power_latest_for_network(network=NetworkAU)
 
 
 # Output and processing tasks
-@profile_task(
-    send_slack=True,
-    message_fmt=(
-        "`NEM`: overnight pipeline processed"
-        " `{run_task_output.inserted_records}` new records for day `{run_task_output.server_latest}`"
-    ),
-)
+
+
 async def nem_per_day_check(always_run: bool = False) -> ControllerReturn:
     """This task is run daily for NEM"""
     dispatch_actuals = run_crawl(AEMONEMDispatchActualGEN)
@@ -111,7 +98,7 @@ async def nem_per_day_check(always_run: bool = False) -> ControllerReturn:
     if not always_run or not dispatch_actuals or not dispatch_actuals.inserted_records:
         raise RetryTask("No new dispatch actuals data")
 
-    daily_runner()
+    await daily_runner()
 
     # export historic intervals
     for network in [NetworkNEM, NetworkWEM]:

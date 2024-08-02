@@ -2,6 +2,7 @@
 Runs daily export task JSONs for OpenNEM website
 """
 
+import asyncio
 import logging
 from datetime import datetime, timedelta
 
@@ -16,7 +17,6 @@ from opennem.aggregates.network_flows import (
 from opennem.aggregates.network_flows_v3 import run_aggregate_flow_for_interval_v3
 from opennem.api.export.map import PriorityType, StatType, get_export_map
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
-from opennem.core.profiler import profile_task
 from opennem.exporter.historic import export_historic_intervals
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkOpenNEMRooftopBackfill, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network
@@ -24,7 +24,7 @@ from opennem.utils.dates import get_last_completed_interval_for_network
 logger = logging.getLogger("opennem.worker.daily")
 
 
-def run_export_for_year(year: int, network_region_code: str | None = None) -> None:
+async def run_export_for_year(year: int, network_region_code: str | None = None) -> None:
     """Run export for latest year"""
     export_map = get_export_map()
     energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.daily).get_by_year(year)
@@ -34,13 +34,13 @@ def run_export_for_year(year: int, network_region_code: str | None = None) -> No
 
     logger.info(f"Running {len(energy_exports.resources)} exports")
 
-    export_energy(energy_exports.resources)
+    await export_energy(energy_exports.resources)
 
 
 # The actual daily runners
 
 
-def daily_catchup_runner(days: int = 2) -> None:
+async def daily_catchup_runner(days: int = 2) -> None:
     """Daily task runner - runs after success of overnight crawls"""
     current_year = datetime.now().year
 
@@ -75,26 +75,25 @@ def daily_catchup_runner(days: int = 2) -> None:
 
     # 4. Run Exports
     #  run exports for latest year
-    export_energy(latest=True)
+    await export_energy(latest=True)
 
     #  run exports for last year
-    run_export_for_year(current_year - 1)
+    await run_export_for_year(current_year - 1)
 
     # run exports for all
     export_map = get_export_map()
     energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.monthly)
-    export_energy(energy_exports.resources)
+    await export_energy(energy_exports.resources)
 
-    export_all_daily()
-    export_all_monthly()
+    await export_all_daily()
+    await export_all_monthly()
 
     # export historic intervals
     for network in [NetworkNEM, NetworkWEM]:
         export_historic_intervals(limit=2, networks=[network])
 
 
-@profile_task(send_slack=False)
-def daily_runner(days: int = 2) -> None:
+async def daily_runner(days: int = 2) -> None:
     """Daily task runner - runs after success of overnight crawls"""
     current_year = datetime.now().year
 
@@ -129,25 +128,25 @@ def daily_runner(days: int = 2) -> None:
 
     # 4. Run Exports
     #  run exports for latest year
-    export_energy(latest=True)
+    await export_energy(latest=True)
 
     #  run exports for last year
-    run_export_for_year(current_year - 1)
+    await run_export_for_year(current_year - 1)
 
     # run exports for all
     export_map = get_export_map()
     energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.monthly)
-    export_energy(energy_exports.resources)
+    await export_energy(energy_exports.resources)
 
-    export_all_daily()
-    export_all_monthly()
+    await export_all_daily()
+    await export_all_monthly()
 
     # export historic intervals
     for network in [NetworkNEM, NetworkWEM]:
         export_historic_intervals(limit=2, networks=[network])
 
 
-def all_runner() -> None:
+async def all_runner() -> None:
     """Like the daily runner but refreshes all tasks"""
 
     # populates the aggregate tables
@@ -157,13 +156,13 @@ def all_runner() -> None:
         run_aggregate_facility_all_by_year(network=network)
 
     # run the exports for all
-    export_power(latest=False)
-    export_energy(latest=False)
+    await export_power(latest=False)
+    await export_energy(latest=False)
 
-    export_all_daily()
-    export_all_monthly()
+    await export_all_daily()
+    await export_all_monthly()
 
 
 if __name__ == "__main__":
     # daily_runner(days=2)
-    daily_runner()
+    asyncio.run(daily_runner())

@@ -32,9 +32,8 @@ from opennem.controllers.output.flows import power_flows_per_interval
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
-from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
 from opennem.core.time import get_interval
-from opennem.db import get_scoped_session
+from opennem.db import SessionLocal
 from opennem.db.models.opennem import NetworkRegion
 from opennem.schema.network import (
     NetworkAEMORooftop,
@@ -52,12 +51,7 @@ from opennem.utils.version import get_version
 logger = logging.getLogger("opennem.export.tasks")
 
 
-@profile_task(
-    send_slack=False,
-    level=ProfilerLevel.NOISY,
-    retention_period=ProfilerRetentionTime.WEEK,
-)
-def export_power(
+async def export_power(
     stats: list[StatExport] | None = None,
     priority: PriorityType | None = None,
     latest: bool | None = False,
@@ -111,7 +105,7 @@ def export_power(
             period=power_stat.period,
         )
 
-        stat_set = power_week(
+        stat_set = await power_week(
             time_series=time_series,
             network_region_code=power_stat.network_region_query or power_stat.network_region or None,
             networks_query=power_stat.networks,
@@ -122,7 +116,7 @@ def export_power(
 
             continue
 
-        demand_set = demand_week(
+        demand_set = await demand_week(
             time_series=time_series,
             networks_query=power_stat.networks,
             network_region_code=power_stat.network_region_query or power_stat.network_region,
@@ -131,7 +125,7 @@ def export_power(
         stat_set.append_set(demand_set)
 
         if power_stat.network_region:
-            if flow_set := power_flows_per_interval(time_series=time_series, network_region_code=power_stat.network_region):
+            if flow_set := await power_flows_per_interval(time_series=time_series, network_region_code=power_stat.network_region):
                 stat_set.append_set(flow_set)
 
         time_series_weather = time_series.copy()
@@ -139,7 +133,7 @@ def export_power(
 
         if power_stat.bom_station:
             with contextlib.suppress(Exception):
-                weather_set = weather_daily(
+                weather_set = await weather_daily(
                     time_series=time_series_weather,
                     station_code=power_stat.bom_station,
                     network_region=power_stat.network_region,
@@ -153,12 +147,7 @@ def export_power(
         output_count += 1
 
 
-@profile_task(
-    send_slack=False,
-    level=ProfilerLevel.NOISY,
-    retention_period=ProfilerRetentionTime.WEEK,
-)
-def export_energy(
+async def export_energy(
     stats: list[StatExport] | None = None,
     priority: PriorityType | None = None,
     latest: bool | None = False,
@@ -217,7 +206,7 @@ def export_energy(
                 logger.debug(f"Skipping since we only want latest and this is not the current year {energy_stat.year}")
                 continue
 
-            stat_set = energy_fueltech_daily(
+            stat_set = await energy_fueltech_daily(
                 time_series=time_series,
                 networks_query=energy_stat.networks,
                 network_region_code=energy_stat.network_region_query or energy_stat.network_region,
@@ -234,13 +223,13 @@ def export_energy(
                 f"Got {len(stat_set.data)} sets for {energy_stat.network} {energy_stat.period}{energy_stat.network_region}"
             )
 
-            demand_energy_and_value = demand_network_region_daily(
+            demand_energy_and_value = await demand_network_region_daily(
                 time_series=time_series, network_region_code=energy_stat.network_region, networks=energy_stat.networks
             )
             stat_set.append_set(demand_energy_and_value)
 
             if energy_stat.network.has_interconnectors and energy_stat.network_region:
-                interconnector_flows = energy_interconnector_flows_and_emissions_v2(
+                interconnector_flows = await energy_interconnector_flows_and_emissions_v2(
                     time_series=time_series,
                     network_region_code=energy_stat.network_region_query or energy_stat.network_region,
                 )
@@ -248,7 +237,7 @@ def export_energy(
 
             if energy_stat.bom_station:
                 try:
-                    weather_stats = weather_daily(
+                    weather_stats = await weather_daily(
                         time_series=time_series,
                         station_code=energy_stat.bom_station,
                         network_region=energy_stat.network_region,
@@ -269,7 +258,7 @@ def export_energy(
             time_series.year = None
             time_series.interval = human_to_interval("1M")
 
-            stat_set = energy_fueltech_daily(
+            stat_set = await energy_fueltech_daily(
                 time_series=time_series,
                 networks_query=energy_stat.networks,
                 network_region_code=energy_stat.network_region_query or energy_stat.network_region,
@@ -278,13 +267,13 @@ def export_energy(
             if not stat_set:
                 continue
 
-            demand_energy_and_value = demand_network_region_daily(
+            demand_energy_and_value = await demand_network_region_daily(
                 time_series=time_series, network_region_code=energy_stat.network_region, networks=energy_stat.networks
             )
             stat_set.append_set(demand_energy_and_value)
 
             if energy_stat.network.has_interconnectors and energy_stat.network_region:
-                interconnector_flows = energy_interconnector_flows_and_emissions_v2(
+                interconnector_flows = await energy_interconnector_flows_and_emissions_v2(
                     time_series=time_series,
                     network_region_code=energy_stat.network_region_query or energy_stat.network_region,
                 )
@@ -292,7 +281,7 @@ def export_energy(
 
             if energy_stat.bom_station:
                 try:
-                    weather_stats = weather_daily(
+                    weather_stats = await weather_daily(
                         time_series=time_series,
                         station_code=energy_stat.bom_station,
                         network_region=energy_stat.network_region,
@@ -306,101 +295,93 @@ def export_energy(
             write_output(energy_stat.path, stat_set)
 
 
-def export_all_monthly(networks: list[NetworkSchema] | None = None, network_region_code: str | None = None) -> None:
-    session = get_scoped_session()
-
+async def export_all_monthly(networks: list[NetworkSchema] | None = None, network_region_code: str | None = None) -> None:
     all_monthly = OpennemDataSet(code="au", data=[], version=get_version(), created_at=get_today_nem(), network=NetworkAU.code)
 
-    cpi = gov_stats_cpi()
+    cpi = await gov_stats_cpi()
     all_monthly.append_set(cpi)
 
     # Iterate networks and network regions
     if not networks:
         networks = [NetworkNEM, NetworkWEM]
 
-    for network in networks:
-        # 1. Setup network regions for each network
-        network_regions_query = session.query(NetworkRegion).filter(NetworkRegion.network_id == network.code)
+    async with SessionLocal() as session:
+        for network in networks:
+            # 1. Setup network regions for each network
+            network_regions_query = session.query(NetworkRegion).filter(NetworkRegion.network_id == network.code)
 
-        if network_region_code:
-            network_regions_query = network_regions_query.filter(NetworkRegion.code == network_region_code)
+            if network_region_code:
+                network_regions_query = network_regions_query.filter(NetworkRegion.code == network_region_code)
 
-        network_regions = network_regions_query.all()
+            network_regions = network_regions_query.all()
 
-        if not network_regions:
-            logger.error(f"Could not get network regions for {network.code}: {network_region_code}")
-            continue
-
-        # 2. sub-networks
-        # networks = [network]
-
-        # if network.subnetworks:
-        #     networks += network.subnetworks
-
-        # # @TODO replace this with NetworkSchema->subnetworks
-        networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
-
-        if network.code == "WEM":
-            networks = [NetworkWEM, NetworkAPVI]
-
-        # @TODO replace with data_first_seen and current date
-        scada_range = get_scada_range_optimized(network=network)
-
-        for network_region in network_regions:
-            logger.info(f"Running monthlies for {network.code} and {network_region.code}")
-
-            time_series = OpennemExportSeries(
-                start=scada_range.start,
-                end=scada_range.end,
-                network=network,
-                interval=get_interval("1M"),
-                period=human_to_period("all"),
-            )
-
-            stat_set = energy_fueltech_daily(
-                time_series=time_series,
-                networks_query=networks,
-                network_region_code=network_region.code,
-            )
-
-            if not stat_set:
-                logger.error(f"Could not get a monthly stat set for {network.code} and {network_region.code}")
+            if not network_regions:
+                logger.error(f"Could not get network regions for {network.code}: {network_region_code}")
                 continue
 
-            demand_energy_and_value = demand_network_region_daily(
-                time_series=time_series, network_region_code=network_region.code, networks=networks
-            )
-            stat_set.append_set(demand_energy_and_value)
+            # 2. sub-networks
+            # networks = [network]
 
-            if network.has_interconnectors:
-                interconnector_flows = energy_interconnector_flows_and_emissions_v2(
+            # if network.subnetworks:
+            #     networks += network.subnetworks
+
+            # # @TODO replace this with NetworkSchema->subnetworks
+            networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
+
+            if network.code == "WEM":
+                networks = [NetworkWEM, NetworkAPVI]
+
+            # @TODO replace with data_first_seen and current date
+            scada_range = get_scada_range_optimized(network=network)
+
+            for network_region in network_regions:
+                logger.info(f"Running monthlies for {network.code} and {network_region.code}")
+
+                time_series = OpennemExportSeries(
+                    start=scada_range.start,
+                    end=scada_range.end,
+                    network=network,
+                    interval=get_interval("1M"),
+                    period=human_to_period("all"),
+                )
+
+                stat_set = await energy_fueltech_daily(
                     time_series=time_series,
+                    networks_query=networks,
                     network_region_code=network_region.code,
                 )
-                stat_set.append_set(interconnector_flows)
 
-            all_monthly.append_set(stat_set)
+                if not stat_set:
+                    logger.error(f"Could not get a monthly stat set for {network.code} and {network_region.code}")
+                    continue
 
-            if bom_station := get_network_region_weather_station(network_region.code):
-                with contextlib.suppress(Exception):
-                    weather_stats = weather_daily(
+                demand_energy_and_value = await demand_network_region_daily(
+                    time_series=time_series, network_region_code=network_region.code, networks=networks
+                )
+                stat_set.append_set(demand_energy_and_value)
+
+                if network.has_interconnectors:
+                    interconnector_flows = await energy_interconnector_flows_and_emissions_v2(
                         time_series=time_series,
-                        station_code=bom_station,
-                        network_region=network_region.code,
-                        network=network,
+                        network_region_code=network_region.code,
                     )
-                    all_monthly.append_set(weather_stats)
+                    stat_set.append_set(interconnector_flows)
 
-    write_output("v3/stats/au/all/monthly.json", all_monthly)
+                all_monthly.append_set(stat_set)
+
+                if bom_station := get_network_region_weather_station(network_region.code):
+                    with contextlib.suppress(Exception):
+                        weather_stats = await weather_daily(
+                            time_series=time_series,
+                            station_code=bom_station,
+                            network_region=network_region.code,
+                        )
+                        all_monthly.append_set(weather_stats)
+
+        write_output("v3/stats/au/all/monthly.json", all_monthly)
 
 
-@profile_task(
-    send_slack=True,
-    message_fmt="{invokee_method_name} ran export all daily tasks export",
-    level=ProfilerLevel.NOISY,
-    retention_period=ProfilerRetentionTime.WEEK,
-)
-def export_all_daily(networks: list[NetworkSchema] | None = None, network_region_code: str | None = None) -> None:
+async def export_all_daily(networks: list[NetworkSchema] | None = None, network_region_code: str | None = None) -> None:
     """Export dailies for all networks and regions"""
 
     # default list of networks
@@ -410,84 +391,77 @@ def export_all_daily(networks: list[NetworkSchema] | None = None, network_region
     if not networks:
         raise Exception("No networks to export for export all daily")
 
-    session = get_scoped_session()
+    cpi = await gov_stats_cpi()
 
-    cpi = gov_stats_cpi()
+    async with SessionLocal() as session:
+        for network in networks:
+            network_regions_query = session.query(NetworkRegion).filter_by(export_set=True).filter_by(network_id=network.code)
 
-    for network in networks:
-        network_regions_query = session.query(NetworkRegion).filter_by(export_set=True).filter_by(network_id=network.code)
+            if network_region_code:
+                network_regions_query = network_regions_query.filter_by(code=network_region_code)
 
-        if network_region_code:
-            network_regions_query = network_regions_query.filter_by(code=network_region_code)
+            network_regions = network_regions_query.all()
 
-        network_regions = network_regions_query.all()
+            for network_region in network_regions:
+                logging.info(f"Exporting for network {network.code} and region {network_region.code}")
 
-        for network_region in network_regions:
-            logging.info(f"Exporting for network {network.code} and region {network_region.code}")
+                networks = [NetworkNEM, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill]
 
-            networks = [NetworkNEM, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill]
+                if network_region.code == "WEM":
+                    networks = [NetworkWEM, NetworkAPVI]
 
-            if network_region.code == "WEM":
-                networks = [NetworkWEM, NetworkAPVI]
+                last_day = get_last_complete_day_for_network(network=network) - timedelta(days=1)
 
-            last_day = get_last_complete_day_for_network(network=network) - timedelta(days=1)
+                if not last_day or not network.data_first_seen:
+                    logger.error(f"Could not get scada range for network {network} and energy True")
+                    continue
 
-            if not last_day or not network.data_first_seen:
-                logger.error(f"Could not get scada range for network {network} and energy True")
-                continue
+                time_series = OpennemExportSeries(
+                    start=network.data_first_seen,
+                    end=last_day,
+                    network=network,
+                    interval=human_to_interval("1d"),
+                    period=human_to_period("all"),
+                )
 
-            time_series = OpennemExportSeries(
-                start=network.data_first_seen,
-                end=last_day,
-                network=network,
-                interval=human_to_interval("1d"),
-                period=human_to_period("all"),
-            )
-
-            stat_set = energy_fueltech_daily(
-                time_series=time_series,
-                networks_query=networks,
-                network_region_code=network_region.code,
-            )
-
-            if not stat_set:
-                continue
-
-            demand_energy_and_value = demand_network_region_daily(
-                time_series=time_series, network_region_code=network_region.code, networks=networks
-            )
-            stat_set.append_set(demand_energy_and_value)
-
-            # Hard coded to NEM only atm but we'll put has_interconnectors
-            # in the metadata to automate all this
-            if network == NetworkNEM:
-                interconnector_flows = energy_interconnector_flows_and_emissions_v2(
+                stat_set = await energy_fueltech_daily(
                     time_series=time_series,
+                    networks_query=networks,
                     network_region_code=network_region.code,
                 )
-                stat_set.append_set(interconnector_flows)
 
-            if bom_station := get_network_region_weather_station(network_region.code):
-                with contextlib.suppress(Exception):
-                    weather_stats = weather_daily(
+                if not stat_set:
+                    continue
+
+                demand_energy_and_value = await demand_network_region_daily(
+                    time_series=time_series, network_region_code=network_region.code, networks=networks
+                )
+                stat_set.append_set(demand_energy_and_value)
+
+                # Hard coded to NEM only atm but we'll put has_interconnectors
+                # in the metadata to automate all this
+                if network == NetworkNEM:
+                    interconnector_flows = await energy_interconnector_flows_and_emissions_v2(
                         time_series=time_series,
-                        station_code=bom_station,
-                        network_region=network_region.code,
+                        network_region_code=network_region.code,
                     )
-                    stat_set.append_set(weather_stats)
-            if cpi:
-                stat_set.append_set(cpi)
+                    stat_set.append_set(interconnector_flows)
 
-            write_output(f"v3/stats/au/{network_region.code}/daily.json", stat_set)
+                if bom_station := get_network_region_weather_station(network_region.code):
+                    with contextlib.suppress(Exception):
+                        weather_stats = await weather_daily(
+                            time_series=time_series,
+                            station_code=bom_station,
+                            network_region=network_region.code,
+                        )
+                        stat_set.append_set(weather_stats)
+                if cpi:
+                    stat_set.append_set(cpi)
+
+                write_output(f"v3/stats/au/{network_region.code}/daily.json", stat_set)
 
 
-@profile_task(
-    send_slack=False,
-    message_fmt="{invokee_method_name} ran export flows",
-    level=ProfilerLevel.NOISY,
-    retention_period=ProfilerRetentionTime.WEEK,
-)
-def export_flows() -> None:
+async def export_flows() -> None:
     date_range = get_scada_range(network=NetworkNEM)
 
     periods = [human_to_period("7d"), human_to_period("30d")]
@@ -511,19 +485,14 @@ def export_flows() -> None:
             period=period,
         )
 
-        stat_set = power_flows_network_week(time_series=time_series)
+        stat_set = await power_flows_network_week(time_series=time_series)
 
         if stat_set:
             write_output(f"v3/stats/au/{interchange_stat.network.code}/flows/{period.period_human}.json", stat_set)
+            write_output(f"v4/stats/au/{interchange_stat.network.code}/flows/{period.period_human}.json", stat_set)
 
 
-@profile_task(
-    send_slack=False,
-    message_fmt="{invokee_method_name} ran export electricity map",
-    level=ProfilerLevel.NOISY,
-    retention_period=ProfilerRetentionTime.WEEK,
-)
-def export_electricitymap() -> None:
+async def export_electricitymap() -> None:
     date_range = get_scada_range(network=NetworkNEM)
 
     if not date_range or not date_range.start:
@@ -543,12 +512,11 @@ def export_electricitymap() -> None:
         start=date_range.start,
         end=date_range.end,
         network=interchange_stat.network,
-        networks=[NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill],
         interval=interchange_stat.interval,
         period=interchange_stat.period,
     )
 
-    stat_set = power_flows_network_week(time_series=time_series)
+    stat_set = await power_flows_network_week(time_series=time_series)
 
     if not stat_set:
         logger.warning("No flow results for electricitymap export")
@@ -567,7 +535,7 @@ def export_electricitymap() -> None:
             em_set.data.append(ds)
 
     for region in ["NSW1", "QLD1", "VIC1", "TAS1", "SA1"]:
-        power_set = power_week(
+        power_set = await power_week(
             time_series,
             region,
             include_capacities=True,
@@ -584,12 +552,11 @@ def export_electricitymap() -> None:
         start=date_range.start,
         end=date_range.end,
         network=NetworkWEM,
-        networks=[NetworkWEM, NetworkAPVI],
         interval=NetworkWEM.get_interval(),
         period=interchange_stat.period,
     )
 
-    power_set = power_week(
+    power_set = await power_week(
         time_series,
         "WEM",
         include_capacities=True,
@@ -600,38 +567,14 @@ def export_electricitymap() -> None:
         em_set.append_set(power_set)
 
     write_output("v3/clients/em/latest.json", em_set)
-
-
-def export_metadata() -> bool:
-    """
-    Export metadata
-
-
-    """
-    _export_map_out = get_export_map()
-
-    # this is a hack because pydantic doesn't
-    # serialize properties
-    for r in _export_map_out.resources:
-        r.file_path = r.path
-
-    wrote_bytes = write_output("metadata.json", _export_map_out)
-
-    if wrote_bytes and wrote_bytes > 0:
-        return True
-
-    return False
+    write_output("v4/clients/em/latest.json", em_set)
 
 
 # Debug Hooks
 if __name__ == "__main__":
-    # export_power(priority=PriorityType.live)
-    # export_energy(latest=True)
+    import asyncio
 
     def daily_runner() -> None:
-        export_energy(latest=True)
+        asyncio.run(export_energy(latest=True))
 
     daily_runner()
-    # export_all_monthly()
-    # export_all_daily()
-    # export_electricitymap()

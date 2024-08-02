@@ -259,7 +259,7 @@ def profile_task(
         @functools.wraps(task)
         def _sync_task_profile_wrapper(*args: Any, **kwargs: Any) -> Any:
             """Wrapper for synchronous tasks"""
-            # ... (keep the existing synchronous wrapper logic)
+            pass
 
         if inspect.iscoroutinefunction(task):
             return _async_task_profile_wrapper
