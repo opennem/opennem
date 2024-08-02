@@ -42,3 +42,18 @@ def get_unit(unit_human: str) -> UnitDefinition:
         return unit_lookup.pop()
 
     raise Exception(f"Invalid interval {unit_human} not mapped")
+
+
+def get_unit_by_value(unit_value: str) -> UnitDefinition:
+    global UNITS
+
+    # Lazy load
+    if not UNITS:
+        UNITS = load_units()
+
+    unit_lookup = list(filter(lambda x: x.unit == unit_value, UNITS))
+
+    if unit_lookup:
+        return unit_lookup.pop()
+
+    raise Exception(f"Invalid interval {unit_value} not mapped")
