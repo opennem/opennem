@@ -12,3 +12,7 @@ class UnitDefinition(BaseConfig):
 
     # should nulls in the unit series be cast
     cast_nulls: bool = True
+
+    @property
+    def value(self) -> str:
+        return self.unit
