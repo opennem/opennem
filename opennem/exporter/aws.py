@@ -27,7 +27,7 @@ class OpennemDataSetSerializeS3:
     def __init__(self, bucket_name: str, exclude_unset: bool = False, debug: bool = False) -> None:
         self.bucket = boto3.resource(
             "s3",
-            endpoint_url="https://17399e149aeaa08c0c7bbb15382fa5c3.r2.cloudflarestorage.com",
+            endpoint_url=settings.s3_endpoint_url,
             aws_access_key_id=settings.aws_access_key_id,
             aws_secret_access_key=settings.aws_secret_access_key,
         ).Bucket(bucket_name)
@@ -85,7 +85,7 @@ def write_statset_to_s3(stat_set: OpennemDataSet, file_path: str, exclude: set =
     if not settings.s3_bucket_path:
         raise Exception("Require an S3 bucket to write to")
 
-    s3bucket = OpennemDataSetSerializeS3(settings.s3_bucket_path, exclude_unset=exclude_unset)
+    s3bucket = OpennemDataSetSerializeS3(settings.s3_bucket_name, exclude_unset=exclude_unset)
     write_response = None
 
     try:

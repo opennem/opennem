@@ -69,6 +69,8 @@ class OpennemSettings(BaseSettings):
     export_local: bool = False
 
     s3_bucket_path: str = Field("data.opennem.org.au", validation_alias=AliasChoices("S3_DATA_BUCKET_PATH"))
+    s3_bucket_name: str = Field("opennem-dev", validation_alias=AliasChoices("S3_DATA_BUCKET_NAME"))
+    s3_endpoint_url: str = "https://17399e149aeaa08c0c7bbb15382fa5c3.r2.cloudflarestorage.com"
 
     # opennem output settings
     interval_default: str = "15m"
@@ -176,6 +178,7 @@ class OpennemSettings(BaseSettings):
     webhook_secret: str | None = None
 
     r2_token: str | None = None
+
     aws_access_key_id: str | None = None
     aws_secret_access_key: str | None = None
 
