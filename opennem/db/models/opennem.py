@@ -41,7 +41,6 @@ from sqlalchemy.sql.schema import UniqueConstraint
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.parsers.aemo.schemas import AEMODataSource
-from opennem.recordreactor.schema import MilestoneAggregate
 from opennem.schema.core import BaseConfig
 
 Base = declarative_base()
@@ -961,18 +960,18 @@ class Milestones(Base):
     record_id: Mapped[str] = Column(Text, primary_key=True)
     interval = Column(DateTime(timezone=False), primary_key=True, index=True)
     instance_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), server_default=sql("uuid_generate_v4()"))
-    record_type = Column(Enum(MilestoneAggregate), nullable=False)
+    aggregate = Column(String, nullable=False)
+    metric = Column(String, nullable=True)
+    period = Column(String, nullable=True)
     significance = Column(Integer, nullable=False, default=0)
     value = Column(Float, nullable=False)
-
+    value_unit = Column(String, nullable=True)
     network_id = Column(Text, ForeignKey("network.code"), nullable=True)
     network_region = Column(Text, nullable=True)
     fueltech_id = Column(Text, ForeignKey("fueltech.code"), nullable=True)
     fueltech_group_id = Column(Text, ForeignKey("fueltech_group.code"), nullable=True)
     description = Column(String, nullable=True)
-    period = Column(String, nullable=True)
-
-    record_field = Column(String, nullable=True)
+    description_long: Mapped[str] = mapped_column(String, nullable=True)
     previous_record_id = Column(Text, nullable=True)
 
     # Relationships

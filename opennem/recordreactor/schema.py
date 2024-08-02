@@ -40,24 +40,26 @@ class MilestonePeriods(str, Enum):
 
 
 class MilestoneRecord(BaseModel):
-    instance_id: UUID4
     record_id: str
     interval: datetime
+    instance_id: UUID4
     aggregate: MilestoneAggregate
+    metric: MilestoneMetric | None = None
+    period: str | None = None
     significance: int
     value: int | float
-    unit: UnitDefinition | str | None = None
-    network: NetworkSchema | str | None = None
+    value_unit: UnitDefinition | None = None
+    network_id: NetworkSchema | str | None = None
     network_region: str | None = None
-    fueltech: FueltechSchema | str | None = None
+    fueltech_id: FueltechSchema | None = None
+    fueltech_group_id: FueltechSchema | str | None = None
     description: str | None = None
-    period: str | None = None
+    description_long: str | None = None
     previous_record_id: str | None = None
-    metric: MilestoneMetric | None = None
 
     @property
     def network_code(self) -> str:
-        return self.network.code if self.network else ""
+        return self.network_id.code if self.network_id else ""
 
     @property
     def country(self) -> str:
@@ -65,8 +67,8 @@ class MilestoneRecord(BaseModel):
 
     @property
     def fueltech_code(self) -> str:
-        return self.fueltech.code if self.fueltech else ""
+        return self.fueltech_id.code if self.fueltech_id else ""
 
     @property
     def unit_code(self) -> str | None:
-        return self.unit.name if self.unit else None
+        return self.value_unit.name if self.value_unit else None

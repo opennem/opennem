@@ -8,9 +8,10 @@ from datetime import datetime, timedelta
 from sqlalchemy import select, text
 
 from opennem import settings
+from opennem.core.units import get_unit
 from opennem.db import AsyncSession, SessionLocal
 from opennem.db.models.opennem import Milestones
-from opennem.recordreactor.schema import MilestoneAggregate
+from opennem.recordreactor.schema import MilestoneAggregate, MilestoneMetric
 from opennem.recordreactor.utils.buckets import BUCKET_SIZES, get_bucket_sql, get_period_start_end, is_end_of_period
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network, make_aware_for_network
@@ -119,14 +120,15 @@ async def persist_demand_and_price_milestones(session, network_id: str, bucket_s
             demand_high_milestone = Milestones(
                 record_id=demand_high_milestone_id,
                 interval=data["bucket"],
-                record_type=MilestoneAggregate.high,
+                aggregate=MilestoneAggregate.high.value,
+                metric=MilestoneMetric.demand.value,
+                period=bucket_size,
                 significance=1,
                 value=data["max_demand"],
+                value_unit=get_unit("power_mega").value,
                 network_id=network_id,
                 network_region=data["network_region"],
-                period=bucket_size,
                 description=f"Highest {bucket_size} demand for {data['network_region']} in {network_id}. ",
-                record_field="demand",
                 previous_record_id=demand_high_milestone.instance_id if demand_high_milestone else None,
             )
 
@@ -142,14 +144,15 @@ async def persist_demand_and_price_milestones(session, network_id: str, bucket_s
             demand_low_milestone = Milestones(
                 record_id=demand_low_milestone_id,
                 interval=data["bucket"],
-                record_type=MilestoneAggregate.low,
+                aggregate=MilestoneAggregate.low.value,
+                metric=MilestoneMetric.demand.value,
+                period=bucket_size,
                 significance=1,
                 value=data["min_demand"],
+                value_unit=get_unit("power_mega").value,
                 network_id=network_id,
                 network_region=data["network_region"],
-                period=bucket_size,
                 description=f"Lowest {bucket_size} demand for {data['network_region']} in {network_id}. ",
-                record_field="demand",
                 previous_record_id=demand_low_milestone.instance_id if demand_low_milestone else None,
             )
 
@@ -165,15 +168,16 @@ async def persist_demand_and_price_milestones(session, network_id: str, bucket_s
             price_low_milestone = Milestones(
                 record_id=price_low_milestone_id,
                 interval=data["bucket"],
-                record_type=MilestoneAggregate.low,
+                aggregate=MilestoneAggregate.low.value,
+                metric=MilestoneMetric.price.value,
+                period=bucket_size,
                 significance=1,
                 value=data["min_price"],
+                value_unit=get_unit("market_value").value,
                 network_id=network_id,
                 network_region=data["network_region"],
-                period=bucket_size,
                 description=f"Lowest {bucket_size} price for{data['network_region']} in {network_id}.",
                 previous_record_id=price_low_milestone.instance_id if price_low_milestone else None,
-                record_field="price",
             )
 
             await session.merge(price_low_milestone)
@@ -186,15 +190,16 @@ async def persist_demand_and_price_milestones(session, network_id: str, bucket_s
             price_high_milestone = Milestones(
                 record_id=price_high_milestone_id,
                 interval=data["bucket"],
-                record_type=MilestoneAggregate.high,
+                aggregate=MilestoneAggregate.high.value,
+                metric=MilestoneMetric.price.value,
+                period=bucket_size,
                 significance=1,
                 value=data["max_price"],
+                value_unit=get_unit("market_value").value,
                 network_id=network_id,
                 network_region=data["network_region"],
-                period=bucket_size,
                 description=f"Highest {bucket_size} price for {data['network_region']} in {network_id}.",
                 previous_record_id=price_high_milestone.instance_id if price_high_milestone else None,
-                record_field="price",
             )
 
             await session.merge(price_high_milestone)

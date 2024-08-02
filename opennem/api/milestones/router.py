@@ -10,6 +10,7 @@ from starlette.exceptions import HTTPException
 
 from opennem.api.keys import api_protected
 from opennem.api.schema import APIV4ResponseSchema
+from opennem.core.units import get_unit_by_value
 from opennem.db import get_scoped_session
 from opennem.recordreactor.schema import (
     MILESTONE_SUPPORTED_NETWORKS,
@@ -44,16 +45,16 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
             "instance_id": db_record["instance_id"],
             "record_id": db_record["record_id"].lower(),
             "interval": milestone_interval,
-            "aggregate": MilestoneAggregate(db_record["record_type"]) if db_record["record_type"] else None,
+            "aggregate": MilestoneAggregate(db_record["aggregate"]) if db_record["aggregate"] else None,
             "significance": db_record["significance"],
             "value": float(db_record["value"]),
-            "unit": "MW",
+            "value_unit": get_unit_by_value(db_record["value_unit"]) if db_record["value_unit"] else None,
             "description": db_record["description"],
             "fueltech": db_record["fueltech_group_id"],
             "network": db_record["network_id"],
             "period": db_record["period"],
             "previous_record_id": db_record["previous_record_id"],
-            "metric": MilestoneMetric(db_record["record_field"]) if db_record["record_field"] else None,
+            "metric": MilestoneMetric(db_record["metric"]) if db_record["metric"] else None,
         }
 
         if db_record["network_region"]:
@@ -89,8 +90,8 @@ async def get_milestones(
 ) -> APIV4ResponseSchema:
     """Get a list of milestones"""
 
-    if limit > 1000:
-        raise HTTPException(status_code=400, detail="Limit must be less than 1000")
+    if limit > 100:
+        raise HTTPException(status_code=400, detail="Limit must be less than 100")
 
     # if date_start and date_end have no timezone, default to NEM time
     if date_start and not date_start.tzinfo:
@@ -159,7 +160,7 @@ async def get_milestones(
             page_number=page,
             date_start=date_start,
             date_end=date_end,
-            record_type=aggregate,
+            aggregate=aggregate,
             fueltech=fuel_tech,
             metric=metric,
             networks=network_schemas,

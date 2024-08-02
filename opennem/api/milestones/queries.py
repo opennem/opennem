@@ -22,7 +22,7 @@ async def get_milestone_records(
     date_end: datetime | None = None,
     significance: int | None = None,
     fueltech: list[str] | None = None,
-    record_type: MilestoneAggregate | None = None,
+    aggregate: MilestoneAggregate | None = None,
     metric: MilestoneMetric | None = None,
     networks: list[NetworkSchema] | None = None,
     network_regions: list[str] | None = None,
@@ -46,14 +46,13 @@ async def get_milestone_records(
         select_query = select_query.where(Milestones.significance >= significance)
 
     if fueltech:
-        fueltech.append("")
         select_query = select_query.where(or_(Milestones.fueltech_group_id.in_(fueltech), Milestones.fueltech_id.in_(fueltech)))
 
-    if record_type:
-        select_query = select_query.where(Milestones.record_type == record_type)
+    if aggregate:
+        select_query = select_query.where(Milestones.aggregate == aggregate)
 
     if metric:
-        select_query = select_query.where(Milestones.record_field == metric)
+        select_query = select_query.where(Milestones.metric == metric)
 
     if networks:
         select_query = select_query.where(Milestones.network_id.in_([network.code for network in networks]))
