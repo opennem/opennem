@@ -619,6 +619,8 @@ class Facility(Base, BaseModel):
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
 
+    include_in_geojson = Column(Boolean, default=True)
+
     __table_args__ = (
         UniqueConstraint("network_id", "code", name="excl_facility_network_id_code"),
         Index(
