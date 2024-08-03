@@ -12,6 +12,8 @@ async def export_facility_geojson() -> None:
     """Get the GeoJSON for facilities and write it to S3"""
     stations = await get_stations()
 
+    logger.info(f"Found {len(stations)} stations")
+
     if not stations:
         raise Exception("No stations found")
 

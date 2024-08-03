@@ -11,13 +11,10 @@ async def get_stations(
     limit: int | None = None,
     page: int = 1,
 ) -> list[Station]:
-    """
-    API controller that gets all approved stations sorted and joined
-    """
     async with SessionLocal() as session:
         # Subquery to get distinct station IDs
         subquery = (
-            select(distinct(Station.id))
+            select(distinct(Station.id).label("station_id"))
             .join(Station.facilities)
             .join(Station.location)
             .join(Facility.fueltech)
@@ -29,14 +26,18 @@ async def get_stations(
         if name:
             subquery = subquery.filter(Station.name.ilike(f"%{name}%"))
 
+        # Convert subquery to a proper subquery
+        subquery = subquery.subquery()
+
         # Main query
         stmt = (
             select(Station)
+            .join(subquery, Station.id == subquery.c.station_id)
             .options(
-                selectinload(Station.facilities),
+                selectinload(Station.facilities.and_(Facility.include_in_geojson == True)),  # noqa: E712
                 selectinload(Station.location),
             )
-            .filter(Station.id.in_(subquery))
+            .filter(Station.approved == True)  # noqa: E712
             .order_by(Station.name)
         )
 
@@ -44,7 +45,7 @@ async def get_stations(
             stmt = stmt.offset((page - 1) * limit).limit(limit)
 
         result = await session.execute(stmt)
-        stations = result.scalars().all()
+        stations = result.scalars().unique().all()
 
     return stations
 
@@ -53,4 +54,5 @@ if __name__ == "__main__":
     import asyncio
 
     stations = asyncio.run(get_stations())
-    print(stations)
+    for s in stations:
+        print(f"{s.name}: {s.code}")
