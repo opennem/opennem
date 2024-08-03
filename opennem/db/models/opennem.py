@@ -958,7 +958,7 @@ class Milestones(Base):
     __tablename__ = "milestones"
 
     record_id: Mapped[str] = Column(Text, primary_key=True)
-    interval = Column(DateTime(timezone=False), primary_key=True, index=True)
+    interval = Column(DateTime(timezone=True), primary_key=True, index=True)
     instance_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), server_default=sql("uuid_generate_v4()"))
     aggregate = Column(String, nullable=False)
     metric = Column(String, nullable=True)
