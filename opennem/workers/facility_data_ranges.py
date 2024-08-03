@@ -84,8 +84,7 @@ async def update_facility_seen_range(
     __query = get_update_seen_query(include_first_seen=include_first_seen, facility_codes=facility_codes)
 
     async with engine.begin() as c:
-        logger.debug(__query)
-        c.exec_driver_sql(__query)
+        await c.exec_driver_sql(__query)
 
     return True
 
