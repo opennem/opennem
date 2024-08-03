@@ -11,6 +11,8 @@ import logging
 from datetime import datetime, timedelta
 from textwrap import dedent
 
+from sqlalchemy import TextClause, text
+
 from opennem.db import db_connect, get_database_engine
 from opennem.queries.utils import duid_to_case
 from opennem.schema.core import BaseConfig
@@ -23,7 +25,7 @@ def get_update_seen_query(
     include_first_seen: bool = False,
     facility_codes: list[str] | None = None,
     interval_window_days: int | None = 7,
-) -> str:
+) -> TextClause:
     date_min: datetime | None = None
 
     if interval_window_days:
@@ -58,9 +60,7 @@ def get_update_seen_query(
 
     query = __query.format(fs=fs, facility_codes_query=facility_codes_query, trading_interval_window=trading_interval_window)
 
-    print(query)
-
-    return dedent(query)
+    return text(dedent(query))
 
 
 # @profile_task(send_slack=True)
@@ -83,8 +83,8 @@ async def update_facility_seen_range(
 
     __query = get_update_seen_query(include_first_seen=include_first_seen, facility_codes=facility_codes)
 
-    async with engine.begin() as c:
-        await c.exec_driver_sql(__query)
+    async with engine.begin() as conn:
+        await conn.execute(__query)
 
     return True
 
