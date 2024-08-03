@@ -20,12 +20,32 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.alter_column("milestones", "dtime", new_column_name="interval", new_type=sa.DateTime(timezone=True))
-    op.add_column(
+    op.create_table(
         "milestones",
-        sa.Column("interval", sa.DateTime(timezone=True), nullable=False),
+        sa.Column("instance_id", postgresql.UUID(as_uuid=True), nullable=False),
+        sa.Column("record_id", postgresql.UUID(as_uuid=True), nullable=False),
+        sa.Column("interval", sa.DateTime(timezone=False), nullable=False),
+        sa.Column(
+            "record_type",
+            sa.Enum("low", "average", "high", name="milestonetype"),
+            nullable=False,
+        ),
+        sa.Column("significance", sa.Integer(), nullable=False),
+        sa.Column("value", sa.Float(), nullable=False),
+        sa.Column("facility_id", sa.Text(), nullable=True),
+        sa.Column("network_id", sa.String(), nullable=True),
+        sa.Column("fueltech_id", sa.String(), nullable=True),
+        sa.Column("description", sa.String(), nullable=True),
+        sa.ForeignKeyConstraint(
+            ["fueltech_id"],
+            ["fueltech.code"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["network_id"],
+            ["network.code"],
+        ),
+        sa.PrimaryKeyConstraint("instance_id", "record_id"),
     )
-    op.drop_index("ix_milestones_dtime", table_name="milestones")
     op.create_index(
         op.f("ix_milestones_interval"),
         "milestones",
@@ -35,9 +55,4 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.alter_column("milestones", "interval", new_column_name="dtime", new_type=sa.DateTime(timezone=True))
-    op.drop_index(op.f("ix_milestones_interval"), table_name="milestones")
-    op.create_index(
-        "ix_milestones_dtime", "milestones", ["dtime"], unique=False
-    )
-    op.drop_column("milestones", "interval")
+    op.drop_table("milestones")

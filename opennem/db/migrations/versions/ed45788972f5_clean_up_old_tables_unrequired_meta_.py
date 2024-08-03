@@ -21,6 +21,7 @@ depends_on = None
 def upgrade() -> None:
     op.drop_index("idx_photo_station_id", table_name="photo", if_exists=True)
     op.drop_index("ix_photo_hash_id", table_name="photo", if_exists=True)
+    op.drop_table("photo")
     op.execute("DROP TYPE IF EXISTS photo")
     op.execute("alter table facility_status drop column if exists created_at")
     op.execute("alter table facility_status drop column if exists created_by")
