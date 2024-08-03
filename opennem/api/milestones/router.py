@@ -135,9 +135,6 @@ async def get_milestones(
     for n in network_schemas:
         network_supported_regions.extend(n.regions if n.regions else [])
 
-    logger.debug(f"Networks: {network_schemas}")
-    logger.debug(f"Network regions: {network_supported_regions}")
-
     if network_region:
         if not network:
             raise HTTPException(status_code=400, detail="Networks must be provided when network regions are provided")
