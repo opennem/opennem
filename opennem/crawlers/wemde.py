@@ -17,7 +17,7 @@ from opennem.utils.dates import get_today_opennem
 logger = logging.getLogger("opennem.crawlers.wemde")
 
 
-def run_wemde_crawl(
+async def run_wemde_crawl(
     crawler: CrawlerDefinition,
     latest: bool = True,
     limit: int | None = None,
@@ -131,13 +131,13 @@ def run_wemde_crawl(
     return cr
 
 
-def run_all_wem_crawlers(latest: bool = True) -> None:
+async def run_all_wem_crawlers(latest: bool = True) -> None:
     for crawler in [
         AEMOWEMDETradingReport,
         # AEMOWEMDEFacilityScadaHistory,
         # AEMOWEMDETradingReportHistory,
     ]:
-        run_wemde_crawl(crawler, latest=latest)
+        await run_wemde_crawl(crawler, latest=latest)
 
 
 AEMOWEMDEFacilityScadaHistory = CrawlerDefinition(
@@ -173,4 +173,6 @@ AEMOWEMDETradingReport = CrawlerDefinition(
 if __name__ == "__main__":
     # backdate_date = datetime.fromisoformat("2024-01-12T00:00:00")
     # crawler_set_meta(AEMOWEMDEFacilityScadaHistory.name, CrawlStatTypes.server_latest, backdate_date)
-    run_all_wem_crawlers(latest=False)
+    import asyncio
+
+    asyncio.run(run_all_wem_crawlers(latest=False))

@@ -23,7 +23,7 @@ async def wem_per_interval_check() -> None:
     """This task runs per interval and checks for new data"""
     _ = await run_crawl(APVIRooftopLatestCrawler)
 
-    run_all_wem_crawlers()
+    await run_all_wem_crawlers()
     await run_export_power_latest_for_network(network=NetworkWEM)
 
 
