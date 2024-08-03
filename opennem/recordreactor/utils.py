@@ -76,7 +76,7 @@ def get_record_description(
         if milestone.network_region
         else None,
         # value
-        f"({round(milestone.value, 2)} {milestone.value_unit.value if milestone.value_unit else ''})",
+        f"({round(milestone.value, 2)} {milestone.unit.value if milestone.unit else ''})",
     ]
 
     # remove empty items from record id components list and join with a period
@@ -116,7 +116,7 @@ if __name__ == "__main__":
         period=MilestonePeriod.year,
         significance=1,
         value=100,
-        value_unit=get_unit_by_value("MW"),
+        unit=get_unit_by_value("MW"),
         network=NetworkNEM,
         network_region="NSW1",
         fueltech_id=None,
@@ -134,7 +134,7 @@ if __name__ == "__main__":
         period=MilestonePeriod.financial_year,
         significance=1,
         value=100,
-        value_unit=get_unit_by_value("MWh"),
+        unit=get_unit_by_value("MWh"),
         network=NetworkNEM,
         network_region="NSW1",
         fueltech_id=get_fueltech("coal_black"),

@@ -10,6 +10,7 @@ from starlette.exceptions import HTTPException
 
 from opennem.api.keys import api_protected
 from opennem.api.schema import APIV4ResponseSchema
+from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit_by_value
 from opennem.db import get_scoped_session
 from opennem.recordreactor.schema import (
@@ -48,10 +49,10 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
             "aggregate": MilestoneAggregate(db_record["aggregate"]) if db_record["aggregate"] else None,
             "significance": db_record["significance"],
             "value": float(db_record["value"]),
-            "value_unit": get_unit_by_value(db_record["value_unit"]) if db_record["value_unit"] else None,
+            "unit": get_unit_by_value(db_record["value_unit"]) if db_record["value_unit"] else None,
             "description": db_record["description"],
             "fueltech": db_record["fueltech_group_id"],
-            "network": db_record["network_id"],
+            "network": network_from_network_code(db_record["network_id"]),
             "period": db_record["period"],
             "previous_instance_id": db_record["previous_instance_id"],
             "metric": MilestoneMetric(db_record["metric"]) if db_record["metric"] else None,

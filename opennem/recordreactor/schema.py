@@ -6,7 +6,7 @@ see matching ORM schema in database. This applies within record reactor and the 
 from datetime import datetime
 from enum import Enum
 
-from pydantic import UUID4, BaseModel, computed_field
+from pydantic import UUID4, BaseModel, Field, computed_field
 
 from opennem.schema.fueltech import FueltechSchema
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
@@ -69,15 +69,21 @@ class MilestoneRecordSchema(BaseModel):
     period: str | None = None
     significance: int
     value: int | float
-    value_unit: UnitDefinition | None = None
-    network: NetworkSchema
+    unit: UnitDefinition | None = Field(exclude=True)
+    network: NetworkSchema = Field(exclude=True)
     network_region: str | None = None
     fueltech_id: FueltechSchema | None = None
     fueltech_group_id: FueltechSchema | str | None = None
     description: str | None = None
     description_long: str | None = None
-    previous_instance_id: str | None = None
+    previous_instance_id: UUID4 | None = None
 
+    @computed_field
+    @property
+    def value_unit(self) -> str | None:
+        return self.unit.value if self.unit else None
+
+    @computed_field
     @property
     def network_id(self) -> str:
         return (
@@ -94,7 +100,7 @@ class MilestoneRecordSchema(BaseModel):
 
     @property
     def unit_code(self) -> str | None:
-        return self.value_unit.name if self.value_unit else None
+        return self.unit.name if self.unit else None
 
 
 def get_milestone_network_id_map(network_id: str) -> str:
