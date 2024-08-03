@@ -969,7 +969,7 @@ class Milestones(Base):
     fueltech_group_id = Column(Text, ForeignKey("fueltech_group.code"), nullable=True)
     description = Column(String, nullable=True)
     description_long: Mapped[str] = mapped_column(String, nullable=True)
-    previous_record_id = Column(Text, nullable=True)
+    previous_instance_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=True)
 
     __table_args__ = (
         UniqueConstraint("record_id", "interval", name="excl_milestone_record_id_interval"),

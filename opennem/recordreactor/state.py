@@ -8,16 +8,17 @@ import logging
 
 from sqlalchemy import text
 
+from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit_by_value
 from opennem.db import SessionLocal
-from opennem.recordreactor.schema import MilestoneRecord
+from opennem.recordreactor.schema import MilestoneRecordSchema
 
 logger = logging.getLogger("opennem.recordreactor.state")
 
-_CURRENT_MILESTONE_STATE: dict[str, MilestoneRecord] | None = None
+_CURRENT_MILESTONE_STATE: dict[str, MilestoneRecordSchema] | None = None
 
 
-async def get_current_milestone_state_from_database() -> dict[str, MilestoneRecord]:
+async def get_current_milestone_state_from_database() -> dict[str, MilestoneRecordSchema]:
     """
     Gets the most recent milestone for each record_id and returns them in a dict keyed by record_id
 
@@ -25,7 +26,7 @@ async def get_current_milestone_state_from_database() -> dict[str, MilestoneReco
         dict[str, MilestoneRecord]: A dictionary of milestone records keyed by record_id
 
     """
-    result_dict: dict[str, MilestoneRecord] = {}
+    result_dict: dict[str, MilestoneRecordSchema] = {}
 
     async with SessionLocal() as session:
         query = text("""
@@ -49,7 +50,7 @@ async def get_current_milestone_state_from_database() -> dict[str, MilestoneReco
                 fueltech_id,
                 fueltech_group_id,
                 description,
-                previous_record_id
+                previous_instance_id
             FROM ranked_records
             WHERE rn = 1
             ORDER BY record_id, "interval" DESC
@@ -58,7 +59,7 @@ async def get_current_milestone_state_from_database() -> dict[str, MilestoneReco
         result = await session.execute(query)
 
         for row in result.fetchall():
-            result_dict[row[0]] = MilestoneRecord(
+            result_dict[row[0]] = MilestoneRecordSchema(
                 record_id=row[0],
                 interval=row[1],
                 instance_id=row[2],
@@ -68,7 +69,7 @@ async def get_current_milestone_state_from_database() -> dict[str, MilestoneReco
                 significance=row[6],
                 value=row[7],
                 value_unit=get_unit_by_value(row[8]),
-                network_id=row[9],
+                network=network_from_network_code(row[9]),
                 network_region=row[10],
                 fueltech_id=row[11],
                 fueltech_group_id=row[12],
@@ -78,7 +79,7 @@ async def get_current_milestone_state_from_database() -> dict[str, MilestoneReco
     return result_dict
 
 
-async def get_current_milestone_state() -> dict[str, MilestoneRecord]:
+async def get_current_milestone_state() -> dict[str, MilestoneRecordSchema]:
     """
     Gets the current milestone mapping
 
@@ -94,7 +95,7 @@ async def get_current_milestone_state() -> dict[str, MilestoneRecord]:
     return _CURRENT_MILESTONE_STATE
 
 
-async def refresh_current_milestone_state() -> dict[str, MilestoneRecord]:
+async def refresh_current_milestone_state() -> dict[str, MilestoneRecordSchema]:
     """
     Refreshes the current milestone mapping
 

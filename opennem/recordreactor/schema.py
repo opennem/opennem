@@ -60,7 +60,7 @@ class MilestoneSchema(BaseModel):
         return self.fueltech_id.label if self.fueltech_id else ""
 
 
-class MilestoneRecord(BaseModel):
+class MilestoneRecordSchema(BaseModel):
     record_id: str
     interval: datetime
     instance_id: UUID4
@@ -70,21 +70,23 @@ class MilestoneRecord(BaseModel):
     significance: int
     value: int | float
     value_unit: UnitDefinition | None = None
-    network_id: NetworkSchema | str | None = None
+    network: NetworkSchema
     network_region: str | None = None
     fueltech_id: FueltechSchema | None = None
     fueltech_group_id: FueltechSchema | str | None = None
     description: str | None = None
     description_long: str | None = None
-    previous_record_id: str | None = None
+    previous_instance_id: str | None = None
 
     @property
-    def network_code(self) -> str:
-        return self.network_id.code if self.network_id else ""
-
-    @property
-    def country(self) -> str:
-        return self.country
+    def network_id(self) -> str:
+        return (
+            self.network.code
+            if self.network and isinstance(self.network, NetworkSchema)
+            else self.network
+            if self.network
+            else ""
+        )
 
     @property
     def fueltech_code(self) -> str:

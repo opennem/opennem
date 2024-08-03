@@ -17,7 +17,7 @@ from opennem.recordreactor.schema import (
     MilestoneAggregate,
     MilestoneMetric,
     MilestonePeriod,
-    MilestoneRecord,
+    MilestoneRecordSchema,
 )
 from opennem.schema.network import NetworkSchema
 
@@ -28,7 +28,7 @@ logger = logging.getLogger("opennem.api.milestones.router")
 milestones_router = APIRouter(tags=["Milestones"], include_in_schema=True)
 
 
-def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecord]:
+def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecordSchema]:
     """Map a list of milestone records from the database to MilestoneRecord"""
     milestone_records = []
 
@@ -53,14 +53,14 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
             "fueltech": db_record["fueltech_group_id"],
             "network": db_record["network_id"],
             "period": db_record["period"],
-            "previous_record_id": db_record["previous_record_id"],
+            "previous_instance_id": db_record["previous_instance_id"],
             "metric": MilestoneMetric(db_record["metric"]) if db_record["metric"] else None,
         }
 
         if db_record["network_region"]:
             milestone_record["network_region"] = db_record["network_region"]
 
-        milestone_model = MilestoneRecord(**milestone_record)
+        milestone_model = MilestoneRecordSchema(**milestone_record)
         milestone_records.append(milestone_model)
 
     return milestone_records

@@ -4,17 +4,13 @@ RecordReactor generation methods
 
 import logging
 from datetime import datetime
-from itertools import product
 
 from sqlalchemy import text
 
 from opennem.db import AsyncSession, SessionLocal
-from opennem.db.models.opennem import Milestones
 from opennem.recordreactor.buckets import get_bucket_sql
-from opennem.recordreactor.map import get_milestone_map_by_record_id
-from opennem.recordreactor.schema import MilestoneAggregate, MilestoneMetric, MilestoneRecord
-from opennem.recordreactor.state import get_current_milestone_state
-from opennem.recordreactor.utils import check_milestone_is_new
+from opennem.recordreactor.persistence import persist_milestones
+from opennem.recordreactor.schema import MilestoneAggregate, MilestoneMetric
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.recordreactor.controllers.generation")
@@ -25,9 +21,7 @@ async def aggregate_generation_and_emissions_data(
 ) -> list[dict]:
     bucket_sql = get_bucket_sql(bucket_size, extra="AT TIME ZONE 'Australia/Brisbane'")
 
-    logger.info(
-        f"Aggregating generation and emissions data for {network_id} bucket size {bucket_size} from {start_date} to {end_date}"
-    )
+    logger.info(f"Aggregating generation & emissions data for {network_id} bucket size {bucket_size} for {start_date}")
 
     query = text(f"""
         WITH timezone_data AS (
@@ -35,6 +29,7 @@ async def aggregate_generation_and_emissions_data(
         )
         SELECT
             {bucket_sql} AS trading_interval,
+            f.network_id,
             f.network_region,
             ft.code AS fueltech_code,
             sum(fs.generated) as fueltech_generated,
@@ -62,12 +57,12 @@ async def aggregate_generation_and_emissions_data(
             f.fueltech_id IS NOT NULL AND
             f.fueltech_id NOT IN ('imports', 'exports', 'interconnector') AND
             f.network_id IN ('NEM', 'AEMO_ROOFTOP', 'AEMO_ROOFTOP_BACKFILL') AND
-            fs.trading_interval >= :date_start::timestamp AT TIME ZONE tz.timezone AND
-            fs.trading_interval < :date_end::timestamp AT TIME ZONE tz.timezone
+            fs.trading_interval >= :start_date AT TIME ZONE tz.timezone AND
+            fs.trading_interval < :end_date AT TIME ZONE tz.timezone
         GROUP BY
-            1, 2, 3
+            1, 2, 3, 4
         ORDER BY
-            1 DESC, 2, 3;
+            1 DESC, 2, 3, 4;
     """)
 
     result = await session.execute(
@@ -83,81 +78,18 @@ async def aggregate_generation_and_emissions_data(
 
     return [
         {
-            "bucket": row.bucket,
+            "bucket": row.trading_interval,
+            "network_id": row.network_id if row.network_id not in ["AEMO_ROOFTOP", "AEMO_ROOFTOP_BACKFILL"] else "NEM",
             "network_region": row.network_region,
-            "generation_low": row.min_generation,
-            "generation_high": row.max_generation,
-            "generation_sum": row.total_generation,
-            "emissions_low": row.min_emissions,
-            "emissions_high": row.max_emissions,
-            "emissions_sum": row.total_emissions,
+            "power_low": row.fueltech_generated,
+            "power_high": row.fueltech_generated,
+            "energy_low": row.fueltech_energy,
+            "energy_high": row.fueltech_energy,
+            "emissions_low": row.fueltech_emissions,
+            "emissions_high": row.fueltech_emissions,
         }
         for row in rows
     ]
-
-
-async def persist_generation_milestones(session, network_id: str, bucket_size: str, aggregated_data: list[dict]):
-    """
-    Persists the demand and price milestones for the given network and bucket size
-
-    Args:
-        session (AsyncSession): The database session
-        network_id (str): The network ID
-        bucket_size (str): The bucket size
-        aggregated_data (list[dict]): The aggregated data
-
-    Returns:
-        None
-
-    """
-
-    milestone_state = await get_current_milestone_state()
-
-    for data in aggregated_data:
-        # create mileston schemas
-        milestone_schemas = []
-
-        for metric, aggregate in product(
-            [MilestoneMetric.energy, MilestoneMetric.emissions, MilestoneMetric.power],
-            [MilestoneAggregate.high, MilestoneAggregate.low],
-        ):
-            milestone_map = await get_milestone_map_by_record_id(
-                f"au.{network_id.lower()}.{data['network_region'].lower()}.{metric.value}.{bucket_size}.{aggregate.value}"
-            )
-            milestone_schemas.append(milestone_map)
-
-        for milestone_schema in milestone_schemas:
-            milestone_prev: MilestoneRecord | None = None
-
-            if milestone_schema.record_id in milestone_state:
-                milestone_prev = milestone_state[milestone_schema.record_id]
-
-            if not milestone_prev or check_milestone_is_new(milestone_schema, milestone_prev, data):
-                data_key = f"{milestone_schema.metric.value}_{milestone_schema.aggregate.value}"
-                data_value = data.get(data_key)
-
-                milestone_new = Milestones(
-                    record_id=milestone_schema.record_id,
-                    interval=data.get("bucket"),
-                    aggregate=milestone_schema.aggregate.value,
-                    metric=milestone_schema.metric.value,
-                    period=bucket_size,
-                    significance=1,
-                    value=data_value,
-                    value_unit=milestone_schema.value_unit.value,
-                    network_id=network_id,
-                    network_region=data.get("network_region"),
-                    previous_record_id=milestone_prev.instance_id if milestone_prev else None,
-                )
-
-                await session.merge(milestone_new)
-
-                # update state to point to this new milestone
-                milestone_state[milestone_schema.record_id] = milestone_new
-
-                logger.info(f"Added milestone for interval {data['bucket']} {milestone_schema.record_id} with value {data_value}")
-
-    await session.flush()
 
 
 async def run_fueltech_generation_milestone_for_interval(
@@ -172,9 +104,10 @@ async def run_fueltech_generation_milestone_for_interval(
             end_date=period_end,
         )
 
-        await persist_generation_milestones(
+        await persist_milestones(
             session=session,
-            network_id=network.code,
+            metrics=[MilestoneMetric.power, MilestoneMetric.emissions, MilestoneMetric.energy],
+            aggregates=[MilestoneAggregate.high, MilestoneAggregate.low],
             bucket_size=bucket_size,
             aggregated_data=aggregated_data,
         )
