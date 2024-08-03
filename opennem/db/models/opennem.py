@@ -29,9 +29,6 @@ from sqlalchemy import (
     Text,
     func,
 )
-from sqlalchemy import (
-    text as sql,
-)
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP, UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -959,7 +956,7 @@ class Milestones(Base):
 
     record_id: Mapped[str] = Column(Text, primary_key=True)
     interval = Column(DateTime(timezone=True), primary_key=True, index=True)
-    instance_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), server_default=sql("uuid_generate_v4()"))
+    instance_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), default=uuid.uuid4)
     aggregate = Column(String, nullable=False)
     metric = Column(String, nullable=True)
     period = Column(String, nullable=True)
