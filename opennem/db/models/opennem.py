@@ -954,7 +954,7 @@ class AggregateNetworkDemand(Base):
 class Milestones(Base):
     __tablename__ = "milestones"
 
-    record_id: Mapped[str] = Column(Text, primary_key=True)
+    record_id: Mapped[str] = Column(Text, primary_key=True, index=True)
     interval = Column(DateTime(timezone=True), primary_key=True, index=True)
     instance_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), default=uuid.uuid4)
     aggregate = Column(String, nullable=False)
@@ -970,6 +970,12 @@ class Milestones(Base):
     description = Column(String, nullable=True)
     description_long: Mapped[str] = mapped_column(String, nullable=True)
     previous_record_id = Column(Text, nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint("record_id", "interval", name="excl_milestone_record_id_interval"),
+        Index("idx_milestone_network_id", network_id, unique=False, postgresql_using="btree"),
+        Index("idx_milestone_fueltech_id", fueltech_id, unique=False, postgresql_using="btree"),
+    )
 
     # Relationships
     # unit = relationship("UnitDefinition")
