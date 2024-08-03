@@ -16,7 +16,7 @@ from opennem.api.stats.schema import OpennemDataSet
 from opennem.utils.numbers import compact_json_output_number_series
 from opennem.utils.url import urljoin
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("opennem.exporter.aws")
 
 
 class OpennemDataSetSerializeS3:
@@ -82,7 +82,7 @@ def write_statset_to_s3(stat_set: OpennemDataSet, file_path: str, exclude: set =
     if file_path.startswith("/"):
         file_path = file_path[1:]
 
-    if not settings.s3_bucket_path:
+    if not settings.s3_bucket_name:
         raise Exception("Require an S3 bucket to write to")
 
     s3bucket = OpennemDataSetSerializeS3(settings.s3_bucket_name, exclude_unset=exclude_unset)
@@ -121,11 +121,13 @@ def write_to_s3(content: str, file_path: str, content_type: str = "application/j
     if file_path.startswith("/"):
         file_path = file_path[1:]
 
-    if not settings.s3_bucket_path:
+    if not settings.s3_bucket_name:
         raise Exception("Require an S3 bucket to write to")
 
-    s3bucket = OpennemDataSetSerializeS3(settings.s3_bucket_path)
+    s3bucket = OpennemDataSetSerializeS3(settings.s3_bucket_name)
     write_response = None
+
+    logger.info(f"Writing to s3 bucket {settings.s3_bucket_name} at path {file_path}")
 
     try:
         write_response = s3bucket.write(file_path, content, content_type=content_type)
