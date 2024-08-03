@@ -4,7 +4,9 @@ RecordReactor utils
 
 import operator
 
-from opennem.recordreactor.schema import MilestoneAggregate, MilestoneRecord, MilestoneSchema
+from opennem.core.units import get_unit_by_value
+from opennem.recordreactor.schema import MilestoneAggregate, MilestoneMetric, MilestoneRecord, MilestoneSchema
+from opennem.schema.units import UnitDefinition
 
 
 def check_milestone_is_new(milestone: MilestoneSchema, milestone_previous: MilestoneRecord, data: dict[str, str | float]) -> bool:
@@ -49,3 +51,19 @@ def get_record_description(
     record_description = " ".join(filter(None, record_description_components))
 
     return record_description
+
+
+def get_record_unit_by_metric(metric: MilestoneMetric) -> UnitDefinition:
+    """get a record unit by metric"""
+    if metric == MilestoneMetric.demand:
+        return get_unit_by_value("MW")
+    elif metric == MilestoneMetric.price:
+        return get_unit_by_value("AUD")
+    elif metric == MilestoneMetric.power:
+        return get_unit_by_value("MW")
+    elif metric == MilestoneMetric.energy:
+        return get_unit_by_value("MWh")
+    elif metric == MilestoneMetric.emissions:
+        return get_unit_by_value("tCO2e")
+    else:
+        raise ValueError(f"Invalid metric: {metric}")
