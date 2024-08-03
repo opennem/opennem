@@ -67,7 +67,6 @@ async def stations_to_geojson(stations: list[Station]) -> FacilityGeo:
                     "data_last_seen": facility.data_last_seen,
                     "network_region": facility.network_region,
                     "emissions_factor_co2": facility.emissions_factor_co2,
-                    "latest_generated": facility.latest_generated,
                 }
             )
 
