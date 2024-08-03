@@ -83,7 +83,6 @@ origins = [
     "https://admin.opennem.localhost",
     "https://*.opennem-fe.pages.dev",
     "https://*.pages.dev",
-    "https://*.netlify.app",
     "https://*.openelectricity.org.au",
     "http://localhost:5173",
 ]
