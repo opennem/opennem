@@ -42,6 +42,7 @@ class MilestoneSchema(BaseModel):
     aggregate: MilestoneAggregate
     metric: MilestoneMetric
     period: MilestonePeriod
+    value_unit: UnitDefinition
     network_id: NetworkSchema
     network_region: str | None = None
     fueltech_id: FueltechSchema | None = None
