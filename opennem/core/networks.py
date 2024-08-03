@@ -64,7 +64,7 @@ def network_from_network_code(network_code: str) -> NetworkSchema | None:
     if len(network_lookup):
         return network_lookup.pop()
 
-    return None
+    raise ValueError(f"Unknown network {network_code}")
 
 
 def datetime_add_network_timezone(dt: datetime, network: NetworkSchema) -> datetime:
