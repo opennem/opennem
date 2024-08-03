@@ -14,7 +14,8 @@ import deprecation
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
 
-from opennem import __version__, settings
+from opennem import settings
+from opennem.utils.version import get_version
 
 DeclarativeBase = declarative_base()
 
@@ -56,7 +57,7 @@ engine = db_connect()
 
 
 @deprecation.deprecated(
-    deprecated_in="1.0", removed_in="0.1.14", current_version=__version__, details="Use the db_connect function instead"
+    deprecated_in="4.0", removed_in="4.1", current_version=get_version(), details="Use the db_connect function instead"
 )
 def get_database_engine() -> AsyncEngine:
     """

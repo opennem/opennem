@@ -2,20 +2,23 @@
 
 import logging
 
-from numpy import deprecate
+import deprecation
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.controllers.schema import ControllerReturn
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.bulk_insert_csv import bulkinsert_mms_items
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
+from opennem.utils.version import get_version
 
 from .schema import SchemaBalancingSummary, SchemaFacilityScada
 
 logger = logging.getLogger(__name__)
 
 
-@deprecate(message="Use async persist_facility_scada_bulk instead")
+@deprecation.deprecated(
+    deprecated_in="4.0", removed_in="4.1", current_version=get_version(), details="persist_facility_scada_bulk"
+)
 async def persist_postgres_facility_scada(records: list[SchemaFacilityScada]) -> int:
     """Persist WEM facility intervals"""
     engine = get_database_engine()
