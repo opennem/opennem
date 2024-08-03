@@ -166,6 +166,7 @@ async def get_milestones(
         )
     except Exception as e:
         logger.error(f"Error getting milestone records: {e}")
+        logger.exception(e)
         response_schema = APIV4ResponseSchema(success=False, error="Error getting milestone records")
         return response_schema
 
