@@ -44,7 +44,7 @@ def network_from_network_region(
     raise Exception(f"Unknown network {network_region}")
 
 
-def network_from_network_code(network_code: str) -> NetworkSchema | None:
+def network_from_network_code(network_code: str) -> NetworkSchema:
     network_code = network_code.upper().strip()
 
     if network_code in ["AU"]:
