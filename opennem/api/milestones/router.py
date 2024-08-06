@@ -186,6 +186,36 @@ async def get_milestones(
 @api_version(4)
 @api_protected()
 @milestones_router.get(
+    "/history/{record_id}",
+    response_model=APIV4ResponseSchema,
+    response_model_exclude_unset=True,
+    response_model_exclude_none=True,
+    description="Get a single milestone",
+)
+async def get_milestone_by_record_id(
+    record_id: str,
+    db: AsyncSession = Depends(get_scoped_session),
+) -> APIV4ResponseSchema:
+    """Get a single milestone by record id"""
+
+    try:
+        db_record, total_records = await get_milestone_records(session=db, record_id=record_id)
+    except Exception as e:
+        logger.error(f"Error getting milestone record: {e}")
+        response_schema = APIV4ResponseSchema(success=False, error="Error getting milestone record")
+        return response_schema
+
+    if not db_record:
+        raise HTTPException(status_code=404, detail="Milestone record not found")
+
+    response_schema = APIV4ResponseSchema(success=True, data=db_record, total_records=total_records)
+
+    return response_schema
+
+
+@api_version(4)
+@api_protected()
+@milestones_router.get(
     "/{instance_id}",
     response_model=APIV4ResponseSchema,
     response_model_exclude_unset=True,
