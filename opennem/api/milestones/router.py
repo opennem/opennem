@@ -246,6 +246,16 @@ async def get_milestone(
         response_schema = APIV4ResponseSchema(success=False, error="Error mapping milestone record")
         return response_schema
 
+    if db_record["history"] and include_history:
+        try:
+            history_records = map_milestone_records_from_db(db_record["history"])
+        except Exception as e:
+            logger.error(f"Error mapping milestone record history: {e}")
+            response_schema = APIV4ResponseSchema(success=False, error="Error mapping milestone record history")
+            return response_schema
+
+        milestone_record["history"] = history_records
+
     response_schema = APIV4ResponseSchema(success=True, data=milestone_record)
 
     return response_schema
