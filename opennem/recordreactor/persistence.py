@@ -87,7 +87,7 @@ async def persist_milestones(
                     period=bucket_size,
                     significance=1,
                     value=data_value,
-                    value_unit=milestone_schema.value_unit.value,
+                    value_unit=milestone_schema.unit.value,
                     network_id=network.code,
                     network_region=data.get("network_region"),
                     description=description,
