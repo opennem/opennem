@@ -105,18 +105,14 @@ async def get_milestone_record(
     record_dict = record.__dict__
 
     if include_history:
-        # get all the historic records for this milestone based on previous instance ids
         select_query = (
             select(Milestones)
             .where(and_(Milestones.record_id == record.record_id, Milestones.interval < record.interval))
-            # .where(Milestones.record_id == record.record_id)
             .order_by(Milestones.interval.desc())
         )
-        logger.debug(f"SQL Query: {select_query.compile(compile_kwargs={'literal_binds': True})}")
         result = await session.execute(select_query)
         records = result.scalars().all()
-        logger.debug(f"Got {len(records)} historic records")
-        record_dict["history"] = records
+        record_dict["history"] = [i.__dict__ for i in records]
 
     return record_dict
 
