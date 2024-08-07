@@ -216,7 +216,7 @@ async def get_milestone_by_record_id(
 @api_version(4)
 @api_protected()
 @milestones_router.get(
-    "/{instance_id}",
+    "/instance/{instance_id}",
     response_model=APIV4ResponseSchema,
     response_model_exclude_unset=True,
     response_model_exclude_none=True,
