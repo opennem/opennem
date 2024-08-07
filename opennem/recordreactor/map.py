@@ -39,7 +39,7 @@ async def generate_milestone_map() -> dict[str, MilestoneSchema]:
                 aggregate=aggregate,
                 metric=metric,
                 period=period,
-                value_unit=get_record_unit_by_metric(metric),
+                unit=get_record_unit_by_metric(metric),
                 network_id=network,
                 network_region=network_region,
                 fueltech_id=None,
