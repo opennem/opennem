@@ -27,6 +27,7 @@ async def get_milestone_records(
     networks: list[NetworkSchema] | None = None,
     network_regions: list[str] | None = None,
     periods: list[MilestonePeriod] | None = None,
+    record_id: str | None = None,
 ) -> tuple[list[dict], int]:
     """Get a list of all milestones ordered by date with a limit, pagination and optional significance filter"""
     page_number -= 1
@@ -62,6 +63,9 @@ async def get_milestone_records(
 
     if periods:
         select_query = select_query.where(Milestones.period.in_(periods))
+
+    if record_id:
+        select_query = select_query.where(Milestones.record_id == record_id)
 
     total_query = select(func.count()).select_from(select_query.subquery())
     total_records = await session.scalar(total_query)
