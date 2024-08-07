@@ -77,6 +77,7 @@ class MilestoneRecordSchema(BaseModel):
     description: str | None = None
     description_long: str | None = None
     previous_instance_id: UUID4 | None = None
+    history: list["MilestoneRecordSchema"] | None = None
 
     @computed_field
     @property
