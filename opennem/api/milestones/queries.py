@@ -2,7 +2,7 @@ import logging
 import uuid
 from datetime import datetime
 
-from sqlalchemy import or_, select
+from sqlalchemy import and_, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import func
 
@@ -92,6 +92,7 @@ async def get_milestone_records(
 async def get_milestone_record(
     session: AsyncSession,
     instance_id: uuid.UUID,
+    include_history: bool = False,
 ) -> dict | None:
     """Get a single milestone record"""
     select_query = select(Milestones).where(Milestones.instance_id == instance_id)
@@ -101,9 +102,23 @@ async def get_milestone_record(
     if not record:
         return None
 
-    logger.debug(record)
+    record_dict = record.__dict__
 
-    return record.__dict__
+    if include_history:
+        # get all the historic records for this milestone based on previous instance ids
+        select_query = (
+            select(Milestones)
+            .where(and_(Milestones.record_id == record.record_id, Milestones.interval < record.interval))
+            # .where(Milestones.record_id == record.record_id)
+            .order_by(Milestones.interval.desc())
+        )
+        logger.debug(f"SQL Query: {select_query.compile(compile_kwargs={'literal_binds': True})}")
+        result = await session.execute(select_query)
+        records = result.scalars().all()
+        logger.debug(f"Got {len(records)} historic records")
+        record_dict["history"] = records
+
+    return record_dict
 
 
 async def get_total_milestones(

@@ -224,12 +224,13 @@ async def get_milestone_by_record_id(
 )
 async def get_milestone(
     instance_id: uuid.UUID,
+    include_history: bool = Query(False, description="Include historical milestone records"),
     db: AsyncSession = Depends(get_scoped_session),
 ) -> APIV4ResponseSchema:
     """Get a single milestone"""
 
     try:
-        db_record = await get_milestone_record(session=db, instance_id=instance_id)
+        db_record = await get_milestone_record(session=db, instance_id=instance_id, include_history=include_history)
     except Exception as e:
         logger.error(f"Error getting milestone record: {e}")
         response_schema = APIV4ResponseSchema(success=False, error="Error getting milestone record")
