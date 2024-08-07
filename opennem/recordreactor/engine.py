@@ -15,7 +15,7 @@ from opennem.utils.dates import get_last_completed_interval_for_network, make_aw
 logger = logging.getLogger("opennem.recordreactor.engine")
 
 
-async def run_milestone_demand(start_interval: datetime, end_interval: datetime | None = None):
+async def run_milestone_engine(start_interval: datetime, end_interval: datetime | None = None):
     num_tasks = 10
 
     for network in [NetworkNEM, NetworkWEM]:
@@ -72,4 +72,4 @@ async def run_milestone_demand(start_interval: datetime, end_interval: datetime 
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(run_milestone_demand(start_interval=NetworkNEM.data_first_seen))
+    asyncio.run(run_milestone_engine(start_interval=datetime.fromisoformat("2017-12-31 14:05:00+00:00")))
