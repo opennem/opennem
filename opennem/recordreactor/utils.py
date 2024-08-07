@@ -60,6 +60,7 @@ def check_milestone_is_new(
 
 def get_record_description(
     milestone: MilestoneRecordSchema,
+    include_value: bool = False,
 ) -> str:
     """get a record description"""
     record_description_components = [
@@ -76,7 +77,7 @@ def get_record_description(
         if milestone.network_region
         else None,
         # value
-        f"({round(milestone.value, 2)} {milestone.unit.value if milestone.unit else ''})",
+        f"({round(milestone.value, 2)} {milestone.unit.value if milestone.unit else ''})" if include_value else None,
     ]
 
     # remove empty items from record id components list and join with a period
