@@ -187,14 +187,12 @@ async def bulkinsert_mms_items(
     sql_query = build_insert_query(table=table, update_cols=update_fields)
     csv_content = generate_bulkinsert_csv_from_records(table, records, column_names=list(records[0].keys()))
 
-    pool = db_connect()
+    pool = await db_connect()  # Assuming db_connect is also async
 
     try:
         async with pool.acquire() as conn:
             num_records = await conn.copy_records_to_table(
-                "__tmp_{table_name}_{tmp_table_name}".format(
-                    table_name=table.__table__.name, tmp_table_name=datetime.strftime(datetime.now(), "%Y%m%d%H%M%S")
-                ),
+                f"__tmp_{table.__table__.name}_{datetime.now().strftime('%Y%m%d%H%M%S')}",
                 records=csv_content.getvalue().splitlines()[1:],  # Skip header
                 columns=csv_content.getvalue().splitlines()[0].split(","),
             )
