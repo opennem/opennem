@@ -16,7 +16,7 @@ logger = logging.getLogger("opennem.api.milestones.queries")
 
 async def get_milestone_records(
     session: AsyncSession,
-    limit: int = 100,
+    limit: int | None = 100,
     page_number: int = 1,
     date_start: datetime | None = None,
     date_end: datetime | None = None,
@@ -70,9 +70,15 @@ async def get_milestone_records(
     total_query = select(func.count()).select_from(select_query.subquery())
     total_records = await session.scalar(total_query)
 
-    offset = page_number * limit
+    select_query = select_query.order_by(Milestones.interval.desc())
 
-    select_query = select_query.order_by(Milestones.interval.desc()).limit(limit)
+    offset: int | None = None
+
+    if limit:
+        offset = page_number * limit
+
+    if limit:
+        select_query = select_query.limit(limit)
 
     if offset and offset > 0:
         select_query = select_query.offset(offset)
