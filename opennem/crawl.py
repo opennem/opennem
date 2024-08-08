@@ -192,7 +192,7 @@ async def run_crawl(
     return cr
 
 
-def run_crawl_urls(urls: list[str]) -> None:
+async def run_crawl_urls(urls: list[str]) -> None:
     """Crawl a lsit of urls
     @TODO support directories
     """
@@ -200,7 +200,7 @@ def run_crawl_urls(urls: list[str]) -> None:
     for url in urls:
         if url.lower().endswith(".zip") or url.lower().endswith(".csv"):
             try:
-                cr = parse_aemo_url_optimized(url)
+                cr = await parse_aemo_url_optimized(url)
                 logger.info(f"Parsed {url} and got {cr.inserted_records or 0} inserted")
             except Exception as e:
                 logger.error(e)

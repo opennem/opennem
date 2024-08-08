@@ -102,19 +102,20 @@ async def process_mms_url(crawler: CrawlerDefinition) -> ControllerReturn | None
         logger.error("No entries to fetch")
         return None
 
+    controller_returns: ControllerReturn | None = None
+
     for entry in entries_to_fetch:
         try:
             # @NOTE optimization - if we're dealing with a large file unzip
             # to disk and parse rather than in-memory. 100,000kb
-            controller_returns: ControllerReturn | None = None
 
             if crawler.bulk_insert:
-                controller_returns = parse_aemo_url_optimized_bulk(entry.link, persist_to_db=True)
+                controller_returns = await parse_aemo_url_optimized_bulk(entry.link, persist_to_db=True)
             elif entry.file_size and entry.file_size > 100_000:
-                controller_returns = parse_aemo_url_optimized(entry.link)
+                controller_returns = await parse_aemo_url_optimized(entry.link)
             else:
                 ts = parse_aemo_url(entry.link)
-                controller_returns = store_aemo_tableset(ts)
+                controller_returns = await store_aemo_tableset(ts)
 
             if not controller_returns:
                 continue

@@ -174,7 +174,7 @@ def generate_bulkinsert_csv_from_records(
     return csv_buffer
 
 
-def bulkinsert_mms_items(
+async def bulkinsert_mms_items(
     table: ORMTableType,
     records: list[dict],
     update_fields: list[str | Column[Any]] | None = None,
@@ -187,28 +187,25 @@ def bulkinsert_mms_items(
     sql_query = build_insert_query(table=table, update_cols=update_fields)
     csv_content = generate_bulkinsert_csv_from_records(table, records, column_names=list(records[0].keys()))
 
-    # @TODO check the scoping here
-    engine = db_connect()
-    conn = engine.raw_connection()
+    pool = await db_connect()
 
     try:
-        cursor = conn.cursor()
-        try:
-            cursor.copy(sql_query, csv_content)
-        except Exception:
-            cursor.copy_expert(sql_query, csv_content)
+        async with pool.acquire() as conn:
+            num_records = await conn.copy_records_to_table(
+                "__tmp_{table_name}_{tmp_table_name}".format(
+                    table_name=table.__table__.name, tmp_table_name=datetime.strftime(datetime.now(), "%Y%m%d%H%M%S")
+                ),
+                records=csv_content.getvalue().splitlines()[1:],  # Skip header
+                columns=csv_content.getvalue().splitlines()[0].split(","),
+            )
+            await conn.execute(sql_query)
 
-        conn.commit()
-        num_records = len(records)
-        logger.info(f"Bulk inserted {len(records)} records")
+        logger.info(f"Bulk inserted {num_records} records")
     except Exception as generic_error:
-        if hasattr(generic_error, "hide_parameters"):
-            generic_error.hide_parameters = True  # type: ignore
         logger.error(generic_error)
         raise generic_error
     finally:
-        engine.dispose()
-        conn.close()
+        await pool.close()
 
     return num_records
 

@@ -11,7 +11,7 @@ from opennem.utils.archive import download_and_unzip
 logger = logging.getLogger("opennem.core.parsers.aemo.nemweb")
 
 
-def parse_aemo_url_optimized(
+async def parse_aemo_url_optimized(
     url: str, table_set: AEMOTableSet | None = None, persist_to_db: bool = True, values_only: bool = False
 ) -> ControllerReturn | AEMOTableSet:
     """Optimized version of aemo url parser that stores the files locally in tmp
@@ -35,7 +35,7 @@ def parse_aemo_url_optimized(
         table_set = parse_aemo_file(str(csv_file_to_process), table_set=table_set, values_only=values_only)
 
         if persist_to_db:
-            controller_returns = store_aemo_tableset(table_set)
+            controller_returns = await store_aemo_tableset(table_set)
             cr.inserted_records += controller_returns.inserted_records
 
             if cr.last_modified and controller_returns.last_modified and cr.last_modified < controller_returns.last_modified:
@@ -58,7 +58,7 @@ def parse_aemo_url_optimized(
     return cr
 
 
-def parse_aemo_url_optimized_bulk(
+async def parse_aemo_url_optimized_bulk(
     url: str, table_set: AEMOTableSet | None = None, persist_to_db: bool = True
 ) -> ControllerReturn | AEMOTableSet:
     """Optimized version of aemo url parser that stores the files locally in tmp
@@ -102,6 +102,8 @@ if __name__ == "__main__":
     # @TODO parse into MMS schema
     url = "https://nemweb.com.au/Reports/ARCHIVE/TradingIS_Reports/PUBLIC_TRADINGIS_20231231_20240106.zip"
     # parse_aemo_url_optimized(url)
-    parse_aemo_url_optimized(url)
+    import asyncio
+
+    asyncio.run(parse_aemo_url_optimized(url))
 
     # controller_returns = store_aemo_tableset(r)

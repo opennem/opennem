@@ -11,7 +11,7 @@ from opennem.utils.archive import download_and_unzip
 logger = logging.getLogger("opennem.core.parsers.aemo.url")
 
 
-def parse_aemo_url_optimized(url: str) -> int:
+async def parse_aemo_url_optimized(url: str) -> int:
     """Optimized version of aemo url parser"""
     files_parsed = 0
 
@@ -25,7 +25,7 @@ def parse_aemo_url_optimized(url: str) -> int:
 
         if f.suffix.lower() in [".csv"]:
             ts = parse_aemo_file(str(f))
-            store_aemo_tableset(ts)
+            await store_aemo_tableset(ts)
             files_parsed += 1
 
     return files_parsed

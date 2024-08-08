@@ -64,6 +64,6 @@ async def persist_facility_scada_bulk(
     if isinstance(records[0], SchemaBalancingSummary):
         table = BalancingSummary
 
-    bulkinsert_mms_items(table=table, records=records_to_store, update_fields=update_fields)  # type: ignore
+    await bulkinsert_mms_items(table=table, records=records_to_store, update_fields=update_fields)  # type: ignore
 
     return None
