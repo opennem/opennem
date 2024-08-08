@@ -69,8 +69,9 @@ async def nem_dispatch_scada_crawl() -> ControllerReturn:
     if not dispatch_scada or not dispatch_scada.inserted_records:
         raise RetryTask("No new dispatch scada data")
 
-    await run_export_power_latest_for_network(network=NetworkNEM)
-    await run_export_power_latest_for_network(network=NetworkAU)
+    await asyncio.gather(
+        run_export_power_latest_for_network(network=NetworkNEM), run_export_power_latest_for_network(network=NetworkAU)
+    )
 
     return dispatch_scada
 
