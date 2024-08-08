@@ -213,10 +213,17 @@ async def get_milestone_by_record_id(
         response_schema = APIV4ResponseSchema(success=False, error="Error getting milestone record")
         return response_schema
 
+    try:
+        milestone_record = map_milestone_records_from_db(db_records=db_record)
+    except Exception as e:
+        logger.error(f"Error mapping milestone record: {e}")
+        response_schema = APIV4ResponseSchema(success=False, error="Error mapping milestone record")
+        return response_schema
+
     if not db_record:
         raise HTTPException(status_code=404, detail="Milestone record not found")
 
-    response_schema = APIV4ResponseSchema(success=True, data=db_record, total_records=total_records)
+    response_schema = APIV4ResponseSchema(success=True, data=milestone_record, total_records=total_records)
 
     return response_schema
 
