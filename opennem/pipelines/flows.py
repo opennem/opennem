@@ -13,7 +13,6 @@ from datetime import datetime
 from sqlalchemy import text as sql
 
 from opennem.aggregates.network_flows import run_flow_update_for_interval
-from opennem.core.profiler import profile_task
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkSchema
 
@@ -86,7 +85,6 @@ def get_latest_flow_interval_processed() -> datetime:
     return latest_interval
 
 
-@profile_task(send_slack=False, message_fmt="`{network}`: flows pipeline processed")
 def per_interval_flows_and_exports(network: NetworkSchema, interval: datetime) -> None:
     """Per interval processor for flows"""
     latest_interval = get_latest_flow_interval_processed()

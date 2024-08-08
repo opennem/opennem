@@ -9,7 +9,6 @@ from sqlalchemy import text as sql
 
 from opennem import settings
 from opennem.aggregates.utils import get_aggregate_month_range, get_aggregate_year_range
-from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
 from opennem.db import get_database_engine
 from opennem.schema.network import (
     NetworkAEMORooftop,
@@ -158,12 +157,6 @@ def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime,
     return result
 
 
-@profile_task(
-    send_slack=True,
-    level=ProfilerLevel.INFO,
-    retention_period=ProfilerRetentionTime.MONTH,
-    message_fmt="`{network.code}`: Ran flow update for interval",
-)
 def run_aggregates_facility_for_interval(interval: datetime, network: NetworkSchema | None = None, offset: int = 1) -> int | None:
     """Runs and stores emission flows for a particular interval"""
 
@@ -186,7 +179,6 @@ def run_facility_aggregates_for_latest_interval(network: NetworkSchema) -> None:
     run_aggregates_facility_for_interval(interval, network=network)
 
 
-@profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
 def run_aggregates_facility_year(year: int, network: NetworkSchema, run_by_month: int = True) -> None:
     """Run aggregates for a single year
 
@@ -223,7 +215,6 @@ def run_aggregates_facility_year(year: int, network: NetworkSchema, run_by_month
             exec_aggregates_facility_daily_query(date_min, date_max, network)
 
 
-@profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
 def run_aggregate_facility_all_by_year(network: NetworkSchema, run_by_month: int = False) -> None:
     """Runs the facility aggregate for a network for all years in its range
 
@@ -250,7 +241,6 @@ def run_aggregate_facility_all_by_year(network: NetworkSchema, run_by_month: int
             exec_aggregates_facility_daily_query(date_min, date_max, network)
 
 
-@profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
 def run_aggregate_facility_days(days: int = 1, network: NetworkSchema | None = None) -> None:
     """Run energy sum update for yesterday. This task is scheduled
     in scheduler/db"""

@@ -9,7 +9,6 @@ from datetime import datetime, timedelta
 from sqlalchemy import text
 
 from opennem import settings
-from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem
@@ -102,7 +101,6 @@ def exec_aggregates_network_demand_query(date_min: datetime, date_max: datetime,
     return False
 
 
-@profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
 def run_aggregates_demand_network(networks: list[NetworkSchema] | None = None) -> None:
     """Run the demand aggregates for each provided network
 
@@ -123,7 +121,6 @@ def run_aggregates_demand_network(networks: list[NetworkSchema] | None = None) -
         exec_aggregates_network_demand_query(date_min=date_min, date_max=date_max, network=network)
 
 
-@profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
 def run_aggregates_demand_network_days(days: int = 3) -> None:
     """Run the demand aggregates"""
 
@@ -134,12 +131,6 @@ def run_aggregates_demand_network_days(days: int = 3) -> None:
         exec_aggregates_network_demand_query(date_min=date_min, date_max=date_max, network=network)  # type: ignore
 
 
-@profile_task(
-    send_slack=True,
-    level=ProfilerLevel.INFO,
-    retention_period=ProfilerRetentionTime.MONTH,
-    message_fmt="`{network.code}`: Ran aggregates demand update for interval `{interval}`",
-)
 def run_aggregates_demand_for_interval(interval: datetime, network: NetworkSchema | None = None, offset: int = 1) -> int | None:
     """Runs and stores emission flows for a particular interval"""
 

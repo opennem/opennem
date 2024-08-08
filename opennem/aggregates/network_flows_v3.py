@@ -15,7 +15,6 @@ from opennem import settings
 from opennem.core.flow_solver import (
     solve_flow_emissions_with_pandas,
 )
-from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
 from opennem.db import get_database_engine, get_scoped_session
 from opennem.db.models.opennem import AggregateNetworkFlows
 from opennem.schema.network import NetworkNEM, NetworkSchema
@@ -373,12 +372,6 @@ def run_flows_for_last_intervals(interval_number: int, network: NetworkSchema = 
     )
 
 
-@profile_task(
-    send_slack=False,
-    message_fmt="Running flow v3 for {days} days",
-    level=ProfilerLevel.INFO,
-    retention_period=ProfilerRetentionTime.MONTH,
-)
 def run_flows_for_last_days(days: int, network: NetworkSchema = NetworkNEM) -> None:
     """ " Run flow processor for last x interval starting from now"""
 

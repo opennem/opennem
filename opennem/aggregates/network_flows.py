@@ -19,7 +19,6 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 from opennem import settings
-from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
 from opennem.db import get_database_engine
 from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
 from opennem.db.models.opennem import AggregateNetworkFlows
@@ -353,12 +352,6 @@ def run_and_store_flows_for_range(date_start: datetime, date_end: datetime, netw
     return inserted_records
 
 
-@profile_task(
-    send_slack=True,
-    level=ProfilerLevel.INFO,
-    retention_period=ProfilerRetentionTime.MONTH,
-    message_fmt="`{network.code}`: Ran flow update for interval `{interval}`",
-)
 def run_flow_update_for_interval(
     interval: datetime, network: NetworkSchema | None = None, number_of_intervals: int = 1
 ) -> int | None:
@@ -373,12 +366,6 @@ def run_flow_update_for_interval(
     return run_and_store_flows_for_range(date_start, date_end, network=network)
 
 
-@profile_task(
-    send_slack=False,
-    message_fmt="Ran emission update for lasts {days} days",
-    level=ProfilerLevel.INFO,
-    retention_period=ProfilerRetentionTime.FOREVER,
-)
 def run_emission_update_day(days: int = 1, day: datetime | None = None, offset_days: int = 1) -> None:
     """Run emission calcs for number of days"""
     # This is Sydney time as the data is published in local time
@@ -408,12 +395,6 @@ def run_flow_updates_for_date_range(date_start: datetime, date_end: datetime) ->
         current_day -= timedelta(days=1)
 
 
-@profile_task(
-    send_slack=True,
-    message_fmt="Ran flow updated all for last year",
-    level=ProfilerLevel.INFO,
-    retention_period=ProfilerRetentionTime.FOREVER,
-)
 def run_flow_updates_all_per_year(year_start: int, years: int = 1, network: NetworkSchema | None = None) -> None:
     """Run emission flow updates by year"""
 
@@ -449,12 +430,6 @@ def run_flow_updates_all_per_year(year_start: int, years: int = 1, network: Netw
             )
 
 
-@profile_task(
-    send_slack=True,
-    message_fmt="Ran flow update for latest interval",
-    level=ProfilerLevel.INFO,
-    retention_period=ProfilerRetentionTime.FOREVER,
-)
 def run_flow_update_for_latest_interval(network: NetworkSchema | None = None, interval_offset: int = 1) -> None:
     """Run run the flow updates for the last interval"""
 
