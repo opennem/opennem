@@ -443,7 +443,7 @@ async def power_flows_network_week(
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
 )
-def power_network_region_fueltech(
+async def power_network_region_fueltech(
     network_code: str, network_region_code: str | None = None, month: date | None = None
 ) -> OpennemDataSet | RedirectResponse:
     network = None
