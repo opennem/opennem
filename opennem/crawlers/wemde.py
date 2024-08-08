@@ -102,7 +102,7 @@ async def run_wemde_crawl(
     if crawler.parser == wemde_parse_trading_price:
         update_fields = ["price", "price_dispatch"]
 
-    persist_facility_scada_bulk(records=data, update_fields=update_fields)
+    await persist_facility_scada_bulk(records=data, update_fields=update_fields)
 
     logger.info(f"Persisted {len(data)} records")
 
