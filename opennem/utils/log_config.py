@@ -32,5 +32,6 @@ LOGGING_CONFIG = {
         "matplotlib": {"level": "WARNING"},
         "psycopg.pq": {"level": "INFO"},
         "httpcore.http11": {"level": "ERROR"},
+        "httpcore.connection": {"level": "ERROR"},
     },
 }
