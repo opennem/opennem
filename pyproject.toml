@@ -69,6 +69,7 @@ celery = "^5.4.0"
 deprecation = "^2.1.0"
 asgiref = "^3.8.1"
 chardet = "^5.2.0"
+tqdm = "^4.66.5"
 
 
 [tool.poetry.group.dev.dependencies]
