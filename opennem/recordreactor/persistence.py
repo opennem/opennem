@@ -6,6 +6,8 @@ import logging
 import uuid
 from itertools import product
 
+from sqlalchemy.exc import IntegrityError
+
 from opennem.core.networks import network_from_network_code
 from opennem.db import AsyncSession
 from opennem.db.models.opennem import Milestones
@@ -42,10 +44,19 @@ async def persist_milestones(
         milestone_schemas: list[MilestoneSchema] = []
 
         for metric, aggregate in product(metrics, aggregates):
-            milestone_map = await get_milestone_map_by_record_id(
-                f"au.{network.code.lower()}.{data['network_region'].lower()}.{metric.value}.{bucket_size}.{aggregate.value}"
-            )
-            milestone_schemas.append(milestone_map)
+            for milestone_record_id in [
+                f"au.{network.code.lower()}.{data['network_region'].lower()}.{metric.value}.{bucket_size}.{aggregate.value}",
+                f"au.{network.code.lower()}.{data['network_region'].lower()}.{data['fueltech_id'].lower()}.{metric.value}.{bucket_size}.{aggregate.value}"
+                if data.get("fueltech_id")
+                else None,
+            ]:
+                try:
+                    milestone_map = await get_milestone_map_by_record_id(milestone_record_id)
+
+                    if milestone_map:
+                        milestone_schemas.append(milestone_map)
+                except ValueError:
+                    logger.warning(f"Invalid milestone record id: {milestone_record_id}")
 
         for milestone_schema in milestone_schemas:
             milestone_prev: MilestoneRecordSchema | None = None
@@ -90,15 +101,21 @@ async def persist_milestones(
                     value_unit=milestone_schema.unit.value,
                     network_id=network.code,
                     network_region=data.get("network_region"),
+                    fueltech_id=data.get("fueltech_id"),
                     description=description,
                     previous_instance_id=milestone_prev.instance_id if milestone_prev else None,
                 )
 
-                await session.merge(milestone_new)
+                try:
+                    await session.merge(milestone_new)
 
-                # update state to point to this new milestone
-                milestone_state[milestone_schema.record_id] = milestone_record_schema
+                    # update state to point to this new milestone
+                    milestone_state[milestone_schema.record_id] = milestone_record_schema
 
-                logger.info(f"Added milestone for interval {data['bucket']} {milestone_schema.record_id} with value {data_value}")
+                    logger.info(
+                        f"Added milestone for interval {data['bucket']} {milestone_schema.record_id} with value {data_value}"
+                    )
+                except IntegrityError:
+                    logger.warning(f"Milestone already exists: {milestone_schema.record_id} for interval {interval}")
 
     await session.flush()

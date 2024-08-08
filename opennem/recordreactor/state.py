@@ -48,7 +48,6 @@ async def get_current_milestone_state_from_database() -> dict[str, MilestoneReco
                 network_id,
                 network_region,
                 fueltech_id,
-                fueltech_group_id,
                 description,
                 previous_instance_id
             FROM ranked_records
@@ -72,8 +71,7 @@ async def get_current_milestone_state_from_database() -> dict[str, MilestoneReco
                 network=network_from_network_code(row[9]),
                 network_region=row[10],
                 fueltech_id=row[11],
-                fueltech_group_id=row[12],
-                description=row[13],
+                description=row[12],
             )
 
     return result_dict

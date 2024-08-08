@@ -2,7 +2,7 @@ import logging
 import uuid
 from datetime import datetime
 
-from sqlalchemy import and_, or_, select
+from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import func
 
@@ -21,7 +21,7 @@ async def get_milestone_records(
     date_start: datetime | None = None,
     date_end: datetime | None = None,
     significance: int | None = None,
-    fueltech: list[str] | None = None,
+    fueltech_id: list[str] | None = None,
     aggregate: MilestoneAggregate | None = None,
     metric: MilestoneMetric | None = None,
     networks: list[NetworkSchema] | None = None,
@@ -46,8 +46,8 @@ async def get_milestone_records(
     if significance:
         select_query = select_query.where(Milestones.significance >= significance)
 
-    if fueltech:
-        select_query = select_query.where(or_(Milestones.fueltech_group_id.in_(fueltech), Milestones.fueltech_id.in_(fueltech)))
+    if fueltech_id:
+        select_query = select_query.where(Milestones.fueltech_id.in_(fueltech_id))
 
     if aggregate:
         select_query = select_query.where(Milestones.aggregate == aggregate)

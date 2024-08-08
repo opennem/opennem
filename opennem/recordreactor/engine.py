@@ -8,15 +8,27 @@ from datetime import datetime, timedelta
 from opennem import settings
 from opennem.recordreactor.buckets import BUCKET_SIZES, get_period_start_end, is_end_of_period
 from opennem.recordreactor.controllers.demand import run_price_demand_milestone_for_interval
-from opennem.recordreactor.controllers.generation import run_fueltech_generation_milestone_for_interval
+from opennem.recordreactor.controllers.generation import run_generation_energy_emissions_milestones
+from opennem.recordreactor.schema import MilestoneMetric
 from opennem.schema.network import NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network, make_aware_for_network
 
 logger = logging.getLogger("opennem.recordreactor.engine")
 
 
-async def run_milestone_engine(start_interval: datetime, end_interval: datetime | None = None):
-    num_tasks = 10
+async def run_milestone_engine(
+    start_interval: datetime, end_interval: datetime | None = None, milestone_metrics: list[MilestoneMetric] | None = None
+):
+    if not milestone_metrics:
+        milestone_metrics = [
+            MilestoneMetric.demand,
+            MilestoneMetric.price,
+            MilestoneMetric.power,
+            MilestoneMetric.energy,
+            MilestoneMetric.emissions,
+        ]
+
+    num_tasks = 14
 
     for network in [NetworkNEM, NetworkWEM]:
         if not network.interval_size:
@@ -42,20 +54,36 @@ async def run_milestone_engine(start_interval: datetime, end_interval: datetime 
                     if settings.dry_run:
                         continue
 
-                    task = run_price_demand_milestone_for_interval(
-                        bucket_size=bucket_size,
-                        period_start=period_start,
-                        period_end=period_end,
-                    )
-                    tasks.append(task)
+                    if MilestoneMetric.demand in milestone_metrics or MilestoneMetric.price in milestone_metrics:
+                        task = run_price_demand_milestone_for_interval(
+                            bucket_size=bucket_size,
+                            period_start=period_start,
+                            period_end=period_end,
+                        )
+                        tasks.append(task)
 
-                    task = run_fueltech_generation_milestone_for_interval(
-                        network=network,
-                        bucket_size=bucket_size,
-                        period_start=period_start,
-                        period_end=period_end,
-                    )
-                    tasks.append(task)
+                    if (
+                        MilestoneMetric.power in milestone_metrics
+                        or MilestoneMetric.energy in milestone_metrics
+                        or MilestoneMetric.emissions in milestone_metrics
+                    ):
+                        task = run_generation_energy_emissions_milestones(
+                            network=network,
+                            bucket_size=bucket_size,
+                            period_start=period_start,
+                            period_end=period_end,
+                            fueltech_group=True,
+                        )
+                        tasks.append(task)
+
+                        task = run_generation_energy_emissions_milestones(
+                            network=network,
+                            bucket_size=bucket_size,
+                            period_start=period_start,
+                            period_end=period_end,
+                            fueltech_group=False,
+                        )
+                        tasks.append(task)
 
             # Move to the next interval
             current_interval += timedelta(minutes=network.interval_size)
@@ -73,4 +101,8 @@ if __name__ == "__main__":
     import asyncio
 
     # 2018-02-26 23:50:00+10:00
-    asyncio.run(run_milestone_engine(start_interval=datetime.fromisoformat("2024-01-01 00:00:00+00:00")))
+    asyncio.run(
+        run_milestone_engine(
+            start_interval=datetime.fromisoformat("2024-06-01 00:00:00"), milestone_metrics=[MilestoneMetric.energy]
+        )
+    )

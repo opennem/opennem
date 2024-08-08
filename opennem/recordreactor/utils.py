@@ -4,7 +4,6 @@ RecordReactor utils
 
 import operator
 
-from opennem.core.fueltechs import get_fueltech
 from opennem.core.network_regions import get_network_region_name
 from opennem.core.units import get_unit_by_value
 from opennem.recordreactor.schema import (
@@ -67,7 +66,7 @@ def get_record_description(
         translate_bucket_size_to_english(milestone.period).capitalize() if milestone.period else None,
         f"{milestone.metric.value.lower()}" if milestone.metric else None,
         f"{milestone.aggregate.value.lower()}" if milestone.aggregate else None,
-        f"for {milestone.fueltech_id.label}" if milestone.fueltech_id else None,
+        f"for {milestone.fueltech_id}" if milestone.fueltech_id else None,
         "record for",
         milestone.network.code,
         # network region
@@ -138,7 +137,7 @@ if __name__ == "__main__":
         unit=get_unit_by_value("MWh"),
         network=NetworkNEM,
         network_region="NSW1",
-        fueltech_id=get_fueltech("coal_black"),
+        fueltech_id="coal_black",
         description="Test",
     )
 

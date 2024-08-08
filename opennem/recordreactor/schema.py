@@ -38,6 +38,19 @@ class MilestonePeriod(str, Enum):
     financial_year = "financial_year"
 
 
+class MilestoneFueltech(str, Enum):
+    coal = "coal"
+    gas = "gas"
+    wind = "wind"
+    solar = "solar"
+    battery_charging = "battery_charging"
+    battery_discharging = "battery_discharging"
+    hydro = "hydro"
+    distillate = "distillate"
+    biomass = "biomass"
+    pumped = "pumps"
+
+
 class MilestoneSchema(BaseModel):
     aggregate: MilestoneAggregate
     metric: MilestoneMetric
@@ -45,7 +58,7 @@ class MilestoneSchema(BaseModel):
     unit: UnitDefinition
     network_id: NetworkSchema
     network_region: str | None = None
-    fueltech_id: FueltechSchema | None = None
+    fueltech_id: FueltechSchema | str | None = None
     fueltech_group_id: FueltechSchema | str | None = None
 
     @computed_field
@@ -72,8 +85,7 @@ class MilestoneRecordSchema(BaseModel):
     unit: UnitDefinition | None = Field(exclude=True)
     network: NetworkSchema = Field(exclude=True)
     network_region: str | None = None
-    fueltech_id: FueltechSchema | None = None
-    fueltech_group_id: FueltechSchema | str | None = None
+    fueltech_id: FueltechSchema | str | None = None
     description: str | None = None
     description_long: str | None = None
     previous_instance_id: UUID4 | None = None
@@ -94,10 +106,6 @@ class MilestoneRecordSchema(BaseModel):
             if self.network
             else ""
         )
-
-    @property
-    def fueltech_code(self) -> str:
-        return self.fueltech_id.code if self.fueltech_id else ""
 
     @property
     def unit_code(self) -> str | None:

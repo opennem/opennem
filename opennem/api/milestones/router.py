@@ -51,7 +51,6 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
             "value": float(db_record["value"]),
             "unit": get_unit_by_value(db_record["value_unit"]) if db_record["value_unit"] else None,
             "description": db_record["description"],
-            "fueltech": db_record["fueltech_group_id"],
             "network": network_from_network_code(db_record["network_id"]),
             "period": db_record["period"],
             "previous_instance_id": db_record["previous_instance_id"],
@@ -60,6 +59,9 @@ def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecor
 
         if db_record["network_region"]:
             milestone_record["network_region"] = db_record["network_region"]
+
+        if db_record["fueltech_id"]:
+            milestone_record["fueltech_id"] = db_record["fueltech_id"]
 
         milestone_model = MilestoneRecordSchema(**milestone_record)
         milestone_records.append(milestone_model)
@@ -83,7 +85,7 @@ async def get_milestones(
     date_end: datetime | None = None,
     aggregate: MilestoneAggregate | None = None,
     metric: MilestoneMetric | None = None,
-    fuel_tech: list[str] | None = Query(None),
+    fueltech_id: list[str] | None = Query(None),
     network: list[str] | None = Query(None),
     network_region: list[str] | None = Query(None),
     period: list[MilestonePeriod] | None = Query(None),
@@ -159,7 +161,7 @@ async def get_milestones(
             date_start=date_start,
             date_end=date_end,
             aggregate=aggregate,
-            fueltech=fuel_tech,
+            fueltech_id=fueltech_id,
             metric=metric,
             networks=network_schemas,
             network_regions=network_region,

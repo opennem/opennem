@@ -8,6 +8,7 @@ from itertools import product
 from opennem.recordreactor.schema import (
     MILESTONE_SUPPORTED_NETWORKS,
     MilestoneAggregate,
+    MilestoneFueltech,
     MilestoneMetric,
     MilestonePeriod,
     MilestoneSchema,
@@ -28,8 +29,8 @@ async def generate_milestone_map() -> dict[str, MilestoneSchema]:
     """
     milestone_records = {}
 
-    for network, aggregate, metric, period in product(
-        MILESTONE_SUPPORTED_NETWORKS, MilestoneAggregate, MilestoneMetric, MilestonePeriod
+    for network, aggregate, metric, period, fueltech_id in product(
+        MILESTONE_SUPPORTED_NETWORKS, MilestoneAggregate, MilestoneMetric, MilestonePeriod, MilestoneFueltech
     ):
         if not network.regions:
             continue
@@ -45,6 +46,10 @@ async def generate_milestone_map() -> dict[str, MilestoneSchema]:
                 fueltech_id=None,
                 fueltech_group_id=None,
             )
+            milestone_records[milestone_schema.record_id] = milestone_schema
+
+            milestone_schema.fueltech_id = fueltech_id.value
+            milestone_schema.fueltech_group_id = fueltech_id.value
 
             milestone_records[milestone_schema.record_id] = milestone_schema
 
