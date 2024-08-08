@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+from datetime import datetime
 
 from opennem.controllers.nem import ControllerReturn, store_aemo_tableset
 from opennem.core.crawlers.history import CrawlHistoryEntry, get_crawler_missing_intervals, set_crawler_history
@@ -15,6 +16,40 @@ from opennem.schema.date_range import CrawlDateRange
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
 
 logger = logging.getLogger("opennem.crawler.nemweb")
+
+
+async def process_nemweb_entry(crawler: CrawlerDefinition, entry: DirlistingEntry, max_date: datetime) -> None:
+    try:
+        # @NOTE optimization - if we're dealing with a large file unzip
+        # to disk and parse rather than in-memory. 100,000kb
+        if crawler.bulk_insert:
+            controller_returns = await parse_aemo_url_optimized_bulk(entry.link, persist_to_db=True)
+        elif entry.file_size and entry.file_size > 100_000:
+            controller_returns = await parse_aemo_url_optimized(entry.link)
+        else:
+            ts = await parse_aemo_url(entry.link)
+            controller_returns = await store_aemo_tableset(ts)
+
+        if not isinstance(controller_returns, ControllerReturn):
+            raise Exception("Controller returns not a ControllerReturn")
+
+        # don't update crawl time if it fails
+        if not controller_returns.inserted_records:
+            return None
+
+        if not controller_returns.last_modified or max_date > controller_returns.last_modified:
+            controller_returns.last_modified = max_date
+
+        if controller_returns.processed_records and entry.aemo_interval_date and entry.aemo_interval_date.date:
+            ch = CrawlHistoryEntry(interval=entry.aemo_interval_date.date, records=controller_returns.processed_records)
+
+            try:
+                await set_crawler_history(crawler_name=crawler.name, histories=[ch])
+            except Exception as e:
+                logger.error(f"Error updating crawl history: {e}")
+
+    except Exception as e:
+        logger.error(f"Processing error: {e}")
 
 
 async def run_nemweb_aemo_crawl(
@@ -74,9 +109,13 @@ async def run_nemweb_aemo_crawl(
         logger.debug(f"Have {len(missing_intervals)} missing intervals for {crawler.name} since {time_interval}")
 
         if not missing_intervals:
-            logger.info("Nothing to do")
+            logger.info("Nothing to do - no missing intervals")
 
         entries_to_fetch = dirlisting.get_files_aemo_intervals(missing_intervals)
+
+        if not entries_to_fetch:
+            logger.info("Nothing to do - no entries to fetch after applying missing intervals")
+            return None
 
     if not entries_to_fetch:
         logger.info("Nothing to do - no entries to fetch")
@@ -89,40 +128,15 @@ async def run_nemweb_aemo_crawl(
     if reverse:
         entries_to_fetch.reverse()
 
+    max_date = max([i.modified_date for i in entries_to_fetch if i.modified_date])
+
+    tasks = []
     for entry in entries_to_fetch:
-        try:
-            # @NOTE optimization - if we're dealing with a large file unzip
-            # to disk and parse rather than in-memory. 100,000kb
-            if crawler.bulk_insert:
-                controller_returns = parse_aemo_url_optimized_bulk(entry.link, persist_to_db=True)
-            elif entry.file_size and entry.file_size > 100_000:
-                controller_returns = parse_aemo_url_optimized(entry.link)
-            else:
-                ts = parse_aemo_url(entry.link)
-                controller_returns = store_aemo_tableset(ts)
+        tasks.append(process_nemweb_entry(crawler=crawler, entry=entry, max_date=max_date))
 
-            if not isinstance(controller_returns, ControllerReturn):
-                raise Exception("Controller returns not a ControllerReturn")
-
-            # don't update crawl time if it fails
-            if not controller_returns.inserted_records:
-                continue
-
-            max_date = max([i.modified_date for i in entries_to_fetch if i.modified_date])
-
-            if not controller_returns.last_modified or max_date > controller_returns.last_modified:
-                controller_returns.last_modified = max_date
-
-            if controller_returns.processed_records > 0:
-                ch = CrawlHistoryEntry(interval=entry.aemo_interval_date, records=controller_returns.processed_records)
-
-                try:
-                    await set_crawler_history(crawler_name=crawler.name, histories=[ch])
-                except Exception as e:
-                    logger.error(f"Error updating crawl history: {e}")
-
-        except Exception as e:
-            logger.error(f"Processing error: {e}")
+        if len(tasks) >= 10:
+            await asyncio.gather(*tasks)
+            tasks = []
 
     if controller_returns:
         controller_returns.crawls_run = len(entries_to_fetch)
@@ -139,7 +153,7 @@ AEMONemwebTradingIS = CrawlerDefinition(
     url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
     network=NetworkNEM,
     backfill_days=14,
-    limit=12 * 24 * 2,
+    # limit=12 * 24 * 2,
     processor=run_nemweb_aemo_crawl,
 )
 
@@ -154,7 +168,7 @@ AEMONemwebDispatchIS = CrawlerDefinition(
     url="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
     network=NetworkNEM,
     backfill_days=2,
-    limit=12 * 24 * 2,
+    # limit=12 * 24 * 2,
     processor=run_nemweb_aemo_crawl,
 )
 
