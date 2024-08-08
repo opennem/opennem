@@ -435,8 +435,6 @@ async def get_scada_range(
 
     scada_range = ScadaDateRange(start=scada_min, end=scada_max, network=network)
 
-    print(scada_range)
-
     return scada_range
 
 
