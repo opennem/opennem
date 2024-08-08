@@ -21,6 +21,8 @@ DeclarativeBase = declarative_base()
 
 logger = logging.getLogger("opennem.db")
 
+_engine = None
+
 
 def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int = 10) -> AsyncEngine:
     """
@@ -32,11 +34,16 @@ def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int
     :param debug: Debug mode will render queries and info to terminal
     :param timeout: Database connection timeout
     """
+    global _engine
+
+    if _engine:
+        return _engine
+
     if not db_conn_str:
         db_conn_str = str(settings.db_url)
 
     try:
-        return create_async_engine(
+        _engine = create_async_engine(
             db_conn_str,
             query_cache_size=1200,
             echo=settings.db_debug,
@@ -48,6 +55,7 @@ def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int
             pool_pre_ping=True,
             pool_use_lifo=True,
         )
+        return _engine
     except Exception as exc:
         logger.error("Could not connect to database: %s", exc)
         raise exc
