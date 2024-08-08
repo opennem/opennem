@@ -22,10 +22,9 @@ from urllib.parse import urljoin
 from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel, BeforeValidator, ValidationError, field_validator
-from pyquery import PyQuery as pq
 
 from opennem.core.normalizers import is_number, strip_double_spaces
-from opennem.core.parsers.aemo.filenames import parse_aemo_filename
+from opennem.core.parsers.aemo.filenames import AEMOMMSFilename, parse_aemo_filename
 from opennem.schema.core import BaseConfig
 from opennem.schema.date_range import CrawlDateRange
 from opennem.utils.httpx import http
@@ -33,13 +32,21 @@ from opennem.utils.httpx import http
 logger = logging.getLogger("opennem.parsers.dirlisting")
 
 __iis_line_match = re.compile(
-    r"(?P<modified_date>.*[AM|PM])\ {2,}(?P<file_size>(\d{1,}|\<dir\>))\ "
+    r"(?P<modified_date>.*[AM|PM])\ {1,}(?P<file_size>(\d{1,}|\<dir\>))\ "
     r"<a href=['\"]?(?P<link>[^'\" >]+)['\"]>(?P<filename>[^\<]+)"
 )
 
 __nemweb_line_match = re.compile(
     r"(?P<modified_date>\d{1,2}/\d{1,2}/\d{4}\s+\d{1,2}:\d{2}\s+[AP]M)\s+(?P<file_size>\d+)"
-    r"\s+<a href=\"(?P<link>[^\"]+)\">(?P<filename>[^<]+)"
+    r"\s+<a href=\"(?P<link>[^\"]+)\">(?P<filename>[^<]+)",
+    re.IGNORECASE,
+)
+
+__nemweb_line_match_new = re.compile(
+    r"(?P<modified_date>[A-Za-z]+,\s+[A-Za-z]+\s+\d{1,2},\s+\d{4}\s+\d{1,2}:\d{2}\s+(?:AM|PM))\s+"
+    r"(?P<file_size>\d+)\s+"
+    r"<A HREF=\"(?P<link>[^\"]+)\">(?P<filename>[^<]+)</A>",
+    re.IGNORECASE,
 )
 
 
@@ -84,26 +91,9 @@ class DirlistingEntry(BaseConfig):
     filename: Path
     link: str
     modified_date: DirlistingModifiedDate
-    aemo_interval_date: datetime | None = None
+    aemo_interval_date: AEMOMMSFilename | None = None
     file_size: int | None = None
     entry_type: DirlistingEntryType = DirlistingEntryType.file
-
-    @field_validator("aemo_interval_date", mode="before")
-    def _validate_aemo_created_date(cls, values: dict[str, Any]) -> datetime | None:
-        # no need to check if this exists since ValidationError will occur if not
-        _filename_value: Path = values["filename"]
-        aemo_dt = None
-
-        if _filename_value.suffix.lower() not in [".zip", ".csv"]:
-            return None
-
-        try:
-            aemo_dt = parse_aemo_filename(str(_filename_value))
-        except Exception as e:
-            logger.info(f"Error parsing aemo datetime: {e}")
-            return None
-
-        return aemo_dt.date
 
     @field_validator("file_size", mode="before")
     @classmethod
@@ -189,7 +179,7 @@ class DirectoryListing(BaseModel):
         return list(filter(lambda x: x.modified_date in intervals, self.entries))
 
     def get_files_aemo_intervals(self, intervals: list[datetime]) -> list[DirlistingEntry]:
-        return list(filter(lambda x: x.aemo_interval_date in intervals, self.entries))
+        return list(filter(lambda x: x.aemo_interval_date.date in intervals if x.aemo_interval_date else False, self.entries))
 
     def get_files_modified_since(self, modified_date: datetime) -> list[DirlistingEntry]:
         modified_since: list[DirlistingEntry] = []
@@ -218,7 +208,14 @@ def parse_dirlisting_line(dirlisting_line: str) -> DirlistingEntry | None:
     if not dirlisting_line:
         return None
 
-    for _match in [__iis_line_match, __nemweb_line_match]:
+    # remove double spaces and newlines
+    dirlisting_line = dirlisting_line.replace("\n", "")
+    # replace any spaces of more than 1 with a single space
+    dirlisting_line = re.sub(r"\s{2,}", " ", dirlisting_line)
+
+    matches: re.Match | None = None
+
+    for _match in [__iis_line_match, __nemweb_line_match, __nemweb_line_match_new]:
         matches = _match.search(dirlisting_line)
 
         if not matches:
@@ -242,6 +239,15 @@ def parse_dirlisting_line(dirlisting_line: str) -> DirlistingEntry | None:
     except ValueError as e:
         logger.error(f"Error parsing dirlisting line: {e}")
 
+    try:
+        if model and model.filename:
+            model.aemo_interval_date = parse_aemo_filename(str(model.filename))
+    except Exception as e:
+        logger.error(f"Error parsing AEMO filename: {e}")
+
+    if not model:
+        raise Exception(f"Could not parse dirlisting line: {dirlisting_line}")
+
     return model
 
 
@@ -249,16 +255,26 @@ async def get_dirlisting(url: str, timezone: str | None = None) -> DirectoryList
     """Parse a directory listng into a list of DirlistingEntry models"""
     dirlisting_content = await http.get(url)
 
-    resp = pq(dirlisting_content.text)
+    logger.debug(f"Got dirlisting content of lenght {len(dirlisting_content.text)}")
+
+    if not dirlisting_content.text:
+        raise Exception("No dirlisting content")
+
+    # resp = pq(dirlisting_content.text, parser="html")
 
     _dirlisting_models: list[DirlistingEntry] = []
 
-    pre_area = resp("pre")
+    # pre_area = resp("pre")
+
+    # use regex to find the pre area
+    pre_area = re.search(r"<pre>(.*?)</pre>", dirlisting_content.text, re.DOTALL)
 
     if not pre_area:
         raise Exception("Invalid directory listing: no pre or bad html")
 
-    for i in [i for i in pre_area.html().split("<br/>") if pre_area.html() and isinstance(pre_area.html(), str) and i]:
+    pre_content = pre_area.group(1)
+
+    for i in pre_content.split("<br>"):
         # it catches the containing block so skip those
         if not i:
             continue
