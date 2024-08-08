@@ -30,7 +30,7 @@ from opennem.pipelines.nem import (
 )
 from opennem.pipelines.wem import wem_per_interval_check
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
-from opennem.utils.sync import run_async_task_reusable
+from opennem.utils.sync import run_async_task, run_async_task_reusable
 from opennem.workers.daily import daily_catchup_runner
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 from opennem.workers.network_data_range import run_network_data_range_update
@@ -53,7 +53,7 @@ worker_startup_alert()
     name="crawler_run_nem_dispatch_scada_crawl",
 )
 @huey.lock_task("crawler_run_nem_dispatch_scada_crawl")
-@run_async_task_reusable
+@run_async_task
 async def crawler_run_nem_dispatch_scada_crawl() -> None:
     """dispatch_scada for NEM crawl"""
     await nem_dispatch_scada_crawl()
@@ -63,7 +63,7 @@ async def crawler_run_nem_dispatch_scada_crawl() -> None:
     network_interval_crontab(network=NetworkNEM), priority=50, retries=2, retry_delay=10, name="crawler_run_nem_dispatch_is_crawl"
 )
 @huey.lock_task("crawler_run_nem_dispatch_is_crawl")
-@run_async_task_reusable
+@run_async_task
 async def crawler_run_nem_dispatch_is_crawl() -> None:
     """dispatch_is for NEM crawl"""
     await nem_dispatch_is_crawl()
@@ -73,7 +73,7 @@ async def crawler_run_nem_dispatch_is_crawl() -> None:
     network_interval_crontab(network=NetworkNEM), priority=50, retries=2, retry_delay=10, name="crawler_run_nem_trading_is_crawl"
 )
 @huey.lock_task("crawler_run_nem_trading_is_crawl")
-@run_async_task_reusable
+@run_async_task
 async def crawler_run_nem_trading_is_crawl() -> None:
     """dispatch_is for NEM crawl"""
     await nem_trading_is_crawl()
@@ -87,7 +87,7 @@ async def crawler_run_nem_trading_is_crawl() -> None:
     name="crawler_run_nem_rooftop_per_interval",
 )
 @huey.lock_task("crawler_run_nem_rooftop_per_interval")
-@run_async_task_reusable
+@run_async_task
 async def crawler_run_nem_rooftop_per_interval() -> None:
     await nem_rooftop_crawl()
 
