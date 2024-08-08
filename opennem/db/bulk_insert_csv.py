@@ -12,9 +12,10 @@ from datetime import datetime
 from io import StringIO
 from typing import Any, TypeVar
 
+from sqlalchemy import text
 from sqlalchemy.sql.schema import Column, Table
 
-from opennem.db import db_connect
+from opennem.db import SessionLocal
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
 
 logger = logging.getLogger("opennem.db.bulk_insert_csv")
@@ -187,23 +188,22 @@ async def bulkinsert_mms_items(
     sql_query = build_insert_query(table=table, update_cols=update_fields)
     csv_content = generate_bulkinsert_csv_from_records(table, records, column_names=list(records[0].keys()))
 
-    pool = db_connect()  # Assuming db_connect is also async
-
-    try:
-        async with pool.acquire() as conn:
-            num_records = await conn.copy_records_to_table(
-                f"__tmp_{table.__table__.name}_{datetime.now().strftime('%Y%m%d%H%M%S')}",
-                records=csv_content.getvalue().splitlines()[1:],  # Skip header
-                columns=csv_content.getvalue().splitlines()[0].split(","),
-            )
-            await conn.execute(sql_query)
-
-        logger.info(f"Bulk inserted {num_records} records")
-    except Exception as generic_error:
-        logger.error(generic_error)
-        raise generic_error
-    finally:
-        await pool.close()
+    async with SessionLocal() as session:
+        async with session.begin():
+            try:
+                num_records = await session.execute(
+                    text(sql_query),
+                    params={
+                        "__tmp_table_content": csv_content.getvalue().splitlines()[1:],  # Skip header
+                        "columns": csv_content.getvalue().splitlines()[0].split(","),
+                    },
+                )
+                await session.commit()
+                logger.info(f"Bulk inserted {num_records} records")
+            except Exception as generic_error:
+                logger.error(generic_error)
+                await session.rollback()
+                raise generic_error
 
     return num_records
 
