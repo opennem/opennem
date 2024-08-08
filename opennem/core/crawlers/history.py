@@ -93,8 +93,8 @@ async def set_crawler_history(crawler_name: str, histories: list[CrawlHistoryEnt
 
     async with SessionLocal() as session:
         try:
-            session.execute(stmt)
-            session.commit()
+            await session.execute(stmt)
+            await session.commit()
         except Exception as e:
             logger.error(f"set_crawler_history error updating records: {e}")
 
