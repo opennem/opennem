@@ -358,7 +358,7 @@ def parse_aemo_mms_csv(
     return table_set
 
 
-def parse_aemo_url(
+async def parse_aemo_url(
     url: str, table_set: AEMOTableSet | None = None, skip_records: bool = False, values_only: bool = False
 ) -> AEMOTableSet:
     """Parse a single AEMO URL into an AEMOTableSet"""
@@ -367,7 +367,7 @@ def parse_aemo_url(
         table_set = AEMOTableSet()
 
     try:
-        csv_content = url_downloader(url)
+        csv_content = await url_downloader(url)
     except Exception as e:
         raise Exception(f"Could not fetch AEMO url {url}: {e}") from None
 
