@@ -42,7 +42,7 @@ async def run_wemde_crawl(
         backfill_days = 365
 
     try:
-        dirlisting = get_dirlisting(crawler.url, timezone=crawler.network.timezone if crawler.network else None)
+        dirlisting = await get_dirlisting(crawler.url, timezone=crawler.network.timezone if crawler.network else None)
     except Exception as e:
         raise Exception(f"Could not fetch directory listing: {crawler.url}. {e}") from e
 
@@ -58,7 +58,7 @@ async def run_wemde_crawl(
         entries_to_fetch = dirlisting.get_most_recent_files(limit=limit)
 
     elif latest:
-        last_crawled = crawler_get_meta(crawler.name, CrawlStatTypes.server_latest)
+        last_crawled = await crawler_get_meta(crawler.name, CrawlStatTypes.server_latest)
 
         logger.debug(f"Running latest and last crawled: {last_crawled}")
 
