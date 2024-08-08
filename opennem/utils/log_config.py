@@ -31,5 +31,6 @@ LOGGING_CONFIG = {
         "parso": {"level": "ERROR", "propagate": False},
         "matplotlib": {"level": "WARNING"},
         "psycopg.pq": {"level": "INFO"},
+        "httpcore.http11": {"level": "ERROR"},
     },
 }
