@@ -194,12 +194,20 @@ async def get_milestones(
 )
 async def get_milestone_by_record_id(
     record_id: str,
+    limit: int = 100,
+    page: int = 1,
     db: AsyncSession = Depends(get_scoped_session),
 ) -> APIV4ResponseSchema:
     """Get a single milestone by record id"""
 
+    if limit > 100:
+        raise HTTPException(status_code=400, detail="Limit must be less than 100")
+
+    if page < 1:
+        raise HTTPException(status_code=400, detail="Page must be greater than 0")
+
     try:
-        db_record, total_records = await get_milestone_records(session=db, record_id=record_id)
+        db_record, total_records = await get_milestone_records(session=db, record_id=record_id, page_number=page, limit=limit)
     except Exception as e:
         logger.error(f"Error getting milestone record: {e}")
         response_schema = APIV4ResponseSchema(success=False, error="Error getting milestone record")
