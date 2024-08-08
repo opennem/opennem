@@ -187,7 +187,7 @@ async def bulkinsert_mms_items(
     sql_query = build_insert_query(table=table, update_cols=update_fields)
     csv_content = generate_bulkinsert_csv_from_records(table, records, column_names=list(records[0].keys()))
 
-    pool = await db_connect()
+    pool = db_connect()
 
     try:
         async with pool.acquire() as conn:
