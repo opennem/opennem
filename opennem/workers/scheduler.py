@@ -45,7 +45,13 @@ worker_startup_alert()
 
 
 # crawler tasks live per interval for each network
-@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=2, retry_delay=10)
+@huey.periodic_task(
+    network_interval_crontab(network=NetworkNEM),
+    priority=50,
+    retries=2,
+    retry_delay=10,
+    name="crawler_run_nem_dispatch_scada_crawl",
+)
 @huey.lock_task("crawler_run_nem_dispatch_scada_crawl")
 @run_async_task_reusable
 async def crawler_run_nem_dispatch_scada_crawl() -> None:
@@ -53,7 +59,9 @@ async def crawler_run_nem_dispatch_scada_crawl() -> None:
     await nem_dispatch_scada_crawl()
 
 
-@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=2, retry_delay=10)
+@huey.periodic_task(
+    network_interval_crontab(network=NetworkNEM), priority=50, retries=2, retry_delay=10, name="crawler_run_nem_dispatch_is_crawl"
+)
 @huey.lock_task("crawler_run_nem_dispatch_is_crawl")
 @run_async_task_reusable
 async def crawler_run_nem_dispatch_is_crawl() -> None:
@@ -61,7 +69,9 @@ async def crawler_run_nem_dispatch_is_crawl() -> None:
     await nem_dispatch_is_crawl()
 
 
-@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=2, retry_delay=10)
+@huey.periodic_task(
+    network_interval_crontab(network=NetworkNEM), priority=50, retries=2, retry_delay=10, name="crawler_run_nem_trading_is_crawl"
+)
 @huey.lock_task("crawler_run_nem_trading_is_crawl")
 @run_async_task_reusable
 async def crawler_run_nem_trading_is_crawl() -> None:
@@ -70,7 +80,11 @@ async def crawler_run_nem_trading_is_crawl() -> None:
 
 
 @huey.periodic_task(
-    network_interval_crontab(network=NetworkAEMORooftop, number_minutes=1), priority=50, retries=2, retry_delay=15
+    network_interval_crontab(network=NetworkAEMORooftop, number_minutes=1),
+    priority=50,
+    retries=2,
+    retry_delay=15,
+    name="crawler_run_nem_rooftop_per_interval",
 )
 @huey.lock_task("crawler_run_nem_rooftop_per_interval")
 @run_async_task_reusable
@@ -78,14 +92,14 @@ async def crawler_run_nem_rooftop_per_interval() -> None:
     await nem_rooftop_crawl()
 
 
-@huey.periodic_task(crontab(hour="*/1"), priority=50, retries=5, retry_delay=15)
+@huey.periodic_task(crontab(hour="*/1"), priority=50, retries=5, retry_delay=15, name="crawler_run_wem_per_interval")
 @huey.lock_task("crawler_run_wem_per_interval")
 @run_async_task_reusable
 async def crawler_run_wem_per_interval() -> None:
     await wem_per_interval_check()
 
 
-@huey.periodic_task(crontab(minute="*/10"), priority=1)
+@huey.periodic_task(crontab(minute="*/10"), priority=1, name="crawler_run_bom_capitals")
 @huey.lock_task("crawler_run_bom_capitals")
 @run_async_task_reusable
 async def crawler_run_bom_capitals() -> None:
@@ -93,21 +107,21 @@ async def crawler_run_bom_capitals() -> None:
 
 
 # Checks for the overnights from aemo and then runs the daily runner
-@huey.periodic_task(crontab(hour="4", minute="20"))
+@huey.periodic_task(crontab(hour="4", minute="20"), name="nem_overnight_check_always")
 @huey.lock_task("nem_overnight_check_always")
 @run_async_task_reusable
 async def nem_overnight_check_always() -> None:
     await nem_per_day_check(always_run=True)
 
 
-@huey.periodic_task(crontab(hour="8", minute="20"), retries=10, retry_delay=60, priority=50)
+@huey.periodic_task(crontab(hour="8", minute="20"), retries=10, retry_delay=60, priority=50, name="nem_overnight_check")
 @huey.lock_task("nem_overnight_check")
 @run_async_task_reusable
 async def nem_overnight_check() -> None:
     await nem_per_day_check()
 
 
-@huey.periodic_task(crontab(hour="10", minute="20"), retries=10, retry_delay=60, priority=50)
+@huey.periodic_task(crontab(hour="10", minute="20"), retries=10, retry_delay=60, priority=50, name="daily_catchup_runner_worker")
 @huey.lock_task("daily_catchup_runner_worker")
 @run_async_task_reusable
 async def daily_catchup_runner_worker() -> None:
@@ -115,7 +129,7 @@ async def daily_catchup_runner_worker() -> None:
 
 
 # export tasks
-@huey.periodic_task(crontab(minute="*/15"), priority=90)
+@huey.periodic_task(crontab(minute="*/15"), priority=90, name="schedule_custom_tasks")
 @huey.lock_task("schedule_custom_tasks")
 @run_async_task_reusable
 async def schedule_custom_tasks() -> None:
@@ -123,7 +137,7 @@ async def schedule_custom_tasks() -> None:
     await export_flows()
 
 
-@huey.periodic_task(crontab(hour="2", minute="19"))
+@huey.periodic_task(crontab(hour="2", minute="19"), name="schedule_power_weeklies")
 @huey.lock_task("schedule_power_weeklies")
 @run_async_task_reusable
 async def schedule_power_weeklies() -> None:
@@ -134,7 +148,7 @@ async def schedule_power_weeklies() -> None:
 
 
 # geojson maps
-@huey.periodic_task(crontab(minute="*/30"), priority=50)
+@huey.periodic_task(crontab(minute="*/30"), priority=50, name="schedule_export_geojson")
 @huey.lock_task("schedule_export_geojson")
 @run_async_task_reusable
 async def schedule_export_geojson() -> None:
@@ -142,7 +156,7 @@ async def schedule_export_geojson() -> None:
 
 
 # worker tasks
-@huey.periodic_task(crontab(hour="20", minute="45"))
+@huey.periodic_task(crontab(hour="20", minute="45"), name="schedule_facility_first_seen_check")
 @huey.lock_task("schedule_facility_first_seen_check")
 @run_async_task_reusable
 async def schedule_facility_first_seen_check() -> None:
@@ -150,7 +164,7 @@ async def schedule_facility_first_seen_check() -> None:
     await facility_first_seen_check()
 
 
-@huey.periodic_task(crontab(hour="*/1", minute="15"))
+@huey.periodic_task(crontab(hour="*/1", minute="15"), name="run_run_network_data_range_update")
 @huey.lock_task("run_run_network_data_range_update")
 @run_async_task_reusable
 async def run_run_network_data_range_update() -> None:
@@ -160,13 +174,13 @@ async def run_run_network_data_range_update() -> None:
 
 
 # system tasks
-@huey.periodic_task(crontab(hour="*/1", minute="55"))
+@huey.periodic_task(crontab(hour="*/1", minute="55"), name="run_clean_tmp_dir")
 @huey.lock_task("run_clean_tmp_dir")
 def run_clean_tmp_dir() -> None:
     clean_tmp_dir()
 
 
-@huey.periodic_task(crontab(hour="22", minute="55"))
+@huey.periodic_task(crontab(hour="22", minute="55"), name="run_cleanup_database_task_profiles_basedon_retention")
 @huey.lock_task("run_cleanup_database_task_profiles_basedon_retention")
 @run_async_task_reusable
 async def run_cleanup_database_task_profiles_basedon_retention() -> None:
