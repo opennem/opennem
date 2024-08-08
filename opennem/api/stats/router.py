@@ -377,7 +377,7 @@ async def power_flows_network_week(
     if not interval_obj:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Interval not found")
 
-    scada_range = get_scada_range(network=network)
+    scada_range = await get_scada_range(network=network)
 
     if not scada_range:
         raise Exception("Require a scada range")
@@ -480,7 +480,7 @@ def power_network_region_fueltech(
     interval_obj = network.get_interval()
     period_obj = human_to_period("1M")
 
-    scada_range = get_scada_range(network=network)
+    scada_range = await get_scada_range(network=network)
 
     if not scada_range:
         raise Exception("Require a scada range")
@@ -627,7 +627,7 @@ async def emission_factor_per_network(  # type: ignore
 #     response_model=OpennemDataSet,
 #     response_model_exclude_unset=True,
 # )
-def fueltech_demand_mix(
+async def fueltech_demand_mix(
     network_code: str,
     engine: Engine = Depends(get_database_engine),  # type: ignore
 ) -> OpennemDataSet:
@@ -656,7 +656,7 @@ def fueltech_demand_mix(
     interval_obj = human_to_interval("5m")
     period_obj = human_to_period("1d")
 
-    scada_range = get_scada_range(network=network)
+    scada_range = await get_scada_range(network=network)
 
     if not scada_range:
         raise HTTPException(

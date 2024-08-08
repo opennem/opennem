@@ -91,7 +91,7 @@ async def export_power(
 
         # @NOTE temp fix as WEM is often delayed by an interval or two
         if power_stat.network == NetworkWEM:
-            date_range = get_scada_range(network=power_stat.network)
+            date_range = await get_scada_range(network=power_stat.network)
 
         logger.debug(f"Date range for {power_stat.network.code}: {date_range.start} => {date_range.end}")
 
@@ -462,7 +462,7 @@ async def export_all_daily(networks: list[NetworkSchema] | None = None, network_
 
 
 async def export_flows() -> None:
-    date_range = get_scada_range(network=NetworkNEM)
+    date_range = await get_scada_range(network=NetworkNEM)
 
     periods = [human_to_period("7d"), human_to_period("30d")]
 
@@ -493,7 +493,7 @@ async def export_flows() -> None:
 
 
 async def export_electricitymap() -> None:
-    date_range = get_scada_range(network=NetworkNEM)
+    date_range = await get_scada_range(network=NetworkNEM)
 
     if not date_range or not date_range.start:
         raise Exception("Could not get a scada range in EM export")
@@ -545,7 +545,7 @@ async def export_electricitymap() -> None:
         if power_set:
             em_set.append_set(power_set)
 
-    date_range = get_scada_range(network=NetworkWEM)
+    date_range = await get_scada_range(network=NetworkWEM)
 
     # WEM custom
     time_series = OpennemExportSeries(

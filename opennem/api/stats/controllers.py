@@ -13,7 +13,7 @@ from opennem import settings
 from opennem.api.time import human_to_interval
 from opennem.core.feature_flags import get_list_of_enabled_features
 from opennem.core.normalizers import cast_float_or_none
-from opennem.db import get_database_engine
+from opennem.db import db_connect, get_database_engine
 from opennem.queries.utils import duid_to_case
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkSchema
 from opennem.schema.time import TimeInterval
@@ -325,17 +325,17 @@ def get_scada_range_optimized(network: NetworkSchema) -> ScadaDateRange:
 
 
 @cache_scada_result
-def get_scada_range(
+async def get_scada_range(
     network: NetworkSchema,
     networks: list[NetworkSchema] | None = None,
     network_region: str | None = None,
     facilities: list[str] | None = None,
     energy: bool = False,
-) -> ScadaDateRange | None:
+) -> ScadaDateRange:
     """Get the start and end dates for a network query. This is more efficient
     than providing or querying the range at query time
     """
-    engine = get_database_engine()
+    engine = db_connect()
 
     __query = """
     select
@@ -412,21 +412,23 @@ def get_scada_range(
         )
     )
 
-    with engine.connect() as c:
+    async with engine.begin() as conn:
         logger.debug(scada_range_query)
-        scada_range_result = list(c.execute(sql(scada_range_query)))
+        res = await conn.execute(sql(scada_range_query))
+        scada_range_result = res.fetchone()
 
-        if len(scada_range_result) < 1:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="No results",
-            )
+        logger.debug(scada_range_result)
+        # scada_range_result = list(await conn.execute(sql(scada_range_query)))
+        # scada_range_result = scada_range_result[0]
 
-        scada_min = scada_range_result[0][0]
-        scada_max = scada_range_result[0][1]
+        if not scada_range_result:
+            raise Exception(f"No scada range results for {network.code}")
+
+        scada_min = scada_range_result[0]
+        scada_max = scada_range_result[1]
 
     if not scada_min or not scada_max:
-        return None
+        raise Exception(f"No scada range results (min or max dates) for {network.code}")
 
     # set network timezone since that is what we're querying
     if network and network.get_fixed_offset():
@@ -434,6 +436,8 @@ def get_scada_range(
         scada_max = scada_max.replace(tzinfo=network.get_fixed_offset())
 
     scada_range = ScadaDateRange(start=scada_min, end=scada_max, network=network)
+
+    print(scada_range)
 
     return scada_range
 
@@ -518,3 +522,12 @@ def get_balancing_range(
     scada_range = ScadaDateRange(start=scada_min, end=scada_max, network=network)
 
     return scada_range
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    from opennem.schema.network import NetworkNEM
+
+    res = asyncio.run(get_scada_range(network=NetworkNEM))
+    print(res)

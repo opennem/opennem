@@ -72,4 +72,5 @@ async def run_milestone_engine(start_interval: datetime, end_interval: datetime 
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(run_milestone_engine(start_interval=datetime.fromisoformat("2017-12-31 14:05:00+00:00")))
+    # 2018-02-26 23:50:00+10:00
+    asyncio.run(run_milestone_engine(start_interval=datetime.fromisoformat("2024-01-01 00:00:00+00:00")))
