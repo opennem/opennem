@@ -5,9 +5,7 @@ from textwrap import dedent
 from typing import Any
 
 from datetime_truncate import truncate as date_trunc
-from fastapi.exceptions import HTTPException
 from sqlalchemy import text as sql
-from starlette import status
 
 from opennem import settings
 from opennem.api.time import human_to_interval
@@ -438,88 +436,6 @@ async def get_scada_range(
     scada_range = ScadaDateRange(start=scada_min, end=scada_max, network=network)
 
     print(scada_range)
-
-    return scada_range
-
-
-def get_balancing_range(
-    network: NetworkSchema | None = None,
-    network_region: str | None = None,
-    field_name: str = "price",
-    include_forecasts: bool = False,
-) -> ScadaDateRange | None:
-    """Get the start and end dates for a balancing query. This is more efficient
-    than providing or querying the range at query time
-    """
-    engine = get_database_engine()
-
-    __query = """
-    select
-        min(bs.trading_interval) at time zone '{timezone}',
-        max(bs.trading_interval)  at time zone '{timezone}'
-    from balancing_summary bs
-    where
-        bs.trading_interval >= '{date_min}' and
-        {network_query}
-        {network_region_query}
-        {forecast_include}
-        bs.{field} is not null;
-    """
-
-    network_query = ""
-    timezone = network.timezone_database if network else "UTC"
-
-    # Only look back 7 days because the query is more optimized
-    date_min = datetime.now() - timedelta(days=7)
-
-    if network:
-        network_query = f"bs.network_id = '{network.code}' and"
-
-    network_region_query = ""
-
-    if network_region:
-        network_region_query = f"bs.network_region = '{network_region}' and"
-
-    forecast_include = ""
-
-    if not include_forecasts:
-        forecast_include = "bs.is_forecast is FALSE and "
-
-    scada_range_query = dedent(
-        __query.format(
-            field=field_name,
-            date_min=date_min,
-            network_query=network_query,
-            network_region_query=network_region_query,
-            timezone=timezone,
-            forecast_include=forecast_include,
-        )
-    )
-
-    logger.debug(scada_range_query)
-
-    with engine.connect() as c:
-        logger.debug(scada_range_query)
-        scada_range_result = list(c.execute(scada_range_query))
-
-        if len(scada_range_result) < 1:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="No results",
-            )
-
-        scada_min = scada_range_result[0][0]
-        scada_max = scada_range_result[0][1]
-
-    if not scada_min or not scada_max:
-        return None
-
-    # set network timezone since that is what we're querying
-    if network and network.get_fixed_offset():
-        scada_min = scada_min.replace(tzinfo=network.get_fixed_offset())
-        scada_max = scada_max.replace(tzinfo=network.get_fixed_offset())
-
-    scada_range = ScadaDateRange(start=scada_min, end=scada_max, network=network)
 
     return scada_range
 
