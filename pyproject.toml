@@ -50,7 +50,6 @@ SQLAlchemy = {extras = ["asyncio"], version = "^2.0.30"}
 rich = "^13.7.0"
 GeoAlchemy2 = "^0.14.4"
 boto3 = "^1.23.7"
-pyquery = "^2.0.0"
 seaborn = "^0.13.2"
 fastapi-cache2 = {extras = ["redis"], version = "^0.2.1"}
 httpx = {extras = ["http2", "socks"], version = "^0.27.0"}
