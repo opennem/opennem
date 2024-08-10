@@ -1,67 +1,77 @@
 [
-  {
-    "code": "NEM",
-    "country": "au",
-    "label": "NEM",
-    "timezone": "Australia/Sydney",
-    "timezone_database": "AEST",
-    "network_price": "NEM",
-    "offset": 600,
-    "interval_size": 5,
-    "interval_shift": 5
-  },
-  {
-    "code": "WEM",
-    "country": "au",
-    "label": "WEM",
-    "timezone": "Australia/Perth",
-    "network_price": "WEM",
-    "timezone_database": "AWST",
-    "offset": 480,
-    "interval_size": 30
-  },
-  {
-    "code": "APVI",
-    "country": "au",
-    "label": "APVI",
-    "timezone": "Australia/Perth",
-    "network_price": "WEM",
-    "timezone_database": "AWST",
-    "offset": 600,
-    "interval_size": 15,
-    "export_set": false
-  },
-  {
-    "code": "AEMO_ROOFTOP",
-    "country": "au",
-    "label": "AEMO Rooftop",
-    "timezone": "Australia/Sydney",
-    "timezone_database": "AEST",
-    "network_price": "NEM",
-    "offset": 600,
-    "interval_size": 30,
-    "export_set": false
-  },
-  {
-    "code": "AEMO_ROOFTOP_BACKFILL",
-    "country": "au",
-    "label": "AEMO Rooftop Backfill",
-    "timezone": "Australia/Sydney",
-    "timezone_database": "AEST",
-    "network_price": "NEM",
-    "offset": 600,
-    "interval_size": 30,
-    "export_set": false
-  },
-  {
-    "code": "OPENNEM_ROOFTOP_BACKFILL",
-    "country": "au",
-    "label": "OpenNEM Rooftop Backfill",
-    "timezone": "Australia/Sydney",
-    "timezone_database": "AEST",
-    "network_price": "NEM",
-    "offset": 600,
-    "interval_size": 30,
-    "export_set": false
-  }
+    {
+        "code": "NEM",
+        "country": "au",
+        "label": "NEM",
+        "timezone": "Australia/Brisbane",
+        "timezone_database": "AEST",
+        "network_price": "NEM",
+        "offset": 600,
+        "interval_size": 5,
+        "interval_shift": 5
+    },
+    {
+        "code": "WEM",
+        "country": "au",
+        "label": "WEM",
+        "timezone": "Australia/Perth",
+        "network_price": "WEM",
+        "timezone_database": "AWST",
+        "offset": 480,
+        "interval_size": 30
+    },
+    {
+        "code": "WEMDE",
+        "country": "au",
+        "label": "WEMDE",
+        "timezone": "Australia/Perth",
+        "network_price": "WEMDE",
+        "timezone_database": "AWST",
+        "offset": 480,
+        "interval_size": 5
+    },
+    {
+        "code": "APVI",
+        "country": "au",
+        "label": "APVI",
+        "timezone": "Australia/Perth",
+        "network_price": "WEM",
+        "timezone_database": "AWST",
+        "offset": 600,
+        "interval_size": 15,
+        "export_set": false
+    },
+    {
+        "code": "AEMO_ROOFTOP",
+        "country": "au",
+        "label": "AEMO Rooftop",
+        "timezone": "Australia/Brisbane",
+        "timezone_database": "AEST",
+        "network_price": "NEM",
+        "offset": 600,
+        "interval_size": 30,
+        "export_set": false
+    },
+    {
+        "code": "AEMO_ROOFTOP_BACKFILL",
+        "country": "au",
+        "label": "AEMO Rooftop Backfill",
+        "timezone": "Australia/Brisbane",
+        "timezone_database": "AEST",
+        "network_price": "NEM",
+        "offset": 600,
+        "interval_size": 30,
+        "export_set": false
+    },
+    {
+        "code": "OPENNEM_ROOFTOP_BACKFILL",
+        "country": "au",
+        "label": "OpenNEM Rooftop Backfill",
+        "timezone": "Australia/Brisbane",
+        "timezone_database": "AEST",
+        "network_price": "NEM",
+        "offset": 600,
+        "interval_size": 30,
+        "export_set": false
+    }
 ]

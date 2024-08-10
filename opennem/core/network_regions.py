@@ -9,6 +9,7 @@ _NETWORK_REGION_NAME_MAP = {
     "SA1": "South Australia",
     "TAS1": "Tasmania",
     "WEM": "Western Australia",
+    "WEMDE": "Western Australia",
 }
 
 

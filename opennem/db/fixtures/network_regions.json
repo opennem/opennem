@@ -1,46 +1,50 @@
 [
-  {
-    "code": "WEM",
-    "network_id": "WEM"
-  },
-  {
-    "code": "NSW1",
-    "network_id": "NEM"
-  },
-  {
-    "code": "QLD1",
-    "network_id": "NEM"
-  },
-  {
-    "code": "VIC1",
-    "network_id": "NEM"
-  },
-  {
-    "code": "TAS1",
-    "network_id": "NEM"
-  },
-  {
-    "code": "SA1",
-    "network_id": "NEM"
-  },
-  {
-    "code": "NSW1",
-    "network_id": "AEMO_ROOFTOP"
-  },
-  {
-    "code": "QLD1",
-    "network_id": "AEMO_ROOFTOP"
-  },
-  {
-    "code": "VIC1",
-    "network_id": "AEMO_ROOFTOP"
-  },
-  {
-    "code": "TAS1",
-    "network_id": "AEMO_ROOFTOP"
-  },
-  {
-    "code": "SA1",
-    "network_id": "AEMO_ROOFTOP"
-  }
+    {
+        "code": "WEM",
+        "network_id": "WEM"
+    },
+    {
+        "code": "WEMDE",
+        "network_id": "WEM"
+    },
+    {
+        "code": "NSW1",
+        "network_id": "NEM"
+    },
+    {
+        "code": "QLD1",
+        "network_id": "NEM"
+    },
+    {
+        "code": "VIC1",
+        "network_id": "NEM"
+    },
+    {
+        "code": "TAS1",
+        "network_id": "NEM"
+    },
+    {
+        "code": "SA1",
+        "network_id": "NEM"
+    },
+    {
+        "code": "NSW1",
+        "network_id": "AEMO_ROOFTOP"
+    },
+    {
+        "code": "QLD1",
+        "network_id": "AEMO_ROOFTOP"
+    },
+    {
+        "code": "VIC1",
+        "network_id": "AEMO_ROOFTOP"
+    },
+    {
+        "code": "TAS1",
+        "network_id": "AEMO_ROOFTOP"
+    },
+    {
+        "code": "SA1",
+        "network_id": "AEMO_ROOFTOP"
+    }
 ]

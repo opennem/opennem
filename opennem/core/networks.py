@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from opennem.schema.network import NETWORKS, NetworkAPVI, NetworkAU, NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.schema.network import NETWORKS, NetworkAPVI, NetworkAU, NetworkNEM, NetworkSchema, NetworkWEM, NetworkWEMDE
 
 NEM_STATES = ["QLD", "NSW", "VIC", "ACT", "TAS", "SA", "NT"]
 
@@ -38,6 +38,8 @@ def network_from_network_region(
 
     if network_region in ["WEM", "WA1"]:
         return NetworkWEM
+    if network_region == "WEMDE":
+        return NetworkWEMDE
     if network_region in ["NEM", "NSW1", "QLD1", "SA1", "VIC1", "TAS1"]:
         return NetworkNEM
 
@@ -52,6 +54,9 @@ def network_from_network_code(network_code: str) -> NetworkSchema:
 
     if network_code in ["WEM"]:
         return NetworkWEM
+
+    if network_code == "WEMDE":
+        return NetworkWEMDE
 
     if network_code in ["NEM"]:
         return NetworkNEM
