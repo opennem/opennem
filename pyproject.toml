@@ -46,7 +46,7 @@ datedelta = "^1.3"
 pandas = "^2.2.0"
 osm2geojson = "^0.2.0"
 Mako = "^1.1.4"
-SQLAlchemy = {extras = ["asyncio"], version = "^2.0.30"}
+SQLAlchemy = {extras = ["asyncio"], version = "^2.0.32"}
 rich = "^13.7.0"
 GeoAlchemy2 = "^0.14.4"
 boto3 = "^1.23.7"
