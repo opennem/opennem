@@ -27,7 +27,7 @@ async def init() -> None:
     """
     These are all the init steps required after a db has been initialized
     """
-    load_fixtures()
+    await load_fixtures()
     logger.info("Fixtures loaded")
 
     await import_all_facilities()

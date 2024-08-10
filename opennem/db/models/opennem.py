@@ -188,7 +188,7 @@ class Stats(Base, BaseModel):
 class Network(Base, BaseModel):
     __tablename__ = "network"
 
-    code = Column(Text, primary_key=True)
+    code = Column(Text, primary_key=True, unique=True, index=True)
     country = Column(Text, nullable=False)
     label = Column(Text, nullable=True)
     timezone = Column(Text, nullable=False)
@@ -282,7 +282,7 @@ class BomStation(Base):
     registered = Column(Date)
 
     # priority from 1-5
-    priority = Column(Integer, default=5)
+    priority: Mapped[int] = mapped_column(Integer, default=5)
     is_capital = Column(Boolean, default=False)
 
     website_url = Column(Text, nullable=True)
