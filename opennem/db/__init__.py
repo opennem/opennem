@@ -78,7 +78,9 @@ def get_database_engine() -> AsyncEngine:
     return engine
 
 
+# keey the old variable here until we can remove it
 SessionLocal: AsyncSession = async_sessionmaker(engine, expire_on_commit=False)
+SessionLocalAsync: AsyncSession = async_sessionmaker(engine, expire_on_commit=False)
 
 
 async def get_scoped_session() -> AsyncGenerator[AsyncSession, None]:
