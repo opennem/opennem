@@ -12,17 +12,21 @@ from datetime import datetime
 from io import StringIO
 from typing import Any, TypeVar
 
-from sqlalchemy import text
+import asyncpg
+from asyncpg.pool import Pool
 from sqlalchemy.sql.schema import Column, Table
 
-from opennem.db import SessionLocal
+from opennem import settings
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
 
 logger = logging.getLogger("opennem.db.bulk_insert_csv")
 
 ORMTableType = TypeVar("ORMTableType", bound=Table)
 
-BULK_INSERT_QUERY = """
+# At the module level, create a connection pool
+pool: Pool | None = None
+
+_BULK_INSERT_QUERY = """
     CREATE TEMP TABLE __tmp_{table_name}_{tmp_table_name}
     (LIKE {table_schema}{table_name} INCLUDING DEFAULTS)
     ON COMMIT DROP;
@@ -36,7 +40,7 @@ BULK_INSERT_QUERY = """
     ON CONFLICT {on_conflict}
 """
 
-BULK_INSERT_CONFLICT_UPDATE = """
+_BULK_INSERT_CONFLICT_UPDATE = """
     ({pk_columns}) DO UPDATE set {update_values}
 """
 
@@ -44,7 +48,7 @@ BULK_INSERT_CONFLICT_UPDATE = """
 def build_insert_query(
     table: Table,
     update_cols: list[str | Column] = None,
-) -> str:
+) -> tuple[str, list[str]]:
     """
     Builds the bulk insert query
     """
@@ -67,7 +71,7 @@ def build_insert_query(
     primary_key_columns = [c.name for c in table.__table__.primary_key.columns.values()]  # type: ignore
 
     if len(update_col_names):
-        on_conflict = BULK_INSERT_CONFLICT_UPDATE.format(
+        on_conflict = _BULK_INSERT_CONFLICT_UPDATE.format(
             pk_columns=",".join(primary_key_columns),
             update_values=", ".join([f"{n} = EXCLUDED.{n}" for n in update_col_names]),
         )
@@ -99,19 +103,17 @@ def build_insert_query(
     if _ts:
         tmp_table_name = f"{_ts}_{tmp_table_name}"
 
-    query = BULK_INSERT_QUERY.format(
+    query = _BULK_INSERT_QUERY.format(
         table_name=table.__table__.name,  # type: ignore
         table_schema=table_schema,
         on_conflict=on_conflict,
         tmp_table_name=tmp_table_name,
     )
 
-    logger.debug(query)
-
-    return query
+    return f"__tmp_{table.__table__.name}_{tmp_table_name}", query.split(";")
 
 
-def generate_bulkinsert_csv_from_records(
+def _generate_bulkinsert_csv_from_records(
     table: ORMTableType,
     records: list[dict],
     column_names: list[str] | None = None,
@@ -175,47 +177,83 @@ def generate_bulkinsert_csv_from_records(
     return csv_buffer
 
 
+async def get_pool() -> Pool:
+    global pool
+    if pool is None:
+        pool = await asyncpg.create_pool(dsn=settings.db_url.replace("+asyncpg", ""))
+    return pool
+
+
 async def bulkinsert_mms_items(
     table: ORMTableType,
     records: list[dict],
     update_fields: list[str | Column[Any]] | None = None,
 ) -> int:
-    num_records = 0
-
     if not records:
         return 0
 
-    sql_query = build_insert_query(table=table, update_cols=update_fields)
-    csv_content = generate_bulkinsert_csv_from_records(table, records, column_names=list(records[0].keys()))
+    tmp_table_name, sql_queries = build_insert_query(table=table, update_cols=update_fields)
 
-    async with SessionLocal() as session:
-        async with session.begin():
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        async with conn.transaction():
             try:
-                num_records = await session.execute(
-                    text(sql_query),
-                    params={
-                        "__tmp_table_content": csv_content.getvalue().splitlines()[1:],  # Skip header
-                        "columns": csv_content.getvalue().splitlines()[0].split(","),
-                    },
+                # Execute CREATE TEMP TABLE
+                logger.debug(sql_queries[0])
+                await conn.execute(sql_queries[0])
+
+                # Get column names and types from the temporary table
+                table_info = await conn.fetch(f"""
+                    SELECT column_name, data_type
+                    FROM information_schema.columns
+                    WHERE table_name = '{tmp_table_name.split(".")[-1]}'
+                """)
+
+                # Prepare records
+                columns = [col["column_name"] for col in table_info]
+                column_types = {col["column_name"]: col["data_type"] for col in table_info}
+
+                records_to_insert = []
+                for record in records:
+                    record_values = []
+                    for col in columns:
+                        value = record.get(col)
+                        if value is None:
+                            record_values.append(None)
+                        elif column_types[col] == "timestamp without time zone":
+                            # Convert string to datetime object if it's not already
+                            record_values.append(value if isinstance(value, datetime) else datetime.fromisoformat(str(value)))
+                        elif column_types[col] == "numeric":
+                            # Ensure numeric values are passed as float or Decimal
+                            record_values.append(float(value) if value is not None else None)
+                        elif column_types[col] == "boolean":
+                            # Convert string to boolean
+                            value = str(value).lower()
+                            record_values.append(value in ("true", "t", "yes", "y", "1"))
+                        else:
+                            record_values.append(str(value))
+                    records_to_insert.append(record_values)
+
+                # Use copy_records_to_table to bulk insert the records
+                logger.debug("Copy records to table")
+                result = await conn.copy_records_to_table(
+                    tmp_table_name.split(".")[-1],  # Remove schema if present
+                    records=records_to_insert,
+                    columns=columns,
                 )
-                await session.commit()
-                logger.info(f"Bulk inserted {num_records} records")
+                logger.debug(f"Copy result: {result}")
+
+                # Execute the INSERT ... ON CONFLICT query
+                insert_result = await conn.execute(sql_queries[2])
+
+                num_records = len(records)
+                logger.info(f"Bulk inserted {num_records} records: {insert_result}")
+
+                return num_records
+
             except Exception as generic_error:
-                logger.error(generic_error)
-                await session.rollback()
+                logger.error(f"Error during bulk insert: {generic_error}")
                 raise generic_error
-
-    return num_records
-
-
-def pad_column_null(records: list[dict], column_name: str) -> list[dict]:
-    """Adds missing column name into the list of table records"""
-    a = []
-
-    for i in records:
-        a.append({column_name: "", **i})
-
-    return a
 
 
 def generate_csv_from_records(
