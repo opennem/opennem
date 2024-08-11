@@ -44,7 +44,9 @@ async def _calculate_energy_for_interval(session: AsyncSession, start_time: date
         WHERE interval BETWEEN :start_time AND :end_time
     )
     UPDATE facility_scada fs
-    SET energy = (rs.generated + COALESCE(rs.prev_generated, 0)) / 2 / nd.intervals_per_hour
+    SET
+        energy = (rs.generated + COALESCE(rs.prev_generated, 0)) / 2 / nd.intervals_per_hour,
+        energy_quality_flag = 1
     FROM ranked_scada rs
     JOIN network_data nd ON nd.code = rs.network_id
     WHERE fs.network_id = rs.network_id
@@ -161,8 +163,8 @@ async def main():
 
     # Run backlog
     print("Processing backlog...")
-    date_end = datetime.fromisoformat("2024-01-01T00:00:00")
-    date_start = datetime.fromisoformat("2020-01-01T00:00:00")
+    date_start = datetime.fromisoformat("1999-12-07T00:00:00")
+    date_end = datetime.fromisoformat("2020-01-01T00:00:00")
     await run_energy_backlog(date_start=date_start, date_end=date_end)
 
 
