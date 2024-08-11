@@ -138,6 +138,10 @@ async def run_nemweb_aemo_crawl(
             await asyncio.gather(*tasks)
             tasks = []
 
+    # complete any remaining tasks
+    if tasks:
+        await asyncio.gather(*tasks)
+
     if controller_returns:
         controller_returns.crawls_run = len(entries_to_fetch)
 
@@ -302,4 +306,4 @@ AEMONEMNextDayDispatchArchvie = CrawlerDefinition(
 if __name__ == "__main__":
     from opennem.crawl import run_crawl
 
-    asyncio.run(run_crawl(AEMONemwebTradingIS))
+    asyncio.run(run_crawl(AEMONNemwebDispatchScada, latest=False))
