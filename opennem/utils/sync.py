@@ -1,15 +1,20 @@
 import asyncio
 import functools
 import logging
+import threading
 from collections.abc import Callable, Coroutine
-from typing import Any
+from typing import Any, ParamSpec, TypeVar
 
-import gevent.monkey
 from asgiref.sync import AsyncToSync
+
+thread_local = threading.local()
+
 
 logger = logging.getLogger("opennem.utils.async")
 
-gevent.monkey.patch_all()
+# https://stackoverflow.com/questions/61064782/how-to-use-typevar-with-async-function-in-python
+P = ParamSpec("P")
+R = TypeVar("R")
 
 
 def run_async_task(async_func):
@@ -25,16 +30,40 @@ def run_async_task(async_func):
 
 def get_running_loop():
     try:
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()  # This only works in Python 3.7+
     except RuntimeError:
         loop = asyncio.new_event_loop()
-        print("A new event loop was spawned.")
         asyncio.set_event_loop(loop)
-        loop.run_forever()
     return loop
 
 
+def run_async_task_loop[**P, R](coroutine: Callable[P, Coroutine[Any, Any, R]]):
+    @functools.wraps(coroutine)
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        return asyncio.run(coroutine(*args, **kwargs))
+
+    return wrapper
+
+
+def get_or_create_eventloop():
+    try:
+        return thread_local.loop
+    except AttributeError:
+        thread_local.loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(thread_local.loop)
+        return thread_local.loop
+
+
 def run_async_task_reusable[**P, R](coroutine: Callable[P, Coroutine[Any, Any, R]]):
+    @functools.wraps(coroutine)
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        loop = get_or_create_eventloop()
+        return loop.run_until_complete(coroutine(*args, **kwargs))
+
+    return wrapper
+
+
+def run_async_task_reusable_old[**P, R](coroutine: Callable[P, Coroutine[Any, Any, R]]):
     sync_call = AsyncToSync(coroutine)
 
     @functools.wraps(coroutine)
