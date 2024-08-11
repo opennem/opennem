@@ -39,7 +39,7 @@ class AEMOTableSchema(BaseConfig):
     name: str
     namespace: str
     fieldnames: list[str]
-    records: list[dict[str, Any] | list] = Field(default_factory=list)
+    records: list[dict[str, Any]] = Field(default_factory=list)
 
     # optionally it has a schema
     _record_schema: MMSBaseClass | None = PrivateAttr()
