@@ -21,19 +21,19 @@ from opennem.importer.rooftop import rooftop_remap_regionids
 from opennem.schema.aemo.mms import MMSBaseClass
 from opennem.schema.network import NetworkAEMORooftop, NetworkSchema
 from opennem.utils.dates import parse_date
-from opennem.utils.numbers import float_to_str
 
 logger = logging.getLogger("opennem.controllers.nem")
 
 # @TODO could read this from schema
 FACILITY_SCADA_COLUMN_NAMES = [
     "network_id",
-    "trading_interval",
+    "interval",
     "facility_code",
     "generated",
     "eoi_quantity",
     "is_forecast",
     "energy_quality_flag",
+    "energy",
 ]
 
 # Helpers
@@ -53,7 +53,7 @@ def generate_facility_scada(
     df = pd.DataFrame().from_records(records)
 
     column_renames = {
-        interval_field: "trading_interval",
+        interval_field: "interval",
         power_field: "generated",
         facility_code_field: "facility_code",
     }
@@ -67,10 +67,11 @@ def generate_facility_scada(
 
     df["network_id"] = network.code
     df["is_forecast"] = is_forecast
+    df["energy"] = 0
     df["energy_quality_flag"] = 0
 
     # cast dates
-    df.trading_interval = pd.to_datetime(df.trading_interval)
+    df.interval = pd.to_datetime(df.interval)
 
     df.generated = pd.to_numeric(df.generated)
     df["generated"] = df["generated"].fillna(0)
@@ -81,7 +82,7 @@ def generate_facility_scada(
     df = df[FACILITY_SCADA_COLUMN_NAMES]
 
     # set the index
-    df.set_index(["trading_interval", "network_id", "facility_code", "is_forecast"], inplace=True)
+    df.set_index(["interval", "network_id", "facility_code", "is_forecast"], inplace=True)
 
     # @NOTE optimized way to drop duplicates
     df = df[~df.index.duplicated(keep="last")]
@@ -94,78 +95,6 @@ def generate_facility_scada(
     return clean_records
 
 
-async def generate_balancing_summary(
-    records: list[dict[str, Any]],
-    interval_field: str = "SETTLEMENTDATE",
-    network_region_field: str = "REGIONID",
-    price_field: str | None = None,
-    network: NetworkSchema = NetworkNEM,
-    limit: int = 0,
-) -> ControllerReturn:
-    cr = ControllerReturn(total_records=len(records))
-    primary_keys = set()
-    return_records = []
-
-    for row in records:
-        trading_interval = parse_date(row[interval_field], network=network, dayfirst=False)
-
-        network_region = None
-        if network_region_field and network_region_field in row:
-            network_region = row[network_region_field]
-
-        pk = (trading_interval, network.code, network_region)
-
-        if pk in primary_keys:
-            continue
-
-        primary_keys.add(pk)
-
-        price = None
-        if price_field and price_field in row:
-            price = clean_float(row[price_field])
-            if price:
-                price = str(float_to_str(price))
-
-        return_records.append(
-            {
-                "network_id": network.code,
-                "network_region": network_region,
-                "trading_interval": trading_interval,
-                "price": price,
-            }
-        )
-
-        if limit > 0 and len(return_records) >= limit:
-            break
-
-    cr.processed_records = len(return_records)
-
-    async with SessionLocal() as session:
-        try:
-            stmt = insert(BalancingSummary).values(return_records)
-            stmt = stmt.on_conflict_do_update(
-                index_elements=["trading_interval", "network_id", "network_region"],
-                set_={
-                    "price": stmt.excluded.price,
-                },
-            )
-
-            await session.execute(stmt)
-            await session.commit()
-
-            cr.inserted_records = cr.processed_records
-            cr.server_latest = max([r["trading_interval"] for r in return_records]) if return_records else None
-        except Exception as e:
-            logger.error("Error inserting balancing summary records")
-            logger.error(e)
-            cr.errors = cr.processed_records
-            await session.rollback()
-        finally:
-            await session.close()
-
-    return cr
-
-
 # Processors
 
 
@@ -175,7 +104,19 @@ async def process_dispatch_interconnectorres(table: AEMOTableSchema) -> Controll
     primary_keys = []
 
     for record in table.records:
-        primary_key = {record["settlementdate"], record["interconnectorid"]}
+        interval = parse_date(record["settlementdate"])
+
+        if not interval:
+            logger.warning(f"Invalid interval for record: {record}")
+            continue
+
+        interconnector_id = record.get("interconnectorid")
+
+        if not interconnector_id:
+            logger.warning(f"No interconnector id for record: {record}")
+            continue
+
+        primary_key = {interval, interconnector_id}
 
         if primary_key in primary_keys:
             continue
@@ -188,8 +129,8 @@ async def process_dispatch_interconnectorres(table: AEMOTableSchema) -> Controll
         records_to_store.append(
             {
                 "network_id": "NEM",
-                "facility_code": record["interconnectorid"],
-                "trading_interval": record["settlementdate"],
+                "facility_code": interconnector_id,
+                "interval": interval,
                 "generated": record.get("meteredmwflow", 0),
             }
         )
@@ -200,7 +141,7 @@ async def process_dispatch_interconnectorres(table: AEMOTableSchema) -> Controll
         try:
             stmt = insert(FacilityScada).values(records_to_store)
             stmt = stmt.on_conflict_do_update(
-                index_elements=["trading_interval", "network_id", "facility_code", "is_forecast"],
+                index_elements=["interval", "network_id", "facility_code", "is_forecast"],
                 set_={"generated": stmt.excluded.generated},
             )
 
@@ -208,7 +149,7 @@ async def process_dispatch_interconnectorres(table: AEMOTableSchema) -> Controll
             await session.commit()
 
             cr.inserted_records = cr.processed_records
-            cr.server_latest = max([r["trading_interval"] for r in records_to_store]) if records_to_store else None
+            cr.server_latest = max([r["interval"] for r in records_to_store]) if records_to_store else None
         except Exception as e:
             logger.error("Error inserting dispatch interconnectorres records")
             logger.error(e)
@@ -234,9 +175,9 @@ async def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
 
     for record in table.records:
         # @NOTE disable pk track
-        trading_interval = parse_date(record["settlementdate"])
+        interval = parse_date(record["settlementdate"])
 
-        primary_key = {trading_interval, record["regionid"]}  # type: ignore
+        primary_key = {interval, record["regionid"]}
 
         if primary_key in primary_keys:
             continue
@@ -247,7 +188,7 @@ async def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
             {
                 "network_id": "NEM",
                 "network_region": record.get("regionid"),
-                "trading_interval": trading_interval,
+                "interval": interval,
                 price_field: record["rrp"],
             }
         )
@@ -258,7 +199,7 @@ async def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
         try:
             stmt = insert(BalancingSummary).values(records_to_store)
             stmt = stmt.on_conflict_do_update(
-                index_elements=["trading_interval", "network_id", "network_region"],
+                index_elements=["interval", "network_id", "network_region"],
                 set_={price_field: getattr(stmt.excluded, price_field)},
             )
 
@@ -266,7 +207,7 @@ async def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
             await session.commit()
 
             cr.inserted_records = cr.processed_records
-            cr.server_latest = max([r["trading_interval"] for r in records_to_store]) if records_to_store else None
+            cr.server_latest = max([r["interval"] for r in records_to_store]) if records_to_store else None
         except Exception as e:
             logger.error("Error inserting NEM price records")
             logger.error(e)
@@ -287,9 +228,9 @@ async def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn
         if not isinstance(record, dict):
             continue
 
-        trading_interval = parse_date(record.get("settlementdate"))
+        interval = parse_date(record.get("settlementdate"))
 
-        primary_key = {trading_interval, record["regionid"]}
+        primary_key = {interval, record["regionid"]}
 
         if primary_key in primary_keys:
             continue
@@ -303,7 +244,7 @@ async def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn
             {
                 "network_id": "NEM",
                 "network_region": record["regionid"],
-                "trading_interval": trading_interval,
+                "interval": interval,
                 "net_interchange": record["netinterchange"],
                 "demand": record["totaldemand"],
                 "demand_total": record["demand_and_nonschedgen"],
@@ -316,7 +257,7 @@ async def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn
         try:
             stmt = insert(BalancingSummary).values(records_to_store)
             stmt = stmt.on_conflict_do_update(
-                index_elements=["trading_interval", "network_id", "network_region"],
+                index_elements=["interval", "network_id", "network_region"],
                 set_={
                     "net_interchange": stmt.excluded.net_interchange,
                     "demand_total": stmt.excluded.demand_total,
@@ -328,7 +269,7 @@ async def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn
             await session.commit()
 
             cr.inserted_records = cr.processed_records
-            cr.server_latest = max([r["trading_interval"] for r in records_to_store]) if records_to_store else None
+            cr.server_latest = max([r["interval"] for r in records_to_store]) if records_to_store else None
         except Exception as e:
             logger.error("Error inserting dispatch regionsum records")
             logger.error(e)
@@ -356,17 +297,17 @@ async def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
         if not isinstance(record, dict):
             raise Exception("Invalid record type")
 
-        trading_interval = parse_date(
+        interval = parse_date(
             record["settlementdate"],
             network=NetworkNEM,
             dayfirst=False,
             date_format="%Y/%m/%d %H:%M:%S",
         )
 
-        if not trading_interval:
+        if not interval:
             continue
 
-        _pk = {trading_interval, record["regionid"]}
+        _pk = {interval, record["regionid"]}
 
         if _pk in primary_keys:
             continue
@@ -383,7 +324,7 @@ async def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
                 "network_id": "NEM",
                 "network_region": record["regionid"],
                 "net_interchange_trading": net_interchange,
-                "trading_interval": trading_interval,
+                "interval": interval,
             }
         )
 
@@ -397,7 +338,7 @@ async def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
         try:
             stmt = insert(BalancingSummary).values(records_to_store)
             stmt = stmt.on_conflict_do_update(
-                index_elements=["trading_interval", "network_id", "network_region"],
+                index_elements=["interval", "network_id", "network_region"],
                 set_={
                     "net_interchange_trading": stmt.excluded.net_interchange_trading,
                 },
@@ -408,7 +349,7 @@ async def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
 
             cr.inserted_records = records_processed
             cr.processed_records = records_processed
-            cr.server_latest = max([i["trading_interval"] for i in records_to_store]) if records_to_store else None
+            cr.server_latest = max([i["interval"] for i in records_to_store]) if records_to_store else None
         except Exception as e:
             logger.error("Error inserting records")
             logger.error(e)
@@ -432,7 +373,7 @@ async def process_unit_scada_optimized(table: AEMOTableSchema) -> ControllerRetu
 
     cr.processed_records = len(records)
     cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "eoi_quantity"])  # type: ignore
-    cr.server_latest = max([i["trading_interval"] for i in records if i["trading_interval"]])
+    cr.server_latest = max([i["interval"] for i in records if i["interval"]])
 
     return cr
 
@@ -449,7 +390,7 @@ async def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
 
     cr.processed_records = len(records)
     cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated"])
-    cr.server_latest = max([i["trading_interval"] for i in records if i["trading_interval"]])
+    cr.server_latest = max([i["interval"] for i in records if i["interval"]])
 
     return cr
 
@@ -466,7 +407,7 @@ async def process_meter_data_gen_duid(table: AEMOTableSchema) -> ControllerRetur
 
     cr.processed_records = len(records)
     cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated"])
-    cr.server_latest = max([i["trading_interval"] for i in records])
+    cr.server_latest = max([i["interval"] for i in records])
 
     return cr
 
@@ -487,7 +428,7 @@ async def process_rooftop_actual(table: AEMOTableSchema) -> ControllerReturn:
 
     cr.processed_records = len(records)
     cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "eoi_quantity"])
-    cr.server_latest = max([i["trading_interval"] for i in records])
+    cr.server_latest = max([i["interval"] for i in records])
 
     return cr
 
@@ -509,7 +450,7 @@ async def process_rooftop_forecast(table: AEMOTableSchema) -> ControllerReturn:
 
     cr.processed_records = len(records)
     cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated"])  # type: ignore
-    cr.server_latest = max([i["trading_interval"] for i in records]) if records else None
+    cr.server_latest = max([i["interval"] for i in records]) if records else None
 
     return cr
 

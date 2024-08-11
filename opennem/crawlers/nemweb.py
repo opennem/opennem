@@ -306,4 +306,4 @@ AEMONEMNextDayDispatchArchvie = CrawlerDefinition(
 if __name__ == "__main__":
     from opennem.crawl import run_crawl
 
-    asyncio.run(run_crawl(AEMONNemwebDispatchScada, latest=False))
+    asyncio.run(run_crawl(AEMONNemwebDispatchScadaArchive, latest=False, limit=10))
