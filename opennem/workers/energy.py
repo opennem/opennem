@@ -1,530 +1,170 @@
+import asyncio
 import logging
+import multiprocessing
 from datetime import datetime, timedelta
-from itertools import groupby
-from textwrap import dedent
+
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem import settings
-from opennem.api.stats.controllers import get_scada_range_optimized
-from opennem.api.time import human_to_interval, human_to_period
-from opennem.controllers.output.schema import ExportDatetimeRange, OpennemExportSeries
-from opennem.core.energy import energy_sum, shape_energy_dataframe
-from opennem.core.flows import FlowDirection, fueltech_to_flow, generated_flow_station_id
-from opennem.core.fueltechs import ALL_FUELTECH_CODES
-from opennem.core.network_regions import get_network_regions
-from opennem.db import get_database_engine
-from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
-from opennem.db.models.opennem import FacilityScada
-from opennem.queries.utils import duid_to_case
-from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
-from opennem.utils.dates import DATE_CURRENT_YEAR, get_last_complete_day_for_network
-from opennem.utils.interval import get_human_interval
-from opennem.workers.facility_data_ranges import get_facility_seen_range
+from opennem.db import SessionLocalAsync
 
 logger = logging.getLogger("opennem.workers.energy")
 
-# For debugging queries
-DRY_RUN = settings.dry_run
-YEAR_EARLIEST = 2010
 
-
-def get_generated_query(
-    date_min: datetime,
-    date_max: datetime,
-    network: NetworkSchema,
-    network_region: str | None = None,
-    fueltech_id: str | None = None,
-    facility_codes: list[str] | None = None,
-) -> str:
-    # @TODO support refresh energies for a single duid or station
-
-    __sql = """
-    select
-        fs.trading_interval at time zone '{timezone}' as trading_interval,
-        fs.facility_code,
-        fs.network_id,
-        f.fueltech_id,
-        generated
-    from
-        facility_scada fs
-        left join facility f on fs.facility_code = f.code
-    where
-        f.network_id='{network_id}'
-        {network_region_query}
-        and fs.trading_interval >= '{date_min}'
-        and fs.trading_interval <= '{date_max}'
-        and fs.is_forecast is False
-        {fueltech_match}
-        {facility_match}
-        and fs.generated is not null
-    order by fs.trading_interval asc, 2
+async def _calculate_energy_for_interval(session: AsyncSession, start_time: datetime, end_time: datetime) -> int:
+    """
+    Calculate energy for a an interval range and update the energy column in the facility_scada table.
     """
 
-    fueltech_match = ""
-    facility_match = ""
-    network_region_query = ""
-
-    if fueltech_id:
-        fueltech_match = f"and f.fueltech_id = '{fueltech_id}'"
-
-    if facility_codes:
-        facility_match = f"and f.code in ({duid_to_case(facility_codes)})"
-
-    if network_region:
-        network_region_query = f"and f.network_region='{network_region}'"
-
-    query = __sql.format(
-        timezone=network.timezone_database,
-        network_id=network.code,
-        network_region=network_region,
-        network_region_query=network_region_query,
-        date_min=date_min.replace(tzinfo=network.get_fixed_offset()),
-        date_max=(date_max + timedelta(minutes=5)).replace(tzinfo=network.get_fixed_offset()),
-        fueltech_match=fueltech_match,
-        facility_match=facility_match,
+    query = text("""
+    WITH
+    network_data AS (
+        SELECT
+            code,
+            interval_size,
+            (60 / interval_size) as intervals_per_hour
+        FROM network
+    ),
+    ranked_scada AS (
+        SELECT
+            network_id,
+            facility_code,
+            interval,
+            generated,
+            LAG(generated, 1) OVER (
+                PARTITION BY network_id, facility_code
+                ORDER BY interval
+            ) AS prev_generated,
+            ROW_NUMBER() OVER (
+                PARTITION BY network_id, facility_code, (interval::date)
+                ORDER BY interval
+            ) AS rn
+        FROM facility_scada
+        WHERE interval BETWEEN :start_time AND :end_time
     )
+    UPDATE facility_scada fs
+    SET energy = (rs.generated + COALESCE(rs.prev_generated, 0)) / 2 / nd.intervals_per_hour
+    FROM ranked_scada rs
+    JOIN network_data nd ON nd.code = rs.network_id
+    WHERE fs.network_id = rs.network_id
+      AND fs.facility_code = rs.facility_code
+      AND fs.interval = rs.interval
+      AND fs.interval BETWEEN :start_time AND :end_time
+    """)
 
-    return dedent(query)
+    result = await session.execute(query, {"start_time": start_time, "end_time": end_time})
+    await session.commit()
+    return result.rowcount
 
 
-def get_flows_query(
-    network_region: str,
-    date_min: datetime,
-    date_max: datetime,
-    network: NetworkSchema,
-    flow: FlowDirection,
-) -> str:
-    flow_direction = "<"
-
-    if flow == FlowDirection.exports:
-        flow_direction = ">"
-
-    facility_code = generated_flow_station_id(NetworkNEM, network_region, flow)
-
-    query = f"""
-    select
-        bs.trading_interval at time zone 'AEST' as trading_interval,
-        '{facility_code}' as facility_code,
-        bs.network_id,
-        bs.network_region as facility_code,
-        case when bs.net_interchange {flow_direction} 0 then
-            bs.net_interchange
-        else 0
-        end as generated
-    from balancing_summary bs
-    where
-        bs.network_id='{network.code}'
-        and bs.network_region='{network_region}'
-        and bs.trading_interval >= '{date_min - timedelta(minutes=10)}'
-        and bs.trading_interval <= '{date_max + timedelta(minutes=10)}'
-    order by trading_interval asc;
+async def run_energy_calculation(interval: datetime) -> int:
     """
-
-    return dedent(query)
-
-
-def get_generated(
-    date_min: datetime,
-    date_max: datetime,
-    network: NetworkSchema,
-    network_region: str | None = None,
-    fueltech_id: str | None = None,
-    facility_codes: list[str] | None = None,
-) -> list[dict]:
-    """Gets generated values for a date range for a network and network region
-    and optionally for a single fueltech"""
-
-    # holy prop drill!
-    query = get_generated_query(
-        date_min,
-        date_max,
-        network,
-        fueltech_id=fueltech_id,
-        facility_codes=facility_codes,
-        network_region=network_region,
-    )
-
-    engine = get_database_engine()
-
-    results = []
-
-    with engine.connect() as c:
-        logger.debug(query)
+    Run energy calculation for a single interval.
+    This method is intended to be called by a cron job every 5 minutes.
+    """
+    async with SessionLocalAsync() as session:
+        start_time = interval
+        end_time = interval + timedelta(minutes=5)
 
         if settings.dry_run:
-            return []
-
-        try:
-            results = list(c.execute(query))
-        except Exception as e:
-            logger.error(e)
-
-    logger.debug(f"Got back {len(results)} rows")
-
-    return results
-
-
-def get_flows(
-    date_min: datetime,
-    date_max: datetime,
-    network_region: str,
-    network: NetworkSchema,
-    flow: FlowDirection,
-) -> list[dict]:
-    """Gets flows"""
-
-    query = get_flows_query(network_region, date_min, date_max, network, flow)
-
-    engine = get_database_engine()
-
-    results = []
-
-    with engine.connect() as c:
-        logger.debug(query)
-
-        if not DRY_RUN:
-            try:
-                results = list(c.execute(query))
-            except Exception as e:
-                logger.error(e)
-
-    logger.debug(f"Got back {len(results)} flow rows")
-
-    return results
-
-
-def insert_energies(results: list[dict], network: NetworkSchema) -> int:
-    """Takes a list of generation values and calculates energies and bulk-inserts
-    into the database"""
-
-    # Get the energy sums as a dataframe
-    esdf = energy_sum(results, network=network)
-
-    # Add metadata
-    esdf["generated"] = None
-    esdf["is_forecast"] = False
-    esdf["energy_quality_flag"] = 0
-
-    # reorder columns
-    columns = [
-        "network_id",
-        "trading_interval",
-        "facility_code",
-        "generated",
-        "eoi_quantity",
-        "is_forecast",
-        "energy_quality_flag",
-    ]
-    esdf = esdf[columns]
-
-    records_to_store: list[dict] = esdf.to_dict("records")
-
-    for record in records_to_store[:5]:
-        logger.debug(record)
-
-    if len(records_to_store) < 1:
-        logger.warning("No records returned from energy sum")
-        return 0
-
-    # dedupe records
-    return_records_grouped = {}
-
-    for pk_values, rec_value in groupby(
-        records_to_store,
-        key=lambda r: (
-            r.get("trading_interval"),
-            r.get("network_id"),
-            r.get("facility_code"),
-        ),
-    ):
-        if pk_values not in return_records_grouped:
-            return_records_grouped[pk_values] = list(rec_value).pop()
-
-    records_to_store = list(return_records_grouped.values())
-
-    # Build SQL + CSV and bulk-insert
-    sql_query = build_insert_query(FacilityScada, ["updated_at", "eoi_quantity"])
-    conn = get_database_engine().raw_connection()
-    cursor = conn.cursor()
-
-    csv_content = generate_csv_from_records(
-        FacilityScada,
-        records_to_store,
-        column_names=list(records_to_store[0].keys()),
-    )
-
-    try:
-        cursor.copy_expert(sql_query, csv_content)
-        conn.commit()
-    except Exception as e:
-        logger.error(f"Error inserting records: {e}")
-        return 0
-
-    logger.info(f"Inserted {len(records_to_store)} records")
-
-    return len(records_to_store)
-
-
-def get_date_range(network: NetworkSchema) -> ExportDatetimeRange:
-    date_range = get_scada_range_optimized(network=NetworkNEM)
-
-    time_series = OpennemExportSeries(
-        start=date_range.start,
-        end=date_range.end,
-        interval=human_to_interval("1d"),
-        period=human_to_period("all"),
-        network=network,
-    )
-
-    return time_series.get_range()
-
-
-def run_energy_calc(
-    date_min: datetime,
-    date_max: datetime,
-    network: NetworkSchema,
-    region: str | None = None,
-    fueltech_id: str | None = None,
-    facility_codes: list[str] | None = None,
-) -> int:
-    """Runs the actual energy calc - believe it or not"""
-
-    logger.info(
-        f"Running energy calc for {network.code} region {region} fueltech {fueltech_id} and range {date_min} => {date_max}"
-    )
-
-    if settings.dry_run:
-        return 0
-
-    generated_results: list[dict] = []
-
-    flow = None
-
-    if fueltech_id:
-        flow = fueltech_to_flow(fueltech_id)
-
-    # @TODO get rid of the hard-coded networknem part
-    if flow and region and network == NetworkNEM:
-        generated_results = get_flows(date_min, date_max, network_region=region, network=network, flow=flow)
-    else:
-        generated_results = get_generated(
-            date_min=date_min,
-            date_max=date_max,
-            network_region=region,
-            network=network,
-            fueltech_id=fueltech_id,
-            facility_codes=facility_codes,
-        )
-
-    num_records = 0
-
-    try:
-        if len(generated_results) < 1:
-            logger.warning(f"No results from get_generated query for {region} {date_max} {fueltech_id}")
+            logger.debug(f"Dry run: Skipping calculation for {start_time} to {end_time}")
             return 0
 
-        generated_frame = shape_energy_dataframe(generated_results, network=network)
-
-        num_records = insert_energies(generated_frame, network=network)
-
-        logger.info(f"Done {region} for {date_min} => {date_max}")
-    except Exception as e:
-        error_traceback = e.with_traceback()
-
-        if error_traceback:
-            logger.error(error_traceback)
-        else:
-            logger.error(e)
-
-    return num_records
+        return await _calculate_energy_for_interval(session, start_time, end_time)
 
 
-def run_energy_update_archive(
-    year: int | None = None,
-    months: list[int] | None = None,
-    days: int | None = None,
-    regions: list[str] | None = None,
-    fueltech: str | None = None,
-    network: NetworkSchema = NetworkNEM,
-) -> None:
-    date_range = get_date_range(network=network)
-
-    years: list[int] = []
-
-    if not year:
-        years = list(range(network.data_first_seen.year, DATE_CURRENT_YEAR + 1))
-    else:
-        years = [year]
-
-    if not months:
-        months = list(range(1, 13))
-
-    if not regions:
-        regions = ["NSW1", "QLD1", "VIC1", "TAS1", "SA1"]
-
-    # @TODO remove this and give APVI regions
-    if network == NetworkAPVI:
-        regions = ["WEM"]
-
-    # list of fueltech codes to run
-    fueltechs: list[str] = []
-
-    if fueltech:
-        fueltechs = [fueltech]
-    elif network.fueltechs:
-        fueltechs = network.fueltechs
-    else:
-        fueltechs = ALL_FUELTECH_CODES
-
-    EXCLUDED_FUELTECHS_FROM_ENERGY = ["imports", "exports", "interconnector", "nuclear"]
-
-    for excluded_fueltech_id in EXCLUDED_FUELTECHS_FROM_ENERGY:
-        try:
-            fueltechs.remove(excluded_fueltech_id)
-        except ValueError:
-            pass
-
-    for y in years:
-        for month in months:
-            date_min = datetime(
-                year=y,
-                month=month,
-                day=1,
-                hour=0,
-                minute=0,
-                second=0,
-                tzinfo=NetworkWEM.get_timezone(),
-            )
-
-            date_max = date_min + get_human_interval("1M")
-
-            if days:
-                date_max = datetime(
-                    year=y,
-                    month=month,
-                    day=1 + days,
-                    hour=0,
-                    minute=0,
-                    second=0,
-                    tzinfo=NetworkWEM.get_timezone(),
-                )
-
-            date_min = date_min - timedelta(minutes=10)
-            date_max = date_max + timedelta(minutes=10)
-
-            if date_max > date_range.end:
-                date_max = date_range.end
-
-            if date_min > date_max:
-                logger.debug(f"Reached end of archive {date_min} {date_max}")
-                break
-
-            for region in regions:
-                for fueltech_id in fueltechs:
-                    run_energy_calc(
-                        date_min,
-                        date_max,
-                        region=region,
-                        fueltech_id=fueltech_id,
-                        network=network,
-                    )
+def _chunk_date_range(start_date: datetime, end_date: datetime, chunk_size: timedelta) -> list[tuple[datetime, datetime]]:
+    chunks = []
+    current_start = start_date
+    while current_start < end_date:
+        chunk_end = min(current_start + chunk_size, end_date)
+        chunks.append((current_start, chunk_end))
+        current_start = chunk_end
+    return chunks
 
 
-def run_energy_update_days(
-    networks: list[NetworkSchema] | None = None,
-    days: int = 1,
-    fueltech: str = None,
-    region: str = None,
-) -> None:
-    """Run energy sum update for yesterday. This task is scheduled
-    in scheduler/db"""
+async def _process_date_range(
+    date_start: datetime, date_end: datetime, chunk_size: timedelta = timedelta(days=7), max_workers: int | None = None
+):
+    """
+    Process a date range in chunks.
+    """
+    if max_workers is None:
+        max_workers = multiprocessing.cpu_count()
 
-    if not networks:
-        networks = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop]
+    chunks = _chunk_date_range(date_start, date_end, chunk_size)
 
-    for network in networks:
-        # This is Sydney time as the data is published in local time
-        today_midnight = get_last_complete_day_for_network(network)
+    semaphore = asyncio.Semaphore(max_workers)
 
-        date_max = today_midnight
-        date_min = today_midnight - timedelta(days=days)
+    async def process_chunk(chunk: tuple[datetime, datetime]):
+        async with semaphore:
+            start, end = chunk
+            async with SessionLocalAsync() as session:
+                if settings.dry_run:
+                    logger.debug(f"Dry run: Skipping calculation for {start} to {end}")
+                    return
 
-        regions = [i.code for i in get_network_regions(network)]
+                rows_updated = await _calculate_energy_for_interval(session, start, end)
+                logger.info(f"Processed chunk {start} to {end}. Rows updated: {rows_updated}")
 
-        if region:
-            regions = [region.upper()]
-
-        if network == NetworkAPVI:
-            regions = ["WEM"]
-
-        for ri in regions:
-            run_energy_calc(
-                date_min,
-                date_max,
-                network=network,
-                fueltech_id=fueltech,
-                region=ri,
-            )
+    tasks = [process_chunk(chunk) for chunk in chunks]
+    await asyncio.gather(*tasks)
 
 
-def run_energy_update_all(network: NetworkSchema = NetworkNEM, fueltech: str | None = None) -> None:
-    """Runs energy update for all regions and all years for one-off
-    inserts"""
-    if not network.data_first_seen:
-        raise Exception(f"Require a data_first_seen attribute for network {network.code}")
+async def _get_energy_start_end_dates() -> tuple[datetime, datetime]:
+    """
+    Get the start and end dates for energy calculations.
+    """
+    async with SessionLocalAsync() as session:
+        # Find the earliest date with null energy values
+        query = text("SELECT MIN(interval) FROM facility_scada WHERE energy IS NULL")
+        result = await session.execute(query)
+        start_date = result.scalar()
 
-    for year in range(DATE_CURRENT_YEAR, network.data_first_seen.year, -1):
-        run_energy_update_archive(year=year, fueltech=fueltech, network=network)
+        if not start_date:
+            raise Exception("No backlog to process.")
 
+        # Get the latest date in the facility_scada table
+        query = text("SELECT MAX(interval) FROM facility_scada")
+        result = await session.execute(query)
+        end_date = result.scalar()
 
-def run_energy_update_facility(facility_codes: list[str], network: NetworkSchema = NetworkNEM) -> None:
-    facility_seen_range = None
+        if not end_date:
+            raise Exception("No end date found.")
 
-    # catch me if you can
-    facility_seen_range = get_facility_seen_range(facility_codes)
-
-    if not facility_seen_range or not facility_seen_range.date_max or not facility_seen_range.date_min:
-        raise Exception("run_energy_update_facility requires a facility seen range")
-
-    run_energy_calc(
-        facility_seen_range.date_min,
-        facility_seen_range.date_max,
-        facility_codes=facility_codes,
-        network=network,
-    )
+    return start_date, end_date
 
 
-def _test_case() -> None:
-    """Run a test case so we can attach debugger"""
-    run_energy_calc(
-        date_min=datetime.fromisoformat("2020-12-31 23:50:00+10:00"),
-        date_max=datetime.fromisoformat("2021-02-01 00:10:00+10:00"),
-        network=NetworkNEM,
-        region="NSW1",
-        fueltech_id="coal_black",
-    )
+async def run_energy_backlog(date_start: datetime | None = None, date_end: datetime | None = None) -> None:
+    """
+    Run energy calculation for all historical data that hasn't been processed yet.
+    """
+
+    if date_start is None or date_end is None:
+        date_start_scada, date_end_scada = await _get_energy_start_end_dates()
+
+    if date_start is None:
+        date_start = date_start_scada
+
+    if date_end is None:
+        date_end = date_end_scada
+
+    logger.info(f"Processing backlog from {date_start} to {date_end}")
+
+    await _process_date_range(date_start=date_start, date_end=date_end)
 
 
-def run_energy_worker_for_year(year: int) -> None:
-    date_min = datetime.fromisoformat(f"{year}-01-01T00:00:00+10:00")
-    date_max = date_min + timedelta(days=1)
+# Example usage
+async def main():
+    # Process the most recent 5-minute interval
 
-    while True:
-        logger.info(f"Running for {date_min} => {date_max}")
-
-        if date_max > datetime.fromisoformat(f"{year + 1}-01-01T00:00:00+10:00"):
-            logger.info("Done")
-            break
-
-        run_energy_calc(
-            date_min,
-            date_max,
-            network=NetworkNEM,
-        )
-
-        date_min += timedelta(days=1)
-        date_max += timedelta(days=1)
+    # Run backlog
+    print("Processing backlog...")
+    date_end = datetime.fromisoformat("2024-01-01T00:00:00")
+    date_start = datetime.fromisoformat("2020-01-01T00:00:00")
+    await run_energy_backlog(date_start=date_start, date_end=date_end)
 
 
-# debug entry point
 if __name__ == "__main__":
-    run_energy_update_all(network=NetworkNEM)
+    asyncio.run(main())
