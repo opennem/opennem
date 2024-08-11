@@ -424,14 +424,15 @@ class FacilityScada(Base):
     generated = Column(Numeric, nullable=True)
     is_forecast = Column(Boolean, default=False, primary_key=True)
     eoi_quantity = Column(Numeric, nullable=True)
+    energy: Mapped[float] = mapped_column(Numeric, nullable=True)
     energy_quality_flag = Column(Numeric, nullable=False, default=0)
 
     __table_args__ = (
-        Index("idx_facility_scada_facility_code_trading_interval", "facility_code", "trading_interval", postgresql_using="btree"),
+        Index("idx_facility_scada_facility_code_interval", "facility_code", "interval", postgresql_using="btree"),
         Index("idx_facility_scada_network_id", "network_id"),
-        Index("idx_facility_scada_trading_interval_facility_code", "trading_interval", "facility_code"),
-        Index("idx_facility_scada_is_forecast_interval", "is_forecast", "trading_interval"),
-        Index("idx_facility_scada_network_interval", "network_id", "trading_interval", "is_forecast"),
+        Index("idx_facility_scada_interval_facility_code", "interval", "facility_code"),
+        Index("idx_facility_scada_is_forecast_interval", "is_forecast", "interval"),
+        Index("idx_facility_scada_network_interval", "network_id", "interval", "is_forecast"),
     )
 
     def __str__(self) -> str:
