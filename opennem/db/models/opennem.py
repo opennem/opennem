@@ -433,6 +433,7 @@ class FacilityScada(Base):
         Index("idx_facility_scada_interval_facility_code", "interval", "facility_code"),
         Index("idx_facility_scada_is_forecast_interval", "is_forecast", "interval"),
         Index("idx_facility_scada_network_interval", "network_id", "interval", "is_forecast"),
+        Index("idx_facility_scada_network_facility_interval", "network_id", "facility_code", "interval"),
     )
 
     def __str__(self) -> str:
