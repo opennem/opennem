@@ -17,8 +17,6 @@ from opennem.core.downloader import url_downloader
 from opennem.core.normalizers import normalize_duid
 from opennem.schema.aemo.mms import MMSBaseClass, get_mms_schema_for_table
 from opennem.schema.core import BaseConfig
-from opennem.schema.network import NetworkNEM
-from opennem.utils.dates import parse_date
 from opennem.utils.version import get_version
 
 _HAVE_PANDAS = False
@@ -247,8 +245,6 @@ class AEMOParserException(Exception):
 
 AEMO_ROW_HEADER_TYPES = ["C", "I", "D"]
 
-MMS_DATE_FIELDS = ["settlementdate", "tradinginterval", "lastchanged", "interval_datetime"]
-
 MMS_DUID_FIELDS = ["duid"]
 
 
@@ -342,10 +338,6 @@ def parse_aemo_mms_csv(
                 record = dict(zip(table_current.fieldnames, values, strict=True))
 
                 for field, fieldvalue in record.items():
-                    if field in MMS_DATE_FIELDS:
-                        fieldvalue_parsed = parse_date(fieldvalue, network=NetworkNEM)
-                        record[field] = fieldvalue_parsed
-
                     if field in MMS_DUID_FIELDS:
                         fieldvalue_parsed = normalize_duid(fieldvalue)
                         record[field] = fieldvalue_parsed
