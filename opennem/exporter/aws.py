@@ -73,7 +73,7 @@ class OpennemDataSetSerializeS3:
         return _write_response
 
 
-def write_statset_to_s3(stat_set: OpennemDataSet, file_path: str, exclude: set = None, exclude_unset: bool = False) -> int:
+def write_statset_to_s3(stat_set: OpennemDataSet, file_path: str, exclude: set | None = None, exclude_unset: bool = False) -> int:
     """
     Write an Opennem data set to an s3 bucket using boto
     """
