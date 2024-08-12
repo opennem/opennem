@@ -6,13 +6,17 @@ from sqlalchemy.types import DateTime
 
 class time_bucket_gapfill(FunctionElement):
     name = "time_bucket_gapfill"
+    inherit_cache = True
 
 
 @compiles(time_bucket_gapfill)
 def compile_time_bucket_gapfill(element, compiler, **kw):
     if len(element.clauses) < 2:
         raise ValueError("time_bucket_gapfill requires at least 2 arguments")
-    return "time_bucket_gapfill({})".format(", ".join(compiler.process(arg) for arg in element.clauses))
+    return (
+        f"time_bucket_gapfill({compiler.process(element.clauses.clauses[0])}::interval,"
+        f" {compiler.process(element.clauses.clauses[1])})"
+    )
 
 
 class date_part(expression.FunctionElement):
