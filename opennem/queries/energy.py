@@ -1,9 +1,14 @@
 """ """
 
 import logging
+from datetime import datetime
 from textwrap import dedent
+from typing import Any
+
+from sqlalchemy import text
 
 from opennem.controllers.output.schema import OpennemExportSeries
+from opennem.db import SessionLocal
 from opennem.queries.utils import networks_to_sql_in
 from opennem.schema.network import NetworkAPVI, NetworkAU, NetworkSchema, NetworkWEM
 
@@ -91,3 +96,58 @@ def energy_network_fueltech_query(
             coalesce_with=coalesce_with or "NULL",
         )
     )
+
+
+async def get_fueltech_generated_energy_emissions(
+    network: NetworkSchema, interval: str, date_start: datetime, date_end: datetime
+) -> Any:
+    """
+    Get the total generated energy emissions for a network
+    based on a year
+
+    :param network: The network to query
+    :param date_start: The start date
+    :param date_end: The end date
+    """
+
+    query = text(
+        f"""
+        SELECT
+            time_bucket_gapfill('{interval}', interval) AS interval,
+            f.network_id,
+            f.network_region,
+            ftg.code AS fueltech_id,
+            round(sum(fs.generated), 4) as fueltech_generated,
+            round(sum(fs.energy), 4) as fueltech_energy,
+            CASE
+                WHEN sum(fs.energy) > 0 THEN round(sum(f.emissions_factor_co2 * fs.energy), 4)
+                ELSE 0.0
+            END AS fueltech_emissions,
+            CASE
+                WHEN sum(fs.energy) > 0 THEN round(sum(f.emissions_factor_co2 * fs.energy) / sum(fs.energy), 4)
+                ELSE 0
+            END AS fueltech_emissions_intensity
+        FROM
+            facility_scada fs
+            JOIN facility f ON fs.facility_code = f.code
+            JOIN fueltech ft ON f.fueltech_id = ft.code
+            JOIN fueltech_group ftg ON ft.fueltech_group_id = ftg.code
+        WHERE
+            fs.is_forecast IS FALSE AND
+            f.fueltech_id IS NOT NULL AND
+            f.fueltech_id NOT IN ('imports', 'exports', 'interconnector') AND
+            f.network_id IN ('NEM', 'AEMO_ROOFTOP', 'AEMO_ROOFTOP_BACKFILL') AND
+            fs.interval >= :date_start AND
+            fs.interval < :date_end
+        GROUP BY
+            1, 2, 3, 4
+        ORDER BY
+            1 DESC, 2, 3, 4;
+    """
+    )
+
+    async with SessionLocal() as session:
+        result = await session.execute(query, {"date_start": date_start, "date_end": date_end})
+        rows = result.fetchall()
+
+    return rows
