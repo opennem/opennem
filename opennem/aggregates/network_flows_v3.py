@@ -617,7 +617,18 @@ def run_aggregate_flow_for_interval_v3(
 
 
 def run_aggregate_flows_per_interval_block(date_start: datetime, date_end: datetime, network: NetworkSchema) -> None:
-    """Run aggregate flows for a month"""
+    """Run aggregate flows in interval (7 day) blocks
+
+    This works **backwards** from the start date to the end date, calculating aggregate flows in 7 day blocks.
+
+    NOTE: If an aggregate calculation fails it will continue to the next block without raising an exception.
+    This can leave gaps in the flow data.
+
+    Args:
+        date_start (datetime): Start date to work backwards from
+        date_end (datetime): End date to calculate aggregate flows to. Must be **earlier** than date_start.
+        network (NetworkSchema): Network schema object
+    """
     interval_start = date_start
     interval_end = date_start - timedelta(days=1)
 
@@ -638,6 +649,29 @@ def run_aggregate_flows_per_interval_block(date_start: datetime, date_end: datet
             interval_end = date_end
 
     logger.info("Completed.")
+
+
+def run_flow_updates_all_for_network_v3(network: NetworkSchema) -> None:
+    """Run the entire emissions flow_v3 for a network
+
+    Args:
+        network (NetworkSchema): Network schema object
+
+    Raises:
+        FlowWorkerException: Errors if it can't find date of first seen data for the network
+    """
+    current_date = datetime.now().astimezone(tz=network.get_fixed_offset())
+
+    if not network.data_first_seen:
+        raise FlowWorkerException(f"No data first seen for network {network.code}")
+
+    # Calculate flows in 7-day blocks
+    # This is very confusing because the date_start is the end of the block - it works backwards...
+    run_aggregate_flows_per_interval_block(
+        date_end=network.data_first_seen,
+        date_start=current_date,
+        network=network,
+    )
 
 
 # debug entry point
