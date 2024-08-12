@@ -74,3 +74,11 @@ def make_naive(value: datetime, timezone: pytimezone | None = None) -> datetime:
         raise ValueError("make_naive() cannot be applied to a naive datetime")
 
     return value.astimezone(timezone).replace(tzinfo=None)
+
+
+def strip_timezone(value: datetime) -> datetime:
+    """Strip the timezone from a datetime.datetime."""
+    if is_naive(value):
+        raise ValueError("strip_timezone() cannot be applied to a naive datetime")
+
+    return value.replace(tzinfo=None)
