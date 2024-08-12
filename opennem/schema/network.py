@@ -241,6 +241,7 @@ NetworkWEMDE = NetworkSchema(
     subnetworks=[NetworkAPVI],
     fueltechs=all_fueltechs_without_rooftop,
     regions=["WEMDE"],
+    parent_network="WEM",
 )
 
 
