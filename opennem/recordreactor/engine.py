@@ -10,8 +10,8 @@ from opennem.recordreactor.buckets import BUCKET_SIZES, get_period_start_end, is
 from opennem.recordreactor.controllers.demand import run_price_demand_milestone_for_interval
 from opennem.recordreactor.controllers.generation import run_generation_energy_emissions_milestones
 from opennem.recordreactor.schema import MilestoneMetric
-from opennem.schema.network import NetworkNEM, NetworkWEM
-from opennem.utils.dates import get_last_completed_interval_for_network, make_aware_for_network
+from opennem.schema.network import NetworkNEM, NetworkWEM, NetworkWEMDE
+from opennem.utils.dates import get_last_completed_interval_for_network
 
 logger = logging.getLogger("opennem.recordreactor.engine")
 
@@ -30,23 +30,36 @@ async def run_milestone_engine(
 
     num_tasks = 14
 
-    for network in [NetworkNEM, NetworkWEM]:
+    for network in [NetworkNEM, NetworkWEM, NetworkWEMDE]:
         if not network.interval_size:
+            logger.info(f"Skipping {network.code} as it has no interval size")
+            continue
+
+        if not network.data_first_seen:
+            logger.info(f"Skipping {network.code} as it has no data first seen")
             continue
 
         logger.info(f"Processing price and demand milestone data network {network.code}")
 
         if not end_interval:
             end_interval = get_last_completed_interval_for_network(network)
-
-        start_interval = make_aware_for_network(start_interval, network)
-        end_interval = make_aware_for_network(end_interval, network)
+            logger.info(f"Set end interval for {network.code} to {end_interval}")
 
         current_interval = start_interval
         tasks = []
 
         while current_interval <= end_interval:
             # Process each bucket size for this interval
+
+            if network.data_last_seen and current_interval > network.data_last_seen.replace(tzinfo=None):
+                logger.info(f"Breaking at {current_interval} as it is after the last data seen for {network.code}")
+                break
+
+            if current_interval < network.data_first_seen.replace(tzinfo=None):
+                logger.info(f"Skipping {current_interval} as it is before the first data seen for {network.code}")
+                current_interval += timedelta(minutes=network.interval_size)
+                continue
+
             for bucket_size in BUCKET_SIZES:
                 if is_end_of_period(current_interval, bucket_size):
                     period_start, period_end = get_period_start_end(current_interval, bucket_size)
@@ -56,6 +69,7 @@ async def run_milestone_engine(
 
                     if MilestoneMetric.demand in milestone_metrics or MilestoneMetric.price in milestone_metrics:
                         task = run_price_demand_milestone_for_interval(
+                            network=network,
                             bucket_size=bucket_size,
                             period_start=period_start,
                             period_end=period_end,
@@ -72,16 +86,6 @@ async def run_milestone_engine(
                             bucket_size=bucket_size,
                             period_start=period_start,
                             period_end=period_end,
-                            fueltech_group=True,
-                        )
-                        tasks.append(task)
-
-                        task = run_generation_energy_emissions_milestones(
-                            network=network,
-                            bucket_size=bucket_size,
-                            period_start=period_start,
-                            period_end=period_end,
-                            fueltech_group=False,
                         )
                         tasks.append(task)
 
@@ -101,8 +105,6 @@ if __name__ == "__main__":
     import asyncio
 
     # 2018-02-26 23:50:00+10:00
-    asyncio.run(
-        run_milestone_engine(
-            start_interval=datetime.fromisoformat("2024-06-01 00:00:00"), milestone_metrics=[MilestoneMetric.energy]
-        )
-    )
+    start_interval = datetime.fromisoformat("2024-01-01 00:00:00")
+    end_interval = datetime.fromisoformat("2024-08-01 00:00:00")
+    asyncio.run(run_milestone_engine(start_interval=start_interval, end_interval=end_interval))
