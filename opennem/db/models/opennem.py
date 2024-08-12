@@ -434,6 +434,8 @@ class FacilityScada(Base):
         Index("idx_facility_scada_is_forecast_interval", "is_forecast", "interval"),
         Index("idx_facility_scada_network_interval", "network_id", "interval", "is_forecast"),
         Index("idx_facility_scada_network_facility_interval", "network_id", "facility_code", "interval"),
+        Index("facility_scada_new_interval_idx", "interval", unique=False, postgresql_ops={"interval": "DESC"}),
+        Index("idx_facility_scada_interval_network", "interval", "network_id", postgresql_ops={"interval": "DESC"}),
     )
 
     def __str__(self) -> str:
@@ -463,7 +465,13 @@ class BalancingSummary(Base):
 
     __table_args__ = (
         Index("idx_balancing_summary_network_id_interval", "network_id", "interval", postgresql_using="btree"),
-        Index("idx_balancing_summary_network_region_interval", "network_region", "interval", postgresql_using="btree"),
+        Index(
+            "idx_balancing_summary_interval_network_region",
+            "interval",
+            "network_id",
+            "network_region",
+            postgresql_ops={"interval": "DESC"},
+        ),
     )
 
 
