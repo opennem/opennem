@@ -596,9 +596,9 @@ class Milestones(Base):
     value = Column(Float, nullable=False)
     value_unit = Column(String, nullable=True)
     network_id = Column(Text, ForeignKey("network.code"), nullable=True)
-    network_region = Column(Text, nullable=True)
-    fueltech_id = Column(Text, nullable=True)
-    description = Column(String, nullable=True)
+    network_region: Mapped[str | None] = mapped_column(Text, nullable=True)
+    fueltech_id: Mapped[str | None] = mapped_column(Text, nullable=True)
+    description: Mapped[str | None] = mapped_column(String, nullable=True)
     description_long: Mapped[str] = mapped_column(String, nullable=True)
     previous_instance_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=True)
 
