@@ -56,21 +56,15 @@ class MilestoneSchema(BaseModel):
     metric: MilestoneMetric
     period: MilestonePeriod
     unit: UnitDefinition
-    network_id: NetworkSchema
+    network: NetworkSchema
     network_region: str | None = None
-    fueltech_id: FueltechSchema | str | None = None
-    fueltech_group_id: FueltechSchema | str | None = None
+    fueltech: FueltechSchema | None = None
 
     @computed_field
     @property
     def record_id(self) -> str:
         """calculate the record_id from the milestone record"""
         return get_milestone_record_id(self)
-
-    @property
-    def fueltech_label(self) -> str:
-        """get the fueltech label"""
-        return self.fueltech_id.label if self.fueltech_id else ""
 
 
 class MilestoneRecordSchema(BaseModel):
@@ -131,9 +125,9 @@ def get_milestone_record_id(
     """Get a record id"""
     record_id_components = [
         "au",
-        milestone.network_id.code,
+        milestone.network.parent_network or milestone.network.code,
         milestone.network_region,
-        milestone.fueltech_id,
+        milestone.fueltech,
         milestone.metric.value,
         milestone.period.value,
         milestone.aggregate.value,
@@ -143,3 +137,19 @@ def get_milestone_record_id(
     record_id = ".".join(filter(None, record_id_components)).lower()
 
     return record_id
+
+
+def get_milestone_period_from_bucket_size(bucket_size: str) -> MilestonePeriod:
+    """Get the milestone period from the bucket size"""
+    if bucket_size == "interval":
+        return MilestonePeriod.interval
+    elif bucket_size == "day":
+        return MilestonePeriod.day
+    elif bucket_size == "week":
+        return MilestonePeriod.week
+    elif bucket_size == "month":
+        return MilestonePeriod.month
+    elif bucket_size == "year":
+        return MilestonePeriod.year
+    else:
+        raise ValueError(f"Invalid bucket_size: {bucket_size}")
