@@ -103,4 +103,27 @@ def get_bucket_sql(bucket_size: str, field_name: str | None = None, extra: str =
 
     if bucket_size == "interval":
         return "trading_interval"
-    return f"date_trunc('{bucket_size}', {field_name} {extra})"
+
+    return f"time_bucket_gapfill('1 {bucket_size}', {field_name} {extra})"
+
+
+def get_bucket_interval(bucket_size: str, interval_size: int = 5) -> str:
+    """
+    Method to get the interval for a given bucket size.
+
+    Args:
+        bucket_size (str): The bucket size to get the interval for.
+
+    Returns:
+        str: The interval for the given bucket size.
+
+    Raises:
+        ValueError: If the bucket_size is not valid.
+    """
+    if bucket_size not in BUCKET_SIZES:
+        raise ValueError(f"Invalid bucket_size: {bucket_size}")
+
+    if bucket_size == "interval":
+        return f"{interval_size} minutes"
+
+    return f"1 {bucket_size}"
