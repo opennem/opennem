@@ -25,3 +25,15 @@ def compile_date_part(element, compiler, **kw):
     if len(element.clauses) != 2:
         raise ValueError("date_part requires exactly two arguments")
     return f"date_part({compiler.process(element.clauses[0])}, {compiler.process(element.clauses[1])})"
+
+
+class date_trunc(expression.FunctionElement):
+    type = DateTime()
+    name = "date_trunc"
+
+
+@compiles(date_trunc)
+def compile_date_trunc(element, compiler, **kw):
+    if len(element.clauses) != 2:
+        raise ValueError("date_trunc requires exactly two arguments")
+    return f"date_trunc({compiler.process(element.clauses[0])}, {compiler.process(element.clauses[1])})"
