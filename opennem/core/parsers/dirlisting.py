@@ -229,7 +229,7 @@ def parse_dirlisting_line(dirlisting_line: str) -> DirlistingEntry | None:
     model: DirlistingEntry | None = None
 
     if not matches:
-        logger.error(f"Could not match dirlisting line: {dirlisting_line}")
+        logger.warning(f"Could not match dirlisting line: {dirlisting_line}")
         return None
 
     try:
