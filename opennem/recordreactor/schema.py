@@ -9,6 +9,7 @@ from enum import Enum
 from pydantic import UUID4, BaseModel, Field, computed_field
 
 from opennem.schema.fueltech import FueltechSchema
+from opennem.schema.fueltech_group import FueltechGroupSchema
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.units import UnitDefinition
 
@@ -52,13 +53,15 @@ class MilestoneFueltech(str, Enum):
 
 
 class MilestoneSchema(BaseModel):
+    interval: datetime
     aggregate: MilestoneAggregate
     metric: MilestoneMetric
     period: MilestonePeriod
     unit: UnitDefinition
     network: NetworkSchema
     network_region: str | None = None
-    fueltech: FueltechSchema | None = None
+    fueltech: FueltechGroupSchema | None = None
+    value: int | float | None = None
 
     @computed_field
     @property
@@ -127,7 +130,7 @@ def get_milestone_record_id(
         "au",
         milestone.network.parent_network or milestone.network.code,
         milestone.network_region,
-        milestone.fueltech,
+        milestone.fueltech.code if milestone.fueltech else None,
         milestone.metric.value,
         milestone.period.value,
         milestone.aggregate.value,

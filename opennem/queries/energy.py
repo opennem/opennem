@@ -10,7 +10,7 @@ from sqlalchemy import text
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.db import SessionLocal
 from opennem.queries.utils import networks_to_sql_in
-from opennem.schema.network import NetworkAPVI, NetworkAU, NetworkSchema, NetworkWEM
+from opennem.schema.network import NetworkAPVI, NetworkAU, NetworkNEM, NetworkSchema, NetworkWEM, NetworkWEMDE
 
 logger = logging.getLogger("opennem.queries.energy")
 
@@ -99,7 +99,7 @@ def energy_network_fueltech_query(
 
 
 async def get_fueltech_generated_energy_emissions(
-    network: NetworkSchema, interval: str, date_start: datetime, date_end: datetime
+    network: NetworkSchema, interval: str, date_start: datetime, date_end: datetime, region_group: bool = False
 ) -> Any:
     """
     Get the total generated energy emissions for a network
@@ -110,12 +110,17 @@ async def get_fueltech_generated_energy_emissions(
     :param date_end: The end date
     """
 
+    network_region_query = "f.network_region as network_region," if region_group else ""
+    group_by = "1,2,3,4" if region_group else "1,2,3"
+    network_query = "'NEM','AEMO_ROOFTOP','AEMO_ROOFTOP_BACKFILL'" if network == NetworkNEM else "'WEM', 'WEMDE', 'APVI'"
+    network_region_filter_query = "f.network_region IN ('WEM', 'WEMDE') and " if network in [NetworkWEM, NetworkWEMDE] else ""
+
     query = text(
         f"""
         SELECT
             time_bucket_gapfill('{interval}', interval) AS interval,
             f.network_id,
-            f.network_region,
+            {network_region_query}
             ftg.code AS fueltech_id,
             round(sum(fs.generated), 4) as fueltech_generated,
             round(sum(fs.energy), 4) as fueltech_energy,
@@ -136,13 +141,14 @@ async def get_fueltech_generated_energy_emissions(
             fs.is_forecast IS FALSE AND
             f.fueltech_id IS NOT NULL AND
             f.fueltech_id NOT IN ('imports', 'exports', 'interconnector') AND
-            f.network_id IN ('NEM', 'AEMO_ROOFTOP', 'AEMO_ROOFTOP_BACKFILL') AND
+            f.network_id IN ({network_query}) AND
+            {network_region_filter_query}
             fs.interval >= :date_start AND
             fs.interval < :date_end
         GROUP BY
-            1, 2, 3, 4
+            {group_by}
         ORDER BY
-            1 DESC, 2, 3, 4;
+            1 DESC, 2, 3;
     """
     )
 

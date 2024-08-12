@@ -10,14 +10,17 @@ from opennem.recordreactor.buckets import BUCKET_SIZES, get_period_start_end, is
 from opennem.recordreactor.controllers.demand import run_price_demand_milestone_for_interval
 from opennem.recordreactor.controllers.generation import run_generation_energy_emissions_milestones
 from opennem.recordreactor.schema import MilestoneMetric
-from opennem.schema.network import NetworkNEM, NetworkWEM, NetworkWEMDE
+from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM, NetworkWEMDE
 from opennem.utils.dates import get_last_completed_interval_for_network
 
 logger = logging.getLogger("opennem.recordreactor.engine")
 
 
 async def run_milestone_engine(
-    start_interval: datetime, end_interval: datetime | None = None, milestone_metrics: list[MilestoneMetric] | None = None
+    start_interval: datetime,
+    end_interval: datetime | None = None,
+    milestone_metrics: list[MilestoneMetric] | None = None,
+    networks: list[NetworkSchema] | None = None,
 ):
     if not milestone_metrics:
         milestone_metrics = [
@@ -30,7 +33,11 @@ async def run_milestone_engine(
 
     num_tasks = 14
 
-    for network in [NetworkNEM, NetworkWEM, NetworkWEMDE]:
+    if not networks:
+        networks = [NetworkNEM, NetworkWEM, NetworkWEMDE]
+
+    # for network in [NetworkNEM, NetworkWEM, NetworkWEMDE]:
+    for network in networks:
         if not network.interval_size:
             logger.info(f"Skipping {network.code} as it has no interval size")
             continue
@@ -105,6 +112,13 @@ if __name__ == "__main__":
     import asyncio
 
     # 2018-02-26 23:50:00+10:00
-    start_interval = datetime.fromisoformat("2024-01-01 00:00:00")
+    start_interval = datetime.fromisoformat("2020-01-01 00:00:00")
     end_interval = datetime.fromisoformat("2024-08-01 00:00:00")
-    asyncio.run(run_milestone_engine(start_interval=start_interval, end_interval=end_interval))
+    asyncio.run(
+        run_milestone_engine(
+            start_interval=start_interval,
+            end_interval=end_interval,
+            # milestone_metrics=[MilestoneMetric.energy],
+            # networks=[NetworkNEM],
+        )
+    )

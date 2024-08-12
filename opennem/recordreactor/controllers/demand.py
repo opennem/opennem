@@ -8,10 +8,16 @@ from datetime import datetime
 from pydantic import BaseModel
 from sqlalchemy import text
 
+from opennem.core.units import get_unit
 from opennem.db import SessionLocalAsync
 from opennem.recordreactor.buckets import get_bucket_interval
 from opennem.recordreactor.persistence import persist_milestones
-from opennem.recordreactor.schema import MilestoneAggregate, MilestoneMetric
+from opennem.recordreactor.schema import (
+    MilestoneAggregate,
+    MilestoneMetric,
+    MilestoneSchema,
+    get_milestone_period_from_bucket_size,
+)
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.recordreactor.controllers.demand")
@@ -29,23 +35,24 @@ class MilestonesDemandPriceData(BaseModel):
 
 
 async def aggregate_demand_and_price_data(
-    network: NetworkSchema, bucket_size: str, start_date: datetime, end_date: datetime
-) -> list[dict]:
+    network: NetworkSchema, bucket_size: str, start_date: datetime, end_date: datetime, region_group: bool = False
+) -> list[MilestoneSchema]:
     bucket_sql = get_bucket_interval(bucket_size, interval_size=network.interval_size)
 
-    logger.info(f"Aggregating demand data bucket size {bucket_size} from {start_date} to {end_date}")
+    logger.info(f"Aggregating demand data for {network.code} bucket size {bucket_size} from {start_date}")
+
+    query_network_region = "network_region," if region_group else ""
+    group_by = "1,2,3" if region_group else "1,2"
 
     query = text(f"""
         SELECT
             time_bucket_gapfill('{bucket_sql}', interval) AS interval,
             network_id,
-            network_region,
+            {query_network_region}
             MIN(bs.demand_total) AS min_demand,
             MAX(bs.demand_total) AS max_demand,
-            SUM(bs.demand_total) AS total_demand,
             MIN(bs.price) AS min_price,
-            MAX(bs.price) AS max_price,
-            SUM(bs.price) AS total_price
+            MAX(bs.price) AS max_price
         FROM
             balancing_summary bs
         WHERE
@@ -53,10 +60,7 @@ async def aggregate_demand_and_price_data(
             bs.interval >= :start_date AND
             bs.interval < :end_date
         GROUP BY
-            1,2,3
-        ORDER BY
-            network_id,
-            network_region
+            {group_by}
     """)
 
     async with SessionLocalAsync() as session:
@@ -71,35 +75,87 @@ async def aggregate_demand_and_price_data(
 
         rows = result.fetchall()
 
-    return [
-        {
-            "bucket": row.interval,
-            "network_id": row.network_id,
-            "network_region": row.network_region,
-            "demand_low": row.min_demand,
-            "demand_high": row.max_demand,
-            "demand_sum": row.total_demand,
-            "price_low": row.min_price,
-            "price_high": row.max_price,
-            "price_sum": row.total_price,
-        }
-        for row in rows
-    ]
+    milestone_records: list[MilestoneSchema] = []
+
+    for row in rows:
+        milestone_records.append(
+            MilestoneSchema(
+                interval=row.interval,
+                aggregate=MilestoneAggregate.low,
+                metric=MilestoneMetric.demand,
+                period=get_milestone_period_from_bucket_size(bucket_size),
+                unit=get_unit("demand_mega"),
+                network=network,
+                network_region=row.network_region if region_group else None,
+                value=row.min_demand,
+            )
+        )
+
+        milestone_records.append(
+            MilestoneSchema(
+                interval=row.interval,
+                aggregate=MilestoneAggregate.high,
+                metric=MilestoneMetric.demand,
+                period=get_milestone_period_from_bucket_size(bucket_size),
+                unit=get_unit("demand_mega"),
+                network=network,
+                network_region=row.network_region if region_group else None,
+                value=row.max_demand,
+            )
+        )
+
+        milestone_records.append(
+            MilestoneSchema(
+                interval=row.interval,
+                aggregate=MilestoneAggregate.low,
+                metric=MilestoneMetric.price,
+                period=get_milestone_period_from_bucket_size(bucket_size),
+                unit=get_unit("market_value"),
+                network=network,
+                network_region=row.network_region if region_group else None,
+                value=row.min_price,
+            )
+        )
+
+        milestone_records.append(
+            MilestoneSchema(
+                interval=row.interval,
+                aggregate=MilestoneAggregate.high,
+                metric=MilestoneMetric.price,
+                period=get_milestone_period_from_bucket_size(bucket_size),
+                unit=get_unit("market_value"),
+                network=network,
+                network_region=row.network_region if region_group else None,
+                value=row.max_price,
+            )
+        )
+
+    return milestone_records
 
 
 async def run_price_demand_milestone_for_interval(
     network: NetworkSchema, bucket_size: str, period_start: datetime, period_end: datetime
 ):
-    aggregated_data = await aggregate_demand_and_price_data(
+    milestone_data = await aggregate_demand_and_price_data(
         network=network,
         bucket_size=bucket_size,
         start_date=period_start,
         end_date=period_end,
+        region_group=False,
     )
 
     await persist_milestones(
-        metrics=[MilestoneMetric.demand, MilestoneMetric.price],
-        aggregates=[MilestoneAggregate.high, MilestoneAggregate.low],
+        milestones=milestone_data,
+    )
+
+    milestone_data = await aggregate_demand_and_price_data(
+        network=network,
         bucket_size=bucket_size,
-        aggregated_data=aggregated_data,
+        start_date=period_start,
+        end_date=period_end,
+        region_group=True,
+    )
+
+    await persist_milestones(
+        milestones=milestone_data,
     )

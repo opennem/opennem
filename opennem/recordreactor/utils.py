@@ -33,9 +33,7 @@ def translate_bucket_size_to_english(bucket_size: str) -> str:
         return bucket_size
 
 
-def check_milestone_is_new(
-    milestone: MilestoneSchema, milestone_previous: MilestoneRecordSchema, data: dict[str, str | float]
-) -> bool:
+def check_milestone_is_new(milestone: MilestoneSchema, milestone_previous: MilestoneRecordSchema) -> bool:
     """
     Checks if the given milestone is new or has changed
 
@@ -48,17 +46,14 @@ def check_milestone_is_new(
     """
     _op = operator.gt if milestone.aggregate in [MilestoneAggregate.high] else operator.lt
 
-    data_key = f"{milestone.metric.value}_{milestone.aggregate.value}"
-    data_value = data[data_key]
-
-    if not data_value:
+    if not milestone.value:
         return False
 
-    return _op(data_value, milestone_previous.value)
+    return _op(milestone.value, milestone_previous.value)
 
 
 def get_record_description(
-    milestone: MilestoneRecordSchema,
+    milestone: MilestoneSchema,
     include_value: bool = False,
 ) -> str:
     """get a record description"""
@@ -66,7 +61,7 @@ def get_record_description(
         translate_bucket_size_to_english(milestone.period).capitalize() if milestone.period else None,
         f"{milestone.metric.value.lower()}" if milestone.metric else None,
         f"{milestone.aggregate.value.lower()}" if milestone.aggregate else None,
-        f"for {milestone.fueltech_id}" if milestone.fueltech_id else None,
+        f"for {milestone.fueltech.code}" if milestone.fueltech else None,
         "record for",
         milestone.network.code,
         # network region
@@ -76,7 +71,9 @@ def get_record_description(
         if milestone.network_region
         else None,
         # value
-        f"({round(milestone.value, 2)} {milestone.unit.value if milestone.unit else ''})" if include_value else None,
+        f"({round(milestone.value, 2) if milestone.value else ''} {milestone.unit.value if milestone.unit else ''})"
+        if include_value
+        else None,
     ]
 
     # remove empty items from record id components list and join with a period

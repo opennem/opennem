@@ -41,14 +41,14 @@ async def generate_milestone_map() -> dict[str, MilestoneSchema]:
                 metric=metric,
                 period=period,
                 unit=get_record_unit_by_metric(metric),
-                network_id=network,
+                network=network,
                 network_region=network_region,
-                fueltech_id=None,
+                fueltech=None,
                 fueltech_group_id=None,
             )
             milestone_records[milestone_schema.record_id] = milestone_schema
 
-            milestone_schema.fueltech_id = fueltech_id.value
+            milestone_schema.fueltech = fueltech_id.value
             milestone_schema.fueltech_group_id = fueltech_id.value
 
             milestone_records[milestone_schema.record_id] = milestone_schema
