@@ -37,30 +37,31 @@ class NetworkSchema(BaseConfig):
     offset: int | None = Field(None, description="Network time offset in minutes")
 
     interval_size: int = Field(..., description="Size of network interval in minutes")
-    interval_size_price: int | None = Field(None, description="Size of network price interval in minutes")
+    interval_size_price: int | None = None
 
-    interval_shift: int = Field(0, description="Size of reading shift in minutes")
+    interval_shift: int = 0
 
     # support hardcoded first seen
-    data_first_seen: datetime | None = Field(None, description="First data seen for this network")
-    data_last_seen: datetime | None = Field(None, description="First data seen for this network")
-    price_first_seen: datetime | None = Field(None, description="First price seen for this network")
-    interconnector_first_seen: datetime | None = Field(None, description="First interconnector seen for this network")
-    rooftop_first_seen: datetime | None = Field(None, description="First rooftop seen for this network")
+    data_first_seen: datetime | None = None
+    data_last_seen: datetime | None = None
+    price_first_seen: datetime | None = None
+    interconnector_first_seen: datetime | None = None
+    rooftop_first_seen: datetime | None = None
 
     # monitoring settings
     # in minutes, after how long to alert on delays for this network
-    monitor_interval_alert_threshold: int | None = Field(None, description="Alert threshold for network interval")
+    monitor_interval_alert_threshold: int | None = None
 
     # additional networks that make up this network
     # ex. ROOFTOP, APVI etc.
-    subnetworks: list["NetworkSchema"] | None = Field(None, description="Subnetworks for this network")
+    subnetworks: list["NetworkSchema"] | None = None
+    parent_network: str | None = None
 
     # fueltechs provided by this network
     fueltechs: list[str] | None = Field(None, description="Fueltechs provided by this network")
 
     # Does the network have flows
-    has_interconnectors: bool = Field(False, description="Network has interconnectors")
+    has_interconnectors: bool = False
 
     # list of network regions
     regions: list[str] | None = None
@@ -132,6 +133,7 @@ NetworkAPVI = NetworkSchema(
     interval_size=15,
     data_first_seen=datetime.fromisoformat("2015-03-19 20:15:00+00"),
     fueltechs=["solar_rooftop"],
+    parent_network="WEM",
 )
 
 
@@ -146,6 +148,7 @@ NetworkAEMORooftop = NetworkSchema(
     data_first_seen=datetime.fromisoformat("2018-03-01T00:00:00+10:00"),
     fueltechs=["solar_rooftop"],
     regions=["NSW1", "QLD1", "SA1", "TAS1", "VIC1"],
+    parent_network="NEM",
 )
 
 # This is the network for derived solar_rooftop data
@@ -163,6 +166,7 @@ NetworkAEMORooftopBackfill = NetworkSchema(
     data_first_seen=datetime.fromisoformat("2005-04-01T00:00:00+10:00"),
     fueltechs=["solar_rooftop"],
     regions=["NSW1", "QLD1", "SA1", "TAS1", "VIC1"],
+    parent_network="NEM",
 )
 
 # This is the new backfill network derived from APVI data
@@ -179,6 +183,7 @@ NetworkOpenNEMRooftopBackfill = NetworkSchema(
     data_last_seen=datetime.fromisoformat("2018-02-28T00:00:00+10:00"),
     data_first_seen=datetime.fromisoformat("2015-03-19T00:00:00+10:00"),
     regions=["NSW1", "QLD1", "SA1", "TAS1", "VIC1"],
+    parent_network="NEM",
 )
 
 NetworkNEM = NetworkSchema(
