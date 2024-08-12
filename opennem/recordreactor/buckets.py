@@ -99,7 +99,7 @@ def get_bucket_sql(bucket_size: str, field_name: str | None = None, extra: str =
         raise ValueError(f"Invalid bucket_size: {bucket_size}")
 
     if not field_name:
-        field_name = "trading_interval"
+        field_name = "interval"
 
     if bucket_size == "interval":
         return "trading_interval"
