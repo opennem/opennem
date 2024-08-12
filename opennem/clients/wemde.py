@@ -17,7 +17,7 @@ from pydantic import ValidationError
 from opennem.persistence.schema import SchemaBalancingSummary, SchemaFacilityScada
 from opennem.utils.archive import download_and_parse_json_zip
 
-logger = logging.getLogger("opennem.client.wem")
+logger = logging.getLogger("opennem.client.wemde")
 
 # Old URL
 # _AEMO_WEM_LIVE_SCADA_URL = "https://aemo.com.au/aemo/data/wa/infographic/facility-intervals-last96.csv"
@@ -65,7 +65,7 @@ def wemde_parse_facilityscada(url: str) -> list[SchemaFacilityScada]:
         try:
             m = SchemaFacilityScada(
                 **{
-                    "network_id": "WEM",
+                    "network_id": "WEMDE",
                     "trading_interval": entry.get("dispatchInterval"),
                     "facility_code": entry.get("code"),
                     "generated": entry.get("quantity", 0),
@@ -103,10 +103,10 @@ def wemde_parse_trading_price(url: str) -> list[SchemaBalancingSummary]:
         try:
             m = SchemaBalancingSummary(
                 **{
-                    "network_id": "WEM",
+                    "network_id": "WEMDE",
                     "trading_interval": entry.get("tradingInterval"),
                     "price": entry.get("referenceTradingPrice", 0),
-                    "network_region": "WEM",
+                    "network_region": "WEMDE",
                 }
             )
             models.append(m)
