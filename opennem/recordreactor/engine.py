@@ -57,7 +57,6 @@ async def run_milestone_engine(
     if not periods:
         periods = _DEFAULT_BUCKET_SIZES
 
-    # for network in [NetworkNEM, NetworkWEM, NetworkWEMDE]:
     for network in networks:
         if not network.interval_size:
             logger.info(f"Skipping {network.code} as it has no interval size")
@@ -77,8 +76,6 @@ async def run_milestone_engine(
         tasks = []
 
         while current_interval <= end_interval:
-            # Process each bucket size for this interval
-
             # don't process the network data if it is after the last data seen
             if network.data_last_seen and current_interval > network.data_last_seen.replace(tzinfo=None):
                 logger.info(f"Breaking at {current_interval} as it is after the last data seen for {network.code}")
@@ -91,34 +88,32 @@ async def run_milestone_engine(
                 continue
 
             for bucket_size in periods:
-                if is_end_of_period(current_interval, bucket_size):
-                    period_start, period_end = get_period_start_end(dt=current_interval, bucket_size=bucket_size, network=network)
-                    logger.debug(f"Processing {current_interval} {bucket_size} {period_start} to {period_end} for {network.code}")
+                if not is_end_of_period(current_interval, bucket_size):
+                    continue
 
-                    if settings.dry_run:
-                        continue
+                period_start, period_end = get_period_start_end(dt=current_interval, bucket_size=bucket_size, network=network)
+                logger.debug(f"Processing {current_interval} {bucket_size} {period_start} to {period_end} for {network.code}")
 
-                    if MilestoneMetric.demand in metrics or MilestoneMetric.price in metrics:
-                        task = run_price_demand_milestone_for_interval(
-                            network=network,
-                            bucket_size=bucket_size,
-                            period_start=period_start,
-                            period_end=period_end,
-                        )
-                        tasks.append(task)
+                if settings.dry_run:
+                    continue
 
-                    if (
-                        MilestoneMetric.power in metrics
-                        or MilestoneMetric.energy in metrics
-                        or MilestoneMetric.emissions in metrics
-                    ):
-                        task = run_generation_energy_emissions_milestones(
-                            network=network,
-                            bucket_size=bucket_size,
-                            period_start=period_start,
-                            period_end=period_end,
-                        )
-                        tasks.append(task)
+                if MilestoneMetric.demand in metrics or MilestoneMetric.price in metrics:
+                    task = run_price_demand_milestone_for_interval(
+                        network=network,
+                        bucket_size=bucket_size,
+                        period_start=period_start,
+                        period_end=period_end,
+                    )
+                    tasks.append(task)
+
+                if MilestoneMetric.power in metrics or MilestoneMetric.energy in metrics or MilestoneMetric.emissions in metrics:
+                    task = run_generation_energy_emissions_milestones(
+                        network=network,
+                        bucket_size=bucket_size,
+                        period_start=period_start,
+                        period_end=period_end,
+                    )
+                    tasks.append(task)
 
             # Move to the next interval
             current_interval += timedelta(minutes=network.interval_size)
@@ -136,13 +131,11 @@ async def run_milestone_engine(
 if __name__ == "__main__":
     import asyncio
 
-    start_interval = datetime.fromisoformat("2024-01-01 00:00:00")
-    end_interval = datetime.fromisoformat("2024-01-01 00:00:00")
+    start_interval = datetime.fromisoformat("2020-01-01 00:00:00")
+    end_interval = datetime.fromisoformat("2024-08-07 00:00:00")
     asyncio.run(
         run_milestone_engine(
             start_interval=start_interval,
             end_interval=end_interval,
-            metrics=[MilestoneMetric.energy],
-            networks=[NetworkNEM],
         )
     )
