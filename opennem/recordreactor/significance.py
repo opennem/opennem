@@ -36,12 +36,12 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
     # Period significance
     period_scores = {
         MilestonePeriod.interval: 1,
-        MilestonePeriod.day: 3,
-        MilestonePeriod.week: 4,
-        MilestonePeriod.month: 6,
-        MilestonePeriod.quarter: 8,
+        MilestonePeriod.day: 9,
+        MilestonePeriod.week: 2,
+        MilestonePeriod.month: 9,
+        MilestonePeriod.quarter: 5,
         MilestonePeriod.year: 10,
-        MilestonePeriod.financial_year: 9,
+        MilestonePeriod.financial_year: 4,
     }
     period_score = period_scores[milestone.period] * MilestoneSignificanceWeights.PERIOD.value
 
@@ -50,7 +50,7 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
         MilestoneMetric.demand: 4,
         MilestoneMetric.price: 6,
         MilestoneMetric.power: 5,
-        MilestoneMetric.energy: 8,
+        MilestoneMetric.energy: 9,
         MilestoneMetric.emissions: 9,
     }
     metric_score = metric_scores[milestone.metric] * MilestoneSignificanceWeights.METRIC.value
