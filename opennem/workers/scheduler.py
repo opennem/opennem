@@ -10,6 +10,7 @@ Primary scheduler runs:
 import logging
 
 from huey import PriorityRedisHuey, crontab
+from huey.serializer import Serializer
 
 from opennem import settings
 from opennem.api.export.map import PriorityType
@@ -34,7 +35,7 @@ from opennem.workers.facility_data_ranges import update_facility_seen_range
 from opennem.workers.network_data_range import run_network_data_range_update
 from opennem.workers.system import clean_tmp_dir
 
-huey = PriorityRedisHuey("opennem.scheduler", url=str(settings.redis_url))
+huey = PriorityRedisHuey("opennem.scheduler", url=str(settings.redis_url), serializer=Serializer())
 
 logger = logging.getLogger("openenm.scheduler")
 
