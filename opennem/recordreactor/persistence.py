@@ -35,6 +35,7 @@ async def persist_milestones(
                     continue
 
                 description = get_record_description(record)
+                significance = calculate_milestone_significance(record)
 
                 milestone_new = Milestones(
                     record_id=record.record_id,
@@ -42,7 +43,7 @@ async def persist_milestones(
                     aggregate=record.aggregate.value,
                     metric=record.metric.value,
                     period=record.period.value,
-                    significance=1,
+                    significance=significance,
                     value=record.value,
                     value_unit=record.unit.value,
                     network_id=record.network.code,
@@ -55,8 +56,6 @@ async def persist_milestones(
 
                 if record.fueltech:
                     milestone_new.fueltech_id = record.fueltech.code
-
-                significance = calculate_milestone_significance(record)
 
                 try:
                     milestone_new = await session.merge(milestone_new)
