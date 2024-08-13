@@ -1,5 +1,5 @@
 """
-RecordReactor demand methods
+RecordReactor peristence methods
 """
 
 import logging
