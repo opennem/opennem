@@ -13,11 +13,10 @@ def _load_fueltech_groups() -> list[FueltechGroupSchema]:
     fixture = load_data("fueltech_groups.json", from_fixture=True)
 
     fueltechs = []
-    f: dict | None = None
 
     for f in fixture:
-        _f = FueltechGroupSchema(**f)
-        fueltechs.append(_f)
+        fueltech_group_model = FueltechGroupSchema(**f)
+        fueltechs.append(fueltech_group_model)
 
     return fueltechs
 
@@ -35,3 +34,7 @@ def get_fueltech_group(code: str) -> FueltechGroupSchema:
 
 
 ALL_FUELTECH_GROUP_CODES = [i.code for i in _FUELTECH_GROUPS]
+
+if __name__ == "__main__":
+    fueltech = get_fueltech_group("coal")
+    print(fueltech)

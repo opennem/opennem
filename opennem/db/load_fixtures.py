@@ -13,7 +13,6 @@ from sqlalchemy import and_, select
 from opennem.core.loader import load_data
 from opennem.db import SessionLocalAsync
 from opennem.db.models.opennem import BomStation, FacilityStatus, FuelTech, FuelTechGroup, Network, NetworkRegion
-from opennem.importer.rooftop import rooftop_facilities
 
 logger = logging.getLogger("opennem.db.load_fixtures")
 
@@ -45,6 +44,7 @@ async def load_fueltechs() -> None:
 
             fueltech_group.label = ftg.get("label")
             fueltech_group.color = ftg.get("color")
+            fueltech_group.renewable = ftg.get("renewable", False)
 
             try:
                 session.add(fueltech_group)
@@ -298,11 +298,11 @@ async def load_bom_stations_json() -> None:
 
 async def load_fixtures() -> None:
     await load_fueltechs()
-    await load_facilitystatus()
-    await load_networks()
-    await load_network_regions()
-    await load_bom_stations_json()
-    await rooftop_facilities()
+    # await load_facilitystatus()
+    # await load_networks()
+    # await load_network_regions()
+    # await load_bom_stations_json()
+    # await rooftop_facilities()
 
 
 if __name__ == "__main__":

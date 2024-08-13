@@ -23,6 +23,7 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
+    false,
     func,
 )
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP, UUID
@@ -127,6 +128,7 @@ class FuelTechGroup(Base, BaseModel):
     code = Column(Text, primary_key=True)
     label = Column(Text, nullable=True)
     color = Column(Text, nullable=True)
+    renewable: Mapped[bool] = mapped_column(Boolean, default=False, server_default=false())
 
 
 class FuelTech(Base, BaseModel):

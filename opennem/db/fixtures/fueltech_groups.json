@@ -1,52 +1,62 @@
 [
-  {
-    "code": "coal",
-    "label": "Coal",
-    "color": "#4a4a4a"
-  },
-  {
-    "code": "gas",
-    "label": "Gas",
-    "color": "#FF8813"
-  },
-  {
-    "code": "wind",
-    "label": "Wind",
-    "color": "#417505"
-  },
-  {
-    "code": "solar",
-    "label": "Solar",
-    "color": "#FED500"
-  },
-  {
-    "code": "battery_charging",
-    "label": "Battery (Charging)",
-    "color": "#B2DAEF"
-  },
-  {
-    "code": "battery_discharging",
-    "label": "Battery (Discharging)",
-    "color": "#00A2FA"
-  },
-  {
-    "code": "hydro",
-    "label": "Hyrdo",
-    "color": "#4582B4"
-  },
-  {
-    "code": "distillate",
-    "label": "Distillate",
-    "color": "#F35020"
-  },
-  {
-    "code": "bioenergy",
-    "label": "Bioenergy",
-    "color": "#A3886F"
-  },
-  {
-    "code": "pumps",
-    "label": "Pumps",
-    "color": "#88AFD0"
-  }
+    {
+        "code": "coal",
+        "label": "Coal",
+        "color": "#4a4a4a",
+        "renewable": false
+    },
+    {
+        "code": "gas",
+        "label": "Gas",
+        "color": "#FF8813",
+        "renewable": false
+    },
+    {
+        "code": "wind",
+        "label": "Wind",
+        "color": "#417505",
+        "renewable": true
+    },
+    {
+        "code": "solar",
+        "label": "Solar",
+        "color": "#FED500",
+        "renewable": true
+    },
+    {
+        "code": "battery_charging",
+        "label": "Battery (Charging)",
+        "color": "#B2DAEF",
+        "renewable": true
+    },
+    {
+        "code": "battery_discharging",
+        "label": "Battery (Discharging)",
+        "color": "#00A2FA",
+        "renewable": true
+    },
+    {
+        "code": "hydro",
+        "label": "Hyrdo",
+        "color": "#4582B4",
+        "renewable": true
+    },
+    {
+        "code": "distillate",
+        "label": "Distillate",
+        "color": "#F35020",
+        "renewable": false
+    },
+    {
+        "code": "bioenergy",
+        "label": "Bioenergy",
+        "color": "#A3886F",
+        "renewable": false
+    },
+    {
+        "code": "pumps",
+        "label": "Pumps",
+        "color": "#88AFD0",
+        "renewable": true
+    }
 ]
