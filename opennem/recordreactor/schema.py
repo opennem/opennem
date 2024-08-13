@@ -38,19 +38,6 @@ class MilestonePeriod(str, Enum):
     financial_year = "financial_year"
 
 
-class MilestoneFueltech(str, Enum):
-    coal = "coal"
-    gas = "gas"
-    wind = "wind"
-    solar = "solar"
-    battery_charging = "battery_charging"
-    battery_discharging = "battery_discharging"
-    hydro = "hydro"
-    distillate = "distillate"
-    biomass = "biomass"
-    pumped = "pumps"
-
-
 class MilestoneRecordSchema(BaseModel):
     interval: datetime
     aggregate: MilestoneAggregate
