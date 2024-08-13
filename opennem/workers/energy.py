@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem import settings
 from opennem.db import SessionLocalAsync
+from opennem.utils.dates import get_today_opennem
 
 logger = logging.getLogger("opennem.workers.energy")
 
@@ -60,7 +61,7 @@ async def _calculate_energy_for_interval(session: AsyncSession, start_time: date
     return result.rowcount
 
 
-async def run_energy_calculation(interval: datetime) -> int:
+async def run_energy_calculation_for_interval(interval: datetime) -> int:
     """
     Run energy calculation for a single interval.
     This method is intended to be called by a cron job every 5 minutes.
@@ -74,6 +75,22 @@ async def run_energy_calculation(interval: datetime) -> int:
             return 0
 
         return await _calculate_energy_for_interval(session, start_time, end_time)
+
+
+async def process_energy_from_now(interval: timedelta = timedelta(hours=2)) -> None:
+    """
+    Process energy calculations from now.
+
+    Defaults to running the last 2 hours.
+    """
+
+    async with SessionLocalAsync() as session:
+        end_time = get_today_opennem().replace(tzinfo=None)
+        start_time = end_time - interval
+
+        logger.info(f"Processing energy calculations from {start_time} to {end_time}")
+
+        await _calculate_energy_for_interval(session=session, start_time=start_time, end_time=end_time)
 
 
 def _chunk_date_range(start_date: datetime, end_date: datetime, chunk_size: timedelta) -> list[tuple[datetime, datetime]]:
@@ -143,8 +160,7 @@ async def run_energy_backlog(date_start: datetime | None = None, date_end: datet
     Run energy calculation for all historical data that hasn't been processed yet.
     """
 
-    if date_start is None or date_end is None:
-        date_start_scada, date_end_scada = await _get_energy_start_end_dates()
+    date_start_scada, date_end_scada = await _get_energy_start_end_dates()
 
     if date_start is None:
         date_start = date_start_scada
@@ -163,9 +179,10 @@ async def main():
 
     # Run backlog
     print("Processing backlog...")
-    date_start = datetime.fromisoformat("1999-12-07T00:00:00")
-    date_end = datetime.fromisoformat("2020-01-01T00:00:00")
+    date_start = datetime.fromisoformat("2024-08-10 00:00:00")
+    date_end = get_today_opennem().replace(tzinfo=None)
     await run_energy_backlog(date_start=date_start, date_end=date_end)
+    await process_energy_from_now()
 
 
 if __name__ == "__main__":

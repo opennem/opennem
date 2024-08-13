@@ -14,7 +14,6 @@ from huey import PriorityRedisHuey, crontab
 from opennem import settings
 from opennem.api.export.map import PriorityType
 from opennem.api.export.tasks import export_electricitymap, export_flows, export_power
-from opennem.core.profiler import cleanup_database_task_profiles_basedon_retention
 from opennem.core.startup import worker_startup_alert
 from opennem.crawl import run_crawl
 from opennem.crawlers.bom import BOMCapitals
@@ -156,6 +155,17 @@ async def schedule_export_geojson() -> None:
 
 
 # worker tasks
+@huey.periodic_task(crontab(hour="*/1", minute="15"), name="run_energy_calculation_for_interval")
+@huey.lock_task("run_energy_calculation_for_interval")
+@run_async_task_reusable
+async def run_energy_calculation_for_interval() -> None:
+    """
+    Run energy calculation for a single interval.
+    This method is intended to be called by a cron job every 5 minutes.
+    """
+    await run_energy_calculation_for_interval()
+
+
 @huey.periodic_task(crontab(hour="20", minute="45"), name="schedule_facility_first_seen_check")
 @huey.lock_task("schedule_facility_first_seen_check")
 @run_async_task_reusable
@@ -178,10 +188,3 @@ async def run_run_network_data_range_update() -> None:
 @huey.lock_task("run_clean_tmp_dir")
 def run_clean_tmp_dir() -> None:
     clean_tmp_dir()
-
-
-@huey.periodic_task(crontab(hour="22", minute="55"), name="run_cleanup_database_task_profiles_basedon_retention")
-@huey.lock_task("run_cleanup_database_task_profiles_basedon_retention")
-@run_async_task_reusable
-async def run_cleanup_database_task_profiles_basedon_retention() -> None:
-    await cleanup_database_task_profiles_basedon_retention()
