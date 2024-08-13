@@ -8,6 +8,7 @@ import logging
 from contextlib import asynccontextmanager
 
 import fastapi
+import logfire
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.param_functions import Query
@@ -70,6 +71,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="OpenNEM", debug=settings.debug, version=get_version(), redoc_url="/docs", docs_url=None, lifespan=lifespan)
 
+logfire.instrument_fastapi(app)
 
 # @TODO put CORS available/permissions in settings
 origins = [

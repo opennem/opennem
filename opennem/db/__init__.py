@@ -55,6 +55,7 @@ def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int
             pool_pre_ping=True,
             pool_use_lifo=True,
         )
+
         return _engine
     except Exception as exc:
         logger.error("Could not connect to database: %s", exc)

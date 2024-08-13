@@ -34,6 +34,7 @@ from datetime import datetime
 from pathlib import Path
 from platform import platform
 
+import logfire
 from rich.console import Console
 from rich.prompt import Prompt
 
@@ -62,6 +63,9 @@ __env__ = "prod"
 __package__ = "opennem"
 
 # Check minimum required Python version
+
+# logfire
+logfire.configure()
 
 # console
 console = Console()
