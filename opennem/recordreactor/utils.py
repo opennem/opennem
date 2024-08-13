@@ -58,11 +58,12 @@ def get_record_description(
     include_value: bool = False,
 ) -> str:
     """get a record description"""
+
     record_description_components = [
         translate_bucket_size_to_english(milestone.period).capitalize() if milestone.period else None,
+        f"{milestone.fueltech.label.lower()}" if milestone.fueltech else None,
         f"{milestone.metric.value.lower()}" if milestone.metric else None,
         f"{milestone.aggregate.value.lower()}" if milestone.aggregate else None,
-        f"for {milestone.fueltech.label}" if milestone.fueltech else None,
         "record for",
         milestone.network.code,
         # network region

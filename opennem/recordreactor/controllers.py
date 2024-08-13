@@ -98,7 +98,7 @@ def map_milestone_output_schema_to_record(milestone: MilestoneRecordOutputSchema
         "aggregate": MilestoneAggregate(milestone.aggregate),
         "metric": MilestoneMetric(milestone.metric),
         "period": MilestonePeriod(milestone.period),
-        "unit": MilestonePeriod(milestone.value_unit),
+        "unit": get_unit_by_value(milestone.value_unit),
         "network": network_from_network_code(milestone.network_id),
         "value": milestone.value,
     }
@@ -107,7 +107,7 @@ def map_milestone_output_schema_to_record(milestone: MilestoneRecordOutputSchema
         milestone_record["network_region"] = milestone.network_region
 
     if milestone.fueltech_id:
-        milestone_record["fueltech_id"] = get_fueltech_group(milestone.fueltech_id)
+        milestone_record["fueltech"] = get_fueltech_group(milestone.fueltech_id)
 
     milestone_model = MilestoneRecordSchema(**milestone_record)
     return milestone_model
