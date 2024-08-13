@@ -72,6 +72,8 @@ async def get_current_milestone_state_from_database() -> dict[str, MilestoneReco
                 description=row[12],
             )
 
+    logger.info(f"Loaded {len(result_dict)} milestone records from database")
+
     return result_dict
 
 

@@ -65,6 +65,8 @@ async def persist_milestones(
                     # update state to point to this new milestone
                     milestone_state[record.record_id] = MilestoneRecordOutputSchema(
                         **record.model_dump(),
+                        network_id=record.network.code,
+                        value_unit=record.unit.value,
                         instance_id=milestone_new.instance_id,
                         significance=significance,
                     )

@@ -15,6 +15,7 @@ from opennem.recordreactor.persistence import persist_milestones
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
     MilestoneMetric,
+    MilestonePeriod,
     MilestoneRecordSchema,
     get_milestone_period_from_bucket_size,
 )
@@ -35,7 +36,7 @@ class MilestonesDemandPriceData(BaseModel):
 
 
 async def aggregate_demand_and_price_data(
-    network: NetworkSchema, bucket_size: str, start_date: datetime, end_date: datetime, region_group: bool = False
+    network: NetworkSchema, bucket_size: MilestonePeriod, start_date: datetime, end_date: datetime, region_group: bool = False
 ) -> list[MilestoneRecordSchema]:
     bucket_sql = get_bucket_interval(bucket_size, interval_size=network.interval_size)
 
