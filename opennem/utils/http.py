@@ -14,6 +14,7 @@ from typing import Any
 from urllib.parse import urlparse
 from urllib.request import Request
 
+import logfire
 import requests
 import urllib3
 from requests.adapters import HTTPAdapter
@@ -23,6 +24,8 @@ from opennem import settings
 from opennem.utils.version import get_version
 
 urllib3.disable_warnings()
+
+logfire.instrument_requests()
 
 logger = logging.getLogger("opennem.utils.http")
 

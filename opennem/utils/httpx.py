@@ -4,9 +4,12 @@ import logging
 
 import chardet
 import httpx
+import logfire
 from httpx import AsyncClient, AsyncHTTPTransport
 
 from opennem import __version__, settings
+
+logfire.instrument_httpx()
 
 logger = logging.getLogger("opennem.utils.httpx")
 
