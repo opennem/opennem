@@ -15,7 +15,7 @@ from opennem.recordreactor.persistence import persist_milestones
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
     MilestoneMetric,
-    MilestoneSchema,
+    MilestoneRecordSchema,
     get_milestone_period_from_bucket_size,
 )
 from opennem.schema.network import NetworkSchema
@@ -36,7 +36,7 @@ class MilestonesDemandPriceData(BaseModel):
 
 async def aggregate_demand_and_price_data(
     network: NetworkSchema, bucket_size: str, start_date: datetime, end_date: datetime, region_group: bool = False
-) -> list[MilestoneSchema]:
+) -> list[MilestoneRecordSchema]:
     bucket_sql = get_bucket_interval(bucket_size, interval_size=network.interval_size)
 
     logger.info(f"Aggregating demand data for {network.code} bucket size {bucket_size} from {start_date}")
@@ -75,11 +75,11 @@ async def aggregate_demand_and_price_data(
 
         rows = result.fetchall()
 
-    milestone_records: list[MilestoneSchema] = []
+    milestone_records: list[MilestoneRecordSchema] = []
 
     for row in rows:
         milestone_records.append(
-            MilestoneSchema(
+            MilestoneRecordSchema(
                 interval=row.interval,
                 aggregate=MilestoneAggregate.low,
                 metric=MilestoneMetric.demand,
@@ -92,7 +92,7 @@ async def aggregate_demand_and_price_data(
         )
 
         milestone_records.append(
-            MilestoneSchema(
+            MilestoneRecordSchema(
                 interval=row.interval,
                 aggregate=MilestoneAggregate.high,
                 metric=MilestoneMetric.demand,
@@ -105,7 +105,7 @@ async def aggregate_demand_and_price_data(
         )
 
         milestone_records.append(
-            MilestoneSchema(
+            MilestoneRecordSchema(
                 interval=row.interval,
                 aggregate=MilestoneAggregate.low,
                 metric=MilestoneMetric.price,
@@ -118,7 +118,7 @@ async def aggregate_demand_and_price_data(
         )
 
         milestone_records.append(
-            MilestoneSchema(
+            MilestoneRecordSchema(
                 interval=row.interval,
                 aggregate=MilestoneAggregate.high,
                 metric=MilestoneMetric.price,

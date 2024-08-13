@@ -11,14 +11,14 @@ from sqlalchemy import text
 from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit_by_value
 from opennem.db import SessionLocal
-from opennem.recordreactor.schema import MilestoneRecordSchema
+from opennem.recordreactor.schema import MilestoneRecordOutputSchema
 
 logger = logging.getLogger("opennem.recordreactor.state")
 
-_CURRENT_MILESTONE_STATE: dict[str, MilestoneRecordSchema] | None = None
+_CURRENT_MILESTONE_STATE: dict[str, MilestoneRecordOutputSchema] | None = None
 
 
-async def get_current_milestone_state_from_database() -> dict[str, MilestoneRecordSchema]:
+async def get_current_milestone_state_from_database() -> dict[str, MilestoneRecordOutputSchema]:
     """
     Gets the most recent milestone for each record_id and returns them in a dict keyed by record_id
 
@@ -26,7 +26,7 @@ async def get_current_milestone_state_from_database() -> dict[str, MilestoneReco
         dict[str, MilestoneRecord]: A dictionary of milestone records keyed by record_id
 
     """
-    result_dict: dict[str, MilestoneRecordSchema] = {}
+    result_dict: dict[str, MilestoneRecordOutputSchema] = {}
 
     async with SessionLocal() as session:
         query = text("""
@@ -58,7 +58,7 @@ async def get_current_milestone_state_from_database() -> dict[str, MilestoneReco
         result = await session.execute(query)
 
         for row in result.fetchall():
-            result_dict[row[0]] = MilestoneRecordSchema(
+            result_dict[row[0]] = MilestoneRecordOutputSchema(
                 record_id=row[0],
                 interval=row[1],
                 instance_id=row[2],
@@ -77,7 +77,7 @@ async def get_current_milestone_state_from_database() -> dict[str, MilestoneReco
     return result_dict
 
 
-async def get_current_milestone_state() -> dict[str, MilestoneRecordSchema]:
+async def get_current_milestone_state() -> dict[str, MilestoneRecordOutputSchema]:
     """
     Gets the current milestone mapping
 
@@ -93,7 +93,7 @@ async def get_current_milestone_state() -> dict[str, MilestoneRecordSchema]:
     return _CURRENT_MILESTONE_STATE
 
 
-async def refresh_current_milestone_state() -> dict[str, MilestoneRecordSchema]:
+async def refresh_current_milestone_state() -> dict[str, MilestoneRecordOutputSchema]:
     """
     Refreshes the current milestone mapping
 

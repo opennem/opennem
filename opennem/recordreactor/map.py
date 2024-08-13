@@ -11,7 +11,7 @@ from opennem.recordreactor.schema import (
     MilestoneFueltech,
     MilestoneMetric,
     MilestonePeriod,
-    MilestoneSchema,
+    MilestoneRecordSchema,
 )
 from opennem.recordreactor.utils import get_record_unit_by_metric
 
@@ -20,7 +20,7 @@ logger = logging.getLogger("opennem.recordreactor.map")
 _MILESTONE_MAP = {}
 
 
-async def generate_milestone_map() -> dict[str, MilestoneSchema]:
+async def generate_milestone_map() -> dict[str, MilestoneRecordSchema]:
     """
     Generate a list of milestone schemas for all supported mileston types
 
@@ -36,7 +36,7 @@ async def generate_milestone_map() -> dict[str, MilestoneSchema]:
             continue
 
         for network_region in network.regions:
-            milestone_schema = MilestoneSchema(
+            milestone_schema = MilestoneRecordSchema(
                 aggregate=aggregate,
                 metric=metric,
                 period=period,
@@ -56,7 +56,7 @@ async def generate_milestone_map() -> dict[str, MilestoneSchema]:
     return milestone_records
 
 
-async def get_milestone_map() -> dict[str, MilestoneSchema]:
+async def get_milestone_map() -> dict[str, MilestoneRecordSchema]:
     global _MILESTONE_MAP
 
     if not _MILESTONE_MAP:
@@ -65,7 +65,7 @@ async def get_milestone_map() -> dict[str, MilestoneSchema]:
     return _MILESTONE_MAP
 
 
-async def get_milestone_map_by_record_id(record_id: str) -> MilestoneSchema:
+async def get_milestone_map_by_record_id(record_id: str) -> MilestoneRecordSchema:
     milestone_records = await get_milestone_map()
 
     if record_id not in milestone_records:

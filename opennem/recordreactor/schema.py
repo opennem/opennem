@@ -52,7 +52,7 @@ class MilestoneFueltech(str, Enum):
     pumped = "pumps"
 
 
-class MilestoneSchema(BaseModel):
+class MilestoneRecordSchema(BaseModel):
     interval: datetime
     aggregate: MilestoneAggregate
     metric: MilestoneMetric
@@ -70,7 +70,7 @@ class MilestoneSchema(BaseModel):
         return get_milestone_record_id(self)
 
 
-class MilestoneRecordSchema(BaseModel):
+class MilestoneRecordOutputSchema(BaseModel):
     record_id: str
     interval: datetime
     instance_id: UUID4
@@ -86,7 +86,7 @@ class MilestoneRecordSchema(BaseModel):
     description: str | None = None
     description_long: str | None = None
     previous_instance_id: UUID4 | None = None
-    history: list["MilestoneRecordSchema"] | None = None
+    history: list["MilestoneRecordOutputSchema"] | None = None
 
     @computed_field
     @property
@@ -123,7 +123,7 @@ def get_milestone_network_id_map(network_id: str) -> str:
 
 
 def get_milestone_record_id(
-    milestone: MilestoneSchema,
+    milestone: MilestoneRecordSchema,
 ) -> str:
     """Get a record id"""
     record_id_components = [

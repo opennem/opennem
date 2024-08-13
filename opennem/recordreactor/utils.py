@@ -10,8 +10,8 @@ from opennem.recordreactor.schema import (
     MilestoneAggregate,
     MilestoneMetric,
     MilestonePeriod,
+    MilestoneRecordOutputSchema,
     MilestoneRecordSchema,
-    MilestoneSchema,
 )
 from opennem.schema.units import UnitDefinition
 
@@ -33,7 +33,7 @@ def translate_bucket_size_to_english(bucket_size: str) -> str:
         return bucket_size
 
 
-def check_milestone_is_new(milestone: MilestoneSchema, milestone_previous: MilestoneRecordSchema) -> bool:
+def check_milestone_is_new(milestone: MilestoneRecordSchema, milestone_previous: MilestoneRecordOutputSchema) -> bool:
     """
     Checks if the given milestone is new or has changed
 
@@ -53,7 +53,7 @@ def check_milestone_is_new(milestone: MilestoneSchema, milestone_previous: Miles
 
 
 def get_record_description(
-    milestone: MilestoneSchema,
+    milestone: MilestoneRecordSchema,
     include_value: bool = False,
 ) -> str:
     """get a record description"""
@@ -104,7 +104,7 @@ if __name__ == "__main__":
 
     from opennem.schema.network import NetworkNEM
 
-    test_record = MilestoneRecordSchema(
+    test_record = MilestoneRecordOutputSchema(
         record_id="test",
         interval=datetime.now(),
         instance_id=uuid.uuid4(),
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
     print(get_record_description(test_record))
 
-    test_record2 = MilestoneRecordSchema(
+    test_record2 = MilestoneRecordOutputSchema(
         record_id="test",
         interval=datetime.now(),
         instance_id=uuid.uuid4(),

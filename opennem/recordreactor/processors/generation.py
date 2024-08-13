@@ -13,7 +13,7 @@ from opennem.recordreactor.persistence import persist_milestones
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
     MilestoneMetric,
-    MilestoneSchema,
+    MilestoneRecordSchema,
     get_milestone_period_from_bucket_size,
 )
 from opennem.schema.network import NetworkSchema, NetworkWEM, NetworkWEMDE
@@ -27,7 +27,7 @@ async def aggregate_generation_and_emissions_data(
     date_start: datetime,
     date_end: datetime,
     region_group: bool = True,
-) -> list[MilestoneSchema]:
+) -> list[MilestoneRecordSchema]:
     logger.info(f"Aggregating generation & emissions data for {network.code} bucket size {bucket_size} for {date_start}")
 
     bucket_interval = get_bucket_interval(bucket_size, interval_size=network.interval_size)
@@ -36,11 +36,11 @@ async def aggregate_generation_and_emissions_data(
         network=network, interval=bucket_interval, date_start=date_start, date_end=date_end, region_group=region_group
     )
 
-    milestone_records: list[MilestoneSchema] = []
+    milestone_records: list[MilestoneRecordSchema] = []
 
     for row in results:
         milestone_records.append(
-            MilestoneSchema(
+            MilestoneRecordSchema(
                 interval=row.interval,
                 aggregate=MilestoneAggregate.low,
                 metric=MilestoneMetric.power,
@@ -54,7 +54,7 @@ async def aggregate_generation_and_emissions_data(
         )
 
         milestone_records.append(
-            MilestoneSchema(
+            MilestoneRecordSchema(
                 interval=row.interval,
                 aggregate=MilestoneAggregate.high,
                 metric=MilestoneMetric.power,
@@ -68,7 +68,7 @@ async def aggregate_generation_and_emissions_data(
         )
 
         milestone_records.append(
-            MilestoneSchema(
+            MilestoneRecordSchema(
                 interval=row.interval,
                 aggregate=MilestoneAggregate.low,
                 metric=MilestoneMetric.energy,
@@ -82,7 +82,7 @@ async def aggregate_generation_and_emissions_data(
         )
 
         milestone_records.append(
-            MilestoneSchema(
+            MilestoneRecordSchema(
                 interval=row.interval,
                 aggregate=MilestoneAggregate.high,
                 metric=MilestoneMetric.energy,
@@ -96,7 +96,7 @@ async def aggregate_generation_and_emissions_data(
         )
 
         milestone_records.append(
-            MilestoneSchema(
+            MilestoneRecordSchema(
                 interval=row.interval,
                 aggregate=MilestoneAggregate.low,
                 metric=MilestoneMetric.emissions,
@@ -110,7 +110,7 @@ async def aggregate_generation_and_emissions_data(
         )
 
         milestone_records.append(
-            MilestoneSchema(
+            MilestoneRecordSchema(
                 interval=row.interval,
                 aggregate=MilestoneAggregate.high,
                 metric=MilestoneMetric.emissions,

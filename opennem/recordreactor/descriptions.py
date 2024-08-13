@@ -13,13 +13,13 @@ from opennem.api.milestones.queries import get_milestone_records
 from opennem.api.milestones.router import map_milestone_records_from_db
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Milestones
-from opennem.recordreactor.schema import MilestoneRecordSchema
+from opennem.recordreactor.schema import MilestoneRecordOutputSchema
 from opennem.recordreactor.utils import get_record_description
 
 logger = logging.getLogger("opennem.recordreactor.descriptions")
 
 
-async def update_milestone_description(session: AsyncSession, milestone: MilestoneRecordSchema, description: str) -> None:
+async def update_milestone_description(session: AsyncSession, milestone: MilestoneRecordOutputSchema, description: str) -> None:
     """Updates the description of a milestone"""
     update_query = update(Milestones).where(Milestones.instance_id == milestone.instance_id)
     await session.execute(update_query.values(description=description))

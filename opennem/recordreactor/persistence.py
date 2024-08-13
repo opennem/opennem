@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 
 from opennem.db import SessionLocalAsync
 from opennem.db.models.opennem import Milestones
-from opennem.recordreactor.schema import MilestoneRecordSchema, MilestoneSchema
+from opennem.recordreactor.schema import MilestoneRecordOutputSchema, MilestoneRecordSchema
 from opennem.recordreactor.state import get_current_milestone_state
 from opennem.recordreactor.utils import check_milestone_is_new, get_record_description
 
@@ -16,7 +16,7 @@ logger = logging.getLogger("opennem.recordreactor.persistence")
 
 
 async def persist_milestones(
-    milestones: list[MilestoneSchema],
+    milestones: list[MilestoneRecordSchema],
 ):
     """ """
 
@@ -24,7 +24,7 @@ async def persist_milestones(
 
     async with SessionLocalAsync() as session:
         for record in milestones:
-            milestone_prev: MilestoneRecordSchema | None = None
+            milestone_prev: MilestoneRecordOutputSchema | None = None
 
             if record.record_id in milestone_state:
                 milestone_prev = milestone_state[record.record_id]
@@ -63,7 +63,7 @@ async def persist_milestones(
                     logger.debug(f"Added milestone for interval {record.record_id} with instance id {milestone_new.instance_id}")
 
                     # update state to point to this new milestone
-                    milestone_state[record.record_id] = MilestoneRecordSchema(
+                    milestone_state[record.record_id] = MilestoneRecordOutputSchema(
                         **record.model_dump(),
                         instance_id=milestone_new.instance_id,
                         significance=milestone_new.significance,
