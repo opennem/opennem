@@ -8,8 +8,6 @@ import logging
 
 from sqlalchemy import text
 
-from opennem.core.networks import network_from_network_code
-from opennem.core.units import get_unit_by_value
 from opennem.db import SessionLocal
 from opennem.recordreactor.schema import MilestoneRecordOutputSchema
 
@@ -67,8 +65,8 @@ async def get_current_milestone_state_from_database() -> dict[str, MilestoneReco
                 period=row[5],
                 significance=row[6],
                 value=row[7],
-                unit=get_unit_by_value(row[8]),
-                network=network_from_network_code(row[9]),
+                value_unit=row[8],
+                network_id=row[9],
                 network_region=row[10],
                 fueltech_id=row[11],
                 description=row[12],

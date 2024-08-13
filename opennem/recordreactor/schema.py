@@ -6,9 +6,8 @@ see matching ORM schema in database. This applies within record reactor and the 
 from datetime import datetime
 from enum import Enum
 
-from pydantic import UUID4, BaseModel, Field, computed_field
+from pydantic import UUID4, BaseModel, computed_field
 
-from opennem.schema.fueltech import FueltechSchema
 from opennem.schema.fueltech_group import FueltechGroupSchema
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.units import UnitDefinition
@@ -74,39 +73,19 @@ class MilestoneRecordOutputSchema(BaseModel):
     record_id: str
     interval: datetime
     instance_id: UUID4
-    aggregate: MilestoneAggregate
-    metric: MilestoneMetric | None = None
-    period: str | None = None
+    aggregate: str
+    metric: str
+    period: str
     significance: int
     value: int | float
-    unit: UnitDefinition | None = Field(exclude=True)
-    network: NetworkSchema = Field(exclude=True)
+    value_unit: str
+    network_id: str
     network_region: str | None = None
-    fueltech_id: FueltechSchema | str | None = None
+    fueltech_id: str | None = None
     description: str | None = None
     description_long: str | None = None
     previous_instance_id: UUID4 | None = None
     history: list["MilestoneRecordOutputSchema"] | None = None
-
-    @computed_field
-    @property
-    def value_unit(self) -> str | None:
-        return self.unit.value if self.unit else None
-
-    @computed_field
-    @property
-    def network_id(self) -> str:
-        return (
-            self.network.code
-            if self.network and isinstance(self.network, NetworkSchema)
-            else self.network
-            if self.network
-            else ""
-        )
-
-    @property
-    def unit_code(self) -> str | None:
-        return self.unit.name if self.unit else None
 
 
 def get_milestone_network_id_map(network_id: str) -> str:

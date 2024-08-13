@@ -4,6 +4,7 @@ RecordReactor utils
 
 import operator
 
+from opennem.core.fueltech_group import get_fueltech_group
 from opennem.core.network_regions import get_network_region_name
 from opennem.core.units import get_unit_by_value
 from opennem.recordreactor.schema import (
@@ -99,43 +100,34 @@ def get_record_unit_by_metric(metric: MilestoneMetric) -> UnitDefinition:
 
 
 if __name__ == "__main__":
-    import uuid
     from datetime import datetime
 
     from opennem.schema.network import NetworkNEM
 
-    test_record = MilestoneRecordOutputSchema(
-        record_id="test",
+    test_record = MilestoneRecordSchema(
         interval=datetime.now(),
-        instance_id=uuid.uuid4(),
         aggregate=MilestoneAggregate.high,
         metric=MilestoneMetric.demand,
         period=MilestonePeriod.year,
-        significance=1,
         value=100,
         unit=get_unit_by_value("MW"),
         network=NetworkNEM,
         network_region="NSW1",
-        fueltech_id=None,
-        description="Test",
+        fueltech=None,
     )
 
     print(get_record_description(test_record))
 
-    test_record2 = MilestoneRecordOutputSchema(
-        record_id="test",
+    test_record2 = MilestoneRecordSchema(
         interval=datetime.now(),
-        instance_id=uuid.uuid4(),
         aggregate=MilestoneAggregate.low,
         metric=MilestoneMetric.energy,
         period=MilestonePeriod.financial_year,
-        significance=1,
         value=100,
         unit=get_unit_by_value("MWh"),
         network=NetworkNEM,
         network_region="NSW1",
-        fueltech_id="coal_black",
-        description="Test",
+        fueltech=get_fueltech_group("coal"),
     )
 
     print(get_record_description(test_record2))
