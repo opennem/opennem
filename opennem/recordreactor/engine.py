@@ -5,6 +5,8 @@ RecordReactor engine
 import logging
 from datetime import datetime, timedelta
 
+import tqdm
+
 from opennem import settings
 from opennem.recordreactor.buckets import get_period_start_end, is_end_of_period
 from opennem.recordreactor.processors.demand import run_price_demand_milestone_for_interval
@@ -75,52 +77,60 @@ async def run_milestone_engine(
         current_interval = start_interval
         tasks = []
 
-        while current_interval <= end_interval:
-            # don't process the network data if it is after the last data seen
-            if network.data_last_seen and current_interval > network.data_last_seen.replace(tzinfo=None):
-                logger.info(f"Breaking at {current_interval} as it is after the last data seen for {network.code}")
-                break
+        total_intervals = (end_interval - start_interval).total_seconds() / 60 / network.interval_size
 
-            # don't process the network data if it is before the first data seen
-            if current_interval < network.data_first_seen.replace(tzinfo=None):
-                logger.info(f"Skipping {current_interval} as it is before the first data seen for {network.code}")
+        with tqdm.tqdm(total=total_intervals, unit="interval") as progress_bar:
+            while current_interval <= end_interval:
+                # don't process the network data if it is after the last data seen
+                if network.data_last_seen and current_interval > network.data_last_seen.replace(tzinfo=None):
+                    logger.info(f"Breaking at {current_interval} as it is after the last data seen for {network.code}")
+                    break
+
+                # don't process the network data if it is before the first data seen
+                if current_interval < network.data_first_seen.replace(tzinfo=None):
+                    logger.info(f"Skipping {current_interval} as it is before the first data seen for {network.code}")
+                    current_interval += timedelta(minutes=network.interval_size)
+                    continue
+
+                for bucket_size in periods:
+                    if not is_end_of_period(current_interval, bucket_size):
+                        continue
+
+                    period_start, period_end = get_period_start_end(dt=current_interval, bucket_size=bucket_size, network=network)
+
+                    if settings.dry_run:
+                        continue
+
+                    if MilestoneMetric.demand in metrics or MilestoneMetric.price in metrics:
+                        task = run_price_demand_milestone_for_interval(
+                            network=network,
+                            bucket_size=bucket_size,
+                            period_start=period_start,
+                            period_end=period_end,
+                        )
+                        tasks.append(task)
+
+                    if (
+                        MilestoneMetric.power in metrics
+                        or MilestoneMetric.energy in metrics
+                        or MilestoneMetric.emissions in metrics
+                    ):
+                        task = run_generation_energy_emissions_milestones(
+                            network=network,
+                            bucket_size=bucket_size,
+                            period_start=period_start,
+                            period_end=period_end,
+                        )
+                        tasks.append(task)
+
+                # Move to the next interval
                 current_interval += timedelta(minutes=network.interval_size)
-                continue
 
-            for bucket_size in periods:
-                if not is_end_of_period(current_interval, bucket_size):
-                    continue
+                if len(tasks) >= num_tasks:
+                    await asyncio.gather(*tasks)
+                    tasks = []
 
-                period_start, period_end = get_period_start_end(dt=current_interval, bucket_size=bucket_size, network=network)
-                logger.debug(f"Processing {current_interval} {bucket_size} {period_start} to {period_end} for {network.code}")
-
-                if settings.dry_run:
-                    continue
-
-                if MilestoneMetric.demand in metrics or MilestoneMetric.price in metrics:
-                    task = run_price_demand_milestone_for_interval(
-                        network=network,
-                        bucket_size=bucket_size,
-                        period_start=period_start,
-                        period_end=period_end,
-                    )
-                    tasks.append(task)
-
-                if MilestoneMetric.power in metrics or MilestoneMetric.energy in metrics or MilestoneMetric.emissions in metrics:
-                    task = run_generation_energy_emissions_milestones(
-                        network=network,
-                        bucket_size=bucket_size,
-                        period_start=period_start,
-                        period_end=period_end,
-                    )
-                    tasks.append(task)
-
-            # Move to the next interval
-            current_interval += timedelta(minutes=network.interval_size)
-
-            if len(tasks) >= num_tasks:
-                await asyncio.gather(*tasks)
-                tasks = []
+                progress_bar.update(1)
 
         # Process any remaining tasks
         if tasks:

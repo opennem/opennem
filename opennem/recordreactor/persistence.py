@@ -70,9 +70,9 @@ async def persist_milestones(
                         significance=significance,
                     )
 
-                    logger.info(
-                        f"Added milestone for interval {record.aggregate.value} {record.record_id} with value {record.value}"
-                    )
+                    # logger.info(
+                    #     f"Added milestone for interval {record.aggregate.value} {record.record_id} with value {record.value}"
+                    # )
                 except IntegrityError:
                     logger.warning(f"Milestone already exists: {record.record_id} for interval {record.interval}")
 

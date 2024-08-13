@@ -40,7 +40,7 @@ async def aggregate_demand_and_price_data(
 ) -> list[MilestoneRecordSchema]:
     bucket_sql = get_bucket_interval(bucket_size, interval_size=network.interval_size)
 
-    logger.info(f"Aggregating demand data for {network.code} bucket size {bucket_size} from {start_date}")
+    # logger.info(f"Aggregating demand data for {network.code} bucket size {bucket_size} from {start_date}")
 
     query_network_region = "network_region," if region_group else ""
     group_by = "1,2,3" if region_group else "1,2"
@@ -135,7 +135,7 @@ async def aggregate_demand_and_price_data(
 
 
 async def run_price_demand_milestone_for_interval(
-    network: NetworkSchema, bucket_size: str, period_start: datetime, period_end: datetime
+    network: NetworkSchema, bucket_size: MilestonePeriod, period_start: datetime, period_end: datetime
 ):
     milestone_data = await aggregate_demand_and_price_data(
         network=network,

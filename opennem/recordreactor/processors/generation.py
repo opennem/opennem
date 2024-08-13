@@ -29,7 +29,7 @@ async def aggregate_generation_and_emissions_data(
     date_end: datetime,
     region_group: bool = True,
 ) -> list[MilestoneRecordSchema]:
-    logger.info(f"Aggregating generation & emissions data for {network.code} bucket size {bucket_size} for {date_start}")
+    # logger.info(f"Aggregating generation & emissions data for {network.code} bucket size {bucket_size} for {date_start}")
 
     bucket_interval = get_bucket_interval(bucket_size, interval_size=network.interval_size)
 
