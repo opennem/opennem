@@ -13,7 +13,7 @@ from opennem.recordreactor.schema import (
 logger = logging.getLogger("opennem.recordreactor.controllers")
 
 
-def map_milestone_records_from_db(db_records: list[dict]) -> list[MilestoneRecordOutputSchema]:
+def map_milestone_output_records_from_db(db_records: list[dict]) -> list[MilestoneRecordOutputSchema]:
     """Map a list of milestone records from the database to MilestoneRecord"""
     milestone_records = []
 

@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from tqdm import tqdm
 
 from opennem.api.milestones.queries import get_milestone_records
-from opennem.api.milestones.router import map_milestone_records_from_db
+from opennem.api.milestones.router import map_milestone_output_records_from_db
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Milestones
 from opennem.recordreactor.schema import MilestoneRecordOutputSchema
@@ -32,7 +32,7 @@ async def refresh_milestone_descriptions(limit: int | None = None) -> None:
         records, total_records = await get_milestone_records(session=session, limit=limit)
         logger.info(f"Refreshing {len(records)} milestone descriptions")
 
-        record_schemas = map_milestone_records_from_db(records)
+        record_schemas = map_milestone_output_records_from_db(records)
 
         tasks = []
 

@@ -11,7 +11,7 @@ from starlette.exceptions import HTTPException
 from opennem.api.keys import api_protected
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.db import get_scoped_session
-from opennem.recordreactor.controllers import map_milestone_records_from_db
+from opennem.recordreactor.controllers import map_milestone_output_records_from_db
 from opennem.recordreactor.schema import (
     MILESTONE_SUPPORTED_NETWORKS,
     MilestoneAggregate,
@@ -132,7 +132,7 @@ async def get_milestones(
         return response_schema
 
     try:
-        milestone_records = map_milestone_records_from_db(db_records)
+        milestone_records = map_milestone_output_records_from_db(db_records)
     except Exception as e:
         logger.error(f"Error mapping milestone records: {e}")
         response_schema = APIV4ResponseSchema(success=False, error="Error mapping milestone records")
@@ -174,7 +174,7 @@ async def get_milestone_by_record_id(
         return response_schema
 
     try:
-        milestone_record = map_milestone_records_from_db(db_records=db_record)
+        milestone_record = map_milestone_output_records_from_db(db_records=db_record)
     except Exception as e:
         logger.error(f"Error mapping milestone record: {e}")
         response_schema = APIV4ResponseSchema(success=False, error="Error mapping milestone record")
@@ -215,7 +215,7 @@ async def get_milestone(
         raise HTTPException(status_code=404, detail="Milestone record not found")
 
     try:
-        milestone_record = map_milestone_records_from_db([db_record])
+        milestone_record = map_milestone_output_records_from_db([db_record])
     except Exception as e:
         logger.error(f"Error mapping milestone record: {e}")
         response_schema = APIV4ResponseSchema(success=False, error="Error mapping milestone record")
@@ -223,7 +223,7 @@ async def get_milestone(
 
     if db_record["history"] and include_history:
         try:
-            history_record_schemas = map_milestone_records_from_db(db_record["history"])
+            history_record_schemas = map_milestone_output_records_from_db(db_record["history"])
         except Exception as e:
             logger.error(f"Error mapping milestone record history: {e}")
             response_schema = APIV4ResponseSchema(success=False, error="Error mapping milestone record history")
