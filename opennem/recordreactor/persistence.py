@@ -9,6 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from opennem.db import SessionLocalAsync
 from opennem.db.models.opennem import Milestones
 from opennem.recordreactor.schema import MilestoneRecordOutputSchema, MilestoneRecordSchema
+from opennem.recordreactor.significance import calculate_milestone_significance
 from opennem.recordreactor.state import get_current_milestone_state
 from opennem.recordreactor.utils import check_milestone_is_new, get_record_description
 
@@ -56,6 +57,8 @@ async def persist_milestones(
                 if record.fueltech:
                     milestone_new.fueltech_id = record.fueltech.code
 
+                significance = calculate_milestone_significance(record)
+
                 try:
                     milestone_new = await session.merge(milestone_new)
                     await session.flush()
@@ -66,7 +69,7 @@ async def persist_milestones(
                     milestone_state[record.record_id] = MilestoneRecordOutputSchema(
                         **record.model_dump(),
                         instance_id=milestone_new.instance_id,
-                        significance=milestone_new.significance,
+                        significance=significance,
                     )
 
                     logger.info(
