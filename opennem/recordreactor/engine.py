@@ -7,8 +7,8 @@ from datetime import datetime, timedelta
 
 from opennem import settings
 from opennem.recordreactor.buckets import BUCKET_SIZES, get_period_start_end, is_end_of_period
-from opennem.recordreactor.controllers.demand import run_price_demand_milestone_for_interval
-from opennem.recordreactor.controllers.generation import run_generation_energy_emissions_milestones
+from opennem.recordreactor.processors.demand import run_price_demand_milestone_for_interval
+from opennem.recordreactor.processors.generation import run_generation_energy_emissions_milestones
 from opennem.recordreactor.schema import MilestoneMetric
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM, NetworkWEMDE
 from opennem.utils.dates import get_last_completed_interval_for_network
