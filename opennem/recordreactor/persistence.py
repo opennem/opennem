@@ -32,7 +32,6 @@ async def persist_milestones(
 
             if not milestone_prev or check_milestone_is_new(record, milestone_prev):
                 if not record.value:
-                    logger.warning(f"No data for {record.record_id}")
                     continue
 
                 description = get_record_description(record)
@@ -62,8 +61,6 @@ async def persist_milestones(
                 try:
                     milestone_new = await session.merge(milestone_new)
                     await session.flush()
-
-                    logger.debug(f"Added milestone for interval {record.record_id} with instance id {milestone_new.instance_id}")
 
                     # update state to point to this new milestone
                     milestone_state[record.record_id] = MilestoneRecordOutputSchema(
