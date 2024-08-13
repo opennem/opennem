@@ -914,7 +914,7 @@ kiwisolver==1.4.5 ; python_version >= "3.12" and python_version < "4.0" \
 kombu==5.4.0 ; python_version >= "3.12" and python_version < "4.0" \
     --hash=sha256:ad200a8dbdaaa2bbc5f26d2ee7d707d9a1fded353a0f4bd751ce8c7d9f449c60 \
     --hash=sha256:c8dd99820467610b4febbc7a9e8a0d3d7da2d35116b67184418b51cc520ea6b6
-logfire[celery,fastapi,sqlalchemy]==0.50.1 ; python_version >= "3.12" and python_version < "4.0" \
+logfire[celery,fastapi,httpx,requests,sqlalchemy]==0.50.1 ; python_version >= "3.12" and python_version < "4.0" \
     --hash=sha256:008a39a25e790c47f918d1ca2f34e12c5ceb62c5db45f15860772d07cd60d8b6 \
     --hash=sha256:6dc8989f0ca5a89ebf95748d04c2d5cfc8b50e1efb734fe31bb35fe35256f89c
 lz4==4.3.3 ; python_version >= "3.12" and python_version < "4.0" \
@@ -1246,6 +1246,12 @@ opentelemetry-instrumentation-celery==0.47b0 ; python_version >= "3.12" and pyth
 opentelemetry-instrumentation-fastapi==0.47b0 ; python_version >= "3.12" and python_version < "4.0" \
     --hash=sha256:0c7c10b5d971e99a420678ffd16c5b1ea4f0db3b31b62faf305fbb03b4ebee36 \
     --hash=sha256:5ac28dd401160b02e4f544a85a9e4f61a8cbe5b077ea0379d411615376a2bd21
+opentelemetry-instrumentation-httpx==0.47b0 ; python_version >= "3.12" and python_version < "4.0" \
+    --hash=sha256:24a2db480919b326e50c6a5ad01bb53b717fbd4116bb4d736d104608bf34a25a \
+    --hash=sha256:4a4f7ff4726445e81aaedc025ee0f9ac66c2e9074987879082edea882c4aa22d
+opentelemetry-instrumentation-requests==0.47b0 ; python_version >= "3.12" and python_version < "4.0" \
+    --hash=sha256:77fdd13f64fef2cb44665fe6975eadb993d78f96612e55a502e79b34ef7fee47 \
+    --hash=sha256:f85ed52cbca21bff226e0e7f1888e5b9bc386657ecf4b0440f328e5b3aba8436
 opentelemetry-instrumentation-sqlalchemy==0.47b0 ; python_version >= "3.12" and python_version < "4.0" \
     --hash=sha256:997b2c4a624ebcba45b9bda27882622d0ab3028d66a5fb50cdcf3581af04b3d1 \
     --hash=sha256:bbeab06fc421ddae16bb69ca287abb81a131d3dff97de60b02c092887794103d
