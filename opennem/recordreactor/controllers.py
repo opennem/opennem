@@ -89,3 +89,25 @@ def map_milestone_schema_from_db(db_records: list[dict]) -> list[MilestoneRecord
         milestone_records.append(milestone_model)
 
     return milestone_records
+
+
+def map_milestone_output_schema_to_record(milestone: MilestoneRecordOutputSchema) -> MilestoneRecordSchema:
+    """Map a MilestoneRecordOutputSchema to a MilestoneRecordSchema"""
+    milestone_record = {
+        "interval": milestone.interval,
+        "aggregate": MilestoneAggregate(milestone.aggregate),
+        "metric": MilestoneMetric(milestone.metric),
+        "period": MilestonePeriod(milestone.period),
+        "unit": MilestonePeriod(milestone.value_unit),
+        "network": network_from_network_code(milestone.network_id),
+        "value": milestone.value,
+    }
+
+    if milestone.network_region:
+        milestone_record["network_region"] = milestone.network_region
+
+    if milestone.fueltech_id:
+        milestone_record["fueltech_id"] = get_fueltech_group(milestone.fueltech_id)
+
+    milestone_model = MilestoneRecordSchema(**milestone_record)
+    return milestone_model
