@@ -137,7 +137,7 @@ async def aggregate_demand_and_price_data(
 async def run_price_demand_milestone_for_interval(
     network: NetworkSchema, bucket_size: MilestonePeriod, period_start: datetime, period_end: datetime
 ):
-    milestone_data = await aggregate_demand_and_price_data(
+    milestone_data_countries = await aggregate_demand_and_price_data(
         network=network,
         bucket_size=bucket_size,
         start_date=period_start,
@@ -145,17 +145,15 @@ async def run_price_demand_milestone_for_interval(
         region_group=False,
     )
 
-    await persist_milestones(
-        milestones=milestone_data,
-    )
-
-    milestone_data = await aggregate_demand_and_price_data(
+    milestone_data_regions = await aggregate_demand_and_price_data(
         network=network,
         bucket_size=bucket_size,
         start_date=period_start,
         end_date=period_end,
         region_group=True,
     )
+
+    milestone_data = milestone_data_regions + milestone_data_countries
 
     await persist_milestones(
         milestones=milestone_data,
