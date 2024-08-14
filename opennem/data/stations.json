@@ -677,7 +677,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "wind",
-                "status_id": "commissioning",
+                "status_id": "operating",
                 "code": "GULLRWF2",
                 "network_code": "NEM",
                 "network_region": "NSW1",
@@ -1734,7 +1734,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "wind",
-                "status_id": "commissioning",
+                "status_id": "operating",
                 "code": "CRURWF1",
                 "network_code": null,
                 "network_region": "NSW1",
@@ -14098,7 +14098,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "commissioning",
+                "status_id": "operating",
                 "code": "BNGSF2",
                 "network_code": "NEM",
                 "network_region": "SA1",
@@ -15310,7 +15310,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "wind",
-                "status_id": "commissioning",
+                "status_id": "operating",
                 "code": "LGAPWF2",
                 "network_code": null,
                 "network_region": "SA1",
@@ -18238,7 +18238,7 @@
         "code": "BELLBAY",
         "name": "Bell Bay",
         "network_name": "Bell Bay",
-        "description": "The Bell Bay Power Station was a power station located in Bell Bay, on the Tamar River, Tasmania, Australia, adjacent to the Tamar Valley Power Station, with which it was often confused. It was commissioned between 1971 and 1974 as an oil fired thermal power station, and was converted to natural gas in 2003, after the commissioning of the Tasmanian Gas Pipeline, a submarine gas pipeline which transports natural gas from Longford, Victoria, under Bass Strait, to Bell Bay, Tasmania. As the power station's primary role was to provide system security in the event of drought for Tasmania's predominantly hydro-electric based generation system it only was rarely called on to operate, resulting in intervals of five to eight years between periods of significant use. After the commissioning of Basslink in 2006, the power station was decommissioned in 2009.\nAt the time of decommissioning, it had two 120 megawatts (160,000 hp) gas fired steam turbines and three 35 megawatts (47,000 hp) gas turbines, giving a total capacity of 345 megawatts (463,000 hp) of electricity. After the Bell Bay Power Station was decommissioned, the three smaller units became part of the Tamar Valley Power Station.",
+        "description": "The Bell Bay Power Station was a power station located in Bell Bay, on the Tamar River, Tasmania, Australia, adjacent to the Tamar Valley Power Station, with which it was often confused. It was commissioned between 1971 and 1974 as an oil fired thermal power station, and was converted to natural gas in 2003, after the operating of the Tasmanian Gas Pipeline, a submarine gas pipeline which transports natural gas from Longford, Victoria, under Bass Strait, to Bell Bay, Tasmania. As the power station's primary role was to provide system security in the event of drought for Tasmania's predominantly hydro-electric based generation system it only was rarely called on to operate, resulting in intervals of five to eight years between periods of significant use. After the operating of Basslink in 2006, the power station was decommissioned in 2009.\nAt the time of deoperating, it had two 120 megawatts (160,000 hp) gas fired steam turbines and three 35 megawatts (47,000 hp) gas turbines, giving a total capacity of 345 megawatts (463,000 hp) of electricity. After the Bell Bay Power Station was decommissioned, the three smaller units became part of the Tamar Valley Power Station.",
         "wikipedia_link": "https://en.wikipedia.org/wiki/Bell_Bay_Power_Station",
         "wikidata_id": "Q4883121",
         "website_url": null,
@@ -21817,7 +21817,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "wind",
-                "status_id": "commissioning",
+                "status_id": "operating",
                 "code": "DUNDWF1",
                 "network_code": "NEM",
                 "network_region": "VIC1",
@@ -21840,7 +21840,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "wind",
-                "status_id": "commissioning",
+                "status_id": "operating",
                 "code": "DUNDWF2",
                 "network_code": "NEM",
                 "network_region": "VIC1",
@@ -21863,7 +21863,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "wind",
-                "status_id": "commissioning",
+                "status_id": "operating",
                 "code": "DUNDWF3",
                 "network_code": "NEM",
                 "network_region": "VIC1",
@@ -24939,7 +24939,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "wind",
-                "status_id": "commissioning",
+                "status_id": "operating",
                 "code": "STOCKYD1",
                 "network_code": null,
                 "network_region": "VIC1",
@@ -26469,7 +26469,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "wind",
-                "status_id": "commissioning",
+                "status_id": "operating",
                 "code": "YENDWF1",
                 "network_code": "NEM",
                 "network_region": "VIC1",
