@@ -76,6 +76,14 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
     aggregate_score = 10 if milestone.aggregate == MilestoneAggregate.high else 5
     aggregate_score *= MilestoneSignificanceWeights.AGGREGATE.value
 
+    # some fueltechs that are dispatchable or we don't have about the lows since they're often 0
+    if (
+        milestone.fueltech
+        and milestone.fueltech.code in ["distillate", "solar", "battery_charging", "battery_discharging", "hydro", "pumps"]
+        and milestone.aggregate == MilestoneAggregate.low
+    ):
+        return 1
+
     # Calculate total score
     total_score = sum([period_score, metric_score, network_score, region_score, fueltech_score, aggregate_score])
 
