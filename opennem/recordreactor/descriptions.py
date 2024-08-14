@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from tqdm import tqdm
 
 from opennem.api.milestones.queries import get_milestone_record, get_milestone_records
-from opennem.db import SessionLocal
+from opennem.db import get_write_session
 from opennem.db.models.opennem import Milestones
 from opennem.recordreactor.controllers import map_milestone_output_records_from_db, map_milestone_output_schema_to_record
 from opennem.recordreactor.utils import get_record_description
@@ -28,7 +28,7 @@ async def update_milestone_description(session: AsyncSession, instance_id: UUID4
 async def refresh_milestone_descriptions(limit: int | None = None, instance_id: UUID4 | None = None) -> None:
     """Refreshes the milestone descriptions"""
 
-    async with SessionLocal() as session:
+    async with get_write_session() as session:
         if instance_id:
             record = await get_milestone_record(session=session, instance_id=instance_id)
             if record:

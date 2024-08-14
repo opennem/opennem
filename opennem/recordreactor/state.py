@@ -8,7 +8,7 @@ import logging
 
 from sqlalchemy import text
 
-from opennem.db import SessionLocal
+from opennem.db import get_read_session
 from opennem.recordreactor.schema import MilestoneRecordOutputSchema
 
 logger = logging.getLogger("opennem.recordreactor.state")
@@ -26,7 +26,7 @@ async def get_current_milestone_state_from_database() -> dict[str, MilestoneReco
     """
     result_dict: dict[str, MilestoneRecordOutputSchema] = {}
 
-    async with SessionLocal() as session:
+    async with get_read_session() as session:
         query = text("""
             WITH ranked_records AS (
                 SELECT *,
