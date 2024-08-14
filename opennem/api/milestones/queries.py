@@ -58,10 +58,11 @@ async def get_milestone_records(
     if networks:
         select_query = select_query.where(Milestones.network_id.in_([network.code for network in networks]))
         # and no network regions
-        select_query = select_query.where(Milestones.network_region == None)  # noqa: E711
 
     if network_regions:
         select_query = select_query.where(Milestones.network_region.in_(network_regions))
+    else:
+        select_query = select_query.where(Milestones.network_region == None)  # noqa: E711
 
     if periods:
         select_query = select_query.where(Milestones.period.in_(periods))
