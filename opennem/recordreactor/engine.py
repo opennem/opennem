@@ -18,7 +18,7 @@ from opennem.utils.dates import get_last_completed_interval_for_network
 logger = logging.getLogger("opennem.recordreactor.engine")
 
 # Engine configs
-_DEFAULT_NUM_TASKS = 14
+_DEFAULT_NUM_TASKS = 8
 
 _DEFAULT_METRICS = [
     MilestoneMetric.demand,
@@ -74,10 +74,16 @@ async def run_milestone_engine(
             end_interval = get_last_completed_interval_for_network(network)
             logger.info(f"Set end interval for {network.code} to {end_interval}")
 
+        # how many intervals we process at a time
+        interval_leap_size = network.interval_size
+
+        if network.interval_size == 5:
+            interval_leap_size = 30
+
         current_interval = start_interval
         tasks = []
 
-        total_intervals = (end_interval - start_interval).total_seconds() / 60 / network.interval_size
+        total_intervals = (end_interval - start_interval).total_seconds() / 60 / interval_leap_size
 
         with tqdm.tqdm(total=total_intervals, unit="interval") as progress_bar:
             while current_interval <= end_interval:
@@ -123,8 +129,8 @@ async def run_milestone_engine(
                         )
                         tasks.append(task)
 
-                # Move to the next interval
-                current_interval += timedelta(minutes=network.interval_size)
+                # Move to the next interval and pad it out
+                current_interval += timedelta(minutes=interval_leap_size)
 
                 if len(tasks) >= num_tasks:
                     await asyncio.gather(*tasks)
@@ -141,7 +147,7 @@ async def run_milestone_engine(
 if __name__ == "__main__":
     import asyncio
 
-    start_interval = datetime.fromisoformat("2020-01-01 00:00:00")
+    start_interval = datetime.fromisoformat("2021-03-03T00:00:00")
     end_interval = datetime.fromisoformat("2024-08-07 00:00:00")
     asyncio.run(
         run_milestone_engine(

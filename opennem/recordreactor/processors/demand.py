@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from sqlalchemy import text
 
 from opennem.core.units import get_unit
-from opennem.db import SessionLocalAsync
+from opennem.db import get_read_session
 from opennem.recordreactor.buckets import get_bucket_interval
 from opennem.recordreactor.persistence import persist_milestones
 from opennem.recordreactor.schema import (
@@ -64,7 +64,7 @@ async def aggregate_demand_and_price_data(
             {group_by}
     """)
 
-    async with SessionLocalAsync() as session:
+    async with get_read_session() as session:
         result = await session.execute(
             query,
             {

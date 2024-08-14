@@ -8,7 +8,7 @@ from typing import Any
 from sqlalchemy import text
 
 from opennem.controllers.output.schema import OpennemExportSeries
-from opennem.db import SessionLocal
+from opennem.db import get_read_session
 from opennem.queries.utils import networks_to_sql_in
 from opennem.schema.network import NetworkAPVI, NetworkAU, NetworkNEM, NetworkSchema, NetworkWEM, NetworkWEMDE
 
@@ -152,7 +152,7 @@ async def get_fueltech_generated_energy_emissions(
     """
     )
 
-    async with SessionLocal() as session:
+    async with get_read_session() as session:
         result = await session.execute(query, {"date_start": date_start, "date_end": date_end})
         rows = result.fetchall()
 

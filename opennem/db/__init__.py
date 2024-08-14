@@ -9,6 +9,7 @@ project
 
 import logging
 from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
 
 import deprecation
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
@@ -84,6 +85,27 @@ SessionLocal: AsyncSession = async_sessionmaker(engine, expire_on_commit=False)
 SessionLocalAsync: AsyncSession = async_sessionmaker(engine, expire_on_commit=False)
 
 
+@asynccontextmanager
+async def get_read_session():
+    async with SessionLocalAsync() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
+
+
+@asynccontextmanager
+async def get_write_session() -> AsyncGenerator[AsyncSession, None]:
+    async with SessionLocalAsync() as session:
+        try:
+            async with session.begin():
+                yield session
+            # The commit will be done automatically when exiting the 'begin' context
+        except Exception:
+            await session.rollback()
+            raise
+
+
 async def get_scoped_session() -> AsyncGenerator[AsyncSession, None]:
-    async with SessionLocal() as session:
+    async with SessionLocalAsync() as session:
         yield session

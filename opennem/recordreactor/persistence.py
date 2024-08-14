@@ -6,7 +6,7 @@ import logging
 
 from sqlalchemy.exc import IntegrityError
 
-from opennem.db import SessionLocalAsync
+from opennem.db import get_write_session
 from opennem.db.models.opennem import Milestones
 from opennem.recordreactor.schema import MilestoneRecordOutputSchema, MilestoneRecordSchema
 from opennem.recordreactor.significance import calculate_milestone_significance
@@ -23,7 +23,7 @@ async def persist_milestones(
 
     milestone_state = await get_current_milestone_state()
 
-    async with SessionLocalAsync() as session:
+    async with get_write_session() as session:
         for record in milestones:
             milestone_prev: MilestoneRecordOutputSchema | None = None
 
