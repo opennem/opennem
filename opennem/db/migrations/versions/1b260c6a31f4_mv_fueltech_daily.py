@@ -48,15 +48,16 @@ def upgrade() -> None:
         GROUP BY
             1, 2, 3, 4
         ORDER BY
-            1 DESC, 2, 3, 4;
+            1 DESC, 2, 3, 4
+        WITH NO DATA;
     """)
 
-    op.execute("""
-        SELECT add_continuous_aggregate_policy('mv_fueltech_daily',
-            start_offset => NULL,
-            end_offset => INTERVAL '1 h',
-            schedule_interval => INTERVAL '1 h');
-    """)
+    # op.execute("""
+    #     SELECT add_continuous_aggregate_policy('mv_fueltech_daily',
+    #         start_offset => NULL,
+    #         end_offset => INTERVAL '1 h',
+    #         schedule_interval => INTERVAL '1 h');
+    # """)
 
 
 def downgrade() -> None:
