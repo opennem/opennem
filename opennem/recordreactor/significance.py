@@ -40,6 +40,7 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
         MilestonePeriod.week: 2,
         MilestonePeriod.month: 9,
         MilestonePeriod.quarter: 5,
+        MilestonePeriod.season: 5,
         MilestonePeriod.year: 10,
         MilestonePeriod.financial_year: 4,
     }
@@ -49,7 +50,7 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
     metric_scores = {
         MilestoneMetric.demand: 4,
         MilestoneMetric.price: 6,
-        MilestoneMetric.power: 5,
+        MilestoneMetric.power: 1,
         MilestoneMetric.energy: 9,
         MilestoneMetric.emissions: 9,
     }
