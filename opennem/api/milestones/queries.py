@@ -2,7 +2,7 @@ import logging
 import uuid
 from datetime import datetime
 
-from sqlalchemy import and_, select
+from sqlalchemy import and_, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import func
 
@@ -26,7 +26,6 @@ async def get_milestone_records(
     metric: MilestoneMetric | None = None,
     networks: list[NetworkSchema] | None = None,
     network_regions: list[str] | None = None,
-    network_filter: list[str] | None = None,
     record_filter: list[str] | None = None,
     periods: list[MilestonePeriod] | None = None,
     record_id_filter: str | None = None,
@@ -47,7 +46,6 @@ async def get_milestone_records(
         select_query = select_query.where(Milestones.interval < date_end)
 
     if significance:
-        logger.debug(f"Filtering by significance: {significance}")
         select_query = select_query.where(Milestones.significance >= significance)
 
     if fueltech_id:
@@ -65,7 +63,7 @@ async def get_milestone_records(
 
     if network_regions:
         select_query = select_query.where(Milestones.network_region.in_(network_regions))
-    else:
+    elif not record_filter:
         select_query = select_query.where(Milestones.network_region == None)  # noqa: E711
 
     if periods:
@@ -75,8 +73,10 @@ async def get_milestone_records(
         select_query = select_query.where(Milestones.record_id == record_id)
 
     if record_filter:
-        select_query = select_query.where(Milestones.network.in_(record_filter))
-        select_query = select_query.where(Milestones.network_region.in_(record_filter))
+        for f in record_filter:
+            print(f"Filtering by {f}")
+            select_query = select_query.where(or_(Milestones.network_id == f, Milestones.network_region == f))
+            print(select_query)
 
     # select record_id where it regexp matches record_id_filter
     if record_id_filter:
