@@ -49,7 +49,7 @@ async def get_milestones(
     network_region: list[str] | None = Query(None),
     significance: int | None = Query(None, description="Significance filter"),
     record_id_filter: str | None = Query(None, description="Filter by record_id - supports wildcards"),
-    period: list[MilestonePeriod] | None = Query(None),
+    period: list[MilestonePeriod] | None = Query(None, description="Period filter"),
     db: AsyncSession = Depends(get_scoped_session),
 ) -> APIV4ResponseSchema:
     """Get a list of milestones"""
