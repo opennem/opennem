@@ -70,13 +70,11 @@ async def get_milestone_records(
         select_query = select_query.where(Milestones.period.in_(periods))
 
     if record_id:
-        select_query = select_query.where(Milestones.record_id == record_id)
+        select_query = select(Milestones).where(Milestones.record_id == record_id)
 
     if record_filter:
         for f in record_filter:
-            print(f"Filtering by {f}")
             select_query = select_query.where(or_(Milestones.network_id == f, Milestones.network_region == f))
-            print(select_query)
 
     # select record_id where it regexp matches record_id_filter
     if record_id_filter:
