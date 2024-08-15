@@ -105,6 +105,29 @@ def get_record_unit_by_metric(metric: MilestoneMetric) -> UnitDefinition:
         raise ValueError(f"Invalid metric: {metric}")
 
 
+def get_bucket_query(bucket_size: MilestonePeriod, field_name: str = "interval", interval_size: int = 5) -> str:
+    """
+    Get the bucket query for a given bucket size.
+    """
+    extra = ""
+    bucket_query = f"1 {bucket_size.value}"
+
+    if bucket_size == MilestonePeriod.interval:
+        return f"{interval_size} minutes"
+
+    match bucket_size:
+        case MilestonePeriod.quarter:
+            bucket_query = "3 months"
+        case MilestonePeriod.season:
+            bucket_query = "3 months"
+            extra = ", '-1 month'::interval"
+        case MilestonePeriod.financial_year:
+            bucket_query = "1 year"
+            extra = ", '-6 months'::interval"
+
+    return f"time_bucket('{bucket_query}', {field_name}{extra})"
+
+
 if __name__ == "__main__":
     from datetime import datetime
 
