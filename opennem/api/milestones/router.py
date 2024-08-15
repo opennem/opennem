@@ -45,7 +45,10 @@ async def get_milestones(
     metric: MilestoneMetric | None = None,
     fueltech_id: list[str] | None = Query(None),
     network: list[str] | None = Query(None),
+    record_filter: list[str] | None = Query(None, description="Network filter - specify network or network_region ids"),
     network_region: list[str] | None = Query(None),
+    significance: int | None = Query(None, description="Significance filter"),
+    record_id_filter: str | None = Query(None, description="Filter by record_id - supports wildcards"),
     period: list[MilestonePeriod] | None = Query(None),
     db: AsyncSession = Depends(get_scoped_session),
 ) -> APIV4ResponseSchema:
@@ -105,6 +108,13 @@ async def get_milestones(
         if not all(network_region in network_supported_regions for network_region in network_region):
             raise HTTPException(status_code=400, detail=f"Invalid network region: {", ".join(network_region)}")
 
+    # filter by either network or network_region
+    if record_filter:
+        if not all(f in network_supported_ids for f in record_filter) or not all(
+            f in network_supported_regions for f in record_filter
+        ):
+            raise HTTPException(status_code=400, detail=f"Invalid filter: {', '.join(record_filter)}")
+
     if period:
         if not all(period in MilestonePeriod.__members__.values() for period in period):
             raise HTTPException(status_code=400, detail="Invalid period")
@@ -123,6 +133,9 @@ async def get_milestones(
             metric=metric,
             networks=network_schemas,
             network_regions=network_region,
+            record_filter=record_filter,
+            record_id_filter=record_id_filter,
+            significance=significance,
             periods=period,
         )
     except Exception as e:

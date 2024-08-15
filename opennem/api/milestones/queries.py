@@ -26,7 +26,10 @@ async def get_milestone_records(
     metric: MilestoneMetric | None = None,
     networks: list[NetworkSchema] | None = None,
     network_regions: list[str] | None = None,
+    network_filter: list[str] | None = None,
+    record_filter: list[str] | None = None,
     periods: list[MilestonePeriod] | None = None,
+    record_id_filter: str | None = None,
     record_id: str | None = None,
 ) -> tuple[list[dict], int]:
     """Get a list of all milestones ordered by date with a limit, pagination and optional significance filter"""
@@ -44,6 +47,7 @@ async def get_milestone_records(
         select_query = select_query.where(Milestones.interval < date_end)
 
     if significance:
+        logger.debug(f"Filtering by significance: {significance}")
         select_query = select_query.where(Milestones.significance >= significance)
 
     if fueltech_id:
@@ -69,6 +73,15 @@ async def get_milestone_records(
 
     if record_id:
         select_query = select_query.where(Milestones.record_id == record_id)
+
+    if record_filter:
+        select_query = select_query.where(Milestones.network.in_(record_filter))
+        select_query = select_query.where(Milestones.network_region.in_(record_filter))
+
+    # select record_id where it regexp matches record_id_filter
+    if record_id_filter:
+        record_id_filter = record_id_filter.replace("*", "%")
+        select_query = select_query.where(Milestones.record_id.ilike(f"{record_id_filter}"))
 
     total_query = select(func.count()).select_from(select_query.subquery())
     total_records = await session.scalar(total_query)
