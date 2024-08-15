@@ -98,12 +98,12 @@ def energy_network_fueltech_query(
     )
 
 
-async def get_fueltech_generated_energy_emissions(
+async def get_fueltech_interval_energy_emissions(
     network: NetworkSchema, interval: str, date_start: datetime, date_end: datetime, region_group: bool = False
 ) -> Any:
     """
     Get the total generated energy emissions for a network
-    based on a year
+    based an interval size
 
     :param network: The network to query
     :param date_start: The start date
@@ -150,6 +150,56 @@ async def get_fueltech_generated_energy_emissions(
         ORDER BY
             1 DESC, 2, 3;
     """
+    )
+
+    async with get_read_session() as session:
+        result = await session.execute(query, {"date_start": date_start, "date_end": date_end})
+        rows = result.fetchall()
+
+    return rows
+
+
+async def get_fueltech_generated_energy_emissions(
+    network: NetworkSchema, interval: str, date_start: datetime, date_end: datetime, region_group: bool = False
+) -> Any:
+    """
+    Get the total generated energy emissions for a network
+    based on a year
+
+    :param network: The network to query
+    :param date_start: The start date
+    :param date_end: The end date
+    """
+
+    network_region_query = "fs.network_region as network_region," if region_group else ""
+    group_by = "1,2,3,4" if region_group else "1,2,3"
+    network_query = "'NEM','AEMO_ROOFTOP','AEMO_ROOFTOP_BACKFILL'" if network == NetworkNEM else "'WEM', 'WEMDE', 'APVI'"
+    network_region_filter_query = "fs.network_region IN ('WEM', 'WEMDE') and " if network in [NetworkWEM, NetworkWEMDE] else ""
+
+    query = text(
+        f"""
+            SELECT
+                {interval} AS interval,
+                fs.network_id,
+                {network_region_query}
+                ftg.code as fueltech_id,
+                sum(fs.generated) as fueltech_generated,
+                sum(fs.energy) as fueltech_energy,
+                sum(fs.emissions) as fueltech_emissions
+            FROM
+                mv_fueltech_daily fs
+                JOIN fueltech ft ON fs.fueltech_code = ft.code
+                JOIN fueltech_group ftg on ftg.code = ft.fueltech_group_id
+            WHERE
+                fs.network_id IN ({network_query}) AND
+                {network_region_filter_query}
+                fs.trading_day >= :date_start AND
+                fs.trading_day < :date_end
+            GROUP BY
+                {group_by}
+            ORDER BY
+                1 DESC, 2, 3, 4
+        """
     )
 
     async with get_read_session() as session:
