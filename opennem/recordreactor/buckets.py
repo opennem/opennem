@@ -5,6 +5,8 @@ This module provides utility functions for working with buckets in the context o
 
 from datetime import datetime, timedelta
 
+from dateutil.relativedelta import relativedelta
+
 from opennem.recordreactor.schema import MilestonePeriod
 from opennem.schema.network import NetworkSchema
 
@@ -32,8 +34,14 @@ def is_end_of_period(dt: datetime, bucket_size: MilestonePeriod) -> bool:
             return dt.weekday() == 0 and dt.hour == 0 and dt.minute == 0 and dt.second == 0
         case MilestonePeriod.month:
             return dt.day == 1 and dt.hour == 0 and dt.minute == 0 and dt.second == 0
+        case MilestonePeriod.quarter:
+            return dt.day == 1 and dt.hour == 0 and dt.minute == 0 and dt.second == 0 and dt.month in [1, 4, 7, 10]
+        case MilestonePeriod.season:
+            return dt.day == 1 and dt.hour == 0 and dt.minute == 0 and dt.second == 0 and dt.month in [3, 6, 9, 12]
         case MilestonePeriod.year:
             return dt.month == 1 and dt.day == 1 and dt.hour == 0 and dt.minute == 0 and dt.second == 0
+        case MilestonePeriod.financial_year:
+            return dt.month == 7 and dt.day == 1 and dt.hour == 0 and dt.minute == 0 and dt.second == 0
         case _:
             raise ValueError(f"Invalid bucket_size: {bucket_size}")
 
@@ -68,9 +76,15 @@ def get_period_start_end(dt: datetime, bucket_size: MilestonePeriod, network: Ne
             start = dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
             if start.month == 1:
                 return start.replace(year=start.year - 1, month=12), start
-            return start.replace(month=start.month - 1), start
+            return start - relativedelta(months=1), start
+        case MilestonePeriod.season | MilestonePeriod.quarter:
+            start = dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            return start - relativedelta(months=3), start
         case MilestonePeriod.year:
             start = dt.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+            return start.replace(year=start.year - 1), start
+        case MilestonePeriod.financial_year:
+            start = dt.replace(month=7, day=1, hour=0, minute=0, second=0, microsecond=0)
             return start.replace(year=start.year - 1), start
         case _:
             raise ValueError(f"Invalid bucket_size: {bucket_size}")

@@ -11,6 +11,7 @@ from pydantic import UUID4, BaseModel, computed_field
 from opennem.schema.fueltech_group import FueltechGroupSchema
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.units import UnitDefinition
+from opennem.utils.seasons import map_date_start_to_season
 
 MILESTONE_SUPPORTED_NETWORKS = [NetworkNEM, NetworkWEM]
 
@@ -34,6 +35,7 @@ class MilestonePeriod(str, Enum):
     week = "week"
     month = "month"
     quarter = "quarter"
+    season = "season"
     year = "year"
     financial_year = "financial_year"
 
@@ -98,7 +100,7 @@ def get_milestone_record_id(
         milestone.network_region,
         milestone.fueltech.code if milestone.fueltech else None,
         milestone.metric.value,
-        milestone.period.value,
+        map_date_start_to_season(milestone.interval) if milestone.period is MilestonePeriod.season else milestone.period.value,
         milestone.aggregate.value,
     ]
 
@@ -106,19 +108,3 @@ def get_milestone_record_id(
     record_id = ".".join(filter(None, record_id_components)).lower()
 
     return record_id
-
-
-def get_milestone_period_from_bucket_size(bucket_size: str) -> MilestonePeriod:
-    """Get the milestone period from the bucket size"""
-    if bucket_size == "interval":
-        return MilestonePeriod.interval
-    elif bucket_size == "day":
-        return MilestonePeriod.day
-    elif bucket_size == "week":
-        return MilestonePeriod.week
-    elif bucket_size == "month":
-        return MilestonePeriod.month
-    elif bucket_size == "year":
-        return MilestonePeriod.year
-    else:
-        raise ValueError(f"Invalid bucket_size: {bucket_size}")
