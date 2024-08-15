@@ -15,6 +15,7 @@ from opennem.recordreactor.schema import (
     MilestoneRecordSchema,
 )
 from opennem.schema.units import UnitDefinition
+from opennem.utils.seasons import map_date_start_to_season
 
 
 def translate_bucket_size_to_english(bucket_size: str) -> str:
@@ -60,7 +61,11 @@ def get_record_description(
     """get a record description"""
 
     record_description_components = [
-        translate_bucket_size_to_english(milestone.period).capitalize() if milestone.period else None,
+        map_date_start_to_season(milestone.interval).capitalize()
+        if milestone.period is MilestonePeriod.season
+        else translate_bucket_size_to_english(milestone.period).capitalize()
+        if milestone.period
+        else None,
         f"{milestone.fueltech.label.lower()}" if milestone.fueltech else None,
         f"{milestone.metric.value.lower()}" if milestone.metric else None,
         f"{milestone.aggregate.value.lower()}" if milestone.aggregate else None,
