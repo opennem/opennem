@@ -29,7 +29,7 @@ async def parse_aemo_url_optimized(
     for csv_file_to_process in download_path_files:
         logger.info(f"parsing {csv_file_to_process}")
 
-        if csv_file_to_process.suffix.lower() not in [".csv"]:
+        if csv_file_to_process.suffix.lower() != ".csv":
             continue
 
         table_set = parse_aemo_file(str(csv_file_to_process), table_set=table_set, values_only=values_only)
@@ -74,7 +74,7 @@ async def parse_aemo_url_optimized_bulk(
     for f in download_path_files:
         logger.info(f"parsing {f}")
 
-        if f.suffix.lower() not in [".csv"]:
+        if f.suffix.lower() != ".csv":
             continue
 
         ts = parse_aemo_file(str(f), table_set=ts)

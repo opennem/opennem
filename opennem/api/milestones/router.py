@@ -88,14 +88,14 @@ async def get_milestones(
 
     if network:
         if not all(network in network_supported_ids for network in network):
-            raise HTTPException(status_code=400, detail=f"Invalid network: {', '.join(network)}")
+            raise HTTPException(status_code=400, detail=f"Invalid network: {", ".join(network)}")
 
         network_schemas = [n for n in MILESTONE_SUPPORTED_NETWORKS if n.code in network]
 
     # get a flat list of all network regions
     network_supported_regions: list[str] = []
     for n in MILESTONE_SUPPORTED_NETWORKS:
-        network_supported_regions.extend(n.regions if n.regions else [])
+        network_supported_regions.extend(n.regions or [])
 
     if network_region:
         if not network:
@@ -112,7 +112,7 @@ async def get_milestones(
         if not all(f in supported_networks_and_regions for f in record_filter):
             raise HTTPException(
                 status_code=400,
-                detail=f"Invalid filter: {', '.join(record_filter)} not in {', '.join(supported_networks_and_regions)}",
+                detail=f"Invalid filter: {", ".join(record_filter)} not in {", ".join(supported_networks_and_regions)}",
             )
 
     if period:

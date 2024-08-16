@@ -23,7 +23,7 @@ async def parse_aemo_url_optimized(url: str) -> int:
     for f in onlyfiles:
         logger.info(f"parsing {f}")
 
-        if f.suffix.lower() in [".csv"]:
+        if f.suffix.lower() == ".csv":
             ts = parse_aemo_file(str(f))
             await store_aemo_tableset(ts)
             files_parsed += 1

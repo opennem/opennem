@@ -79,7 +79,7 @@ def save_image_to_cloudflare(image: bytes | BytesIO) -> CloudflareImageResponse:
     except Exception as e:
         raise CloudflareImageException("Bad response model") from e
 
-    logger.info(f"Uploaded to cf and got {len(model.variants)} varianes: {','.join(model.variants)}")
+    logger.info(f"Uploaded to cf and got {len(model.variants)} varianes: {",".join(model.variants)}")
 
     return model
 

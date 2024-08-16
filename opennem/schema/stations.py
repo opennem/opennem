@@ -58,8 +58,8 @@ class StationSet(UserList):
         except ValidationError as e:
             logger.error(f"Validation error for record: {station_dict}")
             for error in e.errors():
-                logger.debug(f"Error: {error['msg']}")
-                logger.debug(f"Field: {error['loc']}")
+                logger.debug(f"Error: {error["msg"]}")
+                logger.debug(f"Field: {error["loc"]}")
 
     def as_list(self) -> list[StationImportSchema]:
         return self.data

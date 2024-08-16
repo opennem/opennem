@@ -76,10 +76,10 @@ def load_data(
     if skip_loaders:
         return data_content.decode(content_type)
 
-    if file_path.suffix in [".zip"]:
+    if file_path.suffix == ".zip":
         return load_data_zip(os.path.join(data_path, file_name))
 
-    if file_path.suffix in [".csv"]:
+    if file_path.suffix == ".csv":
         return load_data_csv(data_content.decode(content_type))
 
     if file_path.suffix in JSON_EXTENSIONS:

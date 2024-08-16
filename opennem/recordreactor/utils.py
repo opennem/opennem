@@ -46,7 +46,7 @@ def check_milestone_is_new(milestone: MilestoneRecordSchema, milestone_previous:
     Returns:
         bool: True if the milestone is new, False if it has changed
     """
-    _op = operator.gt if milestone.aggregate in [MilestoneAggregate.high] else operator.lt
+    _op = operator.gt if milestone.aggregate == MilestoneAggregate.high else operator.lt
 
     if not milestone.value:
         return False
@@ -78,7 +78,7 @@ def get_record_description(
         if milestone.network_region
         else None,
         # value
-        f"({round(milestone.value, 2) if milestone.value else ''} {milestone.unit.value if milestone.unit else ''})"
+        f"({round(milestone.value, 2) if milestone.value else ""} {milestone.unit.value if milestone.unit else ""})"
         if include_value
         else None,
     ]

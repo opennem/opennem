@@ -424,7 +424,7 @@ def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = T
 
         if not bad_values.empty:
             for rec in bad_values.to_dict(orient="records"):
-                raise FlowsValidationError(f"Bad value: {rec['trading_interval']} {rec['network_region']} {field} {rec[field]}")
+                raise FlowsValidationError(f"Bad value: {rec["trading_interval"]} {rec["network_region"]} {field} {rec[field]}")
 
     # 2. Check emission factors
     flow_records_validation = flow_records.copy()
@@ -442,7 +442,7 @@ def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = T
     if not bad_factors_exports.empty:
         for rec in bad_factors_exports.to_dict(orient="records"):
             bad_factor_message = (
-                f"Bad exports emission factor: {rec['trading_interval']} {rec['network_region']} {rec['exports_emission_factor']}"
+                f"Bad exports emission factor: {rec["trading_interval"]} {rec["network_region"]} {rec["exports_emission_factor"]}"
             )
             logger.error(bad_factor_message)
 
@@ -452,7 +452,7 @@ def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = T
     if not bad_factors_imports.empty:
         for rec in bad_factors_imports.to_dict(orient="records"):
             bad_factor_message = (
-                f"Bad imports emission factor: {rec['trading_interval']} {rec['network_region']} {rec['imports_emission_factor']}"
+                f"Bad imports emission factor: {rec["trading_interval"]} {rec["network_region"]} {rec["imports_emission_factor"]}"
             )
             logger.error(bad_factor_message)
 

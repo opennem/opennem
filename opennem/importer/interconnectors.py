@@ -70,7 +70,7 @@ def import_nem_interconnects() -> None:
 
         # skip SNOWY
         # @TODO do these need to be remapped for historical
-        if interconnector.regionfrom in ["SNOWY1"] or interconnector.regionto in ["SNOWY1"]:
+        if interconnector.regionfrom == "SNOWY1" or interconnector.regionto == "SNOWY1":
             continue
 
         logger.debug(interconnector)

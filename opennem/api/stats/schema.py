@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import math
+import operator
 from collections import Counter
 from datetime import date, datetime, timedelta
 from decimal import Decimal
@@ -281,7 +282,7 @@ class OpennemDataSet(BaseConfig):
             sorting_key_method = lambda x: x.id  # noqa:E731
         elif isinstance(value[0], dict):
             _id_values = [i["id"] for i in value]
-            sorting_key_method = lambda x: x["id"]  # noqa:E731
+            sorting_key_method = operator.itemgetter("id")  # noqa:E731
         else:
             raise Exception("Not a valid value type")
 
@@ -294,7 +295,7 @@ class OpennemDataSet(BaseConfig):
                 _duplicate_ids = ", ".join(_id_duplicates)
                 _msg = f"{len(_id_values)} ids and {len(_duplicate_ids)} duplicates: {_duplicate_ids} "
 
-            raise ValueError(f"OpennemDataSet has duplicate id{'s' if len(_id_duplicates) > 1 else ''}: {_msg}")
+            raise ValueError(f"OpennemDataSet has duplicate id{"s" if len(_id_duplicates) > 1 else ""}: {_msg}")
 
         # validate end and start datetimes.
         # if they are not set, set them to the first and last values

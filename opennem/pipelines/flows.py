@@ -9,6 +9,7 @@ Will check that all available data is present before running the flow update
 import dataclasses
 import logging
 from datetime import datetime
+from itertools import starmap
 
 from sqlalchemy import text as sql
 
@@ -58,7 +59,7 @@ def get_flow_depends_crawler_history() -> list[CrawlerHistory]:
     with engine.begin() as conn:
         results = conn.execute(crawler_history_query).fetchall()
 
-    result_models = [CrawlerHistory(*r) for r in results]
+    result_models = list(starmap(CrawlerHistory, results))
 
     return result_models
 

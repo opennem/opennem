@@ -470,7 +470,7 @@ def get_wem2_live_generation_models() -> list[WEMGenerationInterval]:
                 latest_interval = parse_as_at
                 logger.info(f"Latest interval is {latest_interval} found via AS_AT")
             else:
-                raise Exception(f"Invalid AS_AT date: {facility_record['AS_AT']}")
+                raise Exception(f"Invalid AS_AT date: {facility_record["AS_AT"]}")
 
         if not latest_interval:
             raise Exception("No latest interval found")

@@ -133,7 +133,7 @@ def check_emissions_map() -> None:
         facility_code = normalize_duid(rec["facility_code"])
         emissions_intensity = clean_float(rec["emissions_factor_co2"])
 
-        if network_id not in ["NEM"]:
+        if network_id != "NEM":
             csv_out.append(rec)
 
             continue

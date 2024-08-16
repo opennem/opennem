@@ -78,7 +78,7 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
         except ValidationError as ve:
             logger.error(f"Pydantic validation error: {ve}")
             for error in ve.errors():
-                logger.error(f"Field: {error['loc'][0]}, Error: {error['msg']}")
+                logger.error(f"Field: {error["loc"][0]}, Error: {error["msg"]}")
             return None
 
     except Exception as e:

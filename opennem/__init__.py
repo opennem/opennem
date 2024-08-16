@@ -137,7 +137,7 @@ from opennem.core.feature_flags import get_list_of_enabled_features  # noqa: E40
 # Log current timezone to console
 console.print(f" * Current timezone: {datetime.now().astimezone().tzinfo} (settings: {settings.timezone})")
 console.print(f" * Running from {PROJECT_PATH}")
-console.print(f" * Enabled feature flags: {', '.join(get_list_of_enabled_features())}")
+console.print(f" * Enabled feature flags: {", ".join(get_list_of_enabled_features())}")
 
 # Prod safety feature
 if settings.is_prod and not os.environ.get("OPENNEM_CONFIRM_PROD", False):

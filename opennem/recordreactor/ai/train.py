@@ -96,7 +96,7 @@ def write_training_set(training_set: Path) -> Path:
 
 def submit_new_finetune(training_file: Path, model: str = "davinci") -> str:
     """runs the openai process to submit new finetune"""
-    ## Start fine-tuning
+    # Start fine-tuning
     version: str = get_training_version()
     command: list[str] = (
         f"openai api fine_tunes.create --training_file {training_file} --model {model} --suffix {version}".split()

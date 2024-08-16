@@ -198,7 +198,7 @@ def download_file(url: str, destination_directory: Path, expect_content_type: st
         return None
 
     if expect_content_type and r.headers["Content-Type"] != expect_content_type:
-        logger.error(f"Content type mismatch: {r.headers['Content-Type']} != {expect_content_type}")
+        logger.error(f"Content type mismatch: {r.headers["Content-Type"]} != {expect_content_type}")
         return None
 
     with open(local_path, "wb") as f:

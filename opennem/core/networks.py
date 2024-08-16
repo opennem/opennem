@@ -22,7 +22,7 @@ def state_from_network_region(network_region: str) -> str:
 def network_from_state(state: str) -> NetworkSchema:
     state = state.upper().strip()
 
-    if state in ["WA"]:
+    if state == "WA":
         return NetworkWEM
 
     if state in ["QLD", "NSW", "VIC", "ACT", "TAS", "SA", "NT"]:
@@ -49,19 +49,19 @@ def network_from_network_region(
 def network_from_network_code(network_code: str) -> NetworkSchema:
     network_code = network_code.upper().strip()
 
-    if network_code in ["AU"]:
+    if network_code == "AU":
         return NetworkAU
 
-    if network_code in ["WEM"]:
+    if network_code == "WEM":
         return NetworkWEM
 
     if network_code == "WEMDE":
         return NetworkWEMDE
 
-    if network_code in ["NEM"]:
+    if network_code == "NEM":
         return NetworkNEM
 
-    if network_code in ["APVI"]:
+    if network_code == "APVI":
         return NetworkAPVI
 
     network_lookup = list(filter(lambda n: n.code == network_code, NETWORKS))

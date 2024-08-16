@@ -408,7 +408,7 @@ def parse_aemo_file(file: str, table_set: AEMOTableSet | None = None, values_onl
     if not file_path.is_file():
         raise Exception(f"Not a file {file_path}")
 
-    if file_path.suffix.lower() not in [".csv"]:
+    if file_path.suffix.lower() != ".csv":
         raise Exception(f"Not a CSV file {file_path}")
 
     with file_path.open() as fh:
