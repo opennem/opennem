@@ -8,26 +8,33 @@ import logfire
 from httpx import AsyncClient, AsyncHTTPTransport
 
 from opennem import __version__, settings
+from opennem.utils.random_agent import get_random_agent
 
 logfire.instrument_httpx()
 
 logger = logging.getLogger("opennem.utils.httpx")
 
-DEFAULT_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/116.0"
 
 DEFAULT_BROWSER_HEADERS = {
-    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*",
-    "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
-    "accept-encoding": "gzip, deflate",
-    "scheme": "https",
-    "sec-ch-prefers-color-scheme": "light",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": '"macOS"',
-    "sec-fetch-dest": "document",
-    "sec-fetch-mode": "navigate",
-    "sec-fetch-site": "none",
-    "sec-fetch-user": "?1",
-    "upgrade-insecure-requests": "1",
+    "Accept": (
+        "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,"
+        "image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
+    ),
+    "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+    "Cache-Control": "no-cache",
+    "Connection": "keep-alive",
+    # "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*",
+    # "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
+    # "accept-encoding": "gzip, deflate",
+    # "scheme": "https",
+    # "sec-ch-prefers-color-scheme": "light",
+    # "sec-ch-ua-mobile": "?0",
+    # "sec-ch-ua-platform": '"macOS"',
+    # "sec-fetch-dest": "document",
+    # "sec-fetch-mode": "navigate",
+    # "sec-fetch-site": "none",
+    # "sec-fetch-user": "?1",
+    # "upgrade-insecure-requests": "1",
 }
 
 
@@ -45,14 +52,19 @@ def debug_log_response(response) -> None:
     logger.debug(f"Response event hook: {request.method} {request.url} - Status {response.status_code}")
 
 
-def httpx_factory(mimic_browser: bool = False, debug: bool = True, *args, **kwargs) -> AsyncClient:
+class OpenNEMHTTPTransport(AsyncHTTPTransport):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+def httpx_factory(mimic_browser: bool = False, debug: bool = True, proxy: bool = False, *args, **kwargs) -> AsyncClient:
     """Create a new httpx client with default settings"""
 
     # set default request headers
     headers = kwargs.get("headers", {})
 
     if mimic_browser:
-        headers.setdefault("user-agent", DEFAULT_USER_AGENT)
+        headers.setdefault("user-agent", get_random_agent())
         headers.update(DEFAULT_BROWSER_HEADERS)
     else:
         headers.setdefault("user-agent", f"OpenNEM/{__version__}")
@@ -67,6 +79,14 @@ def httpx_factory(mimic_browser: bool = False, debug: bool = True, *args, **kwar
     if not kwargs.get("verify"):
         kwargs["verify"] = settings.http_verify_ssl
 
+    if not kwargs.get("proxy") and proxy and settings.http_proxy_url:
+        logger.debug(f"Setting proxy: {settings.http_proxy_url}")
+        proxy_mounts = {
+            "http://": httpx.AsyncHTTPTransport(proxy=settings.http_proxy_url),
+            "https://": httpx.AsyncHTTPTransport(proxy=settings.http_proxy_url),
+        }
+        kwargs["mounts"] = proxy_mounts
+
     # set event hooks
     event_hooks = kwargs.get("event_hooks", None)
     if debug:
@@ -80,14 +100,12 @@ def httpx_factory(mimic_browser: bool = False, debug: bool = True, *args, **kwar
     return httpx.AsyncClient(
         *args,
         **kwargs,
+        transport=OpenNEMHTTPTransport(retries=settings.http_retries),
         default_encoding=autodetect_encoding,  # type: ignore
     )
 
 
-http_transport = AsyncHTTPTransport(retries=settings.http_retries)
-http = httpx_factory(
-    debug=settings.is_dev, timeout=settings.http_timeout, transport=http_transport, proxy=settings.http_proxy_url
-)
+http = httpx_factory(debug=settings.is_dev, timeout=settings.http_timeout)
 
 
 async def get_http(*args, **kwargs) -> AsyncClient:

@@ -1,16 +1,19 @@
-#!/usr/bin/env/python
-from opennem.utils.http import attach_proxy, http
+#!/usr/bin/env python
+from opennem.utils.httpx import httpx_factory
 
 
-def run_req() -> None:
+async def run_req() -> None:
     """ """
-    req = attach_proxy(http)
     url = "http://lumtest.com/myip.json"
 
-    resp = req.get(url)
-
-    print(resp.json())
+    async with httpx_factory(mimic_browser=True, proxy=True) as http:
+        resp = await http.get(url)
+        print(resp.status_code)
+        print(resp.request.headers)
+        print(resp.json())
 
 
 if __name__ == "__main__":
-    run_req()
+    import asyncio
+
+    asyncio.run(run_req())
