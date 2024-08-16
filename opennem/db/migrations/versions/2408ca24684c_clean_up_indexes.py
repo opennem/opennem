@@ -17,18 +17,14 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.execute(
-        """
-    drop index if exists idx_facility_scada_trading_interval_desc_facility_code;
-    drop index if exists idx_facility_scada_day_network_fueltech_aest;
-    drop index if exists idx_facility_scada_day_network_fueltech_awst;
-    drop index if exists idx_facility_scada_trading_interval_perth_day;
-    drop index if exists idx_facility_scada_trading_interval_perth_month;
-    drop index if exists idx_facility_scada_trading_interval_sydney_day;
-    drop index if exists idx_facility_scada_trading_interval_sydney_month;
-    drop index if exists idx_facility_scada_trading_interval_facility_code;
-    """
-    )
+    op.execute("drop index if exists idx_facility_scada_trading_interval_desc_facility_code;")
+    op.execute("drop index if exists idx_facility_scada_day_network_fueltech_aest;")
+    op.execute("drop index if exists idx_facility_scada_day_network_fueltech_awst;")
+    op.execute("drop index if exists idx_facility_scada_trading_interval_perth_day;")
+    op.execute("drop index if exists idx_facility_scada_trading_interval_perth_month;")
+    op.execute("drop index if exists idx_facility_scada_trading_interval_sydney_day;")
+    op.execute("drop index if exists idx_facility_scada_trading_interval_sydney_month;")
+    op.execute("drop index if exists idx_facility_scada_trading_interval_facility_code;")
 
 
 def downgrade() -> None:

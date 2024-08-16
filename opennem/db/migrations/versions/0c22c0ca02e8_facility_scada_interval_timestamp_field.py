@@ -73,7 +73,6 @@ def upgrade():
 
     # Create indexes
     op.create_index('idx_facility_scada_facility_code_interval', 'facility_scada_new', ['facility_code', 'interval'], unique=False)
-    op.create_index('idx_facility_scada_network_id', 'facility_scada_new', ['network_id'], unique=False)
     op.create_index('idx_facility_scada_interval_facility_code', 'facility_scada_new', ['interval', 'facility_code'], unique=False)
 
     # Drop old table

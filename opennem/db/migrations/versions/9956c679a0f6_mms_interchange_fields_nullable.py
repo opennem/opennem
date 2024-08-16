@@ -19,34 +19,8 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.alter_column(
-        "mnsp_interconnector",
-        "from_region_tlf",
-        existing_type=sa.Numeric(),
-        nullable=True,
-        schema="mms",
-    )
-    op.alter_column(
-        "mnsp_interconnector",
-        "to_region_tlf",
-        existing_type=sa.Numeric(),
-        nullable=True,
-        schema="mms",
-    )
+    pass
 
 
 def downgrade() -> None:
-    op.alter_column(
-        "mnsp_interconnector",
-        "from_region_tlf",
-        existing_type=sa.Numeric(),
-        nullable=False,
-        schema="mms",
-    )
-    op.alter_column(
-        "mnsp_interconnector",
-        "to_region_tlf",
-        existing_type=sa.Numeric(),
-        nullable=False,
-        schema="mms",
-    )
+    pass

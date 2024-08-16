@@ -18,10 +18,8 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.alter_column("dudetail", "maxrateofchangeup", existing_type=sa.Numeric(), nullable=True, schema="mms")
-    op.alter_column("dudetail", "maxrateofchangedown", existing_type=sa.Numeric(), nullable=True, schema="mms")
+    pass
 
 
 def downgrade() -> None:
-    op.alter_column("dudetail", "maxrateofchangeup", existing_type=sa.Numeric(), nullable=False, schema="mms")
-    op.alter_column("dudetail", "maxrateofchangedown", existing_type=sa.Numeric(), nullable=False, schema="mms")
+    pass
