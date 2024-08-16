@@ -6,17 +6,20 @@ Get a list of stations from the local database
 from datetime import date, datetime
 from random import shuffle
 
-from opennem.db import SessionLocal
+from sqlalchemy import select
+
+from opennem.db import get_read_session
 from opennem.db.models.opennem import BomStation
 from opennem.schema.bom import BomStationSchema
 
 
-def get_stations_priority(limit: int | None = None) -> list[BomStationSchema]:
+async def get_stations_priority(limit: int | None = None) -> list[BomStationSchema]:
     """This gets all the capital stations which are required for the linked regions"""
-    with SessionLocal() as session:
-        stations = session.query(BomStation).filter(BomStation.priority < 2).all()
+    async with get_read_session() as session:
+        query = await session.execute(select(BomStation).filter(BomStation.priority < 2))
+        stations = query.scalars().all()
 
-        all_models = [BomStationSchema.from_orm(i) for i in stations]
+        all_models = [BomStationSchema.model_validate(i) for i in stations]
         return_models = []
 
         if limit:
@@ -34,15 +37,15 @@ def get_stations_priority(limit: int | None = None) -> list[BomStationSchema]:
     return return_models
 
 
-def get_stations() -> list[BomStationSchema]:
+async def get_stations() -> list[BomStationSchema]:
     """Get all weather stations
 
     @NOTE This is a bit redundant
     """
-    with SessionLocal() as session:
+    async with get_read_session() as session:
         stations = session.query(BomStation).filter(BomStation.priority >= 2).all()
 
-        all_models = [BomStationSchema.from_orm(i) for i in stations]
+        all_models = [BomStationSchema.model_validate(i) for i in stations]
 
     return all_models
 

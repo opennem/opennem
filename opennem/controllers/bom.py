@@ -6,13 +6,13 @@ from sqlalchemy.dialects.postgresql import insert
 
 from opennem.clients.bom import BOMObservationReturn
 from opennem.controllers.schema import ControllerReturn
-from opennem.db import get_database_engine, get_scoped_session
+from opennem.db import get_database_engine, get_write_session
 from opennem.db.models.opennem import BomObservation
 
 logger = logging.getLogger(__name__)
 
 
-def store_bom_observation_intervals(observations: BOMObservationReturn) -> ControllerReturn:
+async def store_bom_observation_intervals(observations: BOMObservationReturn) -> ControllerReturn:
     """Store BOM Observations"""
 
     engine = get_database_engine()
@@ -67,17 +67,17 @@ def store_bom_observation_intervals(observations: BOMObservationReturn) -> Contr
         },
     )
 
-    with get_scoped_session() as session:
+    async with get_write_session() as session:
         try:
-            session.execute(stmt)
-            session.commit()
+            await session.execute(stmt)
+            await session.commit()
         except Exception as e:
             logger.error(f"Error: {e}")
             cr.errors = cr.processed_records
             cr.error_detail.append(str(e))
         finally:
-            session.close()
-            engine.dispose()
+            await session.close()
+            await engine.dispose()
 
     cr.inserted_records = cr.processed_records
 

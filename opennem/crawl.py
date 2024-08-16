@@ -220,4 +220,6 @@ def get_crawl_set() -> CrawlerSet:
 
 
 if __name__ == "__main__":
-    pass
+    import asyncio
+
+    asyncio.run(run_crawl(BOMCapitals))

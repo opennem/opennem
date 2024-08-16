@@ -14,14 +14,14 @@ from opennem.schema.date_range import CrawlDateRange
 logger = logging.getLogger("opennem.crawler.bom")
 
 
-def crawl_bom_capitals(
+async def crawl_bom_capitals(
     crawler: CrawlerDefinition,
     last_crawled: bool = True,
     limit: bool = False,
     latest: bool = False,
     date_range: CrawlDateRange | None = None,
 ) -> ControllerReturn | None:
-    bom_stations = get_stations_priority(limit=crawler.limit)
+    bom_stations = await get_stations_priority(limit=crawler.limit)
 
     if not bom_stations:
         logger.error("Did not return any weather stations from crawler")
@@ -34,8 +34,8 @@ def crawl_bom_capitals(
                 logger.error(f"Station {bom_station.code} has no feed url - skipping ")
                 continue
 
-            bom_observations = get_bom_observations(bom_station.feed_url, bom_station.code)
-            cr = store_bom_observation_intervals(bom_observations)
+            bom_observations = await get_bom_observations(bom_station.feed_url, bom_station.code)
+            cr = await store_bom_observation_intervals(bom_observations)
 
             if crawler.backoff and crawler.backoff > 0:
                 logger.info(f"Backing off for {crawler.backoff}")
