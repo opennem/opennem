@@ -82,3 +82,25 @@ def strip_timezone(value: datetime) -> datetime:
         raise ValueError("strip_timezone() cannot be applied to a naive datetime")
 
     return value.replace(tzinfo=None)
+
+
+def get_timezone_for_state(state: str) -> str:
+    """Returns the timezone for a given state"""
+
+    match state.upper():
+        case "QLD":
+            return "Australia/Brisbane"
+        case "NSW":
+            return "Australia/Sydney"
+        case "VIC":
+            return "Australia/Melbourne"
+        case "TAS":
+            return "Australia/Hobart"
+        case "SA":
+            return "Australia/Adelaide"
+        case "NT":
+            return "Australia/Darwin"
+        case "WA":
+            return "Australia/Perth"
+        case _:
+            raise ValueError(f"Invalid state provided: {state}")
