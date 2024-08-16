@@ -81,6 +81,13 @@ def is_url(url: str) -> bool:
         return False
 
 
+def strip_url_schema(url: str, replace_schema: str = "http") -> str:
+    """Strips the https schema from a URL"""
+    parsed_url = urlparse(url)
+    url = urlunparse(parsed_url._replace(scheme=replace_schema))
+    return url
+
+
 if __name__ == "__main__":
     u = "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220612.zip"
     print(get_filename_from_url(u))
