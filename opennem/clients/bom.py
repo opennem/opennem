@@ -99,7 +99,6 @@ async def get_bom_observations(observation_url: str, station_code: str) -> BOMOb
         response = await http.get(observation_url)
 
     if response.status_code == 403:
-        logger.debug(f"Response: {response.text}")
         raise Exception(f"BoM client request exception: {response.status_code} - {response.text}")
 
     try:
