@@ -20,12 +20,8 @@ depends_on = None
 
 
 def upgrade() -> None:
-    sql_query = load_data("mms_postgres.sql", from_fixture=True, skip_loaders=True)
-    op.execute(sql_query)
-
-    # reset the search path so that alembic can update the migration table
-    op.execute("set schema 'public';")
+    pass
 
 
 def downgrade() -> None:
-    op.execute("drop schema if exists mms cascade;")
+    pass
