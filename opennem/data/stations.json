@@ -1786,7 +1786,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "CRWASF1",
                 "network_code": null,
                 "network_region": "NSW1",
@@ -2427,7 +2427,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "GNNDHSF1",
                 "network_code": null,
                 "network_region": "NSW1",
@@ -2891,7 +2891,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "HILLSTN1",
                 "network_code": null,
                 "network_region": "NSW1",
@@ -3255,7 +3255,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "JUNEESF1",
                 "network_code": null,
                 "network_region": "NSW1",
@@ -5103,7 +5103,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "SEBSF1",
                 "network_code": null,
                 "network_region": "NSW1",
@@ -5871,7 +5871,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "SUNTPSF1",
                 "network_code": null,
                 "network_region": "NSW1",
@@ -6644,7 +6644,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "WAGGNSF1",
                 "network_code": null,
                 "network_region": "NSW1",
@@ -7874,7 +7874,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "BLUEGSF1",
                 "network_code": null,
                 "network_region": "QLD1",
@@ -9750,7 +9750,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "HUGSF1",
                 "network_code": "NEM",
                 "network_region": "QLD1",
@@ -12805,7 +12805,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "WARWSF1",
                 "network_code": null,
                 "network_region": "QLD1",
@@ -12857,7 +12857,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "WARWSF2",
                 "network_code": null,
                 "network_region": "QLD1",
@@ -12909,7 +12909,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "WDGPH1",
                 "network_code": null,
                 "network_region": "QLD1",
@@ -14150,7 +14150,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "battery_discharging",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "BOWWBA1G",
                 "network_code": null,
                 "network_region": "SA1",
@@ -14173,7 +14173,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "BOWWPV1",
                 "network_code": null,
                 "network_region": "SA1",
@@ -14196,7 +14196,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "bioenergy_biogas",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "BOLIVAR1",
                 "network_code": "NEM",
                 "network_region": "SA1",
@@ -14219,7 +14219,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "battery_charging",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "BOWWBA1L",
                 "network_code": null,
                 "network_region": "SA1",
@@ -15039,7 +15039,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "battery_discharging",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "HVWWBA1G",
                 "network_code": null,
                 "network_region": "SA1",
@@ -15062,7 +15062,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "HVWWPV1",
                 "network_code": null,
                 "network_region": "SA1",
@@ -15085,7 +15085,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "battery_charging",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "HVWWBA1L",
                 "network_code": null,
                 "network_region": "SA1",
@@ -21482,7 +21482,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "COHUNSF1",
                 "network_code": null,
                 "network_region": "VIC1",
@@ -24425,7 +24425,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "wind",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "MUWAWF2",
                 "network_code": null,
                 "network_region": "VIC1",
@@ -29933,7 +29933,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "battery_discharging",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "CBWWBA1G",
                 "network_code": null,
                 "network_region": "SA1",
@@ -29956,7 +29956,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "battery_charging",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "CBWWBA1L",
                 "network_code": null,
                 "network_region": "SA1",
@@ -29979,7 +29979,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "solar_utility",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "CBWWPV1",
                 "network_code": null,
                 "network_region": "SA1",
@@ -32049,6 +32049,7 @@
             "geocode_approved": false,
             "geocode_skip": false
         }
+    },
     {
         "code": "RYANCWF",
         "name": "Ryan Corner Wind Farm",
