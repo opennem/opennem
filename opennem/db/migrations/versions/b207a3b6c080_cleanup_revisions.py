@@ -56,7 +56,6 @@ def upgrade() -> None:
     )
     op.drop_constraint("fk_facility_station_code", "facility", type_="foreignkey")
     op.create_foreign_key("fk_facility_station_code", "facility", "station", ["station_id"], ["id"])
-    op.create_index("idx_location_boundary", "location", ["boundary"], unique=False, postgresql_using="gist")
     op.add_column("milestones", sa.Column("network_region", sa.Text(), nullable=True))
     op.add_column("milestones", sa.Column("fueltech_group_id", sa.Text(), nullable=True))
     op.alter_column("milestones", "record_id", existing_type=sa.UUID(), type_=sa.Text(), existing_nullable=False)
