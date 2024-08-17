@@ -32049,5 +32049,56 @@
             "geocode_approved": false,
             "geocode_skip": false
         }
+    {
+        "code": "RYANCWF",
+        "name": "Ryan Corner Wind Farm",
+        "network_name": "Ryan Corner Wind Farm",
+        "description": "The Ryan Corner Wind Farm site is located in South-Western Victoria near the township of Yambuk, 16.5km north west of Port Fairy within the Moyne Shire Local Government Area. The project covers an area of approximately 3,388 Ha, where the current land use is primarily agricultural activities including grazing of sheep and cattle.",
+        "wikipedia_link": null,
+        "wikidata_id": null,
+        "website_url": "https://ryancornerwindfarm.globalpower-generation.com.au/",
+        "approved": true,
+        "approved_by": "opennem.registry",
+        "facilities": [
+            {
+                "network_id": "NEM",
+                "fueltech_id": "wind",
+                "status_id": "operating",
+                "code": "RYANCWF1",
+                "network_code": "NEM",
+                "network_region": "VIC1",
+                "network_name": null,
+                "dispatch_type": "GENERATOR",
+                "interconnector": false,
+                "interconnector_region_to": null,
+                "interconnector_region_from": null,
+                "capacity_registered": 218.4,
+                "expected_closure_date": null,
+                "expected_closure_year": null,
+                "registered": null,
+                "deregistered": null,
+                "unit_id": null,
+                "unit_number": null,
+                "unit_alias": null,
+                "unit_capacity": null,
+                "emissions_factor_co2": null
+            }
+        ],
+        "location": {
+            "address1": "Hamilton-Port Fairy Rd",
+            "address2": "",
+            "locality": "Orford",
+            "state": "VIC",
+            "postcode": "3284",
+            "country": "AU",
+            "geocode_processed_at": null,
+            "lat": -38.271324761470034,
+            "lng": 142.1402873920773,
+            "osm_way_id": null,
+            "place_id": null,
+            "geocode_by": "opennem.registry",
+            "geocode_approved": true,
+            "geocode_skip": false
+        }
     }
 ]
