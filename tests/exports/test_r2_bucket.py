@@ -23,7 +23,7 @@ class TestR2Bucket:
 
     @pytest.mark.asyncio
     async def test_write_content_to_r2(self):
-        file = open('/home/hong-phuc/Desktop/opennem/tests/fixtures/test.txt', 'r')
+        file = open(TEST_FIXTURE_PATH / f"test.txt", 'r')
         
         with patch.object(settings, 's3_endpoint_url', 'https://17399e149aeaa08c0c7bbb15382fa5c3.r2.cloudflarestorage.com'):
             with patch.object(settings, 's3_bucket_name', 'r2-dev'):

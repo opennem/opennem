@@ -33,11 +33,11 @@ def write_output(
     if is_local:
         byte_count = write_to_local(path, write_content)
     elif isinstance(stat_set, str):
-        byte_count = write_content_to_r2(stat_set, path)
+        byte_count = write_content_to_r2(stat_set, path, "application/json")
     elif isinstance(stat_set, OpennemDataSet):
         byte_count = write_stat_set_to_r2(stat_set, path, exclude_unset=exclude_unset)
     elif isinstance(stat_set, BaseModel):
-        byte_count = write_content_to_r2(write_content, path)
+        byte_count = write_content_to_r2(write_content, path, "application/json")
     else:
         raise Exception("Do not know how to write content of this type to output")
 
