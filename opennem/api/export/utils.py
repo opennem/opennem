@@ -37,7 +37,7 @@ def write_output(
     elif isinstance(stat_set, OpennemDataSet):
         byte_count = write_stat_set_to_r2(stat_set, path, exclude_unset=exclude_unset)
     elif isinstance(stat_set, BaseModel):
-        byte_count = write_to_s3(write_content, path)
+        byte_count = write_content_to_r2(write_content, path)
     else:
         raise Exception("Do not know how to write content of this type to output")
 
