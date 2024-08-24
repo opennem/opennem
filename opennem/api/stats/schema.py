@@ -319,10 +319,20 @@ class OpennemDataSet(BaseConfig):
 
         return sorted(value, key=sorting_key_method)  # type: ignore
 
-    _version_fromstr = validator("created_at", allow_reuse=True, pre=True)(optionally_parse_string_datetime)
+    @field_validator("created_at", mode="before")
+    @classmethod
+    def parse_created_at(cls, value):
+        return optionally_parse_string_datetime(value)
 
-    _created_at_trim = validator("created_at", allow_reuse=True, pre=True)(chop_datetime_microseconds)
-    _network_lowercase = validator("network", allow_reuse=True, pre=True)(optionaly_lowercase_string)
+    @field_validator("created_at")
+    @classmethod
+    def chop_datetime_microseconds(cls, value):
+        return chop_datetime_microseconds(value)
+
+    @field_validator("network")
+    @classmethod
+    def lowercase_network(cls, value):
+        return optionaly_lowercase_string(value)
 
 
 class RegionFlowResult(BaseConfig):
@@ -391,7 +401,10 @@ def load_opennem_dataset_from_file(file_path: str | Path) -> OpennemDataSet:
         raise Exception(f"File does not exist: {file_path}")
 
     try:
-        return pydantic.parse_file_as(path=str(file_path), type_=OpennemDataSet)
+        file_path = Path(file_path)
+        json_data = file_path.read_text()
+        return OpennemDataSet.model_validate_json(json_data)
+            #return pydantic.parse_file_as(path=str(file_path), type_=OpennemDataSet)
     except Exception as e:
         raise Exception(f"Error loading file: {file_path} - {e}") from None
 

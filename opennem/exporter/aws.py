@@ -112,7 +112,7 @@ def write_statset_to_s3(stat_set: OpennemDataSet, file_path: str, exclude: set |
     return write_response["length"]
 
 
-def write_to_s3(content: str, file_path: str, content_type: str = "application/json") -> int:
+def write_to_s3(content: str, file_path: str, content_type: str = "text/plain") -> int:
     """
     Write a string to s3
     """
