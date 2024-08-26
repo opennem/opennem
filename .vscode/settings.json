@@ -28,4 +28,5 @@
     "source.organizeImports.ruff": "explicit"
   },
   "editor.defaultFormatter": "charliermarsh.ruff",
+  "python.analysis.autoImportCompletions": true,
 }

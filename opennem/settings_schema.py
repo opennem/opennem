@@ -179,8 +179,8 @@ class OpennemSettings(BaseSettings):
 
     r2_token: str | None = None
 
-    aws_access_key_id: str | None = None
-    aws_secret_access_key: str | None = None
+    aws_access_key_id: str = Field("", validation_alias=AliasChoices("AWS_ACCESS_KEY_ID"))
+    aws_secret_access_key: str = Field("", validation_alias=AliasChoices("AWS_SECRET_ACCESS_KEY"))
 
     # pylint: disable=no-self-argument
     @field_validator("log_level")
