@@ -17,8 +17,6 @@ from opennem.exporter.historic import export_historic_intervals
 from opennem.importer.db import import_all_facilities
 from opennem.importer.db import init as db_init
 from opennem.parsers.aemo.cli import cmd_data_cli
-from opennem.workers.daily import all_runner, daily_runner
-from opennem.workers.energy import run_energy_update_archive
 
 logger = logging.getLogger("opennem.cli")
 
@@ -40,7 +38,7 @@ def cmd_db_init() -> None:
 
 @click.command()
 def cmd_db_fixtures() -> None:
-    load_fixtures()
+    asyncio.run(load_fixtures())
     logger.info("Fixtures loaded")
 
 
@@ -61,17 +59,17 @@ def cmd_import_facilities() -> None:
 
 @click.command()
 def cmd_import_fueltechs() -> None:
-    load_fueltechs()
+    asyncio.run(load_fueltechs())
 
 
 @click.command()
 def cmd_import_bom_stations() -> None:
-    load_bom_stations_json()
+    asyncio.run(load_bom_stations_json())
 
 
 @click.command()
 def cmd_weather_init() -> None:
-    load_bom_stations_json()
+    asyncio.run(load_bom_stations_json())
 
 
 # Tasks
@@ -80,27 +78,6 @@ def cmd_weather_init() -> None:
 @click.group()
 def cmd_task() -> None:
     pass
-
-
-@click.command()
-@click.option("--year", required=True, type=int)
-@click.option("--fueltech", required=False, type=str)
-def cmd_task_energy(year: int, fueltech: str | None = None) -> None:
-    run_energy_update_archive(year, fueltech=fueltech)
-
-
-@click.command()
-@click.option("--days", required=False, type=int, default=2)
-def cmd_task_daily(days: int) -> None:
-    daily_runner(days=days)
-
-
-@click.command()
-def cmd_task_all() -> None:
-    """
-    Runs gap fill, daily and aggregate tasks
-    """
-    all_runner()
 
 
 @click.command()
@@ -131,9 +108,6 @@ cmd_db.add_command(cmd_db_init, name="init")
 cmd_db.add_command(cmd_db_fixtures, name="fixtures")
 
 
-cmd_task.add_command(cmd_task_energy, name="energy")
-cmd_task.add_command(cmd_task_daily, name="daily")
-cmd_task.add_command(cmd_task_all, name="all")
 cmd_task.add_command(cmd_task_historic, name="historic")
 
 if __name__ == "__main__":
