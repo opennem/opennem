@@ -130,7 +130,7 @@ async def run_milestone_engine(
                         # tasks.append(task)
 
                 # Move to the next interval and pad it out
-                current_interval += timedelta(minutes=interval_leap_size)
+                current_interval += timedelta(days=1)
 
                 if len(tasks) >= 2 * len(periods):
                     # await asyncio.gather(*tasks)
@@ -147,8 +147,8 @@ async def run_milestone_engine(
 if __name__ == "__main__":
     import asyncio
 
-    start_interval = datetime.fromisoformat("2015-07-01 00:00:00")
-    end_interval = datetime.fromisoformat("2024-08-10 00:00:00")
+    start_interval = datetime.fromisoformat("1998-12-08 00:00:00")
+    end_interval = datetime.fromisoformat("2024-08-15 00:00:00")
     asyncio.run(
         run_milestone_engine(
             start_interval=start_interval,
