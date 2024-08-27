@@ -250,13 +250,14 @@ async def get_milestone(
 
 
 @api_version(4)
-# @api_protected()
+@api_protected()
 @milestones_router.get(
     "/record_ids",
     response_model=APIV4ResponseSchema,
     response_model_exclude_unset=True,
     response_model_exclude_none=True,
     description="Get a list of milestone record ids with the most recent record for each record_id",
+    include_in_schema=False,
 )
 async def api_get_milestone_record_ids(
     db: AsyncSession = Depends(get_scoped_session),
