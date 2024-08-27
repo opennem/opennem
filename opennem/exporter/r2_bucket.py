@@ -5,17 +5,18 @@ Writes OpennemDataSet's to AWS R2 buckets
 """
 
 import logging
+from typing import Any
 from urllib.parse import urljoin
 
 from aioboto3.session import Session
 from aiohttp import ClientError
-from httpx import Client
+
 from opennem import settings
 from opennem.api.stats.schema import OpennemDataSet
 from opennem.utils.numbers import compact_json_output_number_series
-from typing import Any
 
 logger = logging.getLogger("opennem.exporter.r2_bucket")
+
 
 class OpennemDataSetSerialize:
     session: Session
@@ -39,7 +40,7 @@ class OpennemDataSetSerialize:
             try:
                 self.bucket = await s3.Bucket(self.bucket_name)
             except Exception as e:
-                raise RuntimeError(e)
+                raise RuntimeError(e) from e
 
     async def dump(self, key: str, stat_set_to_write: OpennemDataSet, exclude: set | None = None) -> Any:
         indent = None
@@ -56,17 +57,17 @@ class OpennemDataSetSerialize:
                 stat_set_content = compact_json_output_number_series(stat_set_content)
 
         try:
-            obj_to_write = await self.bucket.Object(key = key)
+            obj_to_write = await self.bucket.Object(key=key)
             write_result = await obj_to_write.put(Body=stat_set_content, ContentType="application/json")
         except Exception as e:
-            raise RuntimeError(e)
+            raise RuntimeError(e) from e
 
         write_result["length"] = len(stat_set_content)
 
         return write_result
-    
+
     async def write(self, key: str, content_to_write: str, content_type: str = "text/plain") -> Any:
-        obj_to_write = await self.bucket.Object(key = key)
+        obj_to_write = await self.bucket.Object(key=key)
 
         write_result = await obj_to_write.put(Body=content_to_write, ContentType=content_type)
 
@@ -74,7 +75,10 @@ class OpennemDataSetSerialize:
 
         return write_result
 
-async def write_stat_set_to_r2(stat_set: OpennemDataSet, file_path: str, exclude: set | None = None, exclude_unset: bool = False) -> int:
+
+async def write_stat_set_to_r2(
+    stat_set: OpennemDataSet, file_path: str, exclude: set | None = None, exclude_unset: bool = False
+) -> int:
     r2_save_path = urljoin(f"https://{settings.s3_bucket_path}", file_path)
 
     if file_path.startswith("/"):
@@ -82,7 +86,7 @@ async def write_stat_set_to_r2(stat_set: OpennemDataSet, file_path: str, exclude
 
     if not settings.s3_bucket_name:
         raise Exception("Require an R2 bucket to write to")
-    
+
     r2_bucket = OpennemDataSetSerialize(settings.s3_bucket_name, exclude_unset=exclude_unset)
     write_response = None
 
@@ -92,7 +96,7 @@ async def write_stat_set_to_r2(stat_set: OpennemDataSet, file_path: str, exclude
     except ClientError as e:
         logger.log(e)
         return 1
-    
+
     if "ResponseMetadata" not in write_response:
         raise Exception(f"Error writing stat set to {file_path} invalid write response")
 
@@ -110,6 +114,7 @@ async def write_stat_set_to_r2(stat_set: OpennemDataSet, file_path: str, exclude
 
     return write_response["length"]
 
+
 async def write_content_to_r2(content: str, file_path: str, content_type: str = "text/plain") -> int:
     r2_save_path = urljoin(f"https://{settings.s3_bucket_path}", file_path)
 
@@ -118,7 +123,7 @@ async def write_content_to_r2(content: str, file_path: str, content_type: str = 
 
     if not settings.s3_bucket_name:
         raise Exception("Require an R2 bucket to write to")
-    
+
     r2_bucket = OpennemDataSetSerialize(settings.s3_bucket_name)
     write_response = None
 
@@ -128,7 +133,7 @@ async def write_content_to_r2(content: str, file_path: str, content_type: str = 
     except ClientError as e:
         logger.log(e)
         return 1
-    
+
     if "ResponseMetadata" not in write_response:
         raise Exception(f"Error writing stat set to {file_path} invalid write response")
 
