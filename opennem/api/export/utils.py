@@ -9,7 +9,6 @@ from pydantic.main import BaseModel
 
 from opennem import settings
 from opennem.api.stats.schema import OpennemDataSet
-from opennem.exporter.aws import write_statset_to_s3, write_to_s3
 from opennem.exporter.local import write_to_local
 from opennem.exporter.r2_bucket import write_content_to_r2, write_stat_set_to_r2
 
