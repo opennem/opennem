@@ -20,6 +20,8 @@ depends_on = None
 
 
 def upgrade() -> None:
+    op.execute("drop table if exists milestones cascade")
+
     op.create_table(
         "milestones",
         sa.Column("instance_id", postgresql.UUID(as_uuid=True), nullable=False),

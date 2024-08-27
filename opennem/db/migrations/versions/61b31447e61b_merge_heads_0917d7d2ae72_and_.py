@@ -20,7 +20,8 @@ depends_on = None
 
 
 def upgrade() -> None:
-    pass
+    op.create_index("ix_stats_country_type", "stats", ["stat_type", "country"], unique=False)
+    op.create_index("ix_stats_date", "stats", [sa.text("stat_date DESC")], unique=False)
 
 
 def downgrade() -> None:
