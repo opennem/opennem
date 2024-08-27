@@ -2,11 +2,11 @@ import logging
 import uuid
 from datetime import datetime
 
-from sqlalchemy import and_, or_, select
+from sqlalchemy import and_, or_, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import func
 
-from opennem.db import SessionLocal
+from opennem.db import SessionLocal, get_read_session
 from opennem.db.models.opennem import Milestones
 from opennem.recordreactor.schema import MilestoneAggregate, MilestoneMetric, MilestonePeriod
 from opennem.schema.network import NetworkSchema
@@ -155,6 +155,54 @@ async def get_total_milestones(
     return num_records
 
 
+async def get_milestone_record_ids() -> list[dict]:
+    """Get a list of all milestone record ids including the most recent record for each record_id"""
+
+    query = """SELECT DISTINCT ON (record_id)
+        record_id,
+        interval,
+        significance,
+        value,
+        network_id,
+        fueltech_id,
+        description,
+        period,
+        aggregate,
+        metric,
+        value_unit,
+        description_long,
+        network_region,
+        previous_instance_id
+    FROM milestones
+    ORDER BY record_id, interval DESC"""
+
+    async with get_read_session() as session:
+        result = await session.execute(text(query))
+        records = result.fetchall()
+
+        record_list = []
+        for record in records:
+            record_dict = {
+                "record_id": record.record_id,
+                "interval": record.interval,
+                "significance": record.significance,
+                "value": record.value,
+                "network_id": record.network_id,
+                "fueltech_id": record.fueltech_id,
+                "description": record.description,
+                "period": record.period,
+                "aggregate": record.aggregate,
+                "metric": record.metric,
+                "value_unit": record.value_unit,
+                "description_long": record.description_long,
+                "network_region": record.network_region,
+                "previous_instance_id": record.previous_instance_id,
+            }
+            record_list.append(record_dict)
+
+        return record_list
+
+
 # debugger entry point
 async def main():
     async with SessionLocal() as session:
@@ -166,4 +214,4 @@ async def main():
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(main())
+    asyncio.run(get_milestone_record_ids())

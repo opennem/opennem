@@ -20,7 +20,7 @@ from opennem.recordreactor.schema import (
 )
 from opennem.schema.network import NetworkSchema
 
-from .queries import get_milestone_record, get_milestone_records
+from .queries import get_milestone_record, get_milestone_record_ids, get_milestone_records
 
 logger = logging.getLogger("opennem.api.milestones.router")
 
@@ -247,3 +247,22 @@ async def get_milestone(
     response_schema = APIV4ResponseSchema(success=True, data=milestone_record)
 
     return response_schema
+
+
+@api_version(4)
+# @api_protected()
+@milestones_router.get(
+    "/record_ids",
+    response_model=APIV4ResponseSchema,
+    response_model_exclude_unset=True,
+    response_model_exclude_none=True,
+    description="Get a list of milestone record ids with the most recent record for each record_id",
+)
+async def api_get_milestone_record_ids(
+    db: AsyncSession = Depends(get_scoped_session),
+) -> APIV4ResponseSchema:
+    """Get a list of milestone record ids with the most recent record for each record_id"""
+
+    record_ids = await get_milestone_record_ids()
+
+    return APIV4ResponseSchema(success=True, data=record_ids)
