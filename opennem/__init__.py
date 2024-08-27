@@ -58,7 +58,7 @@ except ImportError:
 logger = logging.getLogger("opennem")
 
 # Module variables
-__version__ = "4.0.0a133"
+__version__ = "4.0.0a134"
 __env__ = "prod"
 __package__ = "opennem"
 
