@@ -30,7 +30,7 @@ milestones_router = APIRouter(tags=["Milestones"], include_in_schema=True)
 @api_version(4)
 @api_protected()
 @milestones_router.get(
-    "/",
+    "/records",
     response_model=APIV4ResponseSchema,
     response_model_exclude_unset=True,
     response_model_exclude_none=True,
