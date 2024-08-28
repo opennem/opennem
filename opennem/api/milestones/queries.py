@@ -155,7 +155,7 @@ async def get_total_milestones(
     return num_records
 
 
-async def get_milestone_record_ids() -> list[dict]:
+async def get_milestone_record_ids(session: AsyncSession, record_id: str | None = None) -> list[dict]:
     """Get a list of all milestone record ids including the most recent record for each record_id"""
 
     query = """SELECT DISTINCT ON (record_id)
@@ -199,6 +199,9 @@ async def get_milestone_record_ids() -> list[dict]:
                 "previous_instance_id": record.previous_instance_id,
             }
             record_list.append(record_dict)
+
+        if record_id:
+            record_list = [record for record in record_list if record["record_id"] == record_id]
 
         return record_list
 

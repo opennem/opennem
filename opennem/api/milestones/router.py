@@ -255,7 +255,7 @@ async def get_milestone(
 @api_version(4)
 @api_protected()
 @milestones_router.get(
-    "/record_ids",
+    "/record_id",
     response_model=APIV4ResponseSchema,
     response_model_exclude_unset=True,
     response_model_exclude_none=True,
@@ -264,9 +264,13 @@ async def get_milestone(
 )
 async def api_get_milestone_record_ids(
     db: AsyncSession = Depends(get_scoped_session),
+    record_id: str | None = Query(None, description="Filter by record_id"),
 ) -> APIV4ResponseSchema:
     """Get a list of milestone record ids with the most recent record for each record_id"""
 
-    record_ids = await get_milestone_record_ids()
+    record_ids = await get_milestone_record_ids(db, record_id)
+
+    if not record_ids:
+        raise HTTPException(status_code=404, detail="No records found")
 
     return APIV4ResponseSchema(success=True, data=record_ids)
