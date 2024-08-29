@@ -33,6 +33,13 @@ class MilestoneSignificanceWeights(Enum):
 def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
     """Calculate the significance of a milestone"""
 
+    # update prioritised for significant milestones
+    if milestone.fueltech in ["solar", "wind", "coal", "gas", "battery_discharging"]:
+        if milestone.network_region is None:
+            return 10
+        else:
+            return 10  # @NOTE temporary
+
     # Period significance
     period_scores = {
         MilestonePeriod.interval: 1,
