@@ -11,6 +11,7 @@ from opennem import settings
 from opennem.recordreactor.buckets import get_period_start_end, is_end_of_period
 from opennem.recordreactor.processors.demand import run_price_demand_milestone_for_interval
 from opennem.recordreactor.processors.generation import run_generation_energy_emissions_milestones
+from opennem.recordreactor.processors.power import run_power_milestones
 from opennem.recordreactor.schema import MilestoneMetric, MilestonePeriod
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM, NetworkWEMDE
 from opennem.utils.dates import get_last_completed_interval_for_network
@@ -107,6 +108,14 @@ async def run_milestone_engine(
                     if settings.dry_run:
                         continue
 
+                    if MilestoneMetric.power in metrics:
+                        await run_power_milestones(
+                            network=network,
+                            bucket_size=bucket_size,
+                            period_start=period_start,
+                            period_end=period_end,
+                        )
+
                     if MilestoneMetric.demand in metrics or MilestoneMetric.price in metrics:
                         await run_price_demand_milestone_for_interval(
                             network=network,
@@ -116,11 +125,7 @@ async def run_milestone_engine(
                         )
                         # tasks.append(task)
 
-                    if (
-                        MilestoneMetric.power in metrics
-                        or MilestoneMetric.energy in metrics
-                        or MilestoneMetric.emissions in metrics
-                    ):
+                    if MilestoneMetric.energy in metrics or MilestoneMetric.emissions in metrics:
                         await run_generation_energy_emissions_milestones(
                             network=network,
                             bucket_size=bucket_size,
@@ -130,7 +135,7 @@ async def run_milestone_engine(
                         # tasks.append(task)
 
                 # Move to the next interval and pad it out
-                current_interval += timedelta(days=1)
+                current_interval += timedelta(minutes=interval_leap_size)
 
                 if len(tasks) >= 2 * len(periods):
                     # await asyncio.gather(*tasks)
@@ -147,11 +152,13 @@ async def run_milestone_engine(
 if __name__ == "__main__":
     import asyncio
 
-    start_interval = datetime.fromisoformat("1998-12-08 00:00:00")
+    nem_start = datetime.fromisoformat("1998-12-08 00:00:00")
+    start_interval = datetime.fromisoformat("2024-01-01 00:00:00")
     end_interval = datetime.fromisoformat("2024-08-15 00:00:00")
     asyncio.run(
         run_milestone_engine(
             start_interval=start_interval,
             end_interval=end_interval,
+            metrics=[MilestoneMetric.power],
         )
     )

@@ -135,6 +135,9 @@ async def aggregate_generation_and_emissions_data(
 async def run_generation_energy_emissions_milestones(
     network: NetworkSchema, bucket_size: MilestonePeriod, period_start: datetime, period_end: datetime
 ):
+    if bucket_size == MilestonePeriod.interval:
+        return
+
     milestone_data = await aggregate_generation_and_emissions_data(
         network=network,
         bucket_size=bucket_size,

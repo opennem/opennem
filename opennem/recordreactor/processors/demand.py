@@ -136,6 +136,9 @@ async def aggregate_demand_and_price_data(
 async def run_price_demand_milestone_for_interval(
     network: NetworkSchema, bucket_size: MilestonePeriod, period_start: datetime, period_end: datetime
 ):
+    if bucket_size == MilestonePeriod.interval:
+        return
+
     milestone_data_countries = await aggregate_demand_and_price_data(
         network=network,
         bucket_size=bucket_size,
