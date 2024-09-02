@@ -398,7 +398,7 @@ class Facility(Base, BaseModel):
     approved = Column(Boolean, default=False)
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
-    include_in_geojson = Column(Boolean, default=True)
+    # include_in_geojson = Column(Boolean, default=True)
 
     network = relationship("Network", lazy="joined", innerjoin=True)
     fueltech = relationship("FuelTech", back_populates="facilities", lazy="joined", innerjoin=False)

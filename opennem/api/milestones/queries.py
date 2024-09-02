@@ -152,7 +152,7 @@ async def get_total_milestones(
     count_stmt = select(func.count()).select_from(select_query.subquery())
     num_records = await session.scalar(count_stmt)
 
-    return num_records
+    return num_records or 0
 
 
 async def get_milestone_record_ids(session: AsyncSession, record_id: str | None = None) -> list[dict]:
