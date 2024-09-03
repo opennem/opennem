@@ -28,9 +28,9 @@ logger = logging.getLogger("opennem.pipelines.nem")
 async def task_nem_interval_check(ctx) -> None:
     """This task runs per interval and checks for new data"""
     tasks = [
-        run_crawl(AEMONemwebDispatchIS),
-        run_crawl(AEMONNemwebDispatchScada),
-        run_crawl(AEMONemwebTradingIS),
+        run_crawl(AEMONemwebDispatchIS, latest=True),
+        run_crawl(AEMONNemwebDispatchScada, latest=True),
+        run_crawl(AEMONemwebTradingIS, latest=True),
     ]
 
     results = await asyncio.gather(*tasks)
