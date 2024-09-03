@@ -38,7 +38,7 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
         if milestone.network_region is None:
             return 10
         else:
-            return 10  # @NOTE temporary
+            return 9  # @NOTE temporary
 
     # Period significance
     period_scores = {
