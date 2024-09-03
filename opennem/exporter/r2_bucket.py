@@ -17,6 +17,8 @@ from opennem.utils.numbers import compact_json_output_number_series
 
 logger = logging.getLogger("opennem.exporter.r2_bucket")
 
+_botocore_session = Session()
+
 
 class OpennemDataSetSerialize:
     session: Session
@@ -26,7 +28,7 @@ class OpennemDataSetSerialize:
     exclude_unset: bool = False
 
     def __init__(self, bucket_name: str, exclude_unset: bool = False, debug: bool = False) -> None:
-        self.session = Session()
+        self.session = _botocore_session
         self.bucket = None
         self.debug = settings.debug
         self.bucket_name = bucket_name
@@ -36,6 +38,10 @@ class OpennemDataSetSerialize:
             self.debug = debug
 
     async def create_S3_bucket(self):
+        """Create an S3 bucket if it doesn't exist"""
+        if not settings.s3_bucket_name:
+            raise Exception("Require an R2 bucket to write to")
+
         async with self.session.resource("s3", endpoint_url=settings.s3_endpoint_url) as s3:
             try:
                 self.bucket = await s3.Bucket(self.bucket_name)
@@ -48,13 +54,13 @@ class OpennemDataSetSerialize:
         if settings.debug:
             indent = 4
 
-        stat_set_content = stat_set_to_write.model_dump_json(exclude_unset=self.exclude_unset, indent=indent, exclude=exclude)
+        stat_set_content = stat_set_to_write.model_dump_json(
+            exclude_unset=self.exclude_unset, indent=indent if settings.is_dev else None, exclude=exclude
+        )
 
         if settings.compact_number_ouput_in_json:
             logger.debug(f"Applying compact number output to {key}")
-
-            if settings.compact_number_ouput_in_json:
-                stat_set_content = compact_json_output_number_series(stat_set_content)
+            stat_set_content = compact_json_output_number_series(stat_set_content)
 
         try:
             obj_to_write = await self.bucket.Object(key=key)
@@ -75,6 +81,13 @@ class OpennemDataSetSerialize:
 
         return write_result
 
+    async def __aenter__(self):
+        await self.create_S3_bucket()
+        return self
+
+    async def __aexit__(self, exc_type, exc_value, traceback):
+        pass
+
 
 async def write_stat_set_to_r2(
     stat_set: OpennemDataSet, file_path: str, exclude: set | None = None, exclude_unset: bool = False
@@ -87,15 +100,14 @@ async def write_stat_set_to_r2(
     if not settings.s3_bucket_name:
         raise Exception("Require an R2 bucket to write to")
 
-    r2_bucket = OpennemDataSetSerialize(settings.s3_bucket_name, exclude_unset=exclude_unset)
     write_response = None
 
-    try:
-        await r2_bucket.create_S3_bucket()
-        write_response = await r2_bucket.dump(file_path, stat_set, exclude=exclude)
-    except ClientError as e:
-        logger.log(e)
-        return 1
+    async with OpennemDataSetSerialize(settings.s3_bucket_name, exclude_unset=exclude_unset) as r2_bucket:
+        try:
+            write_response = await r2_bucket.dump(file_path, stat_set, exclude=exclude)
+        except ClientError as e:
+            logger.error(e)
+            return 1
 
     if "ResponseMetadata" not in write_response:
         raise Exception(f"Error writing stat set to {file_path} invalid write response")
@@ -110,19 +122,19 @@ async def write_stat_set_to_r2(
             )
         )
 
-    logger.info("Wrote {} to {}".format(write_response["length"], r2_save_path))
+    logger.info("Wrote {:.2f} MB to {}".format(write_response["length"] / (1024), r2_save_path))
 
     return write_response["length"]
 
 
 async def write_content_to_r2(content: str, file_path: str, content_type: str = "text/plain") -> int:
+    if not settings.s3_bucket_name:
+        raise Exception("Require an R2 bucket to write to")
+
     r2_save_path = urljoin(f"https://{settings.s3_bucket_path}", file_path)
 
     if file_path.startswith("/"):
         file_path = file_path[1:]
-
-    if not settings.s3_bucket_name:
-        raise Exception("Require an R2 bucket to write to")
 
     r2_bucket = OpennemDataSetSerialize(settings.s3_bucket_name)
     write_response = None
@@ -131,7 +143,7 @@ async def write_content_to_r2(content: str, file_path: str, content_type: str = 
         await r2_bucket.create_S3_bucket()
         write_response = await r2_bucket.write(file_path, content, content_type=content_type)
     except ClientError as e:
-        logger.log(e)
+        logger.error(e)
         return 1
 
     if "ResponseMetadata" not in write_response:
@@ -147,6 +159,6 @@ async def write_content_to_r2(content: str, file_path: str, content_type: str = 
             )
         )
 
-    logger.info("Wrote {} to {}".format(write_response["length"], r2_save_path))
+    logger.info("Wrote {:.2f} MB to {}".format(write_response["length"] / (1024), r2_save_path))
 
     return write_response["length"]
