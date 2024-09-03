@@ -294,11 +294,11 @@ def chop_delta_microseconds(delta: timedelta) -> timedelta:
     return delta - timedelta(microseconds=delta.microseconds)
 
 
-def chop_datetime_microseconds(dt: datetime) -> datetime | None:
+def chop_datetime_microseconds(dt: datetime) -> datetime:
     """Removes the microseconds portion of a datetime"""
 
     if not dt:
-        return None
+        raise ValueError("Datetime is required")
 
     if not dt.microsecond:
         return dt
@@ -306,11 +306,11 @@ def chop_datetime_microseconds(dt: datetime) -> datetime | None:
     return dt - timedelta(microseconds=dt.microsecond)
 
 
-def chop_timezone(dt: datetime) -> datetime | None:
+def chop_timezone(dt: datetime) -> datetime:
     """Removes the timezone of a datetime"""
 
     if not dt:
-        return None
+        raise ValueError("Datetime is required")
 
     if not dt.tzinfo:
         return dt
@@ -438,16 +438,14 @@ def get_last_complete_day_for_network(network: NetworkSchema) -> datetime:
     return today_midnight
 
 
-def get_last_completed_interval_for_network(network: NetworkSchema) -> datetime:
+def get_last_completed_interval_for_network(network: NetworkSchema, tz_aware: bool = True) -> datetime:
     """Get the last completed network time for a network. Live wall clock"""
     now_network = datetime.now(network.get_fixed_offset())
 
+    if not tz_aware:
+        now_network = chop_timezone(now_network)
+
     return now_network.replace(minute=now_network.minute - (now_network.minute % network.interval_size), second=0, microsecond=0)
-
-
-def unix_timestamp_to_aware_datetime(timestamp: int, timezone: str) -> datetime:
-    """Convert a unix timstamp to an aware datetime"""
-    return ZoneInfo(timezone).localize(datetime.fromtimestamp(timestamp))
 
 
 def get_today_nem() -> datetime:
@@ -490,6 +488,16 @@ def get_today_for_network(network: NetworkSchema) -> datetime:
     nem_dt = now_no_microseconds.astimezone(nem_tz)
 
     return nem_dt
+
+
+def get_datetime_now_for_network(network: NetworkSchema, tz_aware: bool = False) -> datetime:
+    """Get the current datetime for a network"""
+    dt_now = datetime.now(network.get_fixed_offset())
+
+    if not tz_aware:
+        dt_now = chop_timezone(dt_now)
+
+    return chop_datetime_microseconds(dt_now)
 
 
 def get_today_opennem() -> datetime:
