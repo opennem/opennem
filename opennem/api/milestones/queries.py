@@ -155,8 +155,13 @@ async def get_total_milestones(
     return num_records or 0
 
 
-async def get_milestone_record_ids(session: AsyncSession, record_id: str | None = None) -> list[dict]:
+async def get_milestone_record_ids(
+    session: AsyncSession, record_id: str | None = None, significance: int | None = None
+) -> list[dict]:
     """Get a list of all milestone record ids including the most recent record for each record_id"""
+
+    if not significance:
+        significance = 0
 
     query = """SELECT DISTINCT ON (record_id)
         record_id,
@@ -174,10 +179,11 @@ async def get_milestone_record_ids(session: AsyncSession, record_id: str | None 
         network_region,
         previous_instance_id
     FROM milestones
+    WHERE significance >= :significance
     ORDER BY record_id, interval DESC"""
 
     async with get_read_session() as session:
-        result = await session.execute(text(query))
+        result = await session.execute(text(query), {"significance": significance})
         records = result.fetchall()
 
         record_list = []
@@ -212,9 +218,3 @@ async def main():
         records, total = await get_milestone_records(session)
         print(f"Total records: {total}")
         print(f"First record: {records[0] if records else None}")
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(get_milestone_record_ids())

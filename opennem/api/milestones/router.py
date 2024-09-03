@@ -124,6 +124,10 @@ async def get_milestones(
 
         period = [MilestonePeriod[period] for period in period]
 
+    if significance:
+        if not 0 <= significance <= 10:
+            raise HTTPException(status_code=400, detail="Significance must be between 0 and 10")
+
     try:
         db_records, total_records = await get_milestone_records(
             db,
@@ -265,10 +269,17 @@ async def get_milestone(
 async def api_get_milestone_record_ids(
     db: AsyncSession = Depends(get_scoped_session),
     record_id: str | None = Query(None, description="Filter by record_id"),
+    significance: int | None = Query(None, description="Significance filter"),
 ) -> APIV4ResponseSchema:
     """Get a list of milestone record ids with the most recent record for each record_id"""
 
-    record_ids = await get_milestone_record_ids(db, record_id)
+    if not significance:
+        significance = 0
+
+    if significance < 0 or significance > 10:
+        raise HTTPException(status_code=400, detail="Significance must be between 0 and 10")
+
+    record_ids = await get_milestone_record_ids(session=db, record_id=record_id, significance=significance)
 
     if not record_ids:
         raise HTTPException(status_code=404, detail="No records found")
