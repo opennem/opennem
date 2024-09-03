@@ -28,7 +28,7 @@ async def power_flows_per_interval(
         network_region=network_region_code,
     )
 
-    with engine.connect() as conn:
+    async with engine.begin() as conn:
         logger.debug(query)
         result = await conn.execute(query)
         rows = result.fetchall()
