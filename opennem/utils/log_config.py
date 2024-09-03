@@ -33,5 +33,7 @@ LOGGING_CONFIG = {
         "psycopg.pq": {"level": "INFO"},
         "httpcore.http11": {"level": "ERROR"},
         "httpcore.connection": {"level": "ERROR"},
+        "aiobotocore": {"level": "ERROR"},
+        "aioboto3": {"level": "ERROR"},
     },
 }
