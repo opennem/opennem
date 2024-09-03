@@ -112,7 +112,7 @@ class OpennemExportSeries(BaseConfig):
             f"period {self.period.period_human if self.period else None} between {self.start} and {self.end}"
         )
 
-    def get_range(self) -> ExportDatetimeRange:
+    def get_range(self, tz_aware: bool = False) -> ExportDatetimeRange:
         """Return a DatetimeRange from the time series for queries"""
         start = self.start.replace(second=0, microsecond=0)
         end = self.end.replace(second=0, microsecond=0)
@@ -132,10 +132,10 @@ class OpennemExportSeries(BaseConfig):
             forecast_start = end
             forecast_end = forecast_start + get_human_interval(self.forecast_period)
 
-            if not is_aware(forecast_start):
-                forecast_start = forecast_start.astimezone(self.network.get_fixed_offset())
-            if not is_aware(forecast_end):
-                forecast_end = forecast_end.astimezone(self.network.get_fixed_offset())
+            if not is_aware(forecast_start) and tz_aware:
+                forecast_start = forecast_start.replace(tzinfo=self.network.get_fixed_offset())
+            if not is_aware(forecast_end) and tz_aware:
+                forecast_end = forecast_end.replace(tzinfo=self.network.get_fixed_offset())
 
             return ExportDatetimeRange(start=forecast_start, end=forecast_end, interval=self.interval)
 
@@ -176,7 +176,6 @@ class OpennemExportSeries(BaseConfig):
                 hour=0,
                 minute=0,
                 second=0,
-                tzinfo=self.network.get_fixed_offset(),
             )
 
             end = datetime(
@@ -186,7 +185,6 @@ class OpennemExportSeries(BaseConfig):
                 hour=23,
                 minute=59,
                 second=59,
-                tzinfo=self.network.get_fixed_offset(),
             )
 
             current_year = get_today_opennem().year
@@ -203,8 +201,6 @@ class OpennemExportSeries(BaseConfig):
 
                 end = end - timedelta(days=1)
 
-                end = end.replace(tzinfo=self.network.get_fixed_offset())
-
         if self.month:
             start = datetime(
                 year=self.month.year,
@@ -214,7 +210,6 @@ class OpennemExportSeries(BaseConfig):
                 minute=0,
                 second=0,
                 microsecond=0,
-                tzinfo=self.network.get_fixed_offset(),
             )
 
             end = start + get_human_interval("1M") - timedelta(days=1)
@@ -227,9 +222,9 @@ class OpennemExportSeries(BaseConfig):
             )
 
         # localize times
-        if not is_aware(start):
-            start = start.astimezone(self.network.get_fixed_offset())
-        if not is_aware(end):
-            end = end.astimezone(self.network.get_fixed_offset())
+        if not is_aware(start) and tz_aware:
+            start = start.replace(tzinfo=self.network.get_fixed_offset())
+        if not is_aware(end) and tz_aware:
+            end = end.replace(tzinfo=self.network.get_fixed_offset())
 
         return ExportDatetimeRange(start=start, end=end, interval=self.interval)
