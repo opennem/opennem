@@ -59,13 +59,6 @@ async def task_nem_rooftop_crawl(ctx) -> None:
     if not rooftop or not any(r.inserted_records for r in rooftop if r):
         raise OpenNEMPipelineRetryTask()
 
-    export_tasks = [
-        run_export_power_latest_for_network(network=NetworkNEM),
-        run_export_power_latest_for_network(network=NetworkAU),
-    ]
-
-    await asyncio.gather(*export_tasks)
-
 
 async def task_bom_capitals_crawl(ctx) -> None:
     """Runs the BOM Capitals crawler every 10 minutes"""
