@@ -174,7 +174,6 @@ async def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
         price_field = "price_dispatch"
 
     for record in table.records:
-        # @NOTE disable pk track
         interval = parse_date(record["settlementdate"])
 
         primary_key = {interval, record["regionid"]}
@@ -195,26 +194,34 @@ async def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
 
         cr.processed_records += 1
 
-    async with SessionLocal() as session:
-        try:
-            stmt = insert(BalancingSummary).values(records_to_store)
-            stmt = stmt.on_conflict_do_update(
-                index_elements=["interval", "network_id", "network_region"],
-                set_={price_field: getattr(stmt.excluded, price_field)},
-            )
+    # Process records in chunks
+    chunk_size = 1000
+    for i in range(0, len(records_to_store), chunk_size):
+        chunk = records_to_store[i : i + chunk_size]
 
-            await session.execute(stmt)
-            await session.commit()
+        async with SessionLocal() as session:
+            try:
+                stmt = insert(BalancingSummary).values(chunk)
+                stmt = stmt.on_conflict_do_update(
+                    index_elements=["interval", "network_id", "network_region"],
+                    set_={price_field: getattr(stmt.excluded, price_field)},
+                )
 
-            cr.inserted_records = cr.processed_records
-            cr.server_latest = max([r["interval"] for r in records_to_store]) if records_to_store else None
-        except Exception as e:
-            logger.error("Error inserting NEM price records")
-            logger.error(e)
-            cr.errors = cr.processed_records
-            await session.rollback()
-        finally:
-            await session.close()
+                await session.execute(stmt)
+                await session.commit()
+
+                cr.inserted_records += len(chunk)
+
+                logger.debug(f"Inserted {len(chunk)} records for NEM price")
+            except Exception as e:
+                logger.error(f"Error inserting NEM price records (chunk {i//chunk_size + 1})")
+                logger.error(e)
+                cr.errors += len(chunk)
+                await session.rollback()
+            finally:
+                await session.close()
+
+    cr.server_latest = max([r["interval"] for r in records_to_store]) if records_to_store else None
 
     return cr
 
@@ -455,7 +462,7 @@ async def process_rooftop_forecast(table: AEMOTableSchema) -> ControllerReturn:
     return cr
 
 
-TABLE_PROCESSOR_MAP = {
+_TABLE_PROCESSOR_MAP = {
     "dispatch_interconnectorres": "process_dispatch_interconnectorres",
     "dispatch_unit_scada": "process_unit_scada_optimized",
     "dispatch_unit_solution": "process_unit_solution",
@@ -476,11 +483,11 @@ async def store_aemo_tableset(tableset: AEMOTableSet) -> ControllerReturn:
     cr = ControllerReturn()
 
     for table in tableset.tables:
-        if table.full_name not in TABLE_PROCESSOR_MAP:
-            logger.info("No processor for table %s", table.full_name)
+        if table.full_name not in _TABLE_PROCESSOR_MAP:
+            logger.debug("No processor for table %s", table.full_name)
             continue
 
-        process_meth = TABLE_PROCESSOR_MAP[table.full_name]
+        process_meth = _TABLE_PROCESSOR_MAP[table.full_name]
 
         if process_meth not in globals():
             logger.info("Invalid processing function %s", process_meth)
@@ -504,5 +511,7 @@ async def store_aemo_tableset(tableset: AEMOTableSet) -> ControllerReturn:
             cr.errors += record_item.errors
             cr.error_detail += record_item.error_detail
             cr.server_latest = record_item.server_latest
+
+    logger.info(f"Stored {cr.inserted_records} records of {cr.total_records} in {len(tableset.tables)} tables")
 
     return cr

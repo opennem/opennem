@@ -47,7 +47,7 @@ from opennem.schema.date_range import CrawlDateRange
 from opennem.utils.dates import get_today_opennem
 from opennem.utils.modules import load_all_crawler_definitions
 
-logger = logging.getLogger("opennem.crawler")
+logger = logging.getLogger("opennem.crawl")
 
 
 async def load_crawlers(live_load: bool = False) -> CrawlerSet:

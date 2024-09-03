@@ -18,7 +18,7 @@ from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
 logger = logging.getLogger("opennem.crawler.nemweb")
 
 
-async def process_nemweb_entry(crawler: CrawlerDefinition, entry: DirlistingEntry, max_date: datetime) -> None:
+async def process_nemweb_entry(crawler: CrawlerDefinition, entry: DirlistingEntry, max_date: datetime) -> ControllerReturn:
     controller_return: ControllerReturn | None = None
 
     try:
@@ -40,7 +40,8 @@ async def process_nemweb_entry(crawler: CrawlerDefinition, entry: DirlistingEntr
 
     # don't update crawl time if it fails
     if not controller_return.inserted_records:
-        return None
+        logger.error(f"No records inserted for {entry.link}")
+        return controller_return
 
     if not controller_return.last_modified or max_date > controller_return.last_modified:
         controller_return.last_modified = max_date
@@ -52,6 +53,8 @@ async def process_nemweb_entry(crawler: CrawlerDefinition, entry: DirlistingEntr
             await set_crawler_history(crawler_name=crawler.name, histories=[ch])
         except Exception as e:
             logger.error(f"Error updating crawl history: {e}")
+
+    return controller_return
 
 
 async def run_nemweb_aemo_crawl(
@@ -143,6 +146,8 @@ async def run_nemweb_aemo_crawl(
                     controller_return.inserted_records += task_result.inserted_records
                     controller_return.processed_records += task_result.processed_records
                     controller_return.total_records += task_result.total_records
+                else:
+                    logger.error(f"No task result for {entry.link}")
 
             tasks = []
 
