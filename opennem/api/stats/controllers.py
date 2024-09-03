@@ -5,19 +5,26 @@ from textwrap import dedent
 from typing import Any
 
 from datetime_truncate import truncate as date_trunc
+from sqlalchemy import select
 from sqlalchemy import text as sql
 
 from opennem import settings
 from opennem.api.time import human_to_interval
 from opennem.core.feature_flags import get_list_of_enabled_features
 from opennem.core.normalizers import cast_float_or_none
-from opennem.db import db_connect, get_database_engine
+from opennem.db import db_connect, get_read_session
+from opennem.db.models.opennem import FacilityScada
 from opennem.queries.utils import duid_to_case
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkSchema
 from opennem.schema.time import TimeInterval
 from opennem.schema.units import UnitDefinition
 from opennem.utils.cache import cache_scada_result
-from opennem.utils.dates import get_last_completed_interval_for_network, get_today_for_network
+from opennem.utils.dates import (
+    chop_timezone,
+    get_datetime_now_for_network,
+    get_last_completed_interval_for_network,
+    get_today_for_network,
+)
 from opennem.utils.numbers import cast_trailing_nulls
 from opennem.utils.timezone import is_aware, make_aware
 from opennem.utils.version import get_version
@@ -270,36 +277,39 @@ def networks_to_in(networks: list[NetworkSchema]) -> str:
     return ", ".join(codes)
 
 
-def get_latest_interval_live(network: NetworkSchema) -> datetime:
+async def get_latest_interval_live(network: NetworkSchema, days_back: int = 14) -> datetime:
     """Get the latest live interval for a network"""
-    query = sql(
-        """
-        select
-            max(fs.trading_interval) at time zone :timezone
-        from facility_scada fs
-        where
-            fs.network_id = :network_id and
-            fs.trading_interval <= now() and
-            fs.trading_interval > now() - interval '1 day'
-    """
+    if not network.get_timezone():
+        raise Exception(f"No timezone for {network.code}")
+
+    datetime_now_network = get_datetime_now_for_network(network=network)
+
+    query = (
+        select(FacilityScada.interval)
+        .where(
+            FacilityScada.network_id == network.code,
+            FacilityScada.interval <= datetime_now_network,
+            FacilityScada.interval > datetime_now_network - timedelta(days=days_back),
+        )
+        .order_by(FacilityScada.interval.desc())
+        .limit(1)
     )
 
-    engine = get_database_engine()
+    async with get_read_session() as session:
+        result = await session.execute(query)
+        latest_interval = result.scalar_one_or_none()
 
-    with engine.begin() as conn:
-        result = conn.execute(query, {"network_id": network.code, "timezone": network.timezone_database}).fetchone()
-
-        if not result:
-            raise Exception(f"Could not fetch latest live interval for {network.code}")
-
-    dt = result[0]
+    if not latest_interval:
+        raise Exception(f"Could not fetch latest live interval for {network.code}")
 
     try:
-        dt = dt.replace(tzinfo=network.get_fixed_offset())
+        latest_interval = latest_interval.replace(tzinfo=network.get_fixed_offset())
     except Exception:
-        raise Exception(f"Could not convert {dt} to timezone {network.timezone_database} for {network.code}") from None
+        raise Exception(
+            f"Could not convert {latest_interval} to timezone {network.timezone_database} for {network.code}"
+        ) from None
 
-    return dt
+    return latest_interval
 
 
 def get_scada_range_optimized(network: NetworkSchema) -> ScadaDateRange:
@@ -307,13 +317,13 @@ def get_scada_range_optimized(network: NetworkSchema) -> ScadaDateRange:
     if not network.data_first_seen:
         raise Exception(f"No data start for {network.code}. Required for optimized scada range")
 
-    data_start = network.data_first_seen
-    data_end = get_last_completed_interval_for_network(network)
+    data_start = chop_timezone(network.data_first_seen)
+    data_end = get_last_completed_interval_for_network(network, tz_aware=False)
 
     # find an earlier subnetwork data start
     if network.subnetworks:
         for subnetwork in network.subnetworks:
-            if subnetwork.data_first_seen and subnetwork.data_first_seen < data_start:
+            if subnetwork.data_first_seen and chop_timezone(subnetwork.data_first_seen) < data_start:
                 data_start = subnetwork.data_first_seen
 
     if not data_start:

@@ -89,10 +89,6 @@ async def export_power(
 
         date_range: ScadaDateRange = get_scada_range_optimized(network=power_stat.network)
 
-        # @NOTE temp fix as WEM is often delayed by an interval or two
-        if power_stat.network == NetworkWEM:
-            date_range = await get_scada_range(network=power_stat.network)
-
         logger.debug(f"Date range for {power_stat.network.code}: {date_range.start} => {date_range.end}")
 
         # Migrate to this time_series
@@ -142,7 +138,7 @@ async def export_power(
                 )
                 stat_set.append_set(weather_set)
 
-        write_output(power_stat.path, stat_set)
+        await write_output(power_stat.path, stat_set)
 
         output_count += 1
 

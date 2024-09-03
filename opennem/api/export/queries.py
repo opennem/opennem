@@ -1,3 +1,4 @@
+import logging
 from datetime import timedelta
 from textwrap import dedent
 
@@ -9,8 +10,10 @@ from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.schema.network import NetworkAPVI, NetworkAU, NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.stats import StatTypes
 
+logger = logging.getLogger("opennem.api.export.queries")
 
-def weather_observation_query(time_series: OpennemExportSeries, station_codes: list[str]) -> TextClause:
+
+def weather_observation_query(time_series: OpennemExportSeries, station_codes: list[str]) -> str:
     """
     Get weather observations for a list of stations and a date range.
     """
@@ -54,7 +57,7 @@ def interconnector_power_flow(time_series: OpennemExportSeries, network_region: 
 
     ___query = """
     select
-        time_bucket_gapfill(INTERVAL '5 minutes', bs.trading_interval) as trading_interval,
+        time_bucket_gapfill(INTERVAL '5 minutes', bs.interval) as interval,
         bs.network_region,
         case when max(bs.net_interchange) < 0 then
             max(bs.net_interchange)
@@ -71,7 +74,7 @@ def interconnector_power_flow(time_series: OpennemExportSeries, network_region: 
         bs.trading_interval <= '{date_end}' and
         bs.trading_interval >= '{date_start}'
     group by 1, 2
-    order by trading_interval desc;
+    order by interval desc;
 
 
     """
@@ -179,13 +182,13 @@ def price_network_query(
 
     __query = """
         select
-            time_bucket_gapfill('{trunc}', bs.trading_interval) as trading_interval,
+            time_bucket_gapfill('{trunc}', bs.interval) as interval,
             {group_field},
             coalesce(avg(bs.price), avg(bs.price_dispatch)) as price
         from balancing_summary bs
         where
-            bs.trading_interval <= '{date_max}' and
-            bs.trading_interval >= '{date_min}' and
+            bs.interval >= '{date_min}' and
+            bs.interval <= '{date_max}' and
             {network_query}
             {network_region_query}
             1=1
@@ -193,7 +196,6 @@ def price_network_query(
         order by 1 desc
     """
 
-    timezone = time_series.network.timezone_database
     network_region_query = ""
 
     if network_region:
@@ -206,16 +208,17 @@ def price_network_query(
         group_field = "'AU'"
 
     # Get the time range using either the old way or the new v4 way
-    time_series_range = time_series.get_range()
+    time_series_range = time_series.get_range(tz_aware=False)
     date_max = time_series_range.end
     date_min = time_series_range.start
+
+    logger.debug(f"Price network query for {time_series.network.code} {date_min} => {date_max}")
 
     return text(
         __query.format(
             network_query=network_query,
             trunc=time_series.interval.interval_sql,
             network_region_query=network_region_query,
-            timezone=timezone,
             date_max=date_max,
             date_min=date_min,
             group_field=group_field,
@@ -236,18 +239,18 @@ def network_demand_query(
 
     __query = """
     select
-        t.trading_interval at time zone '{timezone}' as trading_interval,
+        t.interval,
         t.network_id,
         t.demand
     from (
         select
-            time_bucket_gapfill('{interval}', trading_interval) as trading_interval,
+            time_bucket_gapfill('{interval}', interval) as interval,
             network_id,
             coalesce(max(demand_total), 0) as demand
         from balancing_summary bs
         where
-            bs.trading_interval <= '{date_max}' and
-            bs.trading_interval >= '{date_min}' and
+            bs.interval <= '{date_max}' and
+            bs.interval >= '{date_min}' and
             {network_query}
             {network_region_query}
             1=1
@@ -302,7 +305,7 @@ def power_network_fueltech_query(
 
     __query = """
     select
-        t.trading_interval,
+        t.interval,
         t.fueltech_code,
         sum(t.fueltech_power) as fueltech_power,
         case when
@@ -315,7 +318,7 @@ def power_network_fueltech_query(
         end as fueltech_emissions_intensity
     from (
         select
-            time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
+            time_bucket_gapfill('{trunc}', fs.interval) AS interval,
             ft.code as fueltech_code,
             coalesce(sum(fs.generated), 0) as fueltech_power,
             coalesce(sum(fs.generated), 0) / (60 / max(n.interval_size)) as fueltech_energy,
@@ -330,8 +333,8 @@ def power_network_fueltech_query(
             f.fueltech_id not in ({fueltechs_exclude}) and
             {network_query}
             {network_region_query}
-            fs.trading_interval <= '{date_max}' and
-            fs.trading_interval >= '{date_min}'
+            fs.interval <= '{date_max}' and
+            fs.interval >= '{date_min}'
             {fueltech_filter}
         group by 1, f.code, f.emissions_factor_co2, 2, n.interval_size
     ) as t
@@ -401,13 +404,13 @@ def power_network_rooftop_query(
 
     __query = """
         select
-            t.trading_interval at time zone '{timezone}' as trading_interval,
+            t.interval at time zone '{timezone}' as interval,
             t.fueltech_code,
             coalesce(sum(t.facility_power), 0) as power
         from (
 
             select
-                time_bucket_gapfill('30 minutes', fs.trading_interval)  AS trading_interval,
+                time_bucket_gapfill('30 minutes', fs.interval)  AS interval,
                 ft.code as fueltech_code,
                 {agg_func}(fs.generated) as facility_power
             from facility_scada fs
@@ -418,8 +421,8 @@ def power_network_rooftop_query(
                 f.fueltech_id = 'solar_rooftop' and
                 {network_query}
                 {network_region_query}
-                fs.trading_interval >= '{date_min}' and
-                fs.trading_interval < '{date_max}'
+                fs.interval >= '{date_min}' and
+                fs.interval < '{date_max}'
             group by 1, 2
         ) as t
         group by 1, 2
@@ -483,7 +486,7 @@ def power_and_emissions_network_fueltech_query(
 
     __query = """
         select
-            t.trading_interval at time zone '{timezone}',
+            t.interval,
             t.fueltech_code,
             sum(t.fueltech_power),
             sum(t.emissions),

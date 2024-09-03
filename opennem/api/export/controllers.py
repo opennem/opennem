@@ -467,12 +467,8 @@ async def power_week(
 
         result.append_set(stats_emission_factors)
 
-    # price
-    # adjust the interval size
-    time_series_price = time_series.copy()
-
     query: TextClause = price_network_query(
-        time_series=time_series_price,
+        time_series=time_series,
         networks_query=networks_query,
         network_region=network_region_code,
     )
@@ -501,7 +497,7 @@ async def power_week(
     time_series_rooftop = time_series.copy()
 
     if time_series.network == NetworkNEM:
-        time_series_rooftop.end = get_latest_interval_live(network=NetworkAEMORooftop)
+        time_series_rooftop.end = await get_latest_interval_live(network=NetworkAEMORooftop)
 
     time_series_rooftop.interval = human_to_interval("30m")
 
