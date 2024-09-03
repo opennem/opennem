@@ -8,7 +8,7 @@ $ python -m opennem.cli
 import asyncio
 import logging
 
-import click
+import asyncclick as click
 
 from opennem import settings
 from opennem.core.crawlers.cli import cmd_crawl_cli

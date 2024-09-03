@@ -1,23 +1,16 @@
 """Crawl commands cli"""
 
-import asyncio
 import logging
-from pathlib import Path
 
-import click
+import asyncclick as click
 from rich.table import Table
 
 from opennem import console
 from opennem.core.crawlers.crawler import crawlers_flush_metadata, crawlers_get_crawl_metadata
-from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
 from opennem.crawl import get_crawl_set, run_crawl
-from opennem.utils.http import test_proxy
 from opennem.utils.timesince import timesince
-from opennem.utils.url import is_url
 
 logger = logging.getLogger("opennem.cli")
-
-crawler_set = get_crawl_set()
 
 
 @click.group()
@@ -29,12 +22,10 @@ def cmd_crawl_cli() -> None:
 @click.argument("name")
 @click.option("--all", default=False, is_flag=True, help="Run all")
 @click.option("--limit", default=None, type=int, help="Limit to N most recent records")
-def crawl_cli_run(name: str, all: bool = False, limit: int | None = None) -> None:
-    test_proxy()
-
+async def crawl_cli_run(name: str, all: bool = False, limit: int | None = None) -> None:
     console.log(f"Run crawlers matching: {name}")
 
-    crawlers = get_crawl_set()
+    crawlers = await get_crawl_set()
 
     try:
         crawlers_filtered = crawlers.get_crawlers_by_match(name, only_active=False)
@@ -54,7 +45,7 @@ def crawl_cli_run(name: str, all: bool = False, limit: int | None = None) -> Non
             f"{c.last_processed}\n\tserver_latest: {c.server_latest}"
         )
         try:
-            asyncio.run(run_crawl(c, latest=not all, limit=limit))
+            await run_crawl(c, latest=not all, limit=limit)
         except Exception as e:
             console.log(f"[red]Error running crawler[/red]: {e}")
 
@@ -78,6 +69,7 @@ def crawl_cli_list() -> None:
     table.add_column("Last Processed")
     table.add_column("Server Latest")
 
+    # crawler_meta = anyio.run(func=crawlers_get_crawl_metadata)
     crawler_meta = crawlers_get_crawl_metadata()
 
     for c in crawler_meta:
@@ -92,27 +84,6 @@ def crawl_cli_list() -> None:
     console.print(table)
 
 
-@click.command()
-@click.argument("url")
-def crawl_cli_import(url: str):
-    """cli import crawl"""
-    urls = []
-
-    if not is_url(url):
-        url_file = Path(url)
-        if not url_file.is_file():
-            raise Exception("Not a url and not a file")
-
-        with url_file.open() as fh:
-            urls = fh.read().split("/n")
-    else:
-        urls.append(url)
-
-    for u in urls:
-        parse_aemo_url_optimized(u)
-
-
 cmd_crawl_cli.add_command(crawl_cli_run, name="run")
 cmd_crawl_cli.add_command(crawl_cli_list, name="list")
 cmd_crawl_cli.add_command(crawl_cli_flush, name="flush")
-cmd_crawl_cli.add_command(crawl_cli_import, name="import")

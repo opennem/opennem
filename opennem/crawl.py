@@ -3,6 +3,7 @@
 import asyncio
 import inspect
 import logging
+from typing import Any
 
 from pydantic import ValidationError
 
@@ -137,13 +138,14 @@ async def run_crawl(
     limit: int | None = None,
     latest: bool = True,
     date_range: CrawlDateRange | None = None,
-) -> ControllerReturn | None:
+    reverse: bool = True,
+) -> ControllerReturn:
     """Runs a crawl from the crawl definition with ability to overwrite last crawled and obey the defined
     limit"""
 
     if not settings.run_crawlers:
         logger.info(f"Crawlers are disabled. Skipping {crawler.name}")
-        return None
+        raise Exception("Crawl controller error: crawling disabled") from None
 
     logger.info(
         f"Crawling: {crawler.name}. (Last Crawled: {crawler.last_crawled}. "
@@ -158,17 +160,32 @@ async def run_crawl(
 
     cr: ControllerReturn | None = None
 
+    # build the params for the crawler
+    params: dict[str, Any] = {"crawler": crawler}
+
+    if "last_crawled" in inspect.signature(crawler.processor).parameters:
+        params["last_crawled"] = last_crawled
+
+    if "date_range" in inspect.signature(crawler.processor).parameters:
+        params["date_range"] = date_range
+
+    if "reverse" in inspect.signature(crawler.processor).parameters:
+        params["reverse"] = reverse
+
+    if "limit" in inspect.signature(crawler.processor).parameters:
+        params["limit"] = limit or crawler.limit
+
+    if "latest" in inspect.signature(crawler.processor).parameters:
+        params["latest"] = latest
+
+    # run the crawl processor
     if inspect.iscoroutinefunction(crawler.processor):
-        cr = await crawler.processor(
-            crawler=crawler, last_crawled=last_crawled, limit=limit or crawler.limit, latest=latest, date_range=date_range
-        )
+        cr = await crawler.processor(**params)
     else:
-        cr = crawler.processor(
-            crawler=crawler, last_crawled=last_crawled, limit=limit or crawler.limit, latest=latest, date_range=date_range
-        )
+        cr = crawler.processor(**params)
 
     if not cr:
-        return None
+        raise Exception("Crawl controller error") from None
 
     # run here
     has_errors = False
@@ -178,7 +195,7 @@ async def run_crawl(
     if cr.errors > 0:
         has_errors = True
         logger.error(f"Crawl controller error for {crawler.name}: {cr.error_detail}")
-        return None
+        raise Exception("Crawl controller error") from None
 
     if not has_errors:
         if cr.server_latest:
@@ -209,12 +226,12 @@ async def run_crawl_urls(urls: list[str]) -> None:
 _CRAWLER_SET: CrawlerSet | None = None
 
 
-def get_crawl_set() -> CrawlerSet:
+async def get_crawl_set() -> CrawlerSet:
     """Access method for crawler set"""
     global _CRAWLER_SET
 
     if not _CRAWLER_SET:
-        _CRAWLER_SET = asyncio.run(load_crawlers())
+        _CRAWLER_SET = await load_crawlers()
 
     return _CRAWLER_SET
 
