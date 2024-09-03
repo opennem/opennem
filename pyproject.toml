@@ -32,8 +32,6 @@ sentry-sdk = "^2.1.1"
 pydantic = {extras = ["email"], version = "^2.6.4"}
 alembic = "^1.6.2"
 click = "^8.0.3"
-huey = "^2.2.0"
-redis = "^4.3.4"
 geojson = "^3.1.0"
 fastapi = "^0.110.0"
 shapely = "^2.0.2"
@@ -72,6 +70,7 @@ tqdm = "^4.66.5"
 logfire = {extras = ["celery", "fastapi", "httpx", "requests", "sqlalchemy"], version = "^0.50.1"}
 aioboto3 = "^13.1.1"
 pytest-asyncio = "^0.23.8"
+arq = "^0.26.1"
 
 
 [tool.poetry.group.dev.dependencies]

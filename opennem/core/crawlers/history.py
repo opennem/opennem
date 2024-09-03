@@ -162,7 +162,7 @@ async def get_crawler_missing_intervals(
             select
                 interval
             from generate_series(
-                nemweb_latest_interval() - interval '14 days',
+                nemweb_latest_interval() - interval '{days} days',
                 nemweb_latest_interval(),
                 interval '{interval.interval_sql} minutes'
             ) AS interval
@@ -175,7 +175,7 @@ async def get_crawler_missing_intervals(
         left join (
             select * from crawl_history
             where crawler_name = :crawler_name
-            and interval <= nemweb_latest_interval() and interval >= nemweb_latest_interval() - interval '14 days'
+            and interval <= nemweb_latest_interval() and interval >= nemweb_latest_interval() - interval '{days} days'
         ) as ch on ch.interval = intervals.interval
         where ch.inserted_records is null
         order by 1 desc;
@@ -208,7 +208,11 @@ if __name__ == "__main__":
 
     async def main():
         # m = await get_crawler_missing_intervals("au.nemweb.current.trading_is", interval=get_interval("5m"), days=3)
-        m = await get_crawler_history("au.nemweb.current.trading_is", interval=get_interval("5m"))
+        m = await get_crawler_history("au.nemweb.current.dispatch_scada", interval=get_interval("5m"), days=30)
+
+        if not m:
+            print("No missing intervals")
+
         for i in m[:5]:
             print(i)
 

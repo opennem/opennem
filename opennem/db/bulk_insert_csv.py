@@ -199,7 +199,6 @@ async def bulkinsert_mms_items(
         async with conn.transaction():
             try:
                 # Execute CREATE TEMP TABLE
-                logger.debug(sql_queries[0])
                 await conn.execute(sql_queries[0])
 
                 # Get column names and types from the temporary table
@@ -235,13 +234,11 @@ async def bulkinsert_mms_items(
                     records_to_insert.append(record_values)
 
                 # Use copy_records_to_table to bulk insert the records
-                logger.debug("Copy records to table")
-                result = await conn.copy_records_to_table(
+                await conn.copy_records_to_table(
                     tmp_table_name.split(".")[-1],  # Remove schema if present
                     records=records_to_insert,
                     columns=columns,
                 )
-                logger.debug(f"Copy result: {result}")
 
                 # Execute the INSERT ... ON CONFLICT query
                 insert_result = await conn.execute(sql_queries[2])

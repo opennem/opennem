@@ -222,4 +222,4 @@ def get_crawl_set() -> CrawlerSet:
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(run_crawl(BOMCapitals))
+    asyncio.run(run_crawl(AEMONNemwebDispatchScada))

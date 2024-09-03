@@ -83,7 +83,7 @@ async def run_nemweb_aemo_crawl(
 
     if limit:
         logger.info(f"Limiting to {limit}")
-        dirlisting.apply_limit(limit)
+        dirlisting.apply_limit(limit=limit)
 
     logger.debug(f"Got {dirlisting.count} entries, {dirlisting.file_count} files and {dirlisting.directory_count} directories")
 
@@ -174,6 +174,7 @@ AEMONemwebDispatchIS = CrawlerDefinition(
     backfill_days=2,
     # limit=12 * 24 * 2,
     processor=run_nemweb_aemo_crawl,
+    latest=True,
 )
 
 # DISPATCH_SCADA
@@ -185,6 +186,8 @@ AEMONNemwebDispatchScada = CrawlerDefinition(
     network=NetworkNEM,
     backfill_days=2,
     processor=run_nemweb_aemo_crawl,
+    latest=True,
+    limit=1,
 )
 
 
@@ -306,4 +309,4 @@ AEMONEMNextDayDispatchArchvie = CrawlerDefinition(
 if __name__ == "__main__":
     from opennem.crawl import run_crawl
 
-    asyncio.run(run_crawl(AEMONNemwebDispatchScadaArchive, latest=False, limit=10))
+    asyncio.run(run_crawl(AEMONNemwebDispatchScada, latest=False, limit=10))

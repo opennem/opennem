@@ -1,36 +1,86 @@
-import asyncio
-import logging
+"""Task scheduler"""
 
-from asgiref.sync import async_to_sync
-from celery import Celery
+import logging
+from datetime import timedelta, timezone
+
+from arq import cron, run_worker
+from arq.connections import RedisSettings
 
 from opennem import settings
+from opennem.core.startup import worker_startup_alert
+from opennem.tasks.tasks import (
+    task_nem_interval_check,
+)
 
-logger = logging.getLogger("openne.tasks.app")
+# crawler_run_nem_dispatch_scada_crawl,
+# crawler_run_nem_trading_is_crawl,
+from opennem.utils.httpx import httpx_factory
 
-app = Celery("tasks", broker=settings.celery_broker, backend=settings.celery_backend)
-app.conf.timezone = "Australia/Brisbane"  # @NOTE Brisbane has no DST so is +10
+REDIS_SETTINGS = RedisSettings(
+    host=settings.redis_url.host,  # type: ignore
+    port=settings.redis_url.port,  # type: ignore
+    conn_timeout=300,
+)
+
+logger = logging.getLogger("openenm.scheduler")
+
+worker_startup_alert()
 
 
-@app.on_after_configure.connect
-def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(30.0, task_per_interval_check.apply_async(), name="per interval check every 30s")
+async def startup(ctx):
+    ctx["http"] = httpx_factory()
 
-    # Calls test('world') every 30 seconds
-    # sender.add_periodic_task(30.0, test.s("world"), expires=10)
 
-    # sender.add_periodic_task(
-    #     crontab(hour=7, minute=30, day_of_week=1),
-    #     test.s('Happy Mondays!'),
+async def shutdown(ctx):
+    await ctx["http"].aclose()
+
+
+class WorkerSettings:
+    queue_name = "opennem"
+    cron_jobs = [
+        cron(
+            task_nem_interval_check,
+            minute=set(range(0, 60, 5)),
+            second=30,
+            timeout=None,
+            unique=True,
+        ),
+        # cron(
+        #     crawler_run_nem_dispatch_is_crawl,
+        #     minute=set(range(0, 60, 5)),
+        #     second=30,
+        #     timeout=None,
+        #     unique=True,
+        # ),
+        # cron(
+        #     crawler_run_nem_trading_is_crawl,
+        #     minute=set(range(0, 60, 5)),
+        #     second=30,
+        #     timeout=None,
+        #     unique=True,
+        # ),
+    ]
+    # functions = (
+    #     [
+    #         task_nem_dispatch_scada_crawl,
+    #     ],
     # )
 
+    retry_jobs = True
+    max_tries = 5
+    on_startup = startup
+    on_shutdown = shutdown
+    job_timeout = 60 * 60 * 12  # 12 hours max task time
+    redis_settings = REDIS_SETTINGS
+    timezone = timezone(timedelta(hours=10))
 
-@app.task(async_mode="thread")
-def task_per_interval_check() -> None:
-    logger.info("Running per interval check")
-    async_to_sync(asyncio.sleep)(1)
-    logger.info("Slept 1s")
+
+def main() -> None:
+    """Run the main worker"""
+    logger.info("Starting worker")
+    run_worker(WorkerSettings)
+    logger.info("Worker done")
 
 
 if __name__ == "__main__":
-    task_per_interval_check.apply_async()
+    main()
