@@ -19,6 +19,9 @@ from opennem.utils.httpx import httpx_factory
 REDIS_SETTINGS = RedisSettings(
     host=settings.redis_url.host,  # type: ignore
     port=settings.redis_url.port,  # type: ignore
+    username=settings.redis_url.username,  # type: ignore
+    password=settings.redis_url.password,  # type: ignore
+    ssl=settings.redis_url.scheme == "rediss",
     conn_timeout=300,
 )
 
