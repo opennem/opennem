@@ -12,6 +12,7 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 import deprecation
+from sqlalchemy import Engine, create_engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
 
@@ -23,6 +24,7 @@ DeclarativeBase = declarative_base()
 logger = logging.getLogger("opennem.db")
 
 _engine = None
+_engine_sync = None
 
 
 def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int = 10) -> AsyncEngine:
@@ -61,6 +63,19 @@ def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int
     except Exception as exc:
         logger.error("Could not connect to database: %s", exc)
         raise exc
+
+
+def db_connect_sync() -> Engine:
+    global _engine_sync
+
+    if _engine_sync:
+        return _engine_sync
+
+    db_connect_uri = str(settings.db_url).replace("+asyncpg", "+psycopg")
+
+    _engine_sync = create_engine(db_connect_uri, echo=settings.db_debug)
+
+    return _engine_sync
 
 
 engine = db_connect()
