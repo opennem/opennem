@@ -179,13 +179,16 @@ async def run_crawl(
         params["latest"] = latest
 
     # run the crawl processor
-    if inspect.iscoroutinefunction(crawler.processor):
-        cr = await crawler.processor(**params)
-    else:
-        cr = crawler.processor(**params)
+    try:
+        if inspect.iscoroutinefunction(crawler.processor):
+            cr = await crawler.processor(**params)
+        else:
+            cr = crawler.processor(**params)
+    except Exception as e:
+        raise Exception(f"Crawl controller error for {crawler.name}: {e}") from e
 
     if not cr:
-        raise Exception("Crawl controller error") from None
+        raise Exception(f"Crawl controller error no ControllerReturn for {crawler.name}") from None
 
     # run here
     has_errors = False
@@ -201,10 +204,9 @@ async def run_crawl(
         if cr.server_latest:
             await crawler_set_meta(crawler.name, CrawlStatTypes.latest_processed, cr.server_latest)
             await crawler_set_meta(crawler.name, CrawlStatTypes.server_latest, cr.server_latest)
+            logger.info(f"Set last_processed to {crawler.last_processed} and server_latest to {cr.server_latest}")
         else:
             logger.debug(f"{crawler.name} has no server_latest return")
-
-        logger.info(f"Set last_processed to {crawler.last_processed} and server_latest to {cr.server_latest}")
 
     return cr
 

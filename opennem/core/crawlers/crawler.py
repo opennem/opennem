@@ -6,7 +6,7 @@ from textwrap import dedent
 
 from sqlalchemy import text as sql
 
-from opennem.db import get_database_engine
+from opennem.db import db_connect_sync, get_database_engine
 from opennem.schema.core import BaseConfig
 
 logger = logging.getLogger("opennem.crawlers.crawler")
@@ -23,7 +23,7 @@ class CrawlMetadata(BaseConfig):
 
 def crawlers_get_crawl_metadata() -> list[CrawlMetadata]:
     """Get a return of metadata schemas for all crawlers from the database"""
-    engine = get_database_engine()
+    engine = db_connect_sync()
 
     __query = sql(
         """
@@ -38,26 +38,21 @@ def crawlers_get_crawl_metadata() -> list[CrawlMetadata]:
         order by last_crawled desc;
     """
     )
-    _crawler_metas = []
 
-    with engine.connect() as c:
-        _crawler_metas = list(c.execute(__query))
-
-    if not _crawler_metas:
-        return []
+    with engine.begin() as conn:
+        result = conn.execute(__query)
+        _crawler_metas = result.fetchall()
 
     _crawler_meta_models = [
         CrawlMetadata(
-            **{
-                "name": i[0],
-                "version": i[1],
-                "last_crawled": i[2],
-                "last_processed": i[3],
-                "server_latest": i[4],
-                "force_run": i[5],
-            }
+            name=row.name,
+            version=row.version,
+            last_crawled=row.last_crawled,
+            last_processed=row.last_processed,
+            server_latest=row.server_latest,
+            force_run=row.force_run,
         )
-        for i in _crawler_metas
+        for row in _crawler_metas
     ]
 
     return _crawler_meta_models
@@ -113,11 +108,3 @@ def crawlers_flush_metadata(days: int | None = None, crawler_name: str | None = 
     with engine.connect() as c:
         c.execute(meta_query)
         c.execute(history_query)
-
-
-# debug entry point
-if __name__ == "__main__":
-    metas = crawlers_get_crawl_metadata()
-
-    for m in metas:
-        logger.info(f"{m.name} {m.version} {m.last_crawled} {m.last_processed} {m.server_latest}")

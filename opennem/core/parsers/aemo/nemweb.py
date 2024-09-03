@@ -27,7 +27,7 @@ async def parse_aemo_url_optimized(
         table_set = AEMOTableSet()
 
     for csv_file_to_process in download_path_files:
-        logger.info(f"parsing {csv_file_to_process}")
+        logger.info(f"parse_aemo_url_optimized parsing {csv_file_to_process}")
 
         if csv_file_to_process.suffix.lower() != ".csv":
             continue
@@ -72,7 +72,7 @@ async def parse_aemo_url_optimized_bulk(
     ts = AEMOTableSet()
 
     for f in download_path_files:
-        logger.info(f"parsing {f}")
+        logger.info(f"parse_aemo_url_optimized_bulk parsing {f}")
 
         if f.suffix.lower() != ".csv":
             continue
@@ -82,7 +82,7 @@ async def parse_aemo_url_optimized_bulk(
         if not persist_to_db:
             return ts
 
-    controller_returns = store_aemo_tableset(ts)
+    controller_returns = await store_aemo_tableset(ts)
     cr.inserted_records += controller_returns.inserted_records
 
     if cr.last_modified and controller_returns.last_modified and cr.last_modified < controller_returns.last_modified:
