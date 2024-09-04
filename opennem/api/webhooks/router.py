@@ -20,7 +20,7 @@ router = APIRouter(tags=["Webhooks"], include_in_schema=False)
     description="Webhooks",
 )
 @api_version(4)
-async def get_milestones(webhook_secret: str, request: Request) -> str:
+async def webhook_sanity_update(webhook_secret: str, request: Request) -> str:
     """Get a list of milestones"""
 
     if webhook_secret != settings.webhook_secret:
@@ -33,7 +33,7 @@ async def get_milestones(webhook_secret: str, request: Request) -> str:
     if "_type" not in request_json:
         raise HTTPException(status_code=400, detail="Invalid request no _type field present")
 
-    parse_sanity_webhook(request_json)
+    await parse_sanity_webhook(request_json)
 
     try:
         pass

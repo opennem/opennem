@@ -48,6 +48,8 @@ async def get_milestones(
     record_filter: list[str] | None = Query(None, description="Network filter - specify network or network_region ids"),
     network_region: list[str] | None = Query(None),
     significance: int | None = Query(None, description="Significance filter"),
+    significance_min: int | None = Query(None, description="Significance minimum filter"),
+    significance_max: int | None = Query(None, description="Significance maximum filter"),
     record_id_filter: str | None = Query(None, description="Filter by record_id - supports wildcards"),
     period: list[MilestonePeriod] | None = Query(None, description="Period filter"),
     db: AsyncSession = Depends(get_scoped_session),
@@ -128,6 +130,16 @@ async def get_milestones(
         if not 0 <= significance <= 10:
             raise HTTPException(status_code=400, detail="Significance must be between 0 and 10")
 
+        if significance_max or significance_min:
+            raise HTTPException(status_code=400, detail="Cannot use significance with significance_min or significance_max")
+
+    if significance_min and significance_max:
+        if significance_min > significance_max:
+            raise HTTPException(status_code=400, detail="Significance minimum must be less than significance maximum")
+
+        if significance_max < 0 or significance_max > 10:
+            raise HTTPException(status_code=400, detail="Significance maximum must be between 0 and 10")
+
     try:
         db_records, total_records = await get_milestone_records(
             db,
@@ -143,6 +155,8 @@ async def get_milestones(
             record_filter=record_filter,
             record_id_filter=record_id_filter,
             significance=significance,
+            significance_min=significance_min,
+            significance_max=significance_max,
             periods=period,
         )
     except Exception as e:
@@ -270,16 +284,40 @@ async def api_get_milestone_record_ids(
     db: AsyncSession = Depends(get_scoped_session),
     record_id: str | None = Query(None, description="Filter by record_id"),
     significance: int | None = Query(None, description="Significance filter"),
+    significance_min: int | None = Query(None, description="Significance minimum filter"),
+    significance_max: int | None = Query(None, description="Significance maximum filter"),
 ) -> APIV4ResponseSchema:
     """Get a list of milestone record ids with the most recent record for each record_id"""
+
+    if significance and (significance_min or significance_max):
+        raise HTTPException(status_code=400, detail="Cannot use significance with significance_min or significance_max")
 
     if not significance:
         significance = 0
 
-    if significance < 0 or significance > 10:
+    if significance and (significance < 0 or significance > 10):
         raise HTTPException(status_code=400, detail="Significance must be between 0 and 10")
 
-    record_ids = await get_milestone_record_ids(session=db, record_id=record_id, significance=significance)
+    if significance_max and (significance_max < 0 or significance_max > 10):
+        raise HTTPException(status_code=400, detail="Significance maximum must be between 0 and 10")
+
+    if significance_min and (significance_min < 0 or significance_min > 10):
+        raise HTTPException(status_code=400, detail="Significance minimum must be between 0 and 10")
+
+    if significance_min and significance_max:
+        if significance_min > significance_max:
+            raise HTTPException(status_code=400, detail="Significance minimum must be less than significance maximum")
+
+        if significance_max < 0 or significance_max > 10:
+            raise HTTPException(status_code=400, detail="Significance maximum must be between 0 and 10")
+
+    record_ids = await get_milestone_record_ids(
+        session=db,
+        record_id=record_id,
+        significance=significance,
+        significance_min=significance_min,
+        significance_max=significance_max,
+    )
 
     if not record_ids:
         raise HTTPException(status_code=404, detail="No records found")

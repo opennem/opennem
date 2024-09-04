@@ -21,6 +21,8 @@ async def get_milestone_records(
     date_start: datetime | None = None,
     date_end: datetime | None = None,
     significance: int | None = None,
+    significance_min: int | None = None,
+    significance_max: int | None = None,
     fueltech_id: list[str] | None = None,
     aggregate: MilestoneAggregate | None = None,
     metrics: list[str] | None = None,
@@ -45,8 +47,14 @@ async def get_milestone_records(
     if date_end and date_start == date_end:
         select_query = select_query.where(Milestones.interval < date_end)
 
-    if significance:
+    if significance is not None:
         select_query = select_query.where(Milestones.significance >= significance)
+
+    if significance_min is not None:
+        select_query = select_query.where(Milestones.significance >= significance_min)
+
+    if significance_max is not None:
+        select_query = select_query.where(Milestones.significance <= significance_max)
 
     if fueltech_id:
         select_query = select_query.where(Milestones.fueltech_id.in_(fueltech_id))
@@ -156,14 +164,31 @@ async def get_total_milestones(
 
 
 async def get_milestone_record_ids(
-    session: AsyncSession, record_id: str | None = None, significance: int | None = None
+    session: AsyncSession,
+    record_id: str | None = None,
+    significance: int | None = None,
+    significance_min: int | None = None,
+    significance_max: int | None = None,
 ) -> list[dict]:
     """Get a list of all milestone record ids including the most recent record for each record_id"""
 
-    if not significance:
-        significance = 0
+    if significance and (significance_min or significance_max):
+        raise Exception("Cannot use significance with significance_min or significance_max")
 
-    query = """SELECT DISTINCT ON (record_id)
+    logger.debug(f"significance: {significance=} {significance_min=} {significance_max=}")
+
+    significance_clause = ""
+
+    if significance is not None:
+        significance_clause += f"significance >= {significance} and \n"
+
+    if significance_min is not None:
+        significance_clause += f"significance >= {significance_min} and \n"
+
+    if significance_max is not None:
+        significance_clause += f"significance <= {significance_max} and \n"
+
+    query = f"""SELECT DISTINCT ON (record_id)
         record_id,
         interval,
         significance,
@@ -179,8 +204,12 @@ async def get_milestone_record_ids(
         network_region,
         previous_instance_id
     FROM milestones
-    WHERE significance >= :significance
+    WHERE
+        {significance_clause}
+        1=1
     ORDER BY record_id, interval DESC"""
+
+    print(query)
 
     async with get_read_session() as session:
         result = await session.execute(text(query), {"significance": significance})
