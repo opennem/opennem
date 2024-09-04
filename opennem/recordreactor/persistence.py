@@ -21,6 +21,9 @@ async def persist_milestones(
 ):
     """ """
 
+    if not milestones:
+        return
+
     milestone_state = await get_current_milestone_state()
 
     async with get_write_session() as session:

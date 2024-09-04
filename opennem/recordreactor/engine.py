@@ -30,7 +30,7 @@ _DEFAULT_METRICS = [
 ]
 
 _DEFAULT_BUCKET_SIZES = [
-    # MilestonePeriod.interval,
+    MilestonePeriod.interval,
     MilestonePeriod.day,
     MilestonePeriod.week,
     MilestonePeriod.month,
