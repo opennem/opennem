@@ -4,13 +4,13 @@ Takes Sanity webhook responses and parses into structured format for persistance
 
 import logging
 
-from opennem.db import SessionLocal
+from opennem.db import get_write_session
 from opennem.db.models.opennem import Facility, Station
 
 logger = logging.getLogger("opennem.controllers.sanity")
 
 
-def parse_sanity_webhook(request: dict) -> None:
+async def parse_sanity_webhook(request: dict) -> None:
     """Parse a sanity webhook response"""
     if "_type" not in request:
         raise Exception("Invalid request: no _type field present. Fields are {" + ", ".join(request.keys()) + "}")
@@ -71,11 +71,11 @@ def sanity_parse_unit(request: dict) -> dict:
     return unit
 
 
-def persist_facility_record(facility_record: dict) -> None:
+async def persist_facility_record(facility_record: dict) -> None:
     """Persist a facility record to the Station table in database"""
 
-    with SessionLocal() as session:
-        facility = session.query(Station).filter(Station.code == facility_record["code"]).one_or_none()
+    async with get_write_session() as session:
+        facility = await session.query(Station).filter(Station.code == facility_record["code"]).one_or_none()
 
         if not facility:
             facility = Station(**facility_record)
@@ -90,11 +90,11 @@ def persist_facility_record(facility_record: dict) -> None:
         session.commit()
 
 
-def persist_unit_record(unit_record: dict) -> None:
+async def persist_unit_record(unit_record: dict) -> None:
     """Persit the unit record to facility table"""
 
-    with SessionLocal() as session:
-        unit = session.query(Facility).filter(Facility.code == unit_record["code"]).one_or_none()
+    async with get_write_session() as session:
+        unit = await session.query(Facility).filter(Facility.code == unit_record["code"]).one_or_none()
 
         if not unit:
             unit = Facility(**unit_record)
