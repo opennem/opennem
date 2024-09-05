@@ -120,8 +120,7 @@ async def run_milestone_engine(
                         await run_price_demand_milestone_for_interval(
                             network=network,
                             bucket_size=bucket_size,
-                            period_start=period_start,
-                            period_end=period_end,
+                            interval=period_start,
                         )
                         # tasks.append(task)
 
@@ -153,12 +152,12 @@ if __name__ == "__main__":
     import asyncio
 
     nem_start = datetime.fromisoformat("1998-12-08 00:00:00")
-    start_interval = datetime.fromisoformat("2024-01-01 00:00:00")
+    start_interval = datetime.fromisoformat("1999-01-28 22:30:00")
     end_interval = datetime.fromisoformat("2024-08-15 00:00:00")
     asyncio.run(
         run_milestone_engine(
-            start_interval=start_interval,
+            start_interval=nem_start,
             end_interval=end_interval,
-            metrics=[MilestoneMetric.power],
+            metrics=[MilestoneMetric.demand],
         )
     )
