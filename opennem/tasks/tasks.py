@@ -6,6 +6,7 @@ import logging
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_intervals
 from opennem.controllers.schema import ControllerReturn
 from opennem.crawl import run_crawl
+from opennem.crawlers.aemo_market_notice import run_market_notice_update
 from opennem.crawlers.bom import BOMCapitals
 from opennem.crawlers.nemweb import (
     AEMONEMDispatchActualGEN,
@@ -86,3 +87,10 @@ async def nem_per_day_check(always_run: bool = False) -> ControllerReturn:
         server_latest=dispatch_actuals.server_latest,
         last_modified=None,
     )
+
+
+# other tasks
+
+
+async def task_run_market_notice_update(ctx):
+    await run_market_notice_update()

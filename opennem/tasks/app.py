@@ -10,6 +10,7 @@ from opennem import settings
 from opennem.core.startup import worker_startup_alert
 from opennem.tasks.tasks import (
     task_nem_interval_check,
+    task_run_market_notice_update,
 )
 
 # crawler_run_nem_dispatch_scada_crawl,
@@ -45,6 +46,12 @@ class WorkerSettings:
             task_nem_interval_check,
             minute=set(range(0, 60, 5)),
             second=30,
+            timeout=None,
+            unique=True,
+        ),
+        cron(
+            task_run_market_notice_update,
+            minute=30,
             timeout=None,
             unique=True,
         ),
