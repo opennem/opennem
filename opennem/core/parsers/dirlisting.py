@@ -50,7 +50,7 @@ __nemweb_line_match_new = re.compile(
 )
 
 
-def parse_dirlisting_datetime(datetime_string: str | datetime) -> str:
+def parse_dirlisting_datetime(datetime_string: str | datetime) -> datetime:
     """Parses dates from directory listings. Primarily used for modified time"""
 
     # sometimes it already parses via pydantic
@@ -76,10 +76,10 @@ def parse_dirlisting_datetime(datetime_string: str | datetime) -> str:
     if not datetime_parsed:
         raise ValidationError(f"Error parsing dirlisting datetime string: {datetime_string}")
 
-    return str(datetime_parsed)
+    return datetime_parsed
 
 
-DirlistingModifiedDate = Annotated[str, BeforeValidator(parse_dirlisting_datetime)]
+DirlistingModifiedDate = Annotated[datetime, BeforeValidator(parse_dirlisting_datetime)]
 
 
 class DirlistingEntryType(Enum):
@@ -244,8 +244,9 @@ def parse_dirlisting_line(dirlisting_line: str) -> DirlistingEntry | None:
     try:
         if model and model.filename:
             model.aemo_interval_date = parse_aemo_filename(str(model.filename))
-    except Exception as e:
-        logger.error(f"Error parsing AEMO filename: {e}")
+    except Exception:
+        # logger.debug(f"Error parsing AEMO filename: {e}")
+        pass
 
     if not model:
         raise Exception(f"Could not parse dirlisting line: {dirlisting_line}")

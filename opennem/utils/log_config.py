@@ -35,5 +35,8 @@ LOGGING_CONFIG = {
         "httpcore.connection": {"level": "ERROR"},
         "aiobotocore": {"level": "ERROR"},
         "aioboto3": {"level": "ERROR"},
+        "instructor": {"level": "ERROR"},
+        "httpx": {"level": "ERROR"},
+        "openai": {"level": "ERROR"},
     },
 }

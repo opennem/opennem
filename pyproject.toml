@@ -70,6 +70,8 @@ logfire = {extras = ["fastapi", "httpx", "requests", "sqlalchemy"], version = "^
 aioboto3 = "^13.1.1"
 arq = "^0.26.1"
 asyncclick = "^8.1.7.2"
+openai = "^1.43.1"
+instructor = "^1.4.0"
 
 
 [tool.poetry.group.dev.dependencies]

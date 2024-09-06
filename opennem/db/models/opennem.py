@@ -609,3 +609,14 @@ class Milestones(Base):
         Index("idx_milestone_network_id", "network_id", postgresql_using="btree"),
         Index("idx_milestone_fueltech_id", "fueltech_id", postgresql_using="btree"),
     )
+
+
+class AEMOMarketNotice(Base):
+    __tablename__ = "aemo_market_notices"
+
+    notice_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True, primary_key=True)
+    notice_type: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    creation_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, index=True)
+    issue_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False)
+    external_reference: Mapped[str | None] = mapped_column(Text, nullable=True)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
