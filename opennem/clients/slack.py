@@ -4,16 +4,18 @@ import dataclasses
 import logging
 import sys
 
-import requests
 from validators import ValidationFailure
 from validators.url import url as valid_url
 
 from opennem import settings
+from opennem.utils.httpx import httpx_factory
 from opennem.utils.random_agent import get_random_agent
 
 logger = logging.getLogger(__name__)
 
 REQ_HEADERS = {"User-Agent": get_random_agent(), "Content-type": "application/json"}
+
+_http_client = httpx_factory()
 
 
 @dataclasses.dataclass
@@ -57,7 +59,7 @@ def _slack_tag_list(user_list: list[str]) -> str:
     return " ".join([f"<@{i.strip().lstrip("@")}>" for i in user_list if i])
 
 
-def slack_message(
+async def slack_message(
     webhook_url: str | None = None,
     message: str | None = None,
     text: str | None = None,
@@ -109,7 +111,7 @@ def slack_message(
     # as dict and exclude empty fields
     slack_body = dataclasses.asdict(slack_message, dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
 
-    resp = requests.post(webhook_url, json=slack_body)
+    resp = await _http_client.post(webhook_url, json=slack_body)
 
     if resp.status_code != 200:
         logger.error(f"Error sending slack message: {resp.status_code}: {resp.text}")
@@ -119,10 +121,14 @@ def slack_message(
 
 
 if __name__ == "__main__":
+    import asyncio
+
     if len(sys.argv) < 2:
         logger.info("No params")
         sys.exit(1)
 
     msg_args = sys.argv[1:]
     slack_msg = " ".join([str(i) for i in msg_args])
-    slack_return = slack_message(slack_msg, tag_users=["nik"])
+    slack_return = asyncio.run(
+        slack_message(webhook_url=settings.slack_hook_aemo_market_notices, message=slack_msg, tag_users=["nik"])
+    )
