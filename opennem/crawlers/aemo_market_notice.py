@@ -143,7 +143,7 @@ async def run_market_notice_update() -> None:
 
     logger.info(f"Latest notice is: {latest_notice}")
 
-    notices = await _run_aemo_market_notice_craw(time_since=latest_notice, limit=10)
+    notices = await _run_aemo_market_notice_craw(time_since=latest_notice)
 
     logger.info(f"Got {len(notices)} notices")
 
