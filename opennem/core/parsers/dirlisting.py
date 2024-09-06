@@ -146,12 +146,14 @@ class DirectoryListing(BaseModel):
     def apply_filter(self, pattern: str) -> None:
         self.entries = list(filter(lambda x: re.match(pattern, x.link), self.entries))
 
-    def get_files(self) -> list[DirlistingEntry]:
-        accepted_extensions = [".zip", ".csv", ".json"]
+    def get_files(self, accepted_extensions: list[str] | None = None) -> list[DirlistingEntry]:
+        if accepted_extensions is None:
+            accepted_extensions = [".zip", ".csv", ".json"]
 
         return list(
             filter(
-                lambda x: x.entry_type == DirlistingEntryType.file and x.filename.suffix.lower() in accepted_extensions,
+                lambda x: x.entry_type == DirlistingEntryType.file
+                and (x.filename.suffix.lower() in accepted_extensions if accepted_extensions else True),
                 self.entries,
             )
         )
