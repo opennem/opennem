@@ -35,7 +35,7 @@ _DEFAULT_BUCKET_SIZES = [
     MilestonePeriod.week,
     MilestonePeriod.month,
     MilestonePeriod.quarter,
-    MilestonePeriod.season,
+    # MilestonePeriod.season,
     MilestonePeriod.year,
     MilestonePeriod.financial_year,
 ]
@@ -152,12 +152,12 @@ if __name__ == "__main__":
     import asyncio
 
     nem_start = datetime.fromisoformat("1998-12-08 00:00:00")
-    start_interval = datetime.fromisoformat("1999-01-28 22:30:00")
+    start_interval = datetime.fromisoformat("2006-07-16 03:15:00")
     end_interval = datetime.fromisoformat("2024-08-15 00:00:00")
     asyncio.run(
         run_milestone_engine(
             start_interval=nem_start,
             end_interval=end_interval,
-            metrics=[MilestoneMetric.demand],
+            metrics=[MilestoneMetric.power],
         )
     )
