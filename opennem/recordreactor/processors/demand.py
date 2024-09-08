@@ -19,6 +19,7 @@ from opennem.recordreactor.schema import (
     MilestonePeriod,
     MilestoneRecordSchema,
 )
+from opennem.schema.fueltech_group import FueltechGroupSchema
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.recordreactor.controllers.demand")
@@ -88,6 +89,7 @@ async def aggregate_demand_and_price_data(
                     unit=get_unit("demand_mega") if metric == MilestoneMetric.demand else get_unit("price_energy_mega"),
                     network=network,
                     network_region=row.network_region if region_group else None,
+                    fueltech=FueltechGroupSchema(code="demand", label="Demand") if metric == MilestoneMetric.demand else None,
                     value=row.price if metric == MilestoneMetric.price else row.demand_total,
                 )
             )
