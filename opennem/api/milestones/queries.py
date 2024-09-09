@@ -8,7 +8,7 @@ from sqlalchemy.sql import func
 
 from opennem.db import SessionLocal, get_read_session
 from opennem.db.models.opennem import Milestones
-from opennem.recordreactor.schema import MilestoneAggregate, MilestonePeriod
+from opennem.recordreactor.schema import MilestoneAggregate, MilestoneMetric, MilestonePeriod
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.api.milestones.queries")
@@ -166,6 +166,14 @@ async def get_total_milestones(
 async def get_milestone_record_ids(
     session: AsyncSession,
     record_id: str | None = None,
+    date_start: datetime | None = None,
+    date_end: datetime | None = None,
+    aggregate: MilestoneAggregate | None = None,
+    metric: list[MilestoneMetric] | None = None,
+    fueltech_id: list[str] | None = None,
+    network: list[str] | None = None,
+    network_region: list[str] | None = None,
+    network_schemas: list[NetworkSchema] | None = None,
     significance: int | None = None,
     significance_min: int | None = None,
     significance_max: int | None = None,

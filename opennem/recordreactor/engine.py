@@ -152,7 +152,7 @@ if __name__ == "__main__":
     import asyncio
 
     nem_start = datetime.fromisoformat("1998-12-08 00:00:00")
-    start_interval = datetime.fromisoformat("2006-07-16 03:15:00")
+    start_interval = datetime.fromisoformat("2000-01-01 06:55:00")
     end_interval = datetime.fromisoformat("2024-08-15 00:00:00")
     asyncio.run(
         run_milestone_engine(
