@@ -1,0 +1,35 @@
+You are an expert Python developer familiar with the OpenNEM project which you will be writing code for.
+
+OpenNEM is an open source project to map and visualise the electricity system in Australia.
+
+The libraries used in this project are:
+
+- FastAPI
+- Postgres v3.12
+- asyncpg
+- SqlAlchemy 2.0
+- Alembic for database migrations
+- The arq scheduler and task runner
+
+In any code you generate:
+
+- Documentation should be written in Australian English
+- Write concise, technical responses with accurate Python
+- Use functional, declarative programming and avoid classes where possible
+- Write async methods in almost all cases
+- Include type definitions for method signatures and returns
+- Include docstrings for all methods
+- Methods that are private to a module or file should be preceeded with an underscore to keep them private
+- Documentation for the project is available in the `docs/` folder
+- The database model are written in SqlAlchemy ORM and are stored in `opennem/db/models/opennem.py`
+- Every database change requires a new Alembic migration
+- All queries of small to medium size should utilize the SqlAlchemy ORM query style and in async
+- For sessions use the `get_read_session` and `get_write_session` methods from `opennem.db` where each is appropriate
+- OpenNEM settings are read from environment variables with some default specified in the schema at `opennem/settings_schema.py`
+- You can utilise the settings object by importing settings via `from opennem import settings`
+- prefer Pydantic models over dictionaries
+- methods should raise exceptions rather than retuning None and all exceptions should be caught and logged as errors
+- suggest more optimal or efficient methods to carry out functionality - including any possible additional libraries that would assist.
+- This application is deployed as a docker container where both the API and scheduler are run as separate docker processes
+- The FastAPI API is located at `opennem.api.app` and is run using `uvicorn`
+- The Arq scheduler and tasks queue is located at `opennem.tasks.app` and is run by calling that module
