@@ -106,39 +106,31 @@ CREATE TABLE aemo_market_notices
 
 ### Sample Data
 
-```
-notice_id | notice_type | creation_date | issue_date | external_reference | reason
-------------------------------------------------------------------------------------------
-117367 | MARKET INTERVENTION | 2024-07-19 15:38:52 | 2024-07-19 00:00:00 | Direction - SA region 19/07/2024 | AEMO ELECTRICITY MARKET NOTICE
+| notice_id | notice_type | creation_date | issue_date | external_reference | reason |
+| --- | --- | --- | --- | --- | --- |
+| 118053 | RECLASSIFY CONTINGENCY | 2024-09-02 10:04:07 | 2024-09-02 00:00:00 | Cancellation of a Non-Credible Contingency Event: Farrell-John Butters line and Farrell-Rosebery-Newton-Queenstown line in TAS1 due to Lightning. | Cancellation of reclassification of a Non-Credible Contingency Event as a Credible Contingency Event due to Lightning. AEMO considers the simultaneous trip of the following circuits is no longer reaso... |
+| 117699 | MARKET INTERVENTION | 2024-08-16 15:28:53 | 2024-08-16 00:00:00 | Cancellation: Direction issued to:  AGL SA Generation Pty Limited - TORRB3 TORRENS ISLAN | AEMO ELECTRICITY MARKET NOTICE
 
-Direction - SA region 19/07/2024
+Cancellation: Direction issued to:  AGL SA Generation Pty Limited - TORRB3 TORRENS ISLAN
 
-In accordance with section 116 of the National Electricity Law, AEMO has issued a direction to a participant in the SA region. For the...
-118053 | RECLASSIFY CONTINGENCY | 2024-09-02 10:04:07 | 2024-09-02 00:00:00 | Cancellation of a Non-Credible Contingency Event: Farrell-John Butters line and Farrell-Rosebery-Newton-Queenstown line in TAS1 due to Lightning. | Cancellation of reclassification of a Non-Credible Contingency Event as a Credible Contingency Event due to Lightning. AEMO considers the simultaneous trip of the following circuits is no longer reaso...
-117528 | MARKET SYSTEMS | 2024-08-01 15:52:53 | 2024-08-01 00:00:00 | CHG0091339 | Production | NSW Marketnet Router Replacement | Change Number: CHG0091339
+Refer to Market Notice 117681
 
-Notification issued to: Market Notice
+Direction is cancelled from: 1530 hrs 16/08/202... |
+| 117997 | RECLASSIFY CONTINGENCY | 2024-08-31 01:41:27 | 2024-08-31 00:00:00 | Reclassification of a Non-Credible Contingency Event: Lindisfarne - Mornington No.1 TEE line and Lindisfarne - Mornington No.2 TEE line in TAS1 due to Lightning. | Reclassification of a Non-Credible Contingency Event as a Credible Contingency Event due to Lightning. AEMO considers the simultaneous trip of the following circuits to now be more likely and reasonab... |
+| 117972 | PRICES UNCHANGED | 2024-08-29 19:35:40 | 2024-08-29 00:00:00 | [EventId:202408291920_confirmed] Prices for interval 29-Aug-2024 19:20 are now confirmed | AEMO ELECTRICITY MARKET NOTICE
 
-Notification Type: Initial
+Issued by Australian Energy Market Operator Ltd at 1930 hrs on 29 August 2024
 
-Change Type: Normal 
+PRICES ARE NOW CONFIRMED for trading interval 29-Aug-2024 19:20.
 
-Service/ Component: Market Network
+In accordance with Mark... |
+| 117712 | MARKET INTERVENTION | 2024-08-18 16:17:21 | 2024-08-18 00:00:00 | Direction - SA region 18/08/2024 | AEMO ELECTRICITY MARKET NOTICE
 
-Change Title: NSW Marketnet Router Replacement
+Direction - SA region 18/08/2024
 
-...
-118117 | PRICES UNCHANGED | 2024-09-04 10:36:26 | 2024-09-04 10:10:00 | [EventId:202409041010_confirmed] Prices for interval 04-Sep-2024 10:10 are now confirmed | AEMO ELECTRICITY MARKET NOTICE
+Refer to Market Notice 117711
 
-Issued by Australian Energy Market Operator Ltd at 1035 hrs on 4 September 2024
-
-PRICES ARE NOW CONFIRMED for trading interval 04-Sep-2024 10:10.
-
-In accordance with Ma...
-117917 | RECLASSIFY CONTINGENCY | 2024-08-28 09:13:39 | 2024-08-28 00:00:00 | Reclassification of a Non-Credible Contingency Event: Norwood - Scottsdale 1 110kV line and Norwood-Derby-Scottsdale 110kV line in TAS1 due to Lightning. | AEMO ELECTRICITY MARKET NOTICE
-
-Reclassification of a Non-Credible Contingency Event as a Credible Contingency Event due to Lightning. AEMO considers the simultaneous trip of the following circuits to...
-```
+In accordance with section 116 of the National Electricity Law, AEMO is issuing a direction to AGL SA G... |
 
 ## Table: alembic_version
 
@@ -170,11 +162,9 @@ CREATE TABLE alembic_version
 
 ### Sample Data
 
-```
-version_num
----------------
-6f0b9e05ba9f
-```
+| version_num |
+| --- |
+| 6f0b9e05ba9f |
 
 ## Table: api_keys
 
@@ -212,15 +202,13 @@ CREATE TABLE api_keys
 
 ### Sample Data
 
-```
-keyid | description | revoked | created_at
-------------------------------------------------------------
-DQwfwdHCzjBmnM5yMgkAVg | opennem default | False | 2021-05-27 12:28:38.314071+00:00
-```
+| keyid | description | revoked | created_at |
+| --- | --- | --- | --- |
+| DQwfwdHCzjBmnM5yMgkAVg | opennem default | False | 2021-05-27 12:28:38.314071+00:00 |
 
 ## Table: at_facility_daily
 
-Total rows: 2885368
+Total rows: 2,885,368
 
 ### Fields
 
@@ -268,19 +256,17 @@ CREATE TABLE at_facility_daily
 
 ### Sample Data
 
-```
-trading_day | network_id | facility_code | fueltech_id | energy | market_value | emissions | network_region
-------------------------------------------------------------------------------------------------------------------------
-2023-11-25 00:00:00+00:00 | AEMO_ROOFTOP | ROOFTOP_NEM_TAS | solar_rooftop | 732.9395 | 13743.76238250000000000000 | 0.0000 | TAS1
-2013-10-07 00:00:00+00:00 | NEM | LOYYB1 | coal_brown | 12087.36308041666716 | 602063.9408921960801203863 | 13791.9393399571841254038660 | VIC1
-2010-11-24 00:00:00+00:00 | NEM | JLB02 | gas_ocgt | 0 | 0 | 0 | VIC1
-2014-12-04 00:00:00+00:00 | NEM | BRAEMAR5 | gas_ocgt | 3369.24468083333329 | 114787.7056424019156390832 | 2234.286308439305971263864 | QLD1
-2023-06-07 00:00:00+00:00 | NEM | BARCALDN | gas_ccgt | 0 | 0 | 0 | QLD1
-```
+| trading_day | network_id | facility_code | fueltech_id | energy | market_value | emissions | network_region |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 2019-04-07 00:00:00+00:00 | NEM | PPCCGT | gas_ccgt | 8172.56245166666651 | 756200.3061302066037517222 | 3871.404127572887425785825 | SA1 |
+| 2016-03-11 00:00:00+00:00 | NEM | BARRON-1 | hydro | 364.8583333333333424 | 18619.50959703333365270545 | 0E-17 | QLD1 |
+| 2008-03-14 00:00:00+00:00 | WEM | WEST_KALGOORLIE_GT2 | distillate | 0 | 0 | 0 | WEM |
+| 2022-10-14 00:00:00+00:00 | NEM | WHITSF1 | solar_utility | 512.0416666666666636 | 27644.227848958332669767614 | 0E-17 | QLD1 |
+| 2023-08-01 00:00:00+00:00 | NEM | GLRWNSF1 | solar_utility | 318.715833333333339074 | 23275.3844791666670372248450000000000042 | 0E-19 | VIC1 |
 
 ## Table: at_network_demand
 
-Total rows: 62753
+Total rows: 62,753
 
 ### Fields
 
@@ -321,19 +307,17 @@ CREATE TABLE at_network_demand
 
 ### Sample Data
 
-```
-trading_day | network_id | network_region | demand_energy | demand_market_value
----------------------------------------------------------------------------
-2008-08-06 00:00:00+00:00 | NEM | QLD1 | 143.97324666666666666664 | 688431.4406749999999991395000
-2018-12-04 00:00:00+00:00 | WEM | WEM | None | None
-2014-09-23 00:00:00+00:00 | NEM | SA1 | 33.65633757250000000001 | 959640.9777583072333333840309000
-2002-10-05 00:00:00+00:00 | NEM | SA1 | 5.55343833333333333332 | 168548.4598166666666662063000
-2002-12-29 00:00:00+00:00 | NEM | QLD1 | 19.12284749999999999998 | 459637.7299833333333328563000
-```
+| trading_day | network_id | network_region | demand_energy | demand_market_value |
+| --- | --- | --- | --- | --- |
+| 2014-05-19 00:00:00+00:00 | NEM | TAS1 | 30.63305084666666666668 | 1051973.2597649294416672877448000 |
+| 2002-03-03 00:00:00+00:00 | NEM | NSW1 | 27.93518166666666666668 | 604258.8421500000000001394000 |
+| 2008-08-27 00:00:00+00:00 | NEM | NSW1 | 236.26295166666666666669 | 1595005.7818166666666654662000 |
+| 2003-04-11 00:00:00+00:00 | NEM | NSW1 | 32.33671333333333333332 | 539351.9580083333333331225000 |
+| 2012-09-10 00:00:00+00:00 | WEM | WEM | None | None |
 
 ## Table: at_network_flows
 
-Total rows: 7917760
+Total rows: 7,917,760
 
 ### Fields
 
@@ -383,15 +367,13 @@ CREATE TABLE at_network_flows
 
 ### Sample Data
 
-```
-trading_interval | network_id | network_region | energy_imports | energy_exports | emissions_imports | emissions_exports | market_value_imports | market_value_exports
----------------------------------------------------------------------------------------------------------------------------------------
-2013-05-05 16:05:00+00:00 | NEM | NSW1 | 105.810415 | 0.0 | 114.11639047319403 | 0.0 | 0.0 | 0.0
-2014-11-15 19:45:00+00:00 | NEM | VIC1 | 22.555905 | 115.32772333333332 | 8.432016923007547 | 133.70293417810853 | 0.0 | 0.0
-2010-09-14 08:40:00+00:00 | NEM | QLD1 | 0.0 | 66.08333333333333 | 0.0 | 56.7518165501313 | 0.0 | 0.0
-2021-08-18 07:50:00+00:00 | NEM | VIC1 | 45.040255 | 60.8686625 | 4.323630091796656 | 49.19445586624939 | 0.0 | 0.0
-2014-08-05 03:35:00+00:00 | NEM | QLD1 | 0.0 | 97.896745 | 0.0 | 81.72991630515779 | 0.0 | 0.0
-```
+| trading_interval | network_id | network_region | energy_imports | energy_exports | emissions_imports | emissions_exports | market_value_imports | market_value_exports |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2014-06-26 17:40:00+00:00 | NEM | NSW1 | 152.043205 | 0.0 | 145.0811012847138 | 0.0 | 0.0 | 0.0 |
+| 2021-07-27 05:20:00+00:00 | NEM | QLD1 | 0.0 | 77.022465 | 0.0 | 56.18997644940283 | 0.0 | 0.0 |
+| 2011-02-02 12:15:00+00:00 | NEM | SA1 | 21.75 | 0.0 | 25.678122202753123 | 0.0 | 0.0 | 0.0 |
+| 2009-07-17 18:35:00+00:00 | NEM | NSW1 | 109.58333333333334 | 0.0 | 125.20888235820357 | 0.0 | 0.0 | 0.0 |
+| 2020-03-17 16:55:00+00:00 | NEM | VIC1 | 15.66101 | 103.40275583333333 | 2.5273120583425808 | 92.34664486121406 | 0.0 | 0.0 |
 
 ## Table: at_network_flows_v3
 
@@ -445,7 +427,7 @@ CREATE TABLE at_network_flows_v3
 
 ## Table: balancing_summary
 
-Total rows: 11323595
+Total rows: 11,323,605
 
 ### Fields
 
@@ -503,19 +485,17 @@ CREATE TABLE balancing_summary
 
 ### Sample Data
 
-```
-interval | network_id | network_region | forecast_load | generation_scheduled | generation_non_scheduled | generation_total | price | is_forecast | net_interchange | demand_total | price_dispatch | net_interchange_trading | demand
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-2021-05-18 12:45:00 | NEM | VIC1 | None | None | None | None | None | False | -369.58 | 5398.7510 | 39.33064 | None | 5317.84
-2012-12-16 14:40:00 | NEM | SA1 | None | None | None | None | None | False | 30.64 | 1229.17064 | 44.41999 | None | 1103.97
-2015-12-17 06:45:00 | NEM | QLD1 | None | None | None | None | None | False | 335.52 | 6610.84375 | 54.5413 | None | 6321.2
-2021-09-15 16:20:00 | NEM | QLD1 | None | None | None | None | None | False | 795.01 | 6204.9870 | 42.44382 | None | 6060.14
-2012-01-28 02:40:00 | NEM | VIC1 | None | None | None | None | None | False | 1428.73 | 4923.497 | 16.18638 | None | 4836.23
-```
+| interval | network_id | network_region | forecast_load | generation_scheduled | generation_non_scheduled | generation_total | price | is_forecast | net_interchange | demand_total | price_dispatch | net_interchange_trading | demand |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2021-11-30 04:05:00 | NEM | NSW1 | None | None | None | None | 59.72 | False | -513.19 | 6293.8056 | 59.7199 | None | 6278.79 |
+| 2011-12-03 05:55:00 | NEM | TAS1 | None | None | None | None | None | False | -228.63 | 1115.73157 | 12.08 | None | 993.91 |
+| 2020-01-20 15:00:00 | NEM | TAS1 | None | None | None | None | 29.87 | False | -445 | 1170.825260 | 89.08707 | -438.37 | 1099.23 |
+| 2021-06-17 01:00:00 | NEM | VIC1 | None | None | None | None | 106.4 | False | -146.83 | 4983.4030 | 97.05558 | -106.77 | 4931.24 |
+| 2015-12-20 17:45:00 | NEM | NSW1 | None | None | None | None | None | False | -1351.84 | 10937.36296 | 46.0553 | None | 10780.37 |
 
 ## Table: bom_observation
 
-Total rows: 5920234
+Total rows: 5,920,234
 
 ### Fields
 
@@ -569,15 +549,13 @@ CREATE TABLE bom_observation
 
 ### Sample Data
 
-```
-observation_time | station_id | temp_apparent | temp_air | press_qnh | wind_dir | wind_spd | cloud | cloud_type | humidity | wind_gust | temp_max | temp_min
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-2021-03-18 03:30:00+00:00 | 066059 | 19.5 | 18.3 | None | E | 9 |  |  | 100 | 15 | None | None
-2021-04-08 12:30:00+00:00 | 034035 | 21.2 | 21.1 | 1009.2 | NNE | 9 |  |  | 71 | 11 | None | None
-2021-02-02 03:00:00+00:00 | 061366 | 19.2 | 22.0 | 1010.5 | S | 28 |  |  | 74 | 37 | None | None
-1905-11-07 12:00:00+00:00 | 094029 | None | None | None | None | None | None | None | None | None | 19.4 | 9.2
-2017-05-24 03:30:00+00:00 | 086338 | 11.7 | 14.3 | None | None | None | None | None | 11.6 | None | None | None
-```
+| observation_time | station_id | temp_apparent | temp_air | press_qnh | wind_dir | wind_spd | cloud | cloud_type | humidity | wind_gust | temp_max | temp_min |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2021-04-07 23:00:00+00:00 | 068253 | None | 20.5 | 1013.8 | SW | 4 |  |  | None | 7 | None | None |
+| 2021-04-03 07:50:00+00:00 | 250042 | 26.2 | 25.5 | None | CALM | 0 |  |  | 43 | 2 | None | None |
+| 2021-02-02 22:00:00+00:00 | 084016 | 10.1 | 18.1 | 1013.6 | SSW | 46 | Mostly cloudy |  | 69 | 54 | None | None |
+| 2021-03-07 11:00:00+00:00 | 088166 | 17.2 | 20.0 | None | SSW | 6 |  |  | 30 | 7 | None | None |
+| 2021-04-20 22:00:00+00:00 | 009542 | 9.6 | 11.0 | 1023.5 | NNW | 9 | Partly cloudy |  | 99 | 11 | None | None |
 
 ## Table: bom_station
 
@@ -633,19 +611,17 @@ CREATE TABLE bom_station
 
 ### Sample Data
 
-```
-code | state | name | registered | geom | feed_url | is_capital | name_alias | priority | website_url | altitude | web_code
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-025562 | SA | AUSTIN PLAINS | None | 0101000020E6100000E17A14AE47916140713D0AD7A3B041C0 | http://www.bom.gov.au/fwo/IDS60801/IDS60801.94690.json | False | Lameroo AWS | 5 | http://www.bom.gov.au/products/IDS60801/IDS60801.94690.shtml | 110 | None
-005007 | WA | LEARMONTH AIRPORT | None | 0101000020E61000006666666666865C403D0AD7A3703D36C0 | http://www.bom.gov.au/fwo/IDW60801/IDW60801.94302.json | False | Learmonth | 5 | http://www.bom.gov.au/products/IDW60801/IDW60801.94302.shtml | 5 | None
-063077 | NSW | SPRINGWOOD (VALLEY HEIGHTS) | None | 0101000020E6100000C3F5285C8FD262407B14AE47E1DA40C0 | http://www.bom.gov.au/fwo/IDN60801/IDN60801.95744.json | False | Springwood | 5 | http://www.bom.gov.au/products/IDN60801/IDN60801.95744.shtml | 320 | None
-015135 | NT | TENNANT CREEK AIRPORT | None | 0101000020E6100000F6285C8FC2C56040A4703D0AD7A333C0 | http://www.bom.gov.au/fwo/IDD60801/IDD60801.94238.json | False | Tennant Creek | 5 | http://www.bom.gov.au/products/IDD60801/IDD60801.94238.shtml | 375 | None
-033210 | QLD | ST LAWRENCE | None | 0101000020E6100000713D0AD7A3B062409A999999995936C0 | http://www.bom.gov.au/fwo/IDQ60801/IDQ60801.95369.json | False | St Lawrence | 5 | http://www.bom.gov.au/products/IDQ60801/IDQ60801.95369.shtml | 9 | None
-```
+| code | state | name | registered | geom | feed_url | is_capital | name_alias | priority | website_url | altitude | web_code |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 061055 | NSW | NEWCASTLE NOBBYS SIGNAL STATION AWS | None | 0101000020E61000009A99999999F96240F6285C8FC27540C0 | http://www.bom.gov.au/fwo/IDN60801/IDN60801.94774.json | False | Newcastle Nobbys | 5 | http://www.bom.gov.au/products/IDN60801/IDN60801.94774.shtml | 33 | None |
+| 024584 | SA | PALLAMANA AERODROME | None | 0101000020E61000008FC2F5285C67614048E17A14AE8741C0 | http://www.bom.gov.au/fwo/IDS60801/IDS60801.95818.json | False | Pallamana | 5 | http://www.bom.gov.au/products/IDS60801/IDS60801.95818.shtml | 45 | None |
+| 014299 | NT | NGUKURR AIRPORT | None | 0101000020E61000000000000000D86040713D0AD7A3702DC0 | http://www.bom.gov.au/fwo/IDD60801/IDD60801.94106.json | False | Ngukurr AWS | 5 | http://www.bom.gov.au/products/IDD60801/IDD60801.94106.shtml | 14 | None |
+| 031209 | QLD | COOKTOWN AIRPORT | None | 0101000020E6100000AE47E17A142662406666666666E62EC0 | http://www.bom.gov.au/fwo/IDQ60801/IDQ60801.95283.json | False | Cooktown | 5 | http://www.bom.gov.au/products/IDQ60801/IDQ60801.95283.shtml | 4 | None |
+| 068241 | NSW | SHELLHARBOUR AIRPORT | None | 0101000020E6100000E17A14AE47D9624048E17A14AE4741C0 | http://www.bom.gov.au/fwo/IDN60801/IDN60801.95748.json | False | Albion Park | 5 | http://www.bom.gov.au/products/IDN60801/IDN60801.95748.shtml | 8 | None |
 
 ## Table: crawl_history
 
-Total rows: 788264
+Total rows: 788,270
 
 ### Fields
 
@@ -687,15 +663,13 @@ CREATE TABLE crawl_history
 
 ### Sample Data
 
-```
-source | crawler_name | network_id | interval | inserted_records | crawled_time | processed_time
----------------------------------------------------------------------------------------------------------
-nemweb | au.nemweb.current.dispatch_is | NEM | 2024-02-15 23:30:00+00:00 | 16 | None | 2024-02-15 13:30:00+00:00
-nemweb | au.nemweb.current.rooftop | NEM | 2023-10-29 01:00:00+00:00 | 5 | None | 2023-10-28 15:00:59+00:00
-nemweb | au.nemweb.trading_is | NEM | 2023-03-20 23:05:00+00:00 | 5 | None | 2023-03-20 13:05:07+00:00
-nemweb | au.nemweb.trading_is | NEM | 2022-09-06 18:15:00+00:00 | 5 | None | 2022-09-06 08:15:57+00:00
-nemweb | au.nemweb.dispatch_scada | NEM | 2023-05-09 04:50:00+00:00 | 430 | None | 2023-05-08 18:50:02+00:00
-```
+| source | crawler_name | network_id | interval | inserted_records | crawled_time | processed_time |
+| --- | --- | --- | --- | --- | --- | --- |
+| nemweb | au.nemweb.rooftop_forecast | NEM | 2022-11-01 22:30:00+00:00 | 1735 | None | 2022-11-01 12:33:43+00:00 |
+| nemweb | au.nemweb.trading_is | NEM | 2023-05-19 07:15:00+00:00 | 5 | None | 2023-05-18 21:15:03+00:00 |
+| nemweb | au.nemweb.current.trading_is | NEM | 2024-01-06 14:40:00+00:00 | 5 | None | 2024-01-15 14:50:05+00:00 |
+| nemweb | au.nemweb.current.dispatch_scada | NEM | 2023-11-16 13:05:00+00:00 | 447 | None | 2023-11-16 03:05:58+00:00 |
+| nemweb | au.nemweb.dispatch_is | NEM | 2023-07-22 10:30:00+00:00 | 16 | None | 2023-07-22 00:30:01+00:00 |
 
 ## Table: crawl_meta
 
@@ -734,15 +708,13 @@ CREATE TABLE crawl_meta
 
 ### Sample Data
 
-```
-spider_name | data | created_at | updated_at
-------------------------------------------------------------
-au.mms.trading_regionsum | {'version': '2', 'last_crawled': '2022-10-25T08:04:19+11:00'} | 2022-10-24 21:04:20.104853+00:00 | 2022-10-24 21:04:20.333853+00:00
-au.nemweb.archive.trading_is | {'version': '2', 'last_crawled': '2024-09-04T09:46:26+10:00'} | 2022-07-21 01:09:02.568398+00:00 | 2024-09-03 23:46:26.177996+00:00
-au.nem.latest.dispatch_is | {'version': '2', 'last_crawled': '2022-06-23T12:37:43+10:00', 'server_latest': '2022-06-23T12:45:00+10:00', 'latest_processed': '2022-06-23T12:45:00+10:00'} | 2022-06-18 11:10:03.273082+00:00 | 2022-06-23 02:44:26.760678+00:00
-au.nem.archive.dispatch_scada | {'version': '2', 'last_crawled': '2022-06-10T17:58:07+10:00'} | 2022-06-10 07:58:07.656878+00:00 | 2022-06-10 07:58:07.677975+00:00
-apvi.today.data | {'version': '2', 'last_crawled': '2023-09-29T10:55:51+10:00', 'server_latest': '2023-09-29T10:30:00+10:00', 'latest_processed': '2023-09-29T10:30:00+10:00'} | 2022-06-10 05:54:16.106149+00:00 | 2023-09-29 00:55:52.800735+00:00
-```
+| spider_name | data | created_at | updated_at |
+| --- | --- | --- | --- |
+| au.mms.trading_is | {'version': '2', 'last_crawled': '2022-10-10T11:04:11+11:00'} | 2022-10-10 00:04:11.912748+00:00 | 2022-10-10 00:04:19.476002+00:00 |
+| au.webde.history.facility_scada | {'last_crawled': '2024-08-03T10:53:32+10:00', 'server_latest': '2024-08-01T00:00:00', 'latest_interval': '2024-08-02T07:55:00+08:00', 'latest_processed': '2024-01-15T11:46:14+11:00'} | 2024-01-14 20:47:59.503046+00:00 | 2024-08-03 00:53:32.027994+00:00 |
+| au.nemweb.archive.trading_is | {'version': '2', 'last_crawled': '2024-09-04T09:46:26+10:00'} | 2022-07-21 01:09:02.568398+00:00 | 2024-09-03 23:46:26.177996+00:00 |
+| au.nem.latest.trading_is | {'version': '2', 'last_crawled': '2022-08-09T12:09:40+10:00', 'server_latest': '2022-06-12T12:40:00+10:00', 'latest_processed': '2022-06-12T12:40:00+10:00'} | 2022-06-10 06:30:16.615219+00:00 | 2022-08-09 02:09:40.520037+00:00 |
+| au.nemweb.current.rooftop | {'version': '2', 'last_crawled': '2024-09-03T16:30:48+10:00', 'server_latest': '2024-08-03T10:00:00+10:00', 'latest_processed': '2024-08-03T10:00:00+10:00'} | 2023-09-04 10:13:46.256873+00:00 | 2024-09-03 06:30:48.694505+00:00 |
 
 ## Table: facility
 
@@ -856,19 +828,17 @@ CREATE TABLE facility
 
 ### Sample Data
 
-```
-created_by | created_at | updated_at | id | network_id | fueltech_id | status_id | station_id | code | network_code | network_region | network_name | active | dispatch_type | capacity_registered | registered | deregistered | unit_id | unit_number | unit_alias | unit_capacity | approved | approved_by | approved_at | emissions_factor_co2 | interconnector | interconnector_region_to | data_first_seen | data_last_seen | expected_closure_date | expected_closure_year | interconnector_region_from | emission_factor_source | include_in_geojson
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-opennem.registry | 2020-12-09 15:34:57.152482+00:00 | 2024-06-07 13:12:37.960819+00:00 | 567 | WEM | distillate | operating | 408 | TESLA_PICTON_G1 | WEM | WEM | None | True | GENERATOR | 9.9 | 2011-07-27 00:00:00 | None | None | None | None | None | True | None | 2020-12-09 15:34:57.152459+00:00 | 0.97 | False | None | 2014-03-07 06:30:00+00:00 | 2024-08-01 23:55:00+00:00 | None | None | None | None | True
-opennem.registry | 2020-12-09 15:33:49.491388+00:00 | 2024-06-07 13:11:43.311134+00:00 | 238 | NEM | coal_black | operating | 171 | KPP_1 | NEM | QLD1 | None | True | GENERATOR | 744.0 | None | None | None | None | None | None | True | None | 2020-12-09 15:33:49.491375+00:00 | 0.83104 | False | None | 2007-05-12 07:30:00+00:00 | 2024-08-03 00:50:00+00:00 | None | None | None | None | True
-opennem.registry | 2020-12-09 15:33:18.767542+00:00 | 2024-06-07 13:12:05.670696+00:00 | 65 | NEM | gas_steam | retired | 46 | BELLBAY2 | NEM | TAS1 | None | True | GENERATOR | 120.0 | None | None | None | None | None | None | True | None | 2020-12-09 15:33:18.767529+00:00 | 0.70856 | False | None | 2005-05-16 03:35:00+00:00 | 2009-03-31 20:00:00+00:00 | None | None | None | None | True
-opennem.registry | 2020-12-09 15:33:42.283065+00:00 | 2023-03-31 04:51:13.576551+00:00 | 192 | NEM | solar_utility | operating | 142 | HAMISF1 | NEM | QLD1 | None | True | GENERATOR | 57.0 | None | None | None | None | None | None | True | None | 2020-12-09 15:33:42.283052+00:00 | 0.0 | False | None | 2018-07-10 02:40:00+00:00 | 2024-08-03 00:50:00+00:00 | None | None | None | None | True
-opennem.init | 2021-04-13 13:47:33.279399+00:00 | 2023-03-31 04:51:05.874238+00:00 | 675 | NEM | hydro | retired | 483 | SNOWY4 | None | NSW1 | None | True | GENERATOR | None | None | None | None | None | None | None | True | None | None | 0.0 | False | None | 1998-12-06 17:15:00+00:00 | 2001-03-26 06:55:00+00:00 | None | None | None | None | True
-```
+| created_by | created_at | updated_at | id | network_id | fueltech_id | status_id | station_id | code | network_code | network_region | network_name | active | dispatch_type | capacity_registered | registered | deregistered | unit_id | unit_number | unit_alias | unit_capacity | approved | approved_by | approved_at | emissions_factor_co2 | interconnector | interconnector_region_to | data_first_seen | data_last_seen | expected_closure_date | expected_closure_year | interconnector_region_from | emission_factor_source | include_in_geojson |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| opennem.init | 2021-04-13 13:47:32.235400+00:00 | 2024-06-07 13:12:21.170368+00:00 | 659 | NEM | gas_ocgt | retired | 481 | LYGS6 | None | VIC1 | None | True | GENERATOR | None | None | None | None | None | None | None | True | None | None | 0.8715465 | False | None | None | None | None | None | None | None | True |
+| opennem.registry | 2020-12-09 15:33:31.317149+00:00 | 2023-03-31 04:50:58.019264+00:00 | 124 | NEM | wind | operating | 95 | CROOKWF2 | NEM | NSW1 | None | True | GENERATOR | 96.0 | None | None | None | None | None | None | True | None | 2020-12-09 15:33:31.317135+00:00 | 0.0 | False | None | 2018-08-13 22:50:00+00:00 | 2024-08-03 00:50:00+00:00 | None | None | None | None | True |
+| opennem.registry | 2020-12-09 15:34:56.130478+00:00 | 2024-06-07 13:12:35.255359+00:00 | 562 | WEM | gas_ocgt | operating | 403 | NEWGEN_NEERABUP_GT1 | WEM | WEM | None | True | GENERATOR | 342.0 | 2009-10-19 00:00:00 | None | None | None | None | None | True | None | 2020-12-09 15:34:56.130395+00:00 | 0.6 | False | None | 2013-12-17 01:30:00+00:00 | 2024-08-01 23:55:00+00:00 | None | None | None | None | True |
+| opennem.registry | 2020-12-09 15:33:46.984866+00:00 | 2024-06-07 13:11:22.484726+00:00 | 218 | NEM | bioenergy_biogas | operating | 160 | JACKSGUL | NEM | NSW1 | None | True | GENERATOR | 2.0 | None | None | None | None | None | None | True | None | 2020-12-09 15:33:46.984840+00:00 | 0.62 | False | None | None | None | None | None | None | None | True |
+| opennem.init | 2023-01-09 03:14:56.467347+00:00 | 2024-06-07 13:12:13.493276+00:00 | 759 | NEM | wind | operating | 451 | BRYB2WF2 | None | VIC1 | None | True | GENERATOR | 109.0 | None | None | None | 26 | None | 4.038 | False | None | None | 0.0 | False | None | 2022-11-28 21:50:00+00:00 | 2024-08-03 00:45:00+00:00 | None | None | None | None | True |
 
 ## Table: facility_scada
 
-Total rows: 769210786
+Total rows: 769,211,725
 
 ### Fields
 
@@ -920,15 +890,13 @@ CREATE TABLE facility_scada
 
 ### Sample Data
 
-```
-network_id | interval | facility_code | generated | eoi_quantity | is_forecast | energy_quality_flag | energy
-------------------------------------------------------------------------------------------------------------------------
-NEM | 2008-09-03 08:20:00 | URANQ12 | 0.0 | None | False | 1 | 0E-20
-NEM | 2022-09-19 07:40:00 | BANN1 | 34.25 | None | False | 0 | 2.6970833333333333
-NEM | 2017-07-05 00:25:00 | TUNGATIN | 0.0 | 0.0 | False | 1 | 0E-20
-NEM | 2023-05-27 05:00:00 | GERMCRK | 6.1 | None | False | 0 | 0.51250000000000000000
-NEM | 2018-04-11 17:10:00 | HUMENSW | 28.11691 | None | False | 1 | 2.3199754166666667
-```
+| network_id | interval | facility_code | generated | eoi_quantity | is_forecast | energy_quality_flag | energy |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| NEM | 2013-06-22 18:30:00 | URANQ14 | 0.0 | None | False | 1 | 0E-20 |
+| NEM | 2024-04-08 18:55:00 | PIBESSG1 | 0.0 | 0.0 | False | 0 | 0E-20 |
+| NEM | 2003-07-16 06:55:00 | TARONG#3 | 347.75 | 175.78125 | False | 1 | 28.9166666666666667 |
+| NEM | 2009-03-12 17:50:00 | UPPTUMUT | 0.0 | None | False | 1 | 0E-20 |
+| NEM | 2017-10-10 05:40:00 | MLSP1 | 0.138001 | None | False | 1 | 0.01150008333333333333 |
 
 ## Table: facility_status
 
@@ -962,15 +930,13 @@ CREATE TABLE facility_status
 
 ### Sample Data
 
-```
-code | label
-------------------------------
-permitted | Permitted
-maturing | Maturing
-construction | Construction
-commissioning | Commissioning
-emerging | Emerging
-```
+| code | label |
+| --- | --- |
+| cancelled | Cancelled |
+| operating | Operating |
+| retired | Retired |
+| announced | Announced |
+| construction | Construction |
 
 ## Table: feedback
 
@@ -1018,37 +984,69 @@ CREATE TABLE feedback
 
 ### Sample Data
 
-```
-id | subject | description | email | twitter | user_ip | user_agent | created_at | alert_sent
----------------------------------------------------------------------------------------------------------------------------------------
-16 | Ballarat facility feedback | 
+| id | subject | description | email | twitter | user_ip | user_agent | created_at | alert_sent |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 75 | Queanbeyan Battery facility feedback | 
+**No email provided.**
+   
+
 **Path:**
-/facility/au/NEM/BALBESS/?range=7d&interval=30m
+/facility/au/NEM/QBYNB/?range=3d&interval=30m
 
 **Sources:**
-test
+Qbess is gpga its 10mw 20mwh the capital batrery is NEON not sure rating but think its about 100mw th... | None | None | 172.19.0.1 | Mozilla/5.0 (Linux; Android 13; SAMSUNG SM-A525F) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/21.0 Chrome/110.0.5481.154 Mobile Safari/537.36 | 2023-12-08 21:48:13.557640+00:00 | False |
+| 62 | Collector facility feedback | 
+**No email provided.**
+   
+
+**Path:**
+/facility/au/NEM/COLWF01/?range=1y&interval=1w
+
+**Sources:**
+https://ratchaustralia.com/collector/
 
 **Fields:**
 
 ```
 [
  {
-  "key": "Facility status and dates",
-  "value": "operating since  6 Nov 2018"
- }
-]
-```
+  "key": "COLWF01 reg cap",
+  "value": ... | None | None | 172.19.0.1 | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.57 | 2023-07-01 08:01:27.418176+00:00 | False |
+| 46 | Woolooga facility feedback | 
+**Email:**
+west45-7@hotmail.com     
+   
 
-**Descript... | steven@test.com | None | 61.68.241.134 | Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 | 2021-07-03 04:10:30.255253+00:00 | True
-32 | Bango facility feedback | 
+**Path:**
+/facility/au/NEM/WOOLGSF/?range=7d&interval=30m
+
+**Sources:**
+https://www.openstreetmap.org/relation/13366676
+
+**Fields:**
+
+```
+[
+ {
+  "key": "Faci... | west45-7@hotmail.com | None | 172.19.0.1 | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0 | 2023-05-04 00:50:25.030047+00:00 | False |
+| 42 | Yarranlea facility feedback | 
 **No email provided.**
    
 
 **Path:**
-/facility/au/NEM/BANGOWF/?range=7d&interval=30m
+/facility/au/NEM/YARANSF/?range=30d&interval=1d
 
 **Sources:**
-sdf
+yarranlea facilities market turnover calculation for the day of 4 October.   Value is much too high... | None | None | 121.45.192.211 | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36 | 2021-10-05 07:08:12.480583+00:00 | True |
+| 74 | Bouldercombe Battery facility feedback | 
+**No email provided.**
+   
+
+**Path:**
+/facility/au/NEM/BBATTERY/?range=7d&interval=30m
+
+**Sources:**
+Registered capacity needs updating
 
 **Fields:**
 
@@ -1057,67 +1055,7 @@ sdf
 ```
 
 **Description:**
-sdf
- | None | None | 61.68.241.134 | Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 | 2021-07-03 05:55:14.915077+00:00 | True
-68 | Bayswater facility feedback | 
-**Email:**
-jcocks64@gmail.com     
-   
-
-**Path:**
-/facility/au/NEM/BAYSW/?range=3d&interval=30m
-
-**Sources:**
-https://www.wikiwand.com/en/Bayswater_Power_Station
-
-**Fields:**
-
-```
-[
- {
-  "key": "Faci... | jcocks64@gmail.com | None | 172.19.0.1 | Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 | 2023-09-19 11:49:37.992583+00:00 | False
-78 | Callide B facility feedback | 
-**Email:**
-mushalik@tpg.com.au     
-   
-
-**Path:**
-/facility/au/NEM/CALL_B/?range=3d&interval=30m
-
-**Sources:**
-https://opennem.org.au/facility/au
-
-**Fields:**
-
-```
-[]
-```
-
-**Description:**
-No more d... | mushalik@tpg.com.au | None | 172.19.0.1 | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 | 2023-12-14 02:19:05.833648+00:00 | False
-33 | Bango facility feedback | 
-**No email provided.**
-   
-
-**Path:**
-/facility/au/NEM/BANGOWF/?range=7d&interval=30m
-
-**Sources:**
-test
-
-**Fields:**
-
-```
-[
- {
-  "key": "BANGOWF1 label",
-  "value": "BANGOWF1"
- }
-]
-```
-
-**Descriptio... | None | None | 61.68.241.134 | Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 | 2021-07-03 06:00:12.114265+00:00 | True
-```
+Hello, Bouldercombe ... | None | None | 172.19.0.1 | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.60 | 2023-11-17 00:50:48.921739+00:00 | False |
 
 ## Table: fueltech
 
@@ -1163,15 +1101,13 @@ CREATE TABLE fueltech
 
 ### Sample Data
 
-```
-created_by | created_at | updated_at | code | label | renewable | fueltech_group_id
----------------------------------------------------------------------------------------------------------
-None | 2020-12-09 01:46:29.027817+00:00 | 2022-10-04 06:24:38.567367+00:00 | battery_discharging | Battery (Discharging) | True | battery_discharging
-None | 2020-12-09 01:46:29.318789+00:00 | 2022-10-04 06:24:38.815381+00:00 | distillate | Distillate | False | distillate
-None | 2020-12-09 01:46:29.904852+00:00 | 2022-10-04 06:24:39.329845+00:00 | solar_rooftop | Solar (Rooftop) | True | solar
-None | 2020-12-09 01:46:29.087850+00:00 | 2024-08-10 04:20:43.258203+00:00 | bioenergy_biogas | Biogas | False | bioenergy
-None | 2024-08-10 04:20:45.089031+00:00 | None | battery | Battery | True | None
-```
+| created_by | created_at | updated_at | code | label | renewable | fueltech_group_id |
+| --- | --- | --- | --- | --- | --- | --- |
+| None | 2020-12-09 01:46:29.027817+00:00 | 2022-10-04 06:24:38.567367+00:00 | battery_discharging | Battery (Discharging) | True | battery_discharging |
+| None | 2020-12-09 01:46:29.376830+00:00 | 2022-10-04 06:24:38.865319+00:00 | gas_ccgt | Gas (CCGT) | False | gas |
+| None | 2020-12-09 01:46:29.788923+00:00 | 2022-10-04 06:24:39.228913+00:00 | solar_utility | Solar (Utility) | True | solar |
+| None | 2020-12-09 01:46:29.671803+00:00 | 2022-10-04 06:24:39.132031+00:00 | hydro | Hyrdo | True | hydro |
+| None | 2020-12-09 01:46:29.435849+00:00 | 2022-10-04 06:24:38.917529+00:00 | gas_ocgt | Gas (OCGT) | False | gas |
 
 ## Table: fueltech_group
 
@@ -1215,15 +1151,13 @@ CREATE TABLE fueltech_group
 
 ### Sample Data
 
-```
-created_by | created_at | updated_at | code | label | color | renewable
----------------------------------------------------------------------------------------------------------
-None | 2022-10-04 06:24:38.461796+00:00 | 2024-08-13 02:51:57.973473+00:00 | pumps | Pumps | #88AFD0 | True
-None | 2022-10-04 06:24:38.214596+00:00 | 2024-08-13 02:51:57.574303+00:00 | battery_charging | Battery (Charging) | #B2DAEF | True
-None | 2022-10-04 06:24:38.054393+00:00 | None | gas | Gas | #FF8813 | False
-None | 2022-10-04 06:24:38.163568+00:00 | 2024-08-13 02:51:57.473752+00:00 | solar | Solar | #FED500 | True
-None | 2022-10-04 06:24:38.411012+00:00 | None | bioenergy | Bioenergy | #A3886F | False
-```
+| created_by | created_at | updated_at | code | label | color | renewable |
+| --- | --- | --- | --- | --- | --- | --- |
+| None | 2022-10-04 06:24:38.114476+00:00 | 2024-08-13 02:51:57.357664+00:00 | wind | Wind | #417505 | True |
+| None | 2022-10-04 06:24:38.363459+00:00 | None | distillate | Distillate | #F35020 | False |
+| None | 2022-10-04 06:24:38.461796+00:00 | 2024-08-13 02:51:57.973473+00:00 | pumps | Pumps | #88AFD0 | True |
+| None | 2022-10-04 06:24:38.013420+00:00 | None | coal | Coal | #4a4a4a | False |
+| None | 2022-10-04 06:24:38.214596+00:00 | 2024-08-13 02:51:57.574303+00:00 | battery_charging | Battery (Charging) | #B2DAEF | True |
 
 ## Table: geography_columns
 
@@ -1291,13 +1225,11 @@ CREATE TABLE geometry_columns
 
 ### Sample Data
 
-```
-f_table_catalog | f_table_schema | f_table_name | f_geometry_column | coord_dimension | srid | type
----------------------------------------------------------------------------------------------------------
-opennem | public | location | boundary | 2 | 4326 | POLYGON
-opennem | public | location | geom | 2 | 4326 | POINT
-opennem | public | bom_station | geom | 2 | 4326 | POINT
-```
+| f_table_catalog | f_table_schema | f_table_name | f_geometry_column | coord_dimension | srid | type |
+| --- | --- | --- | --- | --- | --- | --- |
+| opennem | public | bom_station | geom | 2 | 4326 | POINT |
+| opennem | public | location | geom | 2 | 4326 | POINT |
+| opennem | public | location | boundary | 2 | 4326 | POLYGON |
 
 ## Table: location
 
@@ -1358,19 +1290,17 @@ CREATE TABLE location
 
 ### Sample Data
 
-```
-id | address1 | address2 | locality | state | postcode | place_id | geocode_approved | geocode_skip | geocode_processed_at | geocode_by | geom | osm_way_id | boundary
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-13581 |  |  |  | QLD | None | None | True | False | None | opennem.registry | 0101000020E6100000F27B55D675326240F021E37236C431C0 | None | None
-13567 |  |  |  | SA | None | None | True | False | None | opennem.registry | 0101000020E610000027DE019E34516140C8D2872EA88740C0 | None | None
-13515 |  |  |  | QLD | None | None | True | False | None | opennem.registry | 0101000020E6100000DD09DB2F29DE6240800C4D6317163BC0 | None | None
-4868 | None | None |  | None | None | None | False | False | None | None | None | None | None
-13805 | None | None | None | NSW | None | None | False | False | None | None | None | None | None
-```
+| id | address1 | address2 | locality | state | postcode | place_id | geocode_approved | geocode_skip | geocode_processed_at | geocode_by | geom | osm_way_id | boundary |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 13594 |  |  |  | QLD | None | None | True | False | None | opennem.registry | 0101000020E6100000B0FECF613E8D6240B83CD68C0C1237C0 | None | None |
+| 13464 |  |  |  | NSW | None | None | True | False | None | opennem.registry | 0101000020E6100000212328B875AD614088D972057FFC3FC0 | None | None |
+| 13806 | None | None | Eastern Creek | NSW | 2766 | None | False | False | None | None | 0101000020E6100000397EDF0B79DA62409CC4310CA3E840C0 | None | None |
+| 13750 |  |  |  | SA | None | None | True | False | None | opennem.registry | 0101000020E610000080457EFD90516140CCD24ECDE56A41C0 | None | None |
+| 13510 |  |  |  | NSW | None | None | True | False | None | opennem.registry | 0101000020E61000003161342BDBB26240ED66463F1A4641C0 | None | None |
 
 ## Table: milestones
 
-Total rows: 15123
+Total rows: 15,123
 
 ### Fields
 
@@ -1433,19 +1363,17 @@ CREATE TABLE milestones
 
 ### Sample Data
 
-```
-instance_id | record_id | interval | significance | value | network_id | fueltech_id | description | period | aggregate | metric | value_unit | description_long | network_region | previous_instance_id
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-1e980fc9-78e5-4c7b-8e74-1b41c1317dde | au.nem.vic1.battery_charging.energy.day.high | 2021-11-12 00:00:00 | 9 | 798.3735 | NEM | battery_charging | Daily battery (charging) energy high record for NEM in Victoria | day | high | energy | MWh | None | VIC1 | 1aafdf14-e70a-4872-b1ee-12224e787133
-832ddc60-d124-4849-b458-029c6b7a3ac8 | au.nem.qld1.coal.emissions.month.high | 2017-07-01 00:00:00 | 8 | 4287139.3535 | NEM | coal | Monthly coal emissions high record for NEM in Queensland | month | high | emissions | tCO2e | None | QLD1 | 0600ca5c-63dd-4928-bbde-f0d6d89be65e
-c43614bb-68ad-4120-8b0f-3740ea3f2248 | au.nem.demand.interval.low | 2005-04-06 00:00:00 | 4 | 1195.02 | NEM | demand | Interval demand low record for NEM | interval | low | demand | MW | None | None | 72d35d5f-b485-4a5d-b727-9e93510f4628
-0d97cade-355d-4978-a580-f95098224c35 | au.nem.vic1.gas.power.interval.high | 2000-01-13 16:00:00 | 4 | 989.15 | NEM | gas | Interval gas power high record for NEM in Victoria | interval | high | power | MW | None | VIC1 | a4114eb6-df81-4f68-9cfd-1ca292806719
-135983df-37a7-47e6-a855-cfa4d2da7444 | au.wem.bioenergy.energy.month.low | 2015-06-01 00:00:00 | 8 | 10046.7955 | WEM | bioenergy | Monthly bioenergy energy low record for WEM | month | low | energy | MWh | None | None | None
-```
+| instance_id | record_id | interval | significance | value | network_id | fueltech_id | description | period | aggregate | metric | value_unit | description_long | network_region | previous_instance_id |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 7949a2db-e2b6-4b66-87b5-e83fe6ebc760 | au.nem.sa1.power.interval.high | 2009-01-29 14:55:00 | 3 | 3218.63843 | NEM | None | Interval power high record for NEM in South Australia | interval | high | power | MW | None | SA1 | 43351624-3c68-45e5-874b-61ab8f2e04ce |
+| aef13063-8925-4185-8c99-aef2ba6314fe | au.nem.tas1.power.interval.low | 2006-01-25 23:20:00 | 3 | 567.38 | NEM | None | Interval power low record for NEM in Tasmania | interval | low | power | MW | None | TAS1 | 0181514c-c45b-41d1-90ac-02bbd8bbdfec |
+| 91468a98-b9f3-475a-be24-ef3d5ea8eff8 | au.nem.nsw1.hydro.energy.quarter.low | 2015-04-01 00:00:00 | 1 | 322490.613 | NEM | hydro | Quarterly hyrdo energy low record for NEM in New South Wales | quarter | low | energy | MWh | None | NSW1 | None |
+| 0936139b-fb45-4b16-8c82-feb7709d0a71 | au.wem.solar.energy.day.high | 2015-08-14 00:00:00 | 9 | 587.8447 | WEM | solar | Daily solar energy high record for WEM | day | high | energy | MWh | None | None | 75b61f58-ec91-41d1-8314-ca3d1f427561 |
+| 68f0c183-2648-4788-b5d4-144b721a9f80 | au.wem.bioenergy.emissions.day.low | 2016-05-22 00:00:00 | 8 | 14.1699 | WEM | bioenergy | Daily bioenergy emissions low record for WEM | day | low | emissions | tCO2e | None | None | ec34c7ce-ab47-4623-8b9a-cef7d0267f95 |
 
 ## Table: mv_fueltech_daily
 
-Total rows: 361037
+Total rows: 361,037
 
 ### Fields
 
@@ -1479,19 +1407,17 @@ CREATE TABLE mv_fueltech_daily
 
 ### Sample Data
 
-```
-trading_day | network_id | network_region | fueltech_code | generated | energy | emissions | emissions_intensity
-------------------------------------------------------------------------------------------------------------------------
-2005-12-08 00:00:00 | NEM | NSW1 | hydro | 205885.3400 | 17160.5529 | 0.0000 | 0.0000
-2018-09-05 00:00:00 | AEMO_ROOFTOP | SA1 | solar_rooftop | 5268.0980 | 2634.0490 | None | None
-2008-10-24 00:00:00 | NEM | QLD1 | coal_black | 1714506.5799 | 142869.2897 | 136715.6232 | 0.9569
-2019-05-22 00:00:00 | APVI | SA1 | solar_rooftop | 13574.1303 | 3393.5326 | None | None
-2013-02-15 00:00:00 | WEM | WEM | wind | None | None | 0 | 0
-```
+| trading_day | network_id | network_region | fueltech_code | generated | energy | emissions | emissions_intensity |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 2020-07-11 00:00:00 | NEM | SA1 | gas_ccgt | 186193.6453 | 15516.1647 | 7656.2850 | 0.4934 |
+| 2018-03-14 00:00:00 | WEM | WEM | gas_ocgt | 34931.4130 | 17509.1345 | 10874.0532 | 0.6211 |
+| 2002-10-29 00:00:00 | NEM | VIC1 | coal_brown | 1693980.8900 | 140917.9612 | 181520.9902 | 1.2881 |
+| 2008-05-28 00:00:00 | NEM | QLD1 | hydro | 40567.5257 | 3381.2492 | 0.0000 | 0.0000 |
+| 2009-03-28 00:00:00 | NEM | SA1 | gas_steam | 15110.0483 | 1259.3286 | 892.3099 | 0.7086 |
 
 ## Table: mv_weather_observations
 
-Total rows: 5409699
+Total rows: 5,409,699
 
 ### Fields
 
@@ -1519,15 +1445,13 @@ CREATE TABLE mv_weather_observations
 
 ### Sample Data
 
-```
-observation_time | station_id | temp_air | temp_min | temp_max
----------------------------------------------------------------------------
-2020-12-28 10:30:00+00:00 | 040043 | 24.2000000000000000 | 24.2 | 24.2
-2021-03-30 05:00:00+00:00 | 080091 | 23.6000000000000000 | 23.6 | 23.6
-2009-02-12 16:00:00+00:00 | 066214 | 20.0000000000000000 | 20.0 | 20.0
-2012-05-08 01:00:00+00:00 | 040913 | 13.9000000000000000 | 13.9 | 13.9
-2020-12-17 15:30:00+00:00 | 028008 | 24.9000000000000000 | 24.9 | 24.9
-```
+| observation_time | station_id | temp_air | temp_min | temp_max |
+| --- | --- | --- | --- | --- |
+| 2021-02-03 00:30:00+00:00 | 063292 | 16.2000000000000000 | 16.2 | 16.2 |
+| 2020-12-22 05:00:00+00:00 | 009215 | 28.4000000000000000 | 28.4 | 28.4 |
+| 2021-04-20 20:30:00+00:00 | 040004 | 10.7000000000000000 | 10.7 | 10.7 |
+| 2023-04-14 23:00:00+00:00 | 014015 | 29.0000000000000000 | 29.0 | 29.0 |
+| 2021-01-08 15:00:00+00:00 | 085096 | 16.8000000000000000 | 16.8 | 16.8 |
 
 ## Table: network
 
@@ -1590,15 +1514,13 @@ CREATE TABLE network
 
 ### Sample Data
 
-```
-created_by | created_at | updated_at | code | country | label | timezone | interval_size | offset | timezone_database | export_set | interval_shift | network_price | data_start_date | data_end_date
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-None | 2021-04-12 07:06:18.835747+00:00 | 2024-08-10 04:32:14.674557+00:00 | AEMO_ROOFTOP_BACKFILL | au | AEMO Rooftop Backfill | Australia/Brisbane | 30 | 600 | AEST | False | 0 | NEM | None | None
-None | 2021-04-09 10:15:56.408641+00:00 | 2024-08-10 04:32:14.576316+00:00 | AEMO_ROOFTOP | au | AEMO Rooftop | Australia/Brisbane | 30 | 600 | AEST | False | 0 | NEM | 2016-07-31 14:30:00+00:00 | 2024-08-02 23:30:00+00:00
-None | 2024-08-10 04:32:14.380672+00:00 | None | WEMDE | au | WEMDE | Australia/Perth | 5 | 480 | AWST | True | 0 | WEMDE | None | None
-None | 2023-02-22 09:54:49.679305+00:00 | 2024-08-10 04:32:14.781558+00:00 | OPENNEM_ROOFTOP_BACKFILL | au | OpenNEM Rooftop Backfill | Australia/Brisbane | 30 | 600 | AEST | False | 0 | NEM | 2015-03-19 20:15:00+00:00 | 2018-02-28 09:30:00+00:00
-None | 2020-12-09 01:46:31.057929+00:00 | 2024-08-10 04:32:14.138129+00:00 | NEM | au | NEM | Australia/Brisbane | 5 | 600 | AEST | True | 5 | NEM | 1998-12-06 15:40:00+00:00 | 2024-08-03 00:15:00+00:00
-```
+| created_by | created_at | updated_at | code | country | label | timezone | interval_size | offset | timezone_database | export_set | interval_shift | network_price | data_start_date | data_end_date |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| None | 2020-12-09 01:46:31.057929+00:00 | 2024-08-10 04:32:14.138129+00:00 | NEM | au | NEM | Australia/Brisbane | 5 | 600 | AEST | True | 5 | NEM | 1998-12-06 15:40:00+00:00 | 2024-08-03 00:15:00+00:00 |
+| None | 2020-12-09 01:46:31.176786+00:00 | 2024-08-03 00:15:22.319623+00:00 | APVI | au | APVI | Australia/Perth | 15 | 600 | AWST | False | 0 | WEM | 2015-03-19 20:15:00+00:00 | 2024-08-03 00:00:00+00:00 |
+| None | 2023-02-22 09:54:49.679305+00:00 | 2024-08-10 04:32:14.781558+00:00 | OPENNEM_ROOFTOP_BACKFILL | au | OpenNEM Rooftop Backfill | Australia/Brisbane | 30 | 600 | AEST | False | 0 | NEM | 2015-03-19 20:15:00+00:00 | 2018-02-28 09:30:00+00:00 |
+| None | 2021-04-12 07:06:18.835747+00:00 | 2024-08-10 04:32:14.674557+00:00 | AEMO_ROOFTOP_BACKFILL | au | AEMO Rooftop Backfill | Australia/Brisbane | 30 | 600 | AEST | False | 0 | NEM | None | None |
+| None | 2021-04-09 10:15:56.408641+00:00 | 2024-08-10 04:32:14.576316+00:00 | AEMO_ROOFTOP | au | AEMO Rooftop | Australia/Brisbane | 30 | 600 | AEST | False | 0 | NEM | 2016-07-31 14:30:00+00:00 | 2024-08-02 23:30:00+00:00 |
 
 ## Table: network_region
 
@@ -1647,15 +1569,13 @@ CREATE TABLE network_region
 
 ### Sample Data
 
-```
-created_by | created_at | updated_at | network_id | code | timezone | timezone_database | offset | export_set
----------------------------------------------------------------------------------------------------------------------------------------
-None | 2021-04-09 10:15:56.438248+00:00 | None | AEMO_ROOFTOP | QLD1 | None | None | None | True
-None | 2021-04-09 10:15:56.441786+00:00 | None | AEMO_ROOFTOP | VIC1 | None | None | None | True
-None | 2020-12-09 01:46:31.422815+00:00 | None | NEM | VIC1 | None | None | None | True
-None | 2021-04-09 10:15:56.445329+00:00 | None | AEMO_ROOFTOP | TAS1 | None | None | None | True
-None | 2020-12-09 01:46:31.363840+00:00 | None | NEM | QLD1 | None | None | None | True
-```
+| created_by | created_at | updated_at | network_id | code | timezone | timezone_database | offset | export_set |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| None | 2020-12-09 01:46:31.302424+00:00 | None | NEM | NSW1 | None | None | None | True |
+| None | 2020-12-09 01:46:31.239865+00:00 | None | WEM | WEM | None | None | None | True |
+| None | 2021-04-09 10:15:56.438248+00:00 | None | AEMO_ROOFTOP | QLD1 | None | None | None | True |
+| None | 2020-12-09 01:46:31.422815+00:00 | None | NEM | VIC1 | None | None | None | True |
+| None | 2024-08-10 04:32:14.952549+00:00 | None | WEM | WEMDE | None | None | None | True |
 
 ## Table: participant
 
@@ -1720,19 +1640,17 @@ CREATE TABLE participant
 
 ### Sample Data
 
-```
-participantid | participantclassid | name | id | description | code | acn | primarybusiness | name | lastchanged | network_name | network_code | country | abn | approved | approved_by | approved_at
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-53 | ERMPOWER | ERMPowerRetailPty | None | None | None | None | False | None | None
-84 | WATERCP | WaterCorporation | None | None | None | None | False | None | None
-155 | Neoenaus | NeoenAustralia | None | None | None | None | False | None | None
-168 | Sfmoora | SolarFarmMooraPty | None | None | None | None | False | None | None
-187 | Vivapwr | VivoPowerWAPty.. | None | None | None | None | False | None | None
-```
+| participantid | participantclassid | name | id | description | code | acn | primarybusiness | name | lastchanged | network_name | network_code | country | abn | approved | approved_by | approved_at |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 62 | HBJMIN | HBJMineralsPty | None | None | None | None | False | None | None |
+| 163 | Phoenix | PhoenixEnergy | None | None | None | None | False | None | None |
+| 137 | Imowa | AustralianEnergyMarketOperator | None | None | None | None | False | None | None |
+| 13 | LNDFLLGP | LandfillGasandPowerPty | Landfill Gas And Power Pty Ltd | None | None | None | False | None | 2021-01-15 04:20:48.442175+00:00 |
+| 95 | Astar | AStarElectricity | None | None | None | None | False | None | None |
 
 ## Table: pg_stat_statements
 
-Total rows: 100
+Total rows: 126
 
 ### Fields
 
@@ -1816,21 +1734,19 @@ CREATE TABLE pg_stat_statements
 
 ### Sample Data
 
-```
-userid | dbid | toplevel | queryid | query | plans | total_plan_time | min_plan_time | max_plan_time | mean_plan_time | stddev_plan_time | calls | total_exec_time | min_exec_time | max_exec_time | mean_exec_time | stddev_exec_time | rows | shared_blks_hit | shared_blks_read | shared_blks_dirtied | shared_blks_written | local_blks_hit | local_blks_read | local_blks_dirtied | local_blks_written | temp_blks_read | temp_blks_written | blk_read_time | blk_write_time | wal_records | wal_fpi | wal_bytes
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-16384 | 16448 | True | 6960685409981736324 | SELECT column_name FROM information_schema.columns WHERE table_name = $1 ORDER BY ordinal_position | 0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 25 | 8.830414 | 0.081189 | 2.8804469999999998 | 0.35321655999999996 | 0.6128130249196785 | 240 | 4188 | 8 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0.0 | 0.0 | 0 | 0 | 0
-16384 | 16448 | True | -2238260910044563148 | SELECT
-            $1 || relname || $2 ||
-            array_to_string(
-                array_agg(
-                    $3 || column_name || $4 ||  type || $5|| not_null
-                )
-              ... | 0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 29 | 11.433968999999998 | 0.046990000000000004 | 9.286489999999999 | 0.3942747931034482 | 1.6806096805062956 | 29 | 939 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0.0 | 0.0 | 0 | 0 | 0
-16384 | 16448 | True | 3749380189022910195 | ROLLBACK | 0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 62 | 0.07687499999999999 | 0.00027 | 0.01974 | 0.0012399193548387093 | 0.002456070795307186 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0.0 | 0.0 | 0 | 0 | 0
-16384 | 16448 | True | 4629810609182828207 | RESET ALL | 0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 3 | 0.02708 | 0.00834 | 0.00954 | 0.009026666666666667 | 0.0005049972497174833 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0.0 | 0.0 | 0 | 0 | 0
-16384 | 16448 | True | 6722864136054051285 | SELECT COUNT(*) FROM fueltech_group | 0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 1 | 0.478673 | 0.478673 | 0.478673 | 0.478673 | 0.0 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0.0 | 0.0 | 0 | 0 | 0
-```
+| userid | dbid | toplevel | queryid | query | plans | total_plan_time | min_plan_time | max_plan_time | mean_plan_time | stddev_plan_time | calls | total_exec_time | min_exec_time | max_exec_time | mean_exec_time | stddev_exec_time | rows | shared_blks_hit | shared_blks_read | shared_blks_dirtied | shared_blks_written | local_blks_hit | local_blks_read | local_blks_dirtied | local_blks_written | temp_blks_read | temp_blks_written | blk_read_time | blk_write_time | wal_records | wal_fpi | wal_bytes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 16384 | 16448 | True | -5843739379638153553 | CREATE TEMP TABLE __tmp_facility_scada_20240909222046
+    (LIKE facility_scada INCLUDING DEFAULTS)
+    ON COMMIT DROP | 0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 1 | 14.263385 | 14.263385 | 14.263385 | 14.263385 | 0.0 | 0 | 525 | 57 | 24 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0.0 | 0.0 | 104 | 25 | 150370 |
+| 16384 | 16448 | True | 8401511264330023979 | COPY "__tmp_facility_scada_20240909222046"("network_id", "interval", "facility_code", "generated", "eoi_quantity", "is_forecast", "energy_quality_flag", "energy") FROM STDIN (FORMAT binary) | 0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 1 | 11.283371 | 11.283371 | 11.283371 | 11.283371 | 0.0 | 466 | 0 | 0 | 0 | 0 | 5 | 0 | 6 | 6 | 0 | 0 | 0.0 | 0.0 | 0 | 0 | 0 |
+| 16384 | 16448 | True | 7146888456859552635 | SELECT * FROM balancing_summary ORDER BY RANDOM() LIMIT $1 | 0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 2 | 14703.377012 | 7085.659937 | 7617.717075 | 7351.688506 | 266.02856899999983 | 10 | 8746 | 237428 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0.0 | 0.0 | 0 | 0 | 0 |
+| 16384 | 16448 | True | -5555279242663759534 | SELECT * FROM feedback ORDER BY RANDOM() LIMIT $1 | 0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 2 | 0.252615 | 0.10732699999999999 | 0.145288 | 0.1263075 | 0.0189805 | 10 | 14 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0.0 | 0.0 | 0 | 0 | 0 |
+| 16384 | 16448 | True | 396979206045734760 | INSERT INTO facility_scada
+        SELECT *
+        FROM __tmp_facility_scada_20240909224046
+    ON CONFLICT 
+    (network_id,interval,facility_code,is_forecast) DO UPDATE set generated = EXCLUDED.gen... | 0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 1 | 128.082273 | 128.082273 | 128.082273 | 128.082273 | 0.0 | 461 | 16256 | 553 | 536 | 22 | 6 | 0 | 0 | 0 | 0 | 0 | 0.0 | 0.0 | 6114 | 515 | 3732690 |
 
 ## Table: pg_stat_statements_info
 
@@ -1856,11 +1772,9 @@ CREATE TABLE pg_stat_statements_info
 
 ### Sample Data
 
-```
-dealloc | stats_reset
-------------------------------
-0 | 2024-09-09 22:19:07.454676+00:00
-```
+| dealloc | stats_reset |
+| --- | --- |
+| 0 | 2024-09-09 22:19:07.454676+00:00 |
 
 ## Table: raster_columns
 
@@ -1952,7 +1866,7 @@ CREATE TABLE raster_overviews
 
 ## Table: spatial_ref_sys
 
-Total rows: 8500
+Total rows: 8,500
 
 ### Fields
 
@@ -1989,15 +1903,13 @@ CREATE TABLE spatial_ref_sys
 
 ### Sample Data
 
-```
-srid | auth_name | auth_srid | srtext | proj4text
----------------------------------------------------------------------------
-5358 | EPSG | 5358 | GEOCCS["SIRGAS-Chile",DATUM["SIRGAS_Chile",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","1064"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["metre",1,A... | +proj=geocent +ellps=GRS80 +units=m +no_defs 
-4724 | EPSG | 4724 | GEOGCS["Diego Garcia 1969",DATUM["Diego_Garcia_1969",SPHEROID["International 1924",6378388,297,AUTHORITY["EPSG","7022"]],TOWGS84[208,-435,-229,0,0,0,0],AUTHORITY["EPSG","6724"]],PRIMEM["Greenwich",0,A... | +proj=longlat +ellps=intl +towgs84=208,-435,-229,0,0,0,0 +no_defs 
-3363 | EPSG | 3363 | PROJCS["NAD83(HARN) / Pennsylvania North (ftUS)",GEOGCS["NAD83(HARN)",DATUM["NAD83_High_Accuracy_Reference_Network",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],TOWGS84[0,0,0,0,... | +proj=lcc +lat_1=41.95 +lat_2=40.88333333333333 +lat_0=40.16666666666666 +lon_0=-77.75 +x_0=600000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=us-ft +no_defs 
-2687 | EPSG | 2687 | PROJCS["Pulkovo 1995 / 3-degree Gauss-Kruger zone 53",GEOGCS["Pulkovo 1995",DATUM["Pulkovo_1995",SPHEROID["Krassowsky 1940",6378245,298.3,AUTHORITY["EPSG","7024"]],TOWGS84[24.47,-130.89,-81.56,0,0,0.1... | +proj=tmerc +lat_0=0 +lon_0=159 +k=1 +x_0=53500000 +y_0=0 +ellps=krass +towgs84=24.47,-130.89,-81.56,0,0,0.13,-0.22 +units=m +no_defs 
-104702 | ESRI | 104702 | GEOGCS["GCS_NAD_1983_HARN_Adj_MN_Beltrami_North",DATUM["D_NAD_1983_HARN_Adj_MN_Beltrami_North",SPHEROID["S_GRS_1980_Adj_MN_Beltrami_North",6378505.809,298.257222100883,AUTHORITY["ESRI","107702"]],AUTH... | +proj=longlat +a=6378505.809 +rf=298.257222100883 +no_defs
-```
+| srid | auth_name | auth_srid | srtext | proj4text |
+| --- | --- | --- | --- | --- |
+| 32011 | EPSG | 32011 | PROJCS["NAD27 / New Jersey",GEOGCS["NAD27",DATUM["North_American_Datum_1927",SPHEROID["Clarke 1866",6378206.4,294.9786982138982,AUTHORITY["EPSG","7008"]],AUTHORITY["EPSG","6267"]],PRIMEM["Greenwich",0... | +proj=tmerc +lat_0=38.83333333333334 +lon_0=-74.66666666666667 +k=0.9999749999999999 +x_0=609601.2192024384 +y_0=0 +datum=NAD27 +units=us-ft +no_defs  |
+| 2633 | EPSG | 2633 | PROJCS["Pulkovo 1942 / 3-degree Gauss-Kruger CM 171E",GEOGCS["Pulkovo 1942",DATUM["Pulkovo_1942",SPHEROID["Krassowsky 1940",6378245,298.3,AUTHORITY["EPSG","7024"]],TOWGS84[23.92,-141.27,-80.9,0,0.35,0... | +proj=tmerc +lat_0=0 +lon_0=171 +k=1 +x_0=500000 +y_0=0 +ellps=krass +towgs84=23.92,-141.27,-80.9,0,0.35,0.82,-0.12 +units=m +no_defs  |
+| 4584 | EPSG | 4584 | PROJCS["New Beijing / Gauss-Kruger CM 105E",GEOGCS["New Beijing",DATUM["New_Beijing",SPHEROID["Krassowsky 1940",6378245,298.3,AUTHORITY["EPSG","7024"]],AUTHORITY["EPSG","1045"]],PRIMEM["Greenwich",0,A... | +proj=tmerc +lat_0=0 +lon_0=105 +k=1 +x_0=500000 +y_0=0 +ellps=krass +units=m +no_defs  |
+| 26977 | EPSG | 26977 | PROJCS["NAD83 / Kansas North",GEOGCS["NAD83",DATUM["North_American_Datum_1983",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY["EPSG","6269"]],PRIM... | +proj=lcc +lat_1=39.78333333333333 +lat_2=38.71666666666667 +lat_0=38.33333333333334 +lon_0=-98 +x_0=400000 +y_0=0 +datum=NAD83 +units=m +no_defs  |
+| 2698 | EPSG | 2698 | PROJCS["Pulkovo 1995 / 3-degree Gauss-Kruger zone 64",GEOGCS["Pulkovo 1995",DATUM["Pulkovo_1995",SPHEROID["Krassowsky 1940",6378245,298.3,AUTHORITY["EPSG","7024"]],TOWGS84[24.47,-130.89,-81.56,0,0,0.1... | +proj=tmerc +lat_0=0 +lon_0=-168 +k=1 +x_0=64500000 +y_0=0 +ellps=krass +towgs84=24.47,-130.89,-81.56,0,0,0.13,-0.22 +units=m +no_defs  |
 
 ## Table: station
 
@@ -2089,15 +2001,14 @@ CREATE TABLE station
 
 ### Sample Data
 
-```
-created_by | stationid | created_at | stationname | address1 | updated_at | address2 | id | address3 | participant_id | address4 | location_id | code | city | state | name | description | postcode | lastchanged | wikipedia_link | connectionpointid | wikidata_id | network_code | network_name | approved | approved_by | approved_at | website_url
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-opennem.registry | 2020-12-09 15:32:39.826093+00:00 | 2024-06-07 13:11:45.449251+00:00 | 231 | None | 13646 | OAKEY | Oakey | The Oakey Power Station is a 332 MW power station located at Oakey on the Darling Downs in southern Queensland, adjacent to the Roma to Brisbane Pipeline. The station is an open-cycle, dual liquid/gas... | https://en.wikipedia.org/wiki/Oakey_Power_Station | Q7073856 | None | Oakey | True | opennem.importer.facilities | 2024-06-07 23:11:45.518754+00:00 | None
-opennem.registry | 2020-12-09 15:32:39.826093+00:00 | 2024-06-07 13:11:13.702014+00:00 | 33 | None | 13448 | BANKSPT | Bankstown Sports Club | None | None | None | None | Bankstown Sports Club | True | opennem.importer.facilities | 2024-06-07 23:11:13.747542+00:00 | None
-opennem.registry | 2020-12-09 15:32:39.826093+00:00 | 2024-06-07 13:11:53.893632+00:00 | 53 | None | 13468 | BNGSF1 | Bungala One | None | None | None | None | Bungala One | True | opennem.importer.facilities | 2024-06-07 23:11:53.937745+00:00 | None
-opennem.registry | 2020-12-09 15:32:39.826093+00:00 | 2024-06-07 13:11:25.202836+00:00 | 209 | None | 13624 | MM | Munmorah | Munmorah Power Station is a demolished coal fired electricity power station with four 350 MW English Electric steam driven turbo-alternators for a combined capacity of 1,400 MW. The station was locate... | https://en.wikipedia.org/wiki/Munmorah_Power_Station | Q11990196 | None | Munmorah | True | opennem.importer.facilities | 2024-06-07 23:11:25.283456+00:00 | None
-opennem.importer.facilities | 2023-04-26 23:10:22.910976+00:00 | 2024-06-07 13:12:40.796131+00:00 | 544 | None | 13838 | PIBESS | Phillip Island BESS | None | None | None | None | Phillip Island BESS | True | opennem.importer.facilities | 2024-06-07 23:12:40.843242+00:00 | https://mondo.com.au/projects/phillip-island-battery
-```
+| created_by | stationid | created_at | stationname | address1 | updated_at | address2 | id | address3 | participant_id | address4 | location_id | code | city | state | name | description | postcode | lastchanged | wikipedia_link | connectionpointid | wikidata_id | network_code | network_name | approved | approved_by | approved_at | website_url |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| opennem.init | 2021-04-13 13:47:32.790389+00:00 | 2024-06-07 13:11:26.790387+00:00 | 482 | None | 4882 | NORTHGT | Northern | None | None | None | None | NORTHERN GAS TURBINE | True | opennem.importer.facilities | 2024-06-07 23:11:26.837534+00:00 | None |
+| opennem.registry | 2020-12-09 15:32:39.826093+00:00 | 2024-06-07 13:12:03.971136+00:00 | 335 | None | 13750 | WINGF1 | Wingfield | None | None | None | None | Wingfield 1 | True | opennem.importer.facilities | 2024-06-07 23:12:04.020536+00:00 | None |
+| opennem.init | 2020-12-15 07:00:22.523039+00:00 | 2024-06-07 13:12:19.831638+00:00 | 425 | None | 1225 | KIAMSF1 | Kiamal | Kiamal Solar Farm is located in north-west Victoria, approximately 3 km north of the township of Ouyen with Stage 1 currently under construction. When completed it will be Victoria's largest solar far... | None | None | None | Kiamal Solar Farm | True | opennem.importer.facilities | 2024-06-07 23:12:19.876389+00:00 | None |
+| opennem.registry | 2020-12-09 15:32:39.826093+00:00 | 2024-06-07 13:11:51.730127+00:00 | 338 | None | 13753 | WIVENSH | Wivenhoe | None | None | None | None | Wivenhoe (Mini Hydro) | True | opennem.importer.facilities | 2024-06-07 23:11:51.775443+00:00 | None |
+| opennem.registry | 2020-12-09 15:32:39.826093+00:00 | 2024-06-07 13:11:34.171269+00:00 | 328 | None | 13743 | WG | Warragamba | Warragamba Power Station is a hydroelectric power station at Warragamba Dam, New South Wales, Australia. Warragamba has one turbine with a generating capacity of 50 MW of electricity.
+The power statio... | https://en.wikipedia.org/wiki/Warragamba_Power_Station | Q7969919 | None | Warragamba | True | opennem.importer.facilities | 2024-06-07 23:11:34.218057+00:00 | None |
 
 ## Table: stats
 
@@ -2142,19 +2053,17 @@ CREATE TABLE stats
 
 ### Sample Data
 
-```
-created_by | created_at | updated_at | stat_date | country | stat_type | value
----------------------------------------------------------------------------------------------------------
-None | 2021-01-05 09:47:54.294658+00:00 | None | 2008-06-30 00:00:00+00:00 | au | CPI | 91.6
-None | 2021-01-05 09:47:54.294658+00:00 | None | 1958-09-01 00:00:00+00:00 | au | CPI | 7.2
-None | 2021-01-05 09:47:54.294658+00:00 | None | 1978-09-30 00:00:00+00:00 | au | CPI | 22.1
-None | 2021-01-05 09:47:54.294658+00:00 | None | 2020-09-30 00:00:00+00:00 | au | CPI | 116.2
-None | 2021-01-05 09:47:54.294658+00:00 | None | 1953-12-01 00:00:00+00:00 | au | CPI | 6.4
-```
+| created_by | created_at | updated_at | stat_date | country | stat_type | value |
+| --- | --- | --- | --- | --- | --- | --- |
+| None | 2021-01-05 09:47:54.294658+00:00 | None | 2020-03-31 00:00:00+00:00 | au | CPI | 116.6 |
+| None | 2021-01-05 09:47:54.294658+00:00 | None | 1976-03-31 00:00:00+00:00 | au | CPI | 17.3 |
+| None | 2021-01-05 09:47:54.294658+00:00 | None | 2009-12-31 00:00:00+00:00 | au | CPI | 94.3 |
+| None | 2021-01-05 09:47:54.294658+00:00 | None | 1998-06-30 00:00:00+00:00 | au | CPI | 67.4 |
+| None | 2021-01-05 09:47:54.294658+00:00 | None | 2016-03-31 00:00:00+00:00 | au | CPI | 108.2 |
 
 ## Table: task_profile
 
-Total rows: 568157
+Total rows: 568,157
 
 ### Fields
 
@@ -2203,12 +2112,10 @@ CREATE TABLE task_profile
 
 ### Sample Data
 
-```
-id | task_name | time_start | time_end | time_sql | time_cpu | errors | retention_period | level | invokee_name
-------------------------------------------------------------------------------------------------------------------------------------------------------
-fea18795-18f7-4705-8c7c-79c74282a647 | wem_per_interval_check | 2024-07-03 12:48:13.130418+00:00 | 2024-07-03 12:48:25.812759+00:00 | None | None | 0 | forever | noisy | 
-e700bd6c-8c2d-4d14-a6a3-5cc8d6996a4c | wem_per_interval_check | 2024-03-03 16:22:32.441213+00:00 | 2024-03-03 16:22:50.829095+00:00 | None | None | 0 | forever | noisy | 
-9d54d80a-98d1-4604-8424-b84b194aced1 | run_aggregate_flow_for_interval_v3 | 2024-07-18 03:40:00.540690+00:00 | 2024-07-18 03:40:00.647996+00:00 | None | None | 0 | forever | info | 
-f07db03c-d7a1-4830-af1f-0081ef7bcd81 | run_aggregate_flow_for_interval_v3 | 2024-07-03 16:20:00.686086+00:00 | 2024-07-03 16:20:00.760331+00:00 | None | None | 0 | forever | info | 
-f9fc00ac-9d07-4adb-bb07-dcf24cccc0ce | nem_dispatch_scada_crawl | 2024-02-14 13:30:59.285936+00:00 | 2024-02-14 13:34:18.366702+00:00 | None | None | 0 | forever | noisy | 
-```
+| id | task_name | time_start | time_end | time_sql | time_cpu | errors | retention_period | level | invokee_name |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 5f1235f7-8907-430c-aa50-80e134c4e287 | wem_per_interval_check | 2024-02-19 21:59:32.441921+00:00 | 2024-02-19 21:59:50.447996+00:00 | None | None | 0 | forever | noisy |  |
+| 7cdda960-1f4b-4df8-912b-f7aea1dd905c | wem_per_interval_check | 2024-04-20 22:27:43.434531+00:00 | 2024-04-20 22:28:00.804758+00:00 | None | None | 0 | forever | noisy |  |
+| 4a691c0b-bce5-4688-881e-342d361bb4f9 | nem_dispatch_scada_crawl | 2024-05-01 16:30:16.425898+00:00 | 2024-05-01 16:33:26.039223+00:00 | None | None | 0 | forever | noisy |  |
+| 2103958e-afc3-428f-adbb-955c8a3d41fb | run_aggregate_flow_for_interval_v3 | 2024-05-07 03:40:01.450143+00:00 | 2024-05-07 03:40:01.548578+00:00 | None | None | 0 | forever | info |  |
+| 649ad23d-b391-4725-9cd2-958b4d2f89a0 | run_aggregate_flow_for_interval_v3 | 2024-03-25 22:30:05.051527+00:00 | 2024-03-25 22:30:05.156517+00:00 | None | None | 0 | forever | info |  |
