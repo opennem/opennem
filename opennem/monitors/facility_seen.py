@@ -105,7 +105,9 @@ async def get_facility_first_seen(period: str) -> list[FacilitySeen]:
     return records
 
 
-async def facility_first_seen_check(only_generation: bool = True, filter_ignored_duids: bool = False) -> list[FacilitySeen]:
+async def facility_first_seen_check(
+    only_generation: bool = True, filter_ignored_duids: bool = False, send_slack: bool = True
+) -> list[FacilitySeen]:
     """Find new DUIDs and alert on them
 
     Args:
@@ -131,9 +133,11 @@ async def facility_first_seen_check(only_generation: bool = True, filter_ignored
                 f"{fac.code}. Generated: {generated_out}MW"
             )
 
-            # send a slack message and log
-            slack_message(webhook_url=settings.slack_hook_new_facilities, tag_users=settings.slack_admin_alert, message=msg)
-            logger.info(msg)
+            if send_slack:
+                await slack_message(
+                    webhook_url=settings.slack_hook_new_facilities, tag_users=settings.slack_admin_alert, message=msg
+                )
+                logger.debug(msg)
 
             facs_out.append(fac)
         else:
@@ -141,7 +145,7 @@ async def facility_first_seen_check(only_generation: bool = True, filter_ignored
                 f"[{settings.env.upper()}] Found new facility on network {fac.network_id} with DUID: "
                 f"{fac.code}. No generation data"
             )
-            logger.info(msg)
+            logger.debug(msg)
 
     return facs_out
 
@@ -150,7 +154,7 @@ async def facility_first_seen_check(only_generation: bool = True, filter_ignored
 if __name__ == "__main__":
     import asyncio
 
-    seen_facilities = asyncio.run(facility_first_seen_check())
+    seen_facilities = asyncio.run(facility_first_seen_check(send_slack=False))
 
     for f in seen_facilities:
         logger.info(f"Unmapped: {f.network_id} {f.code} {f.generated}")
