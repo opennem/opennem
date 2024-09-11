@@ -6,10 +6,24 @@
 #     "python-dotenv",
 # ]
 # ///
-"""Export database schema and sample data"""
+"""Export database schema and sample data into markdown documentation
+
+Run with:
+
+$ uv run export_schema.py
+
+Command line args and options:
+
+-d, --database: Database connection string
+-o, --output: Output file path
+-e, --env-var: Environment variable name for database URL
+--env-file: Path to the .env file
+
+"""
 
 import argparse
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Any, TextIO
@@ -17,6 +31,32 @@ from typing import Any, TextIO
 import psycopg2
 from dotenv import load_dotenv
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+
+# Add this near the top of the file, after the imports
+
+_SYSTEM_TABLES = {
+    # PostGIS tables
+    "geography_columns",
+    "geometry_columns",
+    "spatial_ref_sys",
+    "raster_columns",
+    "raster_overviews",
+    # PostgreSQL system tables
+    "pg_stat_statements",
+    "pg_stat_statements_info",
+    # pgcrypto extension
+    "pgp_armor_headers",
+    # Other common extension tables
+    "hstore_old_ext",
+    "sql_features",
+    "sql_implementation_info",
+    "sql_languages",
+    "sql_packages",
+    "sql_parts",
+    "sql_sizing",
+    "sql_sizing_profiles",
+    # Add any other system tables or extension tables you want to exclude
+}
 
 
 def get_database_connection(
@@ -95,31 +135,39 @@ def get_enabled_plugins(cursor: psycopg2.extensions.cursor) -> list[tuple[str, s
     return cursor.fetchall()
 
 
-def get_tables(cursor: psycopg2.extensions.cursor) -> list[str]:
+def get_tables(cursor: psycopg2.extensions.cursor, schemas: list[str]) -> list[tuple[str, str]]:
     """
-    Get a list of table names in the public schema.
+    Get a list of table names in the specified schemas, excluding system tables.
 
     Args:
         cursor (psycopg2.extensions.cursor): Database cursor object.
+        schemas (List[str]): List of schema names to query.
 
     Returns:
-        List[str]: List of table names.
+        List[Tuple[str, str]]: List of tuples containing schema name and table name.
     """
-    cursor.execute("""
-        SELECT table_name
+    placeholders = ",".join(["%s"] * len(schemas))
+    cursor.execute(
+        f"""
+        SELECT table_schema, table_name
         FROM information_schema.tables
-        WHERE table_schema = 'public'
-        ORDER BY table_name;
-    """)
-    return [row[0] for row in cursor.fetchall()]
+        WHERE table_schema IN ({placeholders})
+        AND table_type = 'BASE TABLE'
+        ORDER BY table_schema, table_name;
+    """,
+        schemas,
+    )
+    tables = cursor.fetchall()
+    return [(schema, table) for schema, table in tables if table.lower() not in _SYSTEM_TABLES]
 
 
-def get_create_table_statement(cursor: psycopg2.extensions.cursor, table: str) -> str | None:
+def get_create_table_statement(cursor: psycopg2.extensions.cursor, schema: str, table: str) -> str | None:
     """
-    Get the CREATE TABLE statement for a given table.
+    Get the CREATE TABLE statement for a given table in a specific schema.
 
     Args:
         cursor (psycopg2.extensions.cursor): Database cursor object.
+        schema (str): Name of the schema.
         table (str): Name of the table.
 
     Returns:
@@ -127,42 +175,42 @@ def get_create_table_statement(cursor: psycopg2.extensions.cursor, table: str) -
     """
     cursor.execute(f"""
         SELECT
-            'CREATE TABLE ' || relname || E'\n(\n' ||
+            'CREATE TABLE ' || quote_ident('{schema}') || '.' || quote_ident('{table}') || E'\n(\n' ||
             array_to_string(
                 array_agg(
-                    '    ' || column_name || ' ' ||  type || ' '|| not_null
+                    '    ' || quote_ident(column_name) || ' ' ||  type || ' '|| not_null
                 )
                 , E',\n'
             ) || E'\n);\n'
         FROM (
             SELECT
-                c.relname, a.attname AS column_name,
+                a.attname AS column_name,
                 pg_catalog.format_type(a.atttypid, a.atttypmod) as type,
                 CASE
                     WHEN a.attnotnull THEN 'NOT NULL'
                     ELSE 'NULL'
                 END as not_null
-            FROM pg_class c,
-                pg_attribute a,
-                pg_type t
-            WHERE c.relname = '{table}'
+            FROM pg_class c
+            JOIN pg_namespace n ON n.oid = c.relnamespace
+            JOIN pg_attribute a ON a.attrelid = c.oid
+            WHERE n.nspname = '{schema}'
+                AND c.relname = '{table}'
                 AND a.attnum > 0
-                AND a.attrelid = c.oid
-                AND a.atttypid = t.oid
             ORDER BY a.attnum
         ) AS tabledefinition
-        GROUP BY relname;
+        GROUP BY schema, table;
     """)
     result = cursor.fetchone()
     return result[0] if result else None
 
 
-def get_constraints(cursor: psycopg2.extensions.cursor, table: str) -> list[tuple[str]]:
+def get_constraints(cursor: psycopg2.extensions.cursor, schema: str, table: str) -> list[tuple[str]]:
     """
-    Get a list of constraints for a given table.
+    Get a list of constraints for a given table in a specific schema.
 
     Args:
         cursor (psycopg2.extensions.cursor): Database cursor object.
+        schema (str): Name of the schema.
         table (str): Name of the table.
 
     Returns:
@@ -172,17 +220,18 @@ def get_constraints(cursor: psycopg2.extensions.cursor, table: str) -> list[tupl
         SELECT pg_get_constraintdef(c.oid)
         FROM pg_constraint c
         JOIN pg_namespace n ON n.oid = c.connamespace
-        WHERE conrelid = '{table}'::regclass AND n.nspname = 'public'
+        WHERE conrelid = '{schema}.{table}'::regclass AND n.nspname = '{schema}'
     """)
     return cursor.fetchall()
 
 
-def get_indexes(cursor: psycopg2.extensions.cursor, table: str) -> list[tuple[str]]:
+def get_indexes(cursor: psycopg2.extensions.cursor, schema: str, table: str) -> list[tuple[str]]:
     """
-    Get a list of indexes for a given table.
+    Get a list of indexes for a given table in a specific schema.
 
     Args:
         cursor (psycopg2.extensions.cursor): Database cursor object.
+        schema (str): Name of the schema.
         table (str): Name of the table.
 
     Returns:
@@ -191,38 +240,43 @@ def get_indexes(cursor: psycopg2.extensions.cursor, table: str) -> list[tuple[st
     cursor.execute(f"""
         SELECT indexdef
         FROM pg_indexes
-        WHERE tablename = '{table}' AND schemaname = 'public'
+        WHERE tablename = '{table}' AND schemaname = '{schema}'
     """)
     return cursor.fetchall()
 
 
-def get_sample_data(cursor: psycopg2.extensions.cursor, table: str) -> list[tuple]:
+def get_sample_data(cursor: psycopg2.extensions.cursor, schema: str, table: str) -> list[tuple]:
     """
-    Get a sample of data from a given table.
+    Get a sample of data from a given table in a specific schema.
 
     Args:
         cursor (psycopg2.extensions.cursor): Database cursor object.
+        schema (str): Name of the schema.
         table (str): Name of the table.
 
     Returns:
         List[Tuple]: List of sample data rows.
     """
-    cursor.execute(f"SELECT * FROM {table} ORDER BY RANDOM() LIMIT 5;")
+    cursor.execute(f"SELECT * FROM {schema}.{table} ORDER BY RANDOM() LIMIT 5;")
     return cursor.fetchall()
 
 
-def get_column_names(cursor: psycopg2.extensions.cursor, table: str) -> list[str]:
+def get_column_names(cursor: psycopg2.extensions.cursor, schema: str, table: str) -> list[str]:
     """
-    Get a list of column names for a given table.
+    Get a list of column names for a given table in a specific schema.
 
     Args:
         cursor (psycopg2.extensions.cursor): Database cursor object.
+        schema (str): Name of the schema.
         table (str): Name of the table.
 
     Returns:
         List[str]: List of column names.
     """
-    cursor.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}' ORDER BY ordinal_position;")
+    cursor.execute(
+        f"SELECT column_name FROM information_schema.columns WHERE table_schema = '{schema}' AND table_name = '{table}'"
+        f" ORDER BY ordinal_position;"
+    )
     return [col[0] for col in cursor.fetchall()]
 
 
@@ -243,28 +297,30 @@ def trim_field(value: Any, max_length: int = 200) -> str:
     return str_value
 
 
-def get_row_count(cursor: psycopg2.extensions.cursor, table: str) -> int:
+def get_row_count(cursor: psycopg2.extensions.cursor, schema: str, table: str) -> int:
     """
-    Get the number of rows in a given table.
+    Get the number of rows in a given table in a specific schema.
 
     Args:
         cursor (psycopg2.extensions.cursor): Database cursor object.
+        schema (str): Name of the schema.
         table (str): Name of the table.
 
     Returns:
         int: Number of rows in the table.
     """
-    cursor.execute(f"SELECT COUNT(*) FROM {table};")
+    cursor.execute(f"SELECT COUNT(*) FROM {schema}.{table};")
     result = cursor.fetchone()
     return result[0] if result else 0
 
 
-def get_table_fields(cursor: psycopg2.extensions.cursor, table: str) -> list[tuple[str, str, int | None, str]]:
+def get_table_fields(cursor: psycopg2.extensions.cursor, schema: str, table: str) -> list[tuple[str, str, int | None, str]]:
     """
-    Get a list of fields and their properties for a given table.
+    Get a list of fields and their properties for a given table in a specific schema.
 
     Args:
         cursor (psycopg2.extensions.cursor): Database cursor object.
+        schema (str): Name of the schema.
         table (str): Name of the table.
 
     Returns:
@@ -273,14 +329,33 @@ def get_table_fields(cursor: psycopg2.extensions.cursor, table: str) -> list[tup
     cursor.execute(f"""
         SELECT column_name, data_type, character_maximum_length, is_nullable
         FROM information_schema.columns
-        WHERE table_name = '{table}'
+        WHERE table_schema = '{schema}' AND table_name = '{table}'
         ORDER BY ordinal_position;
     """)
     return cursor.fetchall()
 
 
+def escape_markdown(text: str) -> str:
+    """
+    Escape special characters in markdown.
+
+    Args:
+        text (str): The text to escape.
+
+    Returns:
+        str: The escaped text.
+    """
+    # Escape characters that have special meaning in markdown
+    escape_chars = r"([|\\`*_{}\[\]()#+\-.!])"
+    return re.sub(escape_chars, r"\\\1", str(text))
+
+
 def export_schema(
-    output: TextIO = sys.stdout, connection_string: str | None = None, env_var: str = "DB_URL", env_file: str = ".env"
+    output: TextIO = sys.stdout,
+    connection_string: str | None = None,
+    env_var: str = "DB_URL",
+    env_file: str = ".env",
+    schemas: list[str] | None = None,
 ) -> None:
     """
     Export database schema and sample data to the specified output.
@@ -290,38 +365,56 @@ def export_schema(
         connection_string (Optional[str]): Database connection string.
         env_var (str): Name of the environment variable to use for the connection string.
         env_file (str): Path to the .env file.
+        schemas (List[str]): List of schemas to export.
 
     Raises:
         Exception: If an error occurs during the export process.
     """
+    if schemas is None:
+        schemas = ["public"]
+
     try:
         conn = get_database_connection(connection_string, env_var, env_file)
         cursor = conn.cursor()
 
         db_name, db_version = get_database_info(cursor)
         plugins = get_enabled_plugins(cursor)
-        tables = get_tables(cursor)
+        tables = get_tables(cursor, schemas)
 
         output.write("# Database Schema\n\n")
         output.write(f"Database: {db_name}\n")
-        output.write(f"PostgreSQL version: {db_version}\n\n")
+        output.write(f"PostgreSQL version: {db_version}\n")
+        output.write(f"Schemas: {', '.join(schemas)}\n\n")
+
+        # Add table of contents
+        output.write("## Table of Contents\n\n")
+        output.write("| Schema | Table Name | Row Count |\n")
+        output.write("|--------|------------|----------|\n")
+        for schema, table in tables:
+            row_count = get_row_count(cursor, schema, table)
+            formatted_row_count = f"{row_count:,}"
+            output.write(
+                f"| {schema} | [{table}](#{schema.lower()}-{table.lower().replace('_', '-')}) | {formatted_row_count} |\n"
+            )
+        output.write("\n")
 
         output.write("## Enabled PostgreSQL Plugins\n\n")
         output.write("| Plugin Name | Version |\n")
         output.write("|-------------|--------|\n")
         for plugin in plugins:
-            output.write(f"| {plugin[0]} | {plugin[1]} |\n")
+            output.write(f"| {escape_markdown(plugin[0])} | {escape_markdown(plugin[1])} |\n")
         output.write("\n")
 
-        for table in tables:
-            output.write(f"## Table: {table}\n\n")
+        for schema, table in tables:
+            output.write(f"## Table: {schema}.{table}\n\n")
 
-            # Add row count
-            row_count = get_row_count(cursor, table)
-            output.write(f"Total rows: {row_count}\n\n")
+            # Add row count with comma-separated formatting
+            row_count = get_row_count(cursor, schema, table)
+            formatted_row_count = f"{row_count:,}"
+            output.write(f"Total rows: {formatted_row_count}\n\n")
 
             # Add table of fields and their types
-            fields = get_table_fields(cursor, table)
+            fields = get_table_fields(cursor, schema, table)
             output.write("### Fields\n\n")
             output.write("| Field Name | Data Type | Max Length | Nullable |\n")
             output.write("|------------|-----------|------------|----------|\n")
@@ -332,39 +425,44 @@ def export_schema(
                 output.write(f"| {name} | {data_type} | {max_length} | {nullable} |\n")
             output.write("\n")
 
-            create_table = get_create_table_statement(cursor, table)
+            create_table = get_create_table_statement(cursor, schema, table)
             if create_table:
                 output.write("### Create Table Statement\n\n")
                 output.write("```sql\n")
                 output.write(create_table)
                 output.write("\n```\n\n")
             else:
-                output.write(f"No CREATE TABLE statement found for {table}\n\n")
+                output.write(f"No CREATE TABLE statement found for {schema}.{table}\n\n")
 
-            constraints = get_constraints(cursor, table)
+            constraints = get_constraints(cursor, schema, table)
             if constraints:
                 output.write("### Constraints\n\n")
                 for constraint in constraints:
                     output.write(f"- {constraint[0]}\n")
                 output.write("\n")
 
-            indexes = get_indexes(cursor, table)
+            indexes = get_indexes(cursor, schema, table)
             if indexes:
                 output.write("### Indexes\n\n")
                 for index in indexes:
                     output.write(f"- {index[0]}\n")
                 output.write("\n")
 
-            sample_data = get_sample_data(cursor, table)
+            sample_data = get_sample_data(cursor, schema, table)
             if sample_data:
                 output.write("### Sample Data\n\n")
-                output.write("```\n")
-                columns = get_column_names(cursor, table)
-                output.write(" | ".join(columns) + "\n")
-                output.write("-" * (len(columns) * 15) + "\n")
+                columns = get_column_names(cursor, schema, table)
+
+                # Write the header
+                output.write("| " + " | ".join(escape_markdown(col) for col in columns) + " |\n")
+
+                # Write the separator
+                output.write("| " + " | ".join(["---"] * len(columns)) + " |\n")
+
+                # Write the data rows
                 for row in sample_data:
-                    output.write(" | ".join(trim_field(cell) for cell in row) + "\n")
-                output.write("```\n\n")
+                    output.write("| " + " | ".join(escape_markdown(trim_field(cell)) for cell in row) + " |\n")
+                output.write("\n")
 
         cursor.close()
         conn.close()
@@ -379,17 +477,19 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--output", help="Output file path")
     parser.add_argument("-e", "--env-var", default="DB_URL", help="Environment variable name for database URL")
     parser.add_argument("--env-file", default=".env", help="Path to the .env file")
+    parser.add_argument("-s", "--schemas", default="public", help="Comma-separated list of schemas to export (default: public)")
     args = parser.parse_args()
 
     try:
+        schemas = [s.strip() for s in args.schemas.split(",")]
         if args.output:
             output_file = Path(args.output)
             output_file.parent.mkdir(parents=True, exist_ok=True)
             with output_file.open("w") as f:
-                export_schema(f, args.database, args.env_var, args.env_file)
+                export_schema(f, args.database, args.env_var, args.env_file, schemas)
             print(f"Schema and sample data exported to {output_file}")
         else:
-            export_schema(connection_string=args.database, env_var=args.env_var, env_file=args.env_file)
+            export_schema(connection_string=args.database, env_var=args.env_var, env_file=args.env_file, schemas=schemas)
     except Exception as e:
         print(f"Error: {str(e)}", file=sys.stderr)
         sys.exit(1)
