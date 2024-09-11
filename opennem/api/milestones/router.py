@@ -188,7 +188,7 @@ async def get_milestones(
 )
 async def get_milestone_by_record_id(
     record_id: str,
-    limit: int = 100,
+    limit: int = 1000,
     page: int = 1,
     db: AsyncSession = Depends(get_scoped_session),
 ) -> APIV4ResponseSchema:
