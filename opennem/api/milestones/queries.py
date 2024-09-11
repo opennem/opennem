@@ -181,7 +181,7 @@ async def get_milestone_record_ids(
     """Get a list of all milestone record ids including the most recent record for each record_id"""
 
     if significance and (significance_min or significance_max):
-        raise Exception("Cannot use significance with significance_min or significance_max")
+        raise Exception("Cannot use signsificance with significance_min or significance_max")
 
     logger.debug(f"significance: {significance=} {significance_min=} {significance_max=}")
 

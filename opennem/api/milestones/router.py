@@ -283,11 +283,41 @@ async def get_milestone(
 async def api_get_milestone_record_ids(
     db: AsyncSession = Depends(get_scoped_session),
     record_id: str | None = Query(None, description="Filter by record_id"),
+    date_start: datetime | None = None,
+    date_end: datetime | None = None,
+    aggregate: MilestoneAggregate | None = None,
+    metric: list[MilestoneMetric] | None = Query(None, description="Metric filter"),
+    fueltech_id: list[str] | None = Query(None),
+    network: list[str] | None = Query(None),
+    network_region: list[str] | None = Query(None),
     significance: int | None = Query(None, description="Significance filter"),
     significance_min: int | None = Query(None, description="Significance minimum filter"),
     significance_max: int | None = Query(None, description="Significance maximum filter"),
 ) -> APIV4ResponseSchema:
     """Get a list of milestone record ids with the most recent record for each record_id"""
+
+    network_schemas: list[NetworkSchema] = []
+    network_supported_ids = [network.code for network in MILESTONE_SUPPORTED_NETWORKS]
+
+    if network:
+        if not all(network in network_supported_ids for network in network):
+            raise HTTPException(status_code=400, detail=f"Invalid network: {", ".join(network)}")
+
+        network_schemas = [n for n in MILESTONE_SUPPORTED_NETWORKS if n.code in network]
+
+    # get a flat list of all network regions
+    network_supported_regions: list[str] = []
+    for n in MILESTONE_SUPPORTED_NETWORKS:
+        network_supported_regions.extend(n.regions or [])
+
+    if network_region:
+        if not network:
+            raise HTTPException(status_code=400, detail="Networks must be provided when network regions are provided")
+
+        network_region = [n.upper() for n in network_region]
+
+        if not all(network_region in network_supported_regions for network_region in network_region):
+            raise HTTPException(status_code=400, detail=f"Invalid network region: {", ".join(network_region)}")
 
     if significance and (significance_min or significance_max):
         raise HTTPException(status_code=400, detail="Cannot use significance with significance_min or significance_max")
@@ -314,6 +344,14 @@ async def api_get_milestone_record_ids(
     record_ids = await get_milestone_record_ids(
         session=db,
         record_id=record_id,
+        date_start=date_start,
+        date_end=date_end,
+        aggregate=aggregate,
+        metric=metric,
+        fueltech_id=fueltech_id,
+        network=network,
+        network_region=network_region,
+        network_schemas=network_schemas,
         significance=significance,
         significance_min=significance_min,
         significance_max=significance_max,
