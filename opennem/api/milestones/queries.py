@@ -2,9 +2,8 @@ import logging
 import uuid
 from datetime import datetime
 
-from sqlalchemy import and_, or_, select, text
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql import func
 
 from opennem.db import SessionLocal, get_read_session
 from opennem.db.models.opennem import Milestones
@@ -181,72 +180,78 @@ async def get_milestone_record_ids(
     """Get a list of all milestone record ids including the most recent record for each record_id"""
 
     if significance and (significance_min or significance_max):
-        raise Exception("Cannot use signsificance with significance_min or significance_max")
+        raise ValueError("Cannot use significance with significance_min or significance_max")
 
-    logger.debug(f"significance: {significance=} {significance_min=} {significance_max=}")
+    subquery = (
+        select(Milestones.record_id, func.max(Milestones.interval).label("max_interval"))
+        .group_by(Milestones.record_id)
+        .subquery()
+    )
 
-    significance_clause = ""
+    query = select(Milestones).join(
+        subquery, and_(Milestones.record_id == subquery.c.record_id, Milestones.interval == subquery.c.max_interval)
+    )
+
+    if record_id:
+        query = query.where(Milestones.record_id == record_id)
+
+    if date_start:
+        query = query.where(Milestones.interval >= date_start)
+
+    if date_end:
+        query = query.where(Milestones.interval <= date_end)
+
+    if aggregate:
+        query = query.where(Milestones.aggregate == aggregate)
+
+    if metric:
+        query = query.where(Milestones.metric.in_(metric))
+
+    if fueltech_id:
+        query = query.where(Milestones.fueltech_id.in_(fueltech_id))
+
+    if network:
+        query = query.where(Milestones.network_id.in_(network))
+
+    if network_region:
+        query = query.where(Milestones.network_region.in_(network_region))
+
+    if network_schemas:
+        network_codes = [schema.code for schema in network_schemas]
+        query = query.where(Milestones.network_id.in_(network_codes))
 
     if significance is not None:
-        significance_clause += f"significance >= {significance} and \n"
+        query = query.where(Milestones.significance >= significance)
 
     if significance_min is not None:
-        significance_clause += f"significance >= {significance_min} and \n"
+        query = query.where(Milestones.significance >= significance_min)
 
     if significance_max is not None:
-        significance_clause += f"significance <= {significance_max} and \n"
-
-    query = f"""SELECT DISTINCT ON (record_id)
-        record_id,
-        interval,
-        significance,
-        value,
-        network_id,
-        fueltech_id,
-        description,
-        period,
-        aggregate,
-        metric,
-        value_unit,
-        description_long,
-        network_region,
-        previous_instance_id
-    FROM milestones
-    WHERE
-        {significance_clause}
-        1=1
-    ORDER BY record_id, interval DESC"""
-
-    print(query)
+        query = query.where(Milestones.significance <= significance_max)
 
     async with get_read_session() as session:
-        result = await session.execute(text(query), {"significance": significance})
-        records = result.fetchall()
+        result = await session.execute(query)
+        records = result.scalars().all()
 
-        record_list = []
-        for record in records:
-            record_dict = {
-                "record_id": record.record_id,
-                "interval": record.interval,
-                "significance": record.significance,
-                "value": record.value,
-                "network_id": record.network_id,
-                "fueltech_id": record.fueltech_id,
-                "description": record.description,
-                "period": record.period,
-                "aggregate": record.aggregate,
-                "metric": record.metric,
-                "value_unit": record.value_unit,
-                "description_long": record.description_long,
-                "network_region": record.network_region,
-                "previous_instance_id": record.previous_instance_id,
-            }
-            record_list.append(record_dict)
-
-        if record_id:
-            record_list = [record for record in record_list if record["record_id"] == record_id]
-
-        return record_list
+    return [
+        {
+            "record_id": record.record_id,
+            "interval": record.interval,
+            "significance": record.significance,
+            "value": record.value,
+            "network_id": record.network_id,
+            "fueltech_id": record.fueltech_id,
+            "description": record.description,
+            "period": record.period,
+            "aggregate": record.aggregate,
+            "metric": record.metric,
+            "value_unit": record.value_unit,
+            "description_long": record.description_long,
+            "network_region": record.network_region,
+            "previous_instance_id": record.previous_instance_id,
+        }
+        for record in records
+    ]
 
 
 # debugger entry point
