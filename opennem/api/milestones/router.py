@@ -10,14 +10,17 @@ from starlette.exceptions import HTTPException
 
 from opennem.api.keys import api_protected
 from opennem.api.schema import APIV4ResponseSchema
+from opennem.core.fueltech_group import get_fueltech_groups
 from opennem.db import get_scoped_session
 from opennem.recordreactor.controllers import map_milestone_output_records_from_db
 from opennem.recordreactor.schema import (
     MILESTONE_SUPPORTED_NETWORKS,
     MilestoneAggregate,
+    MilestoneMetadataSchema,
     MilestoneMetric,
     MilestonePeriod,
 )
+from opennem.schema.fueltech_group import FueltechGroupSchema
 from opennem.schema.network import NetworkSchema
 
 from .queries import get_milestone_record, get_milestone_record_ids, get_milestone_records
@@ -361,3 +364,29 @@ async def api_get_milestone_record_ids(
         raise HTTPException(status_code=404, detail="No records found")
 
     return APIV4ResponseSchema(success=True, data=record_ids)
+
+
+@api_version(4)
+@api_protected()
+@milestones_router.get(
+    "/metadata",
+    response_model=MilestoneMetadataSchema,
+    response_model_exclude_unset=True,
+    response_model_exclude_none=True,
+    description="Get metadata for milestones",
+)
+async def get_milestone_metadata() -> MilestoneMetadataSchema:
+    """Get metadata for milestones"""
+
+    metadata = MilestoneMetadataSchema(
+        aggregates=list(MilestoneAggregate),
+        metrics=list(MilestoneMetric),
+        periods=list(MilestonePeriod),
+        networks=MILESTONE_SUPPORTED_NETWORKS,
+        fueltechs=get_fueltech_groups() + [FueltechGroupSchema(code="demand", label="Demand")],
+    )
+
+    return metadata
+
+    # response_schema = APIV4ResponseSchema(success=True, data=metadata.dict())
+    # return response_schema

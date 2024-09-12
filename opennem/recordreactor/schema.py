@@ -77,6 +77,15 @@ class MilestoneRecordOutputSchema(BaseModel):
     history: list["MilestoneRecordOutputSchema"] | None = None
 
 
+class MilestoneMetadataSchema(BaseModel):
+    aggregates: list[MilestoneAggregate]
+    metrics: list[MilestoneMetric]
+    periods: list[MilestonePeriod]
+    networks: list[NetworkSchema]
+    network_regions: list[str] | None = None
+    fueltechs: list[FueltechGroupSchema]
+
+
 def get_milestone_network_id_map(network_id: str) -> str:
     """Get a network id map"""
     network_id_map = {
