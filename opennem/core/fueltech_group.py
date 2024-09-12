@@ -33,6 +33,10 @@ def get_fueltech_group(code: str) -> FueltechGroupSchema:
         raise FueltechGroupException(f"Fueltech {_code} not found")
 
 
+def get_fueltech_groups() -> list[FueltechGroupSchema]:
+    return _FUELTECH_GROUPS
+
+
 ALL_FUELTECH_GROUP_CODES = [i.code for i in _FUELTECH_GROUPS]
 
 if __name__ == "__main__":
