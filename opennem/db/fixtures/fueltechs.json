@@ -14,13 +14,13 @@
     {
         "code": "bioenergy_biogas",
         "label": "Biogas",
-        "renewable": false,
+        "renewable": true,
         "fueltech_group_id": "bioenergy"
     },
     {
         "code": "bioenergy_biomass",
         "label": "Biomass",
-        "renewable": false,
+        "renewable": true,
         "fueltech_group_id": "bioenergy"
     },
     {
