@@ -281,7 +281,7 @@ async def get_milestone(
     response_model_exclude_unset=True,
     response_model_exclude_none=True,
     description="Get a list of milestone record ids with the most recent record for each record_id",
-    include_in_schema=False,
+    include_in_schema=True,
 )
 async def api_get_milestone_record_ids(
     db: AsyncSession = Depends(get_scoped_session),
