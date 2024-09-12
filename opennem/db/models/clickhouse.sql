@@ -24,7 +24,7 @@ source(
 		port 5432
 		host 'db01'
 		user 'opennem-re'
-		password 'rmmPpAaHtktbOjXf9AhvAFx0mremAKUz7eKw+eQdtcQ'
+		password 'rmmPpAaHtktbOjXf9AhvAFx0mremAKUz7eKw+eQdtcQ' # pragma: allowlist secret
 		db 'opennem'
 		query 'select
             code,
