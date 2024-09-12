@@ -1,7 +1,0 @@
-aws_access_key_id="AKIA2EQZDX4NFWZDFFUE"
-aws_secret_access_key="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"
-aws_region="ap-southeast-2"
-public_key_public="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDhlxynPAB6crV8LbRL5FQu3D0+l5ueFG2KPG3A6gFS8zVO1yLLAyEMXr25N+J1SDT3OQ3hmMVcwKzQaIcSr3qhtTZMpKZJLpAZ629uFAAqiesin/XH4mOZFDmZ3JAV0VSs+CBbiIR7iS97MkGgCy6sPVQ0BzhWB6WNUXhz5Hag6S+O/7Ilzdm/MR8cG7tZCdinIsrRi/rtkEjllksfHzmxCuVJ1l39h8XKPtigo966BaoMHZ3qkZdu1NQd3KL8SE8uLK11jpuBuRl7Kh9YJwT7OPW4UCQIWSjYlwzTs15pQjXLsmKq7IoNYipy2PNcNi4nW1KNsaE1W6XfQoivF5V/"
-public_key_path="~/.ssh/opennem_deployer.pub"
-public_key_name="opennem_deployer"
-instance_size={docker="t2.medium"}
