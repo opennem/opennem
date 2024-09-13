@@ -173,33 +173,25 @@ def get_create_table_statement(cursor: psycopg2.extensions.cursor, schema: str, 
     Returns:
         Optional[str]: CREATE TABLE statement if found, None otherwise.
     """
-    cursor.execute(f"""
+    query = """
         SELECT
-            'CREATE TABLE ' || quote_ident('{schema}') || '.' || quote_ident('{table}') || E'\n(\n' ||
-            array_to_string(
-                array_agg(
-                    '    ' || quote_ident(column_name) || ' ' ||  type || ' '|| not_null
-                )
-                , E',\n'
+            'CREATE TABLE ' || quote_ident(t.table_schema) || '.' || quote_ident(t.table_name) || E'\n(\n' ||
+            string_agg(
+                '    ' || quote_ident(c.column_name) || ' ' || c.data_type ||
+                CASE WHEN c.character_maximum_length IS NOT NULL
+                     THEN '(' || c.character_maximum_length || ')'
+                     ELSE ''
+                END ||
+                CASE WHEN c.is_nullable = 'NO' THEN ' NOT NULL' ELSE '' END,
+                E',\n'
+                ORDER BY c.ordinal_position
             ) || E'\n);\n'
-        FROM (
-            SELECT
-                a.attname AS column_name,
-                pg_catalog.format_type(a.atttypid, a.atttypmod) as type,
-                CASE
-                    WHEN a.attnotnull THEN 'NOT NULL'
-                    ELSE 'NULL'
-                END as not_null
-            FROM pg_class c
-            JOIN pg_namespace n ON n.oid = c.relnamespace
-            JOIN pg_attribute a ON a.attrelid = c.oid
-            WHERE n.nspname = '{schema}'
-                AND c.relname = '{table}'
-                AND a.attnum > 0
-            ORDER BY a.attnum
-        ) AS tabledefinition
-        GROUP BY schema, table;
-    """)
+        FROM information_schema.tables t
+        JOIN information_schema.columns c ON c.table_schema = t.table_schema AND c.table_name = t.table_name
+        WHERE t.table_schema = %s AND t.table_name = %s
+        GROUP BY t.table_schema, t.table_name;
+    """
+    cursor.execute(query, (schema, table))
     result = cursor.fetchone()
     return result[0] if result else None
 
@@ -216,12 +208,14 @@ def get_constraints(cursor: psycopg2.extensions.cursor, schema: str, table: str)
     Returns:
         List[Tuple[str]]: List of constraint definitions.
     """
-    cursor.execute(f"""
+    query = """
         SELECT pg_get_constraintdef(c.oid)
         FROM pg_constraint c
         JOIN pg_namespace n ON n.oid = c.connamespace
-        WHERE conrelid = '{schema}.{table}'::regclass AND n.nspname = '{schema}'
-    """)
+        JOIN pg_class t ON t.oid = c.conrelid
+        WHERE t.relname = %s AND n.nspname = %s
+    """
+    cursor.execute(query, (table, schema))
     return cursor.fetchall()
 
 
@@ -237,11 +231,12 @@ def get_indexes(cursor: psycopg2.extensions.cursor, schema: str, table: str) -> 
     Returns:
         List[Tuple[str]]: List of index definitions.
     """
-    cursor.execute(f"""
+    query = """
         SELECT indexdef
         FROM pg_indexes
-        WHERE tablename = '{table}' AND schemaname = '{schema}'
-    """)
+        WHERE tablename = %s AND schemaname = %s
+    """
+    cursor.execute(query, (table, schema))
     return cursor.fetchall()
 
 

@@ -9,26 +9,26 @@ Schemas: public
 | Schema | Table Name | Row Count |
 |--------|------------|----------|
 | public | [aemo_facility_data](#public-aemo-facility-data) | 0 |
-| public | [aemo_market_notices](#public-aemo-market-notices) | 824 |
+| public | [aemo_market_notices](#public-aemo-market-notices) | 867 |
 | public | [alembic_version](#public-alembic-version) | 1 |
 | public | [api_keys](#public-api-keys) | 1 |
 | public | [at_facility_daily](#public-at-facility-daily) | 2,885,368 |
 | public | [at_network_demand](#public-at-network-demand) | 62,753 |
 | public | [at_network_flows](#public-at-network-flows) | 7,917,760 |
 | public | [at_network_flows_v3](#public-at-network-flows-v3) | 0 |
-| public | [balancing_summary](#public-balancing-summary) | 11,327,830 |
+| public | [balancing_summary](#public-balancing-summary) | 11,329,335 |
 | public | [bom_observation](#public-bom-observation) | 5,920,234 |
 | public | [bom_station](#public-bom-station) | 773 |
-| public | [crawl_history](#public-crawl-history) | 790,804 |
+| public | [crawl_history](#public-crawl-history) | 791,707 |
 | public | [crawl_meta](#public-crawl-meta) | 50 |
 | public | [facility](#public-facility) | 787 |
-| public | [facility_scada](#public-facility-scada) | 769,611,359 |
+| public | [facility_scada](#public-facility-scada) | 769,754,406 |
 | public | [facility_status](#public-facility-status) | 12 |
 | public | [feedback](#public-feedback) | 94 |
 | public | [fueltech](#public-fueltech) | 26 |
 | public | [fueltech_group](#public-fueltech-group) | 10 |
 | public | [location](#public-location) | 551 |
-| public | [milestones](#public-milestones) | 14,372 |
+| public | [milestones](#public-milestones) | 18,679 |
 | public | [network](#public-network) | 7 |
 | public | [network_region](#public-network-region) | 12 |
 | public | [participant](#public-participant) | 201 |
@@ -73,17 +73,17 @@ Total rows: 0
 ```sql
 CREATE TABLE public.aemo_facility_data
 (
-    aemo_source aemodatasource NOT NULL,
+    aemo_source USER-DEFINED NOT NULL,
     source_date date NOT NULL,
-    name text NULL,
-    name_network text NULL,
-    network_region text NULL,
-    fueltech_id text NULL,
-    status_id text NULL,
-    duid text NULL,
-    units_no integer NULL,
-    capacity_registered numeric NULL,
-    closure_year_expected integer NULL
+    name text,
+    name_network text,
+    network_region text,
+    fueltech_id text,
+    status_id text,
+    duid text,
+    units_no integer,
+    capacity_registered numeric,
+    closure_year_expected integer
 );
 
 ```
@@ -98,7 +98,7 @@ CREATE TABLE public.aemo_facility_data
 
 ## Table: public.aemo_market_notices
 
-Total rows: 824
+Total rows: 867
 
 ### Fields
 
@@ -120,7 +120,7 @@ CREATE TABLE public.aemo_market_notices
     notice_type character varying NOT NULL,
     creation_date timestamp without time zone NOT NULL,
     issue_date timestamp without time zone NOT NULL,
-    external_reference text NULL,
+    external_reference text,
     reason text NOT NULL
 );
 
@@ -141,31 +141,26 @@ CREATE TABLE public.aemo_market_notices
 
 | notice\_id | notice\_type | creation\_date | issue\_date | external\_reference | reason |
 | --- | --- | --- | --- | --- | --- |
-| 118001 | RECLASSIFY CONTINGENCY | 2024\-08\-31 03:54:41 | 2024\-08\-31 00:00:00 | Reclassification of a Non\-Credible Contingency Event: Palmerston \- Hadspen 3 & 4 110kV line and  line in TAS1 due to Lightning\. | Reclassification of a Non\-Credible Contingency Event as a Credible Contingency Event due to Lightning\. AEMO considers the simultaneous trip of the following circuits to now be more likely and reasonab\.\.\. |
-| 117663 | MARKET INTERVENTION | 2024\-08\-13 14:11:27 | 2024\-08\-13 00:00:00 | Cancellation: Direction issued to:  AGL SA Generation Pty Limited \- TORRB2 TORRENS ISLAN | AEMO ELECTRICITY MARKET NOTICE
+| 117843 | PRICES UNCHANGED | 2024\-08\-27 12:10:17 | 2024\-08\-27 00:00:00 | \[EventId:202408271150\_confirmed\] Prices for interval 27\-Aug\-2024 11:50 are now confirmed | AEMO ELECTRICITY MARKET NOTICE
 
-Cancellation: Direction issued to:  AGL SA Generation Pty Limited \- TORRB2 TORRENS ISLAN
+Issued by Australian Energy Market Operator Ltd at 1210 hrs on 27 August 2024
 
-Refer to Market Notice 117656
+PRICES ARE NOW CONFIRMED for trading interval 27\-Aug\-2024 11:50\.
 
-Direction is cancelled from: 1400 hrs 13/08/202\.\.\. |
-| 117687 | NON\-CONFORMANCE | 2024\-08\-15 18:15:18 | 2024\-08\-15 18:15:00 | NON\-CONFORMANCE Region QLD1 Thursday, 15 August 2024 | AEMO ELECTRICITY MARKET NOTICE
+In accordance with Mark\.\.\. |
+| 117966 | RECLASSIFY CONTINGENCY | 2024\-08\-29 19:29:33 | 2024\-08\-29 00:00:00 | Reclassification of a Non\-Credible Contingency Event: Para\-Templers West and Magill\-Torrens Island A 275kV lines in SA due to severe weather warning\. | AEMO ELECTRICITY MARKET NOTICE\.
 
-NON\-CONFORMANCE QLD1 Region Thursday, 15 August 2024
+Reclassification of a non\-credible contingency event as a credible contingency event due to severe weather warning\.
 
-AEMO has declared the following unit as non\-conforming under clause 3\.8\.23 of the National Electricity Rules:
+AEMO considers the simultaneous trip of the follow\.\.\. |
+| 117976 | RECLASSIFY CONTINGENCY | 2024\-08\-29 23:09:34 | 2024\-08\-29 00:00:00 | Reclassification of non\-credible contingency event due to existence of widespread abnormal conditions \- SA region\. | AEMO ELECTRICITY MARKET NOTICE\.
 
-Uni\.\.\. |
-| 118075 | MARKET INTERVENTION | 2024\-09\-02 17:02:42 | 2024\-09\-02 00:00:00 | Direction \- SA region 02/09/2024 | AEMO ELECTRICITY MARKET NOTICE
+AEMO has identified that a non\-credible contingency event impacting the power system is more likely to occur and is considered reasonably possible because of the exist\.\.\. |
+| 117322 | LOAD RESTORE | 2024\-07\-08 19:34:37 | 2024\-07\-08 00:00:00 | Load Restoration Direction in the NSW Region | AEMO has directed load restoration commencing at 1930 hrs 08/07/2024 in the NSW region\. The direction was issued under section 116 of the NEL, and was a clause 4\.8\.9 instruction under the NER\. |
+| 117679 | NON\-CONFORMANCE | 2024\-08\-15 10:10:17 | 2024\-08\-15 00:00:00 | NON\-CONFORMANCE Region SA1 Thursday, 15 August 2024 | AEMO has declared the following units comprising an Aggregate Dispatch Group as non\-conforming under clause 3\.8\.23 of the National Electricity Rules:
 
-Direction \- SA region 02/09/2024
-
-In accordance with section 116 of the National Electricity Law, AEMO has issued a direction to a participant in the SA region\. For the\.\.\. |
-| 117813 | MARKET INTERVENTION | 2024\-08\-26 13:09:15 | 2024\-08\-26 00:00:00 | Direction \- SA region 26/08/2024 | AEMO ELECTRICITY MARKET NOTICE
-
-Direction \- SA region 26/08/2024
-
-In accordance with section 116 of the National Electricity Law, AEMO has issued a direction to a participant in the SA region\. For the\.\.\. |
+Units:      TB2BG1, TB2BL1
+Aggregate Dispatch Gro\.\.\. |
 
 ## Table: public.alembic_version
 
@@ -220,9 +215,9 @@ Total rows: 1
 CREATE TABLE public.api_keys
 (
     keyid text NOT NULL,
-    description text NULL,
+    description text,
     revoked boolean NOT NULL,
-    created_at timestamp with time zone NULL
+    created_at timestamp with time zone
 );
 
 ```
@@ -266,10 +261,10 @@ CREATE TABLE public.at_facility_daily
     trading_day timestamp with time zone NOT NULL,
     network_id text NOT NULL,
     facility_code text NOT NULL,
-    fueltech_id text NULL,
-    energy numeric NULL,
-    market_value numeric NULL,
-    emissions numeric NULL,
+    fueltech_id text,
+    energy numeric,
+    market_value numeric,
+    emissions numeric,
     network_region text NOT NULL
 );
 
@@ -293,11 +288,11 @@ CREATE TABLE public.at_facility_daily
 
 | trading\_day | network\_id | facility\_code | fueltech\_id | energy | market\_value | emissions | network\_region |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2014\-11\-16 00:00:00\+00:00 | NEM | YAMBUKWF | wind | 480\.5958344166666536 | 8635\.133887234865176813312 | 0E\-17 | VIC1 |
-| 2010\-08\-15 00:00:00\+00:00 | NEM | JLA03 | gas\_ocgt | 0 | 0 | 0 | VIC1 |
-| 2010\-01\-26 00:00:00\+00:00 | NEM | MEADOWBK | hydro | 307\.4862658333333445 | 8922\.00361428525864608205 | 0E\-17 | TAS1 |
-| 2016\-02\-07 00:00:00\+00:00 | NEM | YABULU2 | gas\_ccgt | 0 | 0 | 0 | QLD1 |
-| 2012\-05\-13 00:00:00\+00:00 | NEM | MEADOWBK | hydro | 499\.0734866666666711 | 21660\.837533083500083903692 | 0E\-17 | TAS1 |
+| 2021\-05\-24 00:00:00\+00:00 | NEM | HDWF1 | wind | 1739\.720833333333352 | 30489\.54814833333440769837 | 0E\-16 | SA1 |
+| 2019\-10\-25 00:00:00\+00:00 | NEM | LYA3 | coal\_brown | 13435\.5000000000006 | 943126\.475090416708548939 | 15515\.552536575000692890590 | VIC1 |
+| 2019\-05\-25 00:00:00\+00:00 | NEM | BW01 | coal\_black | 14407\.61569625000004 | 1006923\.1375886684663436359 | 13149\.0113407865723365057248 | NSW1 |
+| 2017\-07\-31 00:00:00\+00:00 | NEM | FISHER | hydro | 1101\.203750000000019 | 131679\.62517122500422260135 | 0E\-16 | TAS1 |
+| 2024\-07\-28 00:00:00\+00:00 | NEM | TRIBUTE | hydro | 1778\.3316516666666630 | 290224\.99202610277692141355547222222195 | 0E\-17 | TAS1 |
 
 ## Table: public.at_network_demand
 
@@ -321,8 +316,8 @@ CREATE TABLE public.at_network_demand
     trading_day timestamp with time zone NOT NULL,
     network_id text NOT NULL,
     network_region text NOT NULL,
-    demand_energy numeric NULL,
-    demand_market_value numeric NULL
+    demand_energy numeric,
+    demand_market_value numeric
 );
 
 ```
@@ -344,11 +339,11 @@ CREATE TABLE public.at_network_demand
 
 | trading\_day | network\_id | network\_region | demand\_energy | demand\_market\_value |
 | --- | --- | --- | --- | --- |
-| 2004\-09\-22 00:00:00\+00:00 | NEM | SA1 | 5\.65844333333333333333 | 152696\.0092666666666666399000 |
-| 2015\-04\-04 00:00:00\+00:00 | WEM | WEM | None | None |
-| 2014\-12\-12 00:00:00\+00:00 | NEM | SNOWY1 | None | None |
-| 2021\-07\-06 00:00:00\+00:00 | NEM | TAS1 | 34\.60900663416666666663 | 2161023\.4390509746250256616890000 |
-| 2023\-05\-29 00:00:00\+00:00 | NEM | QLD1 | 151\.10887239666666666669 | 18460632\.9024907426166655529663000 |
+| 2014\-10\-16 00:00:00\+00:00 | WEM | WEM | None | None |
+| 2023\-11\-18 00:00:00\+00:00 | NEM | TAS1 | 27\.50894312166666666656 | 1984162\.8094048727583269684777000 |
+| 2006\-08\-08 00:00:00\+00:00 | NEM | SNOWY1 | 1\.53081166666666666673 | 8651\.5850499999999997383000 |
+| 2001\-07\-06 00:00:00\+00:00 | NEM | TAS1 | None | None |
+| 2017\-12\-08 00:00:00\+00:00 | WEM | WEM | None | None |
 
 ## Table: public.at_network_flows
 
@@ -376,15 +371,12 @@ CREATE TABLE public.at_network_flows
     trading_interval timestamp with time zone NOT NULL,
     network_id text NOT NULL,
     network_region text NOT NULL,
-    energy_imports numeric NULL,
-    energy_exports numeric NULL,
-    emissions_imports numeric NULL,
-    emissions_exports numeric NULL,
-    market_value_imports numeric NULL,
-    market_value_exports numeric NULL,
-    "........pg.dropped.10........" - NULL,
-    "........pg.dropped.11........" - NULL,
-    "........pg.dropped.12........" - NULL
+    energy_imports numeric,
+    energy_exports numeric,
+    emissions_imports numeric,
+    emissions_exports numeric,
+    market_value_imports numeric,
+    market_value_exports numeric
 );
 
 ```
@@ -407,11 +399,11 @@ CREATE TABLE public.at_network_flows
 
 | trading\_interval | network\_id | network\_region | energy\_imports | energy\_exports | emissions\_imports | emissions\_exports | market\_value\_imports | market\_value\_exports |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2020\-07\-19 05:50:00\+00:00 | NEM | NSW1 | 95\.86797833333333 | 0\.0 | 71\.77886448202116 | 0\.0 | 0\.0 | 0\.0 |
-| 2023\-11\-01 06:05:00\+00:00 | NEM | VIC1 | 37\.33038833333333 | 10\.696168333333333 | 4\.238212829917947 | 9\.621576478835465 | 0\.0 | 0\.0 |
-| 2018\-08\-03 07:55:00\+00:00 | NEM | SA1 | 0\.0 | 2\.2041441666666666 | 0\.0 | 0\.5115317815000612 | 0\.0 | 0\.0 |
-| 2023\-09\-17 23:00:00\+00:00 | NEM | TAS1 | 13\.016666666666667 | 0\.0 | 10\.531295910567536 | 0\.0 | 0\.0 | 0\.0 |
-| 2017\-12\-31 08:30:00\+00:00 | NEM | QLD1 | 9\.39974 | 0\.0 | 7\.962718572652248 | 0\.0 | 0\.0 | 0\.0 |
+| 2024\-06\-30 23:35:00\+00:00 | NEM | NSW1 | 4\.966675 | 21\.082073333333334 | 3\.7115070128399066 | 15\.159561332198063 | 0\.0 | 0\.0 |
+| 2009\-08\-31 02:35:00\+00:00 | NEM | SA1 | 3\.9166666666666665 | 0\.0 | 4\.791348112896432 | 0\.0 | 0\.0 | 0\.0 |
+| 2021\-04\-02 00:40:00\+00:00 | NEM | TAS1 | 36\.375 | 0\.0 | 34\.52095286842251 | 0\.0 | 0\.0 | 0\.0 |
+| 2009\-09\-11 08:55:00\+00:00 | NEM | VIC1 | 8\.083333333333334 | 60\.083333333333336 | 0\.0 | 71\.23381391272599 | 0\.0 | 0\.0 |
+| 2021\-10\-05 03:30:00\+00:00 | NEM | SA1 | 0\.0 | 17\.6599525 | 0\.0 | 0\.8907498400159755 | 0\.0 | 0\.0 |
 
 ## Table: public.at_network_flows_v3
 
@@ -439,12 +431,12 @@ CREATE TABLE public.at_network_flows_v3
     trading_interval timestamp with time zone NOT NULL,
     network_id text NOT NULL,
     network_region text NOT NULL,
-    energy_imports numeric NULL,
-    energy_exports numeric NULL,
-    market_value_imports numeric NULL,
-    market_value_exports numeric NULL,
-    emissions_imports numeric NULL,
-    emissions_exports numeric NULL
+    energy_imports numeric,
+    energy_exports numeric,
+    market_value_imports numeric,
+    market_value_exports numeric,
+    emissions_imports numeric,
+    emissions_exports numeric
 );
 
 ```
@@ -465,7 +457,7 @@ CREATE TABLE public.at_network_flows_v3
 
 ## Table: public.balancing_summary
 
-Total rows: 11,327,830
+Total rows: 11,329,340
 
 ### Fields
 
@@ -494,17 +486,17 @@ CREATE TABLE public.balancing_summary
     "interval" timestamp without time zone NOT NULL,
     network_id text NOT NULL,
     network_region text NOT NULL,
-    forecast_load numeric NULL,
-    generation_scheduled numeric NULL,
-    generation_non_scheduled numeric NULL,
-    generation_total numeric NULL,
-    price numeric NULL,
-    is_forecast boolean NULL,
-    net_interchange numeric NULL,
-    demand_total numeric NULL,
-    price_dispatch numeric NULL,
-    net_interchange_trading numeric NULL,
-    demand numeric NULL
+    forecast_load numeric,
+    generation_scheduled numeric,
+    generation_non_scheduled numeric,
+    generation_total numeric,
+    price numeric,
+    is_forecast boolean,
+    net_interchange numeric,
+    demand_total numeric,
+    price_dispatch numeric,
+    net_interchange_trading numeric,
+    demand numeric
 );
 
 ```
@@ -525,11 +517,11 @@ CREATE TABLE public.balancing_summary
 
 | interval | network\_id | network\_region | forecast\_load | generation\_scheduled | generation\_non\_scheduled | generation\_total | price | is\_forecast | net\_interchange | demand\_total | price\_dispatch | net\_interchange\_trading | demand |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2022\-11\-20 05:05:00 | NEM | TAS1 | None | None | None | None | 11\.16 | False | \-177\.5 | 1122\.177530 | 11\.16 | None | 981\.21 |
-| 2009\-10\-12 00:25:00 | NEM | VIC1 | None | None | None | None | None | False | 884\.11 | 5143\.3315 | 10\.89 | None | 5030\.18 |
-| 2023\-05\-11 14:00:00 | NEM | NSW1 | None | None | None | None | 88\.88 | False | \-1252\.13 | 6911\.600710 | 88\.88 | None | 6523\.53 |
-| 2014\-10\-04 04:35:00 | NEM | SA1 | None | None | None | None | None | False | \-6\.55 | 1118\.76009 | 20\.53205 | None | 925\.3 |
-| 2023\-08\-02 14:00:00 | WEM | WEM | None | None | None | 2478\.732 | 155\.25 | False | None | None | None | None | None |
+| 2015\-09\-03 09:05:00 | NEM | VIC1 | None | None | None | None | None | False | \-52\.82 | 6198\.05 | 43\.95049 | None | 5871\.36 |
+| 2014\-07\-20 23:45:00 | NEM | QLD1 | None | None | None | None | None | False | 1027\.41 | 5489\.51282 | 27\.74685 | None | 5361\.01 |
+| 2014\-12\-20 14:55:00 | NEM | NSW1 | None | None | None | None | None | False | \-1382\.86 | 7344\.08357 | 28\.18006 | None | 7320\.3 |
+| 2003\-01\-15 17:00:00 | NEM | SNOWY1 | None | None | None | None | 25\.15 | False | 992\.92 | 7\.08 | None | 992\.92 | None |
+| 2000\-09\-08 09:30:00 | NEM | NSW1 | None | None | None | None | 56\.62 | False | \-126\.92 | 9229\.37 | None | \-126\.92 | None |
 
 ## Table: public.bom_observation
 
@@ -560,17 +552,17 @@ CREATE TABLE public.bom_observation
 (
     observation_time timestamp with time zone NOT NULL,
     station_id text NOT NULL,
-    temp_apparent numeric NULL,
-    temp_air numeric NULL,
-    press_qnh numeric NULL,
-    wind_dir text NULL,
-    wind_spd numeric NULL,
-    cloud text NULL,
-    cloud_type text NULL,
-    humidity numeric NULL,
-    wind_gust numeric NULL,
-    temp_max numeric NULL,
-    temp_min numeric NULL
+    temp_apparent numeric,
+    temp_air numeric,
+    press_qnh numeric,
+    wind_dir text,
+    wind_spd numeric,
+    cloud text,
+    cloud_type text,
+    humidity numeric,
+    wind_gust numeric,
+    temp_max numeric,
+    temp_min numeric
 );
 
 ```
@@ -589,11 +581,11 @@ CREATE TABLE public.bom_observation
 
 | observation\_time | station\_id | temp\_apparent | temp\_air | press\_qnh | wind\_dir | wind\_spd | cloud | cloud\_type | humidity | wind\_gust | temp\_max | temp\_min |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2020\-12\-14 21:50:00\+00:00 | 250061 | 30\.9 | 28\.7 | None | N | 11 |  |  | 63 | 13 | None | None |
-| 2021\-04\-04 05:40:00\+00:00 | 250099 | 24\.5 | 25\.1 | None | NNE | 6 |  |  | 42 | 9 | None | None |
-| 2023\-04\-18 23:30:00\+00:00 | 086338 | 13\.1 | 15\.2 | 1022\.1 | WSW | 9\.0 | None | None | 64\.0 | 20\.0 | None | None |
-| 2021\-02\-18 19:30:00\+00:00 | 055325 | 16\.3 | 15\.2 | 1019\.2 | SSW | 2 |  |  | 97 | 7 | None | None |
-| 2020\-12\-07 19:00:00\+00:00 | 088164 | \-0\.2 | 5\.5 | None | WSW | 24 |  |  | 97 | 33 | None | None |
+| 2015\-06\-02 22:00:00\+00:00 | 040913 | 7\.5 | 8\.8 | None | None | None | None | None | 9\.3 | None | None | None |
+| 2021\-01\-22 10:20:00\+00:00 | 250070 | 26\.0 | 27\.9 | 1013\.1 | WNW | 2 |  |  | 20 | 4 | None | None |
+| 2021\-01\-28 12:00:00\+00:00 | 061412 | 22\.4 | 19\.6 | 1019\.7 | S | 2 |  |  | 95 | 6 | None | None |
+| 2022\-02\-10 13:00:00\+00:00 | 094029 | 12\.3 | 15\.5 | 1017\.2 | NW | 13\.0 | None | None | 56\.0 | 24\.0 | None | None |
+| 2021\-03\-29 13:30:00\+00:00 | 200731 | 31\.3 | 28\.2 | 1008\.4 | ESE | 13 |  |  | 76 | 28 | None | None |
 
 ## Table: public.bom_station
 
@@ -622,17 +614,17 @@ Total rows: 773
 CREATE TABLE public.bom_station
 (
     code text NOT NULL,
-    state text NULL,
-    name text NULL,
-    registered date NULL,
-    geom geometry(Point,4326) NULL,
-    feed_url text NULL,
-    is_capital boolean NULL,
-    name_alias text NULL,
-    priority integer NULL,
-    website_url text NULL,
-    altitude integer NULL,
-    web_code text NULL
+    state text,
+    name text,
+    registered date,
+    geom USER-DEFINED,
+    feed_url text,
+    is_capital boolean,
+    name_alias text,
+    priority integer,
+    website_url text,
+    altitude integer,
+    web_code text
 );
 
 ```
@@ -651,15 +643,15 @@ CREATE TABLE public.bom_station
 
 | code | state | name | registered | geom | feed\_url | is\_capital | name\_alias | priority | website\_url | altitude | web\_code |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 109504 | WA | ESPERANCE NTC AWS | None | 0101000020E61000009A99999999795E408FC2F5285CEF40C0 | http://www\.bom\.gov\.au/fwo/IDW60801/IDW60801\.95648\.json | False | Esperance Harbour | 5 | http://www\.bom\.gov\.au/products/IDW60801/IDW60801\.95648\.shtml | 0 | None |
-| 091344 | TAS | BURNIE NTC AWS | None | 0101000020E610000085EB51B81E3D624066666666668644C0 | http://www\.bom\.gov\.au/fwo/IDT60801/IDT60801\.95963\.json | False | Burnie Port | 5 | http://www\.bom\.gov\.au/products/IDT60801/IDT60801\.95963\.shtml | 0 | None |
-| 097083 | TAS | SCOTTS PEAK DAM | None | 0101000020E6100000713D0AD7A348624085EB51B81E8545C0 | http://www\.bom\.gov\.au/fwo/IDT60801/IDT60801\.95958\.json | False | Scotts Peak | 5 | http://www\.bom\.gov\.au/products/IDT60801/IDT60801\.95958\.shtml | 408 | None |
-| 250107 | TAS | TAS PARKS WILDLIFE PORTABLE D | None | 0101000020E610000066666666663E624033333333339345C0 | http://www\.bom\.gov\.au/fwo/IDT60801/IDT60801\.99148\.json | False | Davey Gorge \(PWS\) | 5 | http://www\.bom\.gov\.au/products/IDT60801/IDT60801\.99148\.shtml | 50 | None |
-| 200831 | QLD | GANNET CAY | None | 0101000020E6100000D7A3703D0A0F63407B14AE47E1FA35C0 | http://www\.bom\.gov\.au/fwo/IDQ60801/IDQ60801\.94379\.json | False | Gannett Cay | 5 | http://www\.bom\.gov\.au/products/IDQ60801/IDQ60801\.94379\.shtml | 2 | None |
+| 040405 | QLD | HERVEY BAY AIRPORT | None | 0101000020E61000005C8FC2F5281C634052B81E85EB5139C0 | http://www\.bom\.gov\.au/fwo/IDQ60801/IDQ60801\.95565\.json | False | Hervey Bay | 5 | http://www\.bom\.gov\.au/products/IDQ60801/IDQ60801\.95565\.shtml | 12 | None |
+| 008296 | WA | MORAWA AIRPORT | None | 0101000020E6100000E17A14AE47015D403333333333333DC0 | http://www\.bom\.gov\.au/fwo/IDW60801/IDW60801\.94417\.json | False | Morawa Airport | 5 | http://www\.bom\.gov\.au/products/IDW60801/IDW60801\.94417\.shtml | 271 | None |
+| 089002 | VIC | BALLARAT AERODROME | None | 0101000020E6100000E17A14AE47F96140E17A14AE47C142C0 | http://www\.bom\.gov\.au/fwo/IDV60801/IDV60801\.94852\.json | False | Ballarat | 5 | http://www\.bom\.gov\.au/products/IDV60801/IDV60801\.94852\.shtml | 435 | None |
+| 018120 | SA | WHYALLA AERO | None | 0101000020E6100000713D0AD7A330614066666666668640C0 | http://www\.bom\.gov\.au/fwo/IDS60801/IDS60801\.95664\.json | False | Whyalla | 5 | http://www\.bom\.gov\.au/products/IDS60801/IDS60801\.95664\.shtml | 9 | None |
+| 018069 | SA | ELLISTON | None | 0101000020E610000014AE47E17ADC60403333333333D340C0 | http://www\.bom\.gov\.au/fwo/IDS60801/IDS60801\.94656\.json | False | Elliston | 5 | http://www\.bom\.gov\.au/products/IDS60801/IDS60801\.94656\.shtml | 7 | None |
 
 ## Table: public.crawl_history
 
-Total rows: 790,804
+Total rows: 791,711
 
 ### Fields
 
@@ -678,13 +670,13 @@ Total rows: 790,804
 ```sql
 CREATE TABLE public.crawl_history
 (
-    source crawlersource NOT NULL,
+    source USER-DEFINED NOT NULL,
     crawler_name text NOT NULL,
     network_id text NOT NULL,
     "interval" timestamp with time zone NOT NULL,
-    inserted_records integer NULL,
-    crawled_time timestamp with time zone NULL,
-    processed_time timestamp with time zone NULL
+    inserted_records integer,
+    crawled_time timestamp with time zone,
+    processed_time timestamp with time zone
 );
 
 ```
@@ -703,11 +695,11 @@ CREATE TABLE public.crawl_history
 
 | source | crawler\_name | network\_id | interval | inserted\_records | crawled\_time | processed\_time |
 | --- | --- | --- | --- | --- | --- | --- |
-| nemweb | au\.nemweb\.dispatch\_is | NEM | 2023\-06\-25 01:55:00\+00:00 | 16 | None | 2023\-06\-24 15:55:01\+00:00 |
-| nemweb | au\.nemweb\.dispatch\_is | NEM | 2023\-06\-08 00:05:00\+00:00 | 16 | None | 2023\-06\-07 14:05:02\+00:00 |
-| nemweb | au\.nemweb\.dispatch\_scada | NEM | 2022\-09\-10 09:10:00\+00:00 | 414 | None | 2022\-09\-09 23:10:55\+00:00 |
-| nemweb | au\.nemweb\.current\.dispatch\_scada | NEM | 2024\-06\-26 23:30:00\+00:00 | 460 | None | 2024\-06\-26 13:30:13\+00:00 |
-| nemweb | au\.nemweb\.trading\_is | NEM | 2023\-07\-23 23:15:00\+00:00 | 5 | None | 2023\-07\-23 13:15:02\+00:00 |
+| nemweb | au\.nemweb\.trading\_is | NEM | 2023\-07\-25 07:30:00\+00:00 | 5 | None | 2023\-07\-24 21:30:06\+00:00 |
+| nemweb | au\.nemweb\.trading\_is | NEM | 2023\-03\-12 05:20:00\+00:00 | 5 | None | 2023\-03\-11 19:20:14\+00:00 |
+| nemweb | au\.nemweb\.dispatch\_scada | NEM | 2023\-09\-25 19:50:00\+00:00 | 445 | None | 2023\-09\-25 09:50:01\+00:00 |
+| nemweb | au\.nemweb\.current\.dispatch\_is | NEM | 2024\-04\-01 08:05:00\+00:00 | 16 | None | 2024\-03\-31 22:05:02\+00:00 |
+| nemweb | au\.nemweb\.dispatch\_scada | NEM | 2023\-09\-18 11:35:00\+00:00 | 446 | None | 2023\-09\-19 22:00:27\+00:00 |
 
 ## Table: public.crawl_meta
 
@@ -728,9 +720,9 @@ Total rows: 50
 CREATE TABLE public.crawl_meta
 (
     spider_name text NOT NULL,
-    data jsonb NULL,
-    created_at timestamp with time zone NULL,
-    updated_at timestamp with time zone NULL
+    data jsonb,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
 );
 
 ```
@@ -748,11 +740,11 @@ CREATE TABLE public.crawl_meta
 
 | spider\_name | data | created\_at | updated\_at |
 | --- | --- | --- | --- |
-| au\.nem\.rooftop | \{'version': '2', 'last\_crawled': '2022\-08\-09T12:10:40\+10:00', 'server\_latest': '2022\-06\-27T11:00:00\+10:00', 'latest\_processed': '2022\-06\-27T11:00:00\+10:00'\} | 2022\-06\-10 05:45:55\.969542\+00:00 | 2022\-08\-09 02:10:40\.472064\+00:00 |
-| au\.mms\.meterdata\_gen\_duid | \{'version': '2', 'last\_crawled': '2023\-04\-01T15:21:32\+11:00'\} | 2023\-03\-30 12:12:55\.510477\+00:00 | 2023\-04\-01 04:21:32\.569705\+00:00 |
-| au\.wem\.live\.balancing | \{'version': '2', 'last\_crawled': '2024\-01\-15T07:33:53\+11:00', 'server\_latest': '2024\-01\-15T05:30:00\+08:00', 'latest\_processed': '2024\-01\-15T05:30:00\+08:00'\} | 2022\-06\-10 05:54:04\.974218\+00:00 | 2024\-01\-14 20:33:53\.360964\+00:00 |
-| au\.nem\.dispatch | \{'version': '2', 'last\_crawled': '2022\-07\-27T11:41:10\+10:00', 'server\_latest': '2022\-07\-20T04:00:00\+10:00', 'latest\_processed': '2022\-07\-20T04:00:00\+10:00'\} | 2022\-06\-10 10:08:08\.977778\+00:00 | 2022\-07\-27 01:41:10\.856443\+00:00 |
-| au\.nemweb\.archive\.dispatch\_is | \{'version': '2', 'last\_crawled': '2022\-10\-23T01:41:05\+11:00'\} | 2022\-07\-21 01:09:04\.417116\+00:00 | 2022\-10\-22 14:41:06\.104388\+00:00 |
+| au\.nemweb\.rooftop\_forecast | \{'version': '2', 'last\_crawled': '2023\-09\-26T16:30:53\+10:00', 'server\_latest': '2023\-10\-04T04:00:00\+10:00', 'latest\_processed': '2023\-10\-04T04:00:00\+10:00'\} | 2022\-06\-25 06:33:16\.514160\+00:00 | 2023\-09\-26 06:30:57\.489743\+00:00 |
+| apvi\.year\.data | \{'version': '2', 'last\_crawled': '2024\-01\-16T10:17:58\+11:00', 'server\_latest': '2024\-01\-16T09:00:00\+10:00', 'latest\_processed': '2024\-01\-16T09:00:00\+10:00'\} | 2023\-09\-01 04:07:46\.172556\+00:00 | 2024\-01\-15 23:30:22\.912226\+00:00 |
+| au\.nem\.current\.dispatch\_scada | \{'version': '2', 'last\_crawled': '2022\-06\-27T11:25:10\+10:00', 'server\_latest': '2022\-06\-27T11:25:00\+10:00', 'latest\_processed': '2022\-06\-27T11:25:00\+10:00'\} | 2022\-06\-10 07:34:07\.936856\+00:00 | 2022\-06\-27 01:37:48\.310364\+00:00 |
+| au\.wemde\.current\.trading\_report | \{'last\_crawled': '2024\-08\-08T11:40:04\+10:00', 'latest\_interval': '2024\-08\-08T07:30:00\+08:00', 'latest\_processed': '2024\-01\-15T11:46:08\+11:00'\} | 2024\-01\-14 20:44:28\.291724\+00:00 | 2024\-08\-08 01:40:04\.645263\+00:00 |
+| au\.nemweb\.current\.dispatch\_is | \{'version': '2', 'last\_crawled': '2024\-09\-14T08:05:30\+10:00', 'server\_latest': '2024\-08\-03T10:50:00\+10:00', 'latest\_processed': '2024\-08\-03T10:50:00\+10:00'\} | 2023\-09\-04 10:39:36\.962104\+00:00 | 2024\-09\-13 22:05:30\.508699\+00:00 |
 
 ## Table: public.facility
 
@@ -802,40 +794,40 @@ Total rows: 787
 ```sql
 CREATE TABLE public.facility
 (
-    created_by text NULL,
-    created_at timestamp with time zone NULL,
-    updated_at timestamp with time zone NULL,
+    created_by text,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
     id integer NOT NULL,
     network_id text NOT NULL,
-    fueltech_id text NULL,
-    status_id text NULL,
-    station_id integer NULL,
+    fueltech_id text,
+    status_id text,
+    station_id integer,
     code text NOT NULL,
-    network_code text NULL,
-    network_region text NULL,
-    network_name text NULL,
-    active boolean NULL,
-    dispatch_type dispatchtype NOT NULL,
-    capacity_registered numeric NULL,
-    registered timestamp without time zone NULL,
-    deregistered timestamp without time zone NULL,
-    unit_id integer NULL,
-    unit_number integer NULL,
-    unit_alias text NULL,
-    unit_capacity numeric NULL,
-    approved boolean NULL,
-    approved_by text NULL,
-    approved_at timestamp with time zone NULL,
-    emissions_factor_co2 numeric NULL,
-    interconnector boolean NULL,
-    interconnector_region_to text NULL,
-    data_first_seen timestamp with time zone NULL,
-    data_last_seen timestamp with time zone NULL,
-    expected_closure_date timestamp without time zone NULL,
-    expected_closure_year integer NULL,
-    interconnector_region_from text NULL,
-    emission_factor_source text NULL,
-    include_in_geojson boolean NULL
+    network_code text,
+    network_region text,
+    network_name text,
+    active boolean,
+    dispatch_type USER-DEFINED NOT NULL,
+    capacity_registered numeric,
+    registered timestamp without time zone,
+    deregistered timestamp without time zone,
+    unit_id integer,
+    unit_number integer,
+    unit_alias text,
+    unit_capacity numeric,
+    approved boolean,
+    approved_by text,
+    approved_at timestamp with time zone,
+    emissions_factor_co2 numeric,
+    interconnector boolean,
+    interconnector_region_to text,
+    data_first_seen timestamp with time zone,
+    data_last_seen timestamp with time zone,
+    expected_closure_date timestamp without time zone,
+    expected_closure_year integer,
+    interconnector_region_from text,
+    emission_factor_source text,
+    include_in_geojson boolean
 );
 
 ```
@@ -868,15 +860,15 @@ CREATE TABLE public.facility
 
 | created\_by | created\_at | updated\_at | id | network\_id | fueltech\_id | status\_id | station\_id | code | network\_code | network\_region | network\_name | active | dispatch\_type | capacity\_registered | registered | deregistered | unit\_id | unit\_number | unit\_alias | unit\_capacity | approved | approved\_by | approved\_at | emissions\_factor\_co2 | interconnector | interconnector\_region\_to | data\_first\_seen | data\_last\_seen | expected\_closure\_date | expected\_closure\_year | interconnector\_region\_from | emission\_factor\_source | include\_in\_geojson |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| opennem\.registry | 2020\-12\-09 15:33:58\.768421\+00:00 | 2023\-03\-31 04:51:41\.352321\+00:00 | 306 | NEM | hydro | operating | 219 | MURRAY | NEM | VIC1 | None | True | GENERATOR | 1500\.0 | None | None | None | None | None | None | True | None | 2020\-12\-09 15:33:58\.768413\+00:00 | 0\.0 | False | None | 2001\-07\-14 14:40:00\+00:00 | 2024\-08\-03 00:50:00\+00:00 | None | None | None | None | True |
-| opennem\.init | 2023\-04\-26 23:10:23\.204804\+00:00 | None | 781 | NEM | solar\_utility | operating | 546 | AVLSF1 | None | NSW1 | None | True | GENERATOR | 245\.0 | None | None | None | None | None | None | False | None | None | 0\.0 | False | None | 2023\-03\-28 03:25:00\+00:00 | 2024\-08\-03 00:50:00\+00:00 | None | None | None | None | True |
-| opennem\.registry | 2020\-12\-09 15:33:35\.892870\+00:00 | 2024\-06\-07 13:11:19\.484806\+00:00 | 158 | NEM | coal\_black | operating | 118 | ER03 | NEM | NSW1 | None | True | GENERATOR | 720\.0 | None | None | None | None | None | None | True | None | 2020\-12\-09 15:33:35\.892859\+00:00 | 0\.91014305 | False | None | 1998\-12\-06 15:50:00\+00:00 | 2024\-08\-03 00:50:00\+00:00 | None | None | None | None | True |
-| opennem\.init | 2022\-06\-16 07:54:45\.510705\+00:00 | 2024\-06\-06 05:16:35\.293826\+00:00 | 732 | NEM | solar\_utility | committed | 519 | BLUEGSF1 | None | QLD1 | None | True | GENERATOR | 183\.0 | None | None | None | None | None | None | True | None | None | 0\.0 | False | None | 2022\-08\-01 03:15:00\+00:00 | 2024\-08\-03 00:50:00\+00:00 | None | None | None | None | True |
-| opennem\.registry | 2020\-12\-09 15:34:57\.517102\+00:00 | 2024\-06\-07 13:12:35\.771021\+00:00 | 575 | WEM | gas\_ocgt | operating | 409 | PINJAR\_GT7 | WEM | WEM | None | True | GENERATOR | 39\.3 | 2003\-07\-01 00:00:00 | None | None | None | None | None | True | None | 2020\-12\-09 15:34:57\.517090\+00:00 | 0\.82 | False | None | 2013\-12\-21 06:30:00\+00:00 | 2024\-07\-22 03:45:00\+00:00 | None | None | None | None | True |
+| opennem\.registry | 2020\-12\-09 15:33:24\.727775\+00:00 | 2024\-06\-07 13:12:13\.892790\+00:00 | 95 | NEM | wind | operating | 73 | CBWF1 | NEM | VIC1 | None | True | GENERATOR | 19\.8 | None | None | None | None | None | None | True | None | 2020\-12\-09 15:33:24\.727755\+00:00 | 0\.0 | False | None | None | None | None | None | None | None | True |
+| opennem\.registry | 2020\-12\-09 15:33:39\.852693\+00:00 | 2024\-06\-07 13:11:41\.702535\+00:00 | 184 | NEM | gas\_wcmg | operating | 136 | GROSV2 | NEM | QLD1 | None | True | GENERATOR | 15\.0 | None | None | None | None | None | None | True | None | 2020\-12\-09 15:33:39\.852680\+00:00 | 0\.716 | False | None | None | None | None | None | None | None | True |
+| opennem\.init | 2023\-01\-09 03:15:16\.014461\+00:00 | 2024\-06\-07 13:12:39\.910630\+00:00 | 763 | NEM | solar\_utility | operating | 533 | NEWENSF2 | None | NSW1 | None | True | GENERATOR | 200\.0 | None | None | None | 144 | None | 1\.388 | False | None | None | 0\.0 | False | None | 2022\-12\-20 00:45:00\+00:00 | 2024\-08\-03 00:50:00\+00:00 | None | None | None | None | True |
+| opennem\.registry | 2020\-12\-09 15:33:47\.441423\+00:00 | 2024\-06\-07 13:12:19\.277347\+00:00 | 222 | NEM | gas\_ocgt | operating | 162 | JLA03 | NEM | VIC1 | None | True | GENERATOR | 51\.0 | None | None | None | None | None | None | True | None | 2020\-12\-09 15:33:47\.441408\+00:00 | 0\.87940454 | False | None | 1998\-12\-10 01:25:00\+00:00 | 2024\-08\-02 09:25:00\+00:00 | None | None | None | None | True |
+| opennem\.init | 2021\-07\-14 17:01:51\.418425\+00:00 | 2023\-06\-16 03:05:00\.834806\+00:00 | 707 | NEM | battery\_charging | operating | 65 | BULBESL1 | None | VIC1 | None | True | LOAD | 20\.0 | None | None | None | 40 | None | 0\.5 | True | None | None | 0\.0 | False | None | 2021\-07\-06 09:40:00\+00:00 | 2024\-08\-03 00:50:00\+00:00 | None | None | None | None | True |
 
 ## Table: public.facility_scada
 
-Total rows: 769,611,359
+Total rows: 769,754,881
 
 ### Fields
 
@@ -899,11 +891,11 @@ CREATE TABLE public.facility_scada
     network_id text NOT NULL,
     "interval" timestamp without time zone NOT NULL,
     facility_code text NOT NULL,
-    generated numeric NULL,
-    eoi_quantity numeric NULL,
+    generated numeric,
+    eoi_quantity numeric,
     is_forecast boolean NOT NULL,
     energy_quality_flag numeric NOT NULL,
-    energy numeric NULL
+    energy numeric
 );
 
 ```
@@ -930,11 +922,11 @@ CREATE TABLE public.facility_scada
 
 | network\_id | interval | facility\_code | generated | eoi\_quantity | is\_forecast | energy\_quality\_flag | energy |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| NEM | 2001\-01\-29 14:50:00 | SNOWY6 | 58\.0 | None | False | 1 | 4\.8333333333333333 |
-| NEM | 2014\-05\-27 18:45:00 | LD03 | 0\.0 | None | False | 1 | 0E\-20 |
-| NEM | 2010\-05\-01 02:35:00 | SWAN\_B\_2 | 47\.52 | None | False | 1 | 4\.0020000000000000 |
-| NEM | 2023\-06\-28 10:30:00 | GULLRSF1 | 0\.80499 | None | False | 0 | 0\.07124916666666666667 |
-| NEM | 2012\-08\-19 23:00:00 | WKIEWA1 | 10\.93 | None | False | 1 | 0\.90875000000000000000 |
+| NEM | 2017\-03\-13 03:35:00 | W/HOE\#2 | 0\.0 | None | False | 1 | 0E\-20 |
+| NEM | 2001\-11\-03 21:30:00 | DARTM1 | 124\.1 | None | False | 1 | 10\.3691666666666667 |
+| NEM | 2018\-10\-31 03:05:00 | VPGS5 | 0\.0 | None | False | 1 | 0E\-20 |
+| NEM | 2009\-09\-28 08:45:00 | LYA2 | 0\.0 | None | False | 1 | 0E\-20 |
+| NEM | 2012\-04\-24 13:00:00 | DG\_QLD1 | 0\.0 | None | False | 1 | 0E\-20 |
 
 ## Table: public.facility_status
 
@@ -952,11 +944,8 @@ Total rows: 12
 ```sql
 CREATE TABLE public.facility_status
 (
-    "........pg.dropped.1........" - NULL,
-    "........pg.dropped.2........" - NULL,
-    "........pg.dropped.3........" - NULL,
     code text NOT NULL,
-    label text NULL
+    label text
 );
 
 ```
@@ -973,11 +962,11 @@ CREATE TABLE public.facility_status
 
 | code | label |
 | --- | --- |
-| mothballed | Mothballed |
-| commissioning | Commissioning |
+| permitted | Permitted |
 | cancelled | Cancelled |
-| maturing | Maturing |
-| construction | Construction |
+| mothballed | Mothballed |
+| committed | Committed |
+| commissioning | Commissioning |
 
 ## Table: public.feedback
 
@@ -1004,12 +993,12 @@ CREATE TABLE public.feedback
 (
     id integer NOT NULL,
     subject text NOT NULL,
-    description text NULL,
-    email text NULL,
-    twitter text NULL,
-    user_ip text NULL,
-    user_agent text NULL,
-    created_at timestamp with time zone NULL,
+    description text,
+    email text,
+    twitter text,
+    user_ip text,
+    user_agent text,
+    created_at timestamp with time zone,
     alert_sent boolean NOT NULL
 );
 
@@ -1022,6 +1011,104 @@ CREATE TABLE public.feedback
 ### Indexes
 
 - CREATE UNIQUE INDEX feedback_pkey ON public.feedback USING btree (id)
+
+### Sample Data
+
+| id | subject | description | email | twitter | user\_ip | user\_agent | created\_at | alert\_sent |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 64 | Shoalhaven facility feedback | 
+\*\*No email provided\.\*\*
+   
+
+\*\*Path:\*\*
+/facility/au/NEM/SHOALHAV/?range=3d&interval=30m
+
+\*\*Sources:\*\*
+https://en\.wikipedia\.org/wiki/Shoalhaven\_Scheme
+
+\*\*Fields:\*\*
+
+\`\`\`
+\[\]
+\`\`\`
+
+\*\*Description:\*\*
+The des\.\.\. | None | None | 172\.19\.0\.1 | Mozilla/5\.0 \(Windows NT 10\.0; Win64; x64\) AppleWebKit/537\.36 \(KHTML, like Gecko\) Chrome/115\.0\.0\.0 Safari/537\.36 | 2023\-08\-18 00:11:26\.418083\+00:00 | False |
+| 30 | Bango facility feedback | 
+\*\*No email provided\.\*\*
+   
+
+\*\*Path:\*\*
+/facility/au/NEM/BANGOWF/?range=7d&interval=30m
+
+\*\*Sources:\*\*
+sdfsd
+
+\*\*Fields:\*\*
+
+\`\`\`
+\[\]
+\`\`\`
+
+\*\*Description:\*\*
+sdfsd
+ | None | None | 61\.68\.241\.134 | Mozilla/5\.0 \(Macintosh; Intel Mac OS X 10\_15\_7\) AppleWebKit/537\.36 \(KHTML, like Gecko\) Chrome/91\.0\.4472\.124 Safari/537\.36 | 2021\-07\-03 05:51:43\.116520\+00:00 | True |
+| 80 | Mt Piper facility feedback | 
+\*\*Email:\*\*
+mushalik@tpg\.com\.au     
+   
+
+\*\*Path:\*\*
+/facility/au/NEM/MP/?range=3d&interval=30m
+
+\*\*Sources:\*\*
+https://opennem\.org\.au/facility/au/NEM/MP/?range=3d&interval=30m
+
+\*\*Fields:\*\*
+
+\`\`\`
+\[\]
+\`\`\`
+
+\.\.\. | mushalik@tpg\.com\.au | None | 172\.19\.0\.1 | Mozilla/5\.0 \(Windows NT 10\.0; Win64; x64\) AppleWebKit/537\.36 \(KHTML, like Gecko\) Chrome/120\.0\.0\.0 Safari/537\.36 | 2023\-12\-16 00:49:51\.059202\+00:00 | False |
+| 70 | Rye Park facility feedback | 
+\*\*No email provided\.\*\*
+   
+
+\*\*Path:\*\*
+/facility/au/NEM/RYEPARK/?range=1d&interval=30m
+
+\*\*Sources:\*\*
+12:00 am on 8 Oct
+
+\*\*Fields:\*\*
+
+\`\`\`
+\[\]
+\`\`\`
+
+\*\*Description:\*\*
+Is this solar or wind?
+ | None | None | 172\.19\.0\.1 | Mozilla/5\.0 \(Macintosh; Intel Mac OS X 10\_15\_7\) AppleWebKit/605\.1\.15 \(KHTML, like Gecko\) Version/17\.0\.1 Safari/605\.1\.15 | 2023\-10\-08 00:12:27\.297574\+00:00 | False |
+| 76 | Mannum facility feedback | 
+\*\*No email provided\.\*\*
+   
+
+\*\*Path:\*\*
+/facility/au/NEM/MAPS2/?range=3d&interval=30m
+
+\*\*Sources:\*\*
+\.
+
+\*\*Fields:\*\*
+
+\`\`\`
+\[
+ \{
+  "key": "Facility default map",
+  "value": \{
+   "type": "Point",
+   "coordi\.\.\. | None | None | 172\.19\.0\.1 | Mozilla/5\.0 \(Windows NT 10\.0; Win64; x64\) AppleWebKit/537\.36 \(KHTML, like Gecko\) Chrome/120\.0\.0\.0 Safari/537\.36 Edg/120\.0\.0\.0 | 2023\-12\-11 04:02:14\.431582\+00:00 | False |
 
 ## Table: public.fueltech
 
@@ -1044,13 +1131,13 @@ Total rows: 26
 ```sql
 CREATE TABLE public.fueltech
 (
-    created_by text NULL,
-    created_at timestamp with time zone NULL,
-    updated_at timestamp with time zone NULL,
+    created_by text,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
     code text NOT NULL,
-    label text NULL,
-    renewable boolean NULL,
-    fueltech_group_id text NULL
+    label text,
+    renewable boolean,
+    fueltech_group_id text
 );
 
 ```
@@ -1069,11 +1156,11 @@ CREATE TABLE public.fueltech
 
 | created\_by | created\_at | updated\_at | code | label | renewable | fueltech\_group\_id |
 | --- | --- | --- | --- | --- | --- | --- |
+| None | 2020\-12\-09 01:46:29\.552866\+00:00 | 2022\-10\-04 06:24:39\.023691\+00:00 | gas\_steam | Gas \(Steam\) | False | gas |
+| None | 2020\-12\-09 01:46:29\.492808\+00:00 | 2022\-10\-04 06:24:38\.971553\+00:00 | gas\_recip | Gas \(Reciprocating\) | False | gas |
 | None | 2020\-12\-09 01:46:29\.671803\+00:00 | 2022\-10\-04 06:24:39\.132031\+00:00 | hydro | Hyrdo | True | hydro |
-| None | 2020\-12\-09 01:46:29\.904852\+00:00 | 2022\-10\-04 06:24:39\.329845\+00:00 | solar\_rooftop | Solar \(Rooftop\) | True | solar |
-| None | 2020\-12\-09 01:46:29\.145850\+00:00 | 2022\-10\-04 06:24:38\.667053\+00:00 | bioenergy\_biomass | Biomass | False | bioenergy |
-| None | 2020\-12\-09 01:46:30\.020865\+00:00 | None | aggregator\_vpp | Aggregator \(VPP\) | True | None |
-| None | 2020\-12\-09 01:46:29\.261797\+00:00 | 2022\-10\-04 06:24:38\.765765\+00:00 | coal\_brown | Coal \(Brown\) | False | coal |
+| None | 2020\-12\-09 01:46:28\.964818\+00:00 | 2022\-10\-04 06:24:38\.513422\+00:00 | battery\_charging | Battery \(Charging\) | True | battery\_charging |
+| None | 2021\-03\-25 10:35:29\.547107\+00:00 | None | interconnector | Interconnector | False | None |
 
 ## Table: public.fueltech_group
 
@@ -1096,12 +1183,12 @@ Total rows: 10
 ```sql
 CREATE TABLE public.fueltech_group
 (
-    created_by text NULL,
-    created_at timestamp with time zone NULL,
-    updated_at timestamp with time zone NULL,
+    created_by text,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
     code text NOT NULL,
-    label text NULL,
-    color text NULL,
+    label text,
+    color text,
     renewable boolean NOT NULL
 );
 
@@ -1119,10 +1206,10 @@ CREATE TABLE public.fueltech_group
 
 | created\_by | created\_at | updated\_at | code | label | color | renewable |
 | --- | --- | --- | --- | --- | --- | --- |
-| None | 2022\-10\-04 06:24:38\.163568\+00:00 | 2024\-08\-13 02:51:57\.473752\+00:00 | solar | Solar | \#FED500 | True |
-| None | 2022\-10\-04 06:24:38\.114476\+00:00 | 2024\-08\-13 02:51:57\.357664\+00:00 | wind | Wind | \#417505 | True |
-| None | 2022\-10\-04 06:24:38\.013420\+00:00 | None | coal | Coal | \#4a4a4a | False |
-| None | 2022\-10\-04 06:24:38\.363459\+00:00 | None | distillate | Distillate | \#F35020 | False |
+| None | 2022\-10\-04 06:24:38\.263261\+00:00 | 2024\-08\-13 02:51:57\.662572\+00:00 | battery\_discharging | Battery \(Discharging\) | \#00A2FA | True |
+| None | 2022\-10\-04 06:24:38\.054393\+00:00 | None | gas | Gas | \#FF8813 | False |
+| None | 2022\-10\-04 06:24:38\.214596\+00:00 | 2024\-08\-13 02:51:57\.574303\+00:00 | battery\_charging | Battery \(Charging\) | \#B2DAEF | True |
+| None | 2022\-10\-04 06:24:38\.461796\+00:00 | 2024\-08\-13 02:51:57\.973473\+00:00 | pumps | Pumps | \#88AFD0 | True |
 | None | 2022\-10\-04 06:24:38\.313712\+00:00 | 2024\-08\-13 02:51:57\.750658\+00:00 | hydro | Hyrdo | \#4582B4 | True |
 
 ## Table: public.location
@@ -1154,19 +1241,19 @@ Total rows: 551
 CREATE TABLE public.location
 (
     id integer NOT NULL,
-    address1 text NULL,
-    address2 text NULL,
-    locality text NULL,
-    state text NULL,
-    postcode text NULL,
-    place_id text NULL,
-    geocode_approved boolean NULL,
-    geocode_skip boolean NULL,
-    geocode_processed_at timestamp without time zone NULL,
-    geocode_by text NULL,
-    geom geometry(Point,4326) NULL,
-    osm_way_id text NULL,
-    boundary geometry(Polygon,4326) NULL
+    address1 text,
+    address2 text,
+    locality text,
+    state text,
+    postcode text,
+    place_id text,
+    geocode_approved boolean,
+    geocode_skip boolean,
+    geocode_processed_at timestamp without time zone,
+    geocode_by text,
+    geom USER-DEFINED,
+    osm_way_id text,
+    boundary USER-DEFINED
 );
 
 ```
@@ -1186,15 +1273,15 @@ CREATE TABLE public.location
 
 | id | address1 | address2 | locality | state | postcode | place\_id | geocode\_approved | geocode\_skip | geocode\_processed\_at | geocode\_by | geom | osm\_way\_id | boundary |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 4888 | None | None | Lonsdale | SA | 5160 | None | False | False | None | None | 0101000020E61000004ACE396D7D4F6140146384CC688C41C0 | None | None |
-| 13664 |  |  |  | TAS | None | None | True | False | None | opennem\.registry | 0101000020E6100000FF5FF466945D624099089CA30CE744C0 | None | None |
-| 13801 | None | None | None | NSW | None | None | False | False | None | None | None | None | None |
-| 13579 |  |  |  | NSW | None | None | True | False | None | opennem\.registry | 0101000020E6100000D7FA22A12D9462408A389D64AB3742C0 | None | None |
-| 13508 |  |  |  | VIC | None | None | True | False | None | opennem\.registry | 0101000020E6100000959F54FBF40C6240757286E28E0743C0 | None | None |
+| 13482 |  |  |  | TAS | None | None | True | False | None | opennem\.registry | 0101000020E6100000846B865763486240FCACD18C302245C0 | None | None |
+| 823 | None | None | Breadalbane | NSW | 2581 | None | False | False | None | None | 0101000020E61000008467268CB2AC6240A1AE4EDA746941C0 | None | None |
+| 13463 |  |  |  | NSW | None | None | True | False | None | opennem\.registry | 0101000020E6100000C8409E5DBEAE6240E529ABE97A2C40C0 | None | None |
+| 13605 |  |  |  | VIC | None | None | True | False | None | opennem\.registry | 0101000020E6100000DD67E82DBD52624082BEE697762043C0 | None | None |
+| 13498 |  |  |  | QLD | None | None | True | False | None | opennem\.registry | 0101000020E610000095E35F15797162409E126B4CE3D636C0 | None | None |
 
 ## Table: public.milestones
 
-Total rows: 14,464
+Total rows: 18,684
 
 ### Fields
 
@@ -1224,23 +1311,18 @@ CREATE TABLE public.milestones
     instance_id uuid NOT NULL,
     record_id text NOT NULL,
     "interval" timestamp without time zone NOT NULL,
-    "........pg.dropped.4........" - NULL,
     significance integer NOT NULL,
     value double precision NOT NULL,
-    "........pg.dropped.7........" - NULL,
-    network_id text NULL,
-    fueltech_id text NULL,
-    description character varying NULL,
-    period character varying NULL,
-    "........pg.dropped.12........" - NULL,
-    "........pg.dropped.13........" - NULL,
+    network_id text,
+    fueltech_id text,
+    description character varying,
+    period character varying,
     aggregate character varying NOT NULL,
-    metric character varying NULL,
-    value_unit character varying NULL,
-    description_long character varying NULL,
-    network_region text NULL,
-    "........pg.dropped.19........" - NULL,
-    previous_instance_id uuid NULL
+    metric character varying,
+    value_unit character varying,
+    description_long character varying,
+    network_region text,
+    previous_instance_id uuid
 );
 
 ```
@@ -1264,11 +1346,11 @@ CREATE TABLE public.milestones
 
 | instance\_id | record\_id | interval | significance | value | network\_id | fueltech\_id | description | period | aggregate | metric | value\_unit | description\_long | network\_region | previous\_instance\_id |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| b9c0d585\-2ca5\-46c9\-a7d7\-69fdd995dcef | au\.wem\.solar\.energy\.day\.high | 2015\-11\-10 00:00:00 | 9 | 2579\.9138 | WEM | solar | Daily solar energy high record for WEM | day | high | energy | MWh | None | None | 847aefe9\-d71c\-4763\-bd03\-5103f9b80d88 |
-| dc1d0f13\-32b0\-4877\-b9df\-d2dad286eef3 | au\.nem\.nsw1\.hydro\.power\.interval\.low | 2001\-12\-23 02:50:00 | 1 | \-69\.98 | NEM | hydro | Interval hyrdo power low record for NEM in New South Wales | interval | low | power | MW | None | NSW1 | 7f6a907e\-01a5\-4f31\-9c32\-bb99878dd497 |
-| 0f9be28d\-47d8\-4978\-8414\-51c1ff8d6ff4 | au\.nem\.nsw1\.solar\.energy\.month\.high | 2015\-09\-01 00:00:00 | 9 | 26017\.5473 | NEM | solar | Monthly solar energy high record for NEM in New South Wales | month | high | energy | MWh | None | NSW1 | 72fa2da5\-b8f2\-4cdb\-b0c8\-13b71855e0d9 |
-| 82f9de73\-6278\-4baf\-a1d5\-6963e966cc15 | au\.nem\.tas1\.hydro\.power\.interval\.high | 2005\-06\-20 17:25:00 | 4 | 1498\.38 | NEM | hydro | Interval hyrdo power high record for NEM in Tasmania | interval | high | power | MW | None | TAS1 | cd5e1252\-95f4\-477e\-9285\-b14bc10616f4 |
-| 34274b4b\-ba1a\-4a15\-a9c1\-28b16ee08126 | au\.nem\.qld1\.coal\.power\.interval\.high | 1998\-12\-16 09:30:00 | 4 | 5333\.0 | NEM | coal | Interval coal power high record for NEM in Queensland | interval | high | power | MW | None | QLD1 | f1ba0c10\-72e9\-4190\-8364\-1500a6e91c00 |
+| 5396ad69\-0b89\-4e38\-ada3\-595594244e63 | au\.nem\.sa1\.gas\.energy\.week\.low | 2022\-12\-12 00:00:00 | 6 | 16157\.0303 | NEM | gas | Weekly gas energy low record for NEM in South Australia | week | low | energy | MWh | None | SA1 | e19ae7a1\-f9e5\-415b\-b552\-18f40b0f2b29 |
+| ba688fd9\-10ab\-4534\-a42f\-647c5e3684fa | au\.nem\.sa1\.solar\.power\.interval\.high | 2016\-08\-16 12:30:00 | 4 | 795\.4814725945301 | NEM | solar | Interval solar power high record for NEM in South Australia | interval | high | power | MW | None | SA1 | 45f00b7e\-c14e\-414b\-b50e\-1affd2299cd0 |
+| e6c6c740\-9d7f\-4429\-a850\-9f33801d3b57 | au\.nem\.coal\.emissions\.week\.low | 2015\-07\-27 00:00:00 | 6 | 3159335\.1314 | NEM | coal | Weekly coal emissions low record for NEM | week | low | emissions | tCO2e | None | None | ecf540f8\-9584\-4c7a\-a72c\-41d00f530c46 |
+| 3d66d0a6\-2d69\-46c9\-a446\-01186e56db44 | au\.nem\.vic1\.gas\.emissions\.day\.high | 2017\-04\-06 00:00:00 | 8 | 15484\.0717 | NEM | gas | Daily gas emissions high record for NEM in Victoria | day | high | emissions | tCO2e | None | VIC1 | dd5e53c5\-d2b0\-4f54\-ba25\-36efab77290a |
+| 9e686aba\-8817\-4c08\-8d32\-5518264d85ed | au\.nem\.tas1\.distillate\.power\.interval\.high | 2016\-04\-21 17:00:00 | 4 | 79\.344501 | NEM | distillate | Interval distillate power high record for NEM in Tasmania | interval | high | power | MW | None | TAS1 | 8a6792aa\-524e\-4fe3\-a885\-2cdd2c22c5b9 |
 
 ## Table: public.network
 
@@ -1299,21 +1381,21 @@ Total rows: 7
 ```sql
 CREATE TABLE public.network
 (
-    created_by text NULL,
-    created_at timestamp with time zone NULL,
-    updated_at timestamp with time zone NULL,
+    created_by text,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
     code text NOT NULL,
     country text NOT NULL,
-    label text NULL,
+    label text,
     timezone text NOT NULL,
     interval_size integer NOT NULL,
-    "offset" integer NULL,
-    timezone_database text NULL,
+    "offset" integer,
+    timezone_database text,
     export_set boolean NOT NULL,
     interval_shift integer NOT NULL,
     network_price text NOT NULL,
-    data_start_date timestamp with time zone NULL,
-    data_end_date timestamp with time zone NULL
+    data_start_date timestamp with time zone,
+    data_end_date timestamp with time zone
 );
 
 ```
@@ -1333,11 +1415,11 @@ CREATE TABLE public.network
 
 | created\_by | created\_at | updated\_at | code | country | label | timezone | interval\_size | offset | timezone\_database | export\_set | interval\_shift | network\_price | data\_start\_date | data\_end\_date |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| None | 2024\-08\-10 04:32:14\.380672\+00:00 | None | WEMDE | au | WEMDE | Australia/Perth | 5 | 480 | AWST | True | 0 | WEMDE | None | None |
-| None | 2021\-04\-09 10:15:56\.408641\+00:00 | 2024\-08\-10 04:32:14\.576316\+00:00 | AEMO\_ROOFTOP | au | AEMO Rooftop | Australia/Brisbane | 30 | 600 | AEST | False | 0 | NEM | 2016\-07\-31 14:30:00\+00:00 | 2024\-08\-02 23:30:00\+00:00 |
-| None | 2020\-12\-09 01:46:31\.118850\+00:00 | 2024\-08\-02 04:15:22\.375279\+00:00 | WEM | au | WEM | Australia/Perth | 30 | 480 | AWST | True | 0 | WEM | 2006\-09\-19 16:00:00\+00:00 | 2024\-08\-01 23:55:00\+00:00 |
-| None | 2020\-12\-09 01:46:31\.176786\+00:00 | 2024\-08\-03 00:15:22\.319623\+00:00 | APVI | au | APVI | Australia/Perth | 15 | 600 | AWST | False | 0 | WEM | 2015\-03\-19 20:15:00\+00:00 | 2024\-08\-03 00:00:00\+00:00 |
 | None | 2023\-02\-22 09:54:49\.679305\+00:00 | 2024\-08\-10 04:32:14\.781558\+00:00 | OPENNEM\_ROOFTOP\_BACKFILL | au | OpenNEM Rooftop Backfill | Australia/Brisbane | 30 | 600 | AEST | False | 0 | NEM | 2015\-03\-19 20:15:00\+00:00 | 2018\-02\-28 09:30:00\+00:00 |
+| None | 2020\-12\-09 01:46:31\.057929\+00:00 | 2024\-08\-10 04:32:14\.138129\+00:00 | NEM | au | NEM | Australia/Brisbane | 5 | 600 | AEST | True | 5 | NEM | 1998\-12\-06 15:40:00\+00:00 | 2024\-08\-03 00:15:00\+00:00 |
+| None | 2021\-04\-12 07:06:18\.835747\+00:00 | 2024\-08\-10 04:32:14\.674557\+00:00 | AEMO\_ROOFTOP\_BACKFILL | au | AEMO Rooftop Backfill | Australia/Brisbane | 30 | 600 | AEST | False | 0 | NEM | None | None |
+| None | 2020\-12\-09 01:46:31\.118850\+00:00 | 2024\-08\-02 04:15:22\.375279\+00:00 | WEM | au | WEM | Australia/Perth | 30 | 480 | AWST | True | 0 | WEM | 2006\-09\-19 16:00:00\+00:00 | 2024\-08\-01 23:55:00\+00:00 |
+| None | 2024\-08\-10 04:32:14\.380672\+00:00 | None | WEMDE | au | WEMDE | Australia/Perth | 5 | 480 | AWST | True | 0 | WEMDE | None | None |
 
 ## Table: public.network_region
 
@@ -1362,14 +1444,14 @@ Total rows: 12
 ```sql
 CREATE TABLE public.network_region
 (
-    created_by text NULL,
-    created_at timestamp with time zone NULL,
-    updated_at timestamp with time zone NULL,
+    created_by text,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
     network_id text NOT NULL,
     code text NOT NULL,
-    timezone text NULL,
-    timezone_database text NULL,
-    "offset" integer NULL,
+    timezone text,
+    timezone_database text,
+    "offset" integer,
     export_set boolean NOT NULL
 );
 
@@ -1388,11 +1470,11 @@ CREATE TABLE public.network_region
 
 | created\_by | created\_at | updated\_at | network\_id | code | timezone | timezone\_database | offset | export\_set |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| None | 2020\-12\-09 01:46:31\.422815\+00:00 | None | NEM | VIC1 | None | None | None | True |
-| None | 2020\-12\-09 01:46:31\.363840\+00:00 | None | NEM | QLD1 | None | None | None | True |
 | None | 2024\-08\-10 04:32:14\.952549\+00:00 | None | WEM | WEMDE | None | None | None | True |
+| None | 2020\-12\-09 01:46:31\.422815\+00:00 | None | NEM | VIC1 | None | None | None | True |
 | None | 2020\-12\-09 01:46:31\.540863\+00:00 | None | NEM | SA1 | None | None | None | True |
 | None | 2020\-12\-09 01:46:31\.302424\+00:00 | None | NEM | NSW1 | None | None | None | True |
+| None | 2020\-12\-09 01:46:31\.480819\+00:00 | None | NEM | TAS1 | None | None | None | True |
 
 ## Table: public.participant
 
@@ -1418,19 +1500,16 @@ Total rows: 201
 ```sql
 CREATE TABLE public.participant
 (
-    "........pg.dropped.1........" - NULL,
-    "........pg.dropped.2........" - NULL,
-    "........pg.dropped.3........" - NULL,
     id integer NOT NULL,
-    code text NULL,
-    name text NULL,
-    network_name text NULL,
-    network_code text NULL,
-    country text NULL,
-    abn text NULL,
-    approved boolean NULL,
-    approved_by text NULL,
-    approved_at timestamp with time zone NULL
+    code text,
+    name text,
+    network_name text,
+    network_code text,
+    country text,
+    abn text,
+    approved boolean,
+    approved_by text,
+    approved_at timestamp with time zone
 );
 
 ```
@@ -1448,11 +1527,11 @@ CREATE TABLE public.participant
 
 | id | code | name | network\_name | network\_code | country | abn | approved | approved\_by | approved\_at |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 161 | Padgold | PaddingtonGold | None | None | None | None | False | None | None |
-| 17 | MPOWER | MetroPowerCompanyPtyltd | Metro Power Company Pty Ltd | None | None | None | False | None | 2021\-01\-15 04:20:48\.579016\+00:00 |
-| 119 | Enernoc | EnerNOCAustralia | None | None | None | None | False | None | None |
-| 95 | Astar | AStarElectricity | None | None | None | None | False | None | None |
-| 170 | Skyfrm | SkyFarming | None | None | None | None | False | None | None |
+| 101 | Byford1 | ByfordSolarFarm1 | None | None | None | None | False | None | None |
+| 32 | WGRES | WasteGasResourcesPty | Waste Gas Resources Pty Ltd | None | None | None | False | None | 2021\-01\-15 04:20:49\.007619\+00:00 |
+| 45 | BYFORD3 | ByfordSolarFarm3Pty | None | None | None | None | False | None | None |
+| 184 | Uon | UON | None | None | None | None | False | None | None |
+| 200 | Wpso | WesternPower | None | None | None | None | False | None | None |
 
 ## Table: public.station
 
@@ -1485,23 +1564,23 @@ Total rows: 551
 ```sql
 CREATE TABLE public.station
 (
-    created_by text NULL,
-    created_at timestamp with time zone NULL,
-    updated_at timestamp with time zone NULL,
+    created_by text,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
     id integer NOT NULL,
-    participant_id integer NULL,
-    location_id integer NULL,
+    participant_id integer,
+    location_id integer,
     code text NOT NULL,
-    name text NULL,
-    description text NULL,
-    wikipedia_link text NULL,
-    wikidata_id text NULL,
-    network_code text NULL,
-    network_name text NULL,
-    approved boolean NULL,
-    approved_by text NULL,
-    approved_at timestamp with time zone NULL,
-    website_url text NULL
+    name text,
+    description text,
+    wikipedia_link text,
+    wikidata_id text,
+    network_code text,
+    network_name text,
+    approved boolean,
+    approved_by text,
+    approved_at timestamp with time zone,
+    website_url text
 );
 
 ```
@@ -1524,11 +1603,11 @@ CREATE TABLE public.station
 
 | created\_by | created\_at | updated\_at | id | participant\_id | location\_id | code | name | description | wikipedia\_link | wikidata\_id | network\_code | network\_name | approved | approved\_by | approved\_at | website\_url |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| opennem\.registry | 2020\-12\-09 15:32:39\.826093\+00:00 | 2024\-06\-07 13:12:27\.883559\+00:00 | 351 | None | 13766 | WYNDW | Wyndham | None | None | None | None | Wyndham | True | opennem\.importer\.facilities | 2024\-06\-07 23:12:27\.926969\+00:00 | None |
-| opennem\.registry | 2020\-12\-09 15:32:39\.826093\+00:00 | 2024\-06\-07 13:11:39\.752649\+00:00 | 105 | None | 13520 | DDSF | Darling Downs | Darling Downs Solar Farm is a 110MW photovoltaic solar power station in Queensland, Australia developed by APA Group 45 km west of Dalby in the Darling Downs region next to the Darling Downs Power Sta\.\.\. | https://en\.wikipedia\.org/wiki/Darling\_Downs\_Solar\_Farm | Q56276276 | None | Darling Downs | True | opennem\.importer\.facilities | 2024\-06\-07 23:11:39\.795911\+00:00 | None |
-| opennem\.registry | 2020\-12\-09 15:32:39\.826093\+00:00 | 2024\-06\-07 13:12:15\.152078\+00:00 | 93 | None | 13508 | CORIO | Corio | None | None | None | None | Corio | True | opennem\.importer\.facilities | 2024\-06\-07 23:12:15\.199212\+00:00 | None |
-| opennem\.registry | 2020\-12\-09 15:32:39\.826093\+00:00 | 2024\-06\-07 13:11:29\.688888\+00:00 | 279 | None | 13694 | SNOWY3 | Guthega | Guthega Power Station is located in the Snowy Mountains region of New South Wales, Australia\. The power station's purpose is for the generation of electricity\. It is the first to be completed and smal\.\.\. | https://en\.wikipedia\.org/wiki/Guthega\_Power\_Station | Q5621737 | None | Guthega | True | opennem\.importer\.facilities | 2024\-06\-07 23:11:29\.768131\+00:00 | None |
-| opennem\.init | 2021\-01\-18 08:28:25\.570778\+00:00 | 2024\-06\-07 13:12:33\.794361\+00:00 | 439 | None | 1639 | MERSOLAR | Merredin | Merredin Solar Farm is the largest solar farm in Western Australia and will have an expected output of 281GWh of electricity annually, generating enough energy to power approximately 42,000 Western Au\.\.\. | None | None | None | Merredin Solar Farm | True | opennem\.importer\.facilities | 2024\-06\-07 23:12:33\.844438\+00:00 | None |
+| opennem\.registry | 2020\-12\-09 15:32:39\.826093\+00:00 | 2024\-06\-07 13:12:08\.133021\+00:00 | 202 | None | 13617 | MEADOWBK | Meadowbank | The Meadowbank Power Station is a run\-of\-the\-river hydroelectric power station located in the Central Highlands region of Tasmania, Australia\. The power station is situated on the  Lower River Derwent\.\.\. | https://en\.wikipedia\.org/wiki/Meadowbank\_Power\_Station | Q6803307 | None | Meadowbank | True | opennem\.importer\.facilities | 2024\-06\-07 23:12:08\.200300\+00:00 | None |
+| opennem\.registry | 2020\-12\-09 15:32:39\.826093\+00:00 | 2024\-06\-07 13:12:30\.643858\+00:00 | 389 | None | 13402 | BLAIRFOX\_KARAKIN | Karakin | None | None | None | None | Karakin | True | opennem\.importer\.facilities | 2024\-06\-07 23:12:30\.689835\+00:00 | None |
+| opennem\.importer\.interconnectors | 2021\-01\-03 07:05:38\.698274\+00:00 | 2022\-08\-05 09:26:21\.770864\+00:00 | 436 | None | 1236 | T\-V\-MNSP1 | Basslink dc interconnector \(mnsp\) | None | None | None | T\-V\-MNSP1 | None | False | None | None | None |
+| opennem\.registry | 2020\-12\-09 15:32:39\.826093\+00:00 | 2024\-06\-07 13:12:32\.134196\+00:00 | 382 | None | 13395 | GOSNELLS | Gosnells | None | None | None | None | Gosnells | True | opennem\.importer\.facilities | 2024\-06\-07 23:12:32\.177745\+00:00 | None |
+| opennem\.importer\.rooftop | 2021\-04\-12 07:06:35\.843691\+00:00 | None | 473 | None | 4873 | ROOFTOP\_AEMO\_ROOFTOP\_BACKFILL\_NSW | Rooftop Solar NSW | Solar rooftop facilities for NSW | None | None | None | None | False |  | None | None |
 
 ## Table: public.stats
 
@@ -1551,13 +1630,13 @@ Total rows: 403
 ```sql
 CREATE TABLE public.stats
 (
-    created_by text NULL,
-    created_at timestamp with time zone NULL,
-    updated_at timestamp with time zone NULL,
+    created_by text,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
     stat_date timestamp with time zone NOT NULL,
     country text NOT NULL,
     stat_type text NOT NULL,
-    value numeric NULL
+    value numeric
 );
 
 ```
@@ -1575,11 +1654,11 @@ CREATE TABLE public.stats
 
 | created\_by | created\_at | updated\_at | stat\_date | country | stat\_type | value |
 | --- | --- | --- | --- | --- | --- | --- |
-| None | 2021\-01\-05 09:47:54\.294658\+00:00 | None | 2017\-09\-30 00:00:00\+00:00 | au | CPI | 111\.4 |
-| None | 2021\-01\-05 09:47:54\.294658\+00:00 | None | 1987\-06\-30 00:00:00\+00:00 | au | CPI | 46\.0 |
-| None | 2021\-01\-05 09:47:54\.294658\+00:00 | None | 1985\-12\-31 00:00:00\+00:00 | au | CPI | 40\.5 |
-| None | 2021\-01\-05 09:47:54\.294658\+00:00 | None | 1989\-12\-31 00:00:00\+00:00 | au | CPI | 55\.2 |
-| None | 2021\-01\-05 09:47:54\.294658\+00:00 | None | 1937\-12\-01 00:00:00\+00:00 | au | CPI | 2\.5 |
+| None | 2021\-01\-05 09:47:54\.294658\+00:00 | None | 1973\-06\-30 00:00:00\+00:00 | au | CPI | 11\.8 |
+| None | 2021\-01\-05 09:47:54\.294658\+00:00 | None | 1949\-12\-01 00:00:00\+00:00 | au | CPI | 4\.1 |
+| None | 2021\-01\-05 09:47:54\.294658\+00:00 | None | 1932\-06\-01 00:00:00\+00:00 | au | CPI | 2\.4 |
+| None | 2021\-01\-05 09:47:54\.294658\+00:00 | None | 1950\-12\-01 00:00:00\+00:00 | au | CPI | 4\.6 |
+| None | 2021\-01\-05 09:47:54\.294658\+00:00 | None | 1998\-09\-30 00:00:00\+00:00 | au | CPI | 67\.5 |
 
 ## Table: public.task_profile
 
@@ -1608,13 +1687,13 @@ CREATE TABLE public.task_profile
     id uuid NOT NULL,
     task_name text NOT NULL,
     time_start timestamp with time zone NOT NULL,
-    time_end timestamp with time zone NULL,
-    time_sql timestamp with time zone NULL,
-    time_cpu timestamp with time zone NULL,
+    time_end timestamp with time zone,
+    time_sql timestamp with time zone,
+    time_cpu timestamp with time zone,
     errors integer NOT NULL,
-    retention_period text NULL,
-    level text NULL,
-    invokee_name text NULL
+    retention_period text,
+    level text,
+    invokee_name text
 );
 
 ```
@@ -1634,8 +1713,8 @@ CREATE TABLE public.task_profile
 
 | id | task\_name | time\_start | time\_end | time\_sql | time\_cpu | errors | retention\_period | level | invokee\_name |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 16cfc8fc\-bd8f\-47db\-9a38\-8bcda2b153e9 | wem\_per\_interval\_check | 2024\-06\-02 10:53:16\.421856\+00:00 | 2024\-06\-02 10:53:33\.507213\+00:00 | None | None | 0 | forever | noisy |  |
-| 91fa3b74\-ce93\-48f4\-a147\-d052cb14563d | run\_aggregate\_flow\_for\_interval\_v3 | 2024\-03\-25 23:55:03\.091450\+00:00 | 2024\-03\-25 23:55:03\.191689\+00:00 | None | None | 0 | forever | info |  |
-| b974511f\-abf9\-40d7\-a315\-d5e4f6be1932 | run\_flows\_for\_last\_intervals | 2024\-06\-02 17:00:02\.056523\+00:00 | 2024\-06\-02 17:00:03\.021863\+00:00 | None | None | 0 | forever | info |  |
-| 580e29d3\-5f94\-4b1a\-906f\-fc392c6fbf58 | wem\_per\_interval\_check | 2024\-07\-01 23:50:13\.134801\+00:00 | 2024\-07\-01 23:50:25\.486808\+00:00 | None | None | 0 | forever | noisy |  |
-| e1cb0308\-b9c0\-4c97\-a6fe\-592c3fbf85ac | run\_aggregate\_flow\_for\_interval\_v3 | 2024\-06\-28 07:10:01\.502779\+00:00 | 2024\-06\-28 07:10:01\.559125\+00:00 | None | None | 0 | forever | info |  |
+| 3f664a60\-ee07\-4d1c\-bf3a\-fbe86b565bd9 | wem\_per\_interval\_check | 2024\-06\-16 01:56:30\.302873\+00:00 | 2024\-06\-16 01:56:44\.376681\+00:00 | None | None | 0 | forever | noisy |  |
+| d36593bc\-5240\-421c\-a92d\-ef80112e0855 | wem\_per\_interval\_check | 2024\-04\-29 20:09:16\.422199\+00:00 | 2024\-04\-29 20:09:33\.677493\+00:00 | None | None | 0 | forever | noisy |  |
+| 2b85167e\-2bde\-4b8e\-8e79\-587c2cdb6567 | run\_aggregate\_flow\_for\_interval\_v3 | 2024\-07\-28 21:35:01\.360356\+00:00 | 2024\-07\-28 21:35:01\.450236\+00:00 | None | None | 0 | forever | info |  |
+| 3c8b6a67\-37fa\-41ae\-84d4\-ccd23005327d | run\_aggregate\_flow\_for\_interval\_v3 | 2024\-05\-31 16:55:01\.970291\+00:00 | 2024\-05\-31 16:55:02\.063462\+00:00 | None | None | 0 | forever | info |  |
+| a464d48b\-7f64\-41ea\-9578\-dafe26a93009 | wem\_per\_interval\_check | 2024\-03\-19 18:55:32\.783532\+00:00 | 2024\-03\-19 18:55:54\.007792\+00:00 | None | None | 0 | forever | noisy |  |
