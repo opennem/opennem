@@ -59,8 +59,8 @@ async def get_milestones(
 ) -> APIV4ResponseSchema:
     """Get a list of milestones"""
 
-    if limit > 100:
-        raise HTTPException(status_code=400, detail="Limit must be less than 100")
+    if limit > 1000:
+        raise HTTPException(status_code=400, detail="Limit must be less than 1000")
 
     # if date_start and date_end have no timezone, default to NEM time
     if date_start and not date_start.tzinfo:
@@ -197,8 +197,8 @@ async def get_milestone_by_record_id(
 ) -> APIV4ResponseSchema:
     """Get a single milestone by record id"""
 
-    if limit > 100:
-        raise HTTPException(status_code=400, detail="Limit must be less than 100")
+    if limit > 1000:
+        raise HTTPException(status_code=400, detail="Limit must be less than 1000")
 
     if page < 1:
         raise HTTPException(status_code=400, detail="Page must be greater than 0")
