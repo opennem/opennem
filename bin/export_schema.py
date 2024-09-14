@@ -18,6 +18,7 @@ Command line args and options:
 -o, --output: Output file path
 -e, --env-var: Environment variable name for database URL
 --env-file: Path to the .env file
+--skip-sample-data: Comma-separated list of tables to skip sample data for
 
 """
 
@@ -252,7 +253,12 @@ def get_sample_data(cursor: psycopg2.extensions.cursor, schema: str, table: str)
     Returns:
         List[Tuple]: List of sample data rows.
     """
-    cursor.execute(f"SELECT * FROM {schema}.{table} ORDER BY RANDOM() LIMIT 5;")
+    query = (
+        f"SELECT * FROM {psycopg2.extensions.quote_ident(schema, cursor)}."
+        f"{psycopg2.extensions.quote_ident(table, cursor)}"
+        " ORDER BY RANDOM() LIMIT 5"
+    )
+    cursor.execute(query)
     return cursor.fetchall()
 
 
@@ -268,10 +274,13 @@ def get_column_names(cursor: psycopg2.extensions.cursor, schema: str, table: str
     Returns:
         List[str]: List of column names.
     """
-    cursor.execute(
-        f"SELECT column_name FROM information_schema.columns WHERE table_schema = '{schema}' AND table_name = '{table}'"
-        f" ORDER BY ordinal_position;"
-    )
+    query = """
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_schema = %s AND table_name = %s
+        ORDER BY ordinal_position
+    """
+    cursor.execute(query, (schema, table))
     return [col[0] for col in cursor.fetchall()]
 
 
@@ -351,6 +360,7 @@ def export_schema(
     env_var: str = "DB_URL",
     env_file: str = ".env",
     schemas: list[str] | None = None,
+    skip_sample_data_tables: list[str] | None = None,
 ) -> None:
     """
     Export database schema and sample data to the specified output.
@@ -361,12 +371,15 @@ def export_schema(
         env_var (str): Name of the environment variable to use for the connection string.
         env_file (str): Path to the .env file.
         schemas (List[str]): List of schemas to export.
+        skip_sample_data_tables (List[str]): List of tables to skip sample data for.
 
     Raises:
         Exception: If an error occurs during the export process.
     """
     if schemas is None:
         schemas = ["public"]
+    if skip_sample_data_tables is None:
+        skip_sample_data_tables = []
 
     try:
         conn = get_database_connection(connection_string, env_var, env_file)
@@ -444,7 +457,7 @@ def export_schema(
                 output.write("\n")
 
             sample_data = get_sample_data(cursor, schema, table)
-            if sample_data:
+            if sample_data and f"{schema}.{table}" not in skip_sample_data_tables:
                 output.write("### Sample Data\n\n")
                 columns = get_column_names(cursor, schema, table)
 
@@ -473,18 +486,26 @@ if __name__ == "__main__":
     parser.add_argument("-e", "--env-var", default="DB_URL", help="Environment variable name for database URL")
     parser.add_argument("--env-file", default=".env", help="Path to the .env file")
     parser.add_argument("-s", "--schemas", default="public", help="Comma-separated list of schemas to export (default: public)")
+    parser.add_argument("--skip-sample-data", help="Comma-separated list of tables to skip sample data for", default="")
     args = parser.parse_args()
 
     try:
         schemas = [s.strip() for s in args.schemas.split(",")]
+        skip_sample_data_tables = [t.strip() for t in args.skip_sample_data.split(",") if t.strip()]
         if args.output:
             output_file = Path(args.output)
             output_file.parent.mkdir(parents=True, exist_ok=True)
             with output_file.open("w") as f:
-                export_schema(f, args.database, args.env_var, args.env_file, schemas)
+                export_schema(f, args.database, args.env_var, args.env_file, schemas, skip_sample_data_tables)
             print(f"Schema and sample data exported to {output_file}")
         else:
-            export_schema(connection_string=args.database, env_var=args.env_var, env_file=args.env_file, schemas=schemas)
+            export_schema(
+                connection_string=args.database,
+                env_var=args.env_var,
+                env_file=args.env_file,
+                schemas=schemas,
+                skip_sample_data_tables=skip_sample_data_tables,
+            )
     except Exception as e:
         print(f"Error: {str(e)}", file=sys.stderr)
         sys.exit(1)
