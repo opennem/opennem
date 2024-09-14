@@ -33,7 +33,6 @@ from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from opennem.core.dispatch_type import DispatchType
-from opennem.parsers.aemo.schemas import AEMODataSource
 from opennem.schema.core import BaseConfig
 
 Base = declarative_base()
@@ -67,15 +66,6 @@ class Feedback(Base):
     user_ip = Column(Text, nullable=True)
     user_agent = Column(Text, nullable=True)
     alert_sent = Column(Boolean, nullable=False, default=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-
-
-class ApiKeys(Base):
-    __tablename__ = "api_keys"
-
-    keyid = Column(Text, nullable=False, primary_key=True)
-    description = Column(Text, nullable=True)
-    revoked = Column(Boolean, nullable=False, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -477,22 +467,6 @@ class BalancingSummary(Base):
     )
 
 
-class AEMOFacilityData(Base):
-    __tablename__ = "aemo_facility_data"
-
-    aemo_source = Column(Enum(AEMODataSource), primary_key=True)
-    source_date = Column(Date, primary_key=True)
-    name = Column(Text, nullable=True)
-    name_network = Column(Text, nullable=True)
-    network_region = Column(Text, primary_key=False)
-    fueltech_id = Column(Text, nullable=True)
-    status_id = Column(Text, nullable=True)
-    duid = Column(Text, nullable=True)
-    units_no = Column(Integer, nullable=True)
-    capacity_registered = Column(Numeric, nullable=True)
-    closure_year_expected = Column(Integer, nullable=True)
-
-
 class AggregateFacilityDaily(Base):
     __tablename__ = "at_facility_daily"
 
@@ -540,29 +514,6 @@ class AggregateNetworkFlows(Base):
     __table_args__ = (
         Index("idx_at_network_flowsy_network_id_trading_interval", "network_id", "trading_interval", postgresql_using="btree"),
         Index("idx_at_network_flows_trading_interval_facility_code", "trading_interval", "network_id", "network_region"),
-    )
-
-
-class AggregateNetworkFlowsV3(Base):
-    __tablename__ = "at_network_flows_v3"
-
-    trading_interval = Column(TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False)
-    network_id = Column(
-        Text, ForeignKey("network.code", name="fk_at_network_flows_network_code"), primary_key=True, index=True, nullable=False
-    )
-    network_region = Column(Text, index=True, primary_key=True, nullable=False)
-    energy_imports = Column(Numeric, nullable=True)
-    energy_exports = Column(Numeric, nullable=True)
-    market_value_imports = Column(Numeric, nullable=True)
-    market_value_exports = Column(Numeric, nullable=True)
-    emissions_imports = Column(Numeric, nullable=True)
-    emissions_exports = Column(Numeric, nullable=True)
-
-    network = relationship("Network")
-
-    __table_args__ = (
-        Index("idx_at_network_flowsy_v3_network_id_trading_interval", "network_id", "trading_interval", postgresql_using="btree"),
-        Index("idx_at_network_flows_v3_trading_interval_facility_code", "trading_interval", "network_id", "network_region"),
     )
 
 
