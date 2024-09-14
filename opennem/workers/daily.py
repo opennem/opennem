@@ -6,13 +6,10 @@ import asyncio
 import logging
 from datetime import datetime, timedelta
 
-from opennem import settings
 from opennem.aggregates.facility_daily import run_aggregate_facility_all_by_year, run_aggregates_facility_year
 from opennem.aggregates.network_demand import run_aggregates_demand_network
 from opennem.aggregates.network_flows import (
-    run_emission_update_day,
     run_flow_updates_all_for_network,
-    run_flow_updates_all_per_year,
 )
 from opennem.aggregates.network_flows_v3 import run_aggregate_flow_for_interval_v3
 from opennem.api.export.map import PriorityType, StatType, get_export_map
@@ -50,17 +47,14 @@ async def daily_catchup_runner(days: int = 2) -> None:
 
     # aggregates
     # 1. flows
-    if settings.flows_and_emissions_v3:
-        # run for days
-        interval_end = get_last_completed_interval_for_network(network=NetworkNEM)
-        interval_start = interval_end - timedelta(days=days, hours=12)
-        run_aggregate_flow_for_interval_v3(
-            network=NetworkNEM,
-            interval_start=interval_start,
-            interval_end=interval_end,
-        )
-    else:
-        run_flow_updates_all_per_year(current_year, 1)
+    # run for days
+    interval_end = get_last_completed_interval_for_network(network=NetworkNEM)
+    interval_start = interval_end - timedelta(days=days, hours=12)
+    run_aggregate_flow_for_interval_v3(
+        network=NetworkNEM,
+        interval_start=interval_start,
+        interval_end=interval_end,
+    )
 
     # 2. facilities
     for network in [NetworkNEM, NetworkWEM, NetworkAEMORooftop, NetworkAPVI]:
@@ -70,8 +64,6 @@ async def daily_catchup_runner(days: int = 2) -> None:
     # 3. network demand
     run_aggregates_demand_network()
     #  flows and flow emissions
-    if not settings.flows_and_emissions_v3:
-        run_emission_update_day(days=days)
 
     # 4. Run Exports
     #  run exports for latest year
@@ -103,17 +95,14 @@ async def daily_runner(days: int = 2) -> None:
 
     # aggregates
     # 1. flows
-    if settings.flows_and_emissions_v3:
-        # run for days
-        interval_end = get_last_completed_interval_for_network(network=NetworkNEM)
-        interval_start = interval_end - timedelta(days=days, hours=12)
-        run_aggregate_flow_for_interval_v3(
-            network=NetworkNEM,
-            interval_start=interval_start,
-            interval_end=interval_end,
-        )
-    else:
-        run_flow_updates_all_per_year(current_year, 1)
+    # run for days
+    interval_end = get_last_completed_interval_for_network(network=NetworkNEM)
+    interval_start = interval_end - timedelta(days=days, hours=12)
+    run_aggregate_flow_for_interval_v3(
+        network=NetworkNEM,
+        interval_start=interval_start,
+        interval_end=interval_end,
+    )
 
     # 2. facilities
     for network in [NetworkNEM, NetworkWEM, NetworkAEMORooftop, NetworkAPVI]:
@@ -121,10 +110,6 @@ async def daily_runner(days: int = 2) -> None:
 
     # 3. network demand
     run_aggregates_demand_network()
-
-    #  flows and flow emissions
-    if not settings.flows_and_emissions_v3:
-        run_emission_update_day(days=days)
 
     # 4. Run Exports
     #  run exports for latest year

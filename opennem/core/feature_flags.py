@@ -5,7 +5,6 @@ from opennem import settings
 FEATURE_FLAG_LIST = [
     "workers_run",
     "run_crawlers",
-    "flows_and_emissions_v3",
     "redirect_api_static",
     "show_emissions_in_power_outputs",
     "show_emission_factors_in_power_outputs",
