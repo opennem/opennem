@@ -135,7 +135,6 @@ class OpennemSettings(BaseSettings):
 
     # feature flags
     run_crawlers: bool = True  # do we enable the crawlers
-    flows_and_emissions_v3: bool = True  #
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
     show_emissions_in_power_outputs: bool = True  # show emissions in power outputs
     show_emission_factors_in_power_outputs: bool = True  # show emissions in power outputs
