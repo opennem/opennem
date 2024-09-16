@@ -9,6 +9,7 @@ from opennem.core.network_regions import get_network_region_name
 from opennem.core.units import get_unit_by_value
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
+    MilestoneFueltechGrouping,
     MilestonePeriod,
     MilestoneRecordOutputSchema,
     MilestoneRecordSchema,
@@ -66,6 +67,16 @@ def check_milestone_is_new(milestone: MilestoneRecordSchema, milestone_previous:
     return _op(milestone.value, milestone_previous.value)
 
 
+def get_milestone_fueltech_label(fueltech: MilestoneFueltechGrouping) -> str:
+    """get a milestone fueltech label"""
+    if fueltech == MilestoneFueltechGrouping.battery_charging:
+        return "Battery (charging)"
+    elif fueltech == MilestoneFueltechGrouping.battery_discharging:
+        return "Battery (discharging)"
+    else:
+        return fueltech.value.capitalize()
+
+
 def get_record_description(
     milestone: MilestoneRecordSchema,
     include_value: bool = False,
@@ -78,7 +89,7 @@ def get_record_description(
         else translate_bucket_size_to_english(milestone.period).capitalize()
         if milestone.period
         else None,
-        f"{milestone.fueltech.label.lower()}" if milestone.fueltech else None,
+        f"{get_milestone_fueltech_label(milestone.fueltech)}" if milestone.fueltech else None,
         f"{get_milestone_type_label(milestone.metric)}" if milestone.metric else None,
         f"{milestone.aggregate.value.lower()}" if milestone.aggregate else None,
         "record for",

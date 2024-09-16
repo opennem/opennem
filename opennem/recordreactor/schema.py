@@ -8,7 +8,6 @@ from enum import Enum
 
 from pydantic import UUID4, BaseModel, computed_field
 
-from opennem.schema.fueltech_group import FueltechGroupSchema
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.units import UnitDefinition
 from opennem.utils.seasons import map_date_start_to_season
@@ -33,13 +32,33 @@ class MilestoneType(str, Enum):
 class MilestonePeriod(str, Enum):
     interval = "interval"
     day = "day"
-    week = "week"
     week_rolling = "7d"
     month = "month"
     quarter = "quarter"
     season = "season"
     year = "year"
     financial_year = "financial_year"
+
+
+class MilestoneFueltechGrouping(str, Enum):
+    """
+    Enum representing different fuel technology groupings for milestones in the OpenNEM project.
+
+    These groupings are used to categorise and analyse energy production and consumption
+    across various technologies in the Australian electricity system.
+    """
+
+    battery_charging = "battery_charging"
+    battery_discharging = "battery_discharging"
+    bioenergy = "bioenergy"
+    coal = "coal"
+    demand = "demand"
+    distillate = "distillate"
+    gas = "gas"
+    hydro = "hydro"
+    pumps = "pumps"
+    solar = "solar"
+    wind = "wind"
 
 
 class MilestoneRecordSchema(BaseModel):
@@ -50,7 +69,7 @@ class MilestoneRecordSchema(BaseModel):
     unit: UnitDefinition
     network: NetworkSchema
     network_region: str | None = None
-    fueltech: FueltechGroupSchema | None = None
+    fueltech: MilestoneFueltechGrouping | None = None
     value: int | float | None = None
 
     @computed_field
@@ -83,9 +102,9 @@ class MilestoneMetadataSchema(BaseModel):
     aggregates: list[MilestoneAggregate]
     milestone_type: list[MilestoneType]
     periods: list[MilestonePeriod]
+    fueltechs: list[MilestoneFueltechGrouping]
     networks: list[NetworkSchema]
     network_regions: list[str] | None = None
-    fueltechs: list[FueltechGroupSchema]
 
 
 def get_milestone_network_id_map(network_id: str) -> str:

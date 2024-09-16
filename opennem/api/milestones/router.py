@@ -10,17 +10,16 @@ from starlette.exceptions import HTTPException
 
 from opennem.api.keys import api_protected
 from opennem.api.schema import APIV4ResponseSchema
-from opennem.core.fueltech_group import get_fueltech_groups
 from opennem.db import get_scoped_session
 from opennem.recordreactor.controllers import map_milestone_output_records_from_db
 from opennem.recordreactor.schema import (
     MILESTONE_SUPPORTED_NETWORKS,
     MilestoneAggregate,
+    MilestoneFueltechGrouping,
     MilestoneMetadataSchema,
     MilestonePeriod,
     MilestoneType,
 )
-from opennem.schema.fueltech_group import FueltechGroupSchema
 from opennem.schema.network import NetworkSchema
 
 from .queries import get_milestone_record, get_milestone_record_ids, get_milestone_records
@@ -379,8 +378,8 @@ async def get_milestone_metadata() -> MilestoneMetadataSchema:
         aggregates=list(MilestoneAggregate),
         milestone_type=list(MilestoneType),
         periods=list(MilestonePeriod),
+        fueltechs=list(MilestoneFueltechGrouping),
         networks=MILESTONE_SUPPORTED_NETWORKS,
-        fueltechs=get_fueltech_groups() + [FueltechGroupSchema(code="demand", label="Demand")],
     )
 
     return metadata

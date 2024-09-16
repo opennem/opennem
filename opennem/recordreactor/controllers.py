@@ -7,6 +7,7 @@ from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit_by_value
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
+    MilestoneFueltechGrouping,
     MilestonePeriod,
     MilestoneRecordOutputSchema,
     MilestoneRecordSchema,
@@ -107,7 +108,7 @@ def map_milestone_output_schema_to_record(milestone: MilestoneRecordOutputSchema
         milestone_record["network_region"] = milestone.network_region
 
     if milestone.fueltech_id:
-        milestone_record["fueltech"] = get_fueltech_group(milestone.fueltech_id)
+        milestone_record["fueltech"] = MilestoneFueltechGrouping(milestone.fueltech_id)
 
     milestone_model = MilestoneRecordSchema(**milestone_record)
     return milestone_model
