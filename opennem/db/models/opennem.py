@@ -479,20 +479,6 @@ class AggregateFacilityDaily(Base):
     market_value = Column(Numeric, nullable=True)
     emissions = Column(Numeric, nullable=True)
 
-    __table_args__ = (
-        Index("idx_at_facility_day_facility_code_trading_interval", "facility_code", "trading_day", postgresql_using="btree"),
-        Index("idx_at_facility_daily_network_id_trading_interval", "network_id", "trading_day", postgresql_using="btree"),
-        Index("idx_at_facility_daily_trading_interval_facility_code", "trading_day", "facility_code"),
-        Index(
-            "idx_at_facility_daily_facility_code_network_id_trading_day",
-            "network_id",
-            "facility_code",
-            "trading_day",
-            unique=True,
-            postgresql_using="btree",
-        ),
-    )
-
 
 class AggregateNetworkFlows(Base):
     __tablename__ = "at_network_flows"
@@ -554,6 +540,7 @@ class Milestones(Base):
     description: Mapped[str | None] = mapped_column(String, nullable=True)
     description_long: Mapped[str] = mapped_column(String, nullable=True)
     previous_instance_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), server_default=func.now())
 
     __table_args__ = (
         UniqueConstraint("record_id", "interval", name="excl_milestone_record_id_interval"),
