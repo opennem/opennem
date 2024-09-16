@@ -21,11 +21,12 @@ class MilestoneAggregate(str, Enum):
     high = "high"
 
 
-class MilestoneMetric(str, Enum):
-    demand = "demand"
+class MilestoneType(str, Enum):
+    demand_power = "demand.power"
+    demand_energy = "demand.energy"
     price = "price"
-    power = "power"
-    energy = "energy"
+    generated_power = "generated.power"
+    generated_energy = "generated.energy"
     emissions = "emissions"
 
 
@@ -43,7 +44,7 @@ class MilestonePeriod(str, Enum):
 class MilestoneRecordSchema(BaseModel):
     interval: datetime
     aggregate: MilestoneAggregate
-    metric: MilestoneMetric
+    metric: MilestoneType
     period: MilestonePeriod
     unit: UnitDefinition
     network: NetworkSchema
@@ -79,7 +80,7 @@ class MilestoneRecordOutputSchema(BaseModel):
 
 class MilestoneMetadataSchema(BaseModel):
     aggregates: list[MilestoneAggregate]
-    metrics: list[MilestoneMetric]
+    type: list[MilestoneType]
     periods: list[MilestonePeriod]
     networks: list[NetworkSchema]
     network_regions: list[str] | None = None

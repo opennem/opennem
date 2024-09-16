@@ -15,7 +15,7 @@ from opennem.api.milestones.queries import get_milestone_record, get_milestone_r
 from opennem.db import get_write_session
 from opennem.db.models.opennem import Milestones
 from opennem.recordreactor.controllers import map_milestone_output_records_from_db, map_milestone_output_schema_to_record
-from opennem.recordreactor.schema import MilestoneAggregate, MilestoneMetric, MilestonePeriod, MilestoneRecordSchema
+from opennem.recordreactor.schema import MilestoneAggregate, MilestonePeriod, MilestoneRecordSchema, MilestoneType
 from opennem.schema.network import NetworkNEM
 
 logger = logging.getLogger("opennem.recordreactor.significance")
@@ -55,11 +55,11 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
 
     # Metric significance
     metric_scores = {
-        MilestoneMetric.demand: 4,
-        MilestoneMetric.price: 6,
-        MilestoneMetric.power: 1,
-        MilestoneMetric.energy: 9,
-        MilestoneMetric.emissions: 9,
+        MilestoneType.demand_power: 4,
+        MilestoneType.price: 6,
+        MilestoneType.generated_power: 1,
+        MilestoneType.generated_energy: 9,
+        MilestoneType.emissions: 9,
     }
     metric_score = metric_scores[milestone.metric] * MilestoneSignificanceWeights.METRIC.value
 

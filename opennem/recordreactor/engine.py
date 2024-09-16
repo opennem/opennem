@@ -12,7 +12,7 @@ from opennem.recordreactor.buckets import get_period_start_end, is_end_of_period
 from opennem.recordreactor.processors.demand import run_price_demand_milestone_for_interval
 from opennem.recordreactor.processors.generation import run_generation_energy_emissions_milestones
 from opennem.recordreactor.processors.power import run_power_milestones
-from opennem.recordreactor.schema import MilestoneMetric, MilestonePeriod
+from opennem.recordreactor.schema import MilestonePeriod, MilestoneType
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM, NetworkWEMDE
 from opennem.utils.dates import get_last_completed_interval_for_network
 
@@ -22,11 +22,11 @@ logger = logging.getLogger("opennem.recordreactor.engine")
 _DEFAULT_NUM_TASKS = 2
 
 _DEFAULT_METRICS = [
-    MilestoneMetric.demand,
-    MilestoneMetric.price,
-    MilestoneMetric.power,
-    MilestoneMetric.energy,
-    MilestoneMetric.emissions,
+    MilestoneType.demand_power,
+    MilestoneType.price,
+    MilestoneType.generated_power,
+    MilestoneType.generated_energy,
+    MilestoneType.emissions,
 ]
 
 _DEFAULT_BUCKET_SIZES = [
@@ -46,7 +46,7 @@ _DEFAULT_NETWORKS = [NetworkNEM, NetworkWEM, NetworkWEMDE]
 async def run_milestone_engine(
     start_interval: datetime,
     end_interval: datetime | None = None,
-    metrics: list[MilestoneMetric] | None = None,
+    metrics: list[MilestoneType] | None = None,
     networks: list[NetworkSchema] | None = None,
     periods: list[MilestonePeriod] | None = None,
     num_tasks: int | None = None,
@@ -108,7 +108,7 @@ async def run_milestone_engine(
                     if settings.dry_run:
                         continue
 
-                    if MilestoneMetric.power in metrics:
+                    if MilestoneType.generated_power in metrics:
                         await run_power_milestones(
                             network=network,
                             bucket_size=bucket_size,
@@ -116,7 +116,7 @@ async def run_milestone_engine(
                             period_end=period_end,
                         )
 
-                    if MilestoneMetric.demand in metrics or MilestoneMetric.price in metrics:
+                    if MilestoneType.demand_power in metrics or MilestoneType.price in metrics:
                         await run_price_demand_milestone_for_interval(
                             network=network,
                             bucket_size=bucket_size,
@@ -124,7 +124,7 @@ async def run_milestone_engine(
                         )
                         # tasks.append(task)
 
-                    if MilestoneMetric.energy in metrics or MilestoneMetric.emissions in metrics:
+                    if MilestoneType.generated_energy in metrics or MilestoneType.emissions in metrics:
                         await run_generation_energy_emissions_milestones(
                             network=network,
                             bucket_size=bucket_size,
@@ -158,6 +158,6 @@ if __name__ == "__main__":
         run_milestone_engine(
             start_interval=start_interval,
             end_interval=end_interval,
-            metrics=[MilestoneMetric.power],
+            metrics=[MilestoneType.generated_power],
         )
     )

@@ -15,9 +15,9 @@ from opennem.db import get_read_session
 from opennem.recordreactor.persistence import persist_milestones
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
-    MilestoneMetric,
     MilestonePeriod,
     MilestoneRecordSchema,
+    MilestoneType,
 )
 from opennem.schema.network import NetworkSchema, NetworkWEM, NetworkWEMDE
 
@@ -75,7 +75,7 @@ async def milestone_aggregate_power_data(
                 MilestoneRecordSchema(
                     interval=row.interval,
                     aggregate=agg,
-                    metric=MilestoneMetric.power,
+                    metric=MilestoneType.generated_power,
                     period=bucket_size,
                     unit=get_unit("power_mega"),
                     network=network,

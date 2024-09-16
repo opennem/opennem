@@ -17,8 +17,8 @@ from opennem.recordreactor.schema import (
     MILESTONE_SUPPORTED_NETWORKS,
     MilestoneAggregate,
     MilestoneMetadataSchema,
-    MilestoneMetric,
     MilestonePeriod,
+    MilestoneType,
 )
 from opennem.schema.fueltech_group import FueltechGroupSchema
 from opennem.schema.network import NetworkSchema
@@ -45,7 +45,7 @@ async def get_milestones(
     date_start: datetime | None = None,
     date_end: datetime | None = None,
     aggregate: MilestoneAggregate | None = None,
-    metric: list[MilestoneMetric] | None = Query(None, description="Metric filter"),
+    metric: list[MilestoneType] | None = Query(None, description="Metric filter"),
     fueltech_id: list[str] | None = Query(None),
     network: list[str] | None = Query(None),
     record_filter: list[str] | None = Query(None, description="Network filter - specify network or network_region ids"),
@@ -86,10 +86,10 @@ async def get_milestones(
 
     if metric:
         for m in metric:
-            if m not in MilestoneMetric.__members__.values():
+            if m not in MilestoneType.__members__.values():
                 raise HTTPException(status_code=400, detail="Invalid metric type")
 
-            metrics_query.append(MilestoneMetric[m])
+            metrics_query.append(MilestoneType[m])
 
     network_schemas: list[NetworkSchema] = []
     network_supported_ids = [network.code for network in MILESTONE_SUPPORTED_NETWORKS]
@@ -289,7 +289,7 @@ async def api_get_milestone_record_ids(
     date_start: datetime | None = None,
     date_end: datetime | None = None,
     aggregate: MilestoneAggregate | None = None,
-    metric: list[MilestoneMetric] | None = Query(None, description="Metric filter"),
+    metric: list[MilestoneType] | None = Query(None, description="Metric filter"),
     fueltech_id: list[str] | None = Query(None),
     network: list[str] | None = Query(None),
     network_region: list[str] | None = Query(None),
@@ -380,7 +380,7 @@ async def get_milestone_metadata() -> MilestoneMetadataSchema:
 
     metadata = MilestoneMetadataSchema(
         aggregates=list(MilestoneAggregate),
-        metrics=list(MilestoneMetric),
+        type=list(MilestoneType),
         periods=list(MilestonePeriod),
         networks=MILESTONE_SUPPORTED_NETWORKS,
         fueltechs=get_fueltech_groups() + [FueltechGroupSchema(code="demand", label="Demand")],

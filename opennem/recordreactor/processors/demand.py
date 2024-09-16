@@ -15,9 +15,9 @@ from opennem.db import get_read_session
 from opennem.recordreactor.persistence import persist_milestones
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
-    MilestoneMetric,
     MilestonePeriod,
     MilestoneRecordSchema,
+    MilestoneType,
 )
 from opennem.schema.fueltech_group import FueltechGroupSchema
 from opennem.schema.network import NetworkSchema
@@ -78,7 +78,7 @@ async def aggregate_demand_and_price_data(
 
     for row in rows:
         for aggregate, metric in itertools.product(
-            [MilestoneAggregate.low, MilestoneAggregate.high], [MilestoneMetric.demand, MilestoneMetric.price]
+            [MilestoneAggregate.low, MilestoneAggregate.high], [MilestoneType.demand_power, MilestoneType.price]
         ):
             milestone_records.append(
                 MilestoneRecordSchema(
@@ -86,11 +86,11 @@ async def aggregate_demand_and_price_data(
                     aggregate=aggregate,
                     metric=metric,
                     period=MilestonePeriod.interval,
-                    unit=get_unit("demand_mega") if metric == MilestoneMetric.demand else get_unit("price_energy_mega"),
+                    unit=get_unit("demand_mega") if metric == MilestoneType.demand_power else get_unit("price_energy_mega"),
                     network=network,
                     network_region=row.network_region if region_group else None,
-                    fueltech=FueltechGroupSchema(code="demand", label="Demand") if metric == MilestoneMetric.demand else None,
-                    value=row.price if metric == MilestoneMetric.price else row.demand_total,
+                    fueltech=FueltechGroupSchema(code="demand", label="Demand") if metric == MilestoneType.demand_power else None,
+                    value=row.price if metric == MilestoneType.price else row.demand_total,
                 )
             )
 

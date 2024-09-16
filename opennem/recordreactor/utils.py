@@ -9,10 +9,10 @@ from opennem.core.network_regions import get_network_region_name
 from opennem.core.units import get_unit_by_value
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
-    MilestoneMetric,
     MilestonePeriod,
     MilestoneRecordOutputSchema,
     MilestoneRecordSchema,
+    MilestoneType,
 )
 from opennem.schema.units import UnitDefinition
 from opennem.utils.seasons import map_date_start_to_season
@@ -89,17 +89,17 @@ def get_record_description(
     return record_description
 
 
-def get_record_unit_by_metric(metric: MilestoneMetric) -> UnitDefinition:
+def get_record_unit_by_metric(metric: MilestoneType) -> UnitDefinition:
     """get a record unit by metric"""
-    if metric == MilestoneMetric.demand:
+    if metric == MilestoneType.demand_power:
         return get_unit_by_value("MW")
-    elif metric == MilestoneMetric.price:
+    elif metric == MilestoneType.price:
         return get_unit_by_value("AUD")
-    elif metric == MilestoneMetric.power:
+    elif metric == MilestoneType.generated_power:
         return get_unit_by_value("MW")
-    elif metric == MilestoneMetric.energy:
+    elif metric == MilestoneType.generated_energy:
         return get_unit_by_value("MWh")
-    elif metric == MilestoneMetric.emissions:
+    elif metric == MilestoneType.emissions:
         return get_unit_by_value("tCO2e")
     else:
         raise ValueError(f"Invalid metric: {metric}")
@@ -136,7 +136,7 @@ if __name__ == "__main__":
     test_record = MilestoneRecordSchema(
         interval=datetime.now(),
         aggregate=MilestoneAggregate.high,
-        metric=MilestoneMetric.demand,
+        metric=MilestoneType.demand_power,
         period=MilestonePeriod.year,
         value=100,
         unit=get_unit_by_value("MW"),
@@ -150,7 +150,7 @@ if __name__ == "__main__":
     test_record2 = MilestoneRecordSchema(
         interval=datetime.now(),
         aggregate=MilestoneAggregate.low,
-        metric=MilestoneMetric.energy,
+        metric=MilestoneType.generated_energy,
         period=MilestonePeriod.financial_year,
         value=100,
         unit=get_unit_by_value("MWh"),
