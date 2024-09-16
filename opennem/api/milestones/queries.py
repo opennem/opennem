@@ -62,10 +62,7 @@ async def get_milestone_records(
         select_query = select_query.where(Milestones.aggregate == aggregate)
 
     if milestone_types:
-        print(milestone_types)
         select_query = select_query.where(Milestones.metric.in_(milestone_types))
-    else:
-        print("no milestone types")
 
     if networks:
         select_query = select_query.where(Milestones.network_id.in_([network.code for network in networks]))

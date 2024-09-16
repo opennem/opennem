@@ -35,6 +35,18 @@ def translate_bucket_size_to_english(bucket_size: str) -> str:
         return bucket_size
 
 
+def get_milestone_type_label(milestone_type: MilestoneType) -> str:
+    """get a milestone type label"""
+    if milestone_type == MilestoneType.demand_power:
+        return "Demand"
+    elif milestone_type == MilestoneType.price:
+        return "Price"
+    elif milestone_type == MilestoneType.generated_power:
+        return "Generation"
+    else:
+        return milestone_type.value.upper()
+
+
 def check_milestone_is_new(milestone: MilestoneRecordSchema, milestone_previous: MilestoneRecordOutputSchema) -> bool:
     """
     Checks if the given milestone is new or has changed
@@ -67,7 +79,7 @@ def get_record_description(
         if milestone.period
         else None,
         f"{milestone.fueltech.label.lower()}" if milestone.fueltech else None,
-        f"{milestone.metric.value.lower()}" if milestone.metric else None,
+        f"{get_milestone_type_label(milestone.metric)}" if milestone.metric else None,
         f"{milestone.aggregate.value.lower()}" if milestone.aggregate else None,
         "record for",
         milestone.network.code,
