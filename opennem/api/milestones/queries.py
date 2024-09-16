@@ -168,7 +168,7 @@ async def get_milestone_record_ids(
     date_start: datetime | None = None,
     date_end: datetime | None = None,
     aggregate: MilestoneAggregate | None = None,
-    metric: list[MilestoneType] | None = None,
+    milestone_type: list[MilestoneType] | None = None,
     fueltech_id: list[str] | None = None,
     network: list[str] | None = None,
     network_region: list[str] | None = None,
@@ -204,8 +204,8 @@ async def get_milestone_record_ids(
     if aggregate:
         query = query.where(Milestones.aggregate == aggregate)
 
-    if metric:
-        query = query.where(Milestones.metric.in_(metric))
+    if milestone_type:
+        query = query.where(Milestones.metric.in_(milestone_type))
 
     if fueltech_id:
         query = query.where(Milestones.fueltech_id.in_(fueltech_id))
