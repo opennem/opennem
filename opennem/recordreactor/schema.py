@@ -16,20 +16,45 @@ MILESTONE_SUPPORTED_NETWORKS = [NetworkNEM, NetworkWEM]
 
 
 class MilestoneAggregate(str, Enum):
+    """
+    Enum representing different types of aggregates for milestones in the OpenNEM project.
+
+    These aggregates are used to summarise data over different time intervals.
+
+    This determines the type of aggregation that is applied to the data.
+    """
+
     low = "low"
     high = "high"
 
 
 class MilestoneType(str, Enum):
-    demand_power = "demand.power"
-    demand_energy = "demand.energy"
+    """
+    Enum representing different types of milestones in the OpenNEM project.
+
+    These types are used to categorise and analyse energy production and consumption
+    across various technologies in the Australian electricity system.
+
+    This determines the source of data and query for the milestone.
+    """
+
+    demand = "demand"
     price = "price"
-    generated_power = "generated.power"
-    generated_energy = "generated.energy"
+    power = "power"
+    energy = "energy"
     emissions = "emissions"
+    renewable_proportion = "renewable_proportion"
 
 
 class MilestonePeriod(str, Enum):
+    """
+    Enum representing different periods for milestones in the OpenNEM project.
+
+    These periods are used to aggregate data over different time intervals.
+
+    This determines the window of time that a milestone covers. ie. the start and end dates in queries
+    """
+
     interval = "interval"
     day = "day"
     week_rolling = "7d"
@@ -59,6 +84,8 @@ class MilestoneFueltechGrouping(str, Enum):
     pumps = "pumps"
     solar = "solar"
     wind = "wind"
+    renewables = "renewables"
+    fossils = "fossils"
 
 
 class MilestoneRecordSchema(BaseModel):

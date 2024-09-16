@@ -22,11 +22,12 @@ logger = logging.getLogger("opennem.recordreactor.engine")
 _DEFAULT_NUM_TASKS = 2
 
 _DEFAULT_METRICS = [
-    MilestoneType.demand_power,
+    MilestoneType.demand,
     MilestoneType.price,
-    MilestoneType.generated_power,
-    MilestoneType.generated_energy,
+    MilestoneType.power,
+    MilestoneType.energy,
     MilestoneType.emissions,
+    # MilestoneType.renewable_proportion
 ]
 
 _DEFAULT_BUCKET_SIZES = [
@@ -108,7 +109,7 @@ async def run_milestone_engine(
                     if settings.dry_run:
                         continue
 
-                    if MilestoneType.generated_power in metrics:
+                    if MilestoneType.power in metrics:
                         await run_power_milestones(
                             network=network,
                             bucket_size=bucket_size,
@@ -116,7 +117,7 @@ async def run_milestone_engine(
                             period_end=period_end,
                         )
 
-                    if MilestoneType.demand_power in metrics or MilestoneType.price in metrics:
+                    if MilestoneType.demand in metrics or MilestoneType.price in metrics:
                         await run_price_demand_milestone_for_interval(
                             network=network,
                             bucket_size=bucket_size,
@@ -124,7 +125,7 @@ async def run_milestone_engine(
                         )
                         # tasks.append(task)
 
-                    if MilestoneType.generated_energy in metrics or MilestoneType.emissions in metrics:
+                    if MilestoneType.energy in metrics or MilestoneType.emissions in metrics:
                         await run_generation_energy_emissions_milestones(
                             network=network,
                             bucket_size=bucket_size,
@@ -159,6 +160,6 @@ if __name__ == "__main__":
         run_milestone_engine(
             start_interval=test_start_interval,
             end_interval=end_interval,
-            metrics=[MilestoneType.demand_power],
+            metrics=[MilestoneType.demand],
         )
     )

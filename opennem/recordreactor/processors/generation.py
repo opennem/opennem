@@ -49,7 +49,7 @@ async def aggregate_generation_and_emissions_data(
             MilestoneRecordSchema(
                 interval=date_start,
                 aggregate=MilestoneAggregate.low,
-                metric=MilestoneType.generated_power,
+                metric=MilestoneType.power,
                 period=bucket_size,
                 unit=get_unit("power_mega"),
                 network=network,
@@ -63,7 +63,7 @@ async def aggregate_generation_and_emissions_data(
             MilestoneRecordSchema(
                 interval=date_start,
                 aggregate=MilestoneAggregate.high,
-                metric=MilestoneType.generated_power,
+                metric=MilestoneType.power,
                 period=bucket_size,
                 unit=get_unit("power_mega"),
                 network=network,
@@ -77,7 +77,7 @@ async def aggregate_generation_and_emissions_data(
             MilestoneRecordSchema(
                 interval=date_start,
                 aggregate=MilestoneAggregate.low,
-                metric=MilestoneType.generated_energy,
+                metric=MilestoneType.energy,
                 period=bucket_size,
                 unit=get_unit("energy_mega"),
                 network=network,
@@ -91,7 +91,7 @@ async def aggregate_generation_and_emissions_data(
             MilestoneRecordSchema(
                 interval=date_start,
                 aggregate=MilestoneAggregate.high,
-                metric=MilestoneType.generated_energy,
+                metric=MilestoneType.energy,
                 period=bucket_size,
                 unit=get_unit("energy_mega"),
                 network=network,

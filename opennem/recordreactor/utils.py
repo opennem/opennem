@@ -38,11 +38,11 @@ def translate_bucket_size_to_english(bucket_size: str) -> str:
 
 def get_milestone_type_label(milestone_type: MilestoneType) -> str:
     """get a milestone type label"""
-    if milestone_type == MilestoneType.demand_power:
+    if milestone_type == MilestoneType.demand:
         return "Demand"
     elif milestone_type == MilestoneType.price:
         return "Price"
-    elif milestone_type == MilestoneType.generated_power:
+    elif milestone_type == MilestoneType.power:
         return "Generation"
     else:
         return milestone_type.value.upper()
@@ -114,13 +114,13 @@ def get_record_description(
 
 def get_record_unit_by_metric(metric: MilestoneType) -> UnitDefinition:
     """get a record unit by metric"""
-    if metric == MilestoneType.demand_power:
+    if metric == MilestoneType.demand:
         return get_unit_by_value("MW")
     elif metric == MilestoneType.price:
         return get_unit_by_value("AUD")
-    elif metric == MilestoneType.generated_power:
+    elif metric == MilestoneType.power:
         return get_unit_by_value("MW")
-    elif metric == MilestoneType.generated_energy:
+    elif metric == MilestoneType.energy:
         return get_unit_by_value("MWh")
     elif metric == MilestoneType.emissions:
         return get_unit_by_value("tCO2e")
@@ -159,7 +159,7 @@ if __name__ == "__main__":
     test_record = MilestoneRecordSchema(
         interval=datetime.now(),
         aggregate=MilestoneAggregate.high,
-        metric=MilestoneType.demand_power,
+        metric=MilestoneType.demand,
         period=MilestonePeriod.year,
         value=100,
         unit=get_unit_by_value("MW"),
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     test_record2 = MilestoneRecordSchema(
         interval=datetime.now(),
         aggregate=MilestoneAggregate.low,
-        metric=MilestoneType.generated_energy,
+        metric=MilestoneType.energy,
         period=MilestonePeriod.financial_year,
         value=100,
         unit=get_unit_by_value("MWh"),

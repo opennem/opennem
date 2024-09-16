@@ -55,11 +55,11 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
 
     # Metric significance
     metric_scores = {
-        MilestoneType.demand_power: 8,
+        MilestoneType.demand: 8,
         MilestoneType.demand_energy: 4,
         MilestoneType.price: 6,
-        MilestoneType.generated_power: 1,
-        MilestoneType.generated_energy: 9,
+        MilestoneType.power: 1,
+        MilestoneType.energy: 9,
         MilestoneType.emissions: 9,
     }
     metric_score = metric_scores[milestone.metric] * MilestoneSignificanceWeights.METRIC.value

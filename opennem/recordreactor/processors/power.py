@@ -75,7 +75,7 @@ async def milestone_aggregate_power_data(
                 MilestoneRecordSchema(
                     interval=row.interval,
                     aggregate=agg,
-                    metric=MilestoneType.generated_power,
+                    metric=MilestoneType.power,
                     period=bucket_size,
                     unit=get_unit("power_mega"),
                     network=network,
