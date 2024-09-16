@@ -66,7 +66,7 @@ deprecation = "^2.1.0"
 asgiref = "^3.8.1"
 chardet = "^5.2.0"
 tqdm = "^4.66.5"
-logfire = {extras = ["fastapi", "httpx", "requests", "sqlalchemy"], version = "^0.51.0"}
+logfire = {extras = ["asyncpg", "fastapi", "httpx", "redis", "requests", "sqlalchemy"], version = "^0.52.0"}
 aioboto3 = "^13.1.1"
 arq = "^0.26.1"
 asyncclick = "^8.1.7.2"
