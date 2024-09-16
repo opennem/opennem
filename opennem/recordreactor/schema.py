@@ -34,6 +34,7 @@ class MilestonePeriod(str, Enum):
     interval = "interval"
     day = "day"
     week = "week"
+    week_rolling = "7d"
     month = "month"
     quarter = "quarter"
     season = "season"
