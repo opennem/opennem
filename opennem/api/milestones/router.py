@@ -45,7 +45,7 @@ async def get_milestones(
     date_start: datetime | None = None,
     date_end: datetime | None = None,
     aggregate: MilestoneAggregate | None = None,
-    metric: list[MilestoneType] | None = Query(None, description="Metric filter"),
+    milestone_type: list[MilestoneType] | None = Query(None, description="Milestone type filter"),
     fueltech_id: list[str] | None = Query(None),
     network: list[str] | None = Query(None),
     record_filter: list[str] | None = Query(None, description="Network filter - specify network or network_region ids"),
@@ -82,14 +82,11 @@ async def get_milestones(
 
         aggregate = MilestoneAggregate[aggregate]
 
-    metrics_query: list[str] = []
+    milestone_type_query: list[str] = []
 
-    if metric:
-        for m in metric:
-            if m not in MilestoneType.__members__.values():
-                raise HTTPException(status_code=400, detail="Invalid metric type")
-
-            metrics_query.append(MilestoneType[m])
+    if milestone_type:
+        for m in milestone_type:
+            milestone_type_query.append(MilestoneType(m))
 
     network_schemas: list[NetworkSchema] = []
     network_supported_ids = [network.code for network in MILESTONE_SUPPORTED_NETWORKS]
@@ -152,7 +149,7 @@ async def get_milestones(
             date_end=date_end,
             aggregate=aggregate,
             fueltech_id=fueltech_id,
-            metrics=metrics_query,
+            milestone_types=milestone_type_query,
             networks=network_schemas,
             network_regions=network_region,
             record_filter=record_filter,
@@ -380,7 +377,7 @@ async def get_milestone_metadata() -> MilestoneMetadataSchema:
 
     metadata = MilestoneMetadataSchema(
         aggregates=list(MilestoneAggregate),
-        type=list(MilestoneType),
+        milestone_type=list(MilestoneType),
         periods=list(MilestonePeriod),
         networks=MILESTONE_SUPPORTED_NETWORKS,
         fueltechs=get_fueltech_groups() + [FueltechGroupSchema(code="demand", label="Demand")],

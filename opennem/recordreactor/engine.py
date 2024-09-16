@@ -153,11 +153,12 @@ if __name__ == "__main__":
 
     nem_start = datetime.fromisoformat("1998-12-08 00:00:00")
     start_interval = datetime.fromisoformat("1999-03-26 04:55:00")
+    test_start_interval = datetime.fromisoformat("2024-08-01 00:00:00")
     end_interval = datetime.fromisoformat("2024-08-15 00:00:00")
     asyncio.run(
         run_milestone_engine(
-            start_interval=start_interval,
+            start_interval=test_start_interval,
             end_interval=end_interval,
-            metrics=[MilestoneType.generated_power],
+            metrics=[MilestoneType.demand_power],
         )
     )

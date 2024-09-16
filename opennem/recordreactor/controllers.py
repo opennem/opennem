@@ -28,6 +28,8 @@ def map_milestone_output_records_from_db(db_records: list[dict]) -> list[Milesto
         # make outputs timezone aware
         milestone_interval = milestone_interval.replace(tzinfo=ZoneInfo(network.timezone))
 
+        logger.info(db_record)
+
         milestone_record = {
             "instance_id": db_record["instance_id"],
             "record_id": db_record["record_id"].lower(),

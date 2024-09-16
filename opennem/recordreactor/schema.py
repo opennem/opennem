@@ -81,7 +81,7 @@ class MilestoneRecordOutputSchema(BaseModel):
 
 class MilestoneMetadataSchema(BaseModel):
     aggregates: list[MilestoneAggregate]
-    type: list[MilestoneType]
+    milestone_type: list[MilestoneType]
     periods: list[MilestonePeriod]
     networks: list[NetworkSchema]
     network_regions: list[str] | None = None
