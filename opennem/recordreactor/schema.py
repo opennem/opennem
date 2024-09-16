@@ -89,6 +89,11 @@ class MilestoneFueltechGrouping(str, Enum):
 
 
 class MilestoneRecordSchema(BaseModel):
+    """
+    Internal representation of a milestone record
+
+    """
+
     interval: datetime
     aggregate: MilestoneAggregate
     metric: MilestoneType
@@ -107,6 +112,10 @@ class MilestoneRecordSchema(BaseModel):
 
 
 class MilestoneRecordOutputSchema(BaseModel):
+    """
+    API output schema for a milestone record
+    """
+
     record_id: str
     interval: datetime
     instance_id: UUID4
@@ -126,6 +135,10 @@ class MilestoneRecordOutputSchema(BaseModel):
 
 
 class MilestoneMetadataSchema(BaseModel):
+    """
+    Metadata schema for a milestone
+    """
+
     aggregates: list[MilestoneAggregate]
     milestone_type: list[MilestoneType]
     periods: list[MilestonePeriod]
