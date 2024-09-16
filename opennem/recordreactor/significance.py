@@ -45,7 +45,6 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
         MilestonePeriod.interval: 1,
         MilestonePeriod.day: 9,
         MilestonePeriod.week_rolling: 2,
-        MilestonePeriod.week: 2,
         MilestonePeriod.month: 9,
         MilestonePeriod.quarter: 5,
         MilestonePeriod.season: 5,
@@ -76,7 +75,16 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
     # Fueltech group significance
     fueltech_score = 0
     if milestone.fueltech:
-        if milestone.fueltech.renewable:
+        # if it's renewable
+        if milestone.fueltech.value in [
+            "solar",
+            "wind",
+            "hydro",
+            "bioenergy",
+            "pumps",
+            "battery_charging",
+            "battery_discharging",
+        ]:
             fueltech_score = 10 if milestone.aggregate == MilestoneAggregate.high else 3
         else:
             fueltech_score = 5
@@ -89,7 +97,7 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
     # some fueltechs that are dispatchable or we don't have about the lows since they're often 0
     if (
         milestone.fueltech
-        and milestone.fueltech.code in ["distillate", "solar", "battery_charging", "battery_discharging", "hydro", "pumps"]
+        and milestone.fueltech.value in ["distillate", "solar", "battery_charging", "battery_discharging", "hydro", "pumps"]
         and milestone.aggregate == MilestoneAggregate.low
     ):
         return 1
