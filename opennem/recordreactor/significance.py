@@ -44,6 +44,7 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
     period_scores = {
         MilestonePeriod.interval: 1,
         MilestonePeriod.day: 9,
+        MilestonePeriod.week_rolling: 2,
         MilestonePeriod.week: 2,
         MilestonePeriod.month: 9,
         MilestonePeriod.quarter: 5,
@@ -55,7 +56,8 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
 
     # Metric significance
     metric_scores = {
-        MilestoneType.demand_power: 4,
+        MilestoneType.demand_power: 8,
+        MilestoneType.demand_energy: 4,
         MilestoneType.price: 6,
         MilestoneType.generated_power: 1,
         MilestoneType.generated_energy: 9,
@@ -90,6 +92,10 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
         and milestone.fueltech.code in ["distillate", "solar", "battery_charging", "battery_discharging", "hydro", "pumps"]
         and milestone.aggregate == MilestoneAggregate.low
     ):
+        return 1
+
+    # power metrics just follow network min/max boundaries so aren't significant
+    if milestone.metric == MilestoneType.price:
         return 1
 
     # Calculate total score
