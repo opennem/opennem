@@ -30,8 +30,8 @@ def is_end_of_period(dt: datetime, bucket_size: MilestonePeriod) -> bool:
             return True
         case MilestonePeriod.day:
             return dt.hour == 0 and dt.minute == 0 and dt.second == 0
-        case MilestonePeriod.week:
-            return dt.weekday() == 0 and dt.hour == 0 and dt.minute == 0 and dt.second == 0
+        case MilestonePeriod.week_rolling:
+            return True
         case MilestonePeriod.month:
             return dt.day == 1 and dt.hour == 0 and dt.minute == 0 and dt.second == 0
         case MilestonePeriod.quarter:
@@ -68,10 +68,8 @@ def get_period_start_end(dt: datetime, bucket_size: MilestonePeriod, network: Ne
             # day returns midnight this morning and end of current day
             start = dt.replace(hour=0, minute=0, second=0, microsecond=0)
             return start - timedelta(days=1), start
-        case MilestonePeriod.week:
-            # week returns monday this week at midnight and end of current week at midnight
-            start = (dt - timedelta(days=dt.weekday())).replace(hour=0, minute=0, second=0, microsecond=0)
-            return start - timedelta(days=7), start
+        case MilestonePeriod.week_rolling:
+            return dt, dt + timedelta(days=7)
         case MilestonePeriod.month:
             start = dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
             if start.month == 1:
