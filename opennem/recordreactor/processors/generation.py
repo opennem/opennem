@@ -5,13 +5,13 @@ RecordReactor generation methods
 import logging
 from datetime import datetime
 
-from opennem.core.fueltech_group import get_fueltech_group
 from opennem.core.units import get_unit
 from opennem.queries.energy import get_fueltech_generated_energy_emissions, get_fueltech_interval_energy_emissions
 from opennem.recordreactor.buckets import get_bucket_interval
 from opennem.recordreactor.persistence import persist_milestones
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
+    MilestoneFueltechGrouping,
     MilestonePeriod,
     MilestoneRecordSchema,
     MilestoneType,
@@ -54,7 +54,7 @@ async def aggregate_generation_and_emissions_data(
                 unit=get_unit("power_mega"),
                 network=network,
                 network_region=row.network_region if region_group else None,
-                fueltech=get_fueltech_group(row.fueltech_id),
+                fueltech=MilestoneFueltechGrouping(row.fueltech_id),
                 value=row.fueltech_generated,
             )
         )
@@ -68,7 +68,7 @@ async def aggregate_generation_and_emissions_data(
                 unit=get_unit("power_mega"),
                 network=network,
                 network_region=row.network_region if region_group else None,
-                fueltech=get_fueltech_group(row.fueltech_id),
+                fueltech=MilestoneFueltechGrouping(row.fueltech_id),
                 value=row.fueltech_generated,
             )
         )
@@ -82,7 +82,7 @@ async def aggregate_generation_and_emissions_data(
                 unit=get_unit("energy_mega"),
                 network=network,
                 network_region=row.network_region if region_group else None,
-                fueltech=get_fueltech_group(row.fueltech_id),
+                fueltech=MilestoneFueltechGrouping(row.fueltech_id),
                 value=row.fueltech_energy,
             )
         )
@@ -96,7 +96,7 @@ async def aggregate_generation_and_emissions_data(
                 unit=get_unit("energy_mega"),
                 network=network,
                 network_region=row.network_region if region_group else None,
-                fueltech=get_fueltech_group(row.fueltech_id),
+                fueltech=MilestoneFueltechGrouping(row.fueltech_id),
                 value=row.fueltech_energy,
             )
         )
@@ -110,7 +110,7 @@ async def aggregate_generation_and_emissions_data(
                 unit=get_unit("emissions"),
                 network=network,
                 network_region=row.network_region if region_group else None,
-                fueltech=get_fueltech_group(row.fueltech_id),
+                fueltech=MilestoneFueltechGrouping(row.fueltech_id),
                 value=row.fueltech_emissions,
             )
         )
@@ -124,7 +124,7 @@ async def aggregate_generation_and_emissions_data(
                 unit=get_unit("emissions"),
                 network=network,
                 network_region=row.network_region if region_group else None,
-                fueltech=get_fueltech_group(row.fueltech_id),
+                fueltech=MilestoneFueltechGrouping(row.fueltech_id),
                 value=row.fueltech_emissions,
             )
         )

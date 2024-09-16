@@ -58,7 +58,7 @@ async def persist_milestones(
                     milestone_new.network_region = record.network_region
 
                 if record.fueltech:
-                    milestone_new.fueltech_id = record.fueltech.code
+                    milestone_new.fueltech_id = record.fueltech.value
 
                 try:
                     milestone_new = await session.merge(milestone_new)

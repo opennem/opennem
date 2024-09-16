@@ -9,12 +9,12 @@ from itertools import product
 
 from sqlalchemy import text
 
-from opennem.core.fueltech_group import get_fueltech_group
 from opennem.core.units import get_unit
 from opennem.db import get_read_session
 from opennem.recordreactor.persistence import persist_milestones
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
+    MilestoneFueltechGrouping,
     MilestonePeriod,
     MilestoneRecordSchema,
     MilestoneType,
@@ -80,7 +80,7 @@ async def milestone_aggregate_power_data(
                     unit=get_unit("power_mega"),
                     network=network,
                     network_region=row.network_region if group_by_region else None,
-                    fueltech=get_fueltech_group(row.fueltech_group) if group_by_fueltech else None,
+                    fueltech=MilestoneFueltechGrouping(row.fueltech_group) if group_by_fueltech else None,
                     value=row.generation,
                 )
             )

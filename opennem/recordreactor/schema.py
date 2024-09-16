@@ -128,7 +128,7 @@ def get_milestone_record_id(
         "au",
         milestone.network.parent_network or milestone.network.code,
         milestone.network_region,
-        milestone.fueltech.code if milestone.fueltech else None,
+        milestone.fueltech if milestone.fueltech else None,
         milestone.metric.value,
         map_date_start_to_season(milestone.interval) if milestone.period is MilestonePeriod.season else milestone.period.value,
         milestone.aggregate.value,
