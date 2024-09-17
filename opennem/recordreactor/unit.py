@@ -4,26 +4,26 @@ Milestone Units
 This module defines Milestone Units, which are used to define the unit of measure for a milestone.
 """
 
-from opennem.recordreactor.schema import MilestoneUnit, MilestoneUnitSchema
+from opennem.recordreactor.schema import MilestoneType, MilestoneUnitSchema
 
-_MILESTONE_UNITS: dict[MilestoneUnit, MilestoneUnitSchema] = {
-    MilestoneUnit.power: MilestoneUnitSchema(name="power", label="Power", unit="MW", output_format="{:,.0f} MW"),
-    MilestoneUnit.energy: MilestoneUnitSchema(name="energy", label="Energy", unit="MWh", output_format="{:,.0f} MWh"),
-    MilestoneUnit.demand: MilestoneUnitSchema(name="demand", label="Demand", unit="MW", output_format="{:,.0f} MW"),
-    MilestoneUnit.price: MilestoneUnitSchema(name="price", label="Price", unit="AUD", output_format="{:,.2f} AUD"),
-    MilestoneUnit.market_value: MilestoneUnitSchema(
+_MILESTONE_UNITS: dict[MilestoneType, MilestoneUnitSchema] = {
+    MilestoneType.power: MilestoneUnitSchema(name="power", label="Power", unit="MW", output_format="{:,.0f} MW"),
+    MilestoneType.energy: MilestoneUnitSchema(name="energy", label="Energy", unit="MWh", output_format="{:,.0f} MWh"),
+    MilestoneType.demand: MilestoneUnitSchema(name="demand", label="Demand", unit="MW", output_format="{:,.0f} MW"),
+    MilestoneType.price: MilestoneUnitSchema(name="price", label="Price", unit="AUD", output_format="{:,.2f} AUD"),
+    MilestoneType.market_value: MilestoneUnitSchema(
         name="market_value", label="Market Value", unit="AUD", output_format="{:,.2f} AUD"
     ),
-    MilestoneUnit.emissions: MilestoneUnitSchema(
+    MilestoneType.emissions: MilestoneUnitSchema(
         name="emissions", label="Emissions", unit="tCO2e", output_format="{:,.0f} tCO2e"
     ),
-    MilestoneUnit.renewable_proportion: MilestoneUnitSchema(
+    MilestoneType.renewable_proportion: MilestoneUnitSchema(
         name="renewable_proportion", label="Renewable Proportion", unit="%", output_format="{:,.0f}%"
     ),
 }
 
 
-def get_milestone_unit(unit: MilestoneUnit) -> MilestoneUnitSchema:
+def get_milestone_unit(unit: MilestoneType) -> MilestoneUnitSchema:
     """
     Get a milestone unit by name
     """
