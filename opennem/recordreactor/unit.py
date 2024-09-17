@@ -9,6 +9,7 @@ from opennem.recordreactor.schema import MilestoneUnit, MilestoneUnitSchema
 _MILESTONE_UNITS: dict[MilestoneUnit, MilestoneUnitSchema] = {
     MilestoneUnit.power: MilestoneUnitSchema(name="power", label="Power", unit="MW", output_format="{:,.0f} MW"),
     MilestoneUnit.energy: MilestoneUnitSchema(name="energy", label="Energy", unit="MWh", output_format="{:,.0f} MWh"),
+    MilestoneUnit.demand: MilestoneUnitSchema(name="demand", label="Demand", unit="MW", output_format="{:,.0f} MW"),
     MilestoneUnit.price: MilestoneUnitSchema(name="price", label="Price", unit="AUD", output_format="{:,.2f} AUD"),
     MilestoneUnit.market_value: MilestoneUnitSchema(
         name="market_value", label="Market Value", unit="AUD", output_format="{:,.2f} AUD"
