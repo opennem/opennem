@@ -105,4 +105,7 @@ def get_bucket_interval(bucket_size: MilestonePeriod, interval_size: int = 5) ->
     if bucket_size.value == "interval":
         return f"{interval_size} minutes"
 
+    if bucket_size == MilestonePeriod.quarter:
+        return "3 months"
+
     return f"1 {bucket_size.value}"

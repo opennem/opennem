@@ -9,7 +9,6 @@ from enum import Enum
 from pydantic import UUID4, BaseModel, Field, computed_field
 
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
-from opennem.schema.units import UnitDefinition
 from opennem.utils.seasons import map_date_start_to_season
 
 MILESTONE_SUPPORTED_NETWORKS = [NetworkNEM, NetworkWEM]
@@ -104,7 +103,7 @@ class MilestoneFueltechGrouping(str, Enum):
     fossils = "fossils"
 
 
-# Schemas
+# Models
 
 
 class MilestoneUnitSchema(BaseModel):
@@ -137,8 +136,8 @@ class MilestoneRecordSchema(BaseModel):
     aggregate: MilestoneAggregate
     metric: MilestoneType
     period: MilestonePeriod
-    unit: UnitDefinition
     network: NetworkSchema
+    unit: MilestoneUnitSchema
     network_region: str | None = None
     fueltech: MilestoneFueltechGrouping | None = None
     value: int | float | None = None
@@ -148,6 +147,12 @@ class MilestoneRecordSchema(BaseModel):
     def record_id(self) -> str:
         """calculate the record_id from the milestone record"""
         return get_milestone_record_id(self)
+
+    # @computed_field
+    # @property
+    # def unit(self) -> MilestoneUnitSchema:
+    #     """get the unit schema for the milestone record"""
+    #     return get_milestone_unit(self.metric)
 
 
 class MilestoneRecordOutputSchema(BaseModel):

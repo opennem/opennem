@@ -48,7 +48,7 @@ async def persist_milestones(
                     period=record.period.value,
                     significance=significance,
                     value=record.value,
-                    value_unit=record.unit.value,
+                    value_unit=record.unit.unit,
                     network_id=record.network.code,
                     description=description,
                     previous_instance_id=milestone_prev.instance_id if milestone_prev else None,
@@ -68,7 +68,7 @@ async def persist_milestones(
                     milestone_state[record.record_id] = MilestoneRecordOutputSchema(
                         **record.model_dump(),
                         network_id=record.network.code,
-                        value_unit=record.unit.value,
+                        value_unit=record.unit.unit,
                         instance_id=milestone_new.instance_id,
                         significance=significance,
                     )
