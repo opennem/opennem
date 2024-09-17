@@ -25,6 +25,7 @@ def energy_fueltech_daily(
 
     query = energy_network_fueltech_query(
         time_series=time_series,
+        network=network,
         network_region=network_region_code,
         networks_query=sub_networks,
     )
