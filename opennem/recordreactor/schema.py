@@ -6,7 +6,7 @@ see matching ORM schema in database. This applies within record reactor and the 
 from datetime import datetime
 from enum import Enum
 
-from pydantic import UUID4, BaseModel, computed_field
+from pydantic import UUID4, BaseModel, Field, computed_field
 
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.units import UnitDefinition
@@ -38,10 +38,26 @@ class MilestoneType(str, Enum):
     This determines the source of data and query for the milestone.
     """
 
-    demand = "demand"
-    price = "price"
     power = "power"
     energy = "energy"
+    demand = "demand"
+    price = "price"
+    market_value = "market_value"
+    emissions = "emissions"
+    renewable_proportion = "renewable_proportion"
+
+
+class MilestoneUnit(str, Enum):
+    """
+    Enum representing different units for milestones in the OpenNEM project.
+
+    These units are used to define the unit of measure for a milestone.
+    """
+
+    power = "power"
+    energy = "energy"
+    price = "price"
+    market_value = "market_value"
     emissions = "emissions"
     renewable_proportion = "renewable_proportion"
 
@@ -86,6 +102,29 @@ class MilestoneFueltechGrouping(str, Enum):
     wind = "wind"
     renewables = "renewables"
     fossils = "fossils"
+
+
+# Schemas
+
+
+class MilestoneUnitSchema(BaseModel):
+    """ """
+
+    name: str
+    label: str
+    unit: str
+    output_format: str
+
+
+class MilestoneTypeSchema(BaseModel):
+    """ """
+
+    name: str
+    label: str
+    unit: str
+    description: str
+    significance_weight: float
+    periods: list[MilestonePeriod] = Field(default=[], description="The periods that this milestone type is applicable for")
 
 
 class MilestoneRecordSchema(BaseModel):
@@ -142,6 +181,7 @@ class MilestoneMetadataSchema(BaseModel):
     aggregates: list[MilestoneAggregate]
     milestone_type: list[MilestoneType]
     periods: list[MilestonePeriod]
+    units: dict[str, MilestoneUnitSchema]
     fueltechs: list[MilestoneFueltechGrouping]
     networks: list[NetworkSchema]
     network_regions: list[str] | None = None

@@ -1,105 +1,110 @@
 [
-  {
-    "name": "power_mega",
-    "name_alias": "power",
-    "unit_type": "power",
-    "unit": "MW"
-  },
-  {
-    "name": "power_giga",
-    "unit_type": "power",
-    "unit": "GW"
-  },
-  {
-    "name": "regional_trade",
-    "name_alias": "regional_trade",
-    "unit_type": "power",
-    "unit": "MW"
-  },
-  {
-    "name": "demand_mega",
-    "name_alias": "demand",
-    "unit_type": "power",
-    "unit": "MW"
-  },
-  {
-    "name": "energy_mega",
-    "name_alias": "energy",
-    "unit_type": "energy",
-    "unit": "MWh"
-  },
-  {
-    "name": "demand.energy_mega",
-    "name_alias": "demand.energy_mega",
-    "unit_type": "energy",
-    "unit": "MWh"
-  },
-  {
-    "name": "energy_gig",
-    "name_alias": "energy_giga",
-    "unit_type": "energy",
-    "unit": "GWh"
-  },
-  {
-    "name": "demand.energy_giga",
-    "name_alias": "demand.energy",
-    "unit_type": "energy",
-    "unit": "GWh"
-  },
-  {
-    "name": "price_energy_mega",
-    "name_alias": "price",
-    "unit_type": "price",
-    "unit": "AUD/MWh"
-  },
-  {
-    "name": "market_value",
-    "unit_type": "market_value",
-    "unit": "AUD"
-  },
-  {
-    "name": "demand.market_value",
-    "unit_type": "market_value",
-    "unit": "AUD"
-  },
-  {
-    "name": "temperature",
-    "cast_nulls": false,
-    "unit_type": "temperature",
-    "unit": "C"
-  },
-  {
-    "name": "temperature_mean",
-    "unit_type": "temperature_mean",
-    "cast_nulls": false,
-    "unit": "C"
-  },
-  {
-    "name": "temperature_max",
-    "unit_type": "temperature_max",
-    "unit": "C",
-    "cast_nulls": false
-  },
-  {
-    "name": "temperature_min",
-    "unit_type": "temperature_min",
-    "unit": "C",
-    "cast_nulls": false
-  },
-  {
-    "name": "emissions",
-    "unit_type": "emissions",
-    "unit": "tCO2e"
-  },
-  {
-    "name": "emissions_factor",
-    "unit_type": "emissions_factor",
-    "unit": "tCO2e/MWh"
-  },
-  {
-    "name": "cpi",
-    "unit_type": "cpi",
-    "cast_nulls": false,
-    "unit": "percent"
-  }
+    {
+        "name": "power_mega",
+        "name_alias": "power",
+        "unit_type": "power",
+        "unit": "MW"
+    },
+    {
+        "name": "power_giga",
+        "unit_type": "power",
+        "unit": "GW"
+    },
+    {
+        "name": "regional_trade",
+        "name_alias": "regional_trade",
+        "unit_type": "power",
+        "unit": "MW"
+    },
+    {
+        "name": "demand_mega",
+        "name_alias": "demand",
+        "unit_type": "power",
+        "unit": "MW"
+    },
+    {
+        "name": "energy_mega",
+        "name_alias": "energy",
+        "unit_type": "energy",
+        "unit": "MWh"
+    },
+    {
+        "name": "demand.energy_mega",
+        "name_alias": "demand.energy_mega",
+        "unit_type": "energy",
+        "unit": "MWh"
+    },
+    {
+        "name": "energy_gig",
+        "name_alias": "energy_giga",
+        "unit_type": "energy",
+        "unit": "GWh"
+    },
+    {
+        "name": "demand.energy_giga",
+        "name_alias": "demand.energy",
+        "unit_type": "energy",
+        "unit": "GWh"
+    },
+    {
+        "name": "price_energy_mega",
+        "name_alias": "price",
+        "unit_type": "price",
+        "unit": "AUD/MWh"
+    },
+    {
+        "name": "market_value",
+        "unit_type": "market_value",
+        "unit": "AUD"
+    },
+    {
+        "name": "demand.market_value",
+        "unit_type": "market_value",
+        "unit": "AUD"
+    },
+    {
+        "name": "temperature",
+        "cast_nulls": false,
+        "unit_type": "temperature",
+        "unit": "C"
+    },
+    {
+        "name": "temperature_mean",
+        "unit_type": "temperature_mean",
+        "cast_nulls": false,
+        "unit": "C"
+    },
+    {
+        "name": "temperature_max",
+        "unit_type": "temperature_max",
+        "unit": "C",
+        "cast_nulls": false
+    },
+    {
+        "name": "temperature_min",
+        "unit_type": "temperature_min",
+        "unit": "C",
+        "cast_nulls": false
+    },
+    {
+        "name": "emissions",
+        "unit_type": "emissions",
+        "unit": "tCO2e"
+    },
+    {
+        "name": "emissions_factor",
+        "unit_type": "emissions_factor",
+        "unit": "tCO2e/MWh"
+    },
+    {
+        "name": "cpi",
+        "unit_type": "cpi",
+        "cast_nulls": false,
+        "unit": "percent"
+    },
+    {
+        "name": "renewable_proportion",
+        "unit_type": "renewable_proportion",
+        "unit": "percent"
+    }
 ]

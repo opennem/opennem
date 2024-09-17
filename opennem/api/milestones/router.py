@@ -20,6 +20,7 @@ from opennem.recordreactor.schema import (
     MilestonePeriod,
     MilestoneType,
 )
+from opennem.recordreactor.unit import get_milestones_units
 from opennem.schema.network import NetworkSchema
 
 from .queries import get_milestone_record, get_milestone_record_ids, get_milestone_records
@@ -378,6 +379,7 @@ async def get_milestone_metadata() -> MilestoneMetadataSchema:
         aggregates=list(MilestoneAggregate),
         milestone_type=list(MilestoneType),
         periods=list(MilestonePeriod),
+        units={unit.name: unit for unit in get_milestones_units()},
         fueltechs=list(MilestoneFueltechGrouping),
         networks=MILESTONE_SUPPORTED_NETWORKS,
     )
