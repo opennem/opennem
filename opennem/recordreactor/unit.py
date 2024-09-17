@@ -17,7 +17,7 @@ _MILESTONE_UNITS: dict[MilestoneType, MilestoneUnitSchema] = {
     MilestoneType.emissions: MilestoneUnitSchema(
         name="emissions", label="Emissions", unit="tCO2e", output_format="{:,.0f} tCO2e"
     ),
-    MilestoneType.renewable_proportion: MilestoneUnitSchema(
+    MilestoneType.proportion: MilestoneUnitSchema(
         name="renewable_proportion", label="Renewable Proportion", unit="%", output_format="{:,.0f}%"
     ),
 }

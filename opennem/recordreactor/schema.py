@@ -44,7 +44,7 @@ class MilestoneType(str, Enum):
     price = "price"
     market_value = "market_value"
     emissions = "emissions"
-    renewable_proportion = "renewable_proportion"
+    proportion = "proportion"
 
 
 class MilestoneUnit(str, Enum):
