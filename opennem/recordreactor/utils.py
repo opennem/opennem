@@ -45,7 +45,7 @@ def get_milestone_type_label(milestone_type: MilestoneType) -> str:
     elif milestone_type == MilestoneType.power:
         return "Generation"
     else:
-        return milestone_type.value.upper()
+        return milestone_type.value.capitalize()
 
 
 def check_milestone_is_new(milestone: MilestoneRecordSchema, milestone_previous: MilestoneRecordOutputSchema) -> bool:
