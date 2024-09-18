@@ -9,6 +9,7 @@ from opennem.queries.renewable_proportion import get_renewable_energy_proportion
 from opennem.recordreactor.persistence import persist_milestones
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
+    MilestoneFueltechGrouping,
     MilestonePeriod,
     MilestoneRecordSchema,
     MilestoneType,
@@ -20,13 +21,25 @@ logger = logging.getLogger("opennem.recordreactor.processors.renewable_proportio
 
 
 async def _aggregate_renewable_proportion_data(
-    network: NetworkSchema, bucket_size: MilestonePeriod, start_date: datetime, end_date: datetime, group_by_region: bool
+    network: NetworkSchema,
+    bucket_size: MilestonePeriod,
+    start_date: datetime,
+    end_date: datetime,
+    group_by_region: bool,
+    group_by_fueltech: bool = False,
+    group_by_renewable: bool = False,
 ) -> list[MilestoneRecordSchema]:
     """
     Aggregate the renewable proportion data for a given network and date range.
     """
     results = await get_renewable_energy_proportion(
-        network=network, bucket_size=bucket_size, start_date=start_date, end_date=end_date, group_by_region=group_by_region
+        network=network,
+        bucket_size=bucket_size,
+        start_date=start_date,
+        end_date=end_date,
+        group_by_region=group_by_region,
+        group_by_fueltech=group_by_fueltech,
+        group_by_renewable=group_by_renewable,
     )
 
     milestone_records: list[MilestoneRecordSchema] = []
@@ -41,8 +54,9 @@ async def _aggregate_renewable_proportion_data(
                     period=bucket_size,
                     network=network,
                     unit=get_milestone_unit(MilestoneType.proportion),
-                    value=row["renewable_proportion"],
-                    network_region=row["network_region"] if group_by_region else network.code,
+                    value=row["proportion"],
+                    network_region=row["network_region"] if row["network_region"] else None,
+                    fueltech=MilestoneFueltechGrouping(row["fueltech_id"]) if row["fueltech_id"] else None,
                 )
             )
 
@@ -57,7 +71,13 @@ async def run_renewable_proportion_milestones(
     """
     for group_by_region in [True, False]:
         milestone_data = await _aggregate_renewable_proportion_data(
-            network=network, bucket_size=bucket_size, start_date=start_date, end_date=end_date, group_by_region=group_by_region
+            network=network,
+            bucket_size=bucket_size,
+            start_date=start_date,
+            end_date=end_date,
+            group_by_region=group_by_region,
+            group_by_fueltech=False,
+            group_by_renewable=True,
         )
 
         await persist_milestones(
