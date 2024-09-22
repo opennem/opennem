@@ -16,9 +16,7 @@ from datedelta import datedelta
 from pydantic import PlainSerializer, ValidationError, field_validator, validator
 
 from opennem import settings
-from opennem.core.compat.utils import translate_id_v3_to_v2
 from opennem.core.feature_flags import get_list_of_enabled_features
-from opennem.core.fueltechs import map_v3_fueltech
 from opennem.core.normalizers import cast_float_or_none
 from opennem.core.validators.data import validate_data_outputs
 from opennem.schema.core import BaseConfig
@@ -208,13 +206,6 @@ class OpennemData(BaseConfig):
     x_capacity_at_present: float | None = None
 
     # validators
-
-    # conveniance methods
-    def id_v2(self) -> str | None:
-        return translate_id_v3_to_v2(self.id) if self.id else None
-
-    def fueltech_v2(self) -> str | None:
-        return map_v3_fueltech(self.fuel_tech) if self.fuel_tech else None
 
 
 class OpennemDataSet(BaseConfig):
