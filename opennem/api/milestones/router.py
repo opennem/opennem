@@ -358,7 +358,7 @@ async def api_get_milestone_record_ids(
     )
 
     if not record_ids:
-        raise HTTPException(status_code=404, detail="No records found")
+        return APIV4ResponseSchema(success=True, error="No records found", total_records=0)
 
     return APIV4ResponseSchema(success=True, data=record_ids)
 
@@ -385,6 +385,3 @@ async def get_milestone_metadata() -> MilestoneMetadataSchema:
     )
 
     return metadata
-
-    # response_schema = APIV4ResponseSchema(success=True, data=metadata.dict())
-    # return response_schema
