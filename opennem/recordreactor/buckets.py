@@ -31,7 +31,8 @@ def is_end_of_period(dt: datetime, bucket_size: MilestonePeriod) -> bool:
         case MilestonePeriod.day:
             return dt.hour == 0 and dt.minute == 0 and dt.second == 0
         case MilestonePeriod.week_rolling:
-            return True
+            # this returns at the end of each day
+            return dt.hour == 0 and dt.minute == 0 and dt.second == 0
         case MilestonePeriod.month:
             return dt.day == 1 and dt.hour == 0 and dt.minute == 0 and dt.second == 0
         case MilestonePeriod.quarter:
