@@ -198,7 +198,7 @@ async def get_milestone_by_record_id(
         raise HTTPException(status_code=400, detail="Limit must be less than 1000")
 
     if page < 1:
-        raise HTTPException(status_code=400, detail="Page must be greater than 0")
+        return APIV4ResponseSchema(success=True, error="Page must be greater than 0", total_records=0)
 
     try:
         db_record, total_records = await get_milestone_records(session=db, record_id=record_id, page_number=page, limit=limit)
@@ -215,7 +215,7 @@ async def get_milestone_by_record_id(
         return response_schema
 
     if not db_record:
-        raise HTTPException(status_code=404, detail="Milestone record not found")
+        return APIV4ResponseSchema(success=True, error="Milestone record not found", total_records=0)
 
     response_schema = APIV4ResponseSchema(success=True, data=milestone_record, total_records=total_records)
 
@@ -242,11 +242,11 @@ async def get_milestone(
         db_record = await get_milestone_record(session=db, instance_id=instance_id, include_history=include_history)
     except Exception as e:
         logger.error(f"Error getting milestone record: {e}")
-        response_schema = APIV4ResponseSchema(success=False, error="Error getting milestone record")
+        response_schema = APIV4ResponseSchema(success=False, error="Error getting milestone record", total_records=0)
         return response_schema
 
     if not db_record:
-        raise HTTPException(status_code=404, detail="Milestone record not found")
+        return APIV4ResponseSchema(success=True, error="Milestone record not found", total_records=0)
 
     try:
         milestone_record = map_milestone_output_records_from_db([db_record])
