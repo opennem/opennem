@@ -6,6 +6,7 @@ import enum
 class DispatchType(enum.Enum):
     GENERATOR = "GENERATOR"
     LOAD = "LOAD"
+    BIDIRECTIONAL = "BIDIRECTIONAL"
 
 
 def dispatch_type_string(dispatch_type: DispatchType) -> str:
