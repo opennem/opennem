@@ -307,9 +307,9 @@ class Station(Base, BaseModel):
     approved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     website_url: Mapped[str] = mapped_column(Text, nullable=True)
 
-    participant = relationship("Participant", cascade="all, delete")
-    location = relationship("Location", lazy="joined", innerjoin=False, cascade="all, delete")
-    facilities = relationship("Facility", lazy="joined", innerjoin=False, cascade="all, delete")
+    # participant = relationship("Participant", cascade="all, delete")
+    # location = relationship("Location", lazy="joined", innerjoin=False, cascade="all, delete")
+    # facilities = relationship("Facility", lazy="joined", innerjoin=False, cascade="all, delete")
 
     __table_args__ = (UniqueConstraint("code", name="excl_station_network_duid"),)
 
