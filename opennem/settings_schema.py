@@ -182,6 +182,11 @@ class OpennemSettings(BaseSettings):
     aws_access_key_id: str = Field("", validation_alias=AliasChoices("AWS_ACCESS_KEY_ID"))
     aws_secret_access_key: str = Field("", validation_alias=AliasChoices("AWS_SECRET_ACCESS_KEY"))
 
+    # sanity cms setup
+    sanity_project_id: str | None = None
+    sanity_dataset_id: str | None = None
+    sanity_api_key: str | None = None
+
     # pylint: disable=no-self-argument
     @field_validator("log_level")
     @classmethod

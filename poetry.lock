@@ -3643,6 +3643,17 @@ dev = ["pre-commit", "tox"]
 testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
+name = "portabletext-html"
+version = "1.1.3"
+description = "HTML renderer for Sanity's Portable Text format"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "portabletext-html-1.1.3.tar.gz", hash = "sha256:cdf8237aa720d71d38017ad80c27b0fe0a70732f30093ed741697b9f3a0f0cff"},
+    {file = "portabletext_html-1.1.3-py3-none-any.whl", hash = "sha256:1e87a1d60e7371bb39484db636e9a4ab35820d94a1a1c3bf8985a22d42853039"},
+]
+
+[[package]]
 name = "prompt-toolkit"
 version = "3.0.47"
 description = "Library for building powerful interactive command lines in Python"
@@ -4406,6 +4417,24 @@ botocore = ">=1.33.2,<2.0a.0"
 
 [package.extras]
 crt = ["botocore[crt] (>=1.33.2,<2.0a.0)"]
+
+[[package]]
+name = "sanity"
+version = "0.0.3"
+description = "Python Client wrapper for Sanity.io HTTP API"
+optional = false
+python-versions = "*"
+files = []
+develop = false
+
+[package.dependencies]
+requests = "*"
+
+[package.source]
+type = "git"
+url = "git@github.com:opennem/sanity-python.git"
+reference = "HEAD"
+resolved_reference = "d6ab12420bcb5e3f97029d3c1d2264c58ef6392d"
 
 [[package]]
 name = "seaborn"
@@ -5551,4 +5580,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "f4540ff967cc0d8a87b63f6ad3bcdaab44510513c1689782e8ce1e905a3c821c"
+content-hash = "9b4a117501faca23fb4eabc3afedeb8282efd1b459d8938ac2cf9533799117d0"
