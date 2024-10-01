@@ -16,7 +16,6 @@ from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures, load
 from opennem.exporter.historic import export_historic_intervals
 from opennem.importer.db import import_all_facilities
 from opennem.importer.db import init as db_init
-from opennem.parsers.aemo.cli import cmd_data_cli
 
 logger = logging.getLogger("opennem.cli")
 
@@ -92,7 +91,6 @@ def cmd_task_historic(weeks: int | None) -> None:
     export_historic_intervals(limit=weeks)
 
 
-main.add_command(cmd_data_cli, name="data")
 main.add_command(cmd_crawl_cli, name="crawl")
 main.add_command(cmd_db, name="db")
 main.add_command(cmd_import, name="import")
