@@ -78,8 +78,6 @@ origins = [
     "https://opennem.org.au",
     "https://dev.opennem.org.au",
     "https://staging.opennem.org.au",
-    "https://admin.opennem.org.au",
-    "https://admin.opennem.test",
     "http://localhost:8002",
     "http://127.0.0.1:8002",
     "https://admin.opennem.localhost",
@@ -87,6 +85,7 @@ origins = [
     "https://*.pages.dev",
     "https://*.openelectricity.org.au",
     "http://localhost:5173",
+    "https://*.opennem-fe-bl7.pages.dev",
 ]
 
 app.add_middleware(
