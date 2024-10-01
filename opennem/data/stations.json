@@ -9206,7 +9206,7 @@
         }
     },
     {
-        "code": "G/STONE",
+        "code": "GSTONE",
         "name": "Gladstone",
         "network_name": "Gladstone",
         "description": null,
@@ -31641,7 +31641,7 @@
         }
     },
     {
-        "code": "FLATROCKS",
+        "code": "FLATROCKS_WF",
         "name": "Flat Rocks",
         "network_name": "Flat Rocks",
         "description": "The Flat Rocks Wind Farm Stage 1 Project will consist of the construction and operation of 18 wind turbines and the related civil and electrical infrastructure. The project site spans the shires of Kojonup and Broomehill-Tambellup, in the Great Southern Region of Western Australia. Construction of the project commenced in 2022 and it’s anticipated for the project to be fully operational in 2024.",
