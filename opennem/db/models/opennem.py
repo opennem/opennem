@@ -159,7 +159,7 @@ class Network(Base, BaseModel):
     interval_shift = Column(Integer, nullable=False, default=0)
     export_set = Column(Boolean, default=True, nullable=False)
 
-    regions = relationship("NetworkRegion", primaryjoin="NetworkRegion.network_id == Network.code", lazy="joined")
+    # regions = relationship("NetworkRegion", primaryjoin="NetworkRegion.network_id == Network.code", lazy="joined")
 
     __table_args__ = (Index("idx_network_code", "code"),)
 
@@ -174,7 +174,7 @@ class NetworkRegion(Base, BaseModel):
     offset = Column(Integer, nullable=True)
     export_set = Column(Boolean, default=True, nullable=False)
 
-    network = relationship("Network", back_populates="regions")
+    # network = relationship("Network", back_populates="regions")
 
 
 class FacilityStatus(Base):
