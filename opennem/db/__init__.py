@@ -101,8 +101,8 @@ SessionLocalAsync: AsyncSession = async_sessionmaker(engine, expire_on_commit=Fa
 
 
 @asynccontextmanager
-async def get_read_session():
-    async with SessionLocalAsync() as session:
+async def get_read_session() -> AsyncGenerator[AsyncSession, None]:
+    async with SessionLocal() as session:
         try:
             yield session
         finally:
