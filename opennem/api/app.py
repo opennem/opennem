@@ -82,15 +82,8 @@ origins = [
 ]
 
 if settings.is_dev:
-    dev_origins = [
-        "https://*.dev.opennem.org.au",
-        "https://*.staging.opennem.org.au",
-        "https://*.opennem-fe.pages.dev",
-        "https://*.opennem-fe-bl7.pages.dev",
-        "https://*.pages.dev",
-        "http://localhost:3000",
-    ]
-    origins.extend(dev_origins)
+    origins = ["*"]  # Allow all origins in development mode
+
 
 app.add_middleware(
     CORSMiddleware,
