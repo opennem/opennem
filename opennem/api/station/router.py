@@ -3,18 +3,17 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
 from starlette import status
 from starlette.responses import Response
 
 from opennem.api import throttle
 from opennem.api.exceptions import OpennemBaseHttpException
-from opennem.core.dispatch_type import DispatchType
+from opennem.api.schema import APIV4ResponseSchema
+from opennem.cms.importer import get_cms_facilities
 from opennem.db import get_scoped_session
-from opennem.db.models.opennem import Facility, FuelTech, Location, Network, Station
-from opennem.schema.opennem import StationOutputSchema
+from opennem.db.models.opennem import Facility, FuelTech, Location, Station
 
-from .schema import StationResponse, StationsResponse
+from .schema import StationsResponse
 
 logger = logging.getLogger("opennem.api.station")
 
@@ -78,74 +77,36 @@ async def get_stations(
 
 
 @router.get(
-    "/{id:int}",
-    response_model=StationResponse,
-    description="Get a single station record",
-    response_model_exclude_none=False,
-)
-async def station_record(
-    response: Response,
-    id: int,
-    session: AsyncSession = Depends(get_scoped_session),
-) -> StationResponse:
-    logger.debug(f"get {id}")
-
-    result = await session.execute(select(Station).where(Station.id == id))
-    station = result.scalar_one_or_none()
-
-    if not station:
-        raise StationNotFound()
-
-    resp = StationResponse(record=station, total_records=1)
-
-    response.headers["X-Total-Count"] = str(1)
-
-    return resp
-
-
-@router.get(
     "/au/{network_id}/{station_code:path}",
     name="Get station information",
     description="Get a single station by code",
-    response_model=StationOutputSchema,
     response_model_exclude_none=True,
+    response_model_exclude_unset=True,
 )
 async def station(
     network_id: str,
     station_code: str,
-    only_generators: bool | None = True,
-    session: AsyncSession = Depends(get_scoped_session),
-) -> Station:
+) -> APIV4ResponseSchema:
     if network_id.upper() not in ["NEM", "WEM"]:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Network not found")
 
-    query = (
-        select(Station)
-        .join(Facility, Facility.station_id == Station.id)
-        .join(Network, Network.code == Facility.network_id)
-        .join(Location, Location.id == Station.location_id)
-        .where(Station.code == station_code)
-        .where(Network.code == network_id)
-        .where(Facility.dispatch_type == DispatchType.GENERATOR)
-        .options(joinedload(Station.facilities))
-    )
+    facilities = get_cms_facilities(facility_code=station_code)
 
-    if only_generators:
-        query = query.where(Facility.dispatch_type == DispatchType.GENERATOR)
-
-    result = await session.execute(query)
-    station = result.unique().scalar_one_or_none()
-
-    if not station:
+    if not facilities:
         raise StationNotFound()
 
-    if not station.facilities:
+    facility = facilities[0]
+
+    if not facility.units:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Station has no facilities",
         )
 
-    if station.facilities:
-        station.network = station.facilities[0].network_id  # type: ignore
+    try:
+        model = APIV4ResponseSchema(success=True, data=[facility], total_records=1)
+    except Exception as e:
+        logger.error(f"Error creating APIV4ResponseSchema: {e}")
+        raise e
 
-    return station
+    return model
