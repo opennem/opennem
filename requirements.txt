@@ -1824,7 +1824,7 @@ rich==13.8.1 ; python_version >= "3.12" and python_version < "4.0" \
 s3transfer==0.10.2 ; python_version >= "3.12" and python_version < "4.0" \
     --hash=sha256:0711534e9356d3cc692fdde846b4a1e4b0cb6519971860796e6bc4c7aea00ef6 \
     --hash=sha256:eca1c20de70a39daee580aef4986996620f365c4e0fda6a86100231d62f1bf69
-sanity @ git+ssh://git@github.com/opennem/sanity-python.git@d6ab12420bcb5e3f97029d3c1d2264c58ef6392d ; python_version >= "3.12" and python_version < "4.0"
+sanity @ git+https://github.com/OmniPro-Group/sanity-python.git@d6ab12420bcb5e3f97029d3c1d2264c58ef6392d ; python_version >= "3.12" and python_version < "4.0"
 seaborn==0.13.2 ; python_version >= "3.12" and python_version < "4.0" \
     --hash=sha256:636f8336facf092165e27924f223d3c62ca560b1f2bb5dff7ab7fad265361987 \
     --hash=sha256:93e60a40988f4d65e9f4885df477e2fdaff6b73a9ded434c1ab356dd57eefff7
