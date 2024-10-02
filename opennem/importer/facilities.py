@@ -198,9 +198,7 @@ async def import_station_set(stations: StationSet, only_insert_facilities: bool 
 
                 # Update station details
                 station_model.name = station.name
-                station_model.network_name = station.network_name
                 station_model.description = station.description
-                station_model.approved = station.approved
                 station_model.website_url = station.website_url
 
                 if station.approved:

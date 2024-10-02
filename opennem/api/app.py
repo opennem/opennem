@@ -28,7 +28,6 @@ from opennem import settings
 from opennem.api import throttle
 from opennem.api.dash.router import router as dash_router
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
-from opennem.api.facility.router import router as facility_router
 from opennem.api.feedback.router import router as feedback_router
 from opennem.api.keys import api_protected, unkey_client
 from opennem.api.milestones.router import milestones_router
@@ -145,8 +144,7 @@ async def http_type_exception_handler(request: Request, exc: HTTPException) -> O
 
 # sub-routers
 app.include_router(stats_router, tags=["Stats"], prefix="/stats")
-app.include_router(station_router, tags=["Stations"], prefix="/station")
-app.include_router(facility_router, tags=["Facilities"], prefix="/facility")
+app.include_router(station_router, tags=["Facilities"], prefix="/facility")
 app.include_router(weather_router, tags=["Weather"], prefix="/weather")
 app.include_router(feedback_router, tags=["Feedback"], prefix="/feedback", include_in_schema=False)
 app.include_router(dash_router, tags=["Dashboard"], prefix="/dash", include_in_schema=False)
