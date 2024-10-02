@@ -75,18 +75,20 @@ logfire.instrument_fastapi(app)
 
 # @TODO put CORS available/permissions in settings
 origins = [
-    "https://opennem.org.au",
-    "https://dev.opennem.org.au",
-    "https://staging.opennem.org.au",
-    "http://localhost:8002",
-    "http://127.0.0.1:8002",
-    "https://admin.opennem.localhost",
-    "https://*.opennem-fe.pages.dev",
-    "https://*.pages.dev",
+    "https://*.opennem.org.au",
     "https://*.openelectricity.org.au",
-    "http://localhost:5173",
-    "https://*.opennem-fe-bl7.pages.dev",
 ]
+
+if settings.is_dev:
+    dev_origins = [
+        "https://*.dev.opennem.org.au",
+        "https://*.staging.opennem.org.au",
+        "https://*.opennem-fe.pages.dev",
+        "https://*.opennem-fe-bl7.pages.dev",
+        "https://*.pages.dev",
+        "http://localhost:3000",
+    ]
+    origins.extend(dev_origins)
 
 app.add_middleware(
     CORSMiddleware,
