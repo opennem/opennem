@@ -72,7 +72,7 @@ arq = "^0.26.1"
 asyncclick = "^8.1.7.2"
 openai = "^1.43.1"
 instructor = "^1.4.0"
-sanity = {git = "git@github.com:opennem/sanity-python.git"}
+sanity = {git = "https://github.com/OmniPro-Group/sanity-python.git"}
 portabletext-html = "^1.1.3"
 
 

@@ -4432,7 +4432,7 @@ requests = "*"
 
 [package.source]
 type = "git"
-url = "git@github.com:opennem/sanity-python.git"
+url = "https://github.com/OmniPro-Group/sanity-python.git"
 reference = "HEAD"
 resolved_reference = "d6ab12420bcb5e3f97029d3c1d2264c58ef6392d"
 
@@ -5580,4 +5580,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "9b4a117501faca23fb4eabc3afedeb8282efd1b459d8938ac2cf9533799117d0"
+content-hash = "b5a6d43b7c416462a0953761793cb566afbf59b6d5fb0d6872d8701739931db9"
