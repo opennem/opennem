@@ -19,6 +19,8 @@ from fastapi_cache.backends.redis import RedisBackend
 from fastapi_versionizer import api_version
 from fastapi_versionizer.versionizer import Versionizer
 from redis import asyncio as aioredis
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from starlette.requests import Request
 
@@ -38,7 +40,7 @@ from opennem.api.webhooks.router import router as webhooks_router
 from opennem.clients.unkey import OpenNEMUser
 from opennem.core.time import INTERVALS, PERIODS
 from opennem.core.units import UNITS
-from opennem.db import get_scoped_session
+from opennem.db import get_read_session, get_scoped_session
 from opennem.db.models.opennem import FuelTech, Network, NetworkRegion
 from opennem.schema.opennem import FueltechSchema, OpennemErrorSchema
 from opennem.schema.time import TimeInterval, TimePeriod
@@ -192,15 +194,33 @@ def robots_txt() -> str:
     tags=["Core"],
     description="Get networks",
 )
-def networks(
-    session: Session = Depends(get_scoped_session),
+async def get_networks(
+    session: AsyncSession = Depends(get_scoped_session),
 ) -> list[APINetworkSchema]:
-    networks = session.query(Network).join(NetworkRegion, NetworkRegion.network_id == Network.code).all()
+    """
+    Retrieve all networks with their associated regions.
 
-    if not networks:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    Args:
+        session (AsyncSession): The database session.
 
-    return networks
+    Returns:
+        list[APINetworkSchema]: A list of network schemas.
+
+    Raises:
+        HTTPException: If no networks are found or if there's an error.
+    """
+    try:
+        stmt = select(Network).join(NetworkRegion, NetworkRegion.network_id == Network.code).distinct()
+        result = await session.execute(stmt)
+        networks = result.scalars().all()
+
+        if not networks:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No networks found")
+
+        return [APINetworkSchema.from_orm(network) for network in networks]
+    except Exception as e:
+        logger.error(f"Error retrieving networks: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error") from e
 
 
 @api_version(3)
@@ -212,13 +232,14 @@ def networks(
     tags=["Core"],
     description="Get network regions",
 )
-def network_regions(
-    session: Session = Depends(get_scoped_session),
+async def get_network_regions(
+    session: AsyncSession = Depends(get_read_session),
     network_code: str = Query(..., description="Network code"),
 ) -> list[APINetworkRegion]:
     network_id = network_code.upper()
 
-    network_regions = session.query(NetworkRegion).filter_by(network_id=network_id).all()
+    network_regions = await session.execute(select(NetworkRegion).where(NetworkRegion.network_id == network_id))
+    network_regions = network_regions.scalars().all()
 
     if not network_regions:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
@@ -240,7 +261,7 @@ def network_regions(
     description="Get all fueltechs",
 )
 def fueltechs(
-    session: Session = Depends(get_scoped_session),
+    session: Session = Depends(get_read_session),
 ) -> list[FueltechSchema]:
     fueltechs = session.query(FuelTech).all()
 
