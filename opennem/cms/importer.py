@@ -24,35 +24,42 @@ client = Client(
 )
 
 
-def get_facilities() -> list[FacilityOutputSchema]:
-    res = client.query("""*[_type == 'facility'] {
-            code,
-            name,
-            website,
-            description,
-            "network_id": upper(network->code),
-            "network_region": upper(region->code),
-            photos,
-            wikipedia,
-            location,
-            units[]-> {
-                code,
-                dispatch_type,
-                "status_id": status,
-                "network_id": upper(network->code),
-                "network_region": upper(network_region->code),
-                "fueltech_id": fuel_technology->code,
-                capacity_registered,
-                capacity_maximum,
-                storage_capacity,
-                emissions_factor_co2,
-                expected_closure_date,
-                commencement_date,
-                closure_date
-            }
-        }""")
+def get_cms_facilities(facility_code: str | None = None) -> list[FacilityOutputSchema]:
+    filter_query = ""
 
-    if not res or "result" not in res or not res["result"]:
+    if facility_code:
+        filter_query += f" && code == '{facility_code}'"
+
+    query = f"""*[_type == "facility"{filter_query}] {{
+        code,
+        name,
+        website,
+        description,
+        "network_id": upper(network->code),
+        "network_region": upper(region->code),
+        photos,
+        wikipedia,
+        location,
+        units[]-> {{
+            code,
+            dispatch_type,
+            "status_id": status,
+            "network_id": upper(network->code),
+            "network_region": upper(network_region->code),
+            "fueltech_id": fuel_technology->code,
+            capacity_registered,
+            capacity_maximum,
+            storage_capacity,
+            emissions_factor_co2,
+            expected_closure_date,
+            commencement_date,
+            closure_date
+        }}
+    }}"""
+
+    res = client.query(query)
+
+    if not res or not isinstance(res, dict) or "result" not in res or not res["result"]:
         logger.error("No facilities found")
         return []
 
@@ -60,12 +67,10 @@ def get_facilities() -> list[FacilityOutputSchema]:
 
     # compile the facility description to html
     for facility in res["result"]:
-        if facility["description"] and len(facility["description"]) > 0:
+        if facility.get("description") and isinstance(facility["description"], list):
             rendered_description = ""
-
-            for _block in facility["description"]:
-                rendered_description += PortableTextRenderer(_block).render()
-
+            for block in facility["description"]:
+                rendered_description += PortableTextRenderer(block).render()
             if rendered_description:
                 facility["description"] = rendered_description
 
@@ -108,8 +113,8 @@ async def get_database_facilities():
 if __name__ == "__main__":
     import asyncio
 
-    opennem_stations = get_opennem_stations()
-    sanity_facilities = get_facilities()
+    # opennem_stations = get_opennem_stations()
+    sanity_facilities = get_cms_facilities(facility_code="BANGOWF")
     database_facilities = asyncio.run(get_database_facilities())
 
     database_facility_codes = [facility.code for facility in database_facilities]
@@ -117,5 +122,4 @@ if __name__ == "__main__":
     # find the facilities that are not in the opennem stations
     for facility in sanity_facilities:
         # find it based on "code" field in opennem stations
-        if facility["code"] not in database_facility_codes:
-            logger.info(f"Facility {facility['code']} not in database stations")
+        print(facility.code, facility.name)
