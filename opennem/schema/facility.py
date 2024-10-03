@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from pydantic import BaseModel
 
@@ -18,7 +18,7 @@ class UnitOutputSchema(BaseModel):
 
     code: str
     dispatch_type: DispatchType
-    fueltech_id: str | None = None
+    fueltech_id: str
     status_id: str
     capacity_registered: float | None = None
     capacity_maximum: float | None = None
@@ -42,3 +42,6 @@ class FacilityOutputSchema(BaseModel):
     photos: list[FacilityPhotoOutputSchema] | None = None
     location: dict[str, float | str] | None = None
     units: list[UnitOutputSchema] | None = None
+
+    # Sanity fields
+    updated_at: datetime | None = None
