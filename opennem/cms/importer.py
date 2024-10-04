@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import json
 import logging
-import pprint
 from pathlib import Path
 
 from portabletext_html import PortableTextRenderer
@@ -30,7 +29,10 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilityOutputS
     if facility_code:
         filter_query += f" && code == '{facility_code}'"
 
-    query = f"""*[_type == "facility"{filter_query}] {{
+    query = f"""*[_type == "facility"{filter_query} && !(_id in path("drafts.**"))] {{
+        _id,
+        _createdAt,
+        _updatedAt,
         code,
         name,
         website,
@@ -63,7 +65,7 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilityOutputS
         logger.error("No facilities found")
         return []
 
-    pprint.pprint(res["result"][0])
+    result_models = {}
 
     # compile the facility description to html
     for facility in res["result"]:
@@ -74,17 +76,27 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilityOutputS
             if rendered_description:
                 facility["description"] = rendered_description
 
-    result_models = []
+        if facility.get("_id"):
+            facility["id"] = facility["_id"]
 
-    for facility in res["result"]:
+        if facility["_updatedAt"]:
+            facility["updated_at"] = facility["_updatedAt"]
+
+        if facility["code"] in result_models:
+            logger.warning(
+                f"Duplicate facility code {facility['code']} sanity. {facility['_id']}"
+                f" existing {result_models[facility['code']].id}"
+            )
+            continue
+
         try:
-            result_models.append(FacilityOutputSchema(**facility))
+            result_models[facility["code"]] = FacilityOutputSchema(**facility)
         except ValidationError as e:
             logger.error(f"Error creating facility model for {facility['code']}: {e}")
             logger.debug(facility)
             raise e
 
-    return result_models
+    return list(result_models.values())
 
 
 def get_opennem_stations() -> list[dict]:
@@ -114,12 +126,7 @@ if __name__ == "__main__":
     import asyncio
 
     # opennem_stations = get_opennem_stations()
-    sanity_facilities = get_cms_facilities(facility_code="BANGOWF")
+    sanity_facilities = get_cms_facilities()
     database_facilities = asyncio.run(get_database_facilities())
 
     database_facility_codes = [facility.code for facility in database_facilities]
-
-    # find the facilities that are not in the opennem stations
-    for facility in sanity_facilities:
-        # find it based on "code" field in opennem stations
-        print(facility.code, facility.name)
