@@ -210,10 +210,10 @@ def get_milestone_record_id(
 ) -> str:
     """Get a record id"""
     record_id_components = [
-        "au",
+        milestone.network.country,
         milestone.network.parent_network or milestone.network.code,
         milestone.network_region,
-        milestone.fueltech if milestone.fueltech else None,
+        milestone.fueltech,
         milestone.metric.value,
         map_date_start_to_season(milestone.interval) if milestone.period is MilestonePeriod.season else milestone.period.value,
         milestone.aggregate.value,
