@@ -7,11 +7,11 @@ import logging
 from enum import Enum
 
 from pydantic import UUID4
-from sqlalchemy import update
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from tqdm import tqdm
 
-from opennem.api.milestones.queries import get_milestone_record, get_milestone_records
+from opennem.api.milestones.queries import get_milestone_record
 from opennem.db import get_write_session
 from opennem.db.models.opennem import Milestones
 from opennem.recordreactor.controllers import map_milestone_output_records_from_db, map_milestone_output_schema_to_record
@@ -33,12 +33,55 @@ class MilestoneSignificanceWeights(Enum):
 def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
     """Calculate the significance of a milestone"""
 
-    # update prioritised for significant milestones
-    if milestone.fueltech in ["solar", "wind", "coal", "gas", "battery_discharging"]:
+    # hacky manual significance for launch
+    # each one of these has a significance of 10 for network wide and 9 for regional
+    # *.[solar|wind|renewables|battery_discharging].[power.interval|energy.day].high
+    # *.[fossil|coal|gas].[power.interval|energy.day].low
+    # *.demand.[power.interval|energy.day].high
+    # *.renewables.proportion.[interval|day|7d].high
+
+    if milestone.metric in [MilestoneType.power, MilestoneType.energy] and milestone.period in [
+        MilestonePeriod.interval,
+        MilestonePeriod.day,
+    ]:
+        if (
+            milestone.fueltech in ["solar", "wind", "renewables", "battery_discharging"]
+            and milestone.aggregate == MilestoneAggregate.high
+        ):
+            if milestone.network_region is None:
+                return 10
+            else:
+                return 9  # @NOTE temporary
+
+        if milestone.fueltech in ["fossil", "coal", "gas"] and milestone.aggregate == MilestoneAggregate.low:
+            if milestone.network_region is None:
+                return 10
+            else:
+                return 9  # @NOTE temporary
+
+    if milestone.metric == MilestoneType.demand and milestone.period in [MilestonePeriod.interval, MilestonePeriod.day]:
+        if milestone.aggregate == MilestoneAggregate.high:
+            if milestone.network_region is None:
+                return 10
+            else:
+                return 9  # @NOTE temporary
+
+    if (
+        milestone.metric == MilestoneType.proportion
+        and milestone.period
+        in [
+            MilestonePeriod.interval,
+            MilestonePeriod.day,
+            MilestonePeriod.week_rolling,
+        ]
+        and milestone.aggregate == MilestoneAggregate.high
+    ):
         if milestone.network_region is None:
             return 10
         else:
             return 9  # @NOTE temporary
+
+    # END HACKS
 
     # Period significance
     period_scores = {
@@ -110,7 +153,7 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
     total_score = sum([period_score, metric_score, network_score, region_score, fueltech_score, aggregate_score])
 
     # Scale score
-    scaled_score = 1 + (total_score - 1) * 9 / 9
+    scaled_score = 1 + (total_score - 1) * 7 / 7
 
     return round(scaled_score)
 
@@ -132,7 +175,10 @@ async def refresh_milestone_significance(limit: int | None = None, instance_id: 
             else:
                 records = []
         else:
-            records, _ = await get_milestone_records(session=session, limit=limit)
+            query = select(Milestones).order_by(Milestones.interval.desc())
+            records_scalars = (await session.execute(query)).scalars().all()
+            # convert to list of dicts
+            records = [rec.__dict__ for rec in records_scalars]
 
         logger.info(f"Refreshing {len(records)} milestone significance")
 
@@ -172,6 +218,6 @@ if __name__ == "__main__":
     import asyncio
     import uuid
 
-    test_instance = uuid.UUID("b98485af-a6d5-4f81-9daf-6740bb317ea1")
+    test_instance = uuid.UUID("005c0159-fcb8-474e-aee8-61fc36c6bcac")
 
     asyncio.run(refresh_milestone_significance(limit=None))
