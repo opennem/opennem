@@ -1,5 +1,6 @@
 """ """
 
+import asyncio
 import logging
 from datetime import datetime
 from textwrap import dedent
@@ -161,14 +162,17 @@ async def get_fueltech_interval_energy_emissions(
 
 async def get_fueltech_generated_energy_emissions(
     network: NetworkSchema, interval: str, date_start: datetime, date_end: datetime, region_group: bool = False
-) -> Any:
+) -> list[Any]:
     """
     Get the total generated energy emissions for a network
     based on a year
 
     :param network: The network to query
+    :param interval: The interval to group by
     :param date_start: The start date
     :param date_end: The end date
+    :param region_group: Whether to group by region
+    :return: ScalarResult containing the query results
     """
 
     network_region_query = "fs.network_region as network_region," if region_group else ""
@@ -180,7 +184,7 @@ async def get_fueltech_generated_energy_emissions(
         f"""
             SELECT
                 {interval} AS interval,
-                fs.network_id,
+                '{network.code.upper()}' as network_id,
                 {network_region_query}
                 ftg.code as fueltech_id,
                 sum(fs.generated) as fueltech_generated,
@@ -204,6 +208,34 @@ async def get_fueltech_generated_energy_emissions(
 
     async with get_read_session() as session:
         result = await session.execute(query, {"date_start": date_start, "date_end": date_end})
-        rows = result.fetchall()
+        return result.all()
 
-    return rows
+
+if __name__ == "__main__":
+
+    async def main() -> None:
+        """
+        Main entry point for running get_fueltech_generated_energy_emissions
+        for NetworkNEM on 2nd Feb 2024, from midnight to midnight.
+        """
+        network = NetworkNEM
+        interval = "fs.trading_day"
+        date_start = datetime(2024, 2, 2, 0, 0, 0)  # Midnight at the start of Feb 2
+        date_end = datetime(2024, 2, 3, 0, 0, 0)  # Midnight at the start of Feb 3
+        region_group = False
+
+        try:
+            results = await get_fueltech_generated_energy_emissions(
+                network=network, interval=interval, date_start=date_start, date_end=date_end, region_group=region_group
+            )
+
+            print(f"Results for {network.code} from {date_start} to {date_end}:")
+
+            # Convert ScalarResult to a list of dictionaries for datatable_print
+            for r in results:
+                print(r)
+            # datatable_print(results)
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+
+    asyncio.run(main())
