@@ -31,14 +31,15 @@ async def aggregate_generation_and_emissions_data(
 ) -> list[MilestoneRecordSchema]:
     # logger.info(f"Aggregating generation & emissions data for {network.code} bucket size {bucket_size} for {date_start}")
 
-    query_method = get_fueltech_generated_energy_emissions
+    _query_method = get_fueltech_generated_energy_emissions
     bucket_interval = get_bucket_query(bucket_size, field_name="fs.trading_day")
 
+    # @NOTE we never run this.
     if bucket_size == MilestonePeriod.interval:
         bucket_interval = get_bucket_interval(bucket_size, interval_size=network.interval_size)
-        query_method = get_fueltech_interval_energy_emissions
+        _query_method = get_fueltech_interval_energy_emissions
 
-    results = await query_method(
+    results = await _query_method(
         network=network, interval=bucket_interval, date_start=date_start, date_end=date_end, region_group=region_group
     )
 
