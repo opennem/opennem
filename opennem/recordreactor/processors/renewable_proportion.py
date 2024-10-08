@@ -69,6 +69,17 @@ async def run_renewable_proportion_milestones(
     """
     Run the renewable proportion milestone for a given network and date range.
     """
+
+    # only run on interval, day and week rolling for now
+    if bucket_size not in [
+        MilestonePeriod.interval,
+        MilestonePeriod.day,
+        MilestonePeriod.week_rolling,
+        MilestonePeriod.month,
+        MilestonePeriod.year,
+    ]:
+        return
+
     for group_by_region in [True, False]:
         milestone_data = await _aggregate_renewable_proportion_data(
             network=network,
