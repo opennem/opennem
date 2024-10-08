@@ -5,8 +5,9 @@ OpenNEM queries for renewable proportion
 
 from datetime import datetime
 
-from sqlalchemy import case, func, select, text
+from sqlalchemy import case, cast, func, select, text
 from sqlalchemy.sql import expression as sql
+from sqlalchemy.types import Numeric
 
 from opennem.db import get_read_session
 from opennem.db.models.opennem import BalancingSummary, Facility, FacilityScada, FuelTech, FuelTechGroup
@@ -64,6 +65,7 @@ async def get_renewable_energy_proportion(
     generation = (
         select(
             func.time_bucket_gapfill(text("'5 min'"), FacilityScada.interval).label("interval"),
+            Facility.network_id,
             Facility.network_region,
             case(
                 (group_by_fueltech, FuelTechGroup.code), else_=text("'renewables'") if group_by_renewable else text("NULL")
@@ -85,7 +87,7 @@ async def get_renewable_energy_proportion(
     if group_by_renewable:
         generation = generation.where(FuelTech.renewable.is_(True))
 
-    generation = generation.group_by(text("1"), text("2"), text("3")).alias("generation_renewable")
+    generation = generation.group_by(text("1"), text("2"), text("3"), text("4")).alias("generation_renewable")
 
     # Subquery for demand
     demand = (
@@ -112,28 +114,38 @@ async def get_renewable_energy_proportion(
     query = (
         select(
             func.time_bucket(text(f"'{bucket_size_sql}'"), generation.c.interval).label("interval"),
+            generation.c.network_id.label("network_id"),
             case((group_by_region, generation.c.network_region), else_=sql.null()).label("network_region"),
             case(
                 (group_by_fueltech, generation.c.fueltech_id),
                 (group_by_renewable, text("'renewables'")),
                 else_=sql.null(),
             ).label("fueltech_id"),
-            func.round(func.max(generation.c.generation), 2).label("generation"),
-            func.round(func.max(generation_rooftop.c.generation), 2).label("generation_rooftop"),
-            func.round(func.avg(demand.c.demand_total), 2).label("demand_total"),
+            func.round(cast(func.max(generation.c.generation), Numeric), 2).label("generation"),
+            func.round(cast(func.max(generation_rooftop.c.generation), Numeric), 2).label("generation_rooftop"),
+            func.round(cast(func.avg(demand.c.demand_total), Numeric), 2).label("demand_total"),
             case(
                 (
                     func.sum(demand.c.demand_total) > 0,
                     func.round(
-                        (
+                        cast(
                             (
-                                func.sum(generation_rooftop.c.generation)
-                                if not group_by_fueltech
-                                else 0 + func.coalesce(func.sum(generation.c.generation), 0)
+                                (
+                                    func.sum(generation_rooftop.c.generation)
+                                    if not group_by_fueltech
+                                    else 0 + func.coalesce(func.sum(generation.c.generation), 0)
+                                )
+                                / cast(
+                                    (
+                                        func.sum(demand.c.demand_total)
+                                        + func.coalesce(func.sum(generation_rooftop.c.generation), 0)
+                                    ),
+                                    Numeric,
+                                )
                             )
-                            / (func.sum(demand.c.demand_total) + func.coalesce(func.sum(generation_rooftop.c.generation), 0))
-                        )
-                        * 100,
+                            * 100,
+                            Numeric,
+                        ),
                         4,
                     ),
                 ),
@@ -155,7 +167,7 @@ async def get_renewable_energy_proportion(
     if network_region:
         query = query.where(demand.c.network_region == network_region)
 
-    query = query.group_by(text("1"), text("2"), text("3")).order_by(text("1"), text("2"), text("3"))
+    query = query.group_by(text("1"), text("2"), text("3"), text("4")).order_by(text("1"), text("2"), text("3"), text("4"))
 
     async with get_read_session() as session:
         result = await session.execute(query)
@@ -174,10 +186,10 @@ if __name__ == "__main__":
             network=NetworkNEM,
             bucket_size=MilestonePeriod.interval,
             start_date=datetime.fromisoformat("2024-08-01 12:00:00"),
-            end_date=datetime.fromisoformat("2024-08-01 12:05:00"),
+            end_date=datetime.fromisoformat("2024-08-01 12:10:00"),
             group_by_region=True,
-            group_by_fueltech=False,
-            group_by_renewable=True,
+            group_by_fueltech=True,
+            group_by_renewable=False,
         )
         datatable_print(results)
 
