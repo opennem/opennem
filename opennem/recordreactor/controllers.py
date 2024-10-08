@@ -13,6 +13,7 @@ from opennem.recordreactor.schema import (
     MilestoneRecordSchema,
     MilestoneType,
 )
+from opennem.recordreactor.unit import get_milestone_unit
 
 logger = logging.getLogger("opennem.recordreactor.controllers")
 
@@ -99,7 +100,7 @@ def map_milestone_output_schema_to_record(milestone: MilestoneRecordOutputSchema
         "aggregate": MilestoneAggregate(milestone.aggregate),
         "metric": MilestoneType(milestone.metric),
         "period": MilestonePeriod(milestone.period),
-        "unit": get_unit_by_value(milestone.value_unit),
+        "unit": get_milestone_unit(MilestoneType(milestone.metric)),
         "network": network_from_network_code(milestone.network_id),
         "value": milestone.value,
     }
