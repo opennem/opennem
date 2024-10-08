@@ -69,9 +69,16 @@ class OpennemSettings(BaseSettings):
 
     export_local: bool = False
 
-    s3_bucket_path: str = Field("data.opennem.org.au", validation_alias=AliasChoices("S3_DATA_BUCKET_PATH"))
-    s3_bucket_name: str = Field("opennem-dev", validation_alias=AliasChoices("S3_DATA_BUCKET_NAME"))
-    s3_endpoint_url: str = "https://17399e149aeaa08c0c7bbb15382fa5c3.r2.cloudflarestorage.com"
+    # R2 settings
+    s3_access_key_id: str = Field(None, description="The access key ID for the S3 bucket")
+    s3_secret_access_key: str = Field(None, description="The secret access key for the S3 bucket")
+    s3_bucket_name: str = Field("opennem-dev", description="The name of the S3 bucket")
+    s3_endpoint_url: str = Field(
+        "https://17399e149aeaa08c0c7bbb15382fa5c3.r2.cloudflarestorage.com",
+        description="The endpoint URL for the S3 bucket",
+    )
+    s3_bucket_public_url: str = Field("https://data.opennem.org.au", description="The public URL of the S3 bucket")
+    s3_region: str = "apac"
 
     # opennem output settings
     interval_default: str = "15m"
@@ -178,9 +185,6 @@ class OpennemSettings(BaseSettings):
     webhook_secret: str | None = None
 
     r2_token: str | None = None
-
-    aws_access_key_id: str = Field("", validation_alias=AliasChoices("AWS_ACCESS_KEY_ID"))
-    aws_secret_access_key: str = Field("", validation_alias=AliasChoices("AWS_SECRET_ACCESS_KEY"))
 
     # sanity cms setup
     sanity_project_id: str | None = None
