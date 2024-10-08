@@ -139,6 +139,8 @@ def get_bucket_query(bucket_size: MilestonePeriod, field_name: str = "interval",
         return f"{interval_size} minutes"
 
     match bucket_size:
+        case MilestonePeriod.week_rolling:
+            bucket_query = "7 days"
         case MilestonePeriod.quarter:
             bucket_query = "3 months"
         case MilestonePeriod.season:
