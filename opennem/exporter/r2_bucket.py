@@ -92,7 +92,7 @@ class OpennemDataSetSerialize:
 async def write_stat_set_to_r2(
     stat_set: OpennemDataSet, file_path: str, exclude: set | None = None, exclude_unset: bool = False
 ) -> int:
-    r2_save_path = urljoin(f"https://{settings.s3_bucket_path}", file_path)
+    r2_save_path = urljoin(f"https://{settings.s3_bucket_public_url}", file_path)
 
     if file_path.startswith("/"):
         file_path = file_path[1:]
@@ -131,20 +131,27 @@ async def write_content_to_r2(content: str, file_path: str, content_type: str = 
     if not settings.s3_bucket_name:
         raise Exception("Require an R2 bucket to write to")
 
-    r2_save_path = urljoin(f"https://{settings.s3_bucket_path}", file_path)
+    r2_save_path = urljoin(f"https://{settings.s3_bucket_public_url}", file_path)
 
     if file_path.startswith("/"):
         file_path = file_path[1:]
 
+    logger.debug(f"setting up r2 bucket {settings.s3_bucket_name}")
     r2_bucket = OpennemDataSetSerialize(settings.s3_bucket_name)
     write_response = None
 
     try:
         await r2_bucket.create_S3_bucket()
+        logger.debug(f"writing {len(content)} to {file_path} of type {content_type}")
         write_response = await r2_bucket.write(file_path, content, content_type=content_type)
     except ClientError as e:
         logger.error(e)
         return 1
+    except Exception as e:
+        logger.error(e)
+        return 1
+
+    logger.debug(write_response)
 
     if "ResponseMetadata" not in write_response:
         raise Exception(f"Error writing stat set to {file_path} invalid write response")
