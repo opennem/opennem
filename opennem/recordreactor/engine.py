@@ -11,7 +11,7 @@ from opennem import settings
 from opennem.recordreactor.buckets import get_period_start_end, is_end_of_period
 from opennem.recordreactor.processors.demand import run_price_demand_milestone_for_interval
 from opennem.recordreactor.processors.generation import run_generation_energy_emissions_milestones
-from opennem.recordreactor.processors.power import run_power_milestones
+from opennem.recordreactor.processors.power import run_renewable_power_milestones
 from opennem.recordreactor.processors.renewable_proportion import run_renewable_proportion_milestones
 from opennem.recordreactor.schema import MilestonePeriod, MilestoneType
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM, NetworkWEMDE
@@ -50,6 +50,8 @@ async def run_milestone_engine(
     metrics: list[MilestoneType] | None = None,
     networks: list[NetworkSchema] | None = None,
     periods: list[MilestonePeriod] | None = None,
+    bulk_insert: bool = False,
+    bulk_insert_batch_size: int = 100,
 ):
     if not metrics:
         metrics = _DEFAULT_METRICS
@@ -107,8 +109,17 @@ async def run_milestone_engine(
                         continue
 
                     if MilestoneType.power in metrics:
+                        # tasks.append(
+                        #     run_power_milestones(
+                        #         network=network,
+                        #         bucket_size=bucket_size,
+                        #         period_start=period_start,
+                        #         period_end=period_end,
+                        #     )
+                        # )
+
                         tasks.append(
-                            run_power_milestones(
+                            run_renewable_power_milestones(
                                 network=network,
                                 bucket_size=bucket_size,
                                 period_start=period_start,
@@ -162,14 +173,21 @@ if __name__ == "__main__":
 
     nem_start = datetime.fromisoformat("1998-12-08 00:00:00")
     start_interval = datetime.fromisoformat("1999-03-26 04:55:00")
-    test_start_interval = datetime.fromisoformat("2020-01-01 00:00:00")
-    end_interval = datetime.fromisoformat("2024-08-15 00:00:00")
+    test_start_interval = datetime.fromisoformat("2010-01-01 00:00:00")
+    end_interval = datetime.fromisoformat("2024-08-01 00:00:00")
     asyncio.run(
         run_milestone_engine(
-            start_interval=test_start_interval,
+            start_interval=nem_start,
             end_interval=end_interval,
-            metrics=[MilestoneType.proportion],
-            periods=[MilestonePeriod.interval],
+            metrics=[MilestoneType.energy],
+            periods=[
+                # MilestonePeriod.interval,
+                MilestonePeriod.day,
+                MilestonePeriod.week_rolling,
+                MilestonePeriod.month,
+                # MilestonePeriod.quarter,
+                MilestonePeriod.year,
+            ],
             networks=[NetworkNEM],
         )
     )
