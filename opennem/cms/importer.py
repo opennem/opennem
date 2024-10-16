@@ -5,12 +5,14 @@ from pathlib import Path
 
 from portabletext_html import PortableTextRenderer
 from pydantic import ValidationError
+from rich.prompt import Confirm
 from sanity import Client
 from sqlalchemy import select
 
 from opennem import settings
 from opennem.db import get_read_session
 from opennem.db.models.opennem import Station
+from opennem.queries.facilities import get_facility_by_code
 from opennem.schema.facility import FacilityOutputSchema
 
 logger = logging.getLogger("sanity.importer")
@@ -85,7 +87,7 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilityOutputS
         if facility["code"] in result_models:
             logger.warning(
                 f"Duplicate facility code {facility['code']} sanity. {facility['_id']}"
-                f" existing {result_models[facility['code']].id}"
+                # f" existing {result_models[facility['code']].id}"
             )
             continue
 
@@ -122,11 +124,59 @@ async def get_database_facilities():
     return facilities
 
 
+async def update_database_facilities_from_cms() -> None:
+    """Update the database facilities from the CMS"""
+
+    sanity_facilities = get_cms_facilities()
+    database_facilities = await get_database_facilities()
+
+    logger.info(f"Updating {len(sanity_facilities)} facilities from CMS. Have {len(database_facilities)} in database")
+
+    sanity_facility_codes = [facility.code for facility in sanity_facilities]
+    database_facility_codes = [facility.code for facility in database_facilities]
+
+    missing_facilities = set(sanity_facility_codes) - set(database_facility_codes)
+
+    if missing_facilities:
+        logger.info(f"Missing {len(missing_facilities)} facilities in database")
+        for facility in missing_facilities:
+            logger.info(f" - {facility}")
+
+    for facility in sanity_facilities:
+        if facility.code not in database_facility_codes:
+            logger.info(f"New facility {facility.code} - {facility.name}")
+            continue
+
+        # else get the facility from the database
+        database_facility = await get_facility_by_code(facility.code)
+
+        if not database_facility:
+            logger.error(f"Facility {facility.code} not found in database .. somehow")
+            continue
+
+        logger.info(f"Updating facility {facility.code} - {facility.name}")
+
+        # loop through each field and each unit and update the database
+        for field in ["name", "website", "description", "wikipedia"]:
+            cms_value = getattr(facility, field)
+
+            if cms_value != getattr(database_facility, field):
+                logger.info(f" => {field}: {getattr(database_facility, field)} needs to be updated to {cms_value}")
+                confirm = Confirm.ask(f"Update {field}?")
+                if not confirm:
+                    continue
+
+                setattr(database_facility, field, cms_value)
+
+        if facility.photos:
+            logger.info(f"Photos: {facility.photos}")
+
+        if facility.location:
+            logger.info(f"Location: {facility.location}")
+
+
 if __name__ == "__main__":
     import asyncio
 
     # opennem_stations = get_opennem_stations()
-    sanity_facilities = get_cms_facilities()
-    database_facilities = asyncio.run(get_database_facilities())
-
-    database_facility_codes = [facility.code for facility in database_facilities]
+    asyncio.run(update_database_facilities_from_cms())
