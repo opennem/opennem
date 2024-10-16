@@ -309,7 +309,8 @@ class Station(Base, BaseModel):
 
     # participant = relationship("Participant", cascade="all, delete")
     # location = relationship("Location", lazy="joined", innerjoin=False, cascade="all, delete")
-    # facilities = relationship("Facility", lazy="joined", innerjoin=False, cascade="all, delete")
+    # facilities = relationship("Facility", lazy="joined", innerjoin=True, cascade="all, delete")
+    facilities = relationship("Facility", innerjoin=True)
 
     __table_args__ = (UniqueConstraint("code", name="excl_station_network_duid"),)
 
@@ -368,7 +369,7 @@ class Facility(Base, BaseModel):
     network_region = Column(Text, index=True)
     network_name = Column(Text)
     active: Mapped[bool] = mapped_column(Boolean, default=True)
-    dispatch_type: Mapped[DispatchType] = mapped_column(Enum(DispatchType), nullable=False, default=DispatchType.GENERATOR)
+    dispatch_type: Mapped[str] = mapped_column(Text, nullable=False, default="GENERATOR")
     capacity_registered: Mapped[float] = mapped_column(Numeric, nullable=True)
     registered: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     deregistered: Mapped[datetime] = mapped_column(DateTime, nullable=True)
