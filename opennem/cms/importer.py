@@ -6,23 +6,17 @@ from pathlib import Path
 from portabletext_html import PortableTextRenderer
 from pydantic import ValidationError
 from rich.prompt import Confirm
-from sanity import Client
 from sqlalchemy import select
 
-from opennem import settings
+from opennem.cms.fieldmap import cms_field_to_database_field
 from opennem.db import get_read_session
 from opennem.db.models.opennem import Station
 from opennem.queries.facilities import get_facility_by_code
 from opennem.schema.facility import FacilityOutputSchema
 
-logger = logging.getLogger("sanity.importer")
+from .client import sanity_client
 
-client = Client(
-    logger=logger,
-    project_id=settings.sanity_project_id,
-    dataset=settings.sanity_dataset_id,
-    token=settings.sanity_api_key,
-)
+logger = logging.getLogger("sanity.importer")
 
 
 def get_cms_facilities(facility_code: str | None = None) -> list[FacilityOutputSchema]:
@@ -61,7 +55,7 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilityOutputS
         }}
     }}"""
 
-    res = client.query(query)
+    res = sanity_client.query(query)
 
     if not res or not isinstance(res, dict) or "result" not in res or not res["result"]:
         logger.error("No facilities found")
@@ -158,15 +152,16 @@ async def update_database_facilities_from_cms() -> None:
 
         # loop through each field and each unit and update the database
         for field in ["name", "website", "description", "wikipedia"]:
+            database_field = cms_field_to_database_field(field)
             cms_value = getattr(facility, field)
 
-            if cms_value != getattr(database_facility, field):
-                logger.info(f" => {field}: {getattr(database_facility, field)} needs to be updated to {cms_value}")
-                confirm = Confirm.ask(f"Update {field}?")
+            if cms_value != getattr(database_facility, database_field):
+                logger.info(f" => {field}: {getattr(database_facility, database_field)} needs to be updated to {cms_value}")
+                confirm = Confirm.ask(f"Update {field}?", default=False)
                 if not confirm:
                     continue
 
-                setattr(database_facility, field, cms_value)
+                setattr(database_facility, database_field, cms_value)
 
         if facility.photos:
             logger.info(f"Photos: {facility.photos}")
