@@ -13,7 +13,7 @@ class FacilityPhotoOutputSchema(BaseModel):
     attribution: str | None = None
 
 
-class UnitOutputSchema(BaseModel):
+class CMSUnitSchema(BaseModel):
     """Facility output schema"""
 
     code: str
@@ -29,7 +29,7 @@ class UnitOutputSchema(BaseModel):
     closure_date: date | None = None
 
 
-class FacilityOutputSchema(BaseModel):
+class CMSFacilitySchema(BaseModel):
     """Station output schema"""
 
     code: str
@@ -41,7 +41,7 @@ class FacilityOutputSchema(BaseModel):
     wikipedia: str | None = None
     photos: list[FacilityPhotoOutputSchema] | None = None
     location: dict[str, float | str] | None = None
-    units: list[UnitOutputSchema] | None = None
+    units: list[CMSUnitSchema]
 
     # Sanity fields
     updated_at: datetime | None = None

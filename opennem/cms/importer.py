@@ -1,98 +1,20 @@
 #!/usr/bin/env python3
 import json
 import logging
+from datetime import datetime
 from pathlib import Path
 
-from portabletext_html import PortableTextRenderer
-from pydantic import ValidationError
-from rich.prompt import Confirm
+from rich.prompt import Confirm, Prompt
 from sqlalchemy import select
 
 from opennem.cms.fieldmap import cms_field_to_database_field
-from opennem.db import get_read_session
-from opennem.db.models.opennem import Station
+from opennem.cms.queries import get_cms_facilities
+from opennem.db import get_read_session, get_write_session
+from opennem.db.models.opennem import Facility, Station
 from opennem.queries.facilities import get_facility_by_code
-from opennem.schema.facility import FacilityOutputSchema
-
-from .client import sanity_client
+from opennem.schema.facility import CMSFacilitySchema
 
 logger = logging.getLogger("sanity.importer")
-
-
-def get_cms_facilities(facility_code: str | None = None) -> list[FacilityOutputSchema]:
-    filter_query = ""
-
-    if facility_code:
-        filter_query += f" && code == '{facility_code}'"
-
-    query = f"""*[_type == "facility"{filter_query} && !(_id in path("drafts.**"))] {{
-        _id,
-        _createdAt,
-        _updatedAt,
-        code,
-        name,
-        website,
-        description,
-        "network_id": upper(network->code),
-        "network_region": upper(region->code),
-        photos,
-        wikipedia,
-        location,
-        units[]-> {{
-            code,
-            dispatch_type,
-            "status_id": status,
-            "network_id": upper(network->code),
-            "network_region": upper(network_region->code),
-            "fueltech_id": fuel_technology->code,
-            capacity_registered,
-            capacity_maximum,
-            storage_capacity,
-            emissions_factor_co2,
-            expected_closure_date,
-            commencement_date,
-            closure_date
-        }}
-    }}"""
-
-    res = sanity_client.query(query)
-
-    if not res or not isinstance(res, dict) or "result" not in res or not res["result"]:
-        logger.error("No facilities found")
-        return []
-
-    result_models = {}
-
-    # compile the facility description to html
-    for facility in res["result"]:
-        if facility.get("description") and isinstance(facility["description"], list):
-            rendered_description = ""
-            for block in facility["description"]:
-                rendered_description += PortableTextRenderer(block).render()
-            if rendered_description:
-                facility["description"] = rendered_description
-
-        if facility.get("_id"):
-            facility["id"] = facility["_id"]
-
-        if facility["_updatedAt"]:
-            facility["updated_at"] = facility["_updatedAt"]
-
-        if facility["code"] in result_models:
-            logger.warning(
-                f"Duplicate facility code {facility['code']} sanity. {facility['_id']}"
-                # f" existing {result_models[facility['code']].id}"
-            )
-            continue
-
-        try:
-            result_models[facility["code"]] = FacilityOutputSchema(**facility)
-        except ValidationError as e:
-            logger.error(f"Error creating facility model for {facility['code']}: {e}")
-            logger.debug(facility)
-            raise e
-
-    return list(result_models.values())
 
 
 def get_opennem_stations() -> list[dict]:
@@ -110,7 +32,7 @@ async def get_database_facilities():
     """Get all facilities with their associated station information from the database"""
 
     async with get_read_session() as session:
-        query = select(Station).where(Station.approved == True)  # noqa: E712
+        query = select(Station)  # noqa: E712
         # .join(Facility, Facility.station_id == Station.id)
         result = await session.execute(query)
         facilities = result.scalars().all()
@@ -118,7 +40,46 @@ async def get_database_facilities():
     return facilities
 
 
-async def update_database_facilities_from_cms() -> None:
+async def create_database_facility_from_cms(facility: CMSFacilitySchema) -> None:
+    """Create new database facilities from the CMS"""
+
+    async with get_write_session() as session:
+        station = Station(
+            code=facility.code,
+            name=facility.name,
+            network_code=facility.network_id,
+            description=facility.description,
+            wikipedia_link=facility.wikipedia,
+            website_url=facility.website,
+            approved=True,
+            created_at=datetime.now(),
+        )
+
+        for unit in facility.units:
+            db_unit = Facility(
+                code=unit.code,
+                network_id=station.network_code,
+                fueltech_id=unit.fueltech_id,
+                status_id=unit.status_id,
+                dispatch_type=unit.dispatch_type.value,
+                capacity_registered=unit.capacity_registered,
+                emissions_factor_co2=unit.emissions_factor_co2,
+                expected_closure_date=unit.expected_closure_date,
+                registered=unit.commencement_date,
+                deregistered=unit.closure_date,
+            )
+            station.facilities.append(db_unit)
+
+        session.add(station)
+
+        try:
+            await session.commit()
+            logger.info(f"Created facility {facility.code} - {facility.name}")
+        except Exception as e:
+            logger.error(f"Error creating facility {facility.code} - {facility.name}: {e}")
+
+
+async def update_database_facilities_from_cms(run_updates: bool = False) -> None:
     """Update the database facilities from the CMS"""
 
     sanity_facilities = get_cms_facilities()
@@ -139,6 +100,16 @@ async def update_database_facilities_from_cms() -> None:
     for facility in sanity_facilities:
         if facility.code not in database_facility_codes:
             logger.info(f"New facility {facility.code} - {facility.name}")
+            add_facility_prompt = Confirm.ask("Add new facility?", default=False)
+
+            if not add_facility_prompt:
+                continue
+
+            await create_database_facility_from_cms(facility)
+            continue
+
+        if not run_updates:
+            logger.info(f"Skipping update for {facility.code} - {facility.name}")
             continue
 
         # else get the facility from the database
@@ -153,21 +124,25 @@ async def update_database_facilities_from_cms() -> None:
         # loop through each field and each unit and update the database
         for field in ["name", "website", "description", "wikipedia"]:
             database_field = cms_field_to_database_field(field)
-            cms_value = getattr(facility, field)
 
-            if cms_value != getattr(database_facility, database_field):
-                logger.info(f" => {field}: {getattr(database_facility, database_field)} needs to be updated to {cms_value}")
-                confirm = Confirm.ask(f"Update {field}?", default=False)
-                if not confirm:
+            cms_value = getattr(facility, field)
+            database_value = getattr(database_facility, database_field)
+
+            if cms_value != database_value:
+                logger.info(f" => {field}: {database_value} needs to be updated to {cms_value}")
+
+                confirm = Prompt.ask(f"Update {field}?", choices=["y", "n", "c"], default="n")
+
+                if confirm == "n":
                     continue
 
-                setattr(database_facility, database_field, cms_value)
+                # update the CMS record
+                elif confirm == "c":
+                    setattr(facility, field, database_value)
 
-        if facility.photos:
-            logger.info(f"Photos: {facility.photos}")
-
-        if facility.location:
-            logger.info(f"Location: {facility.location}")
+                # update the database record
+                else:
+                    setattr(database_facility, database_field, cms_value)
 
 
 if __name__ == "__main__":
