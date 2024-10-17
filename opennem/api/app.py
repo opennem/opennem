@@ -34,7 +34,6 @@ from opennem.api.milestones.router import milestones_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
-from opennem.api.weather.router import router as weather_router
 from opennem.api.webhooks.router import router as webhooks_router
 from opennem.clients.unkey import OpenNEMUser
 from opennem.core.time import INTERVALS, PERIODS
@@ -145,7 +144,6 @@ async def http_type_exception_handler(request: Request, exc: HTTPException) -> O
 # sub-routers
 app.include_router(stats_router, tags=["Stats"], prefix="/stats")
 app.include_router(station_router, tags=["Facilities"], prefix="/facility")
-app.include_router(weather_router, tags=["Weather"], prefix="/weather")
 app.include_router(feedback_router, tags=["Feedback"], prefix="/feedback", include_in_schema=False)
 app.include_router(dash_router, tags=["Dashboard"], prefix="/dash", include_in_schema=False)
 app.include_router(milestones_router, tags=["Milestones"], prefix="/milestones", include_in_schema=True)
