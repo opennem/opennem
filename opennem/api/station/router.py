@@ -1,8 +1,10 @@
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi_cache.decorator import cache
+from fastapi_versionizer import api_version
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 from starlette import status
 from starlette.responses import Response
 
@@ -76,6 +78,8 @@ async def get_stations(
     return resp
 
 
+@api_version(4)
+@cache(expire=60 * 5)
 @router.get(
     "/au/{network_id}/{station_code:path}",
     name="Get station information",
