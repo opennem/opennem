@@ -1,21 +1,14 @@
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from fastapi_cache.decorator import cache
 from fastapi_versionizer import api_version
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 from starlette import status
-from starlette.responses import Response
 
 from opennem.api import throttle
 from opennem.api.exceptions import OpennemBaseHttpException
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.cms.importer import get_cms_facilities
-from opennem.db import get_scoped_session
-from opennem.db.models.opennem import Facility, FuelTech, Location, Station
-
-from .schema import StationsResponse
 
 logger = logging.getLogger("opennem.api.station")
 
@@ -35,47 +28,19 @@ class StationNoFacilities(OpennemBaseHttpException):
 
 
 @throttle.throttle_request()
+@api_version(4)
+@cache(expire=60 * 5)
 @router.get(
     "/",
-    response_model=StationsResponse,
-    description="Get a list of all stations",
+    description="Get a list of all facilities",
     response_model_exclude_none=True,
 )
-async def get_stations(
-    response: Response,
-    session: AsyncSession = Depends(get_scoped_session),
-    facilities_include: bool | None = True,
-    only_approved: bool | None = False,
-    name: str | None = None,
-    limit: int | None = None,
-    page: int = 1,
-) -> StationsResponse:
-    query = select(Station).join(Location)
+async def get_facilities() -> APIV4ResponseSchema:
+    facilities = get_cms_facilities()
 
-    if facilities_include:
-        query = query.outerjoin(Facility, Facility.station_id == Station.id).outerjoin(
-            FuelTech, Facility.fueltech_id == FuelTech.code
-        )
+    model_output = APIV4ResponseSchema(success=True, data=facilities, total_records=len(facilities))
 
-    if only_approved:
-        query = query.where(Station.approved == True)  # noqa: E712
-
-    if name:
-        query = query.where(Station.name.like(f"%{name}%"))
-
-    query = query.order_by(Station.name)
-
-    if limit:
-        query = query.limit(limit)
-
-    result = await session.execute(query)
-    stations = result.unique().scalars().all()
-
-    resp = StationsResponse(data=stations, total_records=len(stations))
-
-    response.headers["X-Total-Count"] = str(len(stations))
-
-    return resp
+    return model_output
 
 
 @api_version(4)
@@ -87,7 +52,7 @@ async def get_stations(
     response_model_exclude_none=True,
     response_model_exclude_unset=True,
 )
-async def station(
+async def get_facility(
     network_id: str,
     station_code: str,
 ) -> APIV4ResponseSchema:
