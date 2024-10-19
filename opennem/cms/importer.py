@@ -10,7 +10,7 @@ from sqlalchemy import select
 from opennem.cms.fieldmap import cms_field_to_database_field
 from opennem.cms.queries import get_cms_facilities
 from opennem.db import get_read_session, get_write_session
-from opennem.db.models.opennem import Facility, Station
+from opennem.db.models.opennem import Facility, Location, Station
 from opennem.queries.facilities import get_facility_by_code
 from opennem.schema.facility import CMSFacilitySchema
 
@@ -54,6 +54,9 @@ async def create_database_facility_from_cms(facility: CMSFacilitySchema) -> None
             approved=True,
             created_at=datetime.now(),
         )
+
+        if facility.location and (facility.location.lat and facility.location.lng):
+            station.location = Location(geom=f"SRID=4326;POINT({facility.location.lng} {facility.location.lat})")
 
         for unit in facility.units:
             db_unit = Facility(

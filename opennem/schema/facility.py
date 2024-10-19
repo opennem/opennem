@@ -29,6 +29,14 @@ class CMSUnitSchema(BaseModel):
     closure_date: date | None = None
 
 
+class CMSFacilityLocationSchema(BaseModel):
+    """Facility location schema"""
+
+    _type: str
+    lat: float | None = None
+    lng: float | None = None
+
+
 class CMSFacilitySchema(BaseModel):
     """Station output schema"""
 
@@ -40,7 +48,7 @@ class CMSFacilitySchema(BaseModel):
     description: str | None = None
     wikipedia: str | None = None
     photos: list[FacilityPhotoOutputSchema] | None = None
-    location: dict[str, float | str] | None = None
+    location: CMSFacilityLocationSchema | None = None
     units: list[CMSUnitSchema]
 
     # Sanity fields
