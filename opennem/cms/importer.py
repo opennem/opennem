@@ -32,7 +32,7 @@ async def get_database_facilities():
     """Get all facilities with their associated station information from the database"""
 
     async with get_read_session() as session:
-        query = select(Station)  # noqa: E712
+        query = select(Station).where(Station.approved == True)  # noqa: E712
         # .join(Facility, Facility.station_id == Station.id)
         result = await session.execute(query)
         facilities = result.scalars().all()
@@ -80,6 +80,18 @@ async def create_database_facility_from_cms(facility: CMSFacilitySchema) -> None
             logger.info(f"Created facility {facility.code} - {facility.name}")
         except Exception as e:
             logger.error(f"Error creating facility {facility.code} - {facility.name}: {e}")
+
+
+def _check_cms_duplicate_ids(facilities: list[CMSFacilitySchema]) -> list[str]:
+    """Check for duplicate ids in the CMS"""
+
+    duplicate_ids = []
+
+    for facility in facilities:
+        if facilities.count(facility.code) > 1:
+            duplicate_ids.append(facility.code)
+
+    return duplicate_ids
 
 
 async def update_database_facilities_from_cms(run_updates: bool = False) -> None:
