@@ -29,7 +29,11 @@ def get_cms_facilities(facility_code: str | None = None) -> list[CMSFacilitySche
         description,
         "network_id": upper(network->code),
         "network_region": upper(region->code),
-        photos,
+        photos[0]-> {{
+            "url": asset->url,
+            caption,
+            attribution
+        }},
         wikipedia,
         location,
         units[]-> {{
@@ -104,3 +108,10 @@ def update_cms_record(facility: CMSFacilitySchema) -> None:
     )
 
     logger.info(f"Updated facility {facility.code} on sanity: {res}")
+
+
+if __name__ == "__main__":
+    facilities = get_cms_facilities(facility_code="AWABAREF")
+    from pprint import pprint
+
+    pprint(facilities)
