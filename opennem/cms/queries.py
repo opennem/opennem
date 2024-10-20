@@ -1,5 +1,13 @@
 """
-Update CMS record value on sanity
+Client query library to get facility and other data from the CMS.
+
+The CMS is a Sanity.io instance.
+
+For documentation on the CMS API see https://www.sanity.io/docs/query-cheat-sheet
+
+The sanity python client is an unofficial client and may not be maintained up to date with the latest Sanity.io API.
+
+For the official client see https://github.com/OmniPro-Group/sanity-python
 """
 
 import logging
@@ -14,6 +22,12 @@ logger = logging.getLogger("opennem.cms.update")
 
 
 def get_cms_facilities(facility_code: str | None = None) -> list[CMSFacilitySchema]:
+    """
+    Get facilities from the CMS
+
+    :param facility_code: Filter by facility code
+    :return: List of facilities
+    """
     filter_query = ""
 
     if facility_code:
