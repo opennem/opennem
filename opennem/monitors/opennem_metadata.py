@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def check_metadata_status() -> bool:
-    metadata_path = bucket_to_website(urljoin(settings.s3_bucket_path, "metadata.json"))
+    metadata_path = bucket_to_website(urljoin(settings.s3_bucket_public_url, "metadata.json"))
 
     resp = requests.get(metadata_path)
 
@@ -36,7 +36,7 @@ def check_metadata_status() -> bool:
             logger.info("Resource without path")
             continue
 
-        resource_website_path = bucket_to_website(urljoin(settings.s3_bucket_path, resource.path))
+        resource_website_path = bucket_to_website(urljoin(settings.s3_bucket_public_url, resource.path))
 
         r = requests.get(resource_website_path)
 
