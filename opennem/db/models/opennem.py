@@ -5,7 +5,6 @@ OpenNEM primary schema adapted to support multiple energy sources
 import enum
 import uuid
 from datetime import datetime
-from decimal import Decimal
 
 from geoalchemy2 import Geometry
 from shapely import wkb
@@ -32,7 +31,6 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from opennem.core.dispatch_type import DispatchType
 from opennem.schema.core import BaseConfig
 
 Base = declarative_base()
@@ -289,27 +287,24 @@ class Location(Base):
         return None
 
 
-class Station(Base, BaseModel):
+class Station(Base):
     __tablename__ = "station"
 
     id = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
+    network_id = Column(Text, ForeignKey("network.code", name="fk_station_network_code"), nullable=True)
+    network_region: Mapped[str | None] = mapped_column(Text, nullable=True)
+    code = Column(Text, index=True, nullable=False, unique=True)
+    name: Mapped[str] = mapped_column(Text)
     participant_id = Column(Integer, ForeignKey("participant.id", name="fk_station_participant_id"), nullable=True)
     location_id = Column(Integer, ForeignKey("location.id", name="fk_station_location_id"), nullable=True)
-    code = Column(Text, index=True, nullable=False, unique=True)
-    name = Column(Text)
     description = Column(Text, nullable=True)
+    website_url: Mapped[str] = mapped_column(Text, nullable=True)
     wikipedia_link = Column(Text, nullable=True)
     wikidata_id = Column(Text, nullable=True)
-    network_code = Column(Text, index=True)
-    network_name = Column(Text)
     approved: Mapped[bool] = mapped_column(Boolean, default=False)
-    approved_by: Mapped[str] = mapped_column(Text)
-    approved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
-    website_url: Mapped[str] = mapped_column(Text, nullable=True)
 
     # participant = relationship("Participant", cascade="all, delete")
-    # location = relationship("Location", lazy="joined", innerjoin=False, cascade="all, delete")
-    # facilities = relationship("Facility", lazy="joined", innerjoin=True, cascade="all, delete")
+    location = relationship("Location", innerjoin=True)
     facilities = relationship("Facility", innerjoin=True)
 
     __table_args__ = (UniqueConstraint("code", name="excl_station_network_duid"),)
@@ -336,24 +331,6 @@ class Station(Base, BaseModel):
         if last_seens:
             fsr.date_max = max(last_seens)
         return fsr
-
-    @hybrid_property
-    def capacity_registered(self) -> float | None:
-        cap_reg: float | None = None
-        for fac in self.facilities:
-            if (
-                fac.capacity_registered
-                and type(fac.capacity_registered) in [int, float, Decimal]
-                and fac.status_id in ["operating", "committed", "commissioning"]
-                and fac.dispatch_type == DispatchType.GENERATOR
-                and fac.active
-            ):
-                if not cap_reg:
-                    cap_reg = 0
-                cap_reg += float(fac.capacity_registered)
-        if cap_reg:
-            cap_reg = round(cap_reg, 2)
-        return cap_reg
 
 
 class Facility(Base, BaseModel):
@@ -387,9 +364,6 @@ class Facility(Base, BaseModel):
     data_first_seen = Column(DateTime(timezone=True), nullable=True, index=True)
     data_last_seen = Column(DateTime(timezone=True), nullable=True, index=True)
     approved: Mapped[bool] = mapped_column(Boolean, default=False)
-    approved_by: Mapped[str] = mapped_column(Text)
-    approved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
-    # include_in_geojson = Column(Boolean, default=True)
 
     network = relationship("Network", lazy="joined", innerjoin=True)
     fueltech = relationship("FuelTech", back_populates="facilities", lazy="joined", innerjoin=False)
@@ -411,8 +385,8 @@ class Facility(Base, BaseModel):
 class FacilityScada(Base):
     __tablename__ = "facility_scada"
 
-    network_id = Column(Text, primary_key=True, nullable=False)
     interval = Column(TIMESTAMP(timezone=False), index=True, primary_key=True, nullable=False)
+    network_id = Column(Text, primary_key=True, nullable=False)
     facility_code = Column(Text, nullable=False, primary_key=True, index=True)
     generated = Column(Numeric, nullable=True)
     is_forecast = Column(Boolean, default=False, primary_key=True)
