@@ -15,7 +15,7 @@ from typing import Any
 
 from geojson import GeoJSONEncoder
 
-from opennem.core.dispatch_type import DispatchType, dispatch_type_string
+from opennem.core.dispatch_type import DispatchType
 
 
 class OpenNEMJSONEncoder(json.JSONEncoder):
@@ -31,7 +31,7 @@ class OpenNEMJSONEncoder(json.JSONEncoder):
         if isinstance(o, date):
             return str(o)
         if isinstance(o, DispatchType):
-            return dispatch_type_string(o)
+            return o.value
         return super().default(o)
 
 
@@ -44,7 +44,7 @@ class OpenNEMGeoJSONEncoder(GeoJSONEncoder, OpenNEMJSONEncoder):
         if isinstance(o, datetime):
             return o.isoformat()
         if isinstance(o, DispatchType):
-            return dispatch_type_string(o)
+            return o.value
         return super().default(o)
 
 
