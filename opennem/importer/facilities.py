@@ -11,7 +11,7 @@ from sqlalchemy.orm import selectinload
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.loader import load_data
 from opennem.db import SessionLocal
-from opennem.db.models.opennem import Facility, Location, Station
+from opennem.db.models.opennem import Facility, Location, Unit
 from opennem.schema.stations import StationSet
 
 logger = logging.getLogger("opennem.importer.facilities")
@@ -186,12 +186,12 @@ async def import_station_set(stations: StationSet, only_insert_facilities: bool 
 
             async with session.begin():
                 # Fetch station with eager-loaded facilities
-                station_query = select(Station).options(selectinload(Station.facilities)).where(Station.code == station.code)
+                station_query = select(Facility).options(selectinload(Facility.units)).where(Facility.code == station.code)
                 station_result = await session.execute(station_query)
                 station_model = station_result.scalar_one_or_none()
 
                 if not station_model:
-                    station_model = Station(code=station.code, created_by="opennem.importer.facilities")
+                    station_model = Facility(code=station.code, created_by="opennem.importer.facilities")
                     logger.debug(f"Adding station: {station.code} - {station.name} (network name: {station.network_name})")
                 else:
                     logger.debug(f"Updating station: {station.code} - {station.name} (network name: {station.network_name})")
@@ -224,7 +224,7 @@ async def import_station_set(stations: StationSet, only_insert_facilities: bool 
                 await session.flush()
 
                 # Process facilities
-                existing_facilities = {(f.code, f.network_id): f for f in station_model.facilities}
+                existing_facilities = {(f.code, f.network_id): f for f in station_model.units}
 
                 for fac in station.facilities:
                     facility_key = (fac.code, fac.network_id)
@@ -235,7 +235,7 @@ async def import_station_set(stations: StationSet, only_insert_facilities: bool 
                         facility_model = existing_facilities[facility_key]
                         logger.debug(f" => Updating existing facility {fac.code} in {station_model.code}")
                     else:
-                        facility_model = Facility(code=fac.code, network_id=fac.network_id)
+                        facility_model = Unit(code=fac.code, network_id=fac.network_id)
                         logger.debug(f" => Adding new facility {fac.code} to {station_model.code}")
 
                     # Update facility details
@@ -257,8 +257,8 @@ async def import_station_set(stations: StationSet, only_insert_facilities: bool 
                     if not facility_model.created_by:
                         facility_model.created_by = "opennem.init"
 
-                    if facility_model not in station_model.facilities:
-                        station_model.facilities.append(facility_model)
+                    if facility_model not in station_model.units:
+                        station_model.units.append(facility_model)
 
                     session.add(facility_model)
 

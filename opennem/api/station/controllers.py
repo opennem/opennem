@@ -2,7 +2,7 @@ from sqlalchemy import distinct, select
 from sqlalchemy.orm import selectinload
 
 from opennem.db import SessionLocal
-from opennem.db.models.opennem import Facility, Station
+from opennem.db.models.opennem import Facility, Unit
 
 
 async def get_stations(
@@ -10,35 +10,35 @@ async def get_stations(
     name: str | None = None,
     limit: int | None = None,
     page: int = 1,
-) -> list[Station]:
+) -> list[Facility]:
     async with SessionLocal() as session:
         # Subquery to get distinct station IDs
         subquery = (
-            select(distinct(Station.id).label("station_id"))
-            .join(Station.facilities)
-            .join(Station.location)
-            .join(Facility.fueltech)
-            .filter(Facility.fueltech_id.is_not(None))
-            .filter(Facility.status_id.is_not(None))
-            .filter(Station.approved.is_(True))
+            select(distinct(Facility.id).label("station_id"))
+            .join(Facility.units)
+            .join(Facility.location)
+            .join(Unit.fueltech)
+            .filter(Unit.fueltech_id.is_not(None))
+            .filter(Unit.status_id.is_not(None))
+            .filter(Facility.approved.is_(True))
         )
 
         if name:
-            subquery = subquery.filter(Station.name.ilike(f"%{name}%"))
+            subquery = subquery.filter(Facility.name.ilike(f"%{name}%"))
 
         # Convert subquery to a proper subquery
         subquery = subquery.subquery()
 
         # Main query
         stmt = (
-            select(Station)
-            .join(subquery, Station.id == subquery.c.station_id)
+            select(Facility)
+            .join(subquery, Facility.id == subquery.c.station_id)
             .options(
-                selectinload(Station.facilities.and_(Facility.include_in_geojson == True)),  # noqa: E712
-                selectinload(Station.location),
+                selectinload(Facility.units.and_(Unit.include_in_geojson == True)),  # noqa: E712
+                selectinload(Facility.location),
             )
-            .filter(Station.approved == True)  # noqa: E712
-            .order_by(Station.name)
+            .filter(Facility.approved == True)  # noqa: E712
+            .order_by(Facility.name)
         )
 
         if limit:

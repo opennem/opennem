@@ -18,7 +18,7 @@ from opennem.core.flows import invert_flow_set
 from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine, get_scoped_session
-from opennem.db.models.opennem import Facility, Station
+from opennem.db.models.opennem import Facility, Unit
 from opennem.queries.emissions import get_emission_factor_region_query
 from opennem.queries.price import get_network_region_price_query
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkNEM, NetworkWEM
@@ -101,12 +101,12 @@ async def power_station(
     period_obj: TimePeriod = human_to_period(period_human)
     units = get_unit("power")
 
-    station: Station | None = (
-        session.query(Station)
-        .join(Facility)
-        .filter(Station.code == station_code)
-        .filter(Facility.network_id == network.code)
-        .filter(Station.approved.is_(True))
+    station: Facility | None = (
+        session.query(Facility)
+        .join(Unit)
+        .filter(Facility.code == station_code)
+        .filter(Unit.network_id == network.code)
+        .filter(Facility.approved.is_(True))
         .one_or_none()
     )
 
@@ -130,7 +130,7 @@ async def power_station(
 
     logger.debug(time_series)
 
-    query = power_facility_query(time_series, station.facility_codes)
+    query = power_facility_query(time_series, station.unit_codes)
 
     logger.debug(query)
 
@@ -225,18 +225,18 @@ async def energy_station(
     period_obj = human_to_period(period)
     units = get_unit("energy")
 
-    station: Station | None = (
-        session.query(Station)
-        .join(Station.facilities)
-        .filter(Station.code == station_code)
-        .filter(Facility.network_id == network.code)
+    station: Facility | None = (
+        session.query(Facility)
+        .join(Facility.units)
+        .filter(Facility.code == station_code)
+        .filter(Unit.network_id == network.code)
         .one_or_none()
     )
 
     if not station:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Station not found")
 
-    if not station.facilities:
+    if not station.units:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Station has no facilities",
@@ -266,7 +266,7 @@ async def energy_station(
 
     query = energy_facility_query(
         time_series,
-        station.facility_codes,
+        station.unit_codes,
     )
 
     logger.debug(query)

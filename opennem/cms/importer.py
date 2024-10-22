@@ -10,7 +10,7 @@ from sqlalchemy import select
 from opennem.cms.fieldmap import cms_field_to_database_field
 from opennem.cms.queries import get_cms_facilities
 from opennem.db import get_read_session, get_write_session
-from opennem.db.models.opennem import Facility, Location, Station
+from opennem.db.models.opennem import Facility, Location, Unit
 from opennem.queries.facilities import get_facility_by_code
 from opennem.schema.facility import CMSFacilitySchema
 
@@ -32,7 +32,7 @@ async def get_database_facilities():
     """Get all facilities with their associated station information from the database"""
 
     async with get_read_session() as session:
-        query = select(Station).where(Station.approved == True)  # noqa: E712
+        query = select(Facility).where(Facility.approved == True)  # noqa: E712
         result = await session.execute(query)
         facilities = result.scalars().all()
 
@@ -43,7 +43,7 @@ async def create_database_facility_from_cms(facility: CMSFacilitySchema) -> None
     """Create new database facilities from the CMS"""
 
     async with get_write_session() as session:
-        station = Station(
+        station = Facility(
             code=facility.code,
             name=facility.name,
             network_code=facility.network_id,
@@ -58,7 +58,7 @@ async def create_database_facility_from_cms(facility: CMSFacilitySchema) -> None
             station.location = Location(geom=f"SRID=4326;POINT({facility.location.lng} {facility.location.lat})")
 
         for unit in facility.units:
-            db_unit = Facility(
+            db_unit = Unit(
                 code=unit.code,
                 network_id=station.network_code,
                 fueltech_id=unit.fueltech_id,
@@ -70,7 +70,7 @@ async def create_database_facility_from_cms(facility: CMSFacilitySchema) -> None
                 registered=unit.commencement_date,
                 deregistered=unit.closure_date,
             )
-            station.facilities.append(db_unit)
+            station.units.append(db_unit)
 
         session.add(station)
 

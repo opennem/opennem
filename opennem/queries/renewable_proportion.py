@@ -10,7 +10,7 @@ from sqlalchemy.sql import expression as sql
 from sqlalchemy.types import Numeric
 
 from opennem.db import get_read_session
-from opennem.db.models.opennem import BalancingSummary, Facility, FacilityScada, FuelTech, FuelTechGroup
+from opennem.db.models.opennem import BalancingSummary, FacilityScada, FuelTech, FuelTechGroup, Unit
 from opennem.recordreactor.buckets import get_bucket_interval
 from opennem.recordreactor.schema import MilestonePeriod
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM, NetworkWEMDE
@@ -44,16 +44,16 @@ async def get_renewable_energy_proportion(
     generation_rooftop = (
         select(
             func.time_bucket_gapfill(text("'5 min'"), FacilityScada.interval).label("interval"),
-            Facility.network_region,
+            Unit.network_region,
             case((group_by_fueltech, text("'solar'")), else_=text("NULL")).label("fueltech_id"),
             func.locf(func.sum(FacilityScada.generated)).label("generation"),
         )
         .select_from(FacilityScada)
-        .join(Facility, Facility.code == FacilityScada.facility_code)
-        .join(FuelTech, FuelTech.code == Facility.fueltech_id)
+        .join(Unit, Unit.code == FacilityScada.facility_code)
+        .join(FuelTech, FuelTech.code == Unit.fueltech_id)
         .where(
-            Facility.network_id.in_(rooftop_networks),
-            Facility.fueltech_id == "solar_rooftop",
+            Unit.network_id.in_(rooftop_networks),
+            Unit.fueltech_id == "solar_rooftop",
             FacilityScada.interval >= start_date,
             FacilityScada.interval < end_date,
         )
@@ -65,20 +65,20 @@ async def get_renewable_energy_proportion(
     generation = (
         select(
             func.time_bucket_gapfill(text("'5 min'"), FacilityScada.interval).label("interval"),
-            Facility.network_id,
-            Facility.network_region,
+            Unit.network_id,
+            Unit.network_region,
             case(
                 (group_by_fueltech, FuelTechGroup.code), else_=text("'renewables'") if group_by_renewable else text("NULL")
             ).label("fueltech_id"),
             func.sum(FacilityScada.generated).label("generation"),
         )
         .select_from(FacilityScada)
-        .join(Facility, Facility.code == FacilityScada.facility_code)
-        .join(FuelTech, FuelTech.code == Facility.fueltech_id)
+        .join(Unit, Unit.code == FacilityScada.facility_code)
+        .join(FuelTech, FuelTech.code == Unit.fueltech_id)
         .join(FuelTechGroup, FuelTechGroup.code == FuelTech.fueltech_group_id)
         .where(
-            Facility.network_id.in_(["NEM", "AEMO_ROOFTOP", "AEMO_ROOFTOP_BACKFILL"]),
-            Facility.fueltech_id != "solar_rooftop",
+            Unit.network_id.in_(["NEM", "AEMO_ROOFTOP", "AEMO_ROOFTOP_BACKFILL"]),
+            Unit.fueltech_id != "solar_rooftop",
             FacilityScada.interval >= start_date,
             FacilityScada.interval < end_date,
         )

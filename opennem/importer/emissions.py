@@ -4,7 +4,7 @@ import logging
 from opennem.core.loader import load_data
 from opennem.core.normalizers import clean_float, normalize_duid
 from opennem.db import SessionLocal
-from opennem.db.models.opennem import Facility
+from opennem.db.models.opennem import Unit
 from opennem.importer.mms import mms_import
 
 logger = logging.getLogger(__name__)
@@ -94,7 +94,7 @@ def import_emissions_map(file_name: str) -> None:
             logger.info(f"No emissions intensity for {facility_code}")
             continue
 
-        facility = session.query(Facility).filter_by(code=facility_code).filter_by(network_id=network_id).one_or_none()
+        facility = session.query(Unit).filter_by(code=facility_code).filter_by(network_id=network_id).one_or_none()
 
         if not facility:
             logger.info(f"No stored facility for {facility_code}")

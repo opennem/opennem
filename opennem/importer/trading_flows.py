@@ -10,7 +10,7 @@ from opennem.core.dispatch_type import DispatchType
 from opennem.core.flows import FlowDirection, generated_flow_station_id
 from opennem.core.networks import state_from_network_region
 from opennem.db import SessionLocal
-from opennem.db.models.opennem import Facility, Location, NetworkRegion, Station
+from opennem.db.models.opennem import Facility, Location, NetworkRegion, Unit
 from opennem.schema.network import NetworkNEM, NetworkRegionSchema, NetworkSchema
 
 logger = logging.getLogger("opennem.importer.trading_flows")
@@ -47,11 +47,11 @@ def setup_network_flow_stations(network: NetworkSchema = NetworkNEM) -> None:
         flow_station_id = generated_flow_station_id(network, network_region)
 
         flow_station = (
-            session.query(Station).filter_by(code=flow_station_id).filter_by(network_code=flow_station_id).one_or_none()
+            session.query(Facility).filter_by(code=flow_station_id).filter_by(network_code=flow_station_id).one_or_none()
         )
 
         if not flow_station:
-            flow_station = Station(code=flow_station_id, network_code=flow_station_id)
+            flow_station = Facility(code=flow_station_id, network_code=flow_station_id)
 
         flow_station.approved = False
         flow_station.created_by = IMPORTER_NAME
@@ -65,7 +65,7 @@ def setup_network_flow_stations(network: NetworkSchema = NetworkNEM) -> None:
 
         for flow_direction, flow_facility_id in flow_facilities:
             flow_facility_model = (
-                session.query(Facility)
+                session.query(Unit)
                 .filter_by(code=flow_facility_id)
                 .filter_by(dispatch_type=DispatchType.GENERATOR)
                 .filter_by(network_id=network.code)
@@ -74,7 +74,7 @@ def setup_network_flow_stations(network: NetworkSchema = NetworkNEM) -> None:
             )
 
             if not flow_facility_model:
-                flow_facility_model = Facility(  # type: ignore
+                flow_facility_model = Unit(  # type: ignore
                     code=flow_facility_id,
                     dispatch_type=DispatchType.GENERATOR,
                     network_id=network.code,
@@ -87,7 +87,7 @@ def setup_network_flow_stations(network: NetworkSchema = NetworkNEM) -> None:
             flow_facility_model.fueltech_id = flow_direction.value
             flow_facility_model.updated_at = datetime.now()
 
-            flow_station.facilities.append(flow_facility_model)
+            flow_station.units.append(flow_facility_model)
 
             session.add(flow_station)
 

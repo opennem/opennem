@@ -2,7 +2,7 @@ import logging
 
 from opennem.core.parsers.aemo.facility_closures import parse_aemo_closures_xls
 from opennem.db import SessionLocal
-from opennem.db.models.opennem import Facility
+from opennem.db.models.opennem import Unit
 
 logger = logging.getLogger("opennem.importer.facility_closure_dates")
 
@@ -12,7 +12,7 @@ def import_aemo_facility_closure_dates() -> bool:
     session = SessionLocal()
 
     for record in closure_records:
-        facility: Facility | None = session.query(Facility).filter_by(network_id="NEM").filter_by(code=record.duid).one_or_none()
+        facility: Unit | None = session.query(Unit).filter_by(network_id="NEM").filter_by(code=record.duid).one_or_none()
 
         if not facility:
             logger.info(f"Could not find facility {record.duid} - {record.station_name}")

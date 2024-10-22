@@ -287,8 +287,8 @@ class Location(Base):
         return None
 
 
-class Station(Base):
-    __tablename__ = "station"
+class Facility(Base):
+    __tablename__ = "facilities"
 
     id = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
     network_id = Column(Text, ForeignKey("network.code", name="fk_station_network_code"), nullable=True)
@@ -305,7 +305,7 @@ class Station(Base):
 
     # participant = relationship("Participant", cascade="all, delete")
     location = relationship("Location", innerjoin=True)
-    facilities = relationship("Facility", innerjoin=True)
+    units = relationship("Unit", innerjoin=True)
 
     __table_args__ = (UniqueConstraint("code", name="excl_station_network_duid"),)
 
@@ -316,16 +316,16 @@ class Station(Base):
         return f"{self.__class__} {self.name} <{self.code}>"
 
     @hybrid_property
-    def facility_codes(self) -> list[str]:
-        return list({f.code for f in self.facilities})
+    def unit_codes(self) -> list[str]:
+        return list({f.code for f in self.units})
 
     @hybrid_property
     def scada_range(self) -> FacilitySeenRange | None:
         fsr = FacilitySeenRange(date_min=None, date_max=None)
-        if not self.facilities:
+        if not self.units:
             return fsr
-        first_seens = [f.data_first_seen for f in self.facilities if f.data_first_seen]
-        last_seens = [f.data_last_seen for f in self.facilities if f.data_last_seen]
+        first_seens = [f.data_first_seen for f in self.units if f.data_first_seen]
+        last_seens = [f.data_last_seen for f in self.units if f.data_last_seen]
         if first_seens:
             fsr.date_min = min(first_seens)
         if last_seens:
@@ -333,13 +333,13 @@ class Station(Base):
         return fsr
 
 
-class Facility(Base):
-    __tablename__ = "facility"
+class Unit(Base):
+    __tablename__ = "units"
 
     id = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
     fueltech_id = Column(Text, ForeignKey("fueltech.code", name="fk_facility_fueltech_id"), nullable=True)
     status_id = Column(Text, ForeignKey("facility_status.code", name="fk_facility_status_code"))
-    station_id = Column(Integer, ForeignKey("station.id", name="fk_facility_station_code"), nullable=True)
+    station_id = Column(Integer, ForeignKey("facilities.id", name="fk_facility_station_code"), nullable=True)
     code = Column(Text, index=True, nullable=False, unique=True)
     dispatch_type: Mapped[str] = mapped_column(Text, nullable=False, default="GENERATOR")
     capacity_registered: Mapped[float] = mapped_column(Numeric, nullable=True)

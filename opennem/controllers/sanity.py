@@ -5,7 +5,7 @@ Takes Sanity webhook responses and parses into structured format for persistance
 import logging
 
 from opennem.db import get_write_session
-from opennem.db.models.opennem import Facility, Station
+from opennem.db.models.opennem import Facility, Unit
 
 logger = logging.getLogger("opennem.controllers.sanity")
 
@@ -75,10 +75,10 @@ async def persist_facility_record(facility_record: dict) -> None:
     """Persist a facility record to the Station table in database"""
 
     async with get_write_session() as session:
-        facility = await session.query(Station).filter(Station.code == facility_record["code"]).one_or_none()
+        facility = await session.query(Facility).filter(Facility.code == facility_record["code"]).one_or_none()
 
         if not facility:
-            facility = Station(**facility_record)
+            facility = Facility(**facility_record)
 
         facility.approved = True
         facility.name = facility_record["name"]
@@ -94,10 +94,10 @@ async def persist_unit_record(unit_record: dict) -> None:
     """Persit the unit record to facility table"""
 
     async with get_write_session() as session:
-        unit = await session.query(Facility).filter(Facility.code == unit_record["code"]).one_or_none()
+        unit = await session.query(Unit).filter(Unit.code == unit_record["code"]).one_or_none()
 
         if not unit:
-            unit = Facility(**unit_record)
+            unit = Unit(**unit_record)
 
         unit.active = True
         unit.approved = True

@@ -12,7 +12,7 @@ from opennem.core.loader import load_data
 from opennem.core.networks import state_from_network_region
 from opennem.core.parsers.aemo.mms import AEMOParserException, parse_aemo_mms_csv
 from opennem.db import SessionLocal
-from opennem.db.models.opennem import Facility, Location, Station
+from opennem.db.models.opennem import Facility, Location, Unit
 from opennem.schema.aemo.mms import MarketConfigInterconnector
 from opennem.utils.mime import decode_bytes
 
@@ -80,7 +80,7 @@ def import_nem_interconnects() -> None:
             continue
 
         interconnector_station = (
-            session.query(Station)
+            session.query(Facility)
             .filter_by(code=interconnector.interconnectorid)
             # .filter_by(network_code="NEM")
             .one_or_none()
@@ -91,7 +91,7 @@ def import_nem_interconnects() -> None:
         else:
             logging.debug(f"Creating new interconnector station: {interconnector.interconnectorid}")
 
-            interconnector_station = Station(
+            interconnector_station = Facility(
                 code=interconnector.interconnectorid,
                 network_code="NEM",
             )
@@ -109,7 +109,7 @@ def import_nem_interconnects() -> None:
         # for network_region in [interconnector.regionfrom, interconnector.regionto]:
         # Fac1
         int_facility = (
-            session.query(Facility)
+            session.query(Unit)
             .filter_by(code=interconnector.interconnectorid)
             .filter_by(dispatch_type=DispatchType.GENERATOR)
             .filter_by(network_id="NEM")
@@ -118,7 +118,7 @@ def import_nem_interconnects() -> None:
         )
 
         if not int_facility:
-            int_facility = Facility(  # type: ignore
+            int_facility = Unit(  # type: ignore
                 code=interconnector.interconnectorid,
                 network_code=interconnector.interconnectorid,
                 dispatch_type=DispatchType.GENERATOR,
@@ -136,7 +136,7 @@ def import_nem_interconnects() -> None:
         int_facility.interconnector_region_to = interconnector.regionto
         int_facility.interconnector_region_from = interconnector.regionfrom
 
-        interconnector_station.facilities.append(int_facility)
+        interconnector_station.units.append(int_facility)
 
         try:
             session.add(interconnector_station)

@@ -4,7 +4,7 @@ from sqlalchemy.future import select
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.db import SessionLocal
-from opennem.db.models.opennem import Facility, Location, Station
+from opennem.db.models.opennem import Facility, Location, Unit
 
 logger = logging.getLogger(__name__)
 
@@ -53,12 +53,12 @@ async def rooftop_facilities() -> None:
                 state_map["state"].upper(),
             )
 
-            result = await session.execute(select(Station).filter_by(code=state_rooftop_code))
+            result = await session.execute(select(Facility).filter_by(code=state_rooftop_code))
             rooftop_station = result.scalars().one_or_none()
 
             if not rooftop_station:
                 logger.info(f"Creating new station {state_rooftop_code}")
-                rooftop_station = Station(
+                rooftop_station = Facility(
                     code=state_rooftop_code,
                 )
 
@@ -71,12 +71,12 @@ async def rooftop_facilities() -> None:
             if not rooftop_station.location:
                 rooftop_station.location = Location(state=state_map["state"])
 
-            result = await session.execute(select(Facility).filter_by(code=state_rooftop_code))
+            result = await session.execute(select(Unit).filter_by(code=state_rooftop_code))
             rooftop_fac = result.scalars().one_or_none()
 
             if not rooftop_fac:
                 logger.info(f"Creating new facility {state_rooftop_code}")
-                rooftop_fac = Facility(code=state_rooftop_code)
+                rooftop_fac = Unit(code=state_rooftop_code)
 
             network = state_map["network"]
 
@@ -93,7 +93,7 @@ async def rooftop_facilities() -> None:
             rooftop_fac.approved_by = "opennem.importer.rooftop"
             rooftop_fac.created_by = "opennem.importer.rooftop"
 
-            rooftop_station.facilities.append(rooftop_fac)
+            rooftop_station.units.append(rooftop_fac)
             session.add(rooftop_fac)
 
             session.add(rooftop_station)

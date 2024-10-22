@@ -7,7 +7,7 @@ from opennem.core.loader import load_data
 from opennem.core.normalizers import clean_capacity, normalize_duid, station_name_cleaner
 from opennem.core.station_duid_map import facility_map_station
 from opennem.db import db_connect
-from opennem.db.models.opennem import Facility, Station
+from opennem.db.models.opennem import Facility, Unit
 from opennem.importer.compat import map_compat_facility_state, map_compat_fueltech, map_compat_network_region
 
 logger = logging.getLogger(__name__)
@@ -36,10 +36,10 @@ def load_opennem_facilities():
             station_state = map_compat_facility_state(station_data["status"]["state"])
             station_network = "WEM" if station_data["location"]["state"] == "WA" else "NEM"
 
-            station = s.query(Station).filter(Station.network_code == station_code).one_or_none()
+            station = s.query(Facility).filter(Facility.network_code == station_code).one_or_none()
 
             if not station:
-                station = Station(
+                station = Facility(
                     network_id=station_network,
                     code=station_code,
                     network_code=station_code,
@@ -72,7 +72,7 @@ def load_opennem_facilities():
             facility = None
 
             try:
-                facility = s.query(Facility).filter(Facility.network_code == facility_duid).one_or_none()
+                facility = s.query(Unit).filter(Unit.network_code == facility_duid).one_or_none()
             except MultipleResultsFound:
                 logger.error(f"Multiple facilities found for duid {facility_duid}")
 
@@ -84,7 +84,7 @@ def load_opennem_facilities():
                 continue
 
             if not facility:
-                facility = Facility(
+                facility = Unit(
                     code=facility_duid,
                     network_code=facility_duid,
                     network_region=facility_network_region,

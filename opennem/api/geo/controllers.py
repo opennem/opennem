@@ -5,12 +5,12 @@ Output controller for stations that is both v3 and v4 comparible.
 
 from pydantic_geojson import PointModel
 
-from opennem.db.models.opennem import Station
+from opennem.db.models.opennem import Facility
 
 from .schema import FacilityFeature, FacilityGeo
 
 
-async def stations_to_geojson(stations: list[Station]) -> FacilityGeo:
+async def stations_to_geojson(stations: list[Facility]) -> FacilityGeo:
     """Takes a list of station models and returns a GeoJSON FeatureCollection"""
     features = []
 
@@ -18,7 +18,7 @@ async def stations_to_geojson(stations: list[Station]) -> FacilityGeo:
         if not station.location:
             continue
 
-        if not station.facilities:
+        if not station.units:
             continue
 
         feature_dict: dict = {"properties": {}}
@@ -27,8 +27,8 @@ async def stations_to_geojson(stations: list[Station]) -> FacilityGeo:
             "station_id": station.id,
             "station_code": station.code,
             "facility_id": station.code,
-            "network": station.facilities[0].network.label,
-            "network_country": station.facilities[0].network.country,
+            "network": station.units[0].network.label,
+            "network_country": station.units[0].network.country,
             "state": station.location.state,
             "postcode": station.location.postcode,
             "name": station.name,
@@ -40,7 +40,7 @@ async def stations_to_geojson(stations: list[Station]) -> FacilityGeo:
         if station.location.osm_way_id:
             feature_dict["properties"]["osm_way_id"] = station.location.osm_way_id
 
-        for facility in station.facilities:
+        for facility in station.units:
             if not facility.fueltech:
                 continue
 

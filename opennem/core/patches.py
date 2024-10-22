@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 # from opennem.core.unit_codes import get_unit_code
 # from opennem.core.unit_parser import parse_unit_duid
 from opennem.db import db_connect
-from opennem.db.models.opennem import Facility, Station
+from opennem.db.models.opennem import Facility, Unit
 
 engine = db_connect()
 session = sessionmaker(bind=engine)
@@ -34,7 +34,7 @@ def patches() -> None:
     # unit = parse_unit_duid(1, duid)
     # unit_code = get_unit_code(unit, duid, "Singleton Solar Farm")
 
-    singleton = Station(
+    singleton = Facility(
         name="Singleton",
         # locality="singleton",
         network_name="Singleton Solar Farm",
@@ -42,7 +42,7 @@ def patches() -> None:
         created_by="opennem.patches",
     )
 
-    singleston_facility = Facility(
+    singleston_facility = Unit(
         code="0NSISF_1",
         status_id="operating",
         network_region="NSW1",
@@ -54,7 +54,7 @@ def patches() -> None:
         capacity_registered=0.4,
         created_by="opennem.patches",
     )
-    singleton.facilities.append(singleston_facility)
+    singleton.units.append(singleston_facility)
 
     s.add(singleston_facility)
     s.add(singleton)
