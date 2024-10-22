@@ -81,20 +81,34 @@ async def create_database_facility_from_cms(facility: CMSFacilitySchema) -> None
             logger.error(f"Error creating facility {facility.code} - {facility.name}: {e}")
 
 
-def _check_cms_duplicate_ids(facilities: list[CMSFacilitySchema]) -> list[str]:
+def check_cms_duplicate_ids(facilities: list[CMSFacilitySchema]) -> tuple[list[str], list[str]]:
     """Check for duplicate ids in the CMS"""
 
-    duplicate_ids = []
+    duplicate_facility_ids = []
+    duplicate_unit_ids = []
 
     for facility in facilities:
         if facilities.count(facility.code) > 1:
-            duplicate_ids.append(facility.code)
+            duplicate_facility_ids.append(facility.code)
 
-    return duplicate_ids
+        for unit in facility.units:
+            if facilities.count(unit.code) > 1:
+                duplicate_unit_ids.append(unit.code)
+
+    if duplicate_facility_ids:
+        logger.info(f"Duplicate facility ids: {duplicate_facility_ids}")
+
+    if duplicate_unit_ids:
+        logger.info(f"Duplicate unit ids: {duplicate_unit_ids}")
+
+    return duplicate_facility_ids, duplicate_unit_ids
 
 
-async def update_database_facilities_from_cms(run_updates: bool = False) -> None:
-    """Update the database facilities from the CMS"""
+async def update_database_facilities_from_cms(run_updates: bool = True) -> None:
+    """Update the database facilities from the CMS
+
+    :param run_updates: Run updates to each facility. If false will only add new facilities
+    """
 
     sanity_facilities = get_cms_facilities()
     database_facilities = await get_database_facilities()
@@ -118,6 +132,7 @@ async def update_database_facilities_from_cms(run_updates: bool = False) -> None
         for facility in missing_facilities_database:
             logger.info(f" - {facility}")
 
+    # loop through each facility and add to database if not present or update if present
     for facility in sanity_facilities:
         if facility.code not in database_facility_codes:
             logger.info(f"New facility {facility.code} - {facility.name}")

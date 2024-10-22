@@ -125,7 +125,12 @@ def update_cms_record(facility: CMSFacilitySchema) -> None:
 
 
 if __name__ == "__main__":
-    facilities = get_cms_facilities(facility_code="AWABAREF")
+    facilities = get_cms_facilities()
     from pprint import pprint
 
-    pprint(facilities)
+    # get all unit codes
+    for facility in facilities:
+        for unit in facility.units:
+            if unit.code == "LYGS1":
+                pprint(unit)
+                print(facility.code)
