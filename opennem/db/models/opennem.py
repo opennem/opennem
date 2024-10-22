@@ -333,19 +333,14 @@ class Station(Base):
         return fsr
 
 
-class Facility(Base, BaseModel):
+class Facility(Base):
     __tablename__ = "facility"
 
     id = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
-    network_id = Column(Text, ForeignKey("network.code", name="fk_station_network_code"), nullable=False)
     fueltech_id = Column(Text, ForeignKey("fueltech.code", name="fk_facility_fueltech_id"), nullable=True)
     status_id = Column(Text, ForeignKey("facility_status.code", name="fk_facility_status_code"))
     station_id = Column(Integer, ForeignKey("station.id", name="fk_facility_station_code"), nullable=True)
     code = Column(Text, index=True, nullable=False, unique=True)
-    network_code = Column(Text, nullable=True, index=True)
-    network_region = Column(Text, index=True)
-    network_name = Column(Text)
-    active: Mapped[bool] = mapped_column(Boolean, default=True)
     dispatch_type: Mapped[str] = mapped_column(Text, nullable=False, default="GENERATOR")
     capacity_registered: Mapped[float] = mapped_column(Numeric, nullable=True)
     registered: Mapped[datetime] = mapped_column(DateTime, nullable=True)
@@ -365,12 +360,10 @@ class Facility(Base, BaseModel):
     data_last_seen = Column(DateTime(timezone=True), nullable=True, index=True)
     approved: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    network = relationship("Network", lazy="joined", innerjoin=True)
     fueltech = relationship("FuelTech", back_populates="facilities", lazy="joined", innerjoin=False)
     status = relationship("FacilityStatus", lazy="joined", innerjoin=True)
 
     __table_args__ = (
-        UniqueConstraint("network_id", "code", name="excl_facility_network_id_code"),
         Index("idx_facility_station_id", "station_id", postgresql_using="btree"),
         Index("idx_facility_fueltech_id", "fueltech_id"),
     )
