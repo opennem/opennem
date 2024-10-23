@@ -127,8 +127,6 @@ class FuelTech(Base, BaseModel):
     renewable = Column(Boolean, default=False)
     fueltech_group_id = Column(Text, ForeignKey("fueltech_group.code"), nullable=True)
 
-    facilities = relationship("Facility")
-
     __table_args__ = (Index("idx_fueltech_code", "code"),)
 
 
@@ -359,9 +357,6 @@ class Unit(Base):
     data_first_seen = Column(DateTime(timezone=True), nullable=True, index=True)
     data_last_seen = Column(DateTime(timezone=True), nullable=True, index=True)
     approved: Mapped[bool] = mapped_column(Boolean, default=False)
-
-    fueltech = relationship("FuelTech", back_populates="facilities", lazy="joined", innerjoin=False)
-    status = relationship("FacilityStatus", lazy="joined", innerjoin=True)
 
     __table_args__ = (
         Index("idx_facility_station_id", "station_id", postgresql_using="btree"),
