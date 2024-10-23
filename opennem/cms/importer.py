@@ -33,7 +33,6 @@ async def get_database_facilities():
 
     async with get_read_session() as session:
         query = select(Station).where(Station.approved == True)  # noqa: E712
-        # .join(Facility, Facility.station_id == Station.id)
         result = await session.execute(query)
         facilities = result.scalars().all()
 
@@ -65,8 +64,8 @@ async def create_database_facility_from_cms(facility: CMSFacilitySchema) -> None
                 fueltech_id=unit.fueltech_id,
                 status_id=unit.status_id,
                 dispatch_type=unit.dispatch_type.value,
-                capacity_registered=unit.capacity_registered,
-                emissions_factor_co2=unit.emissions_factor_co2,
+                capacity_registered=round(unit.capacity_registered, 2) if unit.capacity_registered else None,
+                emissions_factor_co2=round(unit.emissions_factor_co2, 4) if unit.emissions_factor_co2 else None,
                 expected_closure_date=unit.expected_closure_date,
                 registered=unit.commencement_date,
                 deregistered=unit.closure_date,
@@ -110,6 +109,13 @@ async def update_database_facilities_from_cms(run_updates: bool = False) -> None
     if missing_facilities:
         logger.info(f"Missing {len(missing_facilities)} facilities in database")
         for facility in missing_facilities:
+            logger.info(f" - {facility}")
+
+    missing_facilities_database = set(database_facility_codes) - set(sanity_facility_codes)
+
+    if missing_facilities_database:
+        logger.info(f"Missing {len(missing_facilities_database)} facilities in CMS")
+        for facility in missing_facilities_database:
             logger.info(f" - {facility}")
 
     for facility in sanity_facilities:
