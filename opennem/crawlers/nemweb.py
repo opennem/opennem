@@ -25,9 +25,9 @@ async def process_nemweb_entry(crawler: CrawlerDefinition, entry: DirlistingEntr
         # @NOTE optimization - if we're dealing with a large file unzip
         # to disk and parse rather than in-memory. 100,000kb
         if crawler.bulk_insert:
-            controller_return = await parse_aemo_url_optimized_bulk(entry.link, persist_to_db=True)
+            controller_return = await parse_aemo_url_optimized_bulk(entry.link, persist_to_db=True)  # type: ignore
         elif entry.file_size and entry.file_size > 100_000:
-            controller_return = await parse_aemo_url_optimized(entry.link)
+            controller_return = await parse_aemo_url_optimized(entry.link)  # type: ignore
         else:
             ts = await parse_aemo_url(entry.link)
             controller_return = await store_aemo_tableset(ts)
