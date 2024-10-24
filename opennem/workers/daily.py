@@ -8,9 +8,6 @@ from datetime import datetime, timedelta
 
 from opennem.aggregates.facility_daily import run_aggregate_facility_all_by_year, run_aggregates_facility_year
 from opennem.aggregates.network_demand import run_aggregates_demand_network
-from opennem.aggregates.network_flows import (
-    run_flow_updates_all_for_network,
-)
 from opennem.aggregates.network_flows_v3 import run_aggregate_flow_for_interval_v3
 from opennem.api.export.map import PriorityType, StatType, get_export_map
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
@@ -135,7 +132,6 @@ async def all_runner() -> None:
     """Like the daily runner but refreshes all tasks"""
 
     # populates the aggregate tables
-    run_flow_updates_all_for_network(network=NetworkNEM)
 
     for network in [NetworkNEM, NetworkAEMORooftop, NetworkAPVI, NetworkWEM, NetworkOpenNEMRooftopBackfill]:
         run_aggregate_facility_all_by_year(network=network)
