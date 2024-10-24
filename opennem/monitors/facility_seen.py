@@ -87,11 +87,11 @@ async def get_facility_first_seen(period: str) -> list[FacilitySeen]:
         select
             fs.facility_code,
             fs.network_id,
-            sum(fs.generated) as generated
+            round(abs(sum(fs.generated)), 2) as generated
         from facility_scada fs
         where
-            fs.facility_code not in (select distinct code from facility)
-            and fs.trading_interval > now() - interval '{period}'
+            fs.facility_code not in (select distinct code from units)
+            and fs.interval > now() - interval '{period}'
         group by 1, 2
         """
     )
@@ -106,7 +106,7 @@ async def get_facility_first_seen(period: str) -> list[FacilitySeen]:
 
 
 async def facility_first_seen_check(
-    only_generation: bool = True, filter_ignored_duids: bool = False, send_slack: bool = True
+    only_generation: bool = True, filter_ignored_duids: bool = True, send_slack: bool = False
 ) -> list[FacilitySeen]:
     """Find new DUIDs and alert on them
 
@@ -146,15 +146,17 @@ async def facility_first_seen_check(
                 f"{fac.code}. No generation data"
             )
             logger.debug(msg)
+            facs_out.append(fac)
 
-    return facs_out
+    return sorted(facs_out, key=lambda x: x.code, reverse=False)
 
 
 # debug entry point
 if __name__ == "__main__":
     import asyncio
 
-    seen_facilities = asyncio.run(facility_first_seen_check(send_slack=False))
+    seen_facilities = asyncio.run(facility_first_seen_check(send_slack=False, only_generation=False))
 
     for f in seen_facilities:
-        logger.info(f"Unmapped: {f.network_id} {f.code} {f.generated}")
+        # print(f"Unmapped: {f.network_id} {f.code} {f.generated}")
+        print(f.code)
