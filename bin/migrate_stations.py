@@ -6,17 +6,16 @@ import logging
 
 from sqlalchemy import select, update
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import selectinload
 
 from opennem.db import get_write_session
-from opennem.db.models.opennem import Station
+from opennem.db.models.opennem import Facility
 
-logger = logging.getLogger("migrate_stations")
+logger = logging.getLogger("migrate_facilities")
 
 
-async def update_station(code: str, network_id: str, network_region: str) -> None:
+async def update_facility(code: str, network_id: str, network_region: str) -> None:
     async with get_write_session() as session:
-        stmt = update(Station).where(Station.code == code).values(network_id=network_id, network_region=network_region)
+        stmt = update(Facility).where(Facility.code == code).values(network_id=network_id, network_region=network_region)
         await session.execute(stmt)
         await session.commit()
 
@@ -30,30 +29,36 @@ async def main() -> None:
     try:
         async with get_write_session() as session:
             # Use selectinload to eagerly load the facilities relationship
-            stmt = select(Station).options(selectinload(Station.facilities))
+            stmt = select(Facility)
 
             result = await session.execute(stmt)
-            stations = result.scalars().all()
+            facilities = result.scalars().all()
 
-            stations_without_facilities = 0
-            for station in stations:
-                if not station.facilities:
-                    stations_without_facilities += 1
-                    logger.warning(f"Station {station.code} has no facilities {station.name} {station.approved}")
+            facilities_without_units = 0
+            for facility in facilities:
+                if not facility.units:
+                    facilities_without_units += 1
+                    logger.warning(f"Station {facility.code} has no units {facility.name} {facility.approved}")
                     continue
 
-                network_id = station.facilities[0].network_id
-                network_region = station.facilities[0].network_region
+                network_id = facility.units[0].network_id
+                network_region = facility.units[0].network_region
 
-                logger.info(f"Updating {station.code} - {network_id} - {network_region}")
+                logger.info(f"Updating {facility.code} - {network_id} - {network_region}")
 
-                station.network_id = network_id
-                station.network_region = network_region
+                if not network_id:
+                    raise Exception(f"Station {facility.code} has no network_id {facility.name} {facility.approved}")
 
-                await update_station(station.code, network_id, network_region)
+                if not network_region:
+                    raise Exception(f"Station {facility.code} has no network_region {facility.name} {facility.approved}")
 
-            logger.info(f"Processed {len(stations)} stations")
-            logger.info(f"Found {stations_without_facilities} stations without facilities")
+                facility.network_id = network_id
+                facility.network_region = network_region
+
+                await update_facility(facility.code, network_id, network_region)
+
+            logger.info(f"Processed {len(facilities)} stations")
+            logger.info(f"Found {facilities_without_units} stations without units")
 
     except SQLAlchemyError as e:
         logger.error(f"Database error occurred: {str(e)}")
