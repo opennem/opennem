@@ -289,21 +289,21 @@ class Facility(Base):
     __tablename__ = "facilities"
 
     id = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
-    network_id = Column(Text, ForeignKey("network.code", name="fk_station_network_code"), nullable=True)
-    network_region: Mapped[str | None] = mapped_column(Text, nullable=True)
     code = Column(Text, index=True, nullable=False, unique=True)
     name: Mapped[str] = mapped_column(Text)
+    network_id: Mapped[str] = mapped_column(Text, nullable=False)
+    network_region: Mapped[str | None] = mapped_column(Text, nullable=False)
     participant_id = Column(Integer, ForeignKey("participant.id", name="fk_station_participant_id"), nullable=True)
     location_id = Column(Integer, ForeignKey("location.id", name="fk_station_location_id"), nullable=True)
     description = Column(Text, nullable=True)
-    website_url: Mapped[str] = mapped_column(Text, nullable=True)
-    wikipedia_link = Column(Text, nullable=True)
-    wikidata_id = Column(Text, nullable=True)
+    website_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    wikipedia_link: Mapped[str | None] = mapped_column(Text, nullable=True)
+    wikidata_id: Mapped[str | None] = mapped_column(Text, nullable=True)
     approved: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # participant = relationship("Participant", cascade="all, delete")
-    location = relationship("Location", innerjoin=True)
-    units = relationship("Unit", innerjoin=True)
+    location: Mapped["Location | None"] = relationship("Location", innerjoin=True, lazy="selectin")
+    units: Mapped[list["Unit"]] = relationship("Unit", innerjoin=True, lazy="selectin")
 
     __table_args__ = (UniqueConstraint("code", name="excl_station_network_duid"),)
 
@@ -335,28 +335,36 @@ class Unit(Base):
     __tablename__ = "units"
 
     id = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
-    fueltech_id = Column(Text, ForeignKey("fueltech.code", name="fk_facility_fueltech_id"), nullable=True)
-    status_id = Column(Text, ForeignKey("facility_status.code", name="fk_facility_status_code"))
-    station_id = Column(Integer, ForeignKey("facilities.id", name="fk_facility_station_code"), nullable=True)
     code = Column(Text, index=True, nullable=False, unique=True)
+    fueltech_id: Mapped[str | None] = mapped_column(
+        Text, ForeignKey("fueltech.code", name="fk_unit_fueltech_code"), nullable=True
+    )
+    status_id: Mapped[str | None] = mapped_column(
+        Text, ForeignKey("facility_status.code", name="fk_unit_facility_status_code"), nullable=True
+    )
+    station_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("facilities.id", name="fk_unit_facility_id"), nullable=True
+    )
     dispatch_type: Mapped[str] = mapped_column(Text, nullable=False, default="GENERATOR")
-    capacity_registered: Mapped[float] = mapped_column(Numeric, nullable=True)
-    registered: Mapped[datetime] = mapped_column(DateTime, nullable=True)
-    deregistered: Mapped[datetime] = mapped_column(DateTime, nullable=True)
-    expected_closure_date = Column(DateTime, nullable=True)
-    expected_closure_year = Column(Integer, nullable=True)
-    unit_id = Column(Integer, nullable=True)
-    unit_number = Column(Integer, nullable=True)
-    unit_alias = Column(Text, nullable=True)
-    unit_capacity = Column(Numeric, nullable=True)
-    emissions_factor_co2 = Column(Numeric, nullable=True)
-    emission_factor_source = Column(Text, nullable=True)
-    interconnector = Column(Boolean, default=False, index=True)
-    interconnector_region_to = Column(Text, nullable=True, index=True)
-    interconnector_region_from = Column(Text, nullable=True, index=True)
-    data_first_seen = Column(DateTime(timezone=True), nullable=True, index=True)
-    data_last_seen = Column(DateTime(timezone=True), nullable=True, index=True)
+    capacity_registered: Mapped[float | None] = mapped_column(Numeric, nullable=True)
+    registered: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    deregistered: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    expected_closure_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    expected_closure_year: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    unit_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    unit_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    unit_alias: Mapped[str | None] = mapped_column(Text, nullable=True)
+    unit_capacity: Mapped[float | None] = mapped_column(Numeric, nullable=True)
+    emissions_factor_co2: Mapped[float | None] = mapped_column(Numeric, nullable=True)
+    emission_factor_source: Mapped[str | None] = mapped_column(Text, nullable=True)
+    interconnector: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    interconnector_region_to: Mapped[str | None] = mapped_column(Text, nullable=True, index=True)
+    interconnector_region_from: Mapped[str | None] = mapped_column(Text, nullable=True, index=True)
+    data_first_seen: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+    data_last_seen: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
     approved: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    facility = relationship("Facility", innerjoin=True, back_populates="units")
 
     __table_args__ = (
         Index("idx_facility_station_id", "station_id", postgresql_using="btree"),
@@ -428,19 +436,6 @@ class BalancingSummary(Base):
             postgresql_ops={"interval": "DESC"},
         ),
     )
-
-
-class AggregateFacilityDaily(Base):
-    __tablename__ = "at_facility_daily"
-
-    trading_day = Column(TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False)
-    network_id = Column(Text, primary_key=True, index=False, nullable=False)
-    network_region = Column(Text, primary_key=True, nullable=False, index=False)
-    facility_code = Column(Text, primary_key=True, index=True, nullable=False)
-    fueltech_id = Column(Text, nullable=True)
-    energy = Column(Numeric, nullable=True)
-    market_value = Column(Numeric, nullable=True)
-    emissions = Column(Numeric, nullable=True)
 
 
 class AggregateNetworkFlows(Base):
