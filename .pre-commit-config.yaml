@@ -25,7 +25,7 @@ repos:
         hooks:
         -   id: detect-secrets
             args: ['--baseline', '.secrets.baseline']
-            exclude: 'poetry.lock|opennem/db/migrations/versions/.*\.py|tests/.*\.py'
+            exclude: 'poetry.lock|opennem/db/migrations/versions/.*\.py|opennem/db/migrations/versions_old/.*\.py|tests/.*\.py'
 
     # - repo: https://github.com/RobertCraigie/pyright-python
     #   rev: v1.1.295
