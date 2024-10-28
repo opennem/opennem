@@ -95,21 +95,6 @@ class CrawlHistory(Base):
     network = relationship("Network", lazy="joined")
 
 
-class TaskProfile(Base):
-    __tablename__ = "task_profile"
-
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    task_name = Column(Text, nullable=False)
-    time_start = Column(DateTime(timezone=True), nullable=False)
-    time_end = Column(DateTime(timezone=True), nullable=True)
-    time_sql = Column(DateTime(timezone=True), nullable=True)
-    time_cpu = Column(DateTime(timezone=True), nullable=True)
-    errors = Column(Integer, default=0, nullable=False)
-    retention_period = Column(Text, nullable=True, index=True)
-    level = Column(Text, nullable=True, index=True)
-    invokee_name = Column(Text, nullable=True, index=True)
-
-
 class FuelTechGroup(Base, BaseModel):
     __tablename__ = "fueltech_group"
 
@@ -180,21 +165,6 @@ class FacilityStatus(Base):
     label = Column(Text)
 
 
-class Participant(Base):
-    __tablename__ = "participant"
-
-    id = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
-    code = Column(Text, unique=True, index=True)
-    name = Column(Text)
-    network_name = Column(Text)
-    network_code = Column(Text)
-    country = Column(Text)
-    abn = Column(Text)
-    approved = Column(Boolean, default=False)
-    approved_by = Column(Text)
-    approved_at = Column(DateTime(timezone=True), nullable=True)
-
-
 class BomStation(Base):
     __tablename__ = "bom_station"
 
@@ -249,42 +219,6 @@ class BomObservation(Base):
     station = relationship("BomStation")
 
 
-class Location(Base):
-    __tablename__ = "location"
-
-    id = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
-    address1 = Column(Text)
-    address2 = Column(Text)
-    locality = Column(Text)
-    state = Column(Text)
-    postcode = Column(Text, nullable=True)
-    osm_way_id = Column(Text, nullable=True)
-    place_id = Column(Text, nullable=True, index=True)
-    geocode_approved = Column(Boolean, default=False)
-    geocode_skip = Column(Boolean, default=False)
-    geocode_processed_at = Column(DateTime, nullable=True)
-    geocode_by = Column(Text, nullable=True)
-    geom = Column(Geometry("POINT", srid=4326, spatial_index=False))
-    boundary = Column(Geometry("POLYGON", srid=4326, spatial_index=True))
-
-    __table_args__ = (
-        Index("idx_location_geom", "geom", postgresql_using="gist"),
-        Index("idx_location_boundary", "boundary", postgresql_using="gist"),
-    )
-
-    @hybrid_property
-    def lat(self) -> float | None:
-        if self.geom:
-            return wkb.loads(bytes(self.geom.data)).y
-        return None
-
-    @hybrid_property
-    def lng(self) -> float | None:
-        if self.geom:
-            return wkb.loads(bytes(self.geom.data)).x
-        return None
-
-
 class Facility(Base):
     __tablename__ = "facilities"
 
@@ -292,17 +226,13 @@ class Facility(Base):
     code = Column(Text, index=True, nullable=False, unique=True)
     name: Mapped[str] = mapped_column(Text)
     network_id: Mapped[str] = mapped_column(Text, nullable=False)
-    network_region: Mapped[str | None] = mapped_column(Text, nullable=False)
-    participant_id = Column(Integer, ForeignKey("participant.id", name="fk_station_participant_id"), nullable=True)
-    location_id = Column(Integer, ForeignKey("location.id", name="fk_station_location_id"), nullable=True)
-    description = Column(Text, nullable=True)
+    network_region: Mapped[str] = mapped_column(Text, nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
     website_url: Mapped[str | None] = mapped_column(Text, nullable=True)
     wikipedia_link: Mapped[str | None] = mapped_column(Text, nullable=True)
     wikidata_id: Mapped[str | None] = mapped_column(Text, nullable=True)
     approved: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    # participant = relationship("Participant", cascade="all, delete")
-    location: Mapped["Location | None"] = relationship("Location", innerjoin=True, lazy="selectin")
     units: Mapped[list["Unit"]] = relationship("Unit", innerjoin=True, lazy="selectin")
 
     __table_args__ = (UniqueConstraint("code", name="excl_station_network_duid"),)
