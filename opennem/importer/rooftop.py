@@ -1,10 +1,10 @@
 import logging
 
-from sqlalchemy.future import select
+from sqlalchemy import select
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.db import SessionLocal
-from opennem.db.models.opennem import Facility, Location, Unit
+from opennem.db.models.opennem import Facility, Unit
 
 logger = logging.getLogger(__name__)
 
@@ -62,14 +62,13 @@ async def rooftop_facilities() -> None:
                     code=state_rooftop_code,
                 )
 
+            rooftop_station.network_id = state_map["network"]
+            rooftop_station.network_region = state_map["network_region"]
             rooftop_station.name = "Rooftop Solar {}".format(state_map["state"])
             rooftop_station.description = "Solar rooftop facilities for {}".format(state_map["state"])
             rooftop_station.approved = False
             rooftop_station.approved_by = ""
             rooftop_station.created_by = "opennem.importer.rooftop"
-
-            if not rooftop_station.location:
-                rooftop_station.location = Location(state=state_map["state"])
 
             result = await session.execute(select(Unit).filter_by(code=state_rooftop_code))
             rooftop_fac = result.scalars().one_or_none()
@@ -84,14 +83,10 @@ async def rooftop_facilities() -> None:
             if network.upper() == "NEM":
                 network = "AEMO_ROOFTOP"
 
-            rooftop_fac.network_id = network
-            rooftop_fac.network_region = state_map["network_region"]
             rooftop_fac.fueltech_id = "solar_rooftop"
             rooftop_fac.status_id = "operating"
             rooftop_fac.active = False
             rooftop_fac.dispatch_type = DispatchType.GENERATOR
-            rooftop_fac.approved_by = "opennem.importer.rooftop"
-            rooftop_fac.created_by = "opennem.importer.rooftop"
 
             rooftop_station.units.append(rooftop_fac)
             session.add(rooftop_fac)
