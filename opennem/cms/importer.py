@@ -10,7 +10,7 @@ from opennem import settings
 from opennem.clients.slack import slack_message
 from opennem.cms.queries import get_cms_facilities
 from opennem.db import get_read_session, get_write_session
-from opennem.db.models.opennem import Facility, Location, Unit
+from opennem.db.models.opennem import Facility, Unit
 from opennem.schema.facility import CMSFacilitySchema
 
 logger = logging.getLogger("sanity.importer")
@@ -77,8 +77,8 @@ async def create_or_update_database_facility(facility: CMSFacilitySchema) -> Non
         if facility.website and facility.website != facility_db.website_url:
             facility_db.website_url = facility.website.strip()
 
-        if facility_db.location and (facility_db.location.lat and facility_db.location.lng):
-            facility_db.location = Location(geom=f"SRID=4326;POINT({facility_db.location.lng} {facility_db.location.lat})")
+        # if facility_db.location and (facility_db.location.lat and facility_db.location.lng):
+        # facility_db.geom = f"SRID=4326;POINT({facility_db.location.lng} {facility_db.location.lat})"
 
         facility_db_unit_codes = [unit.code for unit in facility_db.units]
         print(facility_db_unit_codes)
