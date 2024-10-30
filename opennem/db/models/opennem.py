@@ -168,17 +168,17 @@ class FacilityStatus(Base):
 class BomStation(Base):
     __tablename__ = "bom_station"
 
-    code = Column(Text, primary_key=True)
-    state = Column(Text)
-    name = Column(Text)
-    web_code = Column(Text, nullable=True)
-    name_alias = Column(Text, nullable=True)
-    registered = Column(Date)
+    code: Mapped[str] = mapped_column(Text, primary_key=True, index=True)
+    state: Mapped[str] = mapped_column(Text)
+    name: Mapped[str] = mapped_column(Text)
+    web_code: Mapped[str | None] = mapped_column(Text, nullable=True)
+    name_alias: Mapped[str | None] = mapped_column(Text, nullable=True)
+    registered: Mapped[datetime | None] = mapped_column(Date)
     priority: Mapped[int] = mapped_column(Integer, default=5)
-    is_capital = Column(Boolean, default=False)
-    website_url = Column(Text, nullable=True)
-    feed_url = Column(Text, nullable=True)
-    altitude = Column(Integer, nullable=True)
+    is_capital: Mapped[bool] = mapped_column(Boolean, default=False)
+    website_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    feed_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    altitude: Mapped[int | None] = mapped_column(Integer, nullable=True)
     geom = Column(Geometry("POINT", srid=4326, spatial_index=False))
 
     __table_args__ = (
@@ -312,7 +312,7 @@ class FacilityScada(Base):
     __tablename__ = "facility_scada"
 
     interval = Column(TIMESTAMP(timezone=False), index=True, primary_key=True, nullable=False)
-    network_id = Column(Text, primary_key=True, nullable=False)
+    network_id = Column(Text, primary_key=True, nullable=False, index=True)
     facility_code = Column(Text, nullable=False, primary_key=True, index=True)
     generated = Column(Numeric, nullable=True)
     is_forecast = Column(Boolean, default=False, primary_key=True)
@@ -320,16 +320,7 @@ class FacilityScada(Base):
     energy: Mapped[float] = mapped_column(Numeric, nullable=True)
     energy_quality_flag = Column(Numeric, nullable=False, default=0)
 
-    __table_args__ = (
-        Index("idx_facility_scada_facility_code_interval", "facility_code", "interval", postgresql_using="btree"),
-        Index("idx_facility_scada_network_id", "network_id"),
-        Index("idx_facility_scada_interval_facility_code", "interval", "facility_code"),
-        Index("idx_facility_scada_is_forecast_interval", "is_forecast", "interval"),
-        Index("idx_facility_scada_network_interval", "network_id", "interval", "is_forecast"),
-        Index("idx_facility_scada_network_facility_interval", "network_id", "facility_code", "interval"),
-        Index("facility_scada_new_interval_idx", "interval", unique=False, postgresql_ops={"interval": "DESC"}),
-        Index("idx_facility_scada_interval_network", "interval", "network_id", postgresql_ops={"interval": "DESC"}),
-    )
+    __table_args__ = ()
 
     def __str__(self) -> str:
         return f"<{self.__class__}: {self.trading_interval} {self.network_id} {self.facility_code}>"
@@ -343,7 +334,7 @@ class BalancingSummary(Base):
 
     network_id = Column(Text, primary_key=True)
     interval: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=False), index=True, primary_key=True)
-    network_region = Column(Text, primary_key=True)
+    network_region = Column(Text, primary_key=True, index=True)
     forecast_load = Column(Numeric, nullable=True)
     generation_scheduled = Column(Numeric, nullable=True)
     generation_non_scheduled = Column(Numeric, nullable=True)
@@ -354,10 +345,10 @@ class BalancingSummary(Base):
     price = Column(Numeric, nullable=True)
     price_dispatch = Column(Numeric, nullable=True)
     net_interchange_trading = Column(Numeric, nullable=True)
-    is_forecast = Column(Boolean, default=False)
+    is_forecast = Column(Boolean, default=False, nullable=False)
 
     __table_args__ = (
-        Index("idx_balancing_summary_network_id_interval", "network_id", "interval", postgresql_using="btree"),
+        # Index("idx_balancing_summary_network_id_interval", "network_id", "interval", postgresql_using="btree"),
         Index(
             "idx_balancing_summary_interval_network_region",
             "interval",
