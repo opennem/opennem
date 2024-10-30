@@ -20,6 +20,8 @@ depends_on = None
 
 
 def upgrade() -> None:
+    op.execute("CREATE EXTENSION IF NOT EXISTS postgis;")
+    op.execute("CREATE EXTENSION IF NOT EXISTS timescaledb;")
     op.create_table('aemo_market_notices',
     sa.Column('notice_id', sa.Integer(), nullable=False),
     sa.Column('notice_type', sa.String(), nullable=False),
