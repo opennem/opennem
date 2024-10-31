@@ -95,7 +95,7 @@ if HAVE_DOTENV:
         console.print(f" * Loading env file: {_env_full_path}")
         load_dotenv(dotenv_path=_env_file, override=True)
 
-settings: OpennemSettings = OpennemSettings()
+settings: OpennemSettings = OpennemSettings()  # type: ignore
 
 if settings.dry_run:
     console.print(" * Dry run (no database actions)")
@@ -104,9 +104,6 @@ elif settings.db_url:
 
 if settings.redis_url:
     console.print(f" * Using redis connection: [red bold encircle]{obfuscate_dsn_password(str(settings.redis_url))}[/]")
-
-if settings.clickhouse_url:
-    console.print(f" * Using clickhouse connection: [red bold encircle]{obfuscate_dsn_password(str(settings.clickhouse_url))}[/]")
 
 # skip if logging not configed
 if LOGGING_CONFIG:
