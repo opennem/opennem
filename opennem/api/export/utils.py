@@ -7,7 +7,6 @@ import logging
 
 from pydantic.main import BaseModel
 
-from opennem import settings
 from opennem.api.stats.schema import OpennemDataSet
 from opennem.exporter.local import write_to_local
 from opennem.exporter.r2_bucket import write_content_to_r2, write_stat_set_to_r2
@@ -22,9 +21,6 @@ async def write_output(
     exclude_unset: bool = True,
 ) -> int:
     """Writes output of stat sets either locally or to s3"""
-    if settings.export_local:
-        is_local = True
-
     write_content = stat_set.model_dump_json(exclude_unset=exclude_unset)
 
     byte_count = 0

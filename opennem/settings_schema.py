@@ -8,7 +8,7 @@ from datetime import UTC
 from datetime import timezone as pytimezone
 from pathlib import Path
 
-from pydantic import AliasChoices, AnyUrl, Field, RedisDsn, field_validator
+from pydantic import AliasChoices, Field, RedisDsn, field_validator
 from pydantic_settings import BaseSettings
 
 from opennem.utils.url import change_url_path
@@ -32,30 +32,15 @@ class OpennemSettings(BaseSettings):
 
     db_url: str = Field("postgresql://user:pass@127.0.0.1:15444/opennem", validation_alias=AliasChoices("DATABASE_HOST_URL"))
 
-    db_test_url: str = Field(
-        "postgresql://user:pass@127.0.0.1:15444/opennem_test", validation_alias=AliasChoices("DATABASE_TEST_URL")
-    )
-
     redis_url: RedisDsn = Field(
         "redis://127.0.0.1",
         validation_alias=AliasChoices("REDIS_HOST_URL", "cache_url"),
-    )
-
-    clickhouse_url: AnyUrl = Field(
-        "http://127.0.0.1:8123/opennem",
-        description="Clickhouse URL",
-        validation_alias=AliasChoices("CLICKHOUSE_HOST_URL"),
     )
 
     # if we're doing a dry run
     dry_run: bool = False
 
     sentry_url: str | None = None
-
-    # This is the module where crawlers are found
-    crawlers_module: str = "opennem.crawlers"
-
-    requests_cache_path: str = ".requests"
 
     # Slack notifications
     slack_hook_new_facilities: str | None = None
@@ -66,8 +51,6 @@ class OpennemSettings(BaseSettings):
 
     # APVI
     apvi_token: str | None = None
-
-    export_local: bool = False
 
     # R2 settings
     s3_access_key_id: str = Field(None, description="The access key ID for the S3 bucket")
@@ -80,22 +63,8 @@ class OpennemSettings(BaseSettings):
     s3_bucket_public_url: str = Field("https://data.opennem.org.au", description="The public URL of the S3 bucket")
     s3_region: str = "apac"
 
-    # opennem output settings
-    interval_default: str = "15m"
-    period_default: str = "7d"
-    precision_default: int = 4
-
     # show database debug
     db_debug: bool = False
-
-    # cache scada values for
-    cache_scada_values_ttl_sec: int = 60 * 5
-
-    # asgi server settings
-    server_host: str = "0.0.0.0"
-    server_port: int = 8000
-    server_reload: bool = False
-    server_ssl: bool = False
 
     # timeout on http requests
     # see opennem.utils.http
@@ -110,15 +79,6 @@ class OpennemSettings(BaseSettings):
     http_proxy_url: str | None = None  # @note don't let it confict with env HTTP_PROXY
 
     _static_folder_path: str = "opennem/static/"
-
-    # output schema options
-    # output values for region, network etc. in lower case
-    schema_output_lowercase_strings: bool = True
-    # prepend the country code in the id
-    schema_output_id_country: bool = False
-
-    # templates folder relative to opennem module root
-    templates_dir: str = "templates"
 
     # api key cookie settings
     api_app_auth_name: str = "onau"
@@ -135,23 +95,12 @@ class OpennemSettings(BaseSettings):
     cloudflare_account_id: str | None = None
     cloudflare_api_key: str | None = None
 
-    tmp_file_prefix: str | None = "opennem_"
-
-    # alert threshold level in minutes for interval delay monitoring
-    monitor_interval_alert_threshold: int | None = 10
-
     # feature flags
     run_crawlers: bool = True  # do we enable the crawlers
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
     show_emissions_in_power_outputs: bool = True  # show emissions in power outputs
     show_emission_factors_in_power_outputs: bool = True  # show emissions in power outputs
     compact_number_ouput_in_json: bool = False  # compact number output in json
-
-    # send daily fueltech summary
-    send_daily_fueltech_summary: bool = True
-
-    # profiler options
-    profiler_level: str = "NOISY"
 
     # clerk API key
     clerk_secret_key: str | None = None

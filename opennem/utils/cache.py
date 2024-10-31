@@ -10,13 +10,12 @@ from functools import wraps
 
 from cachetools import TTLCache
 
-from opennem import settings
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger(__name__)
 
-CACHE_AGE = settings.cache_scada_values_ttl_sec
+CACHE_AGE = 60 * 5
 
 scada_cache: TTLCache = TTLCache(maxsize=100, ttl=CACHE_AGE)
 

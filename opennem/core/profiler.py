@@ -63,7 +63,7 @@ def profiler_level_string_to_enum(level: str) -> ProfilerLevel:
     raise Exception("Invalid profiler level")
 
 
-PROFILE_LEVEL = profiler_level_string_to_enum(settings.profiler_level)
+PROFILE_LEVEL = ProfilerLevel.NOISY
 
 
 # method used to discover the invokee

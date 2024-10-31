@@ -7,13 +7,11 @@ from math import floor, log, pow  # noqa: no-name-module
 from re import Match
 from typing import Any
 
-from opennem import settings
-
 logger = logging.getLogger("opennem.utils.numbers")
 
 __log10 = 2.302585092994046
 
-DEFAULT_PRECISION = settings.precision_default
+DEFAULT_PRECISION = 4
 
 ctx = decimal.Context()
 ctx.prec = 20

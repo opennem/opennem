@@ -44,8 +44,7 @@ def optionaly_lowercase_string(value: str) -> str:
     if not value:
         raise ValueError("Require a value to lowercase")
 
-    if settings.schema_output_lowercase_strings:
-        value = value.lower()
+    value = value.lower()
 
     return value
 
@@ -90,8 +89,7 @@ def get_data_id(
     """Method to build the data id for a stat export"""
     id_components = []
 
-    if settings.schema_output_id_country:
-        id_components.append(network.country)
+    id_components.append(network.country)
 
     id_str = ".".join([i.lower() for i in id_components if i])
 

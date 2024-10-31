@@ -49,56 +49,57 @@ from opennem.utils.modules import load_all_crawler_definitions
 
 logger = logging.getLogger("opennem.crawl")
 
+_CRAWLERS_MODULE = "opennem.crawlers"
+
 
 async def load_crawlers(live_load: bool = False) -> CrawlerSet:
     """Loads all the crawler definitions from a module and returns a CrawlSet"""
     crawlers = []
     crawler_definitions: list[CrawlerDefinition] = []
 
-    if settings.crawlers_module:
-        if live_load:
-            crawler_definitions = load_all_crawler_definitions(settings.crawlers_module)
+    if live_load:
+        crawler_definitions = load_all_crawler_definitions(_CRAWLERS_MODULE)
 
-        crawler_definitions = [
-            # NEM
-            AEMONEMDispatchActualGEN,
-            AEMONEMNextDayDispatch,
-            # NEMWEB
-            AEMONemwebRooftop,
-            AEMONemwebRooftopForecast,
-            AEMONemwebTradingIS,
-            AEMONemwebDispatchIS,
-            AEMONNemwebDispatchScada,
-            # NEMWEB Archive
-            AEMONEMDispatchActualGENArchvie,
-            AEMONEMNextDayDispatchArchvie,
-            AEMONNemwebDispatchScadaArchive,
-            AEMONemwebTradingISArchive,
-            AEMONemwebDispatchISArchive,
-            # APVI
-            APVIRooftopTodayCrawler,
-            APVIRooftopLatestCrawler,
-            APVIRooftopMonthCrawler,
-            APVIRooftopAllCrawler,
-            # BOM
-            BOMCapitals,
-            # WEM
-            WEMBalancing,
-            WEMBalancingLive,
-            WEMFacilityScada,
-            WEMFacilityScadaLive,
-            # WEMDE
-            AEMOWEMDEFacilityScadaHistory,
-            AEMOWEMDETradingReport,
-            AEMOWEMDETradingReportHistory,
-            # MMS Crawlers
-            AEMOMMSDispatchInterconnector,
-            AEMOMMSDispatchRegionsum,
-            AEMOMMSDispatchPrice,
-            AEMOMMSDispatchScada,
-            AEMOMMSTradingPrice,
-            AEMOMMSTradingRegionsum,
-        ]
+    crawler_definitions = [
+        # NEM
+        AEMONEMDispatchActualGEN,
+        AEMONEMNextDayDispatch,
+        # NEMWEB
+        AEMONemwebRooftop,
+        AEMONemwebRooftopForecast,
+        AEMONemwebTradingIS,
+        AEMONemwebDispatchIS,
+        AEMONNemwebDispatchScada,
+        # NEMWEB Archive
+        AEMONEMDispatchActualGENArchvie,
+        AEMONEMNextDayDispatchArchvie,
+        AEMONNemwebDispatchScadaArchive,
+        AEMONemwebTradingISArchive,
+        AEMONemwebDispatchISArchive,
+        # APVI
+        APVIRooftopTodayCrawler,
+        APVIRooftopLatestCrawler,
+        APVIRooftopMonthCrawler,
+        APVIRooftopAllCrawler,
+        # BOM
+        BOMCapitals,
+        # WEM
+        WEMBalancing,
+        WEMBalancingLive,
+        WEMFacilityScada,
+        WEMFacilityScadaLive,
+        # WEMDE
+        AEMOWEMDEFacilityScadaHistory,
+        AEMOWEMDETradingReport,
+        AEMOWEMDETradingReportHistory,
+        # MMS Crawlers
+        AEMOMMSDispatchInterconnector,
+        AEMOMMSDispatchRegionsum,
+        AEMOMMSDispatchPrice,
+        AEMOMMSDispatchScada,
+        AEMOMMSTradingPrice,
+        AEMOMMSTradingRegionsum,
+    ]
 
     crawler_meta = await crawlers_get_all_meta()
 

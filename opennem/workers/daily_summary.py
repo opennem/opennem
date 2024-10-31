@@ -155,9 +155,6 @@ def render_daily_fueltech_summary_tweet_text(daily_summary: DailySummary) -> str
 def run_daily_fueltech_summary(network: NetworkSchema) -> None:
     """Produces daily fueltech summary slack message"""
 
-    if not settings.send_daily_fueltech_summary:
-        return None
-
     ds = get_daily_fueltech_summary(network=network)
 
     summary_plot = plot_daily_fueltech_summary(daily_summary=ds)

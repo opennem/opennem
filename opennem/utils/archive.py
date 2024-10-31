@@ -15,7 +15,6 @@ from tempfile import mkdtemp
 from typing import IO, Any
 from zipfile import ZipFile
 
-from opennem import settings
 from opennem.utils.http import http
 from opennem.utils.url import get_filename_from_url
 
@@ -179,7 +178,7 @@ def stream_zip_contents(file_obj: IO[bytes], mode: str = "w"):  # type: ignore
 def download_and_unzip(url: str) -> Path:
     """Download and unzip a multi-zip file into a temporary directory"""
 
-    dest_dir = Path(mkdtemp(prefix=f"{settings.tmp_file_prefix}"))
+    dest_dir = Path(mkdtemp(prefix="opennem_"))
 
     logger.info(f"Saving to {dest_dir}")
 

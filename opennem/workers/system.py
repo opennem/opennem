@@ -8,8 +8,6 @@ from pathlib import Path
 from shutil import rmtree
 from tempfile import gettempdir
 
-from opennem import settings
-
 logger = logging.getLogger("opennem.workers.system")
 
 CLEAN_OLDER_THAN_HOURS = 1
@@ -48,13 +46,12 @@ def clean_tmp_dir(dry_run: bool = False) -> None:
     if not tmp_dir.is_dir():
         raise Exception(f"Not a directory: {tmp_dir}")
 
-    if not settings.tmp_file_prefix:
-        raise Exception("No tmp file prefix")
+    tmp_file_prefix = "opennem_"
 
     for dir_entry in glob(f"{str(tmp_dir)}/*"):
         dir_entry_path = Path(dir_entry)
 
-        if dir_entry_path.name.startswith(settings.tmp_file_prefix):
+        if dir_entry_path.name.startswith(tmp_file_prefix):
             mtime = os.stat(dir_entry_path).st_mtime
 
             if mtime >= now_epoch - (CLEAN_OLDER_THAN_HOURS * 3600):
