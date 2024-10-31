@@ -9,6 +9,7 @@ from arq.connections import RedisSettings
 from opennem import settings
 from opennem.core.startup import worker_startup_alert
 from opennem.tasks.tasks import (
+    task_bom_capitals_crawl,
     task_nem_interval_check,
     task_run_market_notice_update,
 )
@@ -52,6 +53,12 @@ class WorkerSettings:
         cron(
             task_run_market_notice_update,
             minute=30,
+            timeout=None,
+            unique=True,
+        ),
+        cron(
+            task_bom_capitals_crawl,
+            minute={10, 40},
             timeout=None,
             unique=True,
         ),
