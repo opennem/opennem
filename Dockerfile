@@ -39,14 +39,13 @@ RUN chmod -R 655 /install.sh && /install.sh && rm /install.sh
 
 # copy project requirement files here to ensure they will be cached.
 WORKDIR $PYSETUP_PATH
-COPY requirements.txt pyproject.toml ./
+COPY uv.lock pyproject.toml ./
 
 # workaround for if you have packages-include in your pyproject.toml
 RUN mkdir ${PROJECT_NAME} && touch ${PROJECT_NAME}/__init__.py
 
 # install runtime deps - using UV
-RUN /root/.cargo/bin/uv venv ${VENV_PATH}
-RUN /root/.cargo/bin/uv pip install --no-cache -r requirements.txt
+RUN /root/.cargo/bin/uv sync
 
 # `development` image is used during development / testing
 FROM python-base as development

@@ -4,10 +4,10 @@ UPGRADE_ARGS ?= --upgrade
 projectname = opennem
 
 # tools
-ruff-check = poetry run ruff check $(projectname)
-mypy = poetry run mypy $(projectname)
-pytest = poetry run pytest tests -v
-pyright = poetry run pyright -v $(poetry env info -p) $(projectname)
+ruff-check = uv run ruff check $(projectname)
+mypy = uv run mypy $(projectname)
+pytest = uv run pytest tests -v
+pyright = uv run pyright -v $(poetry env info -p) $(projectname)
 version_file = $(projectname)/__init__.py
 bump=prerelease
 
@@ -17,7 +17,7 @@ test:
 
 .PHONY: format
 format:
-	poetry run ruff format $(projectname)
+	uv run ruff format $(projectname)
 	$(ruff-check) --fix
 
 .PHONY: lint

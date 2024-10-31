@@ -1,46 +1,38 @@
 name: Build and Push Docker Image
 
 on:
-    create:
-        tags:
-            - "*"
+  create:
+    tags:
+      - "*"
 
 jobs:
-    build-and-push:
-        runs-on: ubuntu-latest
-        if: startsWith(github.ref, 'refs/tags/')
+  build-and-push:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-            - name: Set up Python
-              uses: actions/setup-python@v2
-              with:
-                  python-version: "3.x"
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
 
-            - name: Install Poetry
-              run: |
-                  curl -sSL https://install.python-poetry.org | python3 -
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-            - name: Get version from poetry
-              run: echo "VERSION=$(poetry version -s)" >> $GITHUB_ENV
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v1
-
-            - name: Login to GitHub Container Registry
-              uses: docker/login-action@v1
-              with:
-                  registry: ghcr.io
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
-
-            - name: Build and push Docker image
-              uses: docker/build-push-action@v2
-              with:
-                  context: .
-                  push: true
-                  tags: |
-                      ghcr.io/opennem/opennem:latest
-                      ghcr.io/opennem/opennem:${{ env.VERSION }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: |
+              ghcr.io/opennem/opennem:latest
