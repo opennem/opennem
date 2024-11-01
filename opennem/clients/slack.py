@@ -4,7 +4,7 @@ import dataclasses
 import logging
 import sys
 
-from validators import ValidationFailure
+from validators import ValidationError
 from validators.url import url as valid_url
 
 from opennem import settings
@@ -85,7 +85,7 @@ async def slack_message(
         logger.error(f"No slack notification endpoint configured for environment {settings.env}")
         return False
 
-    if isinstance(valid_url(webhook_url), ValidationFailure):  # type: ignore
+    if isinstance(valid_url(webhook_url), ValidationError):  # type: ignore
         logger.error(f"Invalid slack notification endpoint configured bad url: {webhook_url}")
         return False
 
