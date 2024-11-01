@@ -1,4 +1,32 @@
-"""Task scheduler"""
+"""
+
+Task scheduler for OpenNEM
+
+This module configures and runs the task scheduler for the OpenNEM project using the arq library.
+It defines the Redis settings, startup and shutdown procedures, and schedules various cron jobs
+to perform periodic tasks such as crawling BOM capitals data, checking NEM intervals, and updating
+market notices.
+
+The task scheduler is an essential component of the OpenNEM system, ensuring that data is collected,
+processed, and updated in a timely manner.
+
+Functions:
+    startup(ctx): Initializes the HTTP client for the task scheduler.
+    shutdown(ctx): Closes the HTTP client for the task scheduler.
+
+Classes:
+    WorkerSettings: Configuration class for the arq worker, including queue name and cron jobs.
+
+Cron Jobs:
+    - task_nem_interval_check: Runs every 5 minutes to check NEM intervals.
+    - task_bom_capitals_crawl: (Not shown in the snippet) Crawls BOM capitals data.
+    - task_run_market_notice_update: (Not shown in the snippet) Updates market notices.
+
+Running the script:
+    - The script can be run directly using Python, which will start the worker.
+    - python -m opennem.tasks.app
+    - Alternatively, it can be run through the Docker container using the `run_worker` command.
+"""
 
 import logging
 from datetime import timedelta, timezone
@@ -13,9 +41,6 @@ from opennem.tasks.tasks import (
     task_nem_interval_check,
     task_run_market_notice_update,
 )
-
-# crawler_run_nem_dispatch_scada_crawl,
-# crawler_run_nem_trading_is_crawl,
 from opennem.utils.httpx import httpx_factory
 
 REDIS_SETTINGS = RedisSettings(
@@ -53,12 +78,14 @@ class WorkerSettings:
         cron(
             task_run_market_notice_update,
             minute=30,
+            second=30,
             timeout=None,
             unique=True,
         ),
         cron(
             task_bom_capitals_crawl,
             minute={10, 40},
+            second=0,
             timeout=None,
             unique=True,
         ),
