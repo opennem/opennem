@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 """
-    Script to run the asgi uvicorn server in dev
-    and prod
+Script to run the asgi uvicorn server in dev
+and prod
 
 """
+
 import logging
 from pathlib import Path
 
@@ -18,7 +19,7 @@ logger = logging.getLogger("opennem.server")
 RELOAD_PATH = Path(__file__).parent.parent.resolve() / "opennem"
 
 
-def run_server() -> None:
+def run_server(host: str = "0.0.0.0", port: int = 8000, server_ssl: bool = False) -> None:
     log_level = "info"
     reload = False
     reload_dirs = None
@@ -32,7 +33,7 @@ def run_server() -> None:
         reload_dirs = [str(RELOAD_PATH)]
         workers = 1
 
-    if settings.server_ssl:
+    if server_ssl:
         ssl_options = {
             "ssl_keyfile": "./var/_wildcard.opennem.localhost-key.pem",
             "ssl_certfile": "./var/_wildcard.opennem.localhost.pem",
@@ -40,8 +41,8 @@ def run_server() -> None:
 
     uvicorn.run(
         "opennem.api.app:app",
-        host=settings.server_host,
-        port=settings.server_port,
+        host=host,
+        port=port,
         log_level=log_level,
         reload=reload,
         reload_dirs=reload_dirs,
@@ -49,7 +50,7 @@ def run_server() -> None:
         **ssl_options,
     )
 
-    logger.info(f"Running server on {settings.server_host} {settings.server_port}")
+    logger.info(f"Running server on {host} {port}")
 
 
 if __name__ == "__main__":
