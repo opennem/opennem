@@ -746,15 +746,6 @@ wheels = [
 ]
 
 [[package]]
-name = "eval-type-backport"
-version = "0.2.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/23/ca/1601a9fa588867fe2ab6c19ed4c936929160d08a86597adf61bbd443fe57/eval_type_backport-0.2.0.tar.gz", hash = "sha256:68796cfbc7371ebf923f03bdf7bef415f3ec098aeced24e054b253a0e78f7b37", size = 8977 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ac/ac/aa3d8e0acbcd71140420bc752d7c9779cf3a2a3bb1d7ef30944e38b2cd39/eval_type_backport-0.2.0-py3-none-any.whl", hash = "sha256:ac2f73d30d40c5a30a80b8739a789d6bb5e49fdffa66d7912667e2015d9c9933", size = 5855 },
-]
-
-[[package]]
 name = "executing"
 version = "2.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1308,15 +1299,6 @@ wheels = [
 ]
 
 [[package]]
-name = "jsonpath-python"
-version = "1.0.6"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/b5/49/e582e50b0c54c1b47e714241c4a4767bf28758bf90212248aea8e1ce8516/jsonpath-python-1.0.6.tar.gz", hash = "sha256:dd5be4a72d8a2995c3f583cf82bf3cd1a9544cfdabf2d22595b67aff07349666", size = 18121 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/16/8a/d63959f4eff03893a00e6e63592e3a9f15b9266ed8e0275ab77f8c7dbc94/jsonpath_python-1.0.6-py3-none-any.whl", hash = "sha256:1e3b78df579f5efc23565293612decee04214609208a2335884b3ee3f786b575", size = 7552 },
-]
-
-[[package]]
 name = "keyring"
 version = "25.5.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1710,7 +1692,7 @@ wheels = [
 
 [[package]]
 name = "opennem-backend"
-version = "4.0.0a161"
+version = "0.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "aioboto3" },
@@ -1837,7 +1819,7 @@ requires-dist = [
     { name = "shapely", specifier = ">=2.0.2,<3.0.0" },
     { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.0.32,<3.0.0" },
     { name = "tqdm", specifier = ">=4.66.5,<5.0.0" },
-    { name = "unkey-py", specifier = ">=0.7.1,<1.0.0" },
+    { name = "unkey-py", specifier = ">=0.7.1,<0.8.0" },
     { name = "uvicorn", specifier = ">=0.30.4,<1.0.0" },
     { name = "validators", specifier = ">=0.18.1,<1.0.0" },
     { name = "xlrd", specifier = ">=2.0.1,<3.0.0" },
@@ -3192,19 +3174,6 @@ wheels = [
 ]
 
 [[package]]
-name = "typing-inspect"
-version = "0.9.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "mypy-extensions" },
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/dc/74/1789779d91f1961fa9438e9a8710cdae6bd138c80d7303996933d117264a/typing_inspect-0.9.0.tar.gz", hash = "sha256:b23fc42ff6f6ef6954e4852c1fb512cdd18dbea03134f91f856a95ccc9461f78", size = 13825 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/65/f3/107a22063bf27bdccf2024833d3445f4eea42b2e598abfbd46f6a63b6cb0/typing_inspect-0.9.0-py3-none-any.whl", hash = "sha256:9ee6fc59062311ef8547596ab6b955e1b8aa46242d854bfc78f4f6b0eff35f9f", size = 8827 },
-]
-
-[[package]]
 name = "tzdata"
 version = "2024.2"
 source = { registry = "https://pypi.org/simple" }
@@ -3215,19 +3184,15 @@ wheels = [
 
 [[package]]
 name = "unkey-py"
-version = "0.8.0"
+version = "0.7.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "eval-type-backport" },
-    { name = "httpx" },
-    { name = "jsonpath-python" },
-    { name = "pydantic" },
-    { name = "python-dateutil" },
-    { name = "typing-inspect" },
+    { name = "aiohttp" },
+    { name = "attrs" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/22/49/2c036c9b7b8201f3f059ff41a15e30186dd6af367bd5003de5dcce939e58/unkey_py-0.8.0.tar.gz", hash = "sha256:369a93c7daee8341fbd88eab13a6c2f6f56b08d1158c086cf0a016c44d6c0c32", size = 61725 }
+sdist = { url = "https://files.pythonhosted.org/packages/e5/49/5ad9cbb8840fea5c6bc0f1dcf702478d0b85e139b5455a4acc288a738d18/unkey_py-0.7.2.tar.gz", hash = "sha256:15de17f5dbbe0a54ea65a6d9746c2bd44750dec9aec4760bba41989499df860f", size = 27842 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/79/a7/35c0520268776cab48fcf6a7414fdd6c93db2146ca2f6a122a62c0dde269/unkey_py-0.8.0-py3-none-any.whl", hash = "sha256:c77b653704a10d4a2cfaaa903293bf85619bfaad5d5074707441dff849a5ed03", size = 105018 },
+    { url = "https://files.pythonhosted.org/packages/ce/b7/81201fe23e63ee4e3946533dad30512de65a4f1f9be66e2b32e1a6fe3a5d/unkey_py-0.7.2-py3-none-any.whl", hash = "sha256:476688f7b43a84f86bb5a8e0b677f790b2bfb562f9b8034a325733014e4074c1", size = 33455 },
 ]
 
 [[package]]
