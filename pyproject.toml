@@ -3,18 +3,12 @@ name = "opennem-backend"
 version = "4.0.0a161"
 description = "OpenElectricity (OpenNEM) Australian Energy Data Platform"
 license = "MIT"
-readme = "README.md"
-homepage = "https://openelectricity.org.au"
-repository = "https://github.com/opennem/opennem"
 keywords = ["openelectricity", "opennem", "analysis", "australia", "energy"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Environment :: Console",
   "Programming Language :: Python :: 3.10",
   "Topic :: Scientific/Engineering"
-]
-include = [
-  'README.md'
 ]
 authors = [
     {name = "Dylan McConnell", email = "dylan.mcconnell@unimelb.edu.au"},
