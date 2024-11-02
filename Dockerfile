@@ -1,4 +1,4 @@
-FROM python:3.12-bullseye as python-base
+FROM python:3.13-bullseye as python-base
 
 # python
 ENV PROJECT_NAME="opennem" \
@@ -19,8 +19,8 @@ ENV PROJECT_NAME="opennem" \
   PYSETUP_PATH="/opt/pysetup" \
   VENV_PATH="/opt/pysetup/.venv"
 
-# prepend poetry and venv to path
-ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
+# prepend venv to path
+ENV PATH="$VENV_PATH/bin:$PATH"
 
 ################################
 # BUILDER-BASE
@@ -29,13 +29,19 @@ ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 FROM python-base as builder-base
 RUN apt-get update \
   && apt-get install --no-install-recommends -y \
-  # deps for building python deps
   build-essential \
+  curl \
+  ca-certificates \
+  pkg-config \
+  libssl-dev \
   && rm -rf /var/lib/apt/lists/*
 
+# Install Rust toolchain
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+
 # install uv
-ADD https://astral.sh/uv/install.sh /install.sh
-RUN chmod -R 655 /install.sh && /install.sh && rm /install.sh
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # copy project requirement files here to ensure they will be cached.
 WORKDIR $PYSETUP_PATH
@@ -45,14 +51,14 @@ COPY uv.lock pyproject.toml ./
 RUN mkdir ${PROJECT_NAME} && touch ${PROJECT_NAME}/__init__.py
 
 # install runtime deps - using UV
-RUN /root/.cargo/bin/uv sync
+RUN uv sync
 
 # `development` image is used during development / testing
 FROM python-base as development
 ENV FASTAPI_ENV=development
 WORKDIR $PYSETUP_PATH
 
-# copy in our built poetry + venv
+# copy in our built venv
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 
 # will become mountpoint of our code
@@ -60,11 +66,9 @@ WORKDIR /app
 EXPOSE 8000
 CMD ["uvicorn", "--reload", "opennem.api.app:app"]
 
-
 # `production` image used for runtime
 FROM python-base as production
 ENV FASTAPI_ENV=production
-ENV PYTHONPATH="$PYTHONPATH:/app"
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 COPY . /app/
 

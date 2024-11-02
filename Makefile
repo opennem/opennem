@@ -7,7 +7,7 @@ projectname = opennem
 ruff-check = uv run ruff check $(projectname)
 mypy = uv run mypy $(projectname)
 pytest = uv run pytest tests -v
-pyright = uv run pyright -v $(poetry env info -p) $(projectname)
+pyright = uv run pyright -v .venv $(projectname)
 version_file = $(projectname)/__init__.py
 bump=prerelease
 
@@ -28,9 +28,6 @@ lint:
 check:
 	$(pyright)
 
-.PHONE: requirements
-requirements:
-	poetry export -o requirements.txt
 
 .PHONY: build
 build:
@@ -56,7 +53,7 @@ version:
 	git push origin $$new_version
 
 .PHONY: release-pre
-release-pre: format lint requirements
+release-pre: format lint
 
 .PHONY: image
 image:
