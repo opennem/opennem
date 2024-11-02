@@ -6,13 +6,11 @@
 
 ![Tests](https://github.com/opennem/opennem/workflows/Tests/badge.svg) [![codecov](https://codecov.io/gh/opennem/opennem/branch/master/graph/badge.svg?token=HSJP632WBX)](https://codecov.io/gh/opennem/opennem)
 
-The OpenNEM project aims to make the wealth of public National Electricity Market (NEM) data more accessible to a wider audience.
+The OpenElectricity project (formerly OpenNEM) aims to make the wealth of public National Electricity Market (NEM) data more accessible to a wider audience.
 
 This toolkit enables downloading, mirroring and accessing energy data from various networks
 
-Project homepage at https://opennem.org.au
-
-Available on Docker at https://hub.docker.com/r/opennem/opennem
+Project homepage at https://openelectricity.org.au
 
 Currently supports:
 
