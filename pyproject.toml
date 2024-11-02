@@ -1,5 +1,6 @@
 [project]
 name = "opennem-backend"
+version = "4.0.0a161"
 description = "OpenElectricity (OpenNEM) Australian Energy Data Platform"
 license = "MIT"
 readme = "README.md"
@@ -15,7 +16,6 @@ classifiers = [
 include = [
   'README.md'
 ]
-dynamic = ["version"]
 authors = [
     {name = "Dylan McConnell", email = "dylan.mcconnell@unimelb.edu.au"},
     {name = "Nik Cubrilovic", email = "git@nikcub.me"},
@@ -102,14 +102,11 @@ dev-dependencies = [
     "psycopg[binary]<4.0.0,>=3.2.1",
 ]
 
-[tool.pdm.build]
-includes = ["opennem"]
-
-
-
-
 [project.scripts]
 opennem = "opennem.cli:main"
+
+[tool.rooster]
+version_files = ["opennem/__init__.py", "README.md"]
 
 [tool.ruff]
 target-version = "py312"
