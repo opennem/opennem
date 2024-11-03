@@ -4,7 +4,6 @@ import logging
 
 from opennem.core.stats.store import init_stats
 from opennem.db.load_fixtures import load_fixtures
-from opennem.importer.facilities import import_facilities
 from opennem.importer.interconnectors import import_nem_interconnects
 from opennem.importer.rooftop import rooftop_facilities
 from opennem.workers.facility_data_ranges import update_facility_seen_range
@@ -13,9 +12,6 @@ logger = logging.getLogger(__name__)
 
 
 async def import_all_facilities() -> None:
-    await import_facilities()
-    logger.info("OpenNEM stations imported")
-
     await rooftop_facilities()
     logger.info("Rooftop stations initialized")
 

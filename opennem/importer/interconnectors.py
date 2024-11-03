@@ -9,10 +9,9 @@ import logging
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.loader import load_data
-from opennem.core.networks import state_from_network_region
 from opennem.core.parsers.aemo.mms import AEMOParserException, parse_aemo_mms_csv
-from opennem.db import SessionLocal
-from opennem.db.models.opennem import Facility, Location, Unit
+from opennem.db import get_read_session
+from opennem.db.models.opennem import Facility, Unit
 from opennem.schema.aemo.mms import MarketConfigInterconnector
 from opennem.utils.mime import decode_bytes
 
@@ -23,7 +22,7 @@ INTERCONNECTOR_TABLE = "interconnector"
 
 
 def import_nem_interconnects() -> None:
-    session = SessionLocal()
+    session = get_read_session()
 
     # Load the MMS CSV file that contains interconnector info
     csv_data = load_data(
@@ -100,9 +99,6 @@ def import_nem_interconnects() -> None:
         interconnector_station.approved = False
 
         interconnector_station.created_by = "opennem.importer.interconnectors"
-
-        if not interconnector_station.location:
-            interconnector_station.location = Location(state=state_from_network_region(interconnector.regionfrom))
 
         interconnector_station.name = interconnector.description
 
