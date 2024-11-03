@@ -11,7 +11,7 @@ from decimal import Decimal
 from sqlalchemy import and_, select
 
 from opennem.core.loader import load_data
-from opennem.db import SessionLocalAsync
+from opennem.db import get_write_session
 from opennem.db.models.opennem import BomStation, FacilityStatus, FuelTech, FuelTechGroup, Network, NetworkRegion
 
 logger = logging.getLogger("opennem.db.load_fixtures")
@@ -24,7 +24,7 @@ async def load_fueltechs() -> None:
     fueltech_groups = load_data("fueltech_groups.json", from_fixture=True)
     fueltechs = load_data("fueltechs.json", from_fixture=True)
 
-    async with SessionLocalAsync() as session:
+    async with get_write_session() as session:
         for ftg in fueltech_groups:
             ftg_code = ftg.get("code")
 
@@ -32,10 +32,8 @@ async def load_fueltechs() -> None:
                 logger.error("Fueltech group has no code")
                 continue
 
-            fueltech_group_query = await session.scalars(select(FuelTechGroup).where(FuelTechGroup.code == ftg_code))
-            fueltech_group = fueltech_group_query.one_or_none()
-
-            logger.debug(f"Loaded fueltech group {fueltech_group.code}")
+            fueltech_group_query = await session.execute(select(FuelTechGroup).where(FuelTechGroup.code == ftg_code))
+            fueltech_group = fueltech_group_query.scalar_one_or_none()
 
             if not fueltech_group:
                 fueltech_group = FuelTechGroup(
@@ -46,13 +44,8 @@ async def load_fueltechs() -> None:
             fueltech_group.color = ftg.get("color")
             fueltech_group.renewable = ftg.get("renewable", False)
 
-            try:
-                session.add(fueltech_group)
-                await session.commit()
-                logger.info(f"Loaded fueltech Group {fueltech_group.code}")
-            except Exception:
-                logger.error(f"Have fueltech group {fueltech_group.code}")
-                await session.rollback()
+            session.add(fueltech_group)
+            logger.info(f"Loaded fueltech Group {fueltech_group.code}")
 
         for ft in fueltechs:
             ft_code = ft.get("code")
@@ -61,8 +54,8 @@ async def load_fueltechs() -> None:
                 logger.error("Fueltech has no code")
                 continue
 
-            fueltech = await session.scalars(select(FuelTech).where(FuelTech.code == ft_code))
-            fueltech = fueltech.one_or_none()
+            fueltech_query = await session.execute(select(FuelTech).where(FuelTech.code == ft_code))
+            fueltech = fueltech_query.scalar_one_or_none()
 
             if not fueltech:
                 fueltech = FuelTech(
@@ -73,13 +66,10 @@ async def load_fueltechs() -> None:
             fueltech.renewable = ft.get("renewable", False)
             fueltech.fueltech_group_id = ft.get("fueltech_group_id")
 
-            try:
-                session.add(fueltech)
-                await session.commit()
-                logger.info(f"Loaded fueltech {fueltech.code}")
-            except Exception:
-                logger.error(f"Have {fueltech.code}")
-                await session.rollback()
+            session.add(fueltech)
+            logger.info(f"Loaded fueltech {fueltech.code}")
+
+        await session.commit()
 
 
 async def load_facilitystatus() -> None:
@@ -88,7 +78,7 @@ async def load_facilitystatus() -> None:
     """
     fixture = load_data("facility_status.json", from_fixture=True)
 
-    async with SessionLocalAsync() as session:
+    async with get_write_session() as session:
         for status in fixture:
             facility_status = await session.execute(select(FacilityStatus).filter_by(code=status["code"]))
             facility_status = facility_status.scalar_one_or_none()
@@ -115,7 +105,7 @@ async def load_networks() -> None:
     """
     fixture = load_data("networks.json", from_fixture=True)
 
-    async with SessionLocalAsync() as session:
+    async with get_write_session() as session:
         for network in fixture:
             network_model_query = await session.scalars(select(Network).where(Network.code == network["code"]))
             network_model = network_model_query.unique().one_or_none()
@@ -152,7 +142,7 @@ async def load_network_regions() -> None:
     """
     fixture = load_data("network_regions.json", from_fixture=True)
 
-    async with SessionLocalAsync() as session:
+    async with get_write_session() as session:
         for network_region in fixture:
             result = await session.scalars(
                 select(NetworkRegion).where(
@@ -210,7 +200,7 @@ async def load_bom_stations_csv() -> None:
 
     lines = station_csv.split("\n")
 
-    async with SessionLocalAsync() as session:
+    async with get_write_session() as session:
         for line in lines:
             code, state, name, registered, lng, lat = parse_fixed_line(line)
 
@@ -241,7 +231,7 @@ async def load_bom_stations_json() -> None:
 
     The json is obtained using scripts/bom_stations.py
     """
-    async with SessionLocalAsync() as session:
+    async with get_write_session() as session:
         bom_stations = load_data("bom_stations.json", from_project=True)
         bom_capitals = load_data("bom_capitals.json", from_project=True)
 
