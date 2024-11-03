@@ -51,7 +51,7 @@ COPY uv.lock pyproject.toml ./
 RUN mkdir ${PROJECT_NAME} && touch ${PROJECT_NAME}/__init__.py
 
 # install runtime deps - using UV
-RUN uv sync
+RUN uv sync --frozen
 
 # `development` image is used during development / testing
 FROM python-base as development
