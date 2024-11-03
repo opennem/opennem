@@ -20,15 +20,17 @@ RELOAD_PATH = Path(__file__).parent.parent.resolve() / "opennem"
 
 
 def run_server(host: str = "0.0.0.0", port: int = 8000, server_ssl: bool = False) -> None:
+    import multiprocessing
+
     log_level = "info"
-    reload = False
+    reload_enabled = False
     reload_dirs = None
-    workers = 4
+    workers = multiprocessing.cpu_count()
     ssl_options = {}
 
     # @TODO move this into opennem.settings
-    if settings.debug:
-        reload = True
+    if settings.debug or settings.is_dev:
+        reload_enabled = True
         log_level = "debug"
         reload_dirs = [str(RELOAD_PATH)]
         workers = 1
@@ -44,10 +46,10 @@ def run_server(host: str = "0.0.0.0", port: int = 8000, server_ssl: bool = False
         host=host,
         port=port,
         log_level=log_level,
-        reload=reload,
+        reload=reload_enabled,
         reload_dirs=reload_dirs,
         workers=workers,
-        **ssl_options,
+        **ssl_options,  # type: ignore
     )
 
     logger.info(f"Running server on {host} {port}")
