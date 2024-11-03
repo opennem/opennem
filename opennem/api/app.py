@@ -353,3 +353,9 @@ versions = Versionizer(
     sort_routes=True,
     # default_version="v{major}",
 ).versionize()
+
+
+def main():
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
