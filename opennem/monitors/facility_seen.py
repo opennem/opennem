@@ -158,5 +158,4 @@ if __name__ == "__main__":
     seen_facilities = asyncio.run(facility_first_seen_check(send_slack=False, only_generation=False))
 
     for f in seen_facilities:
-        # print(f"Unmapped: {f.network_id} {f.code} {f.generated}")
-        print(f.code)
+        print(f"Unmapped: {f.network_id} {f.code} {f.generated}")
