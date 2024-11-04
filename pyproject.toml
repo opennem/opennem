@@ -99,6 +99,7 @@ dev-dependencies = [
 [project.scripts]
 opennem = "opennem.cli:main"
 api = "bin.run_server:run_server"
+worker = "opennem.tasks.app:main"
 
 [tool.rooster]
 version_files = ["opennem/__init__.py", "README.md"]

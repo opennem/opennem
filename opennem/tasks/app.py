@@ -35,7 +35,6 @@ from arq import cron, run_worker
 from arq.connections import RedisSettings
 
 from opennem import settings
-from opennem.core.startup import worker_startup_alert
 from opennem.tasks.tasks import (
     task_bom_capitals_crawl,
     task_nem_interval_check,
@@ -53,8 +52,6 @@ REDIS_SETTINGS = RedisSettings(
 )
 
 logger = logging.getLogger("openenm.scheduler")
-
-worker_startup_alert()
 
 
 async def startup(ctx):
@@ -75,6 +72,7 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
+        # AEMO Market notices
         cron(
             task_run_market_notice_update,
             minute=30,
@@ -82,6 +80,7 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
+        # BoM weather data
         cron(
             task_bom_capitals_crawl,
             minute={10, 40},
@@ -121,9 +120,7 @@ class WorkerSettings:
 
 def main() -> None:
     """Run the main worker"""
-    logger.info("Starting worker")
-    run_worker(WorkerSettings)
-    logger.info("Worker done")
+    run_worker(settings_cls=WorkerSettings)
 
 
 if __name__ == "__main__":
