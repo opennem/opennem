@@ -1,6 +1,6 @@
 from pydantic import Field
 
-from .core import BaseConfig
+from opennem.schema.core import BaseConfig
 
 
 class UnitDefinition(BaseConfig):
