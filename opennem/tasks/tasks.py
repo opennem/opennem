@@ -4,6 +4,7 @@ import asyncio
 import logging
 
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_intervals
+from opennem.cms.importer import update_database_facilities_from_cms
 from opennem.controllers.schema import ControllerReturn
 from opennem.crawl import run_crawl
 from opennem.crawlers.aemo_market_notice import run_market_notice_update
@@ -37,6 +38,7 @@ async def task_nem_interval_check(ctx) -> None:
     results = await asyncio.gather(*tasks)
 
     if not any(r.inserted_records for r in results if r):
+        logger.warning("No new data from crawlers")
         raise OpenNEMPipelineRetryTask()
 
     # run flows
@@ -87,6 +89,16 @@ async def nem_per_day_check(always_run: bool = False) -> ControllerReturn:
         server_latest=dispatch_actuals.server_latest,
         last_modified=None,
     )
+
+
+# cms tasks from webhooks
+
+
+async def task_refresh_from_cms(ctx) -> None:
+    """Update a unit from the CMS"""
+    pass
+
+    await update_database_facilities_from_cms()
 
 
 # other tasks
