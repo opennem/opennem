@@ -24,6 +24,7 @@ from sqlalchemy import (
     UniqueConstraint,
     false,
     func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP, UUID
 from sqlalchemy.ext.declarative import declarative_base
@@ -320,13 +321,40 @@ class FacilityScada(Base):
     energy: Mapped[float] = mapped_column(Numeric, nullable=True)
     energy_quality_flag = Column(Numeric, nullable=False, default=0)
 
-    __table_args__ = ()
+    __table_args__ = (
+        # 1. Primary Index for Time Bucketing
+        Index(
+            "idx_facility_scada_interval_bucket",
+            interval,
+            network_id,
+            facility_code,
+            is_forecast,
+            postgresql_using="btree",
+        ),
+        # 2. Partial Index for Forecast Filter
+        Index(
+            "idx_facility_scada_non_forecast",
+            interval,
+            facility_code,
+            generated,
+            energy,
+            postgresql_where=text("is_forecast = false"),
+            postgresql_using="btree",
+        ),
+        # 3. Index for Grouping
+        Index("idx_facility_scada_group", network_id, facility_code, energy, eoi_quantity, postgresql_using="btree"),
+        # Existing indexes kept for compatibility
+        Index("idx_facility_scada_facility_code_interval", facility_code, interval.desc()),
+        Index("idx_facility_scada_network_id", network_id),
+        Index("idx_facility_scada_interval_facility_code", interval, facility_code),
+        # Additional optimization hints
+    )
 
     def __str__(self) -> str:
-        return f"<{self.__class__}: {self.trading_interval} {self.network_id} {self.facility_code}>"
+        return f"<{self.__class__}: {self.interval} {self.network_id} {self.facility_code}>"
 
     def __repr__(self) -> str:
-        return f"{self.__class__}: {self.trading_interval} {self.network_id} {self.facility_code}"
+        return f"{self.__class__}: {self.interval} {self.network_id} {self.facility_code}"
 
 
 class BalancingSummary(Base):
