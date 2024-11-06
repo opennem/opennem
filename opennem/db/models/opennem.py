@@ -295,7 +295,7 @@ class Unit(Base):
     data_last_seen: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
     approved: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    facility = relationship("Facility", innerjoin=True, back_populates="units")
+    facility = relationship("Facility", innerjoin=True, back_populates="units", lazy="selectin")
 
     __table_args__ = (
         Index("idx_facility_station_id", "station_id", postgresql_using="btree"),
