@@ -31,40 +31,24 @@ Running the script:
 import logging
 from datetime import timedelta, timezone
 
-from arq import cron, run_worker
-from arq.connections import RedisSettings
+from arq import cron
+from arq.worker import create_worker
 
-from opennem import settings
+from opennem.tasks.broker import REDIS_SETTINGS
 from opennem.tasks.tasks import (
     task_bom_capitals_crawl,
     task_nem_interval_check,
-    task_run_market_notice_update,
-)
-from opennem.utils.httpx import httpx_factory
-
-REDIS_SETTINGS = RedisSettings(
-    host=settings.redis_url.host,  # type: ignore
-    port=settings.redis_url.port,  # type: ignore
-    username=settings.redis_url.username,  # type: ignore
-    password=settings.redis_url.password,  # type: ignore
-    ssl=settings.redis_url.scheme == "rediss",
-    conn_timeout=300,
+    task_nem_rooftop_crawl,
+    task_refresh_from_cms,
 )
 
-logger = logging.getLogger("openenm.scheduler")
-
-
-async def startup(ctx):
-    ctx["http"] = httpx_factory()
-
-
-async def shutdown(ctx):
-    await ctx["http"].aclose()
+logger = logging.getLogger("openenm.tasks.app")
 
 
 class WorkerSettings:
-    queue_name = "opennem"
+    # queue_name = "opennem"
     cron_jobs = [
+        # NEM Interval Check
         cron(
             task_nem_interval_check,
             minute=set(range(0, 60, 5)),
@@ -72,18 +56,34 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
-        # AEMO Market notices
+        # NEM Rooftop
         cron(
-            task_run_market_notice_update,
-            minute=30,
-            second=30,
+            task_nem_rooftop_crawl,
+            minute=set(range(0, 60, 30)),
+            second=50,
             timeout=None,
             unique=True,
         ),
+        # AEMO Market notices
+        # cron(
+        #     task_run_market_notice_update,
+        #     minute=30,
+        #     second=30,
+        #     timeout=None,
+        #     unique=True,
+        # ),
         # BoM weather data
         cron(
             task_bom_capitals_crawl,
             minute={10, 40},
+            second=0,
+            timeout=None,
+            unique=True,
+        ),
+        # CMS Update
+        cron(
+            task_refresh_from_cms,
+            minute=1,
             second=0,
             timeout=None,
             unique=True,
@@ -103,24 +103,17 @@ class WorkerSettings:
         #     unique=True,
         # ),
     ]
-    # functions = (
-    #     [
-    #         task_nem_dispatch_scada_crawl,
-    #     ],
-    # )
-
+    redis_settings = REDIS_SETTINGS
     retry_jobs = True
     max_tries = 5
-    on_startup = startup
-    on_shutdown = shutdown
     job_timeout = 60 * 60 * 12  # 12 hours max task time
-    redis_settings = REDIS_SETTINGS
     timezone = timezone(timedelta(hours=10))
 
 
 def main() -> None:
     """Run the main worker"""
-    run_worker(settings_cls=WorkerSettings)
+    worker = create_worker(settings_cls=WorkerSettings)  # type: ignore
+    worker.run()
 
 
 if __name__ == "__main__":
