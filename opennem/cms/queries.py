@@ -16,12 +16,45 @@ from portabletext_html import PortableTextRenderer
 from pydantic import ValidationError
 
 from opennem.cms.client import sanity_client
-from opennem.schema.facility import CMSFacilitySchema
+from opennem.schema.facility import FacilitySchema
+from opennem.schema.unit import UnitSchema
 
 logger = logging.getLogger("opennem.cms.update")
 
 
-def get_cms_facilities(facility_code: str | None = None) -> list[CMSFacilitySchema]:
+class CMSQueryError(Exception):
+    """Error querying the CMS"""
+
+    pass
+
+
+def get_cms_unit(unit_code: str) -> UnitSchema:
+    """
+    Get units from the CMS
+    """
+
+    query = f"""*[_type == "unit" && code == '{unit_code}' && !(_id in path("drafts.**"))] {{
+        _id,
+        _createdAt,
+        _updatedAt,
+        code,
+        dispatch_type,
+        "fueltech_id": fuel_technology->code,
+        "status_id": status,
+        capacity_registered,
+        emissions_factor_co2
+    }}"""
+
+    res = sanity_client.query(query)
+
+    logger.debug(res)
+
+    if not res or not isinstance(res, dict) or "result" not in res or not res["result"]:
+        raise CMSQueryError(f"No unit found for {unit_code}")
+    return UnitSchema(**res["result"][0])
+
+
+def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]:
     """
     Get facilities from the CMS
 
@@ -98,7 +131,7 @@ def get_cms_facilities(facility_code: str | None = None) -> list[CMSFacilitySche
             continue
 
         try:
-            result_models[facility["code"]] = CMSFacilitySchema(**facility)
+            result_models[facility["code"]] = FacilitySchema(**facility)
         except ValidationError as e:
             logger.error(f"Error creating facility model for {facility['code']}: {e}")
             logger.debug(facility)
@@ -107,7 +140,7 @@ def get_cms_facilities(facility_code: str | None = None) -> list[CMSFacilitySche
     return list(result_models.values())
 
 
-def update_cms_record(facility: CMSFacilitySchema) -> None:
+def update_cms_record(facility: FacilitySchema) -> None:
     transactions = [
         {
             "createOrUpdate": {
@@ -125,12 +158,5 @@ def update_cms_record(facility: CMSFacilitySchema) -> None:
 
 
 if __name__ == "__main__":
-    facilities = get_cms_facilities()
-    from pprint import pprint
-
-    # get all unit codes
-    for facility in facilities:
-        for unit in facility.units:
-            if unit.code == "LYGS1":
-                pprint(unit)
-                print(facility.code)
+    unit = get_cms_unit("ADPBA1L")
+    print(unit)
