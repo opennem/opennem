@@ -14,7 +14,7 @@ from opennem.controllers.schema import ControllerReturn
 from opennem.core.networks import NetworkNEM
 from opennem.core.normalizers import clean_float
 from opennem.core.parsers.aemo.mms import AEMOTableSchema, AEMOTableSet
-from opennem.db import SessionLocal
+from opennem.db import get_write_session
 from opennem.db.bulk_insert_csv import bulkinsert_mms_items
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
 from opennem.importer.rooftop import rooftop_remap_regionids
@@ -137,7 +137,7 @@ async def process_dispatch_interconnectorres(table: AEMOTableSchema) -> Controll
         cr.processed_records += 1
 
     # insert
-    async with SessionLocal() as session:
+    async with get_write_session() as session:
         try:
             stmt = insert(FacilityScada).values(records_to_store)
             stmt = stmt.on_conflict_do_update(
@@ -199,11 +199,11 @@ async def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
     for i in range(0, len(records_to_store), chunk_size):
         chunk = records_to_store[i : i + chunk_size]
 
-        async with SessionLocal() as session:
+        async with get_write_session() as session:
             try:
                 stmt = insert(BalancingSummary).values(chunk)
                 stmt = stmt.on_conflict_do_update(
-                    index_elements=["interval", "network_id", "network_region"],
+                    index_elements=["interval", "network_id", "network_region", "is_forecast"],
                     set_={price_field: getattr(stmt.excluded, price_field)},
                 )
 
@@ -260,11 +260,11 @@ async def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn
 
         cr.processed_records += 1
 
-    async with SessionLocal() as session:
+    async with get_write_session() as session:
         try:
             stmt = insert(BalancingSummary).values(records_to_store)
             stmt = stmt.on_conflict_do_update(
-                index_elements=["interval", "network_id", "network_region"],
+                index_elements=["interval", "network_id", "network_region", "is_forecast"],
                 set_={
                     "net_interchange": stmt.excluded.net_interchange,
                     "demand_total": stmt.excluded.demand_total,
@@ -306,7 +306,6 @@ async def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
 
         interval = parse_date(
             record["settlementdate"],
-            network=NetworkNEM,
             dayfirst=False,
             date_format="%Y/%m/%d %H:%M:%S",
         )
@@ -341,11 +340,11 @@ async def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
             logger.info(f"Reached limit of: {limit} {records_processed}")
             break
 
-    async with SessionLocal() as session:
+    async with get_write_session() as session:
         try:
             stmt = insert(BalancingSummary).values(records_to_store)
             stmt = stmt.on_conflict_do_update(
-                index_elements=["interval", "network_id", "network_region"],
+                index_elements=["interval", "network_id", "network_region", "is_forecast"],
                 set_={
                     "net_interchange_trading": stmt.excluded.net_interchange_trading,
                 },
