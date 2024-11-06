@@ -24,6 +24,7 @@ async def webhook_sanity_update(webhook_secret: str, request: Request) -> str:
     Sanity webhook endpoint
 
     """
+
     if webhook_secret != settings.webhook_secret:
         raise HTTPException(status_code=404, detail="Not Found")
 
@@ -37,10 +38,6 @@ async def webhook_sanity_update(webhook_secret: str, request: Request) -> str:
         raise HTTPException(status_code=400, detail="Invalid request sanity-project-id does not match")
 
     request_json = await request.json()
-
-    from pprint import pprint
-
-    pprint(request_json)
 
     if "_type" not in request_json:
         raise HTTPException(status_code=400, detail="Invalid request no _type field present")
