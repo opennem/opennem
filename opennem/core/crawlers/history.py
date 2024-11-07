@@ -164,7 +164,7 @@ async def get_crawler_missing_intervals(
             from generate_series(
                 nemweb_latest_interval() - interval '{days} days',
                 nemweb_latest_interval(),
-                interval '{interval.interval_sql} minutes'
+                interval '{interval.interval_sql}'
             ) AS interval
         )
 
