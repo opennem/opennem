@@ -384,6 +384,21 @@ class BalancingSummary(Base):
             "network_region",
             postgresql_ops={"interval": "DESC"},
         ),
+        # 1. Primary Index optimized for time bucket operations and filtering
+        Index("idx_balancing_time_lookup", "interval", "network_id", "network_region", "is_forecast", postgresql_using="btree"),
+        # 2. Partial index for non-forecast records with price
+        # This helps with the LOCF operation on price
+        Index(
+            "idx_balancing_price_lookup",
+            "interval",
+            "network_id",
+            "network_region",
+            "price",
+            postgresql_where=text("is_forecast = false AND price IS NOT NULL"),
+            postgresql_using="btree",
+        ),
+        # 3. Index for region-based querying
+        Index("idx_balancing_region_time", "network_region", "interval", "is_forecast", postgresql_using="btree"),
     )
 
 
