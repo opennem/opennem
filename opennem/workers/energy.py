@@ -7,7 +7,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem import settings
-from opennem.db import SessionLocalAsync
+from opennem.db import get_read_session, get_write_session
 from opennem.utils.dates import get_today_opennem
 
 logger = logging.getLogger("opennem.workers.energy")
@@ -58,7 +58,7 @@ async def _calculate_energy_for_interval(session: AsyncSession, start_time: date
 
     result = await session.execute(query, {"start_time": start_time, "end_time": end_time})
     await session.commit()
-    return result.rowcount
+    return result.rowcount  # type: ignore
 
 
 async def run_energy_calculation_for_interval(interval: datetime) -> int:
@@ -66,7 +66,7 @@ async def run_energy_calculation_for_interval(interval: datetime) -> int:
     Run energy calculation for a single interval.
     This method is intended to be called by a cron job every 5 minutes.
     """
-    async with SessionLocalAsync() as session:
+    async with get_write_session() as session:
         start_time = interval
         end_time = interval + timedelta(minutes=5)
 
@@ -84,7 +84,7 @@ async def process_energy_from_now(interval: timedelta = timedelta(hours=2)) -> N
     Defaults to running the last 2 hours.
     """
 
-    async with SessionLocalAsync() as session:
+    async with get_write_session() as session:
         end_time = get_today_opennem().replace(tzinfo=None)
         start_time = end_time - interval
 
@@ -119,7 +119,7 @@ async def _process_date_range(
     async def process_chunk(chunk: tuple[datetime, datetime]):
         async with semaphore:
             start, end = chunk
-            async with SessionLocalAsync() as session:
+            async with get_write_session() as session:
                 if settings.dry_run:
                     logger.debug(f"Dry run: Skipping calculation for {start} to {end}")
                     return
@@ -135,7 +135,7 @@ async def _get_energy_start_end_dates() -> tuple[datetime, datetime]:
     """
     Get the start and end dates for energy calculations.
     """
-    async with SessionLocalAsync() as session:
+    async with get_read_session() as session:
         # Find the earliest date with null energy values
         query = text("SELECT MIN(interval) FROM facility_scada WHERE energy IS NULL")
         result = await session.execute(query)
@@ -179,7 +179,7 @@ async def main():
 
     # Run backlog
     print("Processing backlog...")
-    date_start = datetime.fromisoformat("2024-08-10 00:00:00")
+    date_start = datetime.fromisoformat("2020-08-10 00:00:00")
     date_end = get_today_opennem().replace(tzinfo=None)
     await run_energy_backlog(date_start=date_start, date_end=date_end)
     await process_energy_from_now()
