@@ -4,11 +4,14 @@ Takes Sanity webhook responses and parses into structured format for persistance
 
 import logging
 
+from portabletext_html import PortableTextRenderer
 from sqlalchemy import select
 
+from opennem.cms.importer import create_or_update_database_facility
 from opennem.db import get_write_session
 from opennem.db.models.opennem import Facility, Unit
-from opennem.schema.facility import CMSFacilitySchema, CMSUnitSchema
+from opennem.schema.facility import FacilitySchema
+from opennem.schema.unit import UnitSchema
 
 logger = logging.getLogger("opennem.controllers.sanity")
 
@@ -20,17 +23,17 @@ async def parse_sanity_webhook_request(request: dict) -> None:
 
     record_type: str = request["_type"].lower()
 
-    if record_type == "facility":
-        facility_record = sanity_parse_facility(request)
-        await persist_facility_record(facility_record)
+    if record_type in ["facility"]:
+        facility = sanity_parse_facility(request)
+        await create_or_update_database_facility(facility)
     elif record_type == "unit":
-        unit_record = sanity_parse_unit(request)
-        await persist_unit_record(unit_record)
+        unit = sanity_parse_unit(request)
+        await persist_unit_record(unit)
     else:
-        logger.error(f"Invalid record type: {record_type}")
+        logger.warning(f"Unhandled record type: {record_type}")
 
 
-def sanity_parse_facility(request: dict) -> CMSFacilitySchema:
+def sanity_parse_facility(request: dict) -> FacilitySchema:
     """Parse a facility response"""
     if "_type" not in request:
         raise Exception("Invalid request: no _type record present")
@@ -38,24 +41,25 @@ def sanity_parse_facility(request: dict) -> CMSFacilitySchema:
     if request["_type"] != "facility":
         raise Exception("Invalid request: not a facility record")
 
-    facility = {
-        "code": request["code"] if "code" in request else None,
-        "name": request["name"] if "name" in request else None,
-        "wikipedia": request["wikipedia"] if "wikipedia" in request else None,
-        "website": request["website"] if "website" in request else None,
-        "lat": None,
-        "lng": None,
-    }
+    if request.get("description") and isinstance(request["description"], list):
+        rendered_description = ""
+        for block in request["description"]:
+            rendered_description += PortableTextRenderer(block).render()
+        if rendered_description:
+            request["description"] = rendered_description
 
-    if "location" in request:
-        if request["location"]["_type"] == "geopoint":
-            facility["lat"] = request["location"]["lat"]
-            facility["lng"] = request["location"]["lng"]
+    if request.get("_id"):
+        request["id"] = request["_id"]
 
-    return facility
+    if request.get("_updatedAt"):
+        request["updated_at"] = request["_updatedAt"]
+
+    cms_facility = FacilitySchema(**request)
+
+    return cms_facility
 
 
-def sanity_parse_unit(request: dict) -> dict:
+def sanity_parse_unit(request: dict) -> UnitSchema:
     """Parse a facility response"""
     if "_type" not in request:
         raise Exception("Invalid request: no _type record present")
@@ -63,18 +67,12 @@ def sanity_parse_unit(request: dict) -> dict:
     if request["_type"] != "unit":
         raise Exception("Invalid request: not a unit record")
 
-    unit = {
-        "code": request["code"] if "code" in request else None,
-        "emissions_factor_co2": request["emissions_factor_co2"] if "emissions_factor_co2" in request else None,
-        "capacity_registered": request["capacity_registered"] if "capacity_registered" in request else None,
-        "dispatch_type": request["dispatch_type"] if "dispatch_type" in request else None,
-        "status": request["status"] if "status" in request else None,
-    }
+    cms_unit = UnitSchema(**request)
 
-    return unit
+    return cms_unit
 
 
-async def persist_facility_record(facility: CMSFacilitySchema) -> None:
+async def persist_facility_record(facility: FacilitySchema) -> None:
     """Persist a facility record to the Station table in database"""
 
     async with get_write_session() as session:
@@ -92,20 +90,32 @@ async def persist_facility_record(facility: CMSFacilitySchema) -> None:
         await session.commit()
 
 
-async def persist_unit_record(unit: CMSUnitSchema) -> None:
+async def persist_unit_record(unit: UnitSchema) -> None:
     """Persit the unit record to facility table"""
 
     async with get_write_session() as session:
         unit_db = (await session.execute(select(Unit).filter(Unit.code == unit.code))).scalars().one_or_none()
 
         if not unit_db:
-            unit_db = Unit(**unit)
-
-        unit_db.active = True
-        unit_db.capacity_registered = unit.capacity_registered
-        unit_db.dispatch_type = unit.dispatch_type.value
-        unit_db.emissions_factor_co2 = unit.emissions_factor_co2
-        unit_db.status_id = unit.status_id
+            unit_db = Unit(
+                code=unit.code,
+                dispatch_type=unit.dispatch_type.value,
+                status_id=unit.status_id.value,
+                fueltech_id=unit.fueltech_id.value,
+                capacity_registered=unit.capacity_registered,
+                emissions_factor_co2=unit.emissions_factor_co2,
+                approved=True,
+            )
+        else:
+            unit_db.approved = True
+            unit_db.dispatch_type = unit.dispatch_type.value
+            unit_db.fueltech_id = unit.fueltech_id.value
+            unit_db.status_id = unit.status_id.value
+            unit_db.capacity_registered = unit.capacity_registered
+            unit_db.emissions_factor_co2 = unit.emissions_factor_co2
 
         session.add(unit_db)
+
+        logger.info(f"Persisted unit {unit.code} - {unit.fueltech_id} - {unit.status_id} - {unit.dispatch_type.value}")
+
         await session.commit()

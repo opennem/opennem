@@ -11,7 +11,7 @@ from opennem.clients.slack import slack_message
 from opennem.cms.queries import get_cms_facilities
 from opennem.db import get_read_session, get_write_session
 from opennem.db.models.opennem import Facility, Unit
-from opennem.schema.facility import CMSFacilitySchema
+from opennem.schema.facility import FacilitySchema
 
 logger = logging.getLogger("sanity.importer")
 
@@ -38,7 +38,7 @@ async def get_database_facilities():
     return facilities
 
 
-async def create_or_update_database_facility(facility: CMSFacilitySchema, send_slack: bool = True) -> None:
+async def create_or_update_database_facility(facility: FacilitySchema, send_slack: bool = True) -> None:
     """Create new database facilities from the CMS"""
 
     # created_date = get_today_opennem()
@@ -114,12 +114,12 @@ async def create_or_update_database_facility(facility: CMSFacilitySchema, send_s
                 record_updated = True
                 logger.info(f"Created unit {unit.code} for facility {facility.code}")
 
-            if unit.fueltech_id and unit.fueltech_id != unit_db.fueltech_id:
-                unit_db.fueltech_id = unit.fueltech_id
+            if unit.fueltech_id and unit.fueltech_id.value != unit_db.fueltech_id:
+                unit_db.fueltech_id = unit.fueltech_id.value
                 record_updated = True
 
-            if unit.status_id and unit.status_id != unit_db.status_id:
-                unit_db.status_id = unit.status_id
+            if unit.status_id and unit.status_id.value != unit_db.status_id:
+                unit_db.status_id = unit.status_id.value
                 record_updated = True
 
             if unit.dispatch_type and unit.dispatch_type.value != unit_db.dispatch_type.upper():
@@ -154,7 +154,7 @@ async def create_or_update_database_facility(facility: CMSFacilitySchema, send_s
             logger.error(f"Error creating facility {facility_db.code} - {facility_db.name}: {e}")
 
 
-def check_cms_duplicate_ids(facilities: list[CMSFacilitySchema]) -> tuple[list[str], list[str]]:
+def check_cms_duplicate_ids(facilities: list[FacilitySchema]) -> tuple[list[str], list[str]]:
     """Check for duplicate ids in the CMS"""
 
     duplicate_facility_ids = []
