@@ -29,7 +29,15 @@ class BatteryUnitMap(BaseModel):
 UNIT_MAP: dict[DUIDType, BatteryUnitMap] = {}
 
 
-async def get_battery_unit_map() -> dict[str, BatteryUnitMap]:
+def get_battery_unit_map() -> dict[str, BatteryUnitMap]:
+    global UNIT_MAP
+    if not UNIT_MAP:
+        UNIT_MAP = asyncio.run(_generate_battery_unit_map())
+
+    return UNIT_MAP
+
+
+async def _generate_battery_unit_map() -> dict[str, BatteryUnitMap]:
     """This queries the database for all the bidirectional battery units and returns what each should be mapped to"""
 
     async with get_read_session() as session:
@@ -93,7 +101,7 @@ async def process_battery_history():
     """This processes the history of facility_scada and updates the battery units so that
     bidirectional units are split into two separate units
     """
-    unit_map = await get_battery_unit_map()
+    unit_map = await _generate_battery_unit_map()
 
     query_load_template = text(
         "update facility_scada set facility_code = :new_facility_code where facility_code = :old_facility_code "
