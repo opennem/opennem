@@ -29,11 +29,15 @@ class BatteryUnitMap(BaseModel):
 UNIT_MAP: dict[DUIDType, BatteryUnitMap] = {}
 
 
-def get_battery_unit_map() -> dict[str, BatteryUnitMap]:
+async def get_battery_unit_map() -> dict[str, BatteryUnitMap]:
+    """Get the battery unit mapping, generating it if not already cached.
+
+    Returns:
+        dict[str, BatteryUnitMap]: Mapping of bidirectional unit codes to their charge/discharge units
+    """
     global UNIT_MAP
     if not UNIT_MAP:
-        UNIT_MAP = asyncio.run(_generate_battery_unit_map())
-
+        UNIT_MAP = await _generate_battery_unit_map()
     return UNIT_MAP
 
 

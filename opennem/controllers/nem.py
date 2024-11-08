@@ -11,6 +11,7 @@ import pandas as pd
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.controllers.schema import ControllerReturn
+from opennem.core.battery import get_battery_unit_map
 from opennem.core.networks import NetworkNEM
 from opennem.core.normalizers import clean_float
 from opennem.core.parsers.aemo.mms import AEMOTableSchema, AEMOTableSet
@@ -39,7 +40,7 @@ FACILITY_SCADA_COLUMN_NAMES = [
 # Helpers
 
 
-def generate_facility_scada(
+async def generate_facility_scada(
     records: list[dict[str, Any] | MMSBaseClass],
     network: NetworkSchema = NetworkNEM,
     interval_field: str = "settlementdate",
@@ -59,15 +60,15 @@ def generate_facility_scada(
     }
 
     if energy_field:
-        column_renames[energy_field] = "eoi_quantity"
+        column_renames[energy_field] = "energy"
     else:
-        df["eoi_quantity"] = None
+        df["energy"] = None
 
     df = df.rename(columns=column_renames)
 
     df["network_id"] = network.code
     df["is_forecast"] = is_forecast
-    df["energy"] = 0
+    df["eoi_quantity"] = None
     df["energy_quality_flag"] = 0
 
     # cast dates
@@ -77,17 +78,34 @@ def generate_facility_scada(
     df["generated"] = df["generated"].fillna(0)
 
     # fill in energies
-    df["eoi_quantity"] = df.generated / (60 / network.interval_size)
+    df["energy"] = df.generated / (60 / network.interval_size)
 
     df = df[FACILITY_SCADA_COLUMN_NAMES]
+
+    # Get battery unit mappings
+    battery_unit_map = await get_battery_unit_map()
+
+    # Create a function to map facility codes based on generated value
+    def map_battery_code(row):
+        facility_code = row["facility_code"]
+        generated = row["generated"]
+
+        if facility_code in battery_unit_map:
+            battery_map = battery_unit_map[facility_code]
+            if generated < 0:
+                return battery_map.charge_unit
+            else:
+                return battery_map.discharge_unit
+        return facility_code
+
+    # Apply the mapping function
+    df["facility_code"] = df.apply(map_battery_code, axis=1)
 
     # set the index
     df.set_index(["interval", "network_id", "facility_code", "is_forecast"], inplace=True)
 
     # @NOTE optimized way to drop duplicates
     df = df[~df.index.duplicated(keep="last")]
-
-    # records = df
 
     # reorder columns
     clean_records = df.reset_index(inplace=False)[FACILITY_SCADA_COLUMN_NAMES].to_dict("records")
@@ -370,7 +388,7 @@ async def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
 async def process_unit_scada_optimized(table: AEMOTableSchema) -> ControllerReturn:
     cr = ControllerReturn(total_records=len(table.records))
 
-    records = generate_facility_scada(
+    records = await generate_facility_scada(
         table.records,  # type:ignore
         interval_field="settlementdate",
         facility_code_field="duid",
@@ -378,7 +396,7 @@ async def process_unit_scada_optimized(table: AEMOTableSchema) -> ControllerRetu
     )
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "eoi_quantity"])  # type: ignore
+    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy", "energy_quality_flag"])  # type: ignore
     cr.server_latest = max([i["interval"] for i in records if i["interval"]])
 
     return cr
@@ -387,15 +405,15 @@ async def process_unit_scada_optimized(table: AEMOTableSchema) -> ControllerRetu
 async def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
     cr = ControllerReturn(total_records=len(table.records))
 
-    records = generate_facility_scada(
-        table.records,
+    records = await generate_facility_scada(
+        table.records,  # type: ignore
         interval_field="settlementdate",
         facility_code_field="duid",
         power_field="initialmw",
     )
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated"])
+    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy", "energy_quality_flag"])
     cr.server_latest = max([i["interval"] for i in records if i["interval"]])
 
     return cr
@@ -404,15 +422,15 @@ async def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
 async def process_meter_data_gen_duid(table: AEMOTableSchema) -> ControllerReturn:
     cr = ControllerReturn(total_records=len(table.records))
 
-    records = generate_facility_scada(
-        table.records,
+    records = await generate_facility_scada(
+        table.records,  # type: ignore
         interval_field="interval_datetime",
         facility_code_field="duid",
         power_field="mwh_reading",
     )
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated"])
+    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy", "energy_quality_flag"])
     cr.server_latest = max([i["interval"] for i in records])
 
     return cr
@@ -421,8 +439,8 @@ async def process_meter_data_gen_duid(table: AEMOTableSchema) -> ControllerRetur
 async def process_rooftop_actual(table: AEMOTableSchema) -> ControllerReturn:
     cr = ControllerReturn(total_records=len(table.records))
 
-    records = generate_facility_scada(
-        table.records,
+    records = await generate_facility_scada(
+        table.records,  # type: ignore
         interval_field="interval_datetime",
         facility_code_field="regionid",
         power_field="power",
@@ -433,7 +451,7 @@ async def process_rooftop_actual(table: AEMOTableSchema) -> ControllerReturn:
     records = [i for i in records if i]
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "eoi_quantity"])
+    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy", "energy_quality_flag"])
     cr.server_latest = max([i["interval"] for i in records])
 
     return cr
@@ -442,7 +460,7 @@ async def process_rooftop_actual(table: AEMOTableSchema) -> ControllerReturn:
 async def process_rooftop_forecast(table: AEMOTableSchema) -> ControllerReturn:
     cr = ControllerReturn(total_records=len(table.records))
 
-    records = generate_facility_scada(
+    records = await generate_facility_scada(
         table.records,  # type: ignore
         interval_field="interval_datetime",
         facility_code_field="regionid",
@@ -455,7 +473,7 @@ async def process_rooftop_forecast(table: AEMOTableSchema) -> ControllerReturn:
     records = [i for i in records if i]
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated"])  # type: ignore
+    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy", "energy_quality_flag"])  # type: ignore
     cr.server_latest = max([i["interval"] for i in records]) if records else None
 
     return cr
