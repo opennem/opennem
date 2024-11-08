@@ -139,13 +139,13 @@ async def process_battery_history():
 
             logger.info(f"Updated {unit.unit} discharge to {unit.discharge_unit}")
 
-            await session.commit()
+        await session.commit()
 
 
 if __name__ == "__main__":
     import asyncio
 
-    unit_map = asyncio.run(get_battery_unit_map())
+    unit_map = asyncio.run(process_battery_history())
 
-    for unit in unit_map.values():
-        print(f"{unit.unit} -> {unit.charge_unit} | {unit.discharge_unit}")
+    # for unit in unit_map.values():
+    #     print(f"{unit.unit} -> {unit.charge_unit} | {unit.discharge_unit}")
