@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem import settings
 from opennem.db import get_read_session, get_write_session
+from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_today_opennem
 
 logger = logging.getLogger("opennem.workers.energy")
@@ -47,7 +48,7 @@ async def _calculate_energy_for_interval(session: AsyncSession, start_time: date
     UPDATE facility_scada fs
     SET
         energy = (rs.generated + COALESCE(rs.prev_generated, 0)) / 2 / nd.intervals_per_hour,
-        energy_quality_flag = 1
+        energy_quality_flag = 2
     FROM ranked_scada rs
     JOIN network_data nd ON nd.code = rs.network_id
     WHERE fs.network_id = rs.network_id
@@ -179,7 +180,7 @@ async def main():
 
     # Run backlog
     print("Processing backlog...")
-    date_start = datetime.fromisoformat("2020-08-10 00:00:00")
+    date_start = NetworkNEM.data_first_seen.replace(tzinfo=None)
     date_end = get_today_opennem().replace(tzinfo=None)
     await run_energy_backlog(date_start=date_start, date_end=date_end)
     await process_energy_from_now()
