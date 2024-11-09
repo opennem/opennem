@@ -19,10 +19,12 @@ from opennem.crawlers.nemweb import (
     AEMONNemwebDispatchScada,
 )
 from opennem.exporter.historic import export_historic_intervals
+from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.tasks.exceptions import OpenNEMPipelineRetryTask
 from opennem.workers.daily import daily_runner
+from opennem.workers.energy import process_energy_from_now
 
 logger = logging.getLogger("opennem.pipelines.nem")
 
@@ -68,12 +70,29 @@ async def task_bom_capitals_crawl(ctx) -> None:
     await run_crawl(BOMCapitals)
 
 
+async def task_run_energy_calculation(ctx) -> None:
+    """Runs the energy calculation for the last 2 hours"""
+    await process_energy_from_now()
+
+
+async def task_nem_exports(ctx) -> None:
+    """Runs the NEM exports"""
+    await asyncio.gather(
+        run_export_power_latest_for_network(network=NetworkNEM), run_export_power_latest_for_network(network=NetworkAU)
+    )
+
+
 # Output and processing tasks
+
+
+async def task_facility_first_seen_check(ctx) -> None:
+    """Runs the facility first seen check"""
+    await facility_first_seen_check()
 
 
 async def nem_per_day_check(always_run: bool = False) -> ControllerReturn:
     """This task is run daily for NEM"""
-    dispatch_actuals = run_crawl(AEMONEMDispatchActualGEN)
+    dispatch_actuals = await run_crawl(AEMONEMDispatchActualGEN)
     await run_crawl(AEMONEMNextDayDispatch)
 
     if not always_run or not dispatch_actuals or not dispatch_actuals.inserted_records:

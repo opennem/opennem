@@ -155,7 +155,7 @@ async def facility_first_seen_check(
 if __name__ == "__main__":
     import asyncio
 
-    seen_facilities = asyncio.run(facility_first_seen_check(send_slack=False, only_generation=False))
+    seen_facilities = asyncio.run(facility_first_seen_check(send_slack=True, only_generation=True))
 
     for f in seen_facilities:
         print(f"Unmapped: {f.network_id} {f.code} {f.generated}")

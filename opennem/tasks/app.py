@@ -37,9 +37,12 @@ from arq.worker import create_worker
 from opennem.tasks.broker import REDIS_SETTINGS
 from opennem.tasks.tasks import (
     task_bom_capitals_crawl,
+    task_facility_first_seen_check,
+    task_nem_exports,
     task_nem_interval_check,
     task_nem_rooftop_crawl,
     task_refresh_from_cms,
+    task_run_energy_calculation,
 )
 
 logger = logging.getLogger("openenm.tasks.app")
@@ -61,6 +64,31 @@ class WorkerSettings:
             task_nem_rooftop_crawl,
             minute=set(range(0, 60, 30)),
             second=50,
+            timeout=None,
+            unique=True,
+        ),
+        # Energy Calculation
+        cron(
+            task_run_energy_calculation,
+            minute=set(range(0, 60, 5)),
+            second=55,
+            timeout=None,
+            unique=True,
+        ),
+        # NEM exports
+        cron(
+            task_nem_exports,
+            minute=set(range(0, 60, 5)),
+            second=58,
+            timeout=None,
+            unique=True,
+        ),
+        # Facility first seen
+        cron(
+            task_facility_first_seen_check,
+            hour=9,
+            minute=1,
+            second=59,
             timeout=None,
             unique=True,
         ),
