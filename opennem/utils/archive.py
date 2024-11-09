@@ -184,10 +184,7 @@ def download_and_unzip(url: str) -> Path:
 
     filename = get_filename_from_url(url)
 
-    try:
-        response = http.get(url)
-    except Exception as e:
-        logger.error(e)
+    response = http.get(url)
 
     if not response.ok:
         raise Exception(f"Failed to download file: Status code {response.status_code}")
