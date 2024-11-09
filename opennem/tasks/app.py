@@ -37,6 +37,7 @@ from arq.worker import create_worker
 from opennem.tasks.broker import REDIS_SETTINGS
 from opennem.tasks.tasks import (
     task_bom_capitals_crawl,
+    task_export_facility_geojson,
     task_facility_first_seen_check,
     task_nem_exports,
     task_nem_interval_check,
@@ -80,6 +81,14 @@ class WorkerSettings:
             task_nem_exports,
             minute=set(range(0, 60, 5)),
             second=58,
+            timeout=None,
+            unique=True,
+        ),
+        # Facility geojson
+        cron(
+            task_export_facility_geojson,
+            minute=3,
+            second=0,
             timeout=None,
             unique=True,
         ),

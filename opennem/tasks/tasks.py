@@ -18,6 +18,7 @@ from opennem.crawlers.nemweb import (
     AEMONemwebTradingIS,
     AEMONNemwebDispatchScada,
 )
+from opennem.exporter.geojson import export_facility_geojson
 from opennem.exporter.historic import export_historic_intervals
 from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.pipelines.export import run_export_power_latest_for_network
@@ -88,6 +89,11 @@ async def task_nem_exports(ctx) -> None:
 async def task_facility_first_seen_check(ctx) -> None:
     """Runs the facility first seen check"""
     await facility_first_seen_check()
+
+
+async def task_export_facility_geojson(ctx) -> None:
+    """Exports the facility geojson"""
+    await export_facility_geojson()
 
 
 async def nem_per_day_check(always_run: bool = False) -> ControllerReturn:
