@@ -70,7 +70,7 @@ class WorkerSettings:
         # Energy Calculation
         cron(
             task_run_energy_calculation,
-            minute=set(range(0, 60, 5)),
+            minute={2, 32},
             second=55,
             timeout=None,
             unique=True,
