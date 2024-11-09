@@ -34,7 +34,6 @@ async def process_nemweb_entry(crawler: CrawlerDefinition, entry: DirlistingEntr
     except Exception as e:
         logger.error(f"Processing error: {e}")
         raise e
-
     if not isinstance(controller_return, ControllerReturn):
         raise Exception("Controller returns not a ControllerReturn")
 
