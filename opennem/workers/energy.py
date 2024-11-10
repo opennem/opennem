@@ -8,7 +8,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem import settings
 from opennem.db import get_read_session, get_write_session
-from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_today_opennem
 
 logger = logging.getLogger("opennem.workers.energy")
@@ -180,7 +179,7 @@ async def main():
 
     # Run backlog
     print("Processing backlog...")
-    date_start = NetworkNEM.data_first_seen.replace(tzinfo=None)
+    date_start = datetime.fromisoformat("2019-09-25 00:00:00")
     date_end = get_today_opennem().replace(tzinfo=None)
     await run_energy_backlog(date_start=date_start, date_end=date_end)
     await process_energy_from_now()
