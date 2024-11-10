@@ -44,6 +44,7 @@ from opennem.tasks.tasks import (
     task_nem_rooftop_crawl,
     task_refresh_from_cms,
     task_run_energy_calculation,
+    task_update_facility_seen_range,
 )
 
 logger = logging.getLogger("openenm.tasks.app")
@@ -68,6 +69,7 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
+        #
         # Energy Calculation
         cron(
             task_run_energy_calculation,
@@ -98,6 +100,14 @@ class WorkerSettings:
             hour=9,
             minute=1,
             second=59,
+            timeout=None,
+            unique=True,
+        ),
+        # Facility seen range
+        cron(
+            task_update_facility_seen_range,
+            minute={1, 16, 31, 46},
+            second=30,
             timeout=None,
             unique=True,
         ),

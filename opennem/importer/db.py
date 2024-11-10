@@ -6,7 +6,7 @@ from opennem.core.stats.store import init_stats
 from opennem.db.load_fixtures import load_fixtures
 from opennem.importer.interconnectors import import_nem_interconnects
 from opennem.importer.rooftop import rooftop_facilities
-from opennem.workers.facility_data_ranges import update_facility_seen_range
+from opennem.workers.facility_data_seen import update_facility_seen_range
 
 logger = logging.getLogger(__name__)
 

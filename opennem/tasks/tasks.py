@@ -26,6 +26,7 @@ from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.tasks.exceptions import OpenNEMPipelineRetryTask
 from opennem.workers.daily import daily_runner
 from opennem.workers.energy import process_energy_from_now
+from opennem.workers.facility_data_seen import update_facility_seen_range
 
 logger = logging.getLogger("opennem.pipelines.nem")
 
@@ -94,6 +95,11 @@ async def task_facility_first_seen_check(ctx) -> None:
 async def task_export_facility_geojson(ctx) -> None:
     """Exports the facility geojson"""
     await export_facility_geojson()
+
+
+async def task_update_facility_seen_range(ctx) -> None:
+    """Updates the facility seen range"""
+    await update_facility_seen_range(interval_window_days=1)
 
 
 async def nem_per_day_check(always_run: bool = False) -> ControllerReturn:
