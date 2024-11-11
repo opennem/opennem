@@ -15,6 +15,7 @@ import deprecation
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
+from sqlalchemy.pool import NullPool
 
 from opennem import settings
 from opennem.utils.version import get_version
@@ -25,6 +26,7 @@ logger = logging.getLogger("opennem.db")
 
 _engine = None
 _engine_sync = None
+_engine_no_transaction = None
 
 
 def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int = 10) -> AsyncEngine:
@@ -65,6 +67,32 @@ def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int
         raise exc
 
 
+def get_no_transaction_engine(db_conn_str: str | None = None) -> AsyncEngine:
+    """
+    Creates a separate engine specifically for operations that cannot run in transactions.
+    Uses NullPool to ensure clean connections and isolation.
+    """
+    global _engine_no_transaction
+
+    if _engine_no_transaction:
+        return _engine_no_transaction
+
+    if not db_conn_str:
+        db_conn_str = str(settings.db_url)
+
+    try:
+        _engine_no_transaction = create_async_engine(
+            db_conn_str,
+            isolation_level="AUTOCOMMIT",  # This is crucial for no-transaction operations
+            poolclass=NullPool,  # Ensure clean connections
+            echo=settings.db_debug,
+        )
+        return _engine_no_transaction
+    except Exception as exc:
+        logger.error("Could not create no-transaction engine: %s", exc)
+        raise exc
+
+
 def db_connect_sync() -> Engine:
     global _engine_sync
 
@@ -96,8 +124,15 @@ def get_database_engine() -> AsyncEngine:
 
 
 # keey the old variable here until we can remove it
-SessionLocal: AsyncSession = async_sessionmaker(engine, expire_on_commit=False)
-SessionLocalAsync: AsyncSession = async_sessionmaker(engine, expire_on_commit=False)
+SessionLocal = async_sessionmaker(engine, expire_on_commit=False)
+SessionLocalAsync = async_sessionmaker(engine, expire_on_commit=False)
+
+# Create a separate session maker for no-transaction operations
+SessionNoTransaction = async_sessionmaker(
+    get_no_transaction_engine(),
+    expire_on_commit=False,
+    class_=AsyncSession,
+)
 
 
 @asynccontextmanager
@@ -119,6 +154,19 @@ async def get_write_session() -> AsyncGenerator[AsyncSession, None]:
         except Exception:
             await session.rollback()
             raise
+
+
+@asynccontextmanager
+async def get_notransaction_session() -> AsyncGenerator[AsyncSession, None]:
+    """
+    Gets a session that operates outside of transaction blocks.
+    Used for operations that can't run inside transaction blocks like VACUUM or certain TimescaleDB operations.
+    """
+    async with SessionNoTransaction() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
 
 
 async def get_scoped_session() -> AsyncGenerator[AsyncSession, None]:
