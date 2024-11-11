@@ -335,15 +335,34 @@ def power_network_fueltech_query(
             {network_region_query}
             fs.interval <= '{date_max}' and
             fs.interval >= '{date_min}'
-            {fueltech_filter}
         group by 1, f.code, f.emissions_factor_co2, 2, n.interval_size
     ) as t
     group by 1, 2
     order by 1 desc
     """
 
+    __query = """
+    SELECT
+        time_bucket_gapfill('5 min', interval) as interval,
+        fueltech_code,
+        sum(generated) as fueltech_power,
+        sum(emissions) as fueltech_emissions,
+        case when
+            sum(generated) > 0 then round(sum(emissions) / sum(generated), 4)
+            else 0
+        end as fueltech_emissions_intensity
+    FROM mv_facility_scada
+    WHERE
+        interval between '{date_min}' and '{date_max}' and
+        {network_query}
+        {network_region_query}
+        1=1
+    group by 1, 2
+    ORDER BY interval DESC, 2;
+
+    """
+
     network_region_query: str = ""
-    fueltech_filter: str = ""
     wem_apvi_case: str = ""
     timezone: str = time_series.network.timezone_database
 
@@ -353,15 +372,15 @@ def power_network_fueltech_query(
         fueltechs_excluded.append("solar_rooftop")
 
     if network_region:
-        network_region_query = f"f.network_region='{network_region}' and "
+        network_region_query = f"network_region='{network_region}' and "
 
     if NetworkWEM in networks_query:
         # silly single case we'll refactor out
         # APVI network is used to provide rooftop for WEM so we require it
         # in country-wide totals
-        wem_apvi_case = "or (f.network_id='APVI' and f.network_region='WEM')"
+        wem_apvi_case = "or (network_id='APVI' and network_region='WEM')"
 
-    network_query = f"(f.network_id IN ({networks_to_in(networks_query)}) {wem_apvi_case}) and "
+    network_query = f"(network_id IN ({networks_to_in(networks_query)}) {wem_apvi_case}) and "
 
     # Get the data time range
     # use the new v2 feature if it has been provided otherwise use the old method
@@ -380,7 +399,6 @@ def power_network_fueltech_query(
             timezone=timezone,
             date_max=date_max,
             date_min=date_min,
-            fueltech_filter=fueltech_filter,
             wem_apvi_case=wem_apvi_case,
             fueltechs_exclude=fueltechs_exclude,
         )
