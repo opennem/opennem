@@ -18,15 +18,15 @@ from opennem.crawlers.nemweb import (
     AEMONemwebTradingIS,
     AEMONNemwebDispatchScada,
 )
-from opennem.exporter.geojson import export_facility_geojson
+from opennem.exporter.facilities import export_facilities_static
 from opennem.exporter.historic import export_historic_intervals
-from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.tasks.exceptions import OpenNEMPipelineRetryTask
 from opennem.workers.daily import daily_runner
 from opennem.workers.energy import process_energy_from_now
 from opennem.workers.facility_data_seen import update_facility_seen_range
+from opennem.workers.facility_first_seen import facility_first_seen_check
 
 logger = logging.getLogger("opennem.pipelines.nem")
 
@@ -94,7 +94,7 @@ async def task_facility_first_seen_check(ctx) -> None:
 
 async def task_export_facility_geojson(ctx) -> None:
     """Exports the facility geojson"""
-    await export_facility_geojson()
+    await export_facilities_static()
 
 
 async def task_update_facility_seen_range(ctx) -> None:
