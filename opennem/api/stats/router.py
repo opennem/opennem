@@ -232,10 +232,15 @@ async def energy_station(
     units = get_unit("energy")
 
     station: Facility | None = (
-        session.query(Facility)
-        .join(Facility.units)
-        .filter(Facility.code == station_code)
-        .filter(Unit.network_id == network.code)
+        (
+            await session.execute(
+                select(Facility)
+                .join(Facility.units)
+                .filter(Facility.code == station_code)
+                .filter(Facility.network_id == network.code)
+            )
+        )
+        .scalars()
         .one_or_none()
     )
 
@@ -271,14 +276,14 @@ async def energy_station(
     )
 
     query = energy_facility_query(
-        time_series,
-        station.unit_codes,
+        time_series=time_series,
+        facility_codes=[str(u.code) for u in station.units],
     )
 
     logger.debug(query)
 
-    with engine.connect() as c:
-        row = list(c.execute(query))
+    async with engine.begin() as c:
+        row = list(await c.execute(query))
 
     if len(row) < 1:
         raise HTTPException(

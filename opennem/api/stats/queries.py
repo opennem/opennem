@@ -76,38 +76,19 @@ def energy_facility_query(time_series: OpennemExportSeries, facility_codes: list
 
     __query = """
     select
-        time_bucket_gapfill('{interval}', t.trading_day) as trading_day,
-        t.facility_code,
-        coalesce(sum(t.energy), 0) as fueltech_energy,
-        coalesce(sum(t.market_value), 0) as fueltech_market_value,
-        coalesce(sum(t.emissions), 0) as fueltech_emissions
-    from at_facility_daily t
+        time_bucket_gapfill('{interval}', fs.interval) as interval,
+        fs.facility_code,
+        sum(fs.energy) as energy,
+        0 as market_value,
+        sum(fs.emissions) as emissions
+    from mv_facility_scada fs
     where
-        t.trading_day <= '{date_max}' and
-        t.trading_day >= '{date_min}' and
-        t.facility_code in ({facility_codes_parsed})
+        fs.interval >= '{date_min}' and
+        fs.interval <= '{date_max}' and
+        fs.facility_code in ({facility_codes_parsed})
     group by 1, 2
-    order by
-        trading_day desc;
+    order by 1 desc;
     """
-
-    if time_series.interval.interval >= 10080:
-        __query = """
-        select
-            date_trunc('{trunc}', t.trading_day) as trading_day,
-            t.facility_code,
-            sum(t.energy) as fueltech_energy,
-            sum(t.market_value) as fueltech_market_value,
-            sum(t.emissions) as fueltech_emissions
-        from at_facility_daily t
-        where
-            t.trading_day <= '{date_max}' and
-            t.trading_day >= '{date_min}' and
-            t.facility_code in ({facility_codes_parsed})
-        group by 1, 2
-        order by
-            trading_day desc;
-        """
 
     date_range = time_series.get_range()
 
