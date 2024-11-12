@@ -27,6 +27,7 @@ from opennem.workers.daily import daily_runner
 from opennem.workers.energy import process_energy_from_now
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
+from opennem.workers.system import clean_tmp_dir
 
 logger = logging.getLogger("opennem.pipelines.nem")
 
@@ -133,6 +134,11 @@ async def task_refresh_from_cms(ctx) -> None:
 
 
 # other tasks
+
+
+async def task_clean_tmp_dir(ctx) -> None:
+    """Clean the tmp dir"""
+    clean_tmp_dir()
 
 
 async def task_run_market_notice_update(ctx):

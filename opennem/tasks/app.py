@@ -37,6 +37,7 @@ from arq.worker import create_worker
 from opennem.tasks.broker import REDIS_SETTINGS
 from opennem.tasks.tasks import (
     task_bom_capitals_crawl,
+    task_clean_tmp_dir,
     task_export_facility_geojson,
     task_facility_first_seen_check,
     task_nem_exports,
@@ -149,6 +150,14 @@ class WorkerSettings:
         #     timeout=None,
         #     unique=True,
         # ),
+        # clean tmp dir
+        cron(
+            task_clean_tmp_dir,
+            hour=1,
+            minute=0,
+            timeout=None,
+            unique=True,
+        ),
     ]
     redis_settings = REDIS_SETTINGS
     retry_jobs = True
