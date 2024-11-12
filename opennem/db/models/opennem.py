@@ -317,7 +317,6 @@ class FacilityScada(Base):
     facility_code = Column(Text, nullable=False, primary_key=True, index=True)
     generated = Column(Numeric, nullable=True)
     is_forecast = Column(Boolean, default=False, primary_key=True)
-    eoi_quantity = Column(Numeric, nullable=True)
     energy: Mapped[float] = mapped_column(Numeric, nullable=True)
     energy_quality_flag = Column(Numeric, nullable=False, default=0)
 
@@ -342,7 +341,7 @@ class FacilityScada(Base):
             postgresql_using="btree",
         ),
         # 3. Index for Grouping
-        Index("idx_facility_scada_group", network_id, facility_code, energy, eoi_quantity, postgresql_using="btree"),
+        Index("idx_facility_scada_grouping", network_id, facility_code, energy, postgresql_using="btree"),
         # Existing indexes kept for compatibility
         Index("idx_facility_scada_facility_code_interval", facility_code, interval.desc()),
         Index("idx_facility_scada_network_id", network_id),
