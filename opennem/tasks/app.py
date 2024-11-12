@@ -40,8 +40,8 @@ from opennem.tasks.tasks import (
     task_clean_tmp_dir,
     task_export_facility_geojson,
     task_facility_first_seen_check,
-    task_nem_exports,
     task_nem_interval_check,
+    task_nem_power_exports,
     task_nem_rooftop_crawl,
     task_refresh_from_cms,
     task_run_energy_calculation,
@@ -89,8 +89,8 @@ class WorkerSettings:
         ),
         # NEM exports
         cron(
-            task_nem_exports,
-            minute=set(range(0, 60, 5)),
+            task_nem_power_exports,
+            minute=set(range(1, 60, 5)),
             second=58,
             timeout=None,
             unique=True,

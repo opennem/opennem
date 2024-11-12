@@ -22,7 +22,7 @@ from opennem.crawlers.wemde import run_all_wem_crawlers
 from opennem.exporter.facilities import export_facilities_static
 from opennem.exporter.historic import export_historic_intervals
 from opennem.pipelines.export import run_export_power_latest_for_network
-from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
+from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM, NetworkWEMDE
 from opennem.tasks.exceptions import OpenNEMPipelineRetryTask
 from opennem.workers.daily import daily_runner
 from opennem.workers.energy import process_energy_from_now
@@ -85,10 +85,12 @@ async def task_run_energy_calculation(ctx) -> None:
     await process_energy_from_now()
 
 
-async def task_nem_exports(ctx) -> None:
+async def task_nem_power_exports(ctx) -> None:
     """Runs the NEM exports"""
     await asyncio.gather(
-        run_export_power_latest_for_network(network=NetworkNEM), run_export_power_latest_for_network(network=NetworkAU)
+        run_export_power_latest_for_network(network=NetworkNEM),
+        run_export_power_latest_for_network(network=NetworkAU),
+        run_export_power_latest_for_network(network=NetworkWEMDE),
     )
 
 
