@@ -18,6 +18,7 @@ from opennem.crawlers.nemweb import (
     AEMONemwebTradingIS,
     AEMONNemwebDispatchScada,
 )
+from opennem.crawlers.wemde import run_all_wem_crawlers
 from opennem.exporter.facilities import export_facilities_static
 from opennem.exporter.historic import export_historic_intervals
 from opennem.pipelines.export import run_export_power_latest_for_network
@@ -66,6 +67,12 @@ async def task_nem_rooftop_crawl(ctx) -> None:
 
     if not rooftop or not any(r.inserted_records for r in rooftop if r):
         raise OpenNEMPipelineRetryTask()
+
+
+async def task_wem_interval_check(ctx) -> None:
+    """This task runs per interval and checks for new data"""
+    await run_all_wem_crawlers()
+    await run_export_power_latest_for_network(network=NetworkWEM)
 
 
 async def task_bom_capitals_crawl(ctx) -> None:
