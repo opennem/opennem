@@ -479,3 +479,36 @@ class AEMOMarketNotice(Base):
     issue_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False)
     external_reference: Mapped[str | None] = mapped_column(Text, nullable=True)
     reason: Mapped[str] = mapped_column(Text, nullable=False)
+
+
+class FacilityAggregate(Base):
+    """Stores aggregated facility data with pricing and emissions calculations"""
+
+    __tablename__ = "at_facility_intervals"
+
+    # Primary key columns
+    interval: Mapped[datetime] = mapped_column(DateTime(timezone=False), primary_key=True, nullable=False)
+    network_id: Mapped[str] = mapped_column(
+        Text, ForeignKey("network.code", name="fk_facility_aggregates_network_code"), primary_key=True, nullable=False
+    )
+    facility_code: Mapped[str] = mapped_column(Text, primary_key=True, nullable=False)
+    unit_code: Mapped[str] = mapped_column(Text, primary_key=True, nullable=False)
+
+    # Data columns
+    fueltech_code: Mapped[str | None] = mapped_column(Text, nullable=False)
+    network_region: Mapped[str] = mapped_column(Text, nullable=False)
+    status_id: Mapped[str | None] = mapped_column(Text, nullable=True)
+    generated: Mapped[float | None] = mapped_column(Float, nullable=True)
+    energy: Mapped[float | None] = mapped_column(Float, nullable=True)
+    emissions: Mapped[float | None] = mapped_column(Float, nullable=True)
+    emissions_intensity: Mapped[float | None] = mapped_column(Float, nullable=True)
+    market_value: Mapped[float | None] = mapped_column(Float, nullable=True)
+
+    # Metadata
+    last_updated: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("now()"))
+
+    __table_args__ = (
+        Index("idx_at_facility_intervals_interval_network", interval.desc(), network_id),
+        Index("idx_at_facility_intervals_facility_interval", facility_code, interval.desc()),
+        Index("idx_at_facility_intervals_network_region", network_region),
+    )
