@@ -129,7 +129,7 @@ async def task_refresh_from_cms(ctx) -> None:
     """Update a unit from the CMS"""
     pass
 
-    await update_database_facilities_from_cms()
+    await update_database_facilities_from_cms(send_slack=False)
 
 
 # other tasks
