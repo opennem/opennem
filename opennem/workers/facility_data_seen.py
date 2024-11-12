@@ -13,9 +13,8 @@ from textwrap import dedent
 
 from sqlalchemy import TextClause, text
 
-from opennem.db import db_connect, get_database_engine
+from opennem.db import db_connect
 from opennem.queries.utils import duid_to_case
-from opennem.schema.core import BaseConfig
 from opennem.utils.dates import get_today_opennem
 
 logger = logging.getLogger("opennem.workers.facility_data_ranges")
@@ -95,56 +94,7 @@ async def update_facility_seen_range(
     return True
 
 
-class FacilitySeenRange(BaseConfig):
-    date_min: datetime | None = None
-    date_max: datetime | None = None
-
-
-def get_facility_seen_range(facility_codes: list[str]) -> FacilitySeenRange:
-    """Gets the date range that a facility or list of facilities was seen in SCADA data.
-
-
-    Args:
-        facility_codes (Optional[List[str]], optional): List of facility codes to update. Defaults to None.
-
-    Returns:
-        FacilitySeenRange: Schema defining the date range
-    """
-
-    __query = """
-        select
-            min(data_first_seen) as first_seen,
-            max(data_last_seen) as last_seen
-        from facility
-        where code in ({facilities});
-    """
-
-    engine = get_database_engine()
-    result = []
-
-    query = __query.format(facilities=duid_to_case(facility_codes))
-
-    with engine.begin() as c:
-        logger.debug(query)
-        result = list(c.execute(query))
-
-    if not result:
-        raise Exception("Could not get facility seen range: No results")
-
-    _record = result.pop()
-
-    if len(_record) != 2:
-        raise Exception("Coult not get facility seen range: Invalid result or unknown")
-
-    schema = FacilitySeenRange(
-        date_min=_record[0],
-        date_max=_record[1],
-    )
-
-    return schema
-
-
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(update_facility_seen_range(interval_window_days=1))
+    asyncio.run(update_facility_seen_range(interval_window_days=7))
