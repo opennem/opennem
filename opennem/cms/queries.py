@@ -28,6 +28,26 @@ class CMSQueryError(Exception):
     pass
 
 
+def get_cms_owners() -> list[dict]:
+    query = """*[_type == "owner"  && !(_id in path("drafts.**"))] {
+        _id,
+        _createdAt,
+        _updatedAt,
+        name,
+        legal_name,
+        website,
+        wikipedia
+    }"""
+
+    res = sanity_client.query(query)
+
+    from pprint import pprint
+
+    pprint(res)
+
+    return res["result"]
+
+
 def get_cms_unit(unit_code: str) -> UnitSchema:
     """
     Get units from the CMS
@@ -158,5 +178,6 @@ def update_cms_record(facility: FacilitySchema) -> None:
 
 
 if __name__ == "__main__":
-    unit = get_cms_unit("ADPBA1L")
-    print(unit)
+    owners = get_cms_owners()
+    logger.info(f"Found {len(owners)} owners")
+    print(owners)
