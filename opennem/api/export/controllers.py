@@ -15,18 +15,17 @@ from opennem.api.export.queries import (
     power_and_emissions_network_fueltech_query,
     power_network_fueltech_query,
     power_network_interconnector_emissions_query,
-    power_network_rooftop_query,
     price_network_query,
     weather_observation_query,
 )
-from opennem.api.stats.controllers import get_latest_interval_live, stats_factory
+from opennem.api.stats.controllers import stats_factory
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.api.time import human_to_interval
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.units import get_unit
 from opennem.db import db_connect, get_database_engine
 from opennem.queries.flows import get_network_flows_emissions_market_value_query
-from opennem.schema.network import NetworkAEMORooftop, NetworkNEM, NetworkSchema
+from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.schema.stats import StatTypes
 
 _valid_region = re.compile(r"^\w{1,4}\d?$")
@@ -390,7 +389,6 @@ async def power_week(
     time_series: OpennemExportSeries,
     network_region_code: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
-    include_capacities: bool = False,
 ) -> OpennemDataSet | None:  # sourcery skip: use-fstring-for-formatting
     engine = db_connect()
 
@@ -402,6 +400,8 @@ async def power_week(
         networks_query=networks_query,
         network_region=network_region_code,
     )
+
+    logger.debug(query)
 
     async with engine.begin() as conn:
         result = await conn.execute(query)
@@ -486,76 +486,77 @@ async def power_week(
 
     # rooftop solar
 
-    time_series_rooftop = time_series.copy()
+    # time_series_rooftop = time_series.copy()
 
-    if time_series.network == NetworkNEM:
-        time_series_rooftop.end = await get_latest_interval_live(network=NetworkAEMORooftop)
+    # if time_series.network == NetworkNEM:
+    #     time_series_rooftop.end = await get_latest_interval_live(network=NetworkAEMORooftop)
 
-    time_series_rooftop.interval = human_to_interval("30m")
+    # time_series_rooftop.interval = human_to_interval("30m")
 
-    logger.debug(time_series_rooftop)
+    # logger.debug(time_series_rooftop)
 
-    query = power_network_rooftop_query(
-        time_series=time_series_rooftop,
-        networks_query=networks_query,
-        network_region=network_region_code,
-    )
+    # query = power_network_rooftop_query(
+    #     time_series=time_series_rooftop,
+    #     networks_query=networks_query,
+    #     network_region=network_region_code,
+    # )
 
-    async with engine.begin() as conn:
-        logger.debug(query)
-        result_rooftop = await conn.execute(query)
-        row = result_rooftop.fetchall()
+    # async with engine.begin() as conn:
+    #     logger.debug(query)
+    #     result_rooftop = await conn.execute(query)
+    #     row = result_rooftop.fetchall()
 
-    rooftop_power = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
+    # rooftop_power = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
 
-    rooftop = stats_factory(
-        rooftop_power,
-        # code=network_region_code or network.code,
-        network=time_series.network,
-        interval=human_to_interval("30m"),
-        units=get_unit("power"),
-        region=network_region_code,
-        fueltech_group=True,
-        cast_nulls=False,
-        include_code=True,
-    )
+    # rooftop = stats_factory(
+    #     rooftop_power,
+    #     # code=network_region_code or network.code,
+    #     network=time_series.network,
+    #     interval=human_to_interval("30m"),
+    #     units=get_unit("power"),
+    #     region=network_region_code,
+    #     fueltech_group=True,
+    #     cast_nulls=False,
+    #     include_code=True,
+    # )
 
-    # rooftop forecast
-    rooftop_forecast = None
+    # # rooftop forecast
+    # rooftop_forecast = None
 
-    if rooftop and rooftop.data:
-        time_series_rooftop_forecast = time_series_rooftop.copy()
-        time_series_rooftop_forecast.forecast = True
+    # if rooftop and rooftop.data:
+    #     time_series_rooftop_forecast = time_series_rooftop.copy()
+    #     time_series_rooftop_forecast.forecast = True
 
-        logger.debug(time_series_rooftop_forecast)
+    #     logger.debug(time_series_rooftop_forecast)
 
-        query = power_network_rooftop_query(
-            time_series=time_series_rooftop_forecast, networks_query=networks_query, network_region=network_region_code
-        )
+    #     query = power_network_rooftop_query(
+    #         time_series=time_series_rooftop_forecast, networks_query=networks_query, network_region=network_region_code
+    #     )
 
-        async with engine.begin() as conn:
-            logger.debug(query)
-            result_rooftop = await conn.execute(query)
-            row = result_rooftop.fetchall()
+    #     async with engine.begin() as conn:
+    #         logger.debug(query)
+    #         result_rooftop = await conn.execute(query)
+    #         row = result_rooftop.fetchall()
 
-        rooftop_forecast_power = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
+    #     rooftop_forecast_power = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
+    # for i in row]
 
-        rooftop_forecast = stats_factory(
-            rooftop_forecast_power,
-            network=time_series.network,
-            interval=human_to_interval("30m"),
-            units=get_unit("power"),
-            region=network_region_code,
-            fueltech_group=True,
-        )
+    #     rooftop_forecast = stats_factory(
+    #         rooftop_forecast_power,
+    #         network=time_series.network,
+    #         interval=human_to_interval("30m"),
+    #         units=get_unit("power"),
+    #         region=network_region_code,
+    #         fueltech_group=True,
+    #     )
 
-    if rooftop and rooftop_forecast:
-        if hasattr(rooftop, "data") and len(rooftop.data) > 0 and rooftop_forecast.data and len(rooftop_forecast.data) > 0:
-            rooftop.data[0].forecast = rooftop_forecast.data[0].history
-    else:
-        logger.warning("No rooftop or rooftop forecast")
+    # if rooftop and rooftop_forecast:
+    #     if hasattr(rooftop, "data") and len(rooftop.data) > 0 and rooftop_forecast.data and len(rooftop_forecast.data) > 0:
+    #         rooftop.data[0].forecast = rooftop_forecast.data[0].history
+    # else:
+    #     logger.warning("No rooftop or rooftop forecast")
 
-    result.append_set(rooftop)
+    # result.append_set(rooftop)
 
     return result
 
