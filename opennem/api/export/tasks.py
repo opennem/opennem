@@ -182,7 +182,6 @@ async def export_energy(
 
         if not date_range:
             logger.error(f"Skipping - Could not get date range for energy {energy_stat.network} {date_range_networks}")
-
             continue
 
         logger.debug(f"Date range is: {energy_stat.network.code} {date_range.start} => {date_range.end}")

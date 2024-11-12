@@ -8,7 +8,6 @@ FEATURE_FLAG_LIST = [
     "redirect_api_static",
     "show_emissions_in_power_outputs",
     "show_emission_factors_in_power_outputs",
-    "compact_number_ouput_in_json",
 ]
 
 

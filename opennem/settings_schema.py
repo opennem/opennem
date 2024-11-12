@@ -100,7 +100,6 @@ class OpennemSettings(BaseSettings):
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
     show_emissions_in_power_outputs: bool = True  # show emissions in power outputs
     show_emission_factors_in_power_outputs: bool = True  # show emissions in power outputs
-    compact_number_ouput_in_json: bool = False  # compact number output in json
 
     # clerk API key
     clerk_secret_key: str | None = None

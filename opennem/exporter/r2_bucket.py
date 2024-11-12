@@ -13,7 +13,6 @@ from aiohttp import ClientError
 
 from opennem import settings
 from opennem.api.stats.schema import OpennemDataSet
-from opennem.utils.numbers import compact_json_output_number_series
 
 logger = logging.getLogger("opennem.exporter.r2_bucket")
 
@@ -57,10 +56,6 @@ class OpennemDataSetSerialize:
         stat_set_content = stat_set_to_write.model_dump_json(
             exclude_unset=self.exclude_unset, indent=indent if settings.is_dev else None, exclude=exclude
         )
-
-        if settings.compact_number_ouput_in_json:
-            logger.debug(f"Applying compact number output to {key}")
-            stat_set_content = compact_json_output_number_series(stat_set_content)
 
         try:
             obj_to_write = await self.bucket.Object(key=key)
