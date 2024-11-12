@@ -24,7 +24,6 @@ from opennem.exporter.historic import export_historic_intervals
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM, NetworkWEMDE
 from opennem.tasks.exceptions import OpenNEMPipelineRetryTask
-from opennem.workers.daily import daily_runner
 from opennem.workers.energy import process_energy_from_now
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
@@ -120,7 +119,7 @@ async def nem_per_day_check(always_run: bool = False) -> ControllerReturn:
     if not always_run or not dispatch_actuals or not dispatch_actuals.inserted_records:
         raise OpenNEMPipelineRetryTask()
 
-    await daily_runner()
+    # await daily_runner()
 
     # export historic intervals
     for network in [NetworkNEM, NetworkWEM]:
