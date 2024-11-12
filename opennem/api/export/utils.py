@@ -9,7 +9,7 @@ from pydantic.main import BaseModel
 
 from opennem.api.stats.schema import OpennemDataSet
 from opennem.exporter.local import write_to_local
-from opennem.exporter.r2_bucket import write_content_to_r2, write_stat_set_to_r2
+from opennem.exporter.storage_bucket import cloudflare_uploader
 
 logger = logging.getLogger(__name__)
 
@@ -28,12 +28,10 @@ async def write_output(
     if is_local:
         byte_count = write_to_local(path, write_content)
     elif isinstance(stat_set, str):
-        byte_count = await write_content_to_r2(stat_set, path, "application/json")
+        byte_count = await cloudflare_uploader.upload_content(stat_set, path, "application/json")
     elif isinstance(stat_set, OpennemDataSet):
-        byte_count = await write_stat_set_to_r2(stat_set, path, exclude_unset=exclude_unset)
+        byte_count = await cloudflare_uploader.upload_content(write_content, path, "application/json")
     elif isinstance(stat_set, BaseModel):
-        byte_count = await write_content_to_r2(write_content, path, "application/json")
-    else:
-        raise Exception("Do not know how to write content of this type to output")
+        byte_count = await cloudflare_uploader.upload_content(write_content, path, "application/json")
 
     return byte_count
