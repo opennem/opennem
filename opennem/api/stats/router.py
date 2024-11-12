@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 from fastapi_cache.decorator import cache
 from fastapi_versionizer import api_version
+from sqlalchemy import select
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm import Session
 from starlette import status
@@ -102,11 +103,16 @@ async def power_station(
     units = get_unit("power")
 
     station: Facility | None = (
-        session.query(Facility)
-        .join(Unit)
-        .filter(Facility.code == station_code)
-        .filter(Unit.network_id == network.code)
-        .filter(Facility.approved.is_(True))
+        (
+            await session.execute(
+                select(Facility)
+                .join(Unit)
+                .filter(Facility.code == station_code)
+                .filter(Facility.network_id == network.code)
+                .filter(Facility.approved.is_(True))
+            )
+        )
+        .scalars()
         .one_or_none()
     )
 
@@ -130,12 +136,12 @@ async def power_station(
 
     logger.debug(time_series)
 
-    query = power_facility_query(time_series, station.unit_codes)
+    query = power_facility_query(time_series=time_series, facility_codes=[str(u.code) for u in station.units])
 
     logger.debug(query)
 
-    with engine.connect() as c:
-        results = list(c.execute(query))
+    async with engine.begin() as c:
+        results = list(await c.execute(query))
 
     stats = [DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None) for i in results]
 

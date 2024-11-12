@@ -41,6 +41,21 @@ def power_facility_query(
         order by 1 desc
     """
 
+    __query = """
+        select
+            time_bucket_gapfill('{trunc}', fs.interval) as interval,
+            coalesce(avg(fs.generated), 0) as power,
+            fs.facility_code
+        from mv_facility_scada fs
+        where
+            fs.interval >= '{date_min}' and
+            fs.interval <= '{date_max}' and
+            fs.facility_code in ({facility_codes_parsed})
+        group by 1, 3
+        order by 1 desc
+
+    """
+
     date_range = time_series.get_range()
 
     query = __query.format(
