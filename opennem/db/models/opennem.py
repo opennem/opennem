@@ -246,11 +246,11 @@ class Facility(Base):
 
     @hybrid_property
     def unit_codes(self) -> list[str]:
-        return list({f.code for f in self.units})
+        return list({str(f.code) for f in self.units})
 
     @hybrid_property
     def scada_range(self) -> FacilitySeenRange | None:
-        fsr = FacilitySeenRange(date_start=None, end_date=None)
+        fsr = FacilitySeenRange(date_start=None, date_end=None)
         if not self.units:
             return fsr
         first_seens = [f.data_first_seen for f in self.units if f.data_first_seen]
