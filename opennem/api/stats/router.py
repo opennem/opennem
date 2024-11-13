@@ -428,9 +428,6 @@ async def power_network_region_fueltech(
     # redirect to static JSONs
     redirect_url_format = "https://data.opennem.org.au/v3/stats/au/{network_code_out}/{network_region_out}power/7d.json"
 
-    if not month:
-        month = get_today_nem().date()
-
     try:
         network = network_from_network_code(network_code)
     except Exception:
@@ -451,8 +448,11 @@ async def power_network_region_fueltech(
         network_region_out=network_region_out,
     )
 
-    if settings.redirect_api_static:
+    if settings.redirect_api_static and not month:
         return RedirectResponse(url=redirect_to, status_code=status.HTTP_302_FOUND)
+
+    if not month:
+        month = get_today_nem().date()
 
     interval_obj = network.get_interval()
     period_obj = human_to_period("1M")
