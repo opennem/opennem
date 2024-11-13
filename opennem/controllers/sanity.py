@@ -7,9 +7,12 @@ import logging
 from portabletext_html import PortableTextRenderer
 from sqlalchemy import select
 
+from opennem import settings
+from opennem.clients.slack import slack_message
 from opennem.cms.importer import create_or_update_database_facility
 from opennem.db import get_write_session
 from opennem.db.models.opennem import Facility, Unit
+from opennem.exporter.facilities import export_facilities_static
 from opennem.schema.facility import FacilitySchema
 from opennem.schema.unit import UnitSchema
 
@@ -31,6 +34,8 @@ async def parse_sanity_webhook_request(request: dict) -> None:
         await persist_unit_record(unit)
     else:
         logger.warning(f"Unhandled record type: {record_type}")
+
+    await export_facilities_static()
 
 
 def sanity_parse_facility(request: dict) -> FacilitySchema:
@@ -116,6 +121,10 @@ async def persist_unit_record(unit: UnitSchema) -> None:
 
         session.add(unit_db)
 
-        logger.info(f"Persisted unit {unit.code} - {unit.fueltech_id} - {unit.status_id} - {unit.dispatch_type.value}")
+        message = f"Persisted unit {unit.code} - {unit.fueltech_id} - {unit.status_id} - {unit.dispatch_type.value}"
+
+        logger.info(message)
 
         await session.commit()
+
+    await slack_message(webhook_url=settings.slack_hook_new_facilities, message=message)
