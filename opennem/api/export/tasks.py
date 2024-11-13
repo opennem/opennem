@@ -126,7 +126,7 @@ async def export_power(
             if flow_set := await power_flows_per_interval(time_series=time_series, network_region_code=power_stat.network_region):
                 stat_set.append_set(flow_set)
 
-        time_series_weather = time_series.copy()
+        time_series_weather = time_series.model_copy()
         time_series_weather.interval = human_to_interval("30m")
 
         if power_stat.bom_station:
@@ -181,10 +181,6 @@ async def export_energy(
             date_range_networks = [NetworkNEM]
 
         date_range: ScadaDateRange = get_scada_range_optimized(network=energy_stat.network)
-
-        if not date_range:
-            logger.error(f"Skipping - Could not get date range for energy {energy_stat.network} {date_range_networks}")
-            continue
 
         logger.debug(f"Date range is: {energy_stat.network.code} {date_range.start} => {date_range.end}")
 

@@ -304,54 +304,16 @@ def power_network_fueltech_query(
         networks_query.append(time_series.network)
 
     __query = """
-    select
-        t.interval,
-        t.fueltech_code,
-        sum(t.fueltech_power) as fueltech_power,
-        case when
-            sum(t.fueltech_power) > 0 then sum(t.fueltech_emissions)
-            else 0
-        end as fueltech_emissions,
-        case when
-            sum(t.fueltech_power) > 0 then round(sum(t.fueltech_emissions) / sum(t.fueltech_power), 4)
-            else 0
-        end as fueltech_emissions_intensity
-    from (
-        select
-            time_bucket_gapfill('{trunc}', fs.interval) AS interval,
-            ft.code as fueltech_code,
-            coalesce(sum(fs.generated), 0) as fueltech_power,
-            coalesce(sum(fs.generated), 0) / (60 / max(n.interval_size)) as fueltech_energy,
-            max(f.emissions_factor_co2) * sum(fs.generated) /  (60 / max(n.interval_size)) as fueltech_emissions
-        from facility_scada fs
-        join facility f on fs.facility_code = f.code
-        join fueltech ft on f.fueltech_id = ft.code
-        join network n on f.network_id = n.code
-        where
-            fs.is_forecast is False and
-            f.fueltech_id is not null and
-            f.fueltech_id not in ({fueltechs_exclude}) and
-            {network_query}
-            {network_region_query}
-            fs.interval <= '{date_max}' and
-            fs.interval >= '{date_min}'
-        group by 1, f.code, f.emissions_factor_co2, 2, n.interval_size
-    ) as t
-    group by 1, 2
-    order by 1 desc
-    """
-
-    __query = """
     SELECT
         time_bucket_gapfill('5 min', interval) as interval,
         fueltech_code,
         sum(generated) as fueltech_power,
         sum(emissions) as fueltech_emissions,
         case when
-            sum(generated) > 0 then round(sum(emissions) / sum(generated), 4)
+            sum(generated) > 0 then round(sum(emissions)::numeric / sum(generated)::numeric, 4)
             else 0
         end as fueltech_emissions_intensity
-    FROM mv_facility_scada
+    FROM at_facility_intervals
     WHERE
         interval between '{date_min}' and '{date_max}' and
         {network_query}
@@ -359,17 +321,10 @@ def power_network_fueltech_query(
         1=1
     group by 1, 2
     ORDER BY interval DESC, 2;
-
     """
 
     network_region_query: str = ""
     wem_apvi_case: str = ""
-    timezone: str = time_series.network.timezone_database
-
-    fueltechs_excluded = ["exports", "imports", "interconnector"]
-
-    if NetworkNEM in networks_query or NetworkWEM in networks_query:
-        fueltechs_excluded.append("solar_rooftop")
 
     if network_region:
         network_region_query = f"network_region='{network_region}' and "
@@ -389,18 +344,15 @@ def power_network_fueltech_query(
     date_min = time_series_range.start
 
     # If we have a fueltech filter, add it to the query
-    fueltechs_exclude = ", ".join(f"'{i}'" for i in fueltechs_excluded)
 
     query = dedent(
         __query.format(
-            network_query=network_query,
             trunc=time_series.interval.interval_sql,
+            network_query=network_query,
             network_region_query=network_region_query,
-            timezone=timezone,
             date_max=date_max,
             date_min=date_min,
             wem_apvi_case=wem_apvi_case,
-            fueltechs_exclude=fueltechs_exclude,
         )
     )
 
