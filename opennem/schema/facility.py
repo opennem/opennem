@@ -13,12 +13,20 @@ class FacilityPhotoOutputSchema(BaseModel):
     attribution: str | None = None
 
 
-class CMSFacilityLocationSchema(BaseModel):
+class FacilityLocationSchema(BaseModel):
     """Facility location schema"""
 
     _type: str
     lat: float | None = None
     lng: float | None = None
+
+
+class FacilityOwnerSchema(BaseModel):
+    """Facility owner schema"""
+
+    name: str
+    website: str | None = None
+    wikipedia: str | None = None
 
 
 class FacilitySchema(BaseModel):
@@ -32,7 +40,8 @@ class FacilitySchema(BaseModel):
     description: str | None = None
     wikipedia: str | None = None
     photos: list[FacilityPhotoOutputSchema] | None = None
-    location: CMSFacilityLocationSchema | None = None
+    owners: list[FacilityOwnerSchema] | None = None
+    location: FacilityLocationSchema | None = None
     units: list[UnitSchema]
 
     # Sanity fields

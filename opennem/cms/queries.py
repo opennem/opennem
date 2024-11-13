@@ -101,6 +101,11 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]
             caption,
             attribution
         }},
+        owners[]-> {{
+            name,
+            website,
+            wikipedia
+        }},
         wikipedia,
         location,
         units[]-> {{
