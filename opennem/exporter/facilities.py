@@ -9,6 +9,7 @@ import asyncio
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.cms.importer import get_cms_facilities
 from opennem.exporter.storage_bucket import cloudflare_uploader
+from opennem.schema.unit import UnitFueltechType
 from opennem.utils.dates import get_today_opennem
 from opennem.utils.version import get_version
 
@@ -23,7 +24,7 @@ async def export_facilities_static() -> None:
     facilities_clean = []
 
     for facility in facilities:
-        units = [u for u in facility.units if u.fueltech_id != "battery"]
+        units = [u for u in facility.units if u.fueltech_id != UnitFueltechType.battery]
         facility.units = units
         facilities_clean.append(facility)
 
