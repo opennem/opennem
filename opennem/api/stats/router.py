@@ -451,9 +451,6 @@ async def power_network_region_fueltech(
     if settings.redirect_api_static and not month:
         return RedirectResponse(url=redirect_to, status_code=status.HTTP_302_FOUND)
 
-    if not month:
-        month = get_today_nem().date()
-
     interval_obj = network.get_interval()
     period_obj = human_to_period("1M")
 
