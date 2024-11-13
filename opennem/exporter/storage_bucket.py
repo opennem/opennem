@@ -55,6 +55,9 @@ class CloudflareR2Uploader:
         if object_name is None:
             object_name = file_path
 
+        if object_name.startswith("/"):
+            object_name = object_name[1:]
+
         async with await self._get_s3_client() as s3:  # type: ignore
             try:
                 extra_args = {}
@@ -85,6 +88,10 @@ class CloudflareR2Uploader:
         Raises:
             ClientError: If an error occurs during the upload process.
         """
+
+        if object_name.startswith("/"):
+            object_name = object_name[1:]
+
         async with await self._get_s3_client() as s3:  # type: ignore
             try:
                 extra_args = {}
@@ -93,7 +100,8 @@ class CloudflareR2Uploader:
 
                 await s3.put_object(Bucket=self.bucket_name, Key=object_name, Body=content, **extra_args)
                 logger.info(
-                    f"Content uploaded successfully to bucket {self.bucket_name} at {settings.s3_bucket_public_url}{object_name}"
+                    f"Content uploaded successfully to bucket {self.bucket_name} path {object_name}"
+                    f" at {settings.s3_bucket_public_url}{object_name}"
                 )
             except ClientError as e:
                 logger.error(f"An error occurred while uploading content: {e}")
