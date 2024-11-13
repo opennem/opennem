@@ -502,15 +502,7 @@ def get_datetime_now_for_network(network: NetworkSchema, tz_aware: bool = False)
 
 def get_today_opennem() -> datetime:
     """OpenNEM time is Sydney / Melbourne"""
-    now = datetime.now()
-
-    now_no_microseconds = now.replace(microsecond=0)
-
-    opennem_tz = ZoneInfo("Australia/Sydney")
-
-    opennem_dt = now_no_microseconds.astimezone(opennem_tz)
-
-    return opennem_dt
+    return datetime.now(ZoneInfo("Australia/Sydney")).replace(microsecond=0)
 
 
 def make_aware_for_network(dt: datetime, network: NetworkSchema) -> datetime:
