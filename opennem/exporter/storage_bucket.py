@@ -17,6 +17,10 @@ class CloudflareR2Uploader:
         self.endpoint_url = settings.s3_endpoint_url
         self.bucket_name = settings.s3_bucket_name
         self.region = region
+        self.bucket_public_url = settings.s3_bucket_public_url
+
+        if not self.bucket_public_url.endswith("/"):
+            self.bucket_public_url += "/"
 
     async def _get_s3_client(self):
         """
@@ -101,7 +105,7 @@ class CloudflareR2Uploader:
                 await s3.put_object(Bucket=self.bucket_name, Key=object_name, Body=content, **extra_args)
                 logger.info(
                     f"Content uploaded successfully to bucket {self.bucket_name} path {object_name}"
-                    f" at {settings.s3_bucket_public_url}{object_name}"
+                    f" at {self.bucket_public_url}{object_name}"
                 )
             except ClientError as e:
                 logger.error(f"An error occurred while uploading content: {e}")
