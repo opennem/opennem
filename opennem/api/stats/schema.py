@@ -13,7 +13,7 @@ from zoneinfo import ZoneInfo
 import pydantic
 import requests
 from datedelta import datedelta
-from pydantic import PlainSerializer, ValidationError, field_validator, validator
+from pydantic import PlainSerializer, ValidationError, field_validator
 
 from opennem import settings
 from opennem.core.feature_flags import get_list_of_enabled_features
@@ -27,7 +27,8 @@ from opennem.utils.dates import chop_datetime_microseconds
 from opennem.utils.interval import get_human_interval
 from opennem.utils.numbers import sigfig_compact
 
-ValidNumber = float | int | Decimal | None
+ValidNumber = float | int | Decimal
+ValidNumberOrNull = ValidNumber | None
 
 
 logger = logging.getLogger("opennem.stats.schema")
@@ -63,7 +64,7 @@ def number_output(n: float | int | None) -> float | int | None | Decimal | None:
     return sigfig_compact(n)
 
 
-def format_number_series(values: list[ValidNumber]) -> list[ValidNumber]:
+def format_number_series(values: list[ValidNumberOrNull]) -> list[ValidNumberOrNull]:
     """Validate and format list of numeric data values"""
     return list(
         map(
@@ -109,53 +110,11 @@ class OpennemDataHistory(BaseConfig):
     last: datetime
     interval: str
     data: Annotated[
-        list[float | None],
+        list[ValidNumberOrNull],
         PlainSerializer(lambda x: [cast_float_or_none(i) for i in x], return_type=float, when_used="json"),
     ] = pydantic.Field(..., description="Data values")
 
-    # link the parent id
-    # _parent_id: str | None
-
-    # validators
-
-    # _start_timezone_aware = validator("start", allow_reuse=True, pre=True)(validate_datetime_is_aware)
-    # _last_timezone_aware = validator("last", allow_reuse=True, pre=True)(validate_datetime_is_aware)
-
-    # format data numbers
-    # _data_format = validator("data", allow_reuse=True, pre=True)(format_number_series)
-
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator("data", pre=True, always=True)
-    def validate_data(cls, field_value: list[float], values: dict[str, datetime | str | list[float]]) -> list[ValidNumber]:
-        if not field_value:
-            return None
-
-        interval: str | None = values.get("interval")
-        start: datetime | None = values.get("start", None)
-        last: datetime | None = values.get("last", None)
-
-        if not interval or not start or not last:
-            raise ValidationError("Missing interval or start or last for data validation")
-
-        if not isinstance(start, datetime):
-            raise ValidationError(f"Start is not a datetime: {start}")
-
-        if not isinstance(last, datetime):
-            raise ValidationError(f"Last is not a datetime: {last}")
-
-        # logger.debug(f"{len(field_value)} values at {interval} interval from {start} to {last}")
-
-        interval_obj = get_human_interval(interval)
-
-        validation_output = validate_data_outputs(field_value, interval_obj, start, last)
-
-        if not validation_output:
-            raise ValidationError(f"Data validation failed: {validation_output}")
-
-        return field_value
-
-    def get_date(self, dt: date) -> float | Decimal | None:
+    def get_date(self, dt: date) -> ValidNumberOrNull:
         """Get value for a specific date"""
         _values = self.values()
         _get_value = list(filter(lambda x: x[0].date() == dt, _values))
@@ -168,7 +127,7 @@ class OpennemDataHistory(BaseConfig):
     def get_interval(self) -> timedelta | datedelta:
         return get_human_interval(self.interval)
 
-    def values(self) -> list[tuple[datetime, ValidNumber]]:
+    def values(self) -> list[tuple[datetime, ValidNumberOrNull]]:
         interval_obj = get_human_interval(self.interval)
         dt = self.start
 
