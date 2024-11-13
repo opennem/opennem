@@ -18,7 +18,7 @@ requires-python = "<4.0,>=3.12"
 
 dependencies = [
     "requests<3.0.0,>=2.23.0",
-    "sentry-sdk<3.0.0,>=2.1.1",
+    "sentry-sdk[asyncpg,fastapi,httpx,redis,sqlalchemy]>=2.1.1,<3.0.0",
     "pydantic[email]<3.0.0,>=2.6.4",
     "alembic<2.0.0,>=1.6.2",
     "geojson<4.0.0,>=3.1.0",
