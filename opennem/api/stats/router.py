@@ -18,7 +18,7 @@ from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
 from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
-from opennem.db import get_database_engine, get_scoped_session
+from opennem.db import db_connect, get_scoped_session
 from opennem.db.models.opennem import Facility
 from opennem.queries.emissions import get_emission_factor_region_query
 from opennem.queries.price import get_network_region_price_query
@@ -51,7 +51,7 @@ async def power_station(
     period_human: str | None = None,
     period: str | None = None,  # type: ignore
     session: Session = Depends(get_scoped_session),
-    engine: Engine = Depends(get_database_engine),  # type: ignore
+    engine: Engine = Depends(db_connect),  # type: ignore
 ) -> OpennemDataSet:
     if not network_code:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No network code")
@@ -157,7 +157,7 @@ async def energy_station(
     facility_code: str,
     interval: str | None = None,
     period: str | None = None,
-    engine: Engine = Depends(get_database_engine),  # type: ignore
+    engine: Engine = Depends(db_connect),  # type: ignore
     session: Session = Depends(get_scoped_session),
 ) -> OpennemDataSet:
     """
@@ -335,10 +335,9 @@ async def power_flows_network_week(
     network_code: str,
     network_region_code: str | None = None,
     month: date | None = None,
-    engine: Engine = Depends(get_database_engine),  # type: ignore
+    engine: Engine = Depends(db_connect),  # type: ignore
 ) -> OpennemDataSet | None:
     """Get the last day of network flow data"""
-    engine = get_database_engine()
 
     network = network_from_network_code(network_code)
 
@@ -485,7 +484,7 @@ async def power_network_region_fueltech(
         period=period_obj,
     )
 
-    stat_set = power_week(time_series, network_region_code, include_capacities=True, networks_query=networks)
+    stat_set = await power_week(time_series, network_region_code, networks_query=networks)
 
     if not stat_set:
         raise Exception("No results")
@@ -511,10 +510,8 @@ async def emission_factor_per_network(  # type: ignore
     network_code: str,
     interval: str = "5m",
     network_region_code: str | None = None,
-    engine=Depends(get_database_engine),  # type: ignore
+    engine=Depends(db_connect),  # type: ignore
 ) -> OpennemDataSet | None:
-    engine = get_database_engine()
-
     network = None
 
     try:
@@ -631,7 +628,7 @@ async def price_network_endpoint(
     network_code: str,
     network_region_code: str | None = None,
     forecasts: bool = False,
-    engine: Engine = Depends(get_database_engine),
+    engine: Engine = Depends(db_connect),
 ) -> OpennemDataSet:
     """Returns network and network region price info for interval which defaults to network
     interval size
@@ -645,7 +642,6 @@ async def price_network_endpoint(
     Returns:
         OpennemData: data set
     """
-    engine = get_database_engine()
 
     try:
         network = network_from_network_code(network_code)
