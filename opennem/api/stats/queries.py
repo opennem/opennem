@@ -69,37 +69,35 @@ def power_facility_query(
     return text(query)
 
 
-def energy_facility_query(time_series: OpennemExportSeries, facility_codes: list[str]) -> TextClause:
+def energy_facility_query(time_series: OpennemExportSeries, facility_code: str) -> TextClause:
     """
     Get Energy for a list of facility codes
     """
 
     __query = """
-    select
-        time_bucket_gapfill('{interval}', fs.interval) as interval,
+    SELECT
+        time_bucket_gapfill('{interval}', fs.interval) as interval_bucket,
         fs.facility_code,
-        sum(fs.energy) as energy,
-        0 as market_value,
-        sum(fs.emissions) as emissions
-    from mv_facility_scada fs
-    where
-        fs.interval >= '{date_min}' and
-        fs.interval <= '{date_max}' and
-        fs.facility_code in ({facility_codes_parsed})
-    group by 1, 2
-    order by 1 desc;
+        fs.unit_code,
+        round(sum(fs.energy)::numeric, 2) as energy,
+        round(sum(fs.emissions)::numeric, 2) as emissions,
+        round(sum(fs.market_value)::numeric, 2) as market_value
+    FROM at_facility_intervals fs
+    WHERE
+        fs.facility_code = '{facility_code}' and
+        fs.interval >= '{date_min}' and fs.interval <= '{date_max}'
+    GROUP BY 1, 2, 3
+    ORDER BY interval_bucket DESC, 2, 3;
     """
 
     date_range = time_series.get_range()
 
     return text(
         __query.format(
-            facility_codes_parsed=duid_to_case(facility_codes),
-            trunc=time_series.interval.trunc,
             interval=time_series.interval.interval_human,
+            facility_code=facility_code,
             date_max=date_range.end.date(),
             date_min=date_range.start.date(),
-            timezone=time_series.network.timezone_database,
         )
     )
 

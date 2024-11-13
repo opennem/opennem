@@ -176,21 +176,19 @@ async def power_station(
 
 @api_version(3)
 @router.get(
-    "/energy/station/{network_code}/{station_code:path}",
+    "/energy/station/{network_code}/{facility_code:path}",
     name="Energy by Station",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
 )
 @cache(expire=60 * 60 * 12)
 async def energy_station(
-    engine: Engine = Depends(get_database_engine),  # type: ignore
-    session: Session = Depends(get_scoped_session),
-    date_min: datetime | None = None,
-    date_max: datetime | None = None,
-    network_code: str | None = None,
-    station_code: str | None = None,
+    network_code: str,
+    facility_code: str,
     interval: str | None = None,
     period: str | None = None,
+    engine: Engine = Depends(get_database_engine),  # type: ignore
+    session: Session = Depends(get_scoped_session),
 ) -> OpennemDataSet:
     """
     Get energy output for a station (list of facilities)
@@ -209,7 +207,7 @@ async def energy_station(
 
     if not interval:
         # @NOTE rooftop data is 15m
-        if station_code and station_code.startswith("ROOFTOP"):
+        if facility_code and facility_code.startswith("ROOFTOP"):
             interval = "15m"
         else:
             interval = "1d"
@@ -231,41 +229,39 @@ async def energy_station(
     period_obj = human_to_period(period)
     units = get_unit("energy")
 
-    station: Facility | None = (
+    # ensure the facility exists
+    facility_lookup: Facility | None = (
         (
             await session.execute(
-                select(Facility)
-                .join(Facility.units)
-                .filter(Facility.code == station_code)
-                .filter(Facility.network_id == network.code)
+                select(Facility).filter(Facility.code == facility_code).filter(Facility.network_id == network.code)
             )
         )
         .scalars()
         .one_or_none()
     )
 
-    if not station:
+    if not facility_lookup:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Station not found")
 
-    if not station.units:
+    if not facility_lookup.units:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Station has no facilities",
         )
 
     # Start date
-    date_start = station.scada_range.date_min
-    date_end = station.scada_range.date_max
+    date_start = facility_lookup.scada_range.date_start
+    date_end = facility_lookup.scada_range.date_end
 
     # @NOTE only run get scada range if we don't have a date_min or date_max
     if not date_start or not date_end:
         network_range = get_scada_range_optimized(network=network)
 
-    if not date_start:
-        date_start = network_range.start
+        if not date_start:
+            date_start = network_range.start
 
-    if not date_end:
-        date_end = network_range.end
+        if not date_end:
+            date_end = network_range.end
 
     time_series = OpennemExportSeries(
         start=date_start,
@@ -277,7 +273,7 @@ async def energy_station(
 
     query = energy_facility_query(
         time_series=time_series,
-        facility_codes=[str(u.code) for u in station.units],
+        facility_code=facility_code,
     )
 
     logger.debug(query)
@@ -291,11 +287,11 @@ async def energy_station(
             detail="Station stats not found",
         )
 
-    results_energy = [DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None) for i in row]
-
-    results_market_value = [DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None) for i in row]
+    results_energy = [DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None) for i in row]
 
     results_emissions = [DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None) for i in row]
+
+    results_market_value = [DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None) for i in row]
 
     if len(results_energy) < 1:
         raise HTTPException(
@@ -308,7 +304,7 @@ async def energy_station(
         units=units,
         network=network,
         interval=interval_obj,
-        code=station_code,
+        code=facility_code,
         include_group_code=True,
     )
 
@@ -323,7 +319,7 @@ async def energy_station(
         units=get_unit("market_value"),
         network=network,
         interval=interval_obj,
-        code=station_code,
+        code=facility_code,
         include_group_code=True,
     )
 
@@ -334,7 +330,7 @@ async def energy_station(
         units=get_unit("emissions"),
         network=network,
         interval=interval_obj,
-        code=station_code,
+        code=facility_code,
         include_group_code=True,
     )
 

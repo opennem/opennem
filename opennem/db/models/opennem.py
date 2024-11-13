@@ -39,8 +39,8 @@ metadata = Base.metadata
 
 
 class FacilitySeenRange(BaseConfig):
-    date_min: datetime | None = None
-    date_max: datetime | None = None
+    date_start: datetime | None = None
+    date_end: datetime | None = None
 
 
 # db models
@@ -250,15 +250,15 @@ class Facility(Base):
 
     @hybrid_property
     def scada_range(self) -> FacilitySeenRange | None:
-        fsr = FacilitySeenRange(date_min=None, date_max=None)
+        fsr = FacilitySeenRange(date_start=None, end_date=None)
         if not self.units:
             return fsr
         first_seens = [f.data_first_seen for f in self.units if f.data_first_seen]
         last_seens = [f.data_last_seen for f in self.units if f.data_last_seen]
         if first_seens:
-            fsr.date_min = min(first_seens)
+            fsr.date_start = min(first_seens)
         if last_seens:
-            fsr.date_max = max(last_seens)
+            fsr.date_end = max(last_seens)
         return fsr
 
 
