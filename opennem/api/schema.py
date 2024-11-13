@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, Field
 
+from opennem.utils.dates import get_today_opennem
 from opennem.utils.version import get_version
 
 
@@ -41,7 +44,8 @@ class APINetworkSchema(ApiBase):
 
 
 class APIV4ResponseSchema(ApiBase):
-    version: str = get_version()
+    version: str = Field(default_factory=get_version)
+    created_at: datetime = Field(default_factory=get_today_opennem)
     success: bool = True
     error: str | None = None
     data: list = []
