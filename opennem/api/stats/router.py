@@ -1,5 +1,5 @@
 import logging
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
@@ -19,13 +19,12 @@ from opennem.core.flows import invert_flow_set
 from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine, get_scoped_session
-from opennem.db.models.opennem import Facility, Unit
+from opennem.db.models.opennem import Facility
 from opennem.queries.emissions import get_emission_factor_region_query
 from opennem.queries.price import get_network_region_price_query
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.schema.time import TimePeriod
-from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem, is_aware
-from opennem.utils.time import human_to_timedelta
+from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem
 
 from .controllers import get_scada_range, get_scada_range_optimized, stats_factory
 from .queries import energy_facility_query, power_facility_query
@@ -38,7 +37,7 @@ router = APIRouter()
 
 @api_version(3)
 @router.get(
-    "/power/station/{network_code}/{station_code:path}",
+    "/power/station/{network_code}/{facility_code:path}",
     name="Power by Station",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
@@ -46,11 +45,8 @@ router = APIRouter()
 )
 @cache(expire=60 * 5)
 async def power_station(
-    station_code: str | None = None,
+    facility_code: str | None = None,
     network_code: str | None = None,
-    since: datetime | None = None,
-    date_min: datetime | None = None,
-    date_max: datetime | None = None,
     interval_human: str | None = None,
     period_human: str | None = None,
     period: str | None = None,  # type: ignore
@@ -68,24 +64,9 @@ async def power_station(
             detail="No such network",
         )
 
-    latest_network_interval = get_last_completed_interval_for_network(network=network)
-
-    # make all times aware
-    if since and not is_aware(since):
-        since = since.astimezone(network.get_fixed_offset())
-
-    if date_min and not is_aware(date_min):
-        date_min = date_min.astimezone(network.get_fixed_offset())
-
-    if date_max and not is_aware(date_max):
-        date_max = date_max.astimezone(network.get_fixed_offset())
-
-    if not since:
-        since = latest_network_interval - human_to_timedelta("7d")
-
     if not interval_human:
         # @NOTE rooftop data is 15m
-        if station_code and station_code.startswith("ROOFTOP"):
+        if facility_code and facility_code.startswith("ROOFTOP"):
             interval_human = "15m"
         else:
             interval_human = f"{network.interval_size}m"
@@ -102,12 +83,11 @@ async def power_station(
     period_obj: TimePeriod = human_to_period(period_human)
     units = get_unit("power")
 
-    station: Facility | None = (
+    facility_lookup: Facility | None = (
         (
             await session.execute(
                 select(Facility)
-                .join(Unit)
-                .filter(Facility.code == station_code)
+                .filter(Facility.code == facility_code)
                 .filter(Facility.network_id == network.code)
                 .filter(Facility.approved.is_(True))
             )
@@ -116,34 +96,24 @@ async def power_station(
         .one_or_none()
     )
 
-    if not station:
+    if not facility_lookup:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Station not found")
 
-    facilities_date_range = station.scada_range
+    date_min = facility_lookup.scada_range.date_start
+    date_max = facility_lookup.scada_range.date_end
 
-    logger.debug(f"Facilities date range: {facilities_date_range}")
-
-    if not date_max:
-        date_max = latest_network_interval
-
-    if not date_min:
-        date_min = since
-
-        if facilities_date_range.date_min and date_min < facilities_date_range.date_min:
-            date_min = facilities_date_range.date_min
+    logger.debug(f"Facilities date range: {date_min} {date_max}")
 
     time_series = OpennemExportSeries(start=date_min, end=date_max, network=network, interval=interval, period=period_obj)  # type: ignore
 
-    logger.debug(time_series)
-
-    query = power_facility_query(time_series=time_series, facility_codes=[str(u.code) for u in station.units])
+    query = power_facility_query(time_series=time_series, facility_code=facility_code)
 
     logger.debug(query)
 
     async with engine.begin() as c:
         results = list(await c.execute(query))
 
-    stats = [DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None) for i in results]
+    stats = [DataQueryResult(interval=i[0], result=i[3], group_by=i[2] if len(i) > 1 else None) for i in results]
 
     if not stats:
         raise HTTPException(
@@ -153,7 +123,7 @@ async def power_station(
 
     result = stats_factory(
         stats,
-        code=station_code,
+        code=facility_code,
         network=network,
         interval=interval,
         include_group_code=True,

@@ -10,58 +10,32 @@ from sqlalchemy import text
 from sqlalchemy.sql.elements import TextClause
 
 from opennem.controllers.output.schema import OpennemExportSeries
-from opennem.queries.utils import duid_to_case
 
 
 def power_facility_query(
     time_series: OpennemExportSeries,
-    facility_codes: list[str],
+    facility_code: str,
 ) -> TextClause:
     __query = """
-        select
-            t.trading_interval at time zone '{timezone}',
-            coalesce(avg(t.facility_power), 0),
-            t.facility_code
-        from (
-            select
-                time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
-                coalesce(
-                    avg(fs.generated), 0
-                ) as facility_power,
-                fs.facility_code
-            from facility_scada fs
-            join facility f on fs.facility_code = f.code
-            where
-                fs.trading_interval <= '{date_max}' and
-                fs.trading_interval >= '{date_min}' and
-                fs.facility_code in ({facility_codes_parsed})
-            group by 1, 3
-        ) as t
-        group by 1, 3
-        order by 1 desc
-    """
-
-    __query = """
-        select
-            time_bucket_gapfill('{trunc}', fs.interval) as interval,
-            coalesce(avg(fs.generated), 0) as power,
-            fs.facility_code
-        from mv_facility_scada fs
-        where
-            fs.interval >= '{date_min}' and
-            fs.interval <= '{date_max}' and
-            fs.facility_code in ({facility_codes_parsed})
-        group by 1, 3
-        order by 1 desc
+        SELECT
+            time_bucket_gapfill('{trunc}', fs.interval) as interval_bucket,
+            fs.facility_code,
+            fs.unit_code,
+            round(sum(fs.generated)::numeric, 2) as generated
+        FROM at_facility_intervals fs
+        WHERE
+            fs.facility_code = '{facility_code}' and
+            fs.interval >= '{date_min}' and fs.interval <= '{date_max}'
+        GROUP BY 1, 2, 3
+        ORDER BY interval_bucket DESC, 2, 3;
 
     """
 
     date_range = time_series.get_range()
 
     query = __query.format(
-        facility_codes_parsed=duid_to_case(facility_codes),
+        facility_code=facility_code,
         trunc=time_series.interval.interval_sql,
-        timezone=time_series.network.timezone_database,
         date_max=date_range.end,
         date_min=date_range.start,
     )
