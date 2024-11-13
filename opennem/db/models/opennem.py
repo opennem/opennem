@@ -489,10 +489,10 @@ class FacilityAggregate(Base):
     # Primary key columns
     interval: Mapped[datetime] = mapped_column(DateTime(timezone=False), primary_key=True, nullable=False)
     network_id: Mapped[str] = mapped_column(
-        Text, ForeignKey("network.code", name="fk_facility_aggregates_network_code"), primary_key=True, nullable=False
+        Text, ForeignKey("network.code", name="fk_facility_aggregates_network_code"), primary_key=True, nullable=False, index=True
     )
-    facility_code: Mapped[str] = mapped_column(Text, primary_key=True, nullable=False)
-    unit_code: Mapped[str] = mapped_column(Text, primary_key=True, nullable=False)
+    facility_code: Mapped[str] = mapped_column(Text, primary_key=True, nullable=False, index=True)
+    unit_code: Mapped[str] = mapped_column(Text, primary_key=True, nullable=False, index=True)
 
     # Data columns
     fueltech_code: Mapped[str | None] = mapped_column(Text, nullable=False)
@@ -511,4 +511,17 @@ class FacilityAggregate(Base):
         Index("idx_at_facility_intervals_interval_network", interval.desc(), network_id),
         Index("idx_at_facility_intervals_facility_interval", facility_code, interval.desc()),
         Index("idx_at_facility_intervals_network_region", network_region),
+        # Index for time bucket operations
+        Index(
+            "idx_at_facility_intervals_time_facility",
+            interval.desc(),
+            facility_code,
+        ),
+        # Index for unit code grouping
+        Index(
+            "idx_at_facility_intervals_unit_time",
+            unit_code,
+            interval.desc(),
+        ),
+        # Partial index for recent data
     )
