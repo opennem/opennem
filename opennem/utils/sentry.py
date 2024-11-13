@@ -23,4 +23,5 @@ def setup_sentry(sentry_url: str, environment: str = "development") -> None:
         before_send=_sentry_before_send,
         integrations=[RedisIntegration(), SqlalchemyIntegration()],
         profiles_sample_rate=0.1,
+        default_integrations=False,
     )
