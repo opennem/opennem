@@ -18,7 +18,6 @@ from opennem.api.export.controllers import (
     NoResults,
     demand_network_region_daily,
     demand_week,
-    energy_fueltech_daily,
     energy_interconnector_flows_and_emissions_v2,
     gov_stats_cpi,
     power_flows_network_week,
@@ -30,6 +29,7 @@ from opennem.api.export.utils import write_output
 from opennem.api.stats.controllers import get_scada_range, get_scada_range_optimized
 from opennem.api.stats.schema import OpennemDataSet, ScadaDateRange
 from opennem.api.time import human_to_interval, human_to_period
+from opennem.controllers.energy import energy_fueltech_daily_v3
 from opennem.controllers.output.flows import power_flows_per_interval
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
@@ -199,9 +199,9 @@ async def export_energy(
                 logger.debug(f"Skipping since we only want latest and this is not the current year {energy_stat.year}")
                 continue
 
-            stat_set = await energy_fueltech_daily(
+            stat_set = await energy_fueltech_daily_v3(
+                network=energy_stat.network,
                 time_series=time_series,
-                networks_query=energy_stat.networks,
                 network_region_code=energy_stat.network_region_query or energy_stat.network_region,
             )
 
@@ -251,7 +251,7 @@ async def export_energy(
             time_series.year = None
             time_series.interval = human_to_interval("1M")
 
-            stat_set = await energy_fueltech_daily(
+            stat_set = await energy_fueltech_daily_v3(
                 time_series=time_series,
                 networks_query=energy_stat.networks,
                 network_region_code=energy_stat.network_region_query or energy_stat.network_region,
@@ -338,7 +338,7 @@ async def export_all_monthly(networks: list[NetworkSchema] | None = None, networ
                     period=human_to_period("all"),
                 )
 
-                stat_set = await energy_fueltech_daily(
+                stat_set = await energy_fueltech_daily_v3(
                     time_series=time_series,
                     networks_query=networks,
                     network_region_code=str(network_region.code),
@@ -417,7 +417,7 @@ async def export_all_daily(networks: list[NetworkSchema] | None = None, network_
                     period=human_to_period("all"),
                 )
 
-                stat_set = await energy_fueltech_daily(
+                stat_set = await energy_fueltech_daily_v3(
                     time_series=time_series,
                     networks_query=networks,
                     network_region_code=str(network_region.code),

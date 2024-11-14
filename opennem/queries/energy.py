@@ -3,10 +3,9 @@
 import asyncio
 import logging
 from datetime import datetime
-from textwrap import dedent
 from typing import Any
 
-from sqlalchemy import text
+from sqlalchemy import TextClause, text
 
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.db import get_read_session
@@ -22,7 +21,7 @@ def energy_network_fueltech_query(
     network_region: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
     coalesce_with: int | None = None,
-) -> str:
+) -> TextClause:
     """
     Get Energy for a network or network + region
     based on a year
@@ -39,19 +38,16 @@ def energy_network_fueltech_query(
 
     __query = """
     select
-        date_trunc('{trunc}', t.trading_day) as trading_day,
+        time_bucket_gapfill('{trunc}', t.interval) as interval,
         t.network_id,
         t.network_region,
-        t.fueltech_id,
+        t.fueltech_code,
         coalesce(sum(t.energy) / 1000, {coalesce_with}) as fueltech_energy_gwh,
         coalesce(sum(t.market_value), {coalesce_with}) as fueltech_market_value_dollars,
         coalesce(sum(t.emissions), {coalesce_with}) as fueltech_emissions_factor
-    from at_facility_daily t
-    left join facility f on t.facility_code = f.code
+    from at_facility_intervals t
     where
-        t.trading_day <= '{date_max}'::date and
-        t.trading_day >= '{date_min}'::date and
-        t.fueltech_id not in ('imports', 'exports', 'interconnector') and
+        t.interval between '{date_min}' and '{date_max}' and
         {network_query}
         {network_region_query}
         1=1
@@ -65,20 +61,16 @@ def energy_network_fueltech_query(
 
     # Get the time range using either the old way or the new v4 way
     time_series_range = time_series.get_range()
-    date_max = time_series_range.end
-    date_min = time_series_range.start
-
-    trunc = time_series_range.interval.trunc
 
     if network_region:
-        network_region_query = f"f.network_region='{network_region}' and"
+        network_region_query = f"t.network_region='{network_region}' and"
 
     # @NOTE special case for WEM to only include APVI data for that network/region
     # and not double-count all of AU
     network_apvi_wem = ""
 
     if network in [NetworkWEM, NetworkAU]:
-        network_apvi_wem = "or (t.network_id='APVI' and f.network_region in ('WEM'))"
+        network_apvi_wem = "or (t.network_id='APVI' and t.network_region in ('WEM'))"
 
         if NetworkAPVI in networks_query:
             networks_query.pop(networks_query.index(NetworkAPVI))
@@ -87,11 +79,11 @@ def energy_network_fueltech_query(
 
     network_query = f"(t.network_id IN ({networks_list}) {network_apvi_wem}) and "
 
-    return dedent(
+    return text(
         __query.format(
-            trunc=trunc,
-            date_min=date_min,
-            date_max=date_max,
+            trunc=time_series_range.interval.interval_sql,
+            date_min=time_series_range.start.date(),
+            date_max=time_series_range.end.date(),
             network_query=network_query,
             network_region_query=network_region_query,
             coalesce_with=coalesce_with or "NULL",

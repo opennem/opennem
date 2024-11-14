@@ -7,7 +7,7 @@ from sqlalchemy.sql.elements import TextClause
 
 from opennem.api.stats.controllers import networks_to_in
 from opennem.controllers.output.schema import OpennemExportSeries
-from opennem.schema.network import NetworkAPVI, NetworkAU, NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.schema.network import NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.stats import StatTypes
 
 logger = logging.getLogger("opennem.api.export.queries")
@@ -684,90 +684,6 @@ def demand_network_region_query(
 """
 Energy Queries
 """
-
-
-def energy_network_fueltech_query(
-    time_series: OpennemExportSeries,
-    network_region: str | None = None,
-    networks_query: list[NetworkSchema] | None = None,
-    coalesce_with: int | None = None,
-) -> TextClause:
-    """
-    Get Energy for a network or network + region
-    based on a year
-    """
-
-    if not networks_query:
-        networks_query = [time_series.network]
-
-    if time_series.network not in networks_query:
-        networks_query.append(time_series.network)
-
-    __query = """
-    select
-        date_trunc('{trunc}', t.trading_day) as trading_interval,
-        t.fueltech_id,
-        sum(t.fueltech_energy) as fueltech_energy_gwh,
-        sum(t.fueltech_market_value) as market_value_dollars,
-        sum(t.fueltech_emissions) as fueltech_emissions_t
-    from
-    (
-        select
-            time_bucket_gapfill('1d', t.trading_day) as trading_day,
-            t.fueltech_id,
-            coalesce(sum(t.energy) / 1000, {coalesce_with}) as fueltech_energy,
-            coalesce(sum(t.market_value), {coalesce_with}) as fueltech_market_value,
-            coalesce(sum(t.emissions), {coalesce_with}) as fueltech_emissions
-        from at_facility_daily t
-        where
-            t.trading_day <= '{date_max}'::date and
-            t.trading_day >= '{date_min}'::date and
-            t.fueltech_id not in ('imports', 'exports', 'interconnector') and
-            {network_query}
-            {network_region_query}
-            1=1
-        group by 1, 2
-    ) as t
-    group by 1, 2
-    order by 1 desc;
-    """
-
-    network_region_query = ""
-
-    # Get the time range using either the old way or the new v4 way
-    time_series_range = time_series.get_range()
-    date_max = time_series_range.end
-    date_min = time_series_range.start
-
-    trunc = time_series_range.interval.trunc
-
-    if network_region:
-        network_region_query = f"t.network_region='{network_region}' and"
-
-    # @NOTE special case for WEM to only include APVI data for that network/region
-    # and not double-count all of AU
-    network_apvi_wem = ""
-
-    if time_series.network in [NetworkWEM, NetworkAU]:
-        network_apvi_wem = "or (t.network_id='APVI' and t.network_region in ('WEM'))"
-
-        if NetworkAPVI in networks_query:
-            networks_query.pop(networks_query.index(NetworkAPVI))
-
-    networks_list = networks_to_in(networks_query)
-
-    network_query = f"(t.network_id IN ({networks_list}) {network_apvi_wem}) and "
-
-    return text(
-        __query.format(
-            trunc=trunc,
-            date_min=date_min,
-            date_max=date_max,
-            network_query=network_query,
-            network_region_query=network_region_query,
-            coalesce_with=coalesce_with or "NULL",
-        )
-    )
 
 
 def energy_network_interconnector_emissions_query(
