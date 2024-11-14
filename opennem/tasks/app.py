@@ -38,6 +38,7 @@ from opennem.tasks.broker import REDIS_SETTINGS
 from opennem.tasks.tasks import (
     task_bom_capitals_crawl,
     task_clean_tmp_dir,
+    task_export_energy,
     task_export_facility_geojson,
     task_export_flows,
     task_facility_first_seen_check,
@@ -94,6 +95,14 @@ class WorkerSettings:
             task_nem_power_exports,
             minute=set(range(1, 60, 5)),
             second=58,
+            timeout=None,
+            unique=True,
+        ),
+        # energy latest export
+        cron(
+            task_export_energy,
+            minute=15,
+            second=0,
             timeout=None,
             unique=True,
         ),

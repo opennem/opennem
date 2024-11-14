@@ -6,7 +6,7 @@ from datetime import timedelta
 
 from opennem.aggregates.facility_interval import update_facility_aggregates_chunked
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
-from opennem.api.export.tasks import export_electricitymap, export_flows
+from opennem.api.export.tasks import export_electricitymap, export_energy, export_flows
 from opennem.cms.importer import update_database_facilities_from_cms
 from opennem.controllers.schema import ControllerReturn
 from opennem.crawl import run_crawl
@@ -116,6 +116,11 @@ async def task_export_flows(ctx) -> None:
 
 
 # Output and processing tasks
+
+
+async def task_export_energy(ctx) -> None:
+    """Runs the energy export"""
+    await export_energy(latest=True)
 
 
 async def task_update_facility_aggregates_chunked(ctx) -> None:
