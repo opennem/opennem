@@ -601,3 +601,733 @@ Total rows: 555
 
 | Field Name | Data Type | Max Length | Nullable |
 |------------|-----------|------------|----------|
+| id | integer | N/A | No |
+| code | text | N/A | No |
+| name | text | N/A | No |
+| description | text | N/A | Yes |
+| wikipedia_link | text | N/A | Yes |
+| wikidata_id | text | N/A | Yes |
+| network_id | text | N/A | No |
+| network_region | text | N/A | No |
+| approved | boolean | N/A | No |
+| website_url | text | N/A | Yes |
+
+### Create Table Statement
+
+```sql
+CREATE TABLE public.facilities
+(
+    id integer NOT NULL,
+    code text NOT NULL,
+    name text NOT NULL,
+    description text,
+    wikipedia_link text,
+    wikidata_id text,
+    network_id text NOT NULL,
+    network_region text NOT NULL,
+    approved boolean NOT NULL,
+    website_url text
+);
+
+```
+
+### Constraints
+
+- UNIQUE (code)
+- PRIMARY KEY (id)
+
+### Indexes
+
+- CREATE UNIQUE INDEX excl_station_network_duid ON public.facilities USING btree (code)
+- CREATE UNIQUE INDEX station_pkey ON public.facilities USING btree (id)
+- CREATE UNIQUE INDEX ix_facilities_code ON public.facilities USING btree (code)
+
+### Sample Data
+
+| id | code | name | description | wikipedia\_link | wikidata\_id | network\_id | network\_region | approved | website\_url |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 379 | DCWL\_DENMARK | Denmark | None | None | None | WEM | WEM | True | https://www\.dcw\.net\.au/index\.htm |
+| 41 | BAYSW | Bayswater | None | https://en\.wikipedia\.org/wiki/Bayswater\_Power\_Station | Q2944653 | NEM | NSW1 | True | None |
+| 353 | YALLOURN | Yallourn W | None | https://en\.wikipedia\.org/wiki/Yallourn\_Power\_Station | None | NEM | VIC1 | True | https://www\.energyaustralia\.com\.au/about\-us/energy\-generation/yallourn\-power\-station |
+| 188 | LONSDALE | Lonsdale | Lonsdale Power Station is a diesel\-powered electricity generator in South Australia in Lonsdale, an industrial southern suburb of Adelaide\. It is owned by Snowy Hydro since 2014\. It consists of 18 die\.\.\. | https://en\.wikipedia\.org/wiki/Lonsdale\_Power\_Station | Q48815652 | NEM | SA1 | True | None |
+| 274 | SNOWNTH | Snowtown North | None | https://en\.wikipedia\.org/wiki/Snowtown\_Wind\_Farm | None | NEM | SA1 | True | https://snowtownwindfarm2\.com\.au/ |
+
+## Table: public.facility_scada
+
+Total rows: 782,048,285
+
+### Fields
+
+| Field Name | Data Type | Max Length | Nullable |
+|------------|-----------|------------|----------|
+| network_id | text | N/A | No |
+| interval | timestamp without time zone | N/A | No |
+| facility_code | text | N/A | No |
+| generated | numeric | N/A | Yes |
+| energy | numeric | N/A | Yes |
+| is_forecast | boolean | N/A | No |
+| energy_quality_flag | numeric | N/A | No |
+
+### Create Table Statement
+
+```sql
+CREATE TABLE public.facility_scada
+(
+    network_id text NOT NULL,
+    "interval" timestamp without time zone NOT NULL,
+    facility_code text NOT NULL,
+    generated numeric,
+    energy numeric,
+    is_forecast boolean NOT NULL,
+    energy_quality_flag numeric NOT NULL
+);
+
+```
+
+### Constraints
+
+- PRIMARY KEY ("interval", network_id, facility_code, is_forecast)
+
+### Indexes
+
+- CREATE UNIQUE INDEX pk_facility_scada ON public.facility_scada USING btree ("interval", network_id, facility_code, is_forecast)
+- CREATE INDEX idx_facility_scada_facility_code_interval ON public.facility_scada USING btree (facility_code, "interval" DESC)
+- CREATE INDEX idx_facility_scada_interval_bucket ON public.facility_scada USING btree ("interval", network_id, facility_code, is_forecast)
+- CREATE INDEX idx_facility_scada_interval_facility_code ON public.facility_scada USING btree ("interval", facility_code)
+- CREATE INDEX ix_facility_scada_facility_code ON public.facility_scada USING btree (facility_code)
+- CREATE INDEX ix_facility_scada_interval ON public.facility_scada USING btree ("interval")
+- CREATE INDEX ix_facility_scada_network_id ON public.facility_scada USING btree (network_id)
+- CREATE INDEX idx_facility_scada_network_id ON public.facility_scada USING btree (network_id)
+- CREATE INDEX idx_facility_scada_non_forecast ON public.facility_scada USING btree ("interval", facility_code, generated, energy) WHERE (is_forecast = false)
+- CREATE INDEX idx_facility_scada_lookup ON public.facility_scada USING btree ("interval", facility_code, is_forecast) WHERE (is_forecast = false)
+- CREATE INDEX idx_facility_scada_grouping ON public.facility_scada USING btree (network_id, facility_code, energy)
+
+### Sample Data
+
+| network\_id | interval | facility\_code | generated | energy | is\_forecast | energy\_quality\_flag |
+| --- | --- | --- | --- | --- | --- | --- |
+| NEM | 2014\-08\-24 08:05:00 | ROWALLAN | 9\.1945 | 0\.76206666666666666667 | False | 2 |
+| NEM | 2013\-09\-17 11:40:00 | YWPS2 | 0\.0 | 0E\-20 | False | 2 |
+| NEM | 2013\-06\-12 20:30:00 | LKBONNY2 | 53\.74159 | 4\.4579862500000000 | False | 2 |
+| NEM | 2013\-07\-10 18:55:00 | CG4 | 0\.0 | 0E\-20 | False | 2 |
+| NEM | 2016\-02\-19 05:55:00 | QPS5 | 0\.0 | 0E\-20 | False | 2 |
+
+## Table: public.facility_status
+
+Total rows: 12
+
+### Fields
+
+| Field Name | Data Type | Max Length | Nullable |
+|------------|-----------|------------|----------|
+| code | text | N/A | No |
+| label | text | N/A | Yes |
+
+### Create Table Statement
+
+```sql
+CREATE TABLE public.facility_status
+(
+    code text NOT NULL,
+    label text
+);
+
+```
+
+### Constraints
+
+- PRIMARY KEY (code)
+
+### Indexes
+
+- CREATE UNIQUE INDEX facility_status_pkey ON public.facility_status USING btree (code)
+
+### Sample Data
+
+| code | label |
+| --- | --- |
+| commissioning | Commissioning |
+| committed | Committed |
+| construction | Construction |
+| operating | Operating |
+| emerging | Emerging |
+
+## Table: public.feedback
+
+Total rows: 126
+
+### Fields
+
+| Field Name | Data Type | Max Length | Nullable |
+|------------|-----------|------------|----------|
+| id | integer | N/A | No |
+| subject | text | N/A | No |
+| description | text | N/A | Yes |
+| email | text | N/A | Yes |
+| twitter | text | N/A | Yes |
+| user_ip | text | N/A | Yes |
+| user_agent | text | N/A | Yes |
+| created_at | timestamp with time zone | N/A | Yes |
+| alert_sent | boolean | N/A | No |
+
+### Create Table Statement
+
+```sql
+CREATE TABLE public.feedback
+(
+    id integer NOT NULL,
+    subject text NOT NULL,
+    description text,
+    email text,
+    twitter text,
+    user_ip text,
+    user_agent text,
+    created_at timestamp with time zone,
+    alert_sent boolean NOT NULL
+);
+
+```
+
+### Constraints
+
+- PRIMARY KEY (id)
+
+### Indexes
+
+- CREATE UNIQUE INDEX feedback_pkey ON public.feedback USING btree (id)
+
+### Sample Data
+
+| id | subject | description | email | twitter | user\_ip | user\_agent | created\_at | alert\_sent |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 9 | Bango facility feedback | 
+\*\*Path:\*\*
+/facility/au/NEM/BANGOWF/?range=7d&interval=30m
+
+\*\*Sources:\*\*
+https://aemo\.com\.au
+
+\*\*Fields:\*\*
+\[
+ \{
+  "key": " label",
+  "value": ""
+ \},
+ \{
+  "key": "BANGOWF1 label",
+  "value": "BANGOWF1"
+\.\.\. | steven@me\.com | None | 101\.173\.163\.18 | Mozilla/5\.0 \(Macintosh; Intel Mac OS X 10\_15\_7\) AppleWebKit/537\.36 \(KHTML, like Gecko\) Chrome/91\.0\.4472\.77 Safari/537\.36 | 2021\-06\-04 05:31:06\.394107\+00:00 | True |
+| 84 | Flyers Creek Wind Farm facility feedback | 
+\*\*No email provided\.\*\*
+   
+
+\*\*Path:\*\*
+/facility/au/NEM/FLYCRKWF/?range=30d&interval=1d
+
+\*\*Sources:\*\*
+Registered Cap
+
+\*\*Fields:\*\*
+
+\`\`\`
+\[
+ \{
+  "key": "FLYCRKWF reg cap",
+  "value": 3\.8
+ \}
+\]
+\`\`\`
+
+\*\*Desc\.\.\. | None | None | 172\.19\.0\.1 | Mozilla/5\.0 \(Windows NT 10\.0; Win64; x64\) AppleWebKit/537\.36 \(KHTML, like Gecko\) Chrome/121\.0\.0\.0 Safari/537\.36 Edg/121\.0\.0\.0 | 2024\-02\-21 01:08:41\.438340\+00:00 | False |
+| 111 | Port Stanvac facility feedback | 
+\*\*No email provided\.\*\*
+   
+
+\*\*Path:\*\*
+/facility/au/NEM/STANVAC/?range=all&interval=1M
+
+\*\*Sources:\*\*
+Yourself
+
+\*\*Fields:\*\*
+
+\`\`\`
+\[
+ \{
+  "key": "STANV1 label",
+  "value": "STANV1"
+ \},
+ \{
+  "key": "STANV\.\.\. | None | None | 10\.244\.1\.28 | Mozilla/5\.0 \(Windows NT 10\.0; Win64; x64\) AppleWebKit/537\.36 \(KHTML, like Gecko\) Chrome/128\.0\.0\.0 Safari/537\.36 Edg/128\.0\.0\.0 | 2024\-09\-02 22:53:36\.977403\+00:00 | False |
+| 25 | Bango facility feedback | 
+\*\*No email provided\.\*\*
+   
+
+\*\*Path:\*\*
+/facility/au/NEM/BANGOWF/?range=7d&interval=30m
+
+\*\*Sources:\*\*
+sdf
+
+\*\*Fields:\*\*
+
+\`\`\`
+\[\]
+\`\`\`
+
+\*\*Description:\*\*
+sdf
+ | None | None | 61\.68\.241\.134 | Mozilla/5\.0 \(Macintosh; Intel Mac OS X 10\_15\_7\) AppleWebKit/537\.36 \(KHTML, like Gecko\) Chrome/91\.0\.4472\.124 Safari/537\.36 | 2021\-07\-03 05:44:37\.441475\+00:00 | True |
+| 30 | Bango facility feedback | 
+\*\*No email provided\.\*\*
+   
+
+\*\*Path:\*\*
+/facility/au/NEM/BANGOWF/?range=7d&interval=30m
+
+\*\*Sources:\*\*
+sdfsd
+
+\*\*Fields:\*\*
+
+\`\`\`
+\[\]
+\`\`\`
+
+\*\*Description:\*\*
+sdfsd
+ | None | None | 61\.68\.241\.134 | Mozilla/5\.0 \(Macintosh; Intel Mac OS X 10\_15\_7\) AppleWebKit/537\.36 \(KHTML, like Gecko\) Chrome/91\.0\.4472\.124 Safari/537\.36 | 2021\-07\-03 05:51:43\.116520\+00:00 | True |
+
+## Table: public.fueltech
+
+Total rows: 26
+
+### Fields
+
+| Field Name | Data Type | Max Length | Nullable |
+|------------|-----------|------------|----------|
+| created_by | text | N/A | Yes |
+| created_at | timestamp with time zone | N/A | Yes |
+| updated_at | timestamp with time zone | N/A | Yes |
+| code | text | N/A | No |
+| label | text | N/A | Yes |
+| renewable | boolean | N/A | Yes |
+| fueltech_group_id | text | N/A | Yes |
+
+### Create Table Statement
+
+```sql
+CREATE TABLE public.fueltech
+(
+    created_by text,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    code text NOT NULL,
+    label text,
+    renewable boolean,
+    fueltech_group_id text
+);
+
+```
+
+### Constraints
+
+- FOREIGN KEY (fueltech_group_id) REFERENCES fueltech_group(code)
+- PRIMARY KEY (code)
+
+### Indexes
+
+- CREATE UNIQUE INDEX fueltech_pkey ON public.fueltech USING btree (code)
+- CREATE INDEX idx_fueltech_code ON public.fueltech USING btree (code)
+
+### Sample Data
+
+| created\_by | created\_at | updated\_at | code | label | renewable | fueltech\_group\_id |
+| --- | --- | --- | --- | --- | --- | --- |
+| None | 2020\-12\-09 01:46:29\.087850\+00:00 | 2022\-10\-04 06:24:38\.617043\+00:00 | bioenergy\_biogas | Biogas | True | bioenergy |
+| None | 2020\-12\-09 01:46:29\.376830\+00:00 | 2022\-10\-04 06:24:38\.865319\+00:00 | gas\_ccgt | Gas \(CCGT\) | False | gas |
+| None | 2024\-11\-08 07:36:59\.022442\+00:00 | None | battery | Battery | True | None |
+| None | 2020\-12\-09 01:46:30\.020865\+00:00 | None | aggregator\_vpp | Aggregator \(VPP\) | True | None |
+| None | 2020\-12\-09 01:46:29\.261797\+00:00 | 2022\-10\-04 06:24:38\.765765\+00:00 | coal\_brown | Coal \(Brown\) | False | coal |
+
+## Table: public.fueltech_group
+
+Total rows: 10
+
+### Fields
+
+| Field Name | Data Type | Max Length | Nullable |
+|------------|-----------|------------|----------|
+| created_by | text | N/A | Yes |
+| created_at | timestamp with time zone | N/A | Yes |
+| updated_at | timestamp with time zone | N/A | Yes |
+| code | text | N/A | No |
+| label | text | N/A | Yes |
+| color | text | N/A | Yes |
+| renewable | boolean | N/A | No |
+
+### Create Table Statement
+
+```sql
+CREATE TABLE public.fueltech_group
+(
+    created_by text,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    code text NOT NULL,
+    label text,
+    color text,
+    renewable boolean NOT NULL
+);
+
+```
+
+### Constraints
+
+- PRIMARY KEY (code)
+
+### Indexes
+
+- CREATE UNIQUE INDEX fueltech_group_pkey ON public.fueltech_group USING btree (code)
+
+### Sample Data
+
+| created\_by | created\_at | updated\_at | code | label | color | renewable |
+| --- | --- | --- | --- | --- | --- | --- |
+| None | 2022\-10\-04 06:24:38\.411012\+00:00 | None | bioenergy | Bioenergy | \#A3886F | False |
+| None | 2022\-10\-04 06:24:38\.313712\+00:00 | 2024\-11\-08 07:35:33\.398075\+00:00 | hydro | Hyrdo | \#4582B4 | True |
+| None | 2022\-10\-04 06:24:38\.054393\+00:00 | None | gas | Gas | \#FF8813 | False |
+| None | 2022\-10\-04 06:24:38\.013420\+00:00 | None | coal | Coal | \#4a4a4a | False |
+| None | 2022\-10\-04 06:24:38\.214596\+00:00 | 2024\-11\-08 07:35:33\.398075\+00:00 | battery\_charging | Battery \(Charging\) | \#B2DAEF | True |
+
+## Table: public.milestones
+
+Total rows: 0
+
+### Fields
+
+| Field Name | Data Type | Max Length | Nullable |
+|------------|-----------|------------|----------|
+| record_id | text | N/A | No |
+| interval | timestamp without time zone | N/A | No |
+| instance_id | uuid | N/A | No |
+| aggregate | character varying | N/A | No |
+| metric | character varying | N/A | Yes |
+| period | character varying | N/A | Yes |
+| significance | integer | N/A | No |
+| value | double precision | N/A | No |
+| value_unit | character varying | N/A | Yes |
+| network_id | text | N/A | Yes |
+| network_region | text | N/A | Yes |
+| fueltech_id | text | N/A | Yes |
+| description | character varying | N/A | Yes |
+| description_long | character varying | N/A | Yes |
+| previous_instance_id | uuid | N/A | Yes |
+| created_at | timestamp without time zone | N/A | No |
+
+### Create Table Statement
+
+```sql
+CREATE TABLE public.milestones
+(
+    record_id text NOT NULL,
+    "interval" timestamp without time zone NOT NULL,
+    instance_id uuid NOT NULL,
+    aggregate character varying NOT NULL,
+    metric character varying,
+    period character varying,
+    significance integer NOT NULL,
+    value double precision NOT NULL,
+    value_unit character varying,
+    network_id text,
+    network_region text,
+    fueltech_id text,
+    description character varying,
+    description_long character varying,
+    previous_instance_id uuid,
+    created_at timestamp without time zone NOT NULL
+);
+
+```
+
+### Constraints
+
+- PRIMARY KEY (record_id, "interval")
+- FOREIGN KEY (network_id) REFERENCES network(code)
+
+### Indexes
+
+- CREATE UNIQUE INDEX excl_milestone_record_id_interval ON public.milestones USING btree (record_id, "interval")
+- CREATE INDEX idx_milestone_fueltech_id ON public.milestones USING btree (fueltech_id)
+- CREATE INDEX idx_milestone_network_id ON public.milestones USING btree (network_id)
+- CREATE INDEX ix_milestones_interval ON public.milestones USING btree ("interval")
+- CREATE INDEX ix_milestones_record_id ON public.milestones USING btree (record_id)
+
+## Table: public.network
+
+Total rows: 6
+
+### Fields
+
+| Field Name | Data Type | Max Length | Nullable |
+|------------|-----------|------------|----------|
+| created_by | text | N/A | Yes |
+| created_at | timestamp with time zone | N/A | Yes |
+| updated_at | timestamp with time zone | N/A | Yes |
+| code | text | N/A | No |
+| country | text | N/A | No |
+| label | text | N/A | Yes |
+| timezone | text | N/A | No |
+| interval_size | integer | N/A | No |
+| offset | integer | N/A | Yes |
+| timezone_database | text | N/A | Yes |
+| export_set | boolean | N/A | No |
+| interval_shift | integer | N/A | No |
+| network_price | text | N/A | No |
+| data_start_date | timestamp with time zone | N/A | Yes |
+| data_end_date | timestamp with time zone | N/A | Yes |
+
+### Create Table Statement
+
+```sql
+CREATE TABLE public.network
+(
+    created_by text,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    code text NOT NULL,
+    country text NOT NULL,
+    label text,
+    timezone text NOT NULL,
+    interval_size integer NOT NULL,
+    "offset" integer,
+    timezone_database text,
+    export_set boolean NOT NULL,
+    interval_shift integer NOT NULL,
+    network_price text NOT NULL,
+    data_start_date timestamp with time zone,
+    data_end_date timestamp with time zone
+);
+
+```
+
+### Constraints
+
+- PRIMARY KEY (code)
+
+### Indexes
+
+- CREATE UNIQUE INDEX network_pkey ON public.network USING btree (code)
+- CREATE INDEX idx_network_code ON public.network USING btree (code)
+- CREATE INDEX ix_network_data_end_date ON public.network USING btree (data_end_date)
+- CREATE INDEX ix_network_data_start_date ON public.network USING btree (data_start_date)
+
+### Sample Data
+
+| created\_by | created\_at | updated\_at | code | country | label | timezone | interval\_size | offset | timezone\_database | export\_set | interval\_shift | network\_price | data\_start\_date | data\_end\_date |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| None | 2020\-12\-09 01:46:31\.176786\+00:00 | 2024\-11\-06 19:15:23\.412803\+00:00 | APVI | au | APVI | Australia/Perth | 15 | 600 | AWST | False | 0 | WEM | 2015\-03\-19 20:15:00\+00:00 | 2024\-11\-06 19:00:00\+00:00 |
+| None | 2020\-12\-09 01:46:31\.118850\+00:00 | 2024\-11\-06 04:15:23\.483536\+00:00 | WEM | au | WEM | Australia/Perth | 30 | 480 | AWST | True | 0 | WEM | 2006\-09\-19 16:00:00\+00:00 | 2024\-11\-05 23:55:00\+00:00 |
+| None | 2020\-12\-09 01:46:31\.057929\+00:00 | 2024\-11\-06 19:15:23\.412803\+00:00 | NEM | au | NEM | Australia/Sydney | 5 | 600 | AEST | True | 5 | NEM | 1998\-12\-06 15:40:00\+00:00 | 2024\-11\-06 19:15:00\+00:00 |
+| None | 2023\-02\-22 09:54:49\.679305\+00:00 | 2023\-03\-17 22:55:36\.593610\+00:00 | OPENNEM\_ROOFTOP\_BACKFILL | au | OpenNEM Rooftop Backfill | Australia/Sydney | 30 | 600 | AEST | False | 0 | NEM | 2015\-03\-19 20:15:00\+00:00 | 2018\-02\-28 09:30:00\+00:00 |
+| None | 2021\-04\-09 10:15:56\.408641\+00:00 | 2024\-11\-06 19:15:23\.412803\+00:00 | AEMO\_ROOFTOP | au | AEMO Rooftop | Australia/Sydney | 30 | 600 | AEST | False | 0 | NEM | 2016\-07\-31 14:30:00\+00:00 | 2024\-11\-06 18:00:00\+00:00 |
+
+## Table: public.network_region
+
+Total rows: 11
+
+### Fields
+
+| Field Name | Data Type | Max Length | Nullable |
+|------------|-----------|------------|----------|
+| created_by | text | N/A | Yes |
+| created_at | timestamp with time zone | N/A | Yes |
+| updated_at | timestamp with time zone | N/A | Yes |
+| network_id | text | N/A | No |
+| code | text | N/A | No |
+| timezone | text | N/A | Yes |
+| timezone_database | text | N/A | Yes |
+| offset | integer | N/A | Yes |
+| export_set | boolean | N/A | No |
+
+### Create Table Statement
+
+```sql
+CREATE TABLE public.network_region
+(
+    created_by text,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    network_id text NOT NULL,
+    code text NOT NULL,
+    timezone text,
+    timezone_database text,
+    "offset" integer,
+    export_set boolean NOT NULL
+);
+
+```
+
+### Constraints
+
+- FOREIGN KEY (network_id) REFERENCES network(code)
+- PRIMARY KEY (network_id, code)
+
+### Indexes
+
+- CREATE UNIQUE INDEX network_region_pkey ON public.network_region USING btree (network_id, code)
+
+### Sample Data
+
+| created\_by | created\_at | updated\_at | network\_id | code | timezone | timezone\_database | offset | export\_set |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| None | 2020\-12\-09 01:46:31\.480819\+00:00 | None | NEM | TAS1 | None | None | None | True |
+| None | 2021\-04\-09 10:15:56\.445329\+00:00 | None | AEMO\_ROOFTOP | TAS1 | None | None | None | True |
+| None | 2020\-12\-09 01:46:31\.302424\+00:00 | None | NEM | NSW1 | None | None | None | True |
+| None | 2020\-12\-09 01:46:31\.363840\+00:00 | None | NEM | QLD1 | None | None | None | True |
+| None | 2021\-04\-09 10:15:56\.449008\+00:00 | None | AEMO\_ROOFTOP | SA1 | None | None | None | True |
+
+## Table: public.stats
+
+Total rows: 403
+
+### Fields
+
+| Field Name | Data Type | Max Length | Nullable |
+|------------|-----------|------------|----------|
+| created_by | text | N/A | Yes |
+| created_at | timestamp with time zone | N/A | Yes |
+| updated_at | timestamp with time zone | N/A | Yes |
+| stat_date | timestamp with time zone | N/A | No |
+| country | text | N/A | No |
+| stat_type | text | N/A | No |
+| value | numeric | N/A | Yes |
+
+### Create Table Statement
+
+```sql
+CREATE TABLE public.stats
+(
+    created_by text,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    stat_date timestamp with time zone NOT NULL,
+    country text NOT NULL,
+    stat_type text NOT NULL,
+    value numeric
+);
+
+```
+
+### Constraints
+
+- PRIMARY KEY (stat_date, country, stat_type)
+
+### Indexes
+
+- CREATE UNIQUE INDEX stats_pkey ON public.stats USING btree (stat_date, country, stat_type)
+- CREATE INDEX ix_stats_stat_date ON public.stats USING btree (stat_date)
+
+### Sample Data
+
+| created\_by | created\_at | updated\_at | stat\_date | country | stat\_type | value |
+| --- | --- | --- | --- | --- | --- | --- |
+| None | 2021\-01\-05 09:47:54\.294658\+00:00 | None | 1926\-09\-01 00:00:00\+00:00 | au | CPI | 2\.9 |
+| None | 2021\-01\-05 09:47:54\.294658\+00:00 | None | 2000\-12\-31 00:00:00\+00:00 | au | CPI | 73\.1 |
+| None | 2021\-01\-05 09:47:54\.294658\+00:00 | None | 1970\-09\-30 00:00:00\+00:00 | au | CPI | 9\.8 |
+| None | 2021\-01\-05 09:47:54\.294658\+00:00 | None | 1975\-06\-30 00:00:00\+00:00 | au | CPI | 15\.8 |
+| None | 2021\-01\-05 09:47:54\.294658\+00:00 | None | 1952\-09\-01 00:00:00\+00:00 | au | CPI | 6\.2 |
+
+## Table: public.units
+
+Total rows: 856
+
+### Fields
+
+| Field Name | Data Type | Max Length | Nullable |
+|------------|-----------|------------|----------|
+| id | integer | N/A | No |
+| fueltech_id | text | N/A | Yes |
+| status_id | text | N/A | Yes |
+| station_id | integer | N/A | Yes |
+| code | text | N/A | No |
+| capacity_registered | numeric | N/A | Yes |
+| registered | timestamp without time zone | N/A | Yes |
+| deregistered | timestamp without time zone | N/A | Yes |
+| unit_id | integer | N/A | Yes |
+| unit_number | integer | N/A | Yes |
+| unit_alias | text | N/A | Yes |
+| unit_capacity | numeric | N/A | Yes |
+| approved | boolean | N/A | No |
+| emissions_factor_co2 | numeric | N/A | Yes |
+| interconnector | boolean | N/A | No |
+| interconnector_region_to | text | N/A | Yes |
+| data_first_seen | timestamp with time zone | N/A | Yes |
+| data_last_seen | timestamp with time zone | N/A | Yes |
+| expected_closure_date | timestamp without time zone | N/A | Yes |
+| expected_closure_year | integer | N/A | Yes |
+| interconnector_region_from | text | N/A | Yes |
+| emission_factor_source | text | N/A | Yes |
+| dispatch_type | text | N/A | No |
+
+### Create Table Statement
+
+```sql
+CREATE TABLE public.units
+(
+    id integer NOT NULL,
+    fueltech_id text,
+    status_id text,
+    station_id integer,
+    code text NOT NULL,
+    capacity_registered numeric,
+    registered timestamp without time zone,
+    deregistered timestamp without time zone,
+    unit_id integer,
+    unit_number integer,
+    unit_alias text,
+    unit_capacity numeric,
+    approved boolean NOT NULL,
+    emissions_factor_co2 numeric,
+    interconnector boolean NOT NULL,
+    interconnector_region_to text,
+    data_first_seen timestamp with time zone,
+    data_last_seen timestamp with time zone,
+    expected_closure_date timestamp without time zone,
+    expected_closure_year integer,
+    interconnector_region_from text,
+    emission_factor_source text,
+    dispatch_type text NOT NULL
+);
+
+```
+
+### Constraints
+
+- PRIMARY KEY (id)
+- FOREIGN KEY (fueltech_id) REFERENCES fueltech(code)
+- FOREIGN KEY (status_id) REFERENCES facility_status(code)
+- FOREIGN KEY (station_id) REFERENCES facilities(id)
+
+### Indexes
+
+- CREATE UNIQUE INDEX facility_pkey ON public.units USING btree (id)
+- CREATE INDEX idx_facility_fueltech_id ON public.units USING btree (fueltech_id)
+- CREATE UNIQUE INDEX ix_units_code ON public.units USING btree (code)
+- CREATE INDEX ix_units_data_first_seen ON public.units USING btree (data_first_seen)
+- CREATE INDEX ix_units_data_last_seen ON public.units USING btree (data_last_seen)
+- CREATE INDEX ix_units_interconnector ON public.units USING btree (interconnector)
+- CREATE INDEX ix_units_interconnector_region_from ON public.units USING btree (interconnector_region_from)
+- CREATE INDEX ix_units_interconnector_region_to ON public.units USING btree (interconnector_region_to)
+- CREATE INDEX idx_facility_station_id ON public.units USING btree (station_id)
+- CREATE INDEX idx_units_lookup ON public.units USING btree (code, fueltech_id) WHERE ((fueltech_id IS NOT NULL) AND (fueltech_id <> ALL (ARRAY['imports'::text, 'exports'::text, 'interconnector'::text])))
+
+### Sample Data
+
+| id | fueltech\_id | status\_id | station\_id | code | capacity\_registered | registered | deregistered | unit\_id | unit\_number | unit\_alias | unit\_capacity | approved | emissions\_factor\_co2 | interconnector | interconnector\_region\_to | data\_first\_seen | data\_last\_seen | expected\_closure\_date | expected\_closure\_year | interconnector\_region\_from | emission\_factor\_source | dispatch\_type |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 795 | wind | operating | 553 | RYEPARK1 | 396\.0 | None | None | None | None | None | None | True | 0\.0 | False | None | 2023\-08\-18 09:40:00\+00:00 | 2024\-11\-15 08:00:00\+00:00 | None | None | None | None | GENERATOR |
+| 572 | gas\_ocgt | operating | 409 | PINJAR\_GT3 | 39\.2999999999999971578290569595992565155029296875 | 2003\-07\-01 00:00:00 | None | None | None | None | None | True | 0\.81999999999999995115018691649311222136020660400390625 | False | None | 2013\-12\-21 17:30:00\+00:00 | 2024\-09\-21 16:20:00\+00:00 | None | None | None | None | GENERATOR |
+| 852 | battery | operating | 101 | DALNTH1 | 30 | 2024\-07\-24 00:00:00 | None | None | None | None | None | True | None | False | None | None | None | 2030\-01\-01 00:00:00 | None | None | None | BIDIRECTIONAL |
+| 64 | gas\_steam | retired | 46 | BELLBAY1 | 120\.0 | None | None | None | None | None | None | True | 0\.70860000000000000763833440942107699811458587646484375 | False | None | 2005\-05\-16 13:35:00\+00:00 | 2008\-11\-19 08:05:00\+00:00 | None | None | None | None | GENERATOR |
+| 754 | None | operating | 508 | V\-SA\-2 | None | None | None | None | None | None | None | False | 0\.0 | False | None | 2009\-07\-01 00:05:00\+00:00 | 2020\-12\-31 12:15:00\+00:00 | None | None | None | None | GENERATOR |
