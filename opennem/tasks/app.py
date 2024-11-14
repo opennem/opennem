@@ -39,6 +39,7 @@ from opennem.tasks.tasks import (
     task_bom_capitals_crawl,
     task_clean_tmp_dir,
     task_export_facility_geojson,
+    task_export_flows,
     task_facility_first_seen_check,
     task_nem_interval_check,
     task_nem_power_exports,
@@ -96,10 +97,18 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
-        # energy update
+        # facility aggregates
         cron(
             task_update_facility_aggregates_chunked,
             minute=set(range(0, 60, 5)),
+            second=0,
+            timeout=None,
+            unique=True,
+        ),
+        # export flows and electricitymap
+        cron(
+            task_export_flows,
+            minute=set(range(0, 60, 15)),
             second=0,
             timeout=None,
             unique=True,

@@ -5,7 +5,8 @@ import logging
 from datetime import timedelta
 
 from opennem.aggregates.facility_interval import update_facility_aggregates_chunked
-from opennem.aggregates.network_flows_v3 import run_flows_for_last_intervals
+from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
+from opennem.api.export.tasks import export_electricitymap, export_flows
 from opennem.cms.importer import update_database_facilities_from_cms
 from opennem.controllers.schema import ControllerReturn
 from opennem.crawl import run_crawl
@@ -24,7 +25,7 @@ from opennem.crawlers.wemde import run_all_wem_crawlers
 from opennem.exporter.facilities import export_facilities_static
 from opennem.exporter.historic import export_historic_intervals
 from opennem.pipelines.export import run_export_power_latest_for_network
-from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM, NetworkWEMDE
+from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.tasks.exceptions import OpenNEMPipelineRetryTask
 from opennem.utils.dates import get_last_completed_interval_for_network
 from opennem.workers.energy import process_energy_from_now
@@ -49,8 +50,18 @@ async def task_nem_interval_check(ctx) -> None:
         logger.warning("No new data from crawlers")
         raise OpenNEMPipelineRetryTask()
 
+    # update energy
+    await process_energy_from_now()
+    # update facility aggregates
+    interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
+
+    await update_facility_aggregates_chunked(
+        start_date=interval - timedelta(hours=1),
+        end_date=interval,
+    )
+
     # run flows
-    run_flows_for_last_intervals(interval_number=2, network=NetworkNEM)
+    run_flows_for_last_days(days=1, network=NetworkNEM)
 
     await asyncio.gather(
         run_export_power_latest_for_network(network=NetworkNEM), run_export_power_latest_for_network(network=NetworkAU)
@@ -84,16 +95,24 @@ async def task_bom_capitals_crawl(ctx) -> None:
 
 async def task_run_energy_calculation(ctx) -> None:
     """Runs the energy calculation for the last 2 hours"""
-    await process_energy_from_now()
+    pass
+    # await process_energy_from_now()
 
 
 async def task_nem_power_exports(ctx) -> None:
     """Runs the NEM exports"""
-    await asyncio.gather(
-        run_export_power_latest_for_network(network=NetworkNEM),
-        run_export_power_latest_for_network(network=NetworkAU),
-        run_export_power_latest_for_network(network=NetworkWEMDE),
-    )
+    pass
+    # await asyncio.gather(
+    #     run_export_power_latest_for_network(network=NetworkNEM),
+    #     run_export_power_latest_for_network(network=NetworkAU),
+    #     run_export_power_latest_for_network(network=NetworkWEMDE),
+    # )
+
+
+async def task_export_flows(ctx) -> None:
+    """Runs the flows export"""
+    await export_electricitymap()
+    await export_flows()
 
 
 # Output and processing tasks
@@ -101,12 +120,13 @@ async def task_nem_power_exports(ctx) -> None:
 
 async def task_update_facility_aggregates_chunked(ctx) -> None:
     """Updates facility aggregates in chunks"""
-    interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
+    pass
+    # interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
 
-    await update_facility_aggregates_chunked(
-        start_date=interval - timedelta(hours=4),
-        end_date=interval,
-    )
+    # await update_facility_aggregates_chunked(
+    #     start_date=interval - timedelta(hours=4),
+    #     end_date=interval,
+    # )
 
 
 async def task_facility_first_seen_check(ctx) -> None:
