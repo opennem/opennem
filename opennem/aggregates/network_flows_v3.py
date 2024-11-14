@@ -7,20 +7,22 @@ and market_value
 
 import logging
 from datetime import datetime, timedelta
+from textwrap import dedent
 
 import pandas as pd
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.orm import Session
 
 from opennem import settings
 from opennem.core.flow_solver import (
     solve_flow_emissions_with_pandas,
 )
-from opennem.db import get_database_engine, get_scoped_session
+from opennem.db import db_connect_sync
 from opennem.db.models.opennem import AggregateNetworkFlows
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.dates import day_series, get_last_completed_interval_for_network
 
-logger = logging.getLogger("opennem.aggregates.flows_v3")
+logger = logging.getLogger("opennem.aggregates.network_flows")
 
 
 class FlowWorkerException(Exception):
@@ -48,25 +50,27 @@ def load_interconnector_intervals(
         2023-04-09 10:15:00                       VIC1                     NSW1 -261.80997 -21.817498
         2023-04-09 10:15:00                       VIC1                      SA1  412.31787  34.359822
     """
-    engine = get_database_engine()
+    engine = db_connect_sync()
 
     if not interval_end:
         interval_end = interval_start
 
     query = f"""
         select
-            fs.trading_interval at time zone '{network.timezone_database}' as trading_interval,
-            f.interconnector_region_from,
-            f.interconnector_region_to,
+            fs.interval as trading_interval,
+            u.interconnector_region_from,
+            u.interconnector_region_to,
             coalesce(sum(fs.generated), 0) as generated,
-            coalesce(sum(fs.generated) / 12, 0) as energy
+            coalesce(sum(fs.energy), sum(fs.generated) / 12, 0) as energy
         from facility_scada fs
-        left join facility f
-            on fs.facility_code = f.code
+        left join units u
+            on fs.facility_code = u.code
+        left join facilities f
+            on u.station_id = f.id
         where
-            fs.trading_interval >= '{interval_start}'
-            and fs.trading_interval <= '{interval_end}'
-            and f.interconnector is True
+            fs.interval >= '{interval_start}'
+            and fs.interval <= '{interval_end}'
+            and u.interconnector is True
             and f.network_id = '{network.code}'
         group by 1, 2, 3
         order by
@@ -74,13 +78,15 @@ def load_interconnector_intervals(
 
     """
 
-    df_gen = pd.read_sql(query, con=engine.raw_connection(), index_col=["trading_interval"])
+    logger.debug(dedent(query))
+
+    df_gen = pd.read_sql(query, con=engine, index_col=["trading_interval"])  # type: ignore
 
     if df_gen.empty:
         raise FlowWorkerException("No results from load_interconnector_intervals")
 
     # convert index to local timezone
-    df_gen.index.tz_localize(network.get_fixed_offset(), ambiguous="infer")
+    # df_gen.index.tz_localize(network.get_fixed_offset(), ambiguous="infer")
 
     df_gen.reset_index(inplace=True)
 
@@ -127,7 +133,7 @@ def load_energy_and_emissions_for_intervals(
         2023-04-09 10:20:00        NEM           VIC1  387.120670  236.121274             0.609942
     """
 
-    engine = get_database_engine()
+    engine = db_connect_sync()
 
     if not interval_end:
         interval_end = interval_start
@@ -169,20 +175,41 @@ def load_energy_and_emissions_for_intervals(
         order by 1 asc;
     """
 
-    db_connection = engine.raw_connection()
+    query = f"""
+        select
+            fs.interval as trading_interval,
+            fs.network_id,
+            fs.network_region,
+            sum(fs.generated) as generated,
+            sum(fs.energy) as energy,
+            sum(fs.emissions) as emissions,
+            case when sum(fs.emissions) > 0
+                then sum(fs.emissions) / sum(fs.energy)
+                else 0
+            end as emissions_intensity
+        from at_facility_intervals fs
+        where
+            fs.interval >= '{interval_start}'
+            and fs.interval <= '{interval_end}'
+            and fs.network_id IN ('{network.code}', 'AEMO_ROOFTOP', 'OPENNEM_ROOFTOP_BACKFILL')
+            and fs.fueltech_code not in ('battery_charging')
+            and fs.generated > 0
+        group by 1, 2, 3
+        order by 1 asc;
+    """
 
-    df_gen = pd.read_sql(query, con=db_connection, index_col=["trading_interval"])
+    df_gen = pd.read_sql(query, con=engine, index_col=["trading_interval"])  # type: ignore
 
     if df_gen.empty:
-        raise FlowWorkerException("No results from load_interconnector_intervals")
+        raise FlowWorkerException("No results from load_energy_and_emissions_for_intervals")
 
     # convert index to local timezone
-    df_gen.index.tz_localize(network.get_fixed_offset(), ambiguous="infer")
+    # df_gen.index.tz_localize(network.get_fixed_offset(), ambiguous="infer")
 
     df_gen.reset_index(inplace=True)
 
     if df_gen.empty:
-        raise FlowWorkerException("No results from load_interconnector_intervals")
+        raise FlowWorkerException("No results from load_energy_and_emissions_for_intervals")
 
     return df_gen
 
@@ -305,8 +332,8 @@ def calculate_demand_region_for_interval(energy_and_emissions: pd.DataFrame, imp
 
 def persist_network_flows_and_emissions_for_interval(flow_results: pd.DataFrame, network: NetworkSchema = NetworkNEM) -> int:
     """persists the records to at_network_flows"""
-    session = get_scoped_session()
-    engine = get_database_engine()
+    engine = db_connect_sync()
+    session = Session(engine)
 
     records_to_store = flow_results.to_dict(orient="records")
 
@@ -343,19 +370,6 @@ def persist_network_flows_and_emissions_for_interval(flow_results: pd.DataFrame,
     return len(records_to_store)
 
 
-def persist_network_flows_and_emissions_for_interval_as_dataframe(flow_results: pd.DataFrame) -> int | None:
-    """persists the records to at_network_flows"""
-    engine = get_database_engine()
-
-    return flow_results.to_sql("at_network_flows_v3", engine, if_exists="append", index=False, method="multi", chunksize=5000)
-
-
-# @profile_task(
-#     send_slack=False,
-#     message_fmt="Running flow v3 for {interval_number} intervals",
-#     level=ProfilerLevel.INFO,
-#     retention_period=ProfilerRetentionTime.FOREVER,
-# )
 def run_flows_for_last_intervals(interval_number: int, network: NetworkSchema = NetworkNEM) -> None:
     """ " Run flow processor for last x interval starting from now"""
 
@@ -523,15 +537,10 @@ def run_aggregate_flow_for_interval_v3(
 
 # debug entry point
 if __name__ == "__main__":
-    # run_flows_for_last_days(days=1)
-    # run_flows_by_month()
-    # run_flows_for_last_intervals(interval_number=12 * 24 * , network=NetworkNEM)
-    # run_flows_by_month()
+    latest_interval = get_last_completed_interval_for_network(network=NetworkNEM)
 
-    # from_interval = datetime.fromisoformat("2023-02-05T14:50:00+10:00")
-    # run_flows_for_last_intervals(interval_number=12 * 1, network=NetworkNEM)
-    run_flows_by_day_for_range(
-        period_start=datetime.fromisoformat("2024-01-29T00:00:00+10:00"),
-        period_end=get_last_completed_interval_for_network(network=NetworkNEM),
+    run_aggregate_flow_for_interval_v3(
+        network=NetworkNEM,
+        interval_start=latest_interval - timedelta(days=14),
+        interval_end=latest_interval,
     )
-    # run_aggregate_flow_for_interval_v3(network=NetworkNEM)
