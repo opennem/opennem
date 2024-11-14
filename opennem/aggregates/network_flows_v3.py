@@ -140,43 +140,6 @@ def load_energy_and_emissions_for_intervals(
 
     query = f"""
         select
-            generated_intervals.trading_interval,
-            '{network.code}' as network_id,
-            generated_intervals.network_region,
-            sum(generated_intervals.generated) as generated,
-            sum(generated_intervals.energy) as energy,
-            sum(generated_intervals.emissions) as emissions,
-            case when sum(generated_intervals.emissions) > 0
-                then sum(generated_intervals.emissions) / sum(generated_intervals.energy)
-                else 0
-            end as emissions_intensity
-        from
-        (
-            select
-                fs.trading_interval at time zone 'AEST' as trading_interval,
-                f.network_id,
-                f.network_region,
-                fs.facility_code,
-                sum(fs.generated) as generated,
-                sum(fs.generated) / 12 as energy,
-                sum(fs.generated) / 12 * f.emissions_factor_co2 as emissions
-            from facility_scada fs
-            left join facility f on fs.facility_code = f.code
-            where
-                fs.trading_interval >= '{interval_start}'
-                and fs.trading_interval <= '{interval_end}'
-                and f.network_id IN ('{network.code}', 'AEMO_ROOFTOP', 'OPENNEM_ROOFTOP_BACKFILL')
-                and f.fueltech_id not in ('battery_charging')
-                and f.interconnector is False
-                and fs.generated > 0
-            group by fs.trading_interval, fs.facility_code, f.emissions_factor_co2, f.network_region, f.network_id
-        ) as generated_intervals
-        group by 1, 2, 3
-        order by 1 asc;
-    """
-
-    query = f"""
-        select
             fs.interval as trading_interval,
             fs.network_id,
             fs.network_region,
@@ -197,6 +160,8 @@ def load_energy_and_emissions_for_intervals(
         group by 1, 2, 3
         order by 1 asc;
     """
+
+    logger.debug(dedent(query))
 
     df_gen = pd.read_sql(query, con=engine, index_col=["trading_interval"])  # type: ignore
 
@@ -391,7 +356,7 @@ def run_flows_for_last_days(days: int, network: NetworkSchema = NetworkNEM) -> N
 
     logger.info(f"Running flows for last {days}")
 
-    interval_end = get_last_completed_interval_for_network(network=NetworkNEM)
+    interval_end = get_last_completed_interval_for_network(network=network)
     interval_start = interval_end - timedelta(days=days)
     run_aggregate_flow_for_interval_v3(
         network=network,
@@ -542,5 +507,5 @@ if __name__ == "__main__":
     run_aggregate_flow_for_interval_v3(
         network=NetworkNEM,
         interval_start=latest_interval - timedelta(days=14),
-        interval_end=latest_interval,
+        interval_end=latest_interval - timedelta(days=9),
     )
