@@ -146,7 +146,7 @@ async def update_facility_aggregates_chunked(
     start_date: datetime,
     end_date: datetime,
     chunk_days: int = 30,
-    max_concurrent: int = 4,
+    max_concurrent: int = 2,
 ) -> None:
     """
     Updates facility aggregates in chunks working backwards from end_time to start_time.
@@ -237,7 +237,7 @@ if __name__ == "__main__":
 
     asyncio.run(
         update_facility_aggregates_chunked(
-            start_date=interval - timedelta(days=30),
+            start_date=interval - timedelta(days=14),
             end_date=interval,
             chunk_days=30,
         )
