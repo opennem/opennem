@@ -482,7 +482,6 @@ async def export_flows() -> None:
 
         if stat_set:
             await write_output(f"v3/stats/au/{interchange_stat.network.code}/flows/{period.period_human}.json", stat_set)
-            await write_output(f"v4/stats/au/{interchange_stat.network.code}/flows/{period.period_human}.json", stat_set)
 
 
 async def export_electricitymap() -> None:
@@ -560,7 +559,6 @@ async def export_electricitymap() -> None:
         em_set.append_set(power_set)
 
     await write_output("v3/clients/em/latest.json", em_set)
-    await write_output("v4/clients/em/latest.json", em_set)
 
 
 # Debug Hooks
