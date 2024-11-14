@@ -154,7 +154,7 @@ def load_energy_and_emissions_for_intervals(
         where
             fs.interval >= '{interval_start}'
             and fs.interval <= '{interval_end}'
-            and fs.network_id IN ('{network.code}', 'AEMO_ROOFTOP', 'OPENNEM_ROOFTOP_BACKFILL')
+            and fs.network_id IN ('{network.code}')
             and fs.fueltech_code not in ('battery_charging')
             and fs.generated > 0
         group by 1, 2, 3
@@ -441,12 +441,6 @@ def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = T
     return None
 
 
-# @profile_task(
-#     send_slack=True,
-#     message_fmt="Running aggregate flow v3 for interval {interval_start} for {network.code}",
-#     level=ProfilerLevel.INFO,
-#     retention_period=ProfilerRetentionTime.FOREVER,
-# )
 def run_aggregate_flow_for_interval_v3(
     network: NetworkSchema, interval_start: datetime, interval_end: datetime | None = None, validate_results: bool = False
 ) -> int | None:
@@ -506,6 +500,6 @@ if __name__ == "__main__":
 
     run_aggregate_flow_for_interval_v3(
         network=NetworkNEM,
-        interval_start=latest_interval - timedelta(days=14),
-        interval_end=latest_interval - timedelta(days=9),
+        interval_start=latest_interval - timedelta(days=21),
+        interval_end=latest_interval - timedelta(days=16),
     )
