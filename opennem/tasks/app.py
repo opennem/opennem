@@ -45,6 +45,7 @@ from opennem.tasks.tasks import (
     task_nem_rooftop_crawl,
     task_refresh_from_cms,
     task_run_energy_calculation,
+    task_update_facility_aggregates_chunked,
     task_update_facility_seen_range,
     task_wem_interval_check,
 )
@@ -92,6 +93,14 @@ class WorkerSettings:
             task_nem_power_exports,
             minute=set(range(1, 60, 5)),
             second=58,
+            timeout=None,
+            unique=True,
+        ),
+        # energy update
+        cron(
+            task_update_facility_aggregates_chunked,
+            minute=set(range(0, 60, 5)),
+            second=0,
             timeout=None,
             unique=True,
         ),

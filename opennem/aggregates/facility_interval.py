@@ -6,7 +6,8 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem.db import get_write_session
-from opennem.utils.dates import get_today_opennem
+from opennem.schema.network import NetworkNEM
+from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
 
 logger = logging.getLogger("opennem.aggregates.facility_interval")
 
@@ -27,9 +28,7 @@ async def update_facility_aggregates(
                 SELECT
                     time_bucket_gapfill(
                         '5 minutes'::interval,
-                        bs.interval,
-                        start => :start_time,
-                        finish => :end_time
+                        bs.interval
                     ) AS interval,
                     bs.network_id,
                     bs.network_region,
@@ -42,7 +41,7 @@ async def update_facility_aggregates(
                 FROM balancing_summary bs
                 WHERE
                     bs.interval >= :start_time
-                    AND bs.interval < :end_time
+                    AND bs.interval <= :end_time
                 GROUP BY 1, 2, 3
             )
             INSERT INTO at_facility_intervals (
@@ -96,7 +95,7 @@ async def update_facility_aggregates(
                 AND u.fueltech_id IS NOT NULL
                 AND u.fueltech_id NOT IN ('imports', 'exports', 'interconnector', 'battery')
                 AND fs.interval >= :start_time
-                AND fs.interval < :end_time
+                AND fs.interval <= :end_time
             GROUP BY 1, 2, 3, 4, 5, 6, 7
             ON CONFLICT (interval, network_id, facility_code, unit_code)
             DO UPDATE SET
@@ -234,10 +233,12 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     # Example: Update last 7 days of data in chunks
     # asyncio.run(run_facility_aggregate_updates(lookback_days=7))
+    interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
+
     asyncio.run(
         update_facility_aggregates_chunked(
-            start_date=datetime(1999, 12, 1),
-            end_date=datetime(2023, 1, 1),
+            start_date=interval - timedelta(days=30),
+            end_date=interval,
             chunk_days=30,
         )
     )
