@@ -252,8 +252,9 @@ async def export_energy(
             time_series.interval = human_to_interval("1M")
 
             stat_set = await energy_fueltech_daily_v3(
+                network=energy_stat.network,
                 time_series=time_series,
-                networks_query=energy_stat.networks,
+                # networks_query=energy_stat.networks,
                 network_region_code=energy_stat.network_region_query or energy_stat.network_region,
             )
 
@@ -339,8 +340,9 @@ async def export_all_monthly(networks: list[NetworkSchema] | None = None, networ
                 )
 
                 stat_set = await energy_fueltech_daily_v3(
+                    network=network,
                     time_series=time_series,
-                    networks_query=networks,
+                    # networks_query=networks,
                     network_region_code=str(network_region.code),
                 )
 
@@ -418,8 +420,9 @@ async def export_all_daily(networks: list[NetworkSchema] | None = None, network_
                 )
 
                 stat_set = await energy_fueltech_daily_v3(
+                    network=network,
                     time_series=time_series,
-                    networks_query=networks,
+                    # networks_query=networks,
                     network_region_code=str(network_region.code),
                 )
 
