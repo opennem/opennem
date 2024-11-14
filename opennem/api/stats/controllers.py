@@ -318,7 +318,7 @@ def get_scada_range_optimized(network: NetworkSchema) -> ScadaDateRange:
         raise Exception(f"No data start for {network.code}. Required for optimized scada range")
 
     data_start = chop_timezone(network.data_first_seen)
-    data_end = get_last_completed_interval_for_network(network, tz_aware=False)
+    data_end = get_last_completed_interval_for_network(network, tz_aware=False).replace(tzinfo=None)
 
     # find an earlier subnetwork data start
     if network.subnetworks:
