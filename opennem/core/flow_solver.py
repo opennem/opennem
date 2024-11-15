@@ -296,17 +296,17 @@ class FlowSolverResult:
 
 def solve_flow_emissions_with_pandas(interconnector_data, region_data, network: NetworkSchema = NetworkNEM) -> pd.DataFrame:
     """ """
-    region_intensities = region_data[["trading_interval", "network_region", "emissions_intensity"]]
+    region_intensities = region_data[["interval", "network_region", "emissions_intensity"]]
     result_set = interconnector_data.merge(
         region_intensities,
         how="inner",
-        left_on=["trading_interval", "interconnector_region_to"],
-        right_on=["trading_interval", "network_region"],
+        left_on=["interval", "interconnector_region_to"],
+        right_on=["interval", "network_region"],
     ).merge(
         region_intensities,
         how="inner",
-        left_on=["trading_interval", "interconnector_region_from"],
-        right_on=["trading_interval", "network_region"],
+        left_on=["interval", "interconnector_region_from"],
+        right_on=["interval", "network_region"],
         suffixes=["_imports", "_exports"],
     )
     result_set["flow"] = result_set["interconnector_region_from"] + "->" + result_set["interconnector_region_to"]
@@ -328,7 +328,7 @@ def solve_flow_emissions_with_pandas(interconnector_data, region_data, network: 
     # group into import and export dataframes
     imports = (
         (
-            result_set.groupby(["trading_interval", "interconnector_region_to"])[["energy", "emissions"]].apply(
+            result_set.groupby(["interval", "interconnector_region_to"])[["energy", "emissions"]].apply(
                 lambda x: x.astype(float).sum()
             )
         )
@@ -341,12 +341,12 @@ def solve_flow_emissions_with_pandas(interconnector_data, region_data, network: 
             },
             axis=1,
         )
-        .set_index(["trading_interval", "network_region"])
+        .set_index(["interval", "network_region"])
     )
 
     exports = (
         (
-            result_set.groupby(["trading_interval", "interconnector_region_from"])[["energy", "emissions"]].apply(
+            result_set.groupby(["interval", "interconnector_region_from"])[["energy", "emissions"]].apply(
                 lambda x: x.astype(float).sum()
             )
         )
@@ -359,7 +359,7 @@ def solve_flow_emissions_with_pandas(interconnector_data, region_data, network: 
             },
             axis=1,
         )
-        .set_index(["trading_interval", "network_region"])
+        .set_index(["interval", "network_region"])
     )
 
     # merge into single dataframe
@@ -372,7 +372,7 @@ def solve_flow_emissions_with_pandas(interconnector_data, region_data, network: 
     result_data.fillna(0, inplace=True)
 
     # fix timezone
-    result_data.index.levels[0].tz_localize(network.get_fixed_offset())
+    # result_data.index.levels[0].tz_localize(network.get_fixed_offset())
     result_data.reset_index(inplace=True)
 
     return result_data

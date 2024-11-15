@@ -44,7 +44,7 @@ def load_interconnector_intervals(
 
     Example return dataframe:
 
-        trading_interval    interconnector_region_from interconnector_region_to  generated     energy
+        interval    interconnector_region_from interconnector_region_to  generated     energy
         2023-04-09 10:15:00                       NSW1                     QLD1 -669.90010 -55.825008
         2023-04-09 10:15:00                       TAS1                     VIC1 -399.80002 -33.316668
         2023-04-09 10:15:00                       VIC1                     NSW1 -261.80997 -21.817498
@@ -57,7 +57,7 @@ def load_interconnector_intervals(
 
     query = f"""
         select
-            fs.interval as trading_interval,
+            fs.interval as interval,
             u.interconnector_region_from,
             u.interconnector_region_to,
             coalesce(sum(fs.generated), 0) as generated,
@@ -80,7 +80,7 @@ def load_interconnector_intervals(
 
     logger.debug(dedent(query))
 
-    df_gen = pd.read_sql(query, con=engine, index_col=["trading_interval"])  # type: ignore
+    df_gen = pd.read_sql(query, con=engine, index_col=["interval"])  # type: ignore
 
     if df_gen.empty:
         raise FlowWorkerException("No results from load_interconnector_intervals")
@@ -112,7 +112,7 @@ def load_energy_and_emissions_for_intervals(
     Returns:
         pd.DataFrame: DataFrame containing energy and emissions data for each network region.
             Columns:
-                - trading_interval (datetime): Trading interval.
+                - interval (datetime): Trading interval.
                 - network_id (str): Network ID.
                 - network_region (str): Network region.
                 - energy (float): Sum of energy.
@@ -125,7 +125,7 @@ def load_energy_and_emissions_for_intervals(
     Example return dataframe:
 
 
-        trading_interval    network_id network_region      energy   emissions  emissions_intensity
+        interval    network_id network_region      energy   emissions  emissions_intensity
         2023-04-09 10:20:00        NEM           NSW1  468.105472  226.549976             0.483972
         2023-04-09 10:20:00        NEM           QLD1  459.590348  295.124417             0.642147
         2023-04-09 10:20:00        NEM            SA1   36.929530    9.063695             0.245432
@@ -140,7 +140,7 @@ def load_energy_and_emissions_for_intervals(
 
     query = f"""
         select
-            fs.interval as trading_interval,
+            fs.interval as interval,
             fs.network_id,
             fs.network_region,
             sum(fs.generated) as generated,
@@ -163,7 +163,7 @@ def load_energy_and_emissions_for_intervals(
 
     logger.debug(dedent(query))
 
-    df_gen = pd.read_sql(query, con=engine, index_col=["trading_interval"])  # type: ignore
+    df_gen = pd.read_sql(query, con=engine, index_col=["interval"])  # type: ignore
 
     if df_gen.empty:
         raise FlowWorkerException("No results from load_energy_and_emissions_for_intervals")
@@ -199,7 +199,7 @@ def calculate_total_import_and_export_per_region_for_interval(interconnector_dat
     """
 
     dx = (
-        interconnector_data.groupby(["trading_interval", "interconnector_region_from", "interconnector_region_to"])
+        interconnector_data.groupby(["interval", "interconnector_region_from", "interconnector_region_to"])
         .energy.sum()
         .reset_index()
     )
@@ -214,8 +214,8 @@ def calculate_total_import_and_export_per_region_for_interval(interconnector_dat
     )
 
     # set indexes
-    dy.set_index(["trading_interval", "interconnector_region_to", "interconnector_region_from"], inplace=True)
-    dx.set_index(["trading_interval", "interconnector_region_to", "interconnector_region_from"], inplace=True)
+    dy.set_index(["interval", "interconnector_region_to", "interconnector_region_from"], inplace=True)
+    dx.set_index(["interval", "interconnector_region_to", "interconnector_region_from"], inplace=True)
 
     dy["energy"] *= -1
 
@@ -226,10 +226,10 @@ def calculate_total_import_and_export_per_region_for_interval(interconnector_dat
 
     energy_flows = pd.DataFrame(
         {
-            "energy_imports": f.groupby(["trading_interval", "interconnector_region_to"]).energy.sum(),
-            "energy_exports": f.groupby(["trading_interval", "interconnector_region_from"]).energy.sum(),
-            "generated_imports": f.groupby(["trading_interval", "interconnector_region_to"]).energy.sum() * 12,
-            "generated_exports": f.groupby(["trading_interval", "interconnector_region_from"]).energy.sum() * 12,
+            "energy_imports": f.groupby(["interval", "interconnector_region_to"]).energy.sum(),
+            "energy_exports": f.groupby(["interval", "interconnector_region_from"]).energy.sum(),
+            "generated_imports": f.groupby(["interval", "interconnector_region_to"]).energy.sum() * 12,
+            "generated_exports": f.groupby(["interval", "interconnector_region_from"]).energy.sum() * 12,
         }
     )
 
@@ -283,9 +283,7 @@ def calculate_demand_region_for_interval(energy_and_emissions: pd.DataFrame, imp
     """
     imports_and_export.rename({"level_1": "network_region"}, axis=1, inplace=True)
 
-    df_with_demand = energy_and_emissions.merge(
-        imports_and_export, how="left", on=["trading_interval", "network_id", "network_region"]
-    )
+    df_with_demand = energy_and_emissions.merge(imports_and_export, how="left", on=["interval", "network_id", "network_region"])
     df_with_demand["demand"] = df_with_demand["energy"]
     # - df_with_demand["energy_exports"]
 
@@ -304,13 +302,13 @@ def persist_network_flows_and_emissions_for_interval(flow_results: pd.DataFrame,
 
     for rec in records_to_store:
         rec["network_id"] = network.code
-        rec["trading_interval"] = rec["trading_interval"].replace(tzinfo=network.get_fixed_offset())
+        rec["interval"] = rec["interval"]
 
     # insert
     stmt = insert(AggregateNetworkFlows).values(records_to_store)
     stmt.bind = engine
     stmt = stmt.on_conflict_do_update(
-        index_elements=["trading_interval", "network_id", "network_region"],
+        index_elements=["interval", "network_id", "network_region"],
         set_={
             "energy_imports": stmt.excluded.energy_imports,
             "energy_exports": stmt.excluded.energy_exports,
@@ -403,7 +401,7 @@ def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = T
 
         if not bad_values.empty:
             for rec in bad_values.to_dict(orient="records"):
-                raise FlowsValidationError(f"Bad value: {rec["trading_interval"]} {rec["network_region"]} {field} {rec[field]}")
+                raise FlowsValidationError(f"Bad value: {rec["interval"]} {rec["network_region"]} {field} {rec[field]}")
 
     # 2. Check emission factors
     flow_records_validation = flow_records.copy()
@@ -421,7 +419,7 @@ def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = T
     if not bad_factors_exports.empty:
         for rec in bad_factors_exports.to_dict(orient="records"):
             bad_factor_message = (
-                f"Bad exports emission factor: {rec["trading_interval"]} {rec["network_region"]} {rec["exports_emission_factor"]}"
+                f"Bad exports emission factor: {rec["interval"]} {rec["network_region"]} {rec["exports_emission_factor"]}"
             )
             logger.error(bad_factor_message)
 
@@ -431,7 +429,7 @@ def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = T
     if not bad_factors_imports.empty:
         for rec in bad_factors_imports.to_dict(orient="records"):
             bad_factor_message = (
-                f"Bad imports emission factor: {rec["trading_interval"]} {rec["network_region"]} {rec["imports_emission_factor"]}"
+                f"Bad imports emission factor: {rec["interval"]} {rec["network_region"]} {rec["imports_emission_factor"]}"
             )
             logger.error(bad_factor_message)
 
@@ -500,6 +498,6 @@ if __name__ == "__main__":
 
     run_aggregate_flow_for_interval_v3(
         network=NetworkNEM,
-        interval_start=latest_interval - timedelta(days=21),
-        interval_end=latest_interval - timedelta(days=16),
+        interval_start=latest_interval - timedelta(days=20),
+        interval_end=latest_interval - timedelta(days=15),
     )
