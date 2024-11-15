@@ -21,7 +21,6 @@ from opennem.api.export.controllers import (
     gov_stats_cpi,
     power_flows_network_week,
     power_week,
-    weather_daily,
 )
 from opennem.api.export.map import PriorityType, StatExport, StatType, get_export_map
 from opennem.api.export.utils import write_output
@@ -32,6 +31,7 @@ from opennem.controllers.demand import demand_week_v3
 from opennem.controllers.energy import energy_fueltech_daily_v3
 from opennem.controllers.output.flows import power_flows_per_interval
 from opennem.controllers.output.schema import OpennemExportSeries
+from opennem.controllers.output.weather import run_weather_daily_v3
 from opennem.core.flows import invert_flow_set
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
 from opennem.core.time import get_interval
@@ -131,7 +131,7 @@ async def export_power(
 
         if power_stat.bom_station:
             with contextlib.suppress(Exception):
-                weather_set = await weather_daily(
+                weather_set = await run_weather_daily_v3(
                     time_series=time_series_weather,
                     station_code=power_stat.bom_station,
                     network_region=power_stat.network_region,
@@ -230,7 +230,7 @@ async def export_energy(
 
             if energy_stat.bom_station:
                 try:
-                    weather_stats = await weather_daily(
+                    weather_stats = await run_weather_daily_v3(
                         time_series=time_series,
                         station_code=energy_stat.bom_station,
                         network_region=energy_stat.network_region,
@@ -275,7 +275,7 @@ async def export_energy(
 
             if energy_stat.bom_station:
                 try:
-                    weather_stats = await weather_daily(
+                    weather_stats = await run_weather_daily_v3(
                         time_series=time_series,
                         station_code=energy_stat.bom_station,
                         network_region=energy_stat.network_region,
@@ -366,7 +366,7 @@ async def export_all_monthly(networks: list[NetworkSchema] | None = None, networ
 
                 if bom_station := get_network_region_weather_station(str(network_region.code)):
                     with contextlib.suppress(Exception):
-                        weather_stats = await weather_daily(
+                        weather_stats = await run_weather_daily_v3(
                             time_series=time_series,
                             station_code=bom_station,
                             network_region=str(network_region.code),
@@ -445,7 +445,7 @@ async def export_all_daily(networks: list[NetworkSchema] | None = None, network_
 
                 if bom_station := get_network_region_weather_station(str(network_region.code)):
                     with contextlib.suppress(Exception):
-                        weather_stats = await weather_daily(
+                        weather_stats = await run_weather_daily_v3(
                             time_series=time_series,
                             station_code=bom_station,
                             network_region=str(network_region.code),

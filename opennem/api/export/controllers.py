@@ -14,7 +14,6 @@ from opennem.api.export.queries import (
     power_network_fueltech_query,
     power_network_interconnector_emissions_query,
     price_network_query,
-    weather_observation_query,
 )
 from opennem.api.stats.controllers import stats_factory
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
@@ -34,75 +33,6 @@ logger = logging.getLogger(__name__)
 
 class NoResults(OpennemBaseHttpException):
     detail = "No results"
-
-
-async def weather_daily(
-    time_series: OpennemExportSeries,
-    station_code: str,
-    unit_name: str = "temperature_mean",
-    include_min_max: bool = True,
-    network_region: str | None = None,
-) -> OpennemDataSet | None:
-    engine = get_database_engine()
-    units = get_unit(unit_name)
-
-    query = weather_observation_query(
-        time_series=time_series,
-        station_codes=[station_code],
-    )
-
-    async with engine.begin() as conn:
-        result = await conn.execute(query)
-        row = result.fetchall()
-
-    temp_avg = [DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None) for i in row]
-
-    temp_min = [DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None) for i in row]
-
-    temp_max = [DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None) for i in row]
-
-    if not temp_avg:
-        logger.info(f"No weather results for {station_code}")
-        raise NoResults()
-
-    stats = stats_factory(
-        stats=temp_avg,
-        units=units,
-        network=time_series.network,
-        interval=time_series.interval,
-        region=network_region,
-        code="bom",
-        group_field="temperature",
-    )
-
-    if not stats:
-        raise NoResults()
-
-    if include_min_max:
-        stats_min = stats_factory(
-            stats=temp_min,
-            units=get_unit("temperature_min"),
-            network=time_series.network,
-            interval=time_series.interval,
-            region=network_region,
-            code="bom",
-            group_field="temperature",
-        )
-
-        stats_max = stats_factory(
-            stats=temp_max,
-            units=get_unit("temperature_max"),
-            network=time_series.network,
-            interval=time_series.interval,
-            region=network_region,
-            code="bom",
-            group_field="temperature",
-        )
-
-        stats.append_set(stats_min)
-        stats.append_set(stats_max)
-
-    return stats
 
 
 async def gov_stats_cpi() -> OpennemDataSet | None:

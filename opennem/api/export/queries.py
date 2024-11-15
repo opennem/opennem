@@ -13,45 +13,6 @@ from opennem.schema.stats import StatTypes
 logger = logging.getLogger("opennem.api.export.queries")
 
 
-def weather_observation_query(time_series: OpennemExportSeries, station_codes: list[str]) -> str:
-    """
-    Get weather observations for a list of stations and a date range.
-    """
-
-    fence_post_delta: timedelta = timedelta(minutes=0)
-
-    time_series_range = time_series.get_range()
-    date_start = time_series_range.start
-    date_end = time_series_range.end
-
-    __query = """
-    select
-        time_bucket_gapfill('{interval}', fs.observation_time, '{timezone}') as ot,
-        fs.station_id as station_id,
-        avg(fs.temp_air),
-        min(fs.temp_min),
-        max(fs.temp_max)
-    from mv_weather_observations fs
-    where
-        fs.station_id in ({station_codes}) and
-        fs.observation_time <= '{date_end}' and
-        fs.observation_time >= '{date_start}'
-    group by 1, 2
-    order by 1 desc;
-    """
-
-    query = __query.format(
-        station_codes=",".join([f"'{i}'" for i in station_codes]),
-        date_start=date_start,
-        date_end=date_end - fence_post_delta,
-        tz=time_series.network.timezone_database,
-        interval=time_series.interval.interval_sql,
-        timezone=time_series.network.timezone_database,
-    )
-
-    return dedent(query)
-
-
 def interconnector_power_flow(time_series: OpennemExportSeries, network_region: str) -> str:
     """Get interconnector region flows using materialized view"""
 
