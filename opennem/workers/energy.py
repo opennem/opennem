@@ -77,7 +77,7 @@ async def run_energy_calculation_for_interval(interval: datetime) -> int:
         return await _calculate_energy_for_interval(session, start_time, end_time)
 
 
-async def process_energy_from_now(interval: timedelta = timedelta(hours=2)) -> None:
+async def process_energy_from_now(hours: int = 2) -> None:
     """
     Process energy calculations from now.
 
@@ -86,7 +86,7 @@ async def process_energy_from_now(interval: timedelta = timedelta(hours=2)) -> N
 
     async with get_write_session() as session:
         end_time = get_today_opennem().replace(tzinfo=None)
-        start_time = end_time - interval
+        start_time = end_time - timedelta(hours=hours)
 
         logger.info(f"Processing energy calculations from {start_time} to {end_time}")
 
