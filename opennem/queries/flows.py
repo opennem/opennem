@@ -44,7 +44,7 @@ def power_network_flow_query(time_series: OpennemExportSeries, network_region: s
 
     ___query = """
     select
-        time_bucket_gapfill('{interval}', nf.trading_interval) as trading_interval,
+        time_bucket_gapfill('{interval}', nf.interval) as interval,
         nf.network_id,
         nf.network_region,
         max(nf.energy_imports) * {unit_scale} as power_imports_mw,
@@ -67,8 +67,7 @@ def power_network_flow_query(time_series: OpennemExportSeries, network_region: s
     where
         nf.network_id = '{network_id}' and
         nf.network_region= '{network_region}' and
-        nf.trading_interval <= '{date_end}' and
-        nf.trading_interval >= '{date_start}'
+        nf.interval between '{date_start}' and '{date_end}'
     group by 1, 2, 3
     order by 1 desc;
 
