@@ -7,7 +7,7 @@ from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.units import get_unit
 from opennem.db import db_connect
-from opennem.queries.energy import energy_network_fueltech_query
+from opennem.queries.energy import get_energy_network_fueltech_query
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("openne.controllers.energy")
@@ -22,7 +22,7 @@ async def energy_fueltech_daily_v3(
     engine = db_connect()
     units = get_unit("energy_giga")
 
-    query = energy_network_fueltech_query(
+    query = get_energy_network_fueltech_query(
         time_series=time_series,
         network=network,
         network_region=network_region_code,

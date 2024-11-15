@@ -15,7 +15,7 @@ from opennem.schema.network import NetworkAPVI, NetworkAU, NetworkNEM, NetworkSc
 logger = logging.getLogger("opennem.queries.energy")
 
 
-def energy_network_fueltech_query(
+def get_energy_network_fueltech_query(
     network: NetworkSchema,
     time_series: OpennemExportSeries,
     network_region: str | None = None,
