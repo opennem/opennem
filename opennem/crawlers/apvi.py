@@ -4,7 +4,7 @@ import logging
 from datetime import date
 
 from opennem.clients.apvi import APVIForecastSet, get_apvi_rooftop_data
-from opennem.controllers.apvi import store_apvi_forecastset, update_apvi_facility_capacities
+from opennem.controllers.apvi import store_apvi_forecastset
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
 from opennem.schema.date_range import CrawlDateRange
@@ -87,7 +87,7 @@ async def run_apvi_crawl(day: date | None = None) -> ControllerReturn:
 
     cr = await store_apvi_forecastset(apvi_forecast_set)
 
-    await update_apvi_facility_capacities(apvi_forecast_set)
+    # await update_apvi_facility_capacities(apvi_forecast_set)
 
     cr.server_latest = apvi_forecast_set.server_latest
 

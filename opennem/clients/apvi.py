@@ -7,13 +7,12 @@ from json.decoder import JSONDecodeError
 from typing import Any
 from urllib.parse import urlencode
 
-from pydantic import ValidationError, field_validator, validator
+from pydantic import ValidationError, field_validator
 
 from opennem import settings
 from opennem.core.normalizers import is_number
 from opennem.importer.rooftop import ROOFTOP_CODE
 from opennem.schema.core import BaseConfig
-from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_today_opennem, parse_date
 from opennem.utils.httpx import httpx_factory
 from opennem.utils.version import get_version
@@ -91,18 +90,21 @@ def get_apvi_uri(date: date | None = None) -> str:
 
 
 class APVIForecastInterval(BaseConfig):
-    trading_interval: datetime
+    interval: datetime
     network_id: str = APVI_NETWORK_CODE
     state: str | None = None
     facility_code: str | None = None
     generated: float | None = None
-    eoi_quantity: float | None = None
+    energy: float | None = None
 
-    _validate_state = validator("state", pre=True, allow_reuse=True)(lambda x: x.strip().upper() if x else None)
+    @field_validator("state", mode="before")
+    def _validate_state(cls, value: str | None) -> str | None:
+        """Validate and format the state field."""
+        return value.strip().upper() if value else None
 
-    @field_validator("trading_interval", mode="before")
-    @classmethod
+    @field_validator("interval", mode="before")
     def _validate_trading_interval(cls, value: Any) -> datetime:
+        """Validate and parse the trading interval."""
         interval_time = parse_date(
             value,
             dayfirst=False,
@@ -112,29 +114,12 @@ class APVIForecastInterval(BaseConfig):
         if not interval_time:
             raise Exception(f"Invalid APVI forecast interval: {value}")
 
-        # All APVI data is in NEM time
-        interval_time = interval_time.astimezone(NetworkNEM.get_timezone())  # type: ignore
+        return interval_time.replace(tzinfo=None)
 
-        return interval_time
-
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator("facility_code", always=True, pre=True)
-    def _validate_facility_code(cls, value: Any, values: dict[str, Any]) -> str | None:
-        """Generate an OpenNEM derived facility code for APVI facilities"""
-        state = values.get("state", None)
-
-        if not state:
-            return None
-
-        return f"{ROOFTOP_CODE}_{APVI_NETWORK_CODE}_{state.upper()}"
-
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator("eoi_quantity", always=True, pre=True)
-    def _validate_eoi_quantity(cls, value: Any, values: dict[str, Any]) -> float | None:
-        """Calculates energy value"""
-        generated = values["generated"]
+    @field_validator("energy", mode="before")
+    def _validate_energy(cls, value: Any, values: dict[str, Any]) -> float | None:
+        """Calculate energy value."""
+        generated = value
         energy_quantity: float | None = None
 
         if generated and is_number(generated):
@@ -149,11 +134,9 @@ class APVIStateRooftopCapacity(BaseConfig):
     facility_code: str | None = None
     unit_number: int | None = None
 
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator("facility_code", always=True, pre=True)
+    @field_validator("facility_code", mode="before")
     def _validate_facility_code(cls, value: Any, values: dict[str, Any]) -> str:
-        """Generate an OpenNEM derived facility code for APVI facilities"""
+        """Generate an OpenNEM derived facility code for APVI facilities."""
         state = values["state"]
 
         return f"{ROOFTOP_CODE}_{APVI_NETWORK_CODE}_{state.upper()}"
@@ -223,9 +206,7 @@ async def get_apvi_rooftop_data(day: date | None = None) -> APVIForecastSet | No
 
     for state, record in grouped_records.items():
         for interval, value in record.items():
-            _interval_records.append(
-                APVIForecastInterval(trading_interval=interval, state=state, generated=value, eoi_quantity=value / 4)
-            )
+            _interval_records.append(APVIForecastInterval(interval=interval, state=state, generated=value, energy=value / 4))
 
     _state_capacities = {}
 
@@ -254,7 +235,7 @@ async def get_apvi_rooftop_data(day: date | None = None) -> APVIForecastSet | No
 
     apvi_server_latest: datetime | None = None
 
-    trading_intervals = list({i.trading_interval for i in _interval_records})
+    trading_intervals = list({i.interval for i in _interval_records})
 
     if trading_intervals:
         apvi_server_latest = max(trading_intervals)

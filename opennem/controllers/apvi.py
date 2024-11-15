@@ -31,6 +31,8 @@ async def store_apvi_forecastset(forecast_set: APVIForecastSet) -> ControllerRet
     cr.total_records = len(forecast_set.intervals)
 
     for _rec in forecast_set.intervals:
+        _rec.facility_code = f"ROOFTOP_APVI_{_rec.state.upper()}"
+
         records_to_store.append({**_rec.dict(exclude={"state"}), "is_forecast": False})
         cr.processed_records += 1
 
@@ -41,10 +43,10 @@ async def store_apvi_forecastset(forecast_set: APVIForecastSet) -> ControllerRet
         stmt = insert(FacilityScada).values(records_to_store)
         stmt.bind = engine
         stmt = stmt.on_conflict_do_update(
-            index_elements=["trading_interval", "network_id", "facility_code", "is_forecast"],
+            index_elements=["interval", "network_id", "facility_code", "is_forecast"],
             set_={
                 "generated": stmt.excluded.generated,
-                "eoi_quantity": stmt.excluded.eoi_quantity,
+                "energy": stmt.excluded.energy,
             },
         )
 
