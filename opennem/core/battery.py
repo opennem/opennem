@@ -56,8 +56,6 @@ async def _generate_battery_unit_map() -> dict[str, BatteryUnitMap]:
         logger.debug(f"Found {len(facilities)} bidirectional units")
 
         for facility in facilities:
-            logger.info(f"Processing {facility.code} {facility.name}")
-
             # find the bidirectional unit
             bidirectional_unit = next(
                 (unit for unit in facility.units if unit.dispatch_type == UnitDispatchType.BIDIRECTIONAL.value), None
