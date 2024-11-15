@@ -111,7 +111,7 @@ class OpennemDataHistory(BaseConfig):
     interval: str
     data: Annotated[
         list[ValidNumberOrNull],
-        PlainSerializer(lambda x: [cast_float_or_none(i) for i in x], return_type=float, when_used="json"),
+        PlainSerializer(lambda x: [cast_float_or_none(i) for i in x], return_type=list[float | None], when_used="json"),
     ] = pydantic.Field(..., description="Data values")
 
     def get_date(self, dt: date) -> ValidNumberOrNull:
