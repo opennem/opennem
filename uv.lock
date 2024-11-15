@@ -1586,7 +1586,6 @@ dev = [
     { name = "hypothesis" },
     { name = "mdutils" },
     { name = "pdbpp" },
-    { name = "psycopg2" },
     { name = "psycopg2-binary" },
     { name = "pyright" },
     { name = "pytest" },
@@ -1664,7 +1663,6 @@ dev = [
     { name = "hypothesis", specifier = ">=6.108.5,<7.0.0" },
     { name = "mdutils", specifier = ">=1.2.2,<2.0.0" },
     { name = "pdbpp", specifier = ">=0.10.2,<1.0.0" },
-    { name = "psycopg2", extras = ["binary"], specifier = ">=2.9.10" },
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
     { name = "pyright", specifier = ">=1.1.299,<2.0.0" },
     { name = "pytest", specifier = ">=8.0.0,<9.0.0" },
@@ -2126,16 +2124,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/85/50/cd61a358ba1601f40e7d38bcfba22e053f40ef2c50d55b55926aecc8fec7/protobuf-5.28.3-cp38-abi3-manylinux2014_aarch64.whl", hash = "sha256:3fa2de6b8b29d12c61911505d893afe7320ce7ccba4df913e2971461fa36d584", size = 316511 },
     { url = "https://files.pythonhosted.org/packages/5d/ae/3257b09328c0b4e59535e497b0c7537d4954038bdd53a2f0d2f49d15a7c4/protobuf-5.28.3-cp38-abi3-manylinux2014_x86_64.whl", hash = "sha256:712319fbdddb46f21abb66cd33cb9e491a5763b2febd8f228251add221981135", size = 316624 },
     { url = "https://files.pythonhosted.org/packages/ad/c3/2377c159e28ea89a91cf1ca223f827ae8deccb2c9c401e5ca233cd73002f/protobuf-5.28.3-py3-none-any.whl", hash = "sha256:cee1757663fa32a1ee673434fcf3bf24dd54763c79690201208bafec62f19eed", size = 169511 },
-]
-
-[[package]]
-name = "psycopg2"
-version = "2.9.10"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/62/51/2007ea29e605957a17ac6357115d0c1a1b60c8c984951c19419b3474cdfd/psycopg2-2.9.10.tar.gz", hash = "sha256:12ec0b40b0273f95296233e8750441339298e6a572f7039da5b260e3c8b60e11", size = 385672 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/3d/16/4623fad6076448df21c1a870c93a9774ad8a7b4dd1660223b59082dd8fec/psycopg2-2.9.10-cp312-cp312-win32.whl", hash = "sha256:65a63d7ab0e067e2cdb3cf266de39663203d38d6a8ed97f5ca0cb315c73fe067", size = 1025113 },
-    { url = "https://files.pythonhosted.org/packages/66/de/baed128ae0fc07460d9399d82e631ea31a1f171c0c4ae18f9808ac6759e3/psycopg2-2.9.10-cp312-cp312-win_amd64.whl", hash = "sha256:4a579d6243da40a7b3182e0430493dbd55950c493d8c68f4eec0b302f6bbf20e", size = 1163951 },
 ]
 
 [[package]]
