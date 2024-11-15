@@ -13,7 +13,6 @@ import asyncclick as click
 from opennem import settings
 from opennem.core.crawlers.cli import cmd_crawl_cli
 from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures, load_fueltechs
-from opennem.exporter.historic import export_historic_intervals
 from opennem.importer.db import import_all_facilities
 from opennem.importer.db import init as db_init
 
@@ -79,18 +78,6 @@ def cmd_task() -> None:
     pass
 
 
-@click.command()
-@click.option("--weeks", required=False, type=int, default=None)
-def cmd_task_historic(weeks: int | None) -> None:
-    """
-    Runs the historic exports for number of weeks
-
-    Args:
-        weeks (int | None): number of weeks to run
-    """
-    export_historic_intervals(limit=weeks)
-
-
 main.add_command(cmd_crawl_cli, name="crawl")
 main.add_command(cmd_db, name="db")
 main.add_command(cmd_import, name="import")
@@ -105,8 +92,6 @@ cmd_import.add_command(cmd_import_bom_stations, name="bom")
 cmd_db.add_command(cmd_db_init, name="init")
 cmd_db.add_command(cmd_db_fixtures, name="fixtures")
 
-
-cmd_task.add_command(cmd_task_historic, name="historic")
 
 if __name__ == "__main__":
     try:
