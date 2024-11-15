@@ -42,9 +42,9 @@ def energy_network_fueltech_query(
         t.network_id,
         t.network_region,
         t.fueltech_code,
-        coalesce(sum(t.energy) / 1000, {coalesce_with}) as fueltech_energy_gwh,
-        coalesce(sum(t.market_value), {coalesce_with}) as fueltech_market_value_dollars,
-        coalesce(sum(t.emissions), {coalesce_with}) as fueltech_emissions_factor
+        round((sum(t.energy) / 1000)::numeric, 4) as fueltech_energy_gwh,
+        round(sum(t.market_value)::numeric, 2) as fueltech_market_value_dollars,
+        round(sum(t.emissions)::numeric, 2) as fueltech_emissions_factor
     from at_facility_intervals t
     where
         t.interval between '{date_min}' and '{date_max}' and
