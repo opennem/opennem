@@ -43,6 +43,7 @@ from opennem.tasks.tasks import (
     task_export_flows,
     task_facility_first_seen_check,
     task_nem_interval_check,
+    task_nem_per_day_check,
     task_nem_power_exports,
     task_nem_rooftop_crawl,
     task_refresh_from_cms,
@@ -80,6 +81,15 @@ class WorkerSettings:
         cron(
             task_wem_interval_check,
             minute=set(range(0, 60, 5)),
+            second=58,
+            timeout=None,
+            unique=True,
+        ),
+        # NEM Next Day Dispatch
+        cron(
+            task_nem_per_day_check,
+            hour={4, 5, 6},
+            minute=25,
             second=58,
             timeout=None,
             unique=True,

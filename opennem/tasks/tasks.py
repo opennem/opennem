@@ -157,12 +157,12 @@ async def task_update_facility_seen_range(ctx) -> None:
     await update_facility_seen_range(interval_window_days=1)
 
 
-async def nem_per_day_check(always_run: bool = False) -> ControllerReturn:
+async def task_nem_per_day_check(ctx) -> ControllerReturn:
     """This task is run daily for NEM"""
     dispatch_actuals = await run_crawl(AEMONEMDispatchActualGEN)
     await run_crawl(AEMONEMNextDayDispatch)
 
-    if not always_run or not dispatch_actuals or not dispatch_actuals.inserted_records:
+    if not dispatch_actuals or not dispatch_actuals.inserted_records:
         raise OpenNEMPipelineRetryTask()
 
     # await daily_runner()
