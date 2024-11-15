@@ -5,6 +5,7 @@ import logging
 from datetime import timedelta
 
 from opennem.aggregates.facility_interval import update_facility_aggregates_chunked
+from opennem.aggregates.network_demand import run_aggregates_demand_network_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.api.export.tasks import export_electricitymap, export_energy, export_flows
 from opennem.cms.importer import update_database_facilities_from_cms
@@ -95,18 +96,16 @@ async def task_bom_capitals_crawl(ctx) -> None:
 
 async def task_run_energy_calculation(ctx) -> None:
     """Runs the energy calculation for the last 2 hours"""
-    pass
-    # await process_energy_from_now()
+    await process_energy_from_now()
 
 
 async def task_nem_power_exports(ctx) -> None:
     """Runs the NEM exports"""
-    pass
-    # await asyncio.gather(
-    #     run_export_power_latest_for_network(network=NetworkNEM),
-    #     run_export_power_latest_for_network(network=NetworkAU),
-    #     run_export_power_latest_for_network(network=NetworkWEMDE),
-    # )
+    await asyncio.gather(
+        run_export_power_latest_for_network(network=NetworkNEM),
+        run_export_power_latest_for_network(network=NetworkAU),
+        # run_export_power_latest_for_network(network=NetworkWEMDE),
+    )
 
 
 async def task_export_flows(ctx) -> None:
@@ -123,15 +122,24 @@ async def task_export_energy(ctx) -> None:
     await export_energy(latest=True)
 
 
+async def task_run_flows_for_last_days(ctx) -> None:
+    """Runs the flows for the last 2 days"""
+    run_flows_for_last_days(days=2, network=NetworkNEM)
+
+
 async def task_update_facility_aggregates_chunked(ctx) -> None:
     """Updates facility aggregates in chunks"""
-    pass
-    # interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
+    interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
 
-    # await update_facility_aggregates_chunked(
-    #     start_date=interval - timedelta(hours=4),
-    #     end_date=interval,
-    # )
+    await update_facility_aggregates_chunked(
+        start_date=interval - timedelta(hours=4),
+        end_date=interval,
+    )
+
+
+async def task_run_aggregates_demand_network_days(ctx) -> None:
+    """Runs the demand aggregates for the last 14 days"""
+    await run_aggregates_demand_network_days(days=2)
 
 
 async def task_facility_first_seen_check(ctx) -> None:

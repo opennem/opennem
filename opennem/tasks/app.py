@@ -46,6 +46,7 @@ from opennem.tasks.tasks import (
     task_nem_power_exports,
     task_nem_rooftop_crawl,
     task_refresh_from_cms,
+    task_run_aggregates_demand_network_days,
     task_run_energy_calculation,
     task_update_facility_aggregates_chunked,
     task_update_facility_seen_range,
@@ -110,6 +111,14 @@ class WorkerSettings:
         cron(
             task_update_facility_aggregates_chunked,
             minute=set(range(0, 60, 5)),
+            second=0,
+            timeout=None,
+            unique=True,
+        ),
+        # demand aggregates
+        cron(
+            task_run_aggregates_demand_network_days,
+            minute=27,
             second=0,
             timeout=None,
             unique=True,
