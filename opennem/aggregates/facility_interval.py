@@ -237,7 +237,7 @@ if __name__ == "__main__":
 
     asyncio.run(
         update_facility_aggregates_chunked(
-            start_date=interval - timedelta(days=14),
+            start_date=interval - timedelta(days=2),
             end_date=interval,
             chunk_days=30,
         )
