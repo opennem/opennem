@@ -142,6 +142,17 @@ async def _process_aggregate_chunk(
             await update_facility_aggregates(session, start_time, end_time)
 
 
+async def run_update_facility_intervals(hours: int = 4) -> None:
+    """
+    Updates facility intervals for the last x hours (default 4)
+
+    """
+    end_time = get_today_opennem().replace(second=0, microsecond=0, tzinfo=None)
+    start_time = end_time - timedelta(hours=hours)
+    async with get_write_session() as session:
+        await update_facility_aggregates(session, start_time, end_time)
+
+
 async def update_facility_aggregates_chunked(
     start_date: datetime,
     end_date: datetime,
@@ -235,10 +246,12 @@ if __name__ == "__main__":
     # asyncio.run(run_facility_aggregate_updates(lookback_days=7))
     interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
 
-    asyncio.run(
-        update_facility_aggregates_chunked(
-            start_date=interval - timedelta(days=2),
-            end_date=interval,
-            chunk_days=30,
-        )
-    )
+    # asyncio.run(
+    #     update_facility_aggregates_chunked(
+    #         start_date=interval - timedelta(days=7),
+    #         end_date=interval,
+    #         chunk_days=30,
+    #     )
+    # )
+
+    asyncio.run(run_update_facility_intervals(hours=24))

@@ -121,7 +121,7 @@ class WorkerSettings:
         # facility aggregates
         cron(
             task_update_facility_aggregates_chunked,
-            minute=set(range(0, 60, 30)),
+            minute={6},
             second=0,
             timeout=None,
             unique=True,

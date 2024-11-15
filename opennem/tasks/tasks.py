@@ -4,7 +4,7 @@ import asyncio
 import logging
 from datetime import timedelta
 
-from opennem.aggregates.facility_interval import update_facility_aggregates_chunked
+from opennem.aggregates.facility_interval import run_update_facility_intervals, update_facility_aggregates_chunked
 from opennem.aggregates.network_demand import run_aggregates_demand_network_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.api.export.tasks import export_electricitymap, export_energy, export_flows
@@ -129,12 +129,8 @@ async def task_run_flows_for_last_days(ctx) -> None:
 
 async def task_update_facility_aggregates_chunked(ctx) -> None:
     """Updates facility aggregates in chunks"""
-    interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
 
-    await update_facility_aggregates_chunked(
-        start_date=interval - timedelta(hours=4),
-        end_date=interval,
-    )
+    await run_update_facility_intervals(hours=4)
 
 
 async def task_run_aggregates_demand_network_days(ctx) -> None:
