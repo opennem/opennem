@@ -6,7 +6,6 @@ FEATURE_FLAG_LIST = [
     "workers_run",
     "run_crawlers",
     "redirect_api_static",
-    "show_emissions_in_power_outputs",
     "show_emission_factors_in_power_outputs",
 ]
 

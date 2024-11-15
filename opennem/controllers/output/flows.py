@@ -14,7 +14,6 @@ logger = logging.getLogger("opennem.controllers.flows")
 async def power_flows_per_interval(
     time_series: OpennemExportSeries,
     network_region_code: str,
-    include_emissions_and_factors: bool = True,
 ) -> OpennemDataSet | None:
     """Gets the power flows for the most recent week for a region from the aggregate table
 
@@ -72,26 +71,25 @@ async def power_flows_per_interval(
 
     result.append_set(result_exports)
 
-    if settings.show_emissions_in_power_outputs:
-        result_emissions_imports = stats_factory(
-            emissions_imports,
-            network=time_series.network,
-            interval=time_series.interval,
-            units=get_unit("emissions"),
-            region=network_region_code,
-            fueltech_group=True,
-        )
-        result.append_set(result_emissions_imports)
+    result_emissions_imports = stats_factory(
+        emissions_imports,
+        network=time_series.network,
+        interval=time_series.interval,
+        units=get_unit("emissions"),
+        region=network_region_code,
+        fueltech_group=True,
+    )
+    result.append_set(result_emissions_imports)
 
-        result_emissions_exports = stats_factory(
-            emissions_exports,
-            network=time_series.network,
-            interval=time_series.interval,
-            units=get_unit("emissions"),
-            region=network_region_code,
-            fueltech_group=True,
-        )
-        result.append_set(result_emissions_exports)
+    result_emissions_exports = stats_factory(
+        emissions_exports,
+        network=time_series.network,
+        interval=time_series.interval,
+        units=get_unit("emissions"),
+        region=network_region_code,
+        fueltech_group=True,
+    )
+    result.append_set(result_emissions_exports)
 
     if settings.show_emission_factors_in_power_outputs:
         result_emissions_factor_imports = stats_factory(

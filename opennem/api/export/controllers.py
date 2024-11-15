@@ -387,20 +387,19 @@ async def power_week(
         return None
 
     # emissions
-    if settings.show_emissions_in_power_outputs:
-        emissions = [DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None) for i in row]
+    emissions = [DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None) for i in row]
 
-        stats_emissions = stats_factory(
-            emissions,
-            network=time_series.network,
-            interval=time_series.interval,
-            units=get_unit("emissions"),
-            region=network_region_code,
-            fueltech_group=True,
-            include_code=True,
-        )
+    stats_emissions = stats_factory(
+        emissions,
+        network=time_series.network,
+        interval=time_series.interval,
+        units=get_unit("emissions"),
+        region=network_region_code,
+        fueltech_group=True,
+        include_code=True,
+    )
 
-        result.append_set(stats_emissions)
+    result.append_set(stats_emissions)
 
     # emission factors
     if settings.show_emission_factors_in_power_outputs:
