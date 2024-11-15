@@ -17,7 +17,6 @@ from sqlalchemy import select
 from opennem.api.export.controllers import (
     NoResults,
     demand_network_region_daily,
-    demand_week,
     energy_interconnector_flows_and_emissions_v2,
     gov_stats_cpi,
     power_flows_network_week,
@@ -29,6 +28,7 @@ from opennem.api.export.utils import write_output
 from opennem.api.stats.controllers import get_scada_range, get_scada_range_optimized
 from opennem.api.stats.schema import OpennemDataSet, ScadaDateRange
 from opennem.api.time import human_to_interval, human_to_period
+from opennem.controllers.demand import demand_week_v3
 from opennem.controllers.energy import energy_fueltech_daily_v3
 from opennem.controllers.output.flows import power_flows_per_interval
 from opennem.controllers.output.schema import OpennemExportSeries
@@ -114,7 +114,7 @@ async def export_power(
 
             continue
 
-        demand_set = await demand_week(
+        demand_set = await demand_week_v3(
             time_series=time_series,
             networks_query=power_stat.networks,
             network_region_code=power_stat.network_region_query or power_stat.network_region,

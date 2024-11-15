@@ -10,7 +10,6 @@ from opennem.api.export.queries import (
     demand_network_region_query,
     interconnector_flow_network_regions_query,
     interconnector_power_flow,
-    network_demand_query,
     power_and_emissions_network_fueltech_query,
     power_network_fueltech_query,
     power_network_interconnector_emissions_query,
@@ -339,46 +338,6 @@ async def power_flows_network_week(
 
     if not result:
         logger.error(f"No results from interconnector_flow_network_regions_query with {time_series}")
-        return None
-
-    return result
-
-
-async def demand_week(
-    time_series: OpennemExportSeries,
-    network_region_code: str | None,
-    networks_query: list[NetworkSchema] | None = None,
-) -> OpennemDataSet | None:
-    engine = db_connect()
-
-    query = network_demand_query(
-        time_series=time_series,
-        network_region=network_region_code,
-        networks_query=networks_query,
-    )
-
-    async with engine.begin() as conn:
-        logger.debug(query)
-        result = await conn.execute(query)
-        row = result.fetchall()
-
-    if not row:
-        logger.error(f"No results from network_demand_query with {time_series}")
-        return None
-
-    demand = [DataQueryResult(interval=i[0], result=i[2], group_by="demand" if len(i) > 1 else None) for i in row]
-
-    result = stats_factory(
-        demand,
-        # code=network_region_code or network.code,
-        network=time_series.network,
-        interval=time_series.interval,
-        units=get_unit("demand"),
-        region=network_region_code,
-    )
-
-    if not result:
-        logger.error(f"No results from network_demand_query with {time_series}")
         return None
 
     return result
