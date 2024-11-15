@@ -404,7 +404,7 @@ class BalancingSummary(Base):
 class AggregateNetworkFlows(Base):
     __tablename__ = "at_network_flows"
 
-    trading_interval = Column(TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False)
+    interval = Column(TIMESTAMP(timezone=False), index=True, primary_key=True, nullable=False)
     network_id = Column(
         Text, ForeignKey("network.code", name="fk_at_network_flows_network_code"), primary_key=True, index=True, nullable=False
     )
@@ -419,8 +419,8 @@ class AggregateNetworkFlows(Base):
     network = relationship("Network")
 
     __table_args__ = (
-        Index("idx_at_network_flowsy_network_id_trading_interval", "network_id", "trading_interval", postgresql_using="btree"),
-        Index("idx_at_network_flows_trading_interval_facility_code", "trading_interval", "network_id", "network_region"),
+        Index("idx_at_network_flows_network_id_trading_interval", "network_id", "interval", postgresql_using="btree"),
+        Index("idx_at_network_flows_trading_interval_facility_code", "interval", "network_id", "network_region"),
     )
 
 
