@@ -2,9 +2,8 @@
 
 import asyncio
 import logging
-from datetime import timedelta
 
-from opennem.aggregates.facility_interval import run_update_facility_intervals, update_facility_aggregates_chunked
+from opennem.aggregates.facility_interval import run_update_facility_intervals
 from opennem.aggregates.network_demand import run_aggregates_demand_network_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.api.export.tasks import export_electricitymap, export_energy, export_flows
@@ -28,7 +27,6 @@ from opennem.exporter.historic import export_historic_intervals
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.tasks.exceptions import OpenNEMPipelineRetryTask
-from opennem.utils.dates import get_last_completed_interval_for_network
 from opennem.workers.energy import process_energy_from_now
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
@@ -39,27 +37,19 @@ logger = logging.getLogger("opennem.pipelines.nem")
 
 async def task_nem_interval_check(ctx) -> None:
     """This task runs per interval and checks for new data"""
-    tasks = [
-        run_crawl(AEMONemwebDispatchIS, latest=True),
-        run_crawl(AEMONNemwebDispatchScada, latest=True),
-        run_crawl(AEMONemwebTradingIS, latest=True),
-    ]
+    _ = await run_crawl(AEMONemwebDispatchIS, latest=True)
+    dispatch_scada = await run_crawl(AEMONNemwebDispatchScada, latest=True)
+    _ = await run_crawl(AEMONemwebTradingIS, latest=True)
 
-    results = await asyncio.gather(*tasks)
-
-    if not any(r.inserted_records for r in results if r):
+    if not dispatch_scada.inserted_records:
         logger.warning("No new data from crawlers")
         raise OpenNEMPipelineRetryTask()
 
     # update energy
-    await process_energy_from_now()
-    # update facility aggregates
-    interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
+    await process_energy_from_now(hours=1)
 
-    await update_facility_aggregates_chunked(
-        start_date=interval - timedelta(hours=1),
-        end_date=interval,
-    )
+    # update facility aggregates
+    await run_update_facility_intervals(hours=1)
 
     # run flows
     run_flows_for_last_days(days=1, network=NetworkNEM)
@@ -96,7 +86,7 @@ async def task_bom_capitals_crawl(ctx) -> None:
 
 async def task_run_energy_calculation(ctx) -> None:
     """Runs the energy calculation for the last 2 hours"""
-    await process_energy_from_now()
+    await process_energy_from_now(hours=1)
 
 
 async def task_nem_power_exports(ctx) -> None:
