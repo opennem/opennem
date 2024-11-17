@@ -40,6 +40,8 @@ def main(url: str):
                 "date_start": item["history"]["start"],
                 "date_end": item["history"]["last"],
                 "items": len(item["history"]["data"]),
+                "first_item": item["history"]["data"][0],
+                "last_item": item["history"]["data"][-1],
             }
         )
 
