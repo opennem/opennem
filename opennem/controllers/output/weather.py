@@ -21,10 +21,13 @@ async def run_weather_daily_v3(
     engine = db_connect()
     units = get_unit(unit_name)
 
+    date_start = time_series.get_range().start
+    date_end = time_series.get_range().end
+
     query = get_weather_observation_query(
         interval=time_series.interval,
-        date_start=time_series.start,
-        date_end=time_series.end,
+        date_start=date_start,
+        date_end=date_end,
         station_codes=[station_code],
     )
 
