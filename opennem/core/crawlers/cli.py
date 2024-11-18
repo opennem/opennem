@@ -22,7 +22,8 @@ def cmd_crawl_cli() -> None:
 @click.argument("name")
 @click.option("--all", default=False, is_flag=True, help="Run all")
 @click.option("--limit", default=None, type=int, help="Limit to N most recent records")
-async def crawl_cli_run(name: str, all: bool = False, limit: int | None = None) -> None:
+@click.option("--reverse", default=False, is_flag=True, help="Reverse the order of the crawlers")
+async def crawl_cli_run(name: str, all: bool = False, limit: int | None = None, reverse: bool = False) -> None:
     console.log(f"Run crawlers matching: {name}")
 
     crawlers = await get_crawl_set()
@@ -45,7 +46,7 @@ async def crawl_cli_run(name: str, all: bool = False, limit: int | None = None) 
             f"{c.last_processed}\n\tserver_latest: {c.server_latest}"
         )
         try:
-            await run_crawl(c, latest=not all, limit=limit)
+            await run_crawl(c, latest=not all, limit=limit, reverse=reverse)
         except Exception as e:
             console.log(f"[red]Error running crawler[/red]: {e}")
 
