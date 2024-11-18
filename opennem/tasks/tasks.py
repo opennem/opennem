@@ -23,7 +23,8 @@ from opennem.crawlers.nemweb import (
 )
 from opennem.crawlers.wemde import run_all_wem_crawlers
 from opennem.exporter.facilities import export_facilities_static
-from opennem.exporter.historic import export_historic_intervals
+
+# from opennem.exporter.historic import export_historic_intervals
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.tasks.exceptions import OpenNEMPipelineRetryTask
@@ -154,8 +155,9 @@ async def task_nem_per_day_check(ctx) -> ControllerReturn:
     # await daily_runner()
 
     # export historic intervals
-    for network in [NetworkNEM, NetworkWEM]:
-        export_historic_intervals(limit=2, networks=[network])
+    for _network in [NetworkNEM, NetworkWEM]:
+        pass
+        # export_historic_intervals(limit=2, networks=[network])
 
     return ControllerReturn(
         server_latest=dispatch_actuals.server_latest,
