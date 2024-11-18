@@ -569,9 +569,9 @@ def check_duid_data():
         for unit in facility.units:
             unit_record = {
                 "unit_code": unit.code,
-                "fueltech_id": unit.fueltech_id,
-                "status_id": unit.status_id,
-                "dispatch_type": unit.dispatch_type,
+                "fueltech_id": unit.fueltech_id.value,
+                "status_id": unit.status_id.value,
+                "dispatch_type": unit.dispatch_type.value,
                 "has_capacity": True if unit.capacity_registered else False,
                 "has_capacity_max": True if unit.capacity_maximum else False,
                 "has_storage_capacity": _has_storage(unit),
