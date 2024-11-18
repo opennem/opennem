@@ -28,6 +28,8 @@ async def run_weather_daily_v3(
         station_codes=[station_code],
     )
 
+    logger.debug(query)
+
     async with engine.begin() as conn:
         result = await conn.execute(query)
         row = result.fetchall()
