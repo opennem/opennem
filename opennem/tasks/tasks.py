@@ -47,10 +47,10 @@ async def task_nem_interval_check(ctx) -> None:
         raise OpenNEMPipelineRetryTask()
 
     # update energy
-    await process_energy_from_now(hours=1)
+    await process_energy_from_now(hours=4)
 
     # update facility aggregates
-    await run_update_facility_intervals(hours=1)
+    await run_update_facility_intervals(hours=4)
 
     # run flows
     run_flows_for_last_days(days=1, network=NetworkNEM)
@@ -87,7 +87,7 @@ async def task_bom_capitals_crawl(ctx) -> None:
 
 async def task_run_energy_calculation(ctx) -> None:
     """Runs the energy calculation for the last 2 hours"""
-    await process_energy_from_now(hours=1)
+    await process_energy_from_now(hours=4)
 
 
 async def task_nem_power_exports(ctx) -> None:
