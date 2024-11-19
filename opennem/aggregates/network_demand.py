@@ -31,7 +31,7 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
             time_bucket('1 day', fs.interval) as trading_day,
             fs.network_id,
             fs.network_region,
-            sum(fs.demand_energy) as demand_energy,
+            sum(fs.demand_energy) / 1000 as demand_energy,
             sum(fs.demand_market_value) as demand_market_value
         from (
             select
@@ -147,4 +147,4 @@ async def run_demand_aggregates_for_latest_interval(network: NetworkSchema) -> N
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(run_aggregates_demand_network_days(days=14))
+    asyncio.run(run_aggregates_demand_network_days(days=32))
