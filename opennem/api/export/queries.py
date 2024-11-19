@@ -530,7 +530,7 @@ def demand_network_region_query(
 
     ___query = """
         select
-            date_trunc('{trunc}', trading_day) as trading_day,
+            time_bucket_gapfill('{trunc}', trading_day) as trading_day,
             network_id,
             {network_region_select}
             round(sum(demand_energy), 4),
@@ -566,7 +566,7 @@ def demand_network_region_query(
 
     return text(
         ___query.format(
-            trunc=time_series.interval.trunc,
+            trunc=time_series.interval.interval_sql,
             date_min=date_min,
             date_max=date_max,
             network_id=time_series.network.code,
