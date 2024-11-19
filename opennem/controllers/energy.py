@@ -27,15 +27,27 @@ async def energy_fueltech_daily_v3(
         network_region=network_region_code,
     )
 
-    async with engine.connect() as conn:
+    async with engine.begin() as conn:
         logger.debug(query)
-        row = await conn.execute(query)
+        res = await conn.execute(query)
 
-    results_energy = [DataQueryResult(interval=i[0], group_by=i[2], result=i[3] if len(i) > 1 else None) for i in row]
+    results = list(res)
+    columns = res.keys()
+    result_dicts = [dict(zip(columns, row, strict=False)) for row in results]
 
-    results_market_value = [DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 1 else None) for i in row]
+    results_energy = [
+        DataQueryResult(interval=i["interval"], group_by=i["fueltech_code"], result=i["fueltech_energy_gwh"])
+        for i in result_dicts
+    ]
 
-    results_emissions = [DataQueryResult(interval=i[0], group_by=i[2], result=i[5] if len(i) > 1 else None) for i in row]
+    results_market_value = [
+        DataQueryResult(interval=i["interval"], group_by=i["fueltech_code"], result=i["fueltech_market_value_dollars"])
+        for i in result_dicts
+    ]
+
+    results_emissions = [
+        DataQueryResult(interval=i["interval"], group_by=i["fueltech_code"], result=i["fueltech_emissions"]) for i in result_dicts
+    ]
 
     if not results_energy:
         raise Exception(f"No results from query: {query}")
@@ -59,7 +71,11 @@ async def energy_fueltech_daily_v3(
         interval=time_series.interval,
         region=network_region_code,
         localize=True,
+        code=network.code.lower(),
     )
+
+    logger.debug(f"results market value: {len(results_market_value)}")
+    logger.debug(f"stats_market_value: {len(stats_market_value.data)}")
 
     stats.append_set(stats_market_value)
 
@@ -70,9 +86,12 @@ async def energy_fueltech_daily_v3(
         fueltech_group=True,
         interval=time_series.interval,
         region=network_region_code,
-        code=time_series.network.code.lower(),
         localize=True,
+        code=time_series.network.code.lower(),
     )
+
+    logger.debug(f"results emissions: {len(results_emissions)}")
+    logger.debug(f"stats_emissions: {len(stats_emissions.data)}")
 
     stats.append_set(stats_emissions)
 
