@@ -20,7 +20,6 @@ def get_energy_network_fueltech_query(
     network: NetworkSchema,
     network_region: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
-    coalesce_with: int | None = None,
 ) -> TextClause:
     """
     Get Energy for a network or network + region
@@ -84,7 +83,6 @@ def get_energy_network_fueltech_query(
             date_max=time_series_range.end,
             network_query=network_query,
             network_region_query=network_region_query,
-            coalesce_with=coalesce_with or "NULL",
         )
     )
 
