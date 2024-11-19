@@ -55,25 +55,6 @@ def get_energy_network_fueltech_query(
         1 desc, 2;
     """
 
-    if not network_region:
-        __query = """
-            select
-            time_bucket_gapfill('{trunc}', t.interval) as interval,
-            t.network_id,
-            t.fueltech_code,
-            round((sum(t.energy) / 1000)::numeric, 4) as fueltech_energy_gwh,
-            round(sum(t.market_value)::numeric, 2) as fueltech_market_value_dollars,
-            round(sum(t.emissions)::numeric, 2) as fueltech_emissions_factor
-        from at_facility_intervals t
-        where
-            t.interval between '{date_min}' and '{date_max}' and
-            {network_query}
-            1=1
-        group by 1, 2, 3
-        order by
-            1 desc, 2;
-    """
-
     network_region_query = ""
 
     # Get the time range using either the old way or the new v4 way
