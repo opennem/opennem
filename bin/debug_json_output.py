@@ -37,6 +37,7 @@ def main(url: str):
             {
                 "id": item["id"],
                 "interval": item["history"]["interval"],
+                "unit": item["units"],
                 "date_start": item["history"]["start"],
                 "date_end": item["history"]["last"],
                 "items": len(item["history"]["data"]),
