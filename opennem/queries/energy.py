@@ -46,7 +46,7 @@ def get_energy_network_fueltech_query(
         round(sum(t.emissions)::numeric, 2) as fueltech_emissions_factor
     from at_facility_intervals t
     where
-        t.interval between '{date_min}' and '{date_max}' and
+        t.interval >= '{date_min}' and t.interval <= '{date_max}' and
         {network_query}
         {network_region_query}
         1=1
@@ -80,8 +80,8 @@ def get_energy_network_fueltech_query(
     return text(
         __query.format(
             trunc=time_series_range.interval.interval_sql,
-            date_min=time_series_range.start.date(),
-            date_max=time_series_range.end.date(),
+            date_min=time_series_range.start,
+            date_max=time_series_range.end,
             network_query=network_query,
             network_region_query=network_region_query,
             coalesce_with=coalesce_with or "NULL",
