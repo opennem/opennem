@@ -43,7 +43,7 @@ def get_energy_network_fueltech_query(
         t.fueltech_code,
         round((sum(t.energy) / 1000)::numeric, 4) as fueltech_energy_gwh,
         round(sum(t.market_value)::numeric, 2) as fueltech_market_value_dollars,
-        round(sum(t.emissions)::numeric, 2) as fueltech_emissions_factor
+        round(sum(t.emissions)::numeric, 2) as fueltech_emissions
     from at_facility_intervals t
     where
         t.interval >= '{date_min}' and t.interval <= '{date_max}' and
