@@ -221,6 +221,7 @@ async def export_energy(
             )
             stat_set.append_set(demand_energy_and_value)
 
+            # network flows
             if energy_stat.network.has_interconnectors and energy_stat.network_region:
                 interconnector_flows = await energy_interconnector_flows_and_emissions_v2(
                     time_series=time_series,
@@ -228,6 +229,7 @@ async def export_energy(
                 )
                 stat_set.append_set(interconnector_flows)
 
+            # weather output
             if energy_stat.bom_station:
                 try:
                     weather_stats = await run_weather_daily_v3(
@@ -240,8 +242,6 @@ async def export_energy(
                     logger.info(f"No results for weather result: {e}")
                 except Exception as e:
                     logger.error(f"weather_stat exception: {e}")
-            else:
-                logger.info("Stat set has no bom station")
 
             await write_output(energy_stat.path, stat_set)
 
