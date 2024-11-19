@@ -17,7 +17,6 @@ async def energy_fueltech_daily_v3(
     network: NetworkSchema,
     time_series: OpennemExportSeries,
     network_region_code: str | None = None,
-    sub_networks: list[NetworkSchema] | None = None,
 ) -> OpennemDataSet:
     engine = db_connect()
     units = get_unit("energy_giga")
@@ -26,18 +25,17 @@ async def energy_fueltech_daily_v3(
         time_series=time_series,
         network=network,
         network_region=network_region_code,
-        networks_query=sub_networks,
     )
 
     async with engine.connect() as conn:
         logger.debug(query)
         row = await conn.execute(query)
 
-    results_energy = [DataQueryResult(interval=i[0], group_by=i[3], result=i[4] if len(i) > 1 else None) for i in row]
+    results_energy = [DataQueryResult(interval=i[0], group_by=i[2], result=i[3] if len(i) > 1 else None) for i in row]
 
-    results_market_value = [DataQueryResult(interval=i[0], group_by=i[3], result=i[5] if len(i) > 1 else None) for i in row]
+    results_market_value = [DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 1 else None) for i in row]
 
-    results_emissions = [DataQueryResult(interval=i[0], group_by=i[3], result=i[6] if len(i) > 1 else None) for i in row]
+    results_emissions = [DataQueryResult(interval=i[0], group_by=i[2], result=i[5] if len(i) > 1 else None) for i in row]
 
     if not results_energy:
         raise Exception(f"No results from query: {query}")
