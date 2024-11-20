@@ -65,7 +65,7 @@ class WorkerSettings:
         cron(
             task_nem_interval_check,
             minute=set(range(0, 60, 5)),
-            second=30,
+            second=45,
             timeout=None,
             unique=True,
         ),
@@ -121,7 +121,7 @@ class WorkerSettings:
         # facility aggregates
         cron(
             task_update_facility_aggregates_chunked,
-            minute={6},
+            minute={23},
             second=0,
             timeout=None,
             unique=True,
