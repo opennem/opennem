@@ -52,7 +52,7 @@ from opennem.tasks.tasks import (
     task_run_flows_for_last_days,
     task_update_facility_aggregates_chunked,
     task_update_facility_seen_range,
-    task_wem_interval_check,
+    task_wem_day_crawl,
 )
 
 logger = logging.getLogger("openenm.tasks.app")
@@ -79,8 +79,9 @@ class WorkerSettings:
         ),
         # WEM Interval Check
         cron(
-            task_wem_interval_check,
-            minute=set(range(0, 60, 5)),
+            task_wem_day_crawl,
+            hour={9},
+            minute={30, 40, 50},
             second=58,
             timeout=None,
             unique=True,
