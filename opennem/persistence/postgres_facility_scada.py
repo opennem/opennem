@@ -27,9 +27,9 @@ async def persist_postgres_facility_scada(records: list[SchemaFacilityScada]) ->
     records_to_store = [dict(i) for i in records]
 
     stmt = insert(FacilityScada).values(records_to_store)
-    stmt.bind = engine
+    stmt.bind = engine  # type: ignore
     stmt = stmt.on_conflict_do_update(
-        index_elements=["trading_interval", "network_id", "facility_code", "is_forecast"],
+        index_elements=["interval", "network_id", "facility_code", "is_forecast"],
         set_={
             "generated": stmt.excluded.generated,
         },
@@ -37,14 +37,14 @@ async def persist_postgres_facility_scada(records: list[SchemaFacilityScada]) ->
 
     async with SessionLocal() as session:
         try:
-            session.execute(stmt)
-            session.commit()
+            await session.execute(stmt)
+            await session.commit()
             cr.inserted_records = len(records_to_store)
         except Exception as e:
             logger.error(f"Error: {e}")
         finally:
-            session.close()
-            engine.dispose()
+            await session.close()
+            await engine.dispose()
 
     return len(records_to_store)
 
@@ -57,7 +57,7 @@ async def persist_facility_scada_bulk(
     records_to_store = [dict(i) for i in records]
 
     if not update_fields:
-        update_fields = ["trading_interval", "network_id", "facility_code", "is_forecast"]
+        update_fields = ["interval", "network_id", "facility_code", "is_forecast"]
 
     table = FacilityScada
 
