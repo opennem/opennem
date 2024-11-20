@@ -11,6 +11,7 @@ See the URL constants for sources and unit tests
 """
 
 import logging
+from datetime import datetime
 
 from pydantic import ValidationError
 
@@ -62,14 +63,19 @@ def wemde_parse_facilityscada(url: str) -> list[SchemaFacilityScada]:
 
     # map fields
     for entry in json_records:
+        interval = datetime.fromisoformat(entry.get("dispatchInterval"))
+
+        # strip timezone from interval
+        interval = interval.replace(tzinfo=None)
+
         try:
             m = SchemaFacilityScada(
                 **{
                     "network_id": "WEMDE",
-                    "trading_interval": entry.get("dispatchInterval"),
+                    "interval": interval,
                     "facility_code": entry.get("code"),
                     "generated": entry.get("quantity", 0),
-                    "eoi_quantity": entry.get("quantity", 0),
+                    "energy": entry.get("quantity", 0) / 12,
                 }
             )
             models.append(m)
@@ -100,11 +106,16 @@ def wemde_parse_trading_price(url: str) -> list[SchemaBalancingSummary]:
 
     # map fields
     for entry in json_records:
+        interval = datetime.fromisoformat(entry.get("tradingInterval"))
+
+        # strip timezone from interval
+        interval = interval.replace(tzinfo=None)
+
         try:
             m = SchemaBalancingSummary(
                 **{
                     "network_id": "WEMDE",
-                    "trading_interval": entry.get("tradingInterval"),
+                    "interval": interval,
                     "price": entry.get("referenceTradingPrice", 0),
                     "network_region": "WEMDE",
                 }

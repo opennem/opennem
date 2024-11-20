@@ -22,7 +22,7 @@ async def run_wemde_crawl(
     latest: bool = True,
     limit: int | None = None,
     backfill_days: int | None = None,
-    last_crawled: datetime | None = None,
+    last_crawled: datetime | str | None = None,
     date_range: CrawlDateRange | None = None,
 ) -> ControllerReturn:
     logger.info("Starting WEMDE crawl")
@@ -86,7 +86,10 @@ async def run_wemde_crawl(
     for entry in entries_to_fetch:
         logger.info(f"Fetching {entry.link}")
 
-        if entry.aemo_interval_date and (not latest_aemo_interval_date or entry.aemo_interval_date > latest_aemo_interval_date):
+        # ugh
+        if isinstance(entry.aemo_interval_date, datetime) and (
+            not latest_aemo_interval_date or entry.aemo_interval_date > latest_aemo_interval_date
+        ):
             latest_aemo_interval_date = entry.aemo_interval_date
 
         try:
@@ -97,7 +100,7 @@ async def run_wemde_crawl(
             continue
 
     # persist data
-    update_fields = ["generated", "eoi_quantity"]
+    update_fields = ["generated", "energy"]
 
     if crawler.parser == wemde_parse_trading_price:
         update_fields = ["price", "price_dispatch"]
@@ -107,7 +110,7 @@ async def run_wemde_crawl(
     logger.info(f"Persisted {len(data)} records")
 
     # track latest interal and update metadata
-    recent_latest_interval = max([i.trading_interval for i in data if i.trading_interval])
+    recent_latest_interval = max([i.interval for i in data if i.interval])
 
     if recent_latest_interval and (not latest_interval or recent_latest_interval > latest_interval):
         latest_interval = recent_latest_interval
@@ -134,10 +137,10 @@ async def run_wemde_crawl(
 async def run_all_wem_crawlers(latest: bool = True) -> None:
     for crawler in [
         AEMOWEMDETradingReport,
-        # AEMOWEMDEFacilityScadaHistory,
-        # AEMOWEMDETradingReportHistory,
+        AEMOWEMDEFacilityScadaHistory,
+        AEMOWEMDETradingReportHistory,
     ]:
-        await run_wemde_crawl(crawler, latest=latest)
+        await run_wemde_crawl(crawler, latest=latest, limit=2)
 
 
 AEMOWEMDEFacilityScadaHistory = CrawlerDefinition(
@@ -175,4 +178,4 @@ if __name__ == "__main__":
     # crawler_set_meta(AEMOWEMDEFacilityScadaHistory.name, CrawlStatTypes.server_latest, backdate_date)
     import asyncio
 
-    asyncio.run(run_all_wem_crawlers(latest=False))
+    asyncio.run(run_all_wem_crawlers(latest=True))

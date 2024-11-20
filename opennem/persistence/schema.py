@@ -4,18 +4,18 @@ from pydantic import BaseModel
 
 
 class SchemaFacilityScada(BaseModel):
+    interval: datetime
     network_id: str
-    trading_interval: datetime
     facility_code: str
     generated: float = 0.0
-    eoi_quantity: float | None = None
+    energy: float | None = None
     is_forecast: bool = False
     energy_quality_flag: int = 0
 
 
 class SchemaBalancingSummary(BaseModel):
+    interval: datetime
     network_id: str
-    trading_interval: datetime
     forecast_load: float | None = None
     generation_scheduled: float | None = None
     generation_non_scheduled: float | None = None

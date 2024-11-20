@@ -372,7 +372,7 @@ class BalancingSummary(Base):
     price = Column(Numeric, nullable=True)
     price_dispatch = Column(Numeric, nullable=True)
     net_interchange_trading = Column(Numeric, nullable=True)
-    is_forecast = Column(Boolean, default=False, nullable=False)
+    is_forecast = Column(Boolean, default=False, nullable=False, primary_key=True)
 
     __table_args__ = (
         # Index("idx_balancing_summary_network_id_interval", "network_id", "interval", postgresql_using="btree"),
