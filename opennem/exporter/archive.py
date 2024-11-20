@@ -5,12 +5,18 @@ Export data as parquet files to a bucket
 Purpose of this module is to export data as parquet files to a public bucket overnight so that it can be
 used for bulk imports in dev.
 
+At the moment we export:
+
+ * generation and energy data per interval by fueltech for the last year
+ * price and demand data per interval for the last year
+
 """
 
 import logging
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from tempfile import mkdtemp
 from textwrap import dedent
 
 import polars as pl
@@ -22,13 +28,13 @@ from opennem.utils.dates import get_today_opennem
 logger = logging.getLogger("opennem.exporter.archive")
 logger.setLevel(logging.DEBUG)
 
-OUTPUT_DIR = Path(__file__).parent.parent.parent / "data" / "archive"
+ARCHIVE_OUTPUT_DIR = Path(mkdtemp())
 
-if not OUTPUT_DIR.exists():
-    raise Exception(f"Output directory {OUTPUT_DIR} does not exist")
+if not ARCHIVE_OUTPUT_DIR.exists():
+    raise Exception(f"Output directory {ARCHIVE_OUTPUT_DIR} does not exist")
 
 
-logger.debug(f"Writing to {OUTPUT_DIR}")
+logger.debug(f"Writing to {ARCHIVE_OUTPUT_DIR}")
 
 
 @dataclass
@@ -132,7 +138,7 @@ def run_and_export_query(query: str, filename: str) -> None:
         df = pl.read_database(query, conn, schema_overrides={})
         logger.debug(f"Loaded data frame for {filename} with {df.shape=}")
 
-        destination_filename = str(OUTPUT_DIR / f"{filename}.parquet")
+        destination_filename = str(ARCHIVE_OUTPUT_DIR / f"{filename}.parquet")
         df.write_parquet(destination_filename)
         logger.info(f"Wrote to {destination_filename}")
 
@@ -168,7 +174,7 @@ async def sync_archive_exports() -> None:
     BUCKET_UPLOAD_DIRECTORY = "archive/nem/"
 
     # read the files in the archive directory and upload them to the bucket
-    for file in OUTPUT_DIR.glob("*.parquet"):
+    for file in ARCHIVE_OUTPUT_DIR.glob("*.parquet"):
         await cloudflare_uploader.upload_file(
             str(file),
             BUCKET_UPLOAD_DIRECTORY + str(file.name),
@@ -177,6 +183,7 @@ async def sync_archive_exports() -> None:
 
 
 def _test_polars_read() -> None:
+    """Test reading parquet files from the bucket"""
     files = [
         "https://data.dev.opennem.org.au/archive/nem/1y_price_and_demand_data.parquet",
         "https://data.dev.opennem.org.au/archive/nem/1y_fueltech_generation_data.parquet",
