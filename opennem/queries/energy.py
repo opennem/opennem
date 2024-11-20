@@ -38,7 +38,6 @@ def get_energy_network_fueltech_query(
     __query = """
     select
         time_bucket_gapfill('{trunc}', t.interval) as interval,
-        t.network_id,
         t.fueltech_code,
         round((sum(t.energy) / 1000)::numeric, 4) as fueltech_energy_gwh,
         round(sum(t.market_value)::numeric, 2) as fueltech_market_value_dollars,
@@ -49,7 +48,7 @@ def get_energy_network_fueltech_query(
         {network_query}
         {network_region_query}
         1=1
-    group by 1, 2, 3
+    group by 1, 2
     order by
         1 desc, 2;
     """
