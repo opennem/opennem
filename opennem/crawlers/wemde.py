@@ -136,6 +136,7 @@ async def run_wemde_crawl(
 
 async def run_all_wem_crawlers(latest: bool = True, limit: int | None = None) -> None:
     for crawler in [
+        AEMOWEMDEFacilityScada,
         AEMOWEMDETradingReport,
         AEMOWEMDEFacilityScadaHistory,
         AEMOWEMDETradingReportHistory,
@@ -147,6 +148,16 @@ async def run_all_wem_crawlers(latest: bool = True, limit: int | None = None) ->
             continue
 
 
+AEMOWEMDEFacilityScada = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.wemde.current.facility_scada",
+    url="https://data.wa.aemo.com.au/public/market-data/wemde/facilityScada/current/",
+    network=NetworkWEM,
+    processor=run_wemde_crawl,
+    parser=wemde_parse_facilityscada,
+)
+
 AEMOWEMDEFacilityScadaHistory = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
@@ -155,6 +166,16 @@ AEMOWEMDEFacilityScadaHistory = CrawlerDefinition(
     network=NetworkWEM,
     processor=run_wemde_crawl,
     parser=wemde_parse_facilityscada,
+)
+
+AEMOWEMDETradingReport = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.wemde.current.trading_report",
+    url="https://data.wa.aemo.com.au/public/market-data/wemde/referenceTradingPrice/current/",
+    network=NetworkWEM,
+    processor=run_wemde_crawl,
+    parser=wemde_parse_trading_price,
 )
 
 AEMOWEMDETradingReportHistory = CrawlerDefinition(
@@ -167,15 +188,6 @@ AEMOWEMDETradingReportHistory = CrawlerDefinition(
     parser=wemde_parse_trading_price,
 )
 
-AEMOWEMDETradingReport = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.live,
-    name="au.wemde.current.trading_report",
-    url="https://data.wa.aemo.com.au/public/market-data/wemde/referenceTradingPrice/current/",
-    network=NetworkWEM,
-    processor=run_wemde_crawl,
-    parser=wemde_parse_trading_price,
-)
 
 if __name__ == "__main__":
     # backdate_date = datetime.fromisoformat("2024-01-12T00:00:00")
