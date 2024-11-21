@@ -25,7 +25,7 @@ async def run_wemde_crawl(
     last_crawled: datetime | str | None = None,
     date_range: CrawlDateRange | None = None,
 ) -> ControllerReturn:
-    logger.info("Starting WEMDE crawl")
+    logger.info(f"Starting WEMDE crawl with {latest=} {limit=}")
 
     entries_to_fetch: list = []
 
@@ -134,13 +134,17 @@ async def run_wemde_crawl(
     return cr
 
 
-async def run_all_wem_crawlers(latest: bool = True) -> None:
+async def run_all_wem_crawlers(latest: bool = True, limit: int | None = None) -> None:
     for crawler in [
         AEMOWEMDETradingReport,
         AEMOWEMDEFacilityScadaHistory,
         AEMOWEMDETradingReportHistory,
     ]:
-        await run_wemde_crawl(crawler, latest=latest, limit=2)
+        try:
+            await run_wemde_crawl(crawler, latest=latest, limit=limit)
+        except Exception as e:
+            logger.error(f"Error running crawler {crawler.name}: {e}")
+            continue
 
 
 AEMOWEMDEFacilityScadaHistory = CrawlerDefinition(
@@ -178,4 +182,4 @@ if __name__ == "__main__":
     # crawler_set_meta(AEMOWEMDEFacilityScadaHistory.name, CrawlStatTypes.server_latest, backdate_date)
     import asyncio
 
-    asyncio.run(run_all_wem_crawlers(latest=True))
+    asyncio.run(run_all_wem_crawlers(latest=False, limit=None))

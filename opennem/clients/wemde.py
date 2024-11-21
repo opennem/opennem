@@ -71,7 +71,7 @@ def wemde_parse_facilityscada(url: str) -> list[SchemaFacilityScada]:
         try:
             m = SchemaFacilityScada(
                 **{
-                    "network_id": "WEMDE",
+                    "network_id": "WEM",
                     "interval": interval,
                     "facility_code": entry.get("code"),
                     "generated": entry.get("quantity", 0),
@@ -114,10 +114,10 @@ def wemde_parse_trading_price(url: str) -> list[SchemaBalancingSummary]:
         try:
             m = SchemaBalancingSummary(
                 **{
-                    "network_id": "WEMDE",
+                    "network_id": "WEM",
                     "interval": interval,
                     "price": entry.get("referenceTradingPrice", 0),
-                    "network_region": "WEMDE",
+                    "network_region": "WEM",
                 }
             )
             models.append(m)
