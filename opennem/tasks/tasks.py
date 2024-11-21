@@ -8,6 +8,7 @@ from opennem.aggregates.network_demand import run_aggregates_demand_network_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.api.export.tasks import export_electricitymap, export_energy, export_flows
 from opennem.cms.importer import update_database_facilities_from_cms
+from opennem.controllers.export import run_export_energy_all
 from opennem.controllers.schema import ControllerReturn
 from opennem.crawl import run_crawl
 from opennem.crawlers.aemo_market_notice import run_market_notice_update
@@ -34,6 +35,8 @@ from opennem.workers.facility_first_seen import facility_first_seen_check
 from opennem.workers.system import clean_tmp_dir
 
 logger = logging.getLogger("opennem.pipelines.nem")
+
+# crawl tasks
 
 
 async def task_nem_interval_check(ctx) -> None:
@@ -85,32 +88,12 @@ async def task_bom_capitals_crawl(ctx) -> None:
     await run_crawl(BOMCapitals)
 
 
+#  processing tasks
+
+
 async def task_run_energy_calculation(ctx) -> None:
     """Runs the energy calculation for the last 2 hours"""
     await process_energy_from_now(hours=4)
-
-
-async def task_nem_power_exports(ctx) -> None:
-    """Runs the NEM exports"""
-    await asyncio.gather(
-        run_export_power_latest_for_network(network=NetworkNEM),
-        run_export_power_latest_for_network(network=NetworkAU),
-        # run_export_power_latest_for_network(network=NetworkWEMDE),
-    )
-
-
-async def task_export_flows(ctx) -> None:
-    """Runs the flows export"""
-    await export_electricitymap()
-    await export_flows()
-
-
-# Output and processing tasks
-
-
-async def task_export_energy(ctx) -> None:
-    """Runs the energy export"""
-    await export_energy(latest=True)
 
 
 async def task_run_flows_for_last_days(ctx) -> None:
@@ -134,14 +117,39 @@ async def task_facility_first_seen_check(ctx) -> None:
     await facility_first_seen_check()
 
 
-async def task_export_facility_geojson(ctx) -> None:
-    """Exports the facility geojson"""
-    await export_facilities_static()
-
-
 async def task_update_facility_seen_range(ctx) -> None:
     """Updates the facility seen range"""
     await update_facility_seen_range(interval_window_days=1)
+
+
+# Output tasks
+
+
+async def task_nem_power_exports(ctx) -> None:
+    """Runs the NEM exports"""
+    await asyncio.gather(
+        run_export_power_latest_for_network(network=NetworkNEM),
+        run_export_power_latest_for_network(network=NetworkAU),
+        # run_export_power_latest_for_network(network=NetworkWEMDE),
+    )
+
+
+async def task_export_flows(ctx) -> None:
+    """Runs the flows export"""
+    await export_electricitymap()
+    await export_flows()
+
+
+async def task_export_energy(ctx) -> None:
+    """Runs the energy export"""
+    await export_energy(latest=True)
+    # await run_export_current_year()
+    await run_export_energy_all()
+
+
+async def task_export_facility_geojson(ctx) -> None:
+    """Exports the facility geojson"""
+    await export_facilities_static()
 
 
 async def task_nem_per_day_check(ctx) -> ControllerReturn:

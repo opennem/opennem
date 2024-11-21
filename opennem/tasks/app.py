@@ -114,6 +114,7 @@ class WorkerSettings:
         # energy latest export
         cron(
             task_export_energy,
+            hour={0, 7, 11},
             minute=17,
             second=0,
             timeout=None,
