@@ -36,6 +36,7 @@ from arq.worker import create_worker
 
 from opennem.tasks.broker import REDIS_SETTINGS
 from opennem.tasks.tasks import (
+    task_apvi_crawl,
     task_bom_capitals_crawl,
     task_clean_tmp_dir,
     task_export_energy,
@@ -82,6 +83,14 @@ class WorkerSettings:
             task_wem_day_crawl,
             hour={9},
             minute={30, 40, 50},
+            second=58,
+            timeout=None,
+            unique=True,
+        ),
+        # APVI Rooftop
+        cron(
+            task_apvi_crawl,
+            minute=set(range(0, 60, 10)),
             second=58,
             timeout=None,
             unique=True,

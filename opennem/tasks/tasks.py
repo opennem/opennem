@@ -12,6 +12,7 @@ from opennem.controllers.export import run_export_energy_all
 from opennem.controllers.schema import ControllerReturn
 from opennem.crawl import run_crawl
 from opennem.crawlers.aemo_market_notice import run_market_notice_update
+from opennem.crawlers.apvi import APVIRooftopLatestCrawler
 from opennem.crawlers.bom import BOMCapitals
 from opennem.crawlers.nemweb import (
     AEMONEMDispatchActualGEN,
@@ -81,6 +82,11 @@ async def task_wem_day_crawl(ctx) -> None:
     """This task runs per interval and checks for new data"""
     await run_all_wem_crawlers(latest=True, limit=2)
     await run_export_power_latest_for_network(network=NetworkWEM)
+
+
+async def task_apvi_crawl(ctx) -> None:
+    """Runs the APVI crawler every 10 minutes"""
+    await run_crawl(APVIRooftopLatestCrawler)
 
 
 async def task_bom_capitals_crawl(ctx) -> None:
