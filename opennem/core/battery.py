@@ -41,17 +41,18 @@ async def get_battery_unit_map() -> dict[str, BatteryUnitMap]:
     return UNIT_MAP
 
 
-async def _generate_battery_unit_map() -> dict[str, BatteryUnitMap]:
+async def _generate_battery_unit_map(facility_code: str | None = None) -> dict[str, BatteryUnitMap]:
     """This queries the database for all the bidirectional battery units and returns what each should be mapped to"""
 
     async with get_read_session() as session:
-        facility_query = await session.execute(
-            select(Facility)
-            .join(Unit)
-            .where(Unit.dispatch_type == UnitDispatchType.BIDIRECTIONAL.value)
-            .order_by(Facility.code, Unit.code)
-        )
-        facilities = facility_query.scalars().all()
+        facility_query = select(Facility).join(Unit).where(Unit.dispatch_type == UnitDispatchType.BIDIRECTIONAL.value)
+
+        if facility_code:
+            facility_query = facility_query.where(Facility.code == facility_code)
+
+        facility_query = facility_query.order_by(Facility.code, Unit.code)
+
+        facilities = (await session.execute(facility_query)).scalars().all()
 
         logger.debug(f"Found {len(facilities)} bidirectional units")
 
@@ -99,11 +100,11 @@ async def _generate_battery_unit_map() -> dict[str, BatteryUnitMap]:
     return UNIT_MAP
 
 
-async def process_battery_history():
+async def process_battery_history(facility_code: str | None = None):
     """This processes the history of facility_scada and updates the battery units so that
     bidirectional units are split into two separate units
     """
-    unit_map = await _generate_battery_unit_map()
+    unit_map = await _generate_battery_unit_map(facility_code=facility_code)
 
     query_load_template = text(
         "update facility_scada set facility_code = :new_facility_code where facility_code = :old_facility_code "
@@ -155,7 +156,7 @@ async def process_battery_history():
 if __name__ == "__main__":
     import asyncio
 
-    unit_map = asyncio.run(process_battery_history())
+    unit_map = asyncio.run(process_battery_history(facility_code="KWINANA_ESR"))
 
     # for unit in unit_map.values():
     #     print(f"{unit.unit} -> {unit.charge_unit} | {unit.discharge_unit}")
