@@ -24,6 +24,7 @@ from opennem.crawlers.nemweb import (
     AEMONNemwebDispatchScada,
 )
 from opennem.crawlers.wemde import run_all_wem_crawlers
+from opennem.exporter.archive import sync_archive_exports
 from opennem.exporter.facilities import export_facilities_static
 
 # from opennem.exporter.historic import export_historic_intervals
@@ -156,6 +157,11 @@ async def task_export_energy(ctx) -> None:
 async def task_export_facility_geojson(ctx) -> None:
     """Exports the facility geojson"""
     await export_facilities_static()
+
+
+async def task_sync_archive_exports(ctx) -> None:
+    """Run and sync parquet exports to output bucket"""
+    await sync_archive_exports()
 
 
 async def task_nem_per_day_check(ctx) -> ControllerReturn:

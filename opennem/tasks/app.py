@@ -51,6 +51,7 @@ from opennem.tasks.tasks import (
     task_run_aggregates_demand_network_days,
     task_run_energy_calculation,
     task_run_flows_for_last_days,
+    task_sync_archive_exports,
     task_update_facility_aggregates_chunked,
     task_update_facility_seen_range,
     task_wem_day_crawl,
@@ -126,6 +127,14 @@ class WorkerSettings:
             hour={0, 7, 11},
             minute=17,
             second=0,
+            timeout=None,
+            unique=True,
+        ),
+        # archive exports daily
+        cron(
+            task_sync_archive_exports,
+            hour=10,
+            minute=0,
             timeout=None,
             unique=True,
         ),
