@@ -38,5 +38,6 @@ LOGGING_CONFIG = {
         "instructor": {"level": "ERROR"},
         "httpx": {"level": "ERROR"},
         "openai": {"level": "ERROR"},
+        "arq.worker": {"level": "INFO"},
     },
 }
