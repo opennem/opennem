@@ -345,6 +345,12 @@ async def throttle_test() -> str:
     return "OK"
 
 
+@app.get("/sentry-debug", include_in_schema=False)
+def trigger_error():
+    division_by_zero = 1 / 0  # noqa: F823, F841
+    return "OK"
+
+
 versions = Versionizer(
     app=app,
     prefix_format="/v{major}",
