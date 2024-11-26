@@ -350,14 +350,14 @@ async def get_scada_range(
         min(f.data_first_seen) at time zone '{timezone}',
         max(fs.trading_interval)  at time zone '{timezone}'
     from facility_scada fs
-    left join facility f on fs.facility_code = f.code
+    left join units u on fs.facility_code = u.code
     where
         fs.trading_interval >= '{date_min}' and
         {facility_query}
         {network_query}
         {network_region_query}
-        f.fueltech_id not in ({excluded_fueltechs})
-        and f.interconnector is FALSE
+        u.fueltech_id not in ({excluded_fueltechs})
+        and u.interconnector is FALSE
         and fs.{field} is not null;
     """
 
@@ -385,28 +385,28 @@ async def get_scada_range(
 
     # Only check energy values
     if energy is True:
-        field_name = "eoi_quantity"
+        field_name = "energy"
 
     # Only look back 7 days because the query is more optimized
     date_min = get_today_for_network(network=network) - timedelta(days=7)
 
     if network:
-        network_query = f"f.network_id = '{network.code}' and"
+        network_query = f"u.network_id = '{network.code}' and"
 
     if networks:
         net_case = networks_to_in(networks)
-        network_query = f"f.network_id IN ({net_case}) and "
+        network_query = f"u.network_id IN ({net_case}) and "
 
     network_region_query = ""
 
     if network_region:
-        network_region_query = f"f.network_region = '{network_region}' and"
+        network_region_query = f"u.network_region = '{network_region}' and"
 
     facility_query = ""
 
     if facilities:
         fac_case = duid_to_case(facilities)
-        facility_query = f"f.code IN ({fac_case}) and "
+        facility_query = f"u.code IN ({fac_case}) and "
 
     scada_range_query = dedent(
         __query.format(
