@@ -114,7 +114,9 @@ if LOGGING_CONFIG:
 # Setup sentry
 if settings.sentry_url:
     setup_sentry(sentry_url=settings.sentry_url, environment=settings.env)
-
+    console.print(f" * Sentry configured at [red bold encircle]{obfuscate_dsn_password(settings.sentry_url)}[/]")
+else:
+    console.print(" * Sentry not configured")
 
 PROJECT_PATH = get_project_path()
 
