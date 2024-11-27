@@ -15,7 +15,7 @@ from datetime import datetime
 
 from pydantic import ValidationError
 
-from opennem.persistence.schema import SchemaBalancingSummary, SchemaFacilityScada
+from opennem.persistence.schema import BalancingSummarySchema, FacilityScadaSchema
 from opennem.utils.archive import download_and_parse_json_zip
 
 logger = logging.getLogger("opennem.client.wemde")
@@ -44,7 +44,7 @@ def _wemde_download_dataset(url: str) -> dict:
     return json_response
 
 
-def wemde_parse_facilityscada(url: str) -> list[SchemaFacilityScada]:
+def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
     """Parses a WEMDE dataset"""
 
     # key to extract
@@ -69,7 +69,7 @@ def wemde_parse_facilityscada(url: str) -> list[SchemaFacilityScada]:
         interval = interval.replace(tzinfo=None)
 
         try:
-            m = SchemaFacilityScada(
+            m = FacilityScadaSchema(
                 **{
                     "network_id": "WEM",
                     "interval": interval,
@@ -87,7 +87,7 @@ def wemde_parse_facilityscada(url: str) -> list[SchemaFacilityScada]:
     return models
 
 
-def wemde_parse_trading_price(url: str) -> list[SchemaBalancingSummary]:
+def wemde_parse_trading_price(url: str) -> list[BalancingSummarySchema]:
     """Parse WEMDE trading price"""
 
     # key to extract
@@ -112,7 +112,7 @@ def wemde_parse_trading_price(url: str) -> list[SchemaBalancingSummary]:
         interval = interval.replace(tzinfo=None)
 
         try:
-            m = SchemaBalancingSummary(
+            m = BalancingSummarySchema(
                 **{
                     "network_id": "WEM",
                     "interval": interval,

@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class SchemaFacilityScada(BaseModel):
+class FacilityScadaSchema(BaseModel):
     interval: datetime
     network_id: str
     facility_code: str
@@ -13,7 +13,7 @@ class SchemaFacilityScada(BaseModel):
     energy_quality_flag: int = 0
 
 
-class SchemaBalancingSummary(BaseModel):
+class BalancingSummarySchema(BaseModel):
     interval: datetime
     network_id: str
     forecast_load: float | None = None

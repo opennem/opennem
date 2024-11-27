@@ -9,7 +9,7 @@ from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_meta, crawler
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
 from opennem.core.parsers.dirlisting import get_dirlisting
 from opennem.persistence.postgres_facility_scada import persist_facility_scada_bulk
-from opennem.persistence.schema import SchemaBalancingSummary, SchemaFacilityScada
+from opennem.persistence.schema import BalancingSummarySchema, FacilityScadaSchema
 from opennem.schema.date_range import CrawlDateRange
 from opennem.schema.network import NetworkWEM
 from opennem.utils.dates import get_today_opennem
@@ -81,7 +81,7 @@ async def run_wemde_crawl(
     latest_interval: datetime | None = None
     latest_aemo_interval_date: datetime | None = None
 
-    data: list[SchemaFacilityScada | SchemaBalancingSummary] = []
+    data: list[FacilityScadaSchema | BalancingSummarySchema] = []
 
     for entry in entries_to_fetch:
         logger.info(f"Fetching {entry.link}")
