@@ -52,7 +52,7 @@ async def task_nem_interval_check(ctx) -> None:
         raise OpenNEMPipelineRetryTask()
 
     # update energy
-    await process_energy_from_now(hours=4)
+    # await process_energy_from_now(hours=4)
 
     # update facility aggregates
     await run_update_facility_intervals(hours=4)
