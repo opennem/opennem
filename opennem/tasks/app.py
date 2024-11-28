@@ -49,7 +49,6 @@ from opennem.tasks.tasks import (
     task_nem_rooftop_crawl,
     task_refresh_from_cms,
     task_run_aggregates_demand_network_days,
-    task_run_energy_calculation,
     task_run_flows_for_last_days,
     task_sync_archive_exports,
     task_update_facility_aggregates_chunked,
@@ -106,13 +105,13 @@ class WorkerSettings:
             unique=True,
         ),
         # Energy Calculation
-        cron(
-            task_run_energy_calculation,
-            minute={2, 32},
-            second=55,
-            timeout=None,
-            unique=True,
-        ),
+        # cron(
+        #     task_run_energy_calculation,
+        #     minute={2, 32},
+        #     second=55,
+        #     timeout=None,
+        #     unique=True,
+        # ),
         # NEM exports
         cron(
             task_nem_power_exports,
