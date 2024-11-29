@@ -25,7 +25,7 @@ def upgrade():
     try:
         # Create continuous aggregate materialized view
         connection.execute(sa.text("""
-        CREATE MATERIALIZED VIEW mv_facility_daily
+        CREATE MATERIALIZED VIEW mv_fueltech_daily
         WITH (timescaledb.continuous) AS
         SELECT
             time_bucket('1 day', interval) AS interval,
@@ -43,13 +43,13 @@ def upgrade():
 
         # Create index on the continuous aggregate
         connection.execute(sa.text("""
-        CREATE INDEX idx_mv_facility_daily
-        ON mv_facility_daily (interval, network_id, network_region, fueltech_code, facility_code)
+        CREATE INDEX idx_mv_fueltech_daily
+        ON mv_fueltech_daily (interval, network_id, network_region, fueltech_code, facility_code)
         """))
 
         # Add refresh policy for the continuous aggregate
         connection.execute(sa.text("""
-        SELECT add_continuous_aggregate_policy('mv_facility_daily',
+        SELECT add_continuous_aggregate_policy('mv_fueltech_daily',
             start_offset => INTERVAL '3 days',
             end_offset => INTERVAL '1 hour',
             schedule_interval => INTERVAL '1 hour')
