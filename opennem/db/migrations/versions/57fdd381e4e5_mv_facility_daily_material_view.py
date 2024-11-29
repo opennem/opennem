@@ -1,6 +1,6 @@
 # pylint: disable=no-member
 """
-mv_facility_daily material view
+mv_fueltech_daily material view
 
 Revision ID: 57fdd381e4e5
 Revises: a328885a3ff7
