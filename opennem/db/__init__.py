@@ -12,6 +12,7 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 import deprecation
+from psycopg import AsyncConnection
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
@@ -172,3 +173,8 @@ async def get_notransaction_session() -> AsyncGenerator[AsyncSession, None]:
 async def get_scoped_session() -> AsyncGenerator[AsyncSession, None]:
     async with SessionLocalAsync() as session:
         yield session
+
+
+async def get_scoped_connection() -> AsyncGenerator[AsyncConnection, None]:
+    async with engine.begin() as connection:
+        yield connection
