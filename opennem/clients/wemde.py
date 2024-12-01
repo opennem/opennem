@@ -15,6 +15,7 @@ from datetime import datetime
 
 from pydantic import ValidationError
 
+from opennem.core.battery import get_battery_unit_map
 from opennem.persistence.schema import BalancingSummarySchema, FacilityScadaSchema
 from opennem.utils.archive import download_and_parse_json_zip
 
@@ -44,7 +45,7 @@ def _wemde_download_dataset(url: str) -> dict:
     return json_response
 
 
-def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
+async def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
     """Parses a WEMDE dataset"""
 
     # key to extract
@@ -61,6 +62,19 @@ def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
 
     models = []
 
+    # Get battery unit mappings
+    battery_unit_map = await get_battery_unit_map()
+
+    # Create a function to map facility codes based on generated value
+    def _map_battery_code(facility_code: str, generated: float) -> str:
+        if facility_code in battery_unit_map:
+            battery_map = battery_unit_map[facility_code]
+            if generated < 0:
+                return battery_map.charge_unit
+            else:
+                return battery_map.discharge_unit
+        return facility_code
+
     # map fields
     for entry in json_records:
         interval = datetime.fromisoformat(entry.get("dispatchInterval"))
@@ -68,14 +82,20 @@ def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
         # strip timezone from interval
         interval = interval.replace(tzinfo=None)
 
+        facility_code = entry.get("code")
+        generated = entry.get("quantity", 0)
+
+        # map battery facility code if needed
+        facility_code = _map_battery_code(facility_code, generated)
+
         try:
             m = FacilityScadaSchema(
                 **{
                     "network_id": "WEM",
                     "interval": interval,
-                    "facility_code": entry.get("code"),
-                    "generated": entry.get("quantity", 0),
-                    "energy": entry.get("quantity", 0) / 12,
+                    "facility_code": facility_code,
+                    "generated": generated,
+                    "energy": generated / 12,
                 }
             )
             models.append(m)

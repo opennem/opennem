@@ -1,5 +1,6 @@
 """Crawls and parses new WEMDE format"""
 
+import inspect
 import logging
 from datetime import datetime
 
@@ -93,10 +94,13 @@ async def run_wemde_crawl(
             latest_aemo_interval_date = entry.aemo_interval_date
 
         try:
-            data += crawler.parser(entry.link)
+            if callable(crawler.parser) and inspect.iscoroutinefunction(crawler.parser):
+                data += await crawler.parser(entry.link)
+            else:
+                data += crawler.parser(entry.link)
 
         except Exception as e:
-            logger.error(f"Error parsing data: {e}")
+            logger.error(f"Error parsing data with {crawler.parser}: {e}")
             continue
 
     # persist data
@@ -194,4 +198,4 @@ if __name__ == "__main__":
     # crawler_set_meta(AEMOWEMDEFacilityScadaHistory.name, CrawlStatTypes.server_latest, backdate_date)
     import asyncio
 
-    asyncio.run(run_all_wem_crawlers(latest=False, limit=None))
+    asyncio.run(run_all_wem_crawlers(latest=False, limit=5))
