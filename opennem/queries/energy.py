@@ -41,8 +41,8 @@ def get_energy_network_fueltech_query(
         t.fueltech_code,
         round((sum(t.energy) / 1000)::numeric, 4) as fueltech_energy_gwh,
         round(sum(t.market_value)::numeric, 2) as fueltech_market_value_dollars,
-        round(sum(t.emissions)::numeric, 2) as fueltech_emissions
-    from mv_facility_daily t
+        round(sum(t.emissions)::numeric, 4) as fueltech_emissions
+    from mv_fueltech_daily t
     where
         t.interval >= '{date_min}' and t.interval <= '{date_max}' and
         {network_query}
@@ -84,6 +84,41 @@ def get_energy_network_fueltech_query(
             network_region_query=network_region_query,
         )
     )
+
+
+def get_energy_facility_query(time_series: OpennemExportSeries, facility_code: str) -> TextClause:
+    """
+    Get Energy for a facility code
+    """
+    __query = """
+    SELECT
+        time_bucket_gapfill('{interval}', fs.interval) as interval,
+        facility_code,
+        unit_code,
+        round(sum(energy)::numeric, 4) as energy,
+        round(sum(emissions)::numeric, 4) as emissions,
+        round(sum(market_value)::numeric, 4) as market_value
+    FROM mv_facility_unit_daily
+    WHERE
+        facility_code = '{facility_code}' and
+        interval >= '{date_min}' and interval <= '{date_max}'
+    GROUP BY 1, 2, 3
+    ORDER BY 1 DESC, 2, 3;
+    """
+
+    date_range = time_series.get_range()
+
+    return text(
+        __query.format(
+            interval=time_series.interval.interval_human,
+            facility_code=facility_code,
+            date_max=date_range.end.date(),
+            date_min=date_range.start.date(),
+        )
+    )
+
+
+# Queries used in record reactor
 
 
 async def get_fueltech_interval_energy_emissions(

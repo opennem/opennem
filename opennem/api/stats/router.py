@@ -21,13 +21,14 @@ from opennem.core.units import get_unit
 from opennem.db import db_connect, get_scoped_session
 from opennem.db.models.opennem import Facility
 from opennem.queries.emissions import get_emission_factor_region_query
+from opennem.queries.energy import get_energy_facility_query
 from opennem.queries.price import get_network_region_price_query
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.schema.time import TimePeriod
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem
 
 from .controllers import get_scada_range, get_scada_range_optimized, stats_factory
-from .queries import energy_facility_query, power_facility_query
+from .queries import power_facility_query
 from .schema import DataQueryResult, OpennemDataSet
 
 logger = logging.getLogger(__name__)
@@ -241,15 +242,16 @@ async def energy_station(
         period=period_obj,
     )
 
-    query = energy_facility_query(
+    query = get_energy_facility_query(
         time_series=time_series,
         facility_code=facility_code,
     )
 
     logger.debug(query)
 
-    async with engine.begin() as c:
-        row = list(await c.execute(query))
+    async with engine.begin() as connection:
+        result = await connection.execute(query)
+        row = list(result)
 
     if len(row) < 1:
         raise HTTPException(
