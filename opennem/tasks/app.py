@@ -81,8 +81,7 @@ class WorkerSettings:
         # WEM Interval Check
         cron(
             task_wem_day_crawl,
-            hour={9},
-            minute={30, 40, 50},
+            minute={30},
             second=58,
             timeout=None,
             unique=True,
