@@ -110,7 +110,7 @@ def get_energy_facility_query(time_series: OpennemExportSeries, facility_code: s
 
     return text(
         __query.format(
-            interval=time_series.interval.interval_human,
+            interval=time_series.interval.interval_sql,
             facility_code=facility_code,
             date_max=date_range.end.date(),
             date_min=date_range.start.date(),
