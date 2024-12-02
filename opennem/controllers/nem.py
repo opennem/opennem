@@ -77,9 +77,6 @@ async def generate_facility_scada(
     df.generated = pd.to_numeric(df.generated)
     df["generated"] = df["generated"].fillna(0)
 
-    # fill in energies
-    df["energy"] = df.generated / (60 / network.interval_size)
-
     df = df[FACILITY_SCADA_COLUMN_NAMES]
 
     # Get battery unit mappings
@@ -111,6 +108,9 @@ async def generate_facility_scada(
     # Apply the mapping function
     df["facility_code"] = df.apply(map_battery_code, axis=1)
     df["generated"] = df.apply(map_battery_generation, axis=1)
+
+    # fill in energies
+    df["energy"] = df.generated / (60 / network.interval_size)
 
     # set the index
     df.set_index(["interval", "network_id", "facility_code", "is_forecast"], inplace=True)
