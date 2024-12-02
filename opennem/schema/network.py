@@ -257,6 +257,7 @@ NetworkAU = NetworkSchema(
     interval_size=30,
     data_first_seen=datetime.fromisoformat("1998-12-07T01:50:00+10:00"),
     subnetworks=[NetworkNEM, NetworkWEM],
+    fueltechs=all_fueltechs_without_rooftop,
 )
 
 
