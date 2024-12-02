@@ -121,7 +121,7 @@ async def persist_unit_record(unit: UnitSchema) -> None:
 
         session.add(unit_db)
 
-        message = f"Persisted unit {unit.code} - {unit.fueltech_id} - {unit.status_id} - {unit.dispatch_type.value}"
+        message = f"Persisted unit {unit.code} - {unit.fueltech_id.value} - {unit.status_id.value} - {unit.dispatch_type.value}"
 
         logger.info(message)
 
