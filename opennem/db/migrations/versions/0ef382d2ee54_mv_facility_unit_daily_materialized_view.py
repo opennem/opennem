@@ -49,6 +49,16 @@ def upgrade():
         """))
 
         connection.execute(sa.text("""
+        CREATE INDEX idx_mv_facility_unit_daily_facility_interval
+        ON mv_facility_unit_daily (facility_code, interval DESC);
+        """))
+
+        connection.execute(sa.text("""
+        CREATE INDEX idx_mv_facility_unit_daily_interval_only
+        ON mv_facility_unit_daily (interval DESC);
+        """))
+
+        connection.execute(sa.text("""
         CREATE INDEX idx_mv_facility_unit_daily_network
         ON mv_facility_unit_daily (network_id, network_region, facility_code, unit_code, interval DESC)
         """))
