@@ -66,14 +66,14 @@ async def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
     battery_unit_map = await get_battery_unit_map()
 
     # Create a function to map facility codes based on generated value
-    def _map_battery_code(facility_code: str, generated: float) -> str:
+    def _map_battery_code(facility_code: str, generated: float) -> tuple[str, float]:
         if facility_code in battery_unit_map:
             battery_map = battery_unit_map[facility_code]
             if generated < 0:
-                return battery_map.charge_unit
+                return battery_map.charge_unit, abs(generated)
             else:
-                return battery_map.discharge_unit
-        return facility_code
+                return battery_map.discharge_unit, generated
+        return facility_code, generated
 
     # map fields
     for entry in json_records:
@@ -86,7 +86,7 @@ async def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
         generated = entry.get("quantity", 0)
 
         # map battery facility code if needed
-        facility_code = _map_battery_code(facility_code, generated)
+        facility_code, generated = _map_battery_code(facility_code, generated)
 
         try:
             m = FacilityScadaSchema(

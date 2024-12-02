@@ -93,6 +93,7 @@ async def generate_facility_scada(
         if facility_code in battery_unit_map:
             battery_map = battery_unit_map[facility_code]
             if generated < 0:
+                row["generated"] = abs(generated)
                 return battery_map.charge_unit
             else:
                 return battery_map.discharge_unit
