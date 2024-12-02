@@ -92,7 +92,7 @@ def get_energy_facility_query(time_series: OpennemExportSeries, facility_code: s
     """
     __query = """
     SELECT
-        time_bucket_gapfill('{interval}', fs.interval) as interval,
+        time_bucket_gapfill('{interval}', interval) as interval,
         facility_code,
         unit_code,
         round(sum(energy)::numeric, 4) as energy,
