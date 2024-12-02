@@ -7,10 +7,12 @@ and OpenElectricity websites on the facilities page.
 import asyncio
 import logging
 
+from opennem import settings
 from opennem.api.schema import APIV4ResponseSchema
+from opennem.clients.slack import slack_message
 from opennem.cms.importer import get_cms_facilities
 from opennem.exporter.storage_bucket import cloudflare_uploader
-from opennem.schema.unit import UnitFueltechType
+from opennem.schema.unit import UnitDispatchType, UnitFueltechType
 from opennem.utils.dates import get_today_opennem
 from opennem.utils.version import get_version
 
@@ -39,9 +41,31 @@ async def export_facilities_static() -> None:
             required_fields = ["code", "fueltech_id", "dispatch_type", "status_id"]
             for field in required_fields:
                 if not getattr(unit, field):
-                    logger.warning(f"Facility {facility.code} - {facility.name} has unit {unit.code} with missing field {field}")
+                    message = f"Facility {facility.code} - {facility.name} has unit {unit.code} with missing field {field}"
+                    await slack_message(webhook_url=settings.slack_hook_new_facilities, message=message)
+                    logger.warning(message)
                     continue
 
+            # check that battery dispatch types are correct
+            if unit.fueltech_id == UnitFueltechType.battery_discharging:
+                if unit.dispatch_type != UnitDispatchType.GENERATOR:
+                    message = (
+                        f"Facility {facility.code} - {facility.name} has"
+                        f" unit {unit.code} with incorrect dispatch type for"
+                        f" fueltech {unit.fueltech_id.value}: {unit.dispatch_type.value}"
+                    )
+                    await slack_message(webhook_url=settings.slack_hook_new_facilities, message=message)
+                    logger.warning(message)
+
+            if unit.fueltech_id == UnitFueltechType.battery_charging:
+                if unit.dispatch_type != UnitDispatchType.LOAD:
+                    message = (
+                        f"Facility {facility.code} - {facility.name} has"
+                        f" unit {unit.code} with incorrect dispatch type for"
+                        f" fueltech {unit.fueltech_id.value}: {unit.dispatch_type.value}"
+                    )
+                    await slack_message(webhook_url=settings.slack_hook_new_facilities, message=message)
+                    logger.warning(message)
         facility.units = units
         facilities_clean.append(facility)
 
