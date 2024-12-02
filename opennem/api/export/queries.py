@@ -202,7 +202,7 @@ def power_network_fueltech_query(
 
     __query = """
     SELECT
-        time_bucket_gapfill('5 min', interval) as interval,
+        time_bucket_gapfill('{interval}', interval) as interval,
         fueltech_code,
         sum(generated) as fueltech_power,
         sum(emissions) as fueltech_emissions,
@@ -244,7 +244,7 @@ def power_network_fueltech_query(
 
     query = dedent(
         __query.format(
-            trunc=time_series.interval.interval_sql,
+            interval=time_series.interval.interval_human,
             network_query=network_query,
             network_region_query=network_region_query,
             date_max=date_max,

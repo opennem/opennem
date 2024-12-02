@@ -206,7 +206,6 @@ def generate_export_map() -> StatMetadata:
                 NetworkWEM,
                 NetworkAEMORooftop,
                 NetworkOpenNEMRooftopBackfill,
-                NetworkAPVI,
             ],
             interval=NetworkAU.get_interval(),
             period=power_period,
