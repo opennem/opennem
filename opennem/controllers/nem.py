@@ -93,14 +93,24 @@ async def generate_facility_scada(
         if facility_code in battery_unit_map:
             battery_map = battery_unit_map[facility_code]
             if generated < 0:
-                row["generated"] = abs(generated)
                 return battery_map.charge_unit
             else:
                 return battery_map.discharge_unit
         return facility_code
 
+    def map_battery_generation(row):
+        facility_code = row["facility_code"]
+        generated = row["generated"]
+
+        if facility_code in battery_unit_map:
+            if facility_code == battery_unit_map[facility_code].charge_unit:
+                return abs(generated)
+
+        return generated
+
     # Apply the mapping function
     df["facility_code"] = df.apply(map_battery_code, axis=1)
+    df["generated"] = df.apply(map_battery_generation, axis=1)
 
     # set the index
     df.set_index(["interval", "network_id", "facility_code", "is_forecast"], inplace=True)
