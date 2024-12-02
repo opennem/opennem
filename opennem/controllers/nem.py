@@ -102,8 +102,8 @@ async def generate_facility_scada(
         facility_code = row["facility_code"]
         generated = row["generated"]
 
-        if facility_code in battery_unit_map:
-            if facility_code == battery_unit_map[facility_code].charge_unit:
+        for _, battery_map in battery_unit_map.items():
+            if facility_code == battery_map.charge_unit:
                 return abs(generated)
 
         return generated
