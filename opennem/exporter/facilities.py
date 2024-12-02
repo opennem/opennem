@@ -5,6 +5,7 @@ and OpenElectricity websites on the facilities page.
 """
 
 import asyncio
+import logging
 
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.cms.importer import get_cms_facilities
@@ -12,6 +13,8 @@ from opennem.exporter.storage_bucket import cloudflare_uploader
 from opennem.schema.unit import UnitFueltechType
 from opennem.utils.dates import get_today_opennem
 from opennem.utils.version import get_version
+
+logger = logging.getLogger("opennem.exporter.facilities")
 
 
 async def export_facilities_static() -> None:
@@ -25,6 +28,20 @@ async def export_facilities_static() -> None:
 
     for facility in facilities:
         units = [u for u in facility.units if u.fueltech_id != UnitFueltechType.battery]
+
+        # sanity check the units are not empty
+        if not units:
+            logger.warning(f"Facility {facility.code} - {facility.name} has no units")
+            continue
+
+        # sanity check unit has required fields
+        for unit in units:
+            required_fields = ["code", "fueltech_id", "dispatch_type", "status_id"]
+            for field in required_fields:
+                if not getattr(unit, field):
+                    logger.warning(f"Facility {facility.code} - {facility.name} has unit {unit.code} with missing field {field}")
+                    continue
+
         facility.units = units
         facilities_clean.append(facility)
 
