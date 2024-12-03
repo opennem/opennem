@@ -8,7 +8,7 @@ from opennem.aggregates.network_demand import run_aggregates_demand_network_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.api.export.tasks import export_electricitymap, export_energy, export_flows
 from opennem.cms.importer import update_database_facilities_from_cms
-from opennem.controllers.export import run_export_current_year, run_export_energy_all
+from opennem.controllers.export import run_export_energy_all, run_export_energy_for_year
 from opennem.controllers.schema import ControllerReturn
 from opennem.crawl import run_crawl
 from opennem.crawlers.aemo_market_notice import run_market_notice_update
@@ -84,7 +84,7 @@ async def task_wem_day_crawl(ctx) -> None:
     await run_all_wem_crawlers(latest=True, limit=3)
     await run_update_facility_intervals(hours=24 * 2)
     await run_export_power_latest_for_network(network=NetworkWEM)
-    await run_export_current_year(network_region_code="WEM")
+    await run_export_energy_for_year(network=NetworkWEM)
 
 
 async def task_apvi_crawl(ctx) -> None:
