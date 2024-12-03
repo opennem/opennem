@@ -3,10 +3,10 @@ OpenNEM cache utilities
 
 """
 
-import inspect
 import logging
 from collections.abc import Awaitable, Callable
 from functools import wraps
+from typing import Any
 
 from cachetools import TTLCache
 
@@ -20,7 +20,7 @@ CACHE_AGE = 60 * 5
 scada_cache: TTLCache = TTLCache(maxsize=100, ttl=CACHE_AGE)
 
 
-def cache_scada_result(func: Callable | Awaitable[Callable]) -> Callable | Awaitable[Callable]:
+def cache_scada_result(func: Callable[..., Awaitable[ScadaDateRange]]) -> Callable[..., Awaitable[ScadaDateRange]]:
     """
     Caches the scada_range results in memory since they're called so often
     by wrapping the function.
@@ -51,17 +51,14 @@ def cache_scada_result(func: Callable | Awaitable[Callable]) -> Callable | Await
         ret: ScadaDateRange | None = None
 
         try:
-            _val: dict = scada_cache[key]
+            _val: dict[str, Any] = scada_cache[key]
             ret = ScadaDateRange(**_val)
 
             logger.debug(f"scada range HIT at key: {key}")
 
             return ret
         except KeyError:
-            if inspect.iscoroutinefunction(func):
-                ret = await func(network, networks, network_region, facilities, energy)
-            else:
-                ret = func(network, networks, network_region, facilities, energy)
+            ret = await func(network, networks, network_region, facilities, energy)
         except Exception as e:
             logger.error(f"Error in cache_scada_result: {e}")
 
