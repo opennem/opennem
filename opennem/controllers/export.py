@@ -6,7 +6,6 @@ from opennem.api.export.tasks import export_energy, export_power
 from opennem.schema.network import (
     NetworkSchema,
 )
-from opennem.utils.dates import get_today_opennem
 
 logger = logging.getLogger("opennem.run_test")
 
@@ -92,10 +91,10 @@ async def run_export_energy_for_year(
     """
     export_map = get_export_map()
 
-    if not year:
-        year = get_today_opennem().year
+    energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.daily)
 
-    energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.daily).get_by_year(year)
+    if year:
+        energy_exports = energy_exports.get_by_year(year)
 
     if network_region_code:
         energy_exports = energy_exports.get_by_network_region(network_region_code)
