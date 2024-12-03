@@ -89,7 +89,7 @@ async def export_power(
         if NetworkNEM in date_range_networks:
             date_range_networks = [NetworkNEM]
 
-        date_range: ScadaDateRange = get_scada_range_optimized(network=power_stat.network)
+        date_range: ScadaDateRange = await get_scada_range(network=power_stat.network)
 
         logger.debug(f"Date range for {power_stat.network.code}: {date_range.start} => {date_range.end}")
 
