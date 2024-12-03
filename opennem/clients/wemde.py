@@ -16,7 +16,6 @@ from datetime import datetime
 from pydantic import ValidationError
 
 from opennem.core.battery import get_battery_unit_map
-from opennem.persistence.postgres_facility_scada import persist_facility_scada_bulk
 from opennem.persistence.schema import BalancingSummarySchema, FacilityScadaSchema
 from opennem.utils.archive import download_and_parse_json_zip
 
@@ -162,7 +161,7 @@ if __name__ == "__main__":
             if m.interval == datetime.fromisoformat("2024-12-01T08:30:00"):
                 print(f"{m.interval} {m.facility_code} {m.generated}")
 
-        await persist_facility_scada_bulk(records=models, update_fields=["generated", "energy"])
+        # await persist_facility_scada_bulk(records=models, update_fields=["generated", "energy"])
 
     asyncio.run(test_wemde())
     # with open("wem-live.json", "w") as fh:
