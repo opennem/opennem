@@ -123,7 +123,7 @@ async def task_run_aggregates_demand_network_days(ctx) -> None:
 
 async def task_facility_first_seen_check(ctx) -> None:
     """Runs the facility first seen check"""
-    await facility_first_seen_check()
+    await facility_first_seen_check(send_slack=True, only_generation=True)
 
 
 async def task_update_facility_seen_range(ctx) -> None:
