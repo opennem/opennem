@@ -16,6 +16,7 @@ from datetime import datetime
 from pydantic import ValidationError
 
 from opennem.core.battery import get_battery_unit_map
+from opennem.persistence.postgres_facility_scada import persist_facility_scada_bulk
 from opennem.persistence.schema import BalancingSummarySchema, FacilityScadaSchema
 from opennem.utils.archive import download_and_parse_json_zip
 
@@ -83,10 +84,10 @@ async def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
         interval = interval.replace(tzinfo=None)
 
         facility_code = entry.get("code")
-        generated = entry.get("quantity", 0)
+        quantity = entry.get("quantity", 0)
 
         # map battery facility code if needed
-        facility_code, generated = _map_battery_code(facility_code, generated)
+        facility_code, quantity = _map_battery_code(facility_code, quantity)
 
         try:
             m = FacilityScadaSchema(
@@ -94,8 +95,8 @@ async def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
                     "network_id": "WEM",
                     "interval": interval,
                     "facility_code": facility_code,
-                    "generated": generated,
-                    "energy": generated / 12,
+                    "generated": quantity * 12,  # convert to MW
+                    "energy": quantity,
                 }
             )
             models.append(m)
@@ -151,10 +152,18 @@ def wemde_parse_trading_price(url: str) -> list[BalancingSummarySchema]:
 
 # debug entry point
 if __name__ == "__main__":
-    url = (
-        "https://data.wa.aemo.com.au/public/market-data/wemde/referenceTradingPrice/current/ReferenceTradingPrice_2024-01-13.json"
-    )
-    models = wemde_parse_trading_price(url)
-    print(len(models))
+    import asyncio
+
+    async def test_wemde():
+        url = "https://data.wa.aemo.com.au/public/market-data/wemde/facilityScada/previous/FacilityScada_20241201.zip"
+        models = await wemde_parse_facilityscada(url)
+
+        for m in models:
+            if m.interval == datetime.fromisoformat("2024-12-01T08:30:00"):
+                print(f"{m.interval} {m.facility_code} {m.generated}")
+
+        await persist_facility_scada_bulk(records=models, update_fields=["generated", "energy"])
+
+    asyncio.run(test_wemde())
     # with open("wem-live.json", "w") as fh:
     # fh.write(m.json(indent=4))
