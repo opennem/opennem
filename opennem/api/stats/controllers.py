@@ -347,12 +347,13 @@ async def get_scada_range(
 
     __query = """
     select
-        min(f.data_first_seen) at time zone '{timezone}',
-        max(fs.trading_interval)  at time zone '{timezone}'
+        min(u.data_first_seen),
+        max(fs.interval)
     from facility_scada fs
-    left join units u on fs.facility_code = u.code
+    join units u on fs.facility_code = u.code
+    join facilities f on f.id = u.station_id
     where
-        fs.trading_interval >= '{date_min}' and
+        fs.interval >= '{date_min}' and
         {facility_query}
         {network_query}
         {network_region_query}
@@ -362,7 +363,6 @@ async def get_scada_range(
     """
 
     network_query = ""
-    timezone = network.timezone_database if network else "UTC"
     field_name = "generated"
 
     # List of fueltechs to exclude from query
@@ -391,16 +391,16 @@ async def get_scada_range(
     date_min = get_today_for_network(network=network) - timedelta(days=7)
 
     if network:
-        network_query = f"u.network_id = '{network.code}' and"
+        network_query = f"f.network_id = '{network.code}' and"
 
     if networks:
         net_case = networks_to_in(networks)
-        network_query = f"u.network_id IN ({net_case}) and "
+        network_query = f"f.network_id IN ({net_case}) and "
 
     network_region_query = ""
 
     if network_region:
-        network_region_query = f"u.network_region = '{network_region}' and"
+        network_region_query = f"f.network_region = '{network_region}' and"
 
     facility_query = ""
 
@@ -415,7 +415,6 @@ async def get_scada_range(
             facility_query=facility_query,
             network_query=network_query,
             network_region_query=network_region_query,
-            timezone=timezone,
             excluded_fueltechs=", ".join([f"'{i}'" for i in list(excluded_fueltechs)]),
         )
     )
