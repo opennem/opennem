@@ -354,6 +354,7 @@ async def get_scada_range(
     join facilities f on f.id = u.station_id
     where
         fs.interval >= '{date_min}' and
+        fs.is_forecast is FALSE and
         {facility_query}
         {network_query}
         {network_region_query}
