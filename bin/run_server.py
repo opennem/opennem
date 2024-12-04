@@ -27,7 +27,7 @@ def run_server(host: str = "0.0.0.0", port: int = 8000, server_ssl: bool = False
     if not workers:
         workers = server_workers
 
-    log_level = "info"
+    log_level = settings.log_level.lower()
     reload_enabled = False
     reload_dirs = None
     ssl_options = {}
