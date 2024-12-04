@@ -19,7 +19,7 @@ logger = logging.getLogger("opennem.server")
 RELOAD_PATH = Path(__file__).parent.parent.resolve() / "opennem"
 
 
-def run_server(host: str = "0.0.0.0", port: int = 8000, server_ssl: bool = False, workers: int | None = None) -> None:
+def run_server(host: str = "0.0.0.0", port: int = 8000, server_ssl: bool = False, workers: int | None = 2) -> None:
     import multiprocessing
 
     server_workers = multiprocessing.cpu_count()
