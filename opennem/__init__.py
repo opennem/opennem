@@ -56,8 +56,6 @@ __package__ = "opennem"
 
 # Check minimum required Python version
 
-# logfire
-logfire.configure()
 
 # console
 console = Console()
@@ -69,6 +67,9 @@ setup_root_logger()
 PYTHON_VERSION = ".".join([str(i) for i in (sys.version_info.major, sys.version_info.minor, sys.version_info.micro)])
 SYSTEM_STRING = platform()
 ENV = os.getenv("ENV", default="local")
+
+# setup logfire
+logfire.configure(service_name="opennem", service_version=__version__)
 
 console.print(f" * Loading OpenNEM ENV: [b magenta]{ENV}[/b magenta]")
 console.print(
