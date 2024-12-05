@@ -6,13 +6,13 @@ import logging
 from opennem.aggregates.facility_interval import run_update_facility_intervals
 from opennem.aggregates.network_demand import run_aggregates_demand_network_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
-from opennem.api.export.tasks import export_electricitymap, export_energy, export_flows
+from opennem.api.export.tasks import export_electricitymap, export_energy, export_flows, export_power
 from opennem.cms.importer import update_database_facilities_from_cms
 from opennem.controllers.export import run_export_energy_all, run_export_energy_for_year
 from opennem.controllers.schema import ControllerReturn
 from opennem.crawl import run_crawl
 from opennem.crawlers.aemo_market_notice import run_market_notice_update
-from opennem.crawlers.apvi import APVIRooftopLatestCrawler
+from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopMonthCrawler
 from opennem.crawlers.bom import BOMCapitals
 from opennem.crawlers.nemweb import (
     AEMONEMDispatchActualGEN,
@@ -207,3 +207,56 @@ async def task_clean_tmp_dir(ctx) -> None:
 
 async def task_run_market_notice_update(ctx):
     await run_market_notice_update()
+
+
+# catchup tasks
+
+
+async def task_catchup(ctx) -> None:
+    """Runs the catchup tasks"""
+    # await run_all_wem_crawlers(latest=False, limit=30)
+
+    crawlers = [
+        AEMONEMDispatchActualGEN,
+        AEMONEMNextDayDispatch,
+        BOMCapitals,
+        APVIRooftopMonthCrawler,
+    ]
+    for crawler in crawlers:
+        try:
+            await run_crawl(crawler, latest=False, limit=30, reverse=True)
+        except Exception as e:
+            logger.error(f"Error running crawler {crawler}: {e}")
+
+    crawlers_current = [
+        AEMONNemwebDispatchScada,
+        AEMONemwebDispatchIS,
+        AEMONemwebTradingIS,
+        AEMONemwebRooftop,
+        AEMONemwebRooftopForecast,
+    ]
+    for crawler in crawlers_current:
+        try:
+            await run_crawl(crawler, latest=False, limit=None, reverse=True)
+        except Exception as e:
+            logger.error(f"Error running crawler {crawler}: {e}")
+
+    # processing
+    # await process_energy_from_now(hours=24 * 30)
+    await run_update_facility_intervals(hours=24 * 30)
+
+    try:
+        run_flows_for_last_days(days=30, network=NetworkNEM)
+    except Exception as e:
+        logger.error(f"Error running flows: {e}")
+
+    # exports
+    await export_power()
+    await run_export_energy_for_year(year=2024)
+    await run_export_energy_for_year(year=2023)
+    # await run_export_energy_all(network_region_code="NSW1")
+    await run_export_energy_all()
+
+
+if __name__ == "__main__":
+    asyncio.run(task_catchup(ctx=None))
