@@ -43,6 +43,7 @@ class OpennemSettings(BaseSettings):
     sentry_url: str | None = None
 
     # Slack notifications
+    slack_notifications: bool = True
     slack_hook_new_facilities: str | None = None
     slack_hook_monitoring: str | None = None
     slack_hook_feedback: str | None = None

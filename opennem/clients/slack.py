@@ -81,6 +81,10 @@ async def slack_message(
     :return: True if sent
     """
 
+    if not settings.slack_notifications:
+        logger.debug(f"Slack notifications are disabled for environment {settings.env}")
+        return False
+
     if not webhook_url:
         logger.error(f"No slack notification endpoint configured for environment {settings.env}")
         return False
