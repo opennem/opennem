@@ -45,7 +45,6 @@ from opennem.tasks.tasks import (
     task_facility_first_seen_check,
     task_nem_interval_check,
     task_nem_per_day_check,
-    task_nem_power_exports,
     task_nem_rooftop_crawl,
     task_refresh_from_cms,
     task_run_aggregates_demand_network_days,
@@ -112,17 +111,18 @@ class WorkerSettings:
         #     unique=True,
         # ),
         # NEM exports
-        cron(
-            task_nem_power_exports,
-            minute=set(range(1, 60, 5)),
-            second=58,
-            timeout=None,
-            unique=True,
-        ),
+        # @NOTE this is done in per-interval check
+        # cron(
+        #     task_nem_power_exports,
+        #     minute=set(range(1, 60, 5)),
+        #     second=58,
+        #     timeout=None,
+        #     unique=True,
+        # ),
         # energy latest export
         cron(
             task_export_energy,
-            hour={0, 7, 11},
+            # hour={0, 7, 11},
             minute=17,
             second=0,
             timeout=None,
