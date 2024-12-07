@@ -109,13 +109,13 @@ async def process_battery_history(facility_code: str | None = None):
     query_load_template = text(
         "update facility_scada set facility_code = :new_facility_code where facility_code = :old_facility_code "
         "and generated < 0 "
-        # "on conflict (network_id, interval, facility_code, is_forecast) do nothing"
+        "on conflict (network_id, interval, facility_code, is_forecast) do nothing"
     )
 
     query_generator = text(
         "update facility_scada set facility_code = :new_facility_code where facility_code = :old_facility_code "
         "and generated >= 0 "
-        # "on conflict (network_id, interval, facility_code, is_forecast) do nothing "
+        "on conflict (network_id, interval, facility_code, is_forecast) do nothing "
     )
 
     async with get_write_session() as session:
@@ -156,7 +156,12 @@ async def process_battery_history(facility_code: str | None = None):
 if __name__ == "__main__":
     import asyncio
 
-    unit_map = asyncio.run(process_battery_history(facility_code="KWINANA_ESR"))
+    async def backlog_battery_history():
+        for facility_code in ["RESS", "RIVNB", "TB2SF", "WDBESS"]:
+            logger.info(f"Processing {facility_code}")
+            await process_battery_history(facility_code=facility_code)
+
+    unit_map = asyncio.run(backlog_battery_history())
 
     # for unit in unit_map.values():
     #     print(f"{unit.unit} -> {unit.charge_unit} | {unit.discharge_unit}")
