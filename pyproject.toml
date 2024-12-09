@@ -166,7 +166,7 @@ requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
 [tool.bumpversion]
-current_version = "4.0.0-dev0"
+current_version = "4.0.0-dev1"
 parse = """(?x)
     (?P<major>0|[1-9]\\d*)\\.
     (?P<minor>0|[1-9]\\d*)\\.
@@ -184,12 +184,12 @@ serialize = [
 search = "{current_version}"
 replace = "{new_version}"
 regex = false
-ignore_missing_version = false
-tag = false
+ignore_missing_version = true
+tag = true
 sign_tags = false
 tag_name = "v{new_version}"
 tag_message = "Bump version: {current_version} → {new_version}"
-allow_dirty = false
+allow_dirty = true
 commit = false
 message = "Bump version: {current_version} → {new_version}"
 commit_args = ""
