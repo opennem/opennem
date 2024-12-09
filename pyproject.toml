@@ -1,6 +1,6 @@
 [project]
 name = "opennem-backend"
-version = "4.0.0a161"
+version = "4.0.0-dev0"
 description = "OpenElectricity (OpenNEM) Australian Energy Data Platform"
 license = "MIT"
 keywords = ["openelectricity", "opennem", "analysis", "australia", "energy"]
@@ -92,6 +92,7 @@ dev-dependencies = [
     "requests-cache<2.0.0,>=1.1.1",
     "hypothesis<7.0.0,>=6.108.5",
     "psycopg2-binary>=2.9.10",
+    "bump-my-version>=0.28.1",
 ]
 
 [project.scripts]
@@ -163,3 +164,36 @@ testpaths = [
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
+
+[tool.bumpversion]
+current_version = "4.0.0-dev0"
+parse = """(?x)
+    (?P<major>0|[1-9]\\d*)\\.
+    (?P<minor>0|[1-9]\\d*)\\.
+    (?P<patch>0|[1-9]\\d*)
+    (?:
+        -                             # dash separator for pre-release section
+        (?P<pre_l>[a-zA-Z-]+)         # pre-release label
+        (?P<pre_n>0|[1-9]\\d*)        # pre-release version number
+    )?                                # pre-release section is optional
+"""
+serialize = [
+    "{major}.{minor}.{patch}-{pre_l}{pre_n}",
+    "{major}.{minor}.{patch}",
+]
+search = "{current_version}"
+replace = "{new_version}"
+regex = false
+ignore_missing_version = false
+tag = false
+sign_tags = false
+tag_name = "v{new_version}"
+tag_message = "Bump version: {current_version} → {new_version}"
+allow_dirty = false
+commit = false
+message = "Bump version: {current_version} → {new_version}"
+commit_args = ""
+
+[tool.bumpversion.parts.pre_l]
+values = ["dev", "rc", "final"]
+optional_value = "final"

@@ -141,9 +141,9 @@ async def run_wemde_crawl(
 async def run_all_wem_crawlers(latest: bool = True, limit: int | None = None) -> None:
     for crawler in [
         AEMOWEMDEFacilityScada,
-        AEMOWEMDETradingReport,
+        # AEMOWEMDETradingReport,
         AEMOWEMDEFacilityScadaHistory,
-        AEMOWEMDETradingReportHistory,
+        # AEMOWEMDETradingReportHistory,
     ]:
         try:
             await run_wemde_crawl(crawler, latest=latest, limit=limit)
@@ -198,4 +198,4 @@ if __name__ == "__main__":
     # crawler_set_meta(AEMOWEMDEFacilityScadaHistory.name, CrawlStatTypes.server_latest, backdate_date)
     import asyncio
 
-    asyncio.run(run_all_wem_crawlers(latest=False, limit=5))
+    asyncio.run(run_all_wem_crawlers(latest=False, limit=14))

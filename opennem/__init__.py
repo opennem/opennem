@@ -50,7 +50,7 @@ from opennem.utils.settings import load_env_file
 logger = logging.getLogger("opennem")
 
 # Module variables
-__version__ = "4.0.0a161"
+__version__ = "4.0.0-dev0"
 __env__ = "prod"
 __package__ = "opennem"
 
