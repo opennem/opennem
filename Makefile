@@ -52,6 +52,13 @@ version:
 	git push origin $$current_branch; \
 	git push origin $$new_version
 
+.PHONE: push
+push:
+	@uv run bump-my-version bump pre_n
+	git add pyproject.toml $(version_file)
+	git commit -m "Bump version: $$new_version"
+	git push -u origin $$current_branch
+
 .PHONY: release-pre
 release-pre: format lint
 
