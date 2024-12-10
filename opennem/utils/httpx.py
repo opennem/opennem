@@ -7,8 +7,9 @@ import httpx
 import logfire
 from httpx import AsyncClient, AsyncHTTPTransport
 
-from opennem import __version__, settings
+from opennem import settings
 from opennem.utils.random_agent import get_random_agent
+from opennem.utils.version import get_version
 
 logfire.instrument_httpx()
 
@@ -67,7 +68,7 @@ def httpx_factory(mimic_browser: bool = False, debug: bool = True, proxy: bool =
         headers.setdefault("user-agent", get_random_agent())
         headers.update(DEFAULT_BROWSER_HEADERS)
     else:
-        headers.setdefault("user-agent", f"OpenNEM/{__version__}")
+        headers.setdefault("user-agent", f"OpenNEM/{get_version()}")
 
     kwargs["headers"] = headers
 

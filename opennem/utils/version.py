@@ -3,9 +3,10 @@
 @NOTE updated to dynamically update with build scripts
 """
 
+import tomllib
 from dataclasses import dataclass
+from functools import lru_cache
 
-from opennem import __version__ as version
 from opennem.core.normalizers import is_number
 
 
@@ -19,12 +20,17 @@ class Version:
     def is_release(self) -> bool:
         return not isinstance(self.patch, str)
 
-    __str__ = lambda self: f"{self.major}.{self.minor}.{self.patch}"  # noqa: E731
+    def __str__(self) -> str:
+        return f"{self.major}.{self.minor}.{self.patch}"
 
 
+@lru_cache(maxsize=1)
 def get_version() -> str:
     """@TODO remove this and use poetry versioning"""
-    return version
+    with open("pyproject.toml", "rb") as f:
+        data = tomllib.load(f)
+
+    return data["project"]["version"]
 
 
 def get_version_model() -> Version:
