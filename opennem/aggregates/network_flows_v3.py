@@ -356,6 +356,7 @@ def run_flows_for_last_days(days: int, network: NetworkSchema = NetworkNEM) -> N
 
     interval_end = get_last_completed_interval_for_network(network=network)
     interval_start = interval_end - timedelta(days=days)
+
     run_aggregate_flow_for_interval_v3(
         network=network,
         interval_start=interval_start,
@@ -496,8 +497,10 @@ def run_aggregate_flow_for_interval_v3(
 if __name__ == "__main__":
     latest_interval = get_last_completed_interval_for_network(network=NetworkNEM)
 
-    run_aggregate_flow_for_interval_v3(
-        network=NetworkNEM,
-        interval_start=latest_interval - timedelta(days=20),
-        interval_end=latest_interval - timedelta(days=15),
-    )
+    # run_aggregate_flow_for_interval_v3(
+    #     network=NetworkNEM,
+    #     interval_start=latest_interval - timedelta(days=20),
+    #     interval_end=latest_interval - timedelta(days=15),
+    # )
+
+    run_flows_for_last_days(days=1, network=NetworkNEM)
