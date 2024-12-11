@@ -12,19 +12,56 @@ The module supports:
  * Content type detection
  * Async operations using aioboto3
  * Error handling and logging
+ * Directory listing and file information retrieval
 """
 
 import asyncio
 import logging
 import os
+from dataclasses import dataclass
+from datetime import datetime
 
 import aioboto3
 from botocore.exceptions import ClientError
+from humanize import naturalsize, naturaltime
 
 from opennem import settings
-from opennem.utils.mime import mime_from_filename
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("opennem.storage_bucket")
+
+
+@dataclass
+class BucketFile:
+    """
+    Represents a file stored in the cloud storage bucket.
+
+    Attributes:
+        name (str): The name of the file without the path
+        full_path (str): The complete path of the file in the bucket
+        size (int): Size of the file in bytes
+        last_modified (datetime): Last modification timestamp of the file
+    """
+
+    name: str
+    file_path: str
+    size: int
+    last_modified: datetime
+
+    @property
+    def file_name(self) -> str:
+        return os.path.basename(self.file_path)
+
+    @property
+    def size_human(self) -> str:
+        return naturalsize(self.size, binary=True)
+
+    @property
+    def last_modified_human(self) -> str:
+        return naturaltime(self.last_modified)
+
+    @property
+    def url(self) -> str:
+        return f"{settings.s3_bucket_public_url}{self.file_path}"
 
 
 class CloudflareR2Uploader:
@@ -158,28 +195,64 @@ class CloudflareR2Uploader:
                 logger.error(f"An error occurred while uploading content: {e}")
                 raise
 
+    async def list_directory(self, prefix: str = "") -> list[BucketFile]:
+        """
+        Get a listing of files in the bucket under the specified prefix.
+
+        Args:
+            prefix: The directory prefix to list (e.g., "data/2024/")
+
+        Returns:
+            A list of BucketFile objects containing file information
+
+        Raises:
+            ClientError: If an error occurs while accessing the bucket
+        """
+        if prefix and not prefix.endswith("/"):
+            prefix += "/"
+
+        async with await self._get_s3_client() as s3:  # type: ignore
+            try:
+                paginator = s3.get_paginator("list_objects_v2")
+                file_list: list[BucketFile] = []
+
+                async for page in paginator.paginate(Bucket=self.bucket_name, Prefix=prefix):
+                    if "Contents" not in page:
+                        continue
+
+                    for obj in page["Contents"]:
+                        # Skip directory markers
+                        if obj["Key"].endswith("/"):
+                            continue
+
+                        logger.info(f"Listing {obj['Key']} with size {obj['Size']}")
+
+                        file_list.append(
+                            BucketFile(
+                                name=os.path.basename(obj["Key"]),
+                                file_path=obj["Key"],
+                                size=obj["Size"],
+                                last_modified=obj["LastModified"],
+                            )
+                        )
+
+                return sorted(file_list, key=lambda x: x.last_modified, reverse=True)
+
+            except ClientError as e:
+                logger.error(f"Error listing directory {prefix}: {e}")
+                raise
+
 
 cloudflare_uploader = CloudflareR2Uploader(region="apac")
 
 
 async def _main():
-    import sys
-
     uploader = CloudflareR2Uploader(region="apac")
 
-    if not sys.argv[1]:
-        print("Please provide a file path to upload")
-        return
+    dir_listings = await uploader.list_directory("archive/nem/")
 
-    filepath = sys.argv[1]
-    content_type = mime_from_filename(filepath)
-
-    logger.info(f"Uploading file {filepath} with content type {content_type}")
-
-    with open(filepath, "rb") as fh:
-        content = fh.read()
-
-    await uploader.upload_bytes(content, filepath, content_type="text/plain")
+    for dir_listing in dir_listings:
+        print(f"{dir_listing.file_name} - {dir_listing.size_human} - {dir_listing.last_modified_human} - {dir_listing.url}")
 
 
 if __name__ == "__main__":
