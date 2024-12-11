@@ -11,7 +11,7 @@ from opennem import settings
 from opennem.recordreactor.buckets import get_period_start_end, is_end_of_period
 from opennem.recordreactor.processors.demand import run_price_demand_milestone_for_interval
 from opennem.recordreactor.processors.generation import run_generation_energy_emissions_milestones
-from opennem.recordreactor.processors.power import run_renewable_power_milestones
+from opennem.recordreactor.processors.power import run_power_milestones, run_renewable_power_milestones
 from opennem.recordreactor.processors.renewable_proportion import run_renewable_proportion_milestones
 from opennem.recordreactor.schema import MilestonePeriod, MilestoneType
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM, NetworkWEMDE
@@ -53,6 +53,11 @@ async def run_milestone_engine(
     bulk_insert: bool = False,
     bulk_insert_batch_size: int = 100,
 ):
+    # normalise start and end intervals with no timezone info (ie. make unaware)
+    start_interval = start_interval.replace(tzinfo=None)
+    if end_interval:
+        end_interval = end_interval.replace(tzinfo=None)
+
     if not metrics:
         metrics = _DEFAULT_METRICS
 
@@ -109,14 +114,14 @@ async def run_milestone_engine(
                         continue
 
                     if MilestoneType.power in metrics:
-                        # tasks.append(
-                        #     run_power_milestones(
-                        #         network=network,
-                        #         bucket_size=bucket_size,
-                        #         period_start=period_start,
-                        #         period_end=period_end,
-                        #     )
-                        # )
+                        tasks.append(
+                            run_power_milestones(
+                                network=network,
+                                bucket_size=bucket_size,
+                                period_start=period_start,
+                                period_end=period_end,
+                            )
+                        )
 
                         tasks.append(
                             run_renewable_power_milestones(
@@ -174,19 +179,22 @@ if __name__ == "__main__":
     nem_start = datetime.fromisoformat("1998-12-08 00:00:00")
     start_interval = datetime.fromisoformat("1999-03-26 04:55:00")
     test_start_interval = datetime.fromisoformat("2010-01-01 00:00:00")
-    end_interval = datetime.fromisoformat("2024-08-01 00:00:00")
+
+    # Test entry point
+    start_interval = datetime.fromisoformat("2024-01-01 00:00:00")
+    end_interval = get_last_completed_interval_for_network(network=NetworkNEM)
     asyncio.run(
         run_milestone_engine(
-            start_interval=nem_start,
+            start_interval=start_interval,
             end_interval=end_interval,
-            metrics=[MilestoneType.energy],
+            metrics=[MilestoneType.power],
             periods=[
-                # MilestonePeriod.interval,
-                MilestonePeriod.day,
-                MilestonePeriod.week_rolling,
-                MilestonePeriod.month,
+                MilestonePeriod.interval,
+                # MilestonePeriod.day,
+                # MilestonePeriod.week_rolling,
+                # MilestonePeriod.month,
                 # MilestonePeriod.quarter,
-                MilestonePeriod.year,
+                # MilestonePeriod.year,
             ],
             networks=[NetworkNEM],
         )
