@@ -85,10 +85,10 @@ async def export_power(
         if output_count >= 1 and latest:
             return None
 
-        date_range_networks = power_stat.networks or []
+        date_range_networks = power_stat.network
 
-        if NetworkNEM in date_range_networks or NetworkAU in date_range_networks:
-            date_range_networks = [NetworkNEM]
+        if NetworkNEM == date_range_networks or NetworkAU == date_range_networks:
+            date_range_networks = NetworkNEM
 
         date_range: ScadaDateRange = await get_scada_range(network=date_range_networks)
 
