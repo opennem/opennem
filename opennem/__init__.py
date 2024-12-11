@@ -89,7 +89,12 @@ settings: OpennemSettings = OpennemSettings()  # type: ignore
 
 # setup logfire
 if not settings.is_local:
-    logfire.configure(service_name="opennem", service_version=__version__, environment=ENV)
+    logfire.configure(
+        service_name="opennem",
+        service_version=__version__,
+        environment=ENV,
+        code_source=logfire.CodeSource(repository="https://github.com/opennem/opennem", revision="master"),
+    )
     logfire.instrument_system_metrics()
 
 if settings.dry_run:
