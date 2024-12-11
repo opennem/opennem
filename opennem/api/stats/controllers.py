@@ -425,10 +425,6 @@ async def get_scada_range(
         res = await conn.execute(sql(scada_range_query))
         scada_range_result = res.fetchone()
 
-        logger.debug(scada_range_result)
-        # scada_range_result = list(await conn.execute(sql(scada_range_query)))
-        # scada_range_result = scada_range_result[0]
-
         if not scada_range_result:
             raise Exception(f"No scada range results for {network.code}")
 
