@@ -19,6 +19,7 @@ import logging
 import os
 from dataclasses import dataclass
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import aioboto3
 from botocore.exceptions import ClientError
@@ -250,7 +251,7 @@ class CloudflareR2Uploader:
                                 name=os.path.basename(obj["Key"]),
                                 file_path=obj["Key"],
                                 size=obj["Size"],
-                                last_modified=obj["LastModified"],
+                                last_modified=obj["LastModified"].astimezone(ZoneInfo("Australia/Sydney")),
                             )
                         )
 

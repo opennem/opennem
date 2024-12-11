@@ -222,7 +222,7 @@ async def generate_archive_dirlisting() -> None:
         dirlisting_html, f"{_BUCKET_UPLOAD_DIRECTORY}index.html", "text/html"
     )
 
-    logger.info(f"Uploaded directory listing{naturalsize(dirlisting_size, binary=True)} to {dir_listing.url}")
+    logger.info(f"Uploaded directory listing {naturalsize(dirlisting_size, binary=True)} to {dir_listing.url}")
 
 
 def _test_polars_read() -> None:
@@ -242,7 +242,8 @@ if __name__ == "__main__":
     import asyncio
 
     async def main() -> None:
-        await sync_archive_exports()
-        _test_polars_read()
+        # await sync_archive_exports()
+        # _test_polars_read()
+        await generate_archive_dirlisting()
 
-    asyncio.run(generate_archive_dirlisting())
+    asyncio.run(main())
