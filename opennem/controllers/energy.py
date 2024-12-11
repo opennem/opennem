@@ -74,9 +74,6 @@ async def energy_fueltech_daily_v3(
         code=network.code.lower(),
     )
 
-    logger.debug(f"results market value: {len(results_market_value)}")
-    logger.debug(f"stats_market_value: {len(stats_market_value.data)}")
-
     stats.append_set(stats_market_value)
 
     stats_emissions = stats_factory(
@@ -89,9 +86,6 @@ async def energy_fueltech_daily_v3(
         localize=True,
         code=time_series.network.code.lower(),
     )
-
-    logger.debug(f"results emissions: {len(results_emissions)}")
-    logger.debug(f"stats_emissions: {len(stats_emissions.data)}")
 
     stats.append_set(stats_emissions)
 
