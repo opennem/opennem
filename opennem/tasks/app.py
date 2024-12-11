@@ -187,8 +187,8 @@ class WorkerSettings:
         # Facility seen range
         cron(
             task_update_facility_seen_range,
-            minute={1, 16, 31, 46},
-            second=30,
+            minute=set(range(1, 60, 5)),
+            second=59,
             timeout=None,
             unique=True,
         ),
