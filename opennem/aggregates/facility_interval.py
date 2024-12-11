@@ -6,7 +6,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem.db import get_write_session
-from opennem.schema.network import NetworkAPVI, NetworkSchema
+from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
 
 logger = logging.getLogger("opennem.aggregates.facility_interval")
@@ -271,7 +271,7 @@ async def run_facility_aggregate_updates(
         raise
 
 
-async def run_facility_aggregate_for_network(network: NetworkSchema) -> None:
+async def run_facility_aggregate_for_network(network: NetworkSchema, chunk_days: int = 30, max_concurrent: int = 2) -> None:
     """Run facility aggregate updates for a specific network.
 
     This function calculates and updates facility aggregate data from the
@@ -293,9 +293,22 @@ async def run_facility_aggregate_for_network(network: NetworkSchema) -> None:
     await update_facility_aggregates_chunked(
         start_date=network.data_first_seen,
         end_date=end_date,
-        chunk_days=30,
-        max_concurrent=2,
+        chunk_days=chunk_days,
+        max_concurrent=max_concurrent,
         network=network,
+    )
+
+
+async def run_facility_aggregate_all(chunk_days: int = 30, max_concurrent: int = 2) -> None:
+    """Run facility aggregate updates for all networks"""
+    start_date = NetworkNEM.data_first_seen
+    end_date = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
+
+    await update_facility_aggregates_chunked(
+        start_date=start_date,  # type: ignore
+        end_date=end_date,
+        chunk_days=chunk_days,
+        max_concurrent=max_concurrent,
     )
 
 
@@ -318,5 +331,5 @@ if __name__ == "__main__":
     #     )
     # )
 
-    # asyncio.run(update_facility_aggregate_last_days(days_back=30))
-    asyncio.run(run_facility_aggregate_for_network(NetworkAPVI))
+    # asyncio.run(update_facility_aggregate_last_days(days_back=7))
+    asyncio.run(run_facility_aggregate_all(chunk_days=10, max_concurrent=2))
