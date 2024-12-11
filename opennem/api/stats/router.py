@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-@api_version(3)
+@api_version(4)
 @router.get(
     "/power/station/{network_code}/{facility_code:path}",
     name="Power by Station",
@@ -145,7 +145,7 @@ async def power_station(
 """
 
 
-@api_version(3)
+@api_version(4)
 @router.get(
     "/energy/station/{network_code}/{facility_code:path}",
     name="Energy by Station",
