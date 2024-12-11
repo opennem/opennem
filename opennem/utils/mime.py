@@ -1,15 +1,16 @@
 """
 mime module - get mime types from url (filename) or bytes
 
-
+Provides utilities for:
+- Detecting MIME types from filenames and content
+- Handling text and binary file detection
+- Supporting common file formats including images
 """
 
 import logging
 import mimetypes
-import re
-import string
-import subprocess
 from io import BytesIO
+from pathlib import Path
 from typing import BinaryIO
 from zipfile import BadZipFile, ZipFile
 
@@ -25,6 +26,45 @@ mimetypes.init()
 logger = logging.getLogger(__name__)
 
 CONTENT_TYPES = ["utf-8", "utf-8-sig", "latin-1"]
+
+# Common MIME types mapping
+MIME_TYPES = {
+    # Documents
+    "parquet": "application/octet-stream",
+    "csv": "text/csv",
+    "json": "application/json",
+    "txt": "text/plain",
+    "pdf": "application/pdf",
+    "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    # Images
+    "jpg": "image/jpeg",
+    "jpeg": "image/jpeg",
+    "png": "image/png",
+    "gif": "image/gif",
+    "bmp": "image/bmp",
+    "webp": "image/webp",
+    "tiff": "image/tiff",
+    "svg": "image/svg+xml",
+}
+
+
+def mime_from_filename(filename: str, default_mime: str | None = "application/octet-stream") -> str | None:
+    """
+    Detects the content type based on file extension using pathlib
+
+    Args:
+        filename: Name of the file
+        default_mime: Default MIME type to return if extension not found
+
+    Returns:
+        str: MIME type for the file or default_mime if not found
+    """
+    try:
+        extension = Path(filename).suffix.lower().lstrip(".")
+        return MIME_TYPES.get(extension, default_mime)
+    except Exception as e:
+        logger.error(f"Error parsing filename {filename}: {e}")
+        return default_mime
 
 
 def mime_from_content(content: BinaryIO) -> str | None:
@@ -43,7 +83,7 @@ def mime_from_content(content: BinaryIO) -> str | None:
         # rewind it back again
         content.seek(0)
 
-        file_mime = magic.from_buffer(_file_buffer, mime=True)
+        file_mime = magic.from_buffer(_file_buffer, mime=True)  # type: ignore
     except Exception as e:
         logger.error(f"Error parsing mime from content: {e}")
         return None
@@ -94,36 +134,3 @@ def is_zip(fh: BinaryIO, test_zip: bool = True) -> bool:
         return False
 
     return False
-
-
-def _is_textfile_proc(fn):
-    """Linux only proc to check if a file is text"""
-    msg = subprocess.Popen(["file", fn], stdout=subprocess.PIPE).communicate()[0]
-    return re.search("text", msg) is not None
-
-
-def is_textfile(fh: BinaryIO) -> bool:
-    """Check if a file is a text file by looking at proportion of non-ASCII characters in file buffer"""
-    fh.seek(0)
-    _buffer = fh.read(512)
-    fh.seek(0)
-
-    if not _buffer:
-        return True
-
-    if "\0" in _buffer:
-        return False
-
-    text_characters = "".join(map(chr, range(32, 127)) + list("\n\r\t\b"))
-    _null_trans = string.maketrans("", "")
-
-    # Get the non-text characters (maps a character to itself then
-    # use the 'remove' option to get rid of the text characters.)
-    t = _buffer.translate(_null_trans, text_characters)
-
-    # If more than 30% non-text characters, then
-    # this is considered a binary file
-    if float(len(t)) / float(len(_buffer)) > 0.30:
-        return False
-
-    return True
