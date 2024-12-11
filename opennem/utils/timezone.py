@@ -4,21 +4,8 @@ Timezone-related classes and functions.
 Some methods adapted from the Django project
 """
 
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from datetime import timezone as pytimezone
-
-
-def get_fixed_timezone(offset: timedelta | int) -> pytimezone:
-    """Return a tzinfo instance with a fixed offset from UTC."""
-
-    if isinstance(offset, timedelta):
-        offset = offset.total_seconds() // 60
-
-    sign = "-" if offset < 0 else "+"
-    hhmm = "%02d%02d" % divmod(abs(offset), 60)
-    name = sign + hhmm
-
-    return pytimezone(timedelta(minutes=offset), name)
 
 
 def is_aware(value: datetime) -> bool:
