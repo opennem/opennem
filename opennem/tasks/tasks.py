@@ -9,7 +9,7 @@ import logfire
 from opennem.aggregates.facility_interval import update_facility_aggregate_last_days, update_facility_aggregates_chunked
 from opennem.aggregates.network_demand import run_aggregates_demand_network_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
-from opennem.api.export.tasks import export_electricitymap, export_energy, export_flows, export_power
+from opennem.api.export.tasks import export_energy, export_power
 from opennem.cms.importer import update_database_facilities_from_cms
 from opennem.controllers.export import run_export_energy_all, run_export_energy_for_year
 from opennem.controllers.schema import ControllerReturn
@@ -163,8 +163,9 @@ async def task_nem_power_exports(ctx) -> None:
 @logfire.instrument("task_export_flows")
 async def task_export_flows(ctx) -> None:
     """Runs the flows export"""
-    await export_electricitymap()
-    await export_flows()
+    pass
+    # await export_electricitymap()
+    # await export_flows()
 
 
 @logfire.instrument("task_export_energy")
