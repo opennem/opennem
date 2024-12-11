@@ -39,6 +39,7 @@ from opennem.tasks.tasks import (
     task_apvi_crawl,
     task_bom_capitals_crawl,
     task_clean_tmp_dir,
+    task_export_daily_monthly,
     task_export_energy,
     task_export_facility_geojson,
     task_export_flows,
@@ -122,6 +123,15 @@ class WorkerSettings:
         cron(
             task_export_energy,
             # hour={0, 7, 11},
+            minute=17,
+            second=0,
+            timeout=None,
+            unique=True,
+        ),
+        # export daily and monthly
+        cron(
+            task_export_daily_monthly,
+            hour=4,
             minute=17,
             second=0,
             timeout=None,

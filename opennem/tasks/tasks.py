@@ -9,7 +9,7 @@ import logfire
 from opennem.aggregates.facility_interval import update_facility_aggregate_last_days, update_facility_aggregates_chunked
 from opennem.aggregates.network_demand import run_aggregates_demand_network_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
-from opennem.api.export.tasks import export_energy, export_power
+from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
 from opennem.cms.importer import update_database_facilities_from_cms
 from opennem.controllers.export import run_export_energy_all, run_export_energy_for_year
 from opennem.controllers.schema import ControllerReturn
@@ -186,6 +186,13 @@ async def task_export_facility_geojson(ctx) -> None:
 async def task_sync_archive_exports(ctx) -> None:
     """Run and sync parquet exports to output bucket"""
     await sync_archive_exports()
+
+
+@logfire.instrument("task_export_daily_monthly")
+async def task_export_daily_monthly(ctx) -> None:
+    """Runs the daily and monthly exports"""
+    await export_all_daily()
+    await export_all_monthly()
 
 
 @logfire.instrument("task_nem_per_day_check")

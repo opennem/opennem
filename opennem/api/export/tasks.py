@@ -374,7 +374,7 @@ async def export_all_monthly(networks: list[NetworkSchema] | None = None, networ
                         )
                         all_monthly.append_set(weather_stats)
 
-        await write_output("v3/stats/au/all/monthly.json", all_monthly)
+        await write_output("v4/stats/au/all/monthly.json", all_monthly)
 
 
 async def export_all_daily(networks: list[NetworkSchema] | None = None, network_region_code: str | None = None) -> None:
@@ -455,7 +455,7 @@ async def export_all_daily(networks: list[NetworkSchema] | None = None, network_
                 if cpi:
                     stat_set.append_set(cpi)
 
-                await write_output(f"v3/stats/au/{network_region.code}/daily.json", stat_set)
+                await write_output(f"v4/stats/au/{network_region.code}/daily.json", stat_set)
 
 
 async def export_flows() -> None:
