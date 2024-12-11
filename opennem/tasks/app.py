@@ -87,7 +87,7 @@ class WorkerSettings:
         # APVI Rooftop
         cron(
             task_apvi_crawl,
-            minute=set(range(0, 60, 10)),
+            minute=set(range(0, 60, 15)),
             second=58,
             timeout=None,
             unique=True,
