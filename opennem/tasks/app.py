@@ -140,7 +140,7 @@ class WorkerSettings:
         # archive exports daily
         cron(
             task_sync_archive_exports,
-            hour=10,
+            hour=7,
             minute=0,
             timeout=None,
             unique=True,

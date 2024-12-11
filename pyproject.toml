@@ -66,6 +66,7 @@ dependencies = [
     "psycopg[binary]>=3.2.3",
     "polars>=1.14.0",
     "typer>=0.15.1",
+    "humanize>=4.11.0",
 ]
 
 [tool.uv]

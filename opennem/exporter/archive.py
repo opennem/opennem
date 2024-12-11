@@ -5,46 +5,55 @@ Export data as parquet files to a bucket
 Purpose of this module is to export data as parquet files to a public bucket overnight so that it can be
 used for bulk imports in dev.
 
-At the moment we export:
+The module streams data directly from the database to the storage bucket using polars and async IO.
 
+Exports:
  * generation and energy data per interval by fueltech for the last year
  * price and demand data per interval for the last year
-
 """
 
+import io
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import datetime
-from pathlib import Path
-from tempfile import mkdtemp
+from datetime import datetime, timedelta
 from textwrap import dedent
 
 import polars as pl
+from humanize import naturalsize
 
+from opennem import settings
 from opennem.db import db_connect_sync
 from opennem.exporter.storage_bucket import cloudflare_uploader
-from opennem.utils.dates import get_today_opennem
+from opennem.schema.network import NetworkNEM
+from opennem.utils.dates import get_last_complete_day_for_network
 
 logger = logging.getLogger("opennem.exporter.archive")
 logger.setLevel(logging.DEBUG)
 
-ARCHIVE_OUTPUT_DIR = Path(mkdtemp())
-
-if not ARCHIVE_OUTPUT_DIR.exists():
-    raise Exception(f"Output directory {ARCHIVE_OUTPUT_DIR} does not exist")
-
-
-logger.debug(f"Writing to {ARCHIVE_OUTPUT_DIR}")
+_BUCKET_UPLOAD_DIRECTORY = "archive/nem/"
 
 
 @dataclass
 class OpenNEMDataExport:
     query: str
     file_name: str
+    time_period: timedelta = timedelta(days=365)
+    enabled: bool = True
+
+    @property
+    def get_output_url(self) -> str:
+        path_parts = [settings.s3_bucket_public_url, _BUCKET_UPLOAD_DIRECTORY, self.file_name]
+        dir_path = "/".join([i.lstrip("/").rstrip("/") for i in path_parts])
+        full_path = f"{dir_path}.parquet"
+        return full_path
 
 
-def get_fueltech_generation_query(date_start: datetime, date_end: datetime) -> str:
-    return f"""
+# queries for archive exports
+
+
+def _get_fueltech_generation_query(date_start: datetime, date_end: datetime) -> str:
+    return dedent(f"""
         select
             fs.interval
             ,fs.network_id
@@ -59,11 +68,11 @@ def get_fueltech_generation_query(date_start: datetime, date_end: datetime) -> s
             and fs.interval < '{date_end}'
         group by 1, 2, 3, 4
         order by 1 desc, 2, 3, 4
-    """.format(date_start=date_start, date_end=date_end)
+    """)
 
 
-def get_price_and_demand_data(date_start: datetime, date_end: datetime) -> str:
-    return f"""
+def _get_price_and_demand_data_query(date_start: datetime, date_end: datetime) -> str:
+    return dedent(f"""
     select
         bs.interval
         ,bs.network_id
@@ -76,10 +85,10 @@ def get_price_and_demand_data(date_start: datetime, date_end: datetime) -> str:
         and bs.interval >= '{date_start}'
         and bs.interval < '{date_end}'
     order by 1;
-    """.format(date_start=date_start, date_end=date_end)
+    """)
 
 
-def get_weather_data(date_start: datetime, date_end: datetime) -> str:
+def _get_weather_data_query(date_start: datetime, date_end: datetime) -> str:
     return f"""
         select
             observation_time as trading_interval,
@@ -97,7 +106,7 @@ def get_weather_data(date_start: datetime, date_end: datetime) -> str:
     """
 
 
-def get_import_export_data(date_start: datetime, date_end: datetime) -> str:
+def _get_import_export_data_query(date_start: datetime, date_end: datetime) -> str:
     return f"""
         select
             fs.trading_interval at time zone 'AEST' as trading_interval
@@ -120,82 +129,99 @@ def get_import_export_data(date_start: datetime, date_end: datetime) -> str:
     """
 
 
-def get_pre_dispatch_data(date_start: datetime, date_end: datetime) -> str:
-    return """
-        select
+_ARCHIVE_EXPORT_QUERY_MAP = {
+    "fueltech_generation": OpenNEMDataExport(query="_get_fueltech_generation_query", file_name="1y_fueltech_generation_data"),
+    "price_and_demand": OpenNEMDataExport(query="_get_price_and_demand_data_query", file_name="1y_price_and_demand_data"),
+    "weather": OpenNEMDataExport(query="_get_weather_data_query", file_name="1y_weather_data", enabled=False),
+    "import_export": OpenNEMDataExport(query="_get_import_export_data_query", file_name="1y_import_export_data", enabled=False),
+}
 
-                fs.trading_interval at time zone 'AEST' as trading_interval
-                ,fs.network_id
+
+async def _stream_and_upload_query(query_func: Callable[[], str], filename: str) -> int:
     """
+    Streams query results directly to parquet format and uploads to bucket
 
+    Args:
+        query_func: Function that returns the SQL query to execute
+        filename: Name of the output file (without extension)
 
-def run_and_export_query(query: str, filename: str) -> None:
+    Returns:
+        float: The size of the file in bytes
+
+    Raises:
+        Exception: If database connection or upload fails
+    """
     engine = db_connect_sync()
+    buffer = io.BytesIO()
 
-    logger.debug(dedent(query))
+    try:
+        with engine.connect() as conn:
+            query = query_func() if callable(query_func) else query_func
+            df = pl.read_database(query, conn, schema_overrides={})
+            logger.debug(f"Loaded data frame with {df.shape=}")
 
-    with engine.connect() as conn:
-        df = pl.read_database(query, conn, schema_overrides={})
-        logger.debug(f"Loaded data frame for {filename} with {df.shape=}")
+            # Write parquet to memory buffer
+            df.write_parquet(buffer)
+            buffer.seek(0)
 
-        destination_filename = str(ARCHIVE_OUTPUT_DIR / f"{filename}.parquet")
-        df.write_parquet(destination_filename)
-        logger.info(f"Wrote to {destination_filename}")
-
-
-def run_archive_exports() -> None:
-    """
-    Runs the archive exports
-    """
-    # start at this morning midnight
-    date_end = get_today_opennem().replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
-
-    # go back 1 year by default
-    date_start = date_end.replace(year=date_end.year - 1)
-
-    EXPORTS = [
-        OpenNEMDataExport(query=get_fueltech_generation_query(date_start, date_end), file_name="1y_fueltech_generation_data"),
-        OpenNEMDataExport(query=get_price_and_demand_data(date_start, date_end), file_name="1y_price_and_demand_data"),
-        # OpenNEMDataExport(query=get_weather_data(date_start, date_end), file_name="weather_data"),
-        # OpenNEMDataExport(query=get_import_export_data(date_start, date_end), file_name="flow_data"),
-    ]
-
-    for export in EXPORTS:
-        logger.info(f"Running and exporting {export.file_name}")
-        run_and_export_query(export.query, export.file_name)
+            # Upload from memory to bucket
+            destination = f"{_BUCKET_UPLOAD_DIRECTORY}{filename}.parquet"
+            await cloudflare_uploader.upload_bytes(buffer.getvalue(), destination, "application/octet-stream")
+            return len(buffer.getvalue())
+    except Exception as e:
+        logger.error(f"Failed to process {filename}: {str(e)}")
+        raise
+    finally:
+        buffer.close()
 
 
 async def sync_archive_exports() -> None:
     """
-    Runs the archive exports
+    Runs the archive exports by streaming data directly to storage
+
+    Raises:
+        Exception: If any export fails
     """
-    run_archive_exports()
+    # start at this morning midnight
+    date_end = get_last_complete_day_for_network(network=NetworkNEM).replace(tzinfo=None)
 
-    BUCKET_UPLOAD_DIRECTORY = "archive/nem/"
+    for export in _ARCHIVE_EXPORT_QUERY_MAP.values():
+        if not export.enabled:
+            logger.info(f"Skipping export {export.file_name} as it is not enabled")
+            continue
 
-    # read the files in the archive directory and upload them to the bucket
-    for file in ARCHIVE_OUTPUT_DIR.glob("*.parquet"):
-        await cloudflare_uploader.upload_file(
-            str(file),
-            BUCKET_UPLOAD_DIRECTORY + str(file.name),
-            "text/parquet",
-        )
+        logger.info(f"Processing export {export.file_name}")
+        date_start = date_end - export.time_period
+
+        if export.query not in globals():
+            raise ValueError(f"Query {export.query} not found in globals")
+
+        def get_query(export: OpenNEMDataExport, date_start: datetime, date_end: datetime) -> Callable[[], str]:
+            return globals()[export.query](date_start, date_end)
+
+        file_size = await _stream_and_upload_query(get_query(export, date_start, date_end), export.file_name)
+        file_size_human = naturalsize(file_size, binary=True)
+        logger.info(f"Uploaded {file_size_human} to {export.get_output_url}")
 
 
 def _test_polars_read() -> None:
     """Test reading parquet files from the bucket"""
-    files = [
-        "https://data.dev.opennem.org.au/archive/nem/1y_price_and_demand_data.parquet",
-        "https://data.dev.opennem.org.au/archive/nem/1y_fueltech_generation_data.parquet",
-    ]
-    for file in files:
-        df = pl.read_parquet(file)
+
+    for export in _ARCHIVE_EXPORT_QUERY_MAP.values():
+        if not export.enabled:
+            logger.info(f"Skipping reading export {export.file_name} as it is not enabled")
+            continue
+
+        df = pl.read_parquet(export.get_output_url)
+        logger.info(f"Read {export.file_name} from {export.get_output_url} with {df.shape=}")
         print(df)
 
 
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(sync_archive_exports())
+    async def main() -> None:
+        await sync_archive_exports()
+        _test_polars_read()
 
-    _test_polars_read()
+    asyncio.run(main())
