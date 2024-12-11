@@ -1,6 +1,6 @@
 [project]
 name = "opennem-backend"
-version = "4.0.0-dev0"
+version = "4.0.0-final1"
 description = "OpenElectricity (OpenNEM) Australian Energy Data Platform"
 license = "MIT"
 keywords = ["openelectricity", "opennem", "analysis", "australia", "energy"]
