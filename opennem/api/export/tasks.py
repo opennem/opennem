@@ -11,6 +11,7 @@ require the API
 import contextlib
 import logging
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import select
 
@@ -163,7 +164,7 @@ async def export_energy(
 
         stats = export_map.resources
 
-    CURRENT_YEAR = datetime.now().year
+    CURRENT_YEAR = datetime.now(ZoneInfo("Australia/Sydney")).year
 
     logger.info(f"Running export_energy with {len(stats)} stats")
 
@@ -180,7 +181,7 @@ async def export_energy(
         if NetworkNEM in date_range_networks:
             date_range_networks = [NetworkNEM]
 
-        date_range: ScadaDateRange = get_scada_range_optimized(network=energy_stat.network)
+        date_range: ScadaDateRange = await get_scada_range(network=energy_stat.network)
 
         logger.debug(f"Date range is: {energy_stat.network.code} {date_range.start} => {date_range.end}")
 
