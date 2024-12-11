@@ -176,12 +176,12 @@ async def export_energy(
         # data time span.
         # @TODO find a better and more flexible way to do this in the
         # range method
-        date_range_networks = energy_stat.networks or []
+        date_range_network = energy_stat.network
 
-        if NetworkNEM in date_range_networks:
-            date_range_networks = [NetworkNEM]
+        if NetworkNEM == date_range_network or NetworkAU == date_range_network:
+            date_range_network = NetworkNEM
 
-        date_range: ScadaDateRange = await get_scada_range(network=energy_stat.network)
+        date_range: ScadaDateRange = await get_scada_range(network=date_range_network)
 
         logger.debug(f"Date range is: {energy_stat.network.code} {date_range.start} => {date_range.end}")
 
