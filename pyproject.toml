@@ -1,6 +1,6 @@
 [project]
 name = "opennem-backend"
-version = "4.0.0-final1"
+version = "4.0.0-rc1"
 description = "OpenElectricity (OpenNEM) Australian Energy Data Platform"
 license = "MIT"
 keywords = ["openelectricity", "opennem", "analysis", "australia", "energy"]
@@ -167,7 +167,7 @@ requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
 [tool.bumpversion]
-current_version = "4.0.0-final1"
+current_version = "4.0.0-rc1"
 parse = """(?x)
     (?P<major>0|[1-9]\\d*)\\.
     (?P<minor>0|[1-9]\\d*)\\.
