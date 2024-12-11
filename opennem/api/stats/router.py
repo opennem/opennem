@@ -103,6 +103,9 @@ async def power_station(
     date_min = facility_lookup.scada_range.date_start
     date_max = facility_lookup.scada_range.date_end
 
+    if not date_min or not date_max:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Station data range not found")
+
     logger.debug(f"Facilities date range: {date_min} {date_max}")
 
     time_series = OpennemExportSeries(start=date_min, end=date_max, network=network, interval=interval, period=period_obj)  # type: ignore
