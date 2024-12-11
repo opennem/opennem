@@ -9,7 +9,7 @@ import logging
 from datetime import datetime
 
 import xlrd
-from pydantic.error_wrappers import ValidationError
+from pydantic import ValidationError
 
 from opennem.schema.stats import AUCpiData, StatDatabase, StatsSet, StatTypes
 from opennem.utils.http import http

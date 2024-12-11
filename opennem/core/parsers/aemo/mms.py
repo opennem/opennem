@@ -9,8 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
-from pydantic.error_wrappers import ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 from pydantic.fields import PrivateAttr
 
 from opennem.core.downloader import url_downloader
