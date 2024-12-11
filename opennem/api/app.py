@@ -80,6 +80,7 @@ origins = [
     "https://*.opennem.org.au",
     "https://*.openelectricity.org.au",
     "https://*.pages.dev",
+    "https://*.oedev.org",
     "https://explore.openelectricity.org.au",
 ]
 
