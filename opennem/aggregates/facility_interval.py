@@ -30,6 +30,7 @@ async def update_facility_aggregates(
     """
     network_filter = ""
 
+    # normalize the time to be without timezone info
     start_time = start_time.replace(tzinfo=None, second=0, microsecond=0)
     end_time = end_time.replace(tzinfo=None, second=0, microsecond=0)
 
@@ -170,9 +171,9 @@ async def update_facility_aggregate_last_days(days_back: int = 1) -> None:
     Args:
         days_back (int): Number of days to look back from current day
     """
-    start_time = get_today_opennem().replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
+    end_time = (get_today_opennem().replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)) + timedelta(days=1)
     # end time is end of today
-    end_time = start_time + timedelta(days=days_back)
+    start_time = end_time - timedelta(days=days_back)
 
     async with get_write_session() as session:
         await update_facility_aggregates(session, start_time, end_time)
