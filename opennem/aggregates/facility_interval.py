@@ -2,6 +2,7 @@ import asyncio
 import logging
 from datetime import date, datetime, time, timedelta
 
+import logfire
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -163,7 +164,8 @@ async def _process_aggregate_chunk(
             await update_facility_aggregates(session, start_time, end_time, network=network)
 
 
-async def update_facility_aggregate_last_days(days_back: int = 1) -> None:
+@logfire.instrument("update_facility_aggregate_last_hours")
+async def update_facility_aggregate_last_hours(hours_back: int = 1, network: NetworkSchema | None = None) -> None:
     """
     Updates facility aggregates for the current day, looking back a specified number of hours.
     This is designed to be called frequently to keep current day data up to date.
@@ -171,12 +173,11 @@ async def update_facility_aggregate_last_days(days_back: int = 1) -> None:
     Args:
         days_back (int): Number of days to look back from current day
     """
-    end_time = (get_today_opennem().replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)) + timedelta(days=1)
-    # end time is end of today
-    start_time = end_time - timedelta(days=days_back)
+    end_time = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
+    start_time = end_time - timedelta(hours=hours_back)
 
     async with get_write_session() as session:
-        await update_facility_aggregates(session, start_time, end_time)
+        await update_facility_aggregates(session, start_time, end_time, network=network)
 
 
 async def update_facility_aggregates_chunked(
@@ -264,7 +265,7 @@ async def run_facility_aggregate_updates(
             )
         else:
             # Default behaviour - just update current day
-            await update_facility_aggregate_last_days(network=network)
+            await update_facility_aggregate_last_hours(network=network)
 
     except Exception as e:
         logger.error(f"Error in aggregate update: {str(e)}")
@@ -331,5 +332,5 @@ if __name__ == "__main__":
     #     )
     # )
 
-    # asyncio.run(update_facility_aggregate_last_days(days_back=7))
-    asyncio.run(run_facility_aggregate_all(chunk_days=10, max_concurrent=2))
+    asyncio.run(update_facility_aggregate_last_hours(hours_back=24))
+    # asyncio.run(run_facility_aggregate_all(chunk_days=10, max_concurrent=2))
