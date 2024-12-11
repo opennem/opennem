@@ -108,7 +108,6 @@ async def update_facility_aggregates(
                 JOIN facilities f ON u.station_id = f.id
                 LEFT JOIN filled_balancing_summary bs ON
                     bs.interval = fs.interval
-                    AND bs.network_id = fs.network_id
                     AND bs.network_region = f.network_region
             WHERE
                 fs.is_forecast IS FALSE
@@ -332,5 +331,5 @@ if __name__ == "__main__":
     #     )
     # )
 
-    asyncio.run(update_facility_aggregate_last_hours(hours_back=24))
-    # asyncio.run(run_facility_aggregate_all(chunk_days=10, max_concurrent=2))
+    # asyncio.run(update_facility_aggregate_last_hours(hours_back=24))
+    asyncio.run(run_facility_aggregate_all(max_concurrent=1))
