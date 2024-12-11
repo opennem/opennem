@@ -27,6 +27,7 @@ from opennem.crawlers.nemweb import (
     AEMONNemwebDispatchScada,
 )
 from opennem.crawlers.wemde import run_all_wem_crawlers
+from opennem.db.views import refresh_recent_aggregates
 from opennem.exporter.archive import sync_archive_exports
 from opennem.exporter.facilities import export_facilities_static
 
@@ -284,6 +285,14 @@ async def task_catchup(ctx) -> None:
     await run_export_energy_for_year(year=2023)
     # await run_export_energy_all(network_region_code="NSW1")
     await run_export_energy_all()
+
+
+async def refresh_continuous_aggregates() -> None:
+    """
+    Task to refresh all continuous aggregates for recent data.
+    This task should be scheduled to run periodically.
+    """
+    await refresh_recent_aggregates()
 
 
 if __name__ == "__main__":
