@@ -68,6 +68,7 @@ ENV = os.getenv("ENV", default="local")
 
 # setup logfire
 logfire.configure(service_name="opennem", service_version=__version__, environment=ENV)
+logfire.instrument_system_metrics()
 
 console.print(f" * Loading OpenNEM ENV: [b magenta]{ENV}[/b magenta]")
 console.print(

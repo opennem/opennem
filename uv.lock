@@ -1314,6 +1314,9 @@ requests = [
 sqlalchemy = [
     { name = "opentelemetry-instrumentation-sqlalchemy" },
 ]
+system-metrics = [
+    { name = "opentelemetry-instrumentation-system-metrics" },
+]
 
 [[package]]
 name = "mako"
@@ -1611,7 +1614,7 @@ dependencies = [
     { name = "gunicorn" },
     { name = "httpx", extra = ["http2", "socks"] },
     { name = "instructor" },
-    { name = "logfire", extra = ["asyncpg", "fastapi", "httpx", "redis", "requests", "sqlalchemy"] },
+    { name = "logfire", extra = ["asyncpg", "fastapi", "httpx", "redis", "requests", "sqlalchemy", "system-metrics"] },
     { name = "mako" },
     { name = "openai" },
     { name = "osm2geojson" },
@@ -1691,7 +1694,7 @@ requires-dist = [
     { name = "gunicorn", specifier = ">=22.0.0,<23.0.0" },
     { name = "httpx", extras = ["http2", "socks"], specifier = ">=0.27.0,<1.0.0" },
     { name = "instructor", specifier = ">=1.4.0,<2.0.0" },
-    { name = "logfire", extras = ["asyncpg", "fastapi", "httpx", "redis", "requests", "sqlalchemy"], specifier = ">=0.52.0,<3.0.0" },
+    { name = "logfire", extras = ["asyncpg", "fastapi", "httpx", "redis", "requests", "sqlalchemy", "system-metrics"], specifier = ">=0.52.0,<3.0.0" },
     { name = "mako", specifier = ">=1.1.4,<2.0.0" },
     { name = "openai", specifier = ">=1.43.1,<2.0.0" },
     { name = "osm2geojson", specifier = ">=0.2.0,<1.0.0" },
@@ -1911,6 +1914,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/62/df/351da8fff041d7277d497b1682763ce43fe61624ed458f21e4f3d449a82c/opentelemetry_instrumentation_sqlalchemy-0.49b2.tar.gz", hash = "sha256:e32f5d37e1fa6efd6b375c67f87d1e4789fe9745cccf692b679de9cccd9910e4", size = 13230 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/72/80/11d8e6c35d4615d367771c91fefe85e9debcd0e2b2004012557743139099/opentelemetry_instrumentation_sqlalchemy-0.49b2-py3-none-any.whl", hash = "sha256:2769e3c8e4e0663c63823361ec7d6393e5c0a8289faec7f477a8e604b043d866", size = 13366 },
+]
+
+[[package]]
+name = "opentelemetry-instrumentation-system-metrics"
+version = "0.49b2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "opentelemetry-api" },
+    { name = "opentelemetry-instrumentation" },
+    { name = "psutil" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/72/58/da2548aaa7d53cf2763db2f8ff88ceac865fca2e5c7fb1d640df939ce91c/opentelemetry_instrumentation_system_metrics-0.49b2.tar.gz", hash = "sha256:2ef4949c0c0f64e6b7437b8d23e0ee57245ab3d0d38501157bb93f4e4151207c", size = 13671 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/82/96/7741ebe40435d599f66e313be10cab1b144d613a08e47901af62db36c24f/opentelemetry_instrumentation_system_metrics-0.49b2-py3-none-any.whl", hash = "sha256:b599dbfba4ba977a8c248b74b18f147da314dbf2b780f4123e16c50e9c4f1948", size = 12049 },
 ]
 
 [[package]]
@@ -2215,6 +2232,21 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/fb/4a/ec56f101d38d4bef2959a9750209809242d86cf8b897db00f2f98bfa360e/protobuf-5.29.1-cp38-abi3-manylinux2014_aarch64.whl", hash = "sha256:b5ba1d0e4c8a40ae0496d0e2ecfdbb82e1776928a205106d14ad6985a09ec155", size = 319572 },
     { url = "https://files.pythonhosted.org/packages/04/52/c97c58a33b3d6c89a8138788576d372a90a6556f354799971c6b4d16d871/protobuf-5.29.1-cp38-abi3-manylinux2014_x86_64.whl", hash = "sha256:8ee1461b3af56145aca2800e6a3e2f928108c749ba8feccc6f5dd0062c410c0d", size = 319671 },
     { url = "https://files.pythonhosted.org/packages/3b/24/c8c49df8f6587719e1d400109b16c10c6902d0c9adddc8fff82840146f99/protobuf-5.29.1-py3-none-any.whl", hash = "sha256:32600ddb9c2a53dedc25b8581ea0f1fd8ea04956373c0c07577ce58d312522e0", size = 172547 },
+]
+
+[[package]]
+name = "psutil"
+version = "6.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/26/10/2a30b13c61e7cf937f4adf90710776b7918ed0a9c434e2c38224732af310/psutil-6.1.0.tar.gz", hash = "sha256:353815f59a7f64cdaca1c0307ee13558a0512f6db064e92fe833784f08539c7a", size = 508565 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/01/9e/8be43078a171381953cfee33c07c0d628594b5dbfc5157847b85022c2c1b/psutil-6.1.0-cp36-abi3-macosx_10_9_x86_64.whl", hash = "sha256:6e2dcd475ce8b80522e51d923d10c7871e45f20918e027ab682f94f1c6351688", size = 247762 },
+    { url = "https://files.pythonhosted.org/packages/1d/cb/313e80644ea407f04f6602a9e23096540d9dc1878755f3952ea8d3d104be/psutil-6.1.0-cp36-abi3-macosx_11_0_arm64.whl", hash = "sha256:0895b8414afafc526712c498bd9de2b063deaac4021a3b3c34566283464aff8e", size = 248777 },
+    { url = "https://files.pythonhosted.org/packages/65/8e/bcbe2025c587b5d703369b6a75b65d41d1367553da6e3f788aff91eaf5bd/psutil-6.1.0-cp36-abi3-manylinux_2_12_i686.manylinux2010_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:9dcbfce5d89f1d1f2546a2090f4fcf87c7f669d1d90aacb7d7582addece9fb38", size = 284259 },
+    { url = "https://files.pythonhosted.org/packages/58/4d/8245e6f76a93c98aab285a43ea71ff1b171bcd90c9d238bf81f7021fb233/psutil-6.1.0-cp36-abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:498c6979f9c6637ebc3a73b3f87f9eb1ec24e1ce53a7c5173b8508981614a90b", size = 287255 },
+    { url = "https://files.pythonhosted.org/packages/27/c2/d034856ac47e3b3cdfa9720d0e113902e615f4190d5d1bdb8df4b2015fb2/psutil-6.1.0-cp36-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d905186d647b16755a800e7263d43df08b790d709d575105d419f8b6ef65423a", size = 288804 },
+    { url = "https://files.pythonhosted.org/packages/ea/55/5389ed243c878725feffc0d6a3bc5ef6764312b6fc7c081faaa2cfa7ef37/psutil-6.1.0-cp37-abi3-win32.whl", hash = "sha256:1ad45a1f5d0b608253b11508f80940985d1d0c8f6111b5cb637533a0e6ddc13e", size = 250386 },
+    { url = "https://files.pythonhosted.org/packages/11/91/87fa6f060e649b1e1a7b19a4f5869709fbf750b7c8c262ee776ec32f3028/psutil-6.1.0-cp37-abi3-win_amd64.whl", hash = "sha256:a8fb3752b491d246034fa4d279ff076501588ce8cbcdbb62c32fd7a377d996be", size = 254228 },
 ]
 
 [[package]]
