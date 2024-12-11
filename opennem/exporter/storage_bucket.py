@@ -5,6 +5,7 @@ import aioboto3
 from botocore.exceptions import ClientError
 
 from opennem import settings
+from opennem.utils.mime import mime_from_filename
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +75,35 @@ class CloudflareR2Uploader:
                 logger.error(f"An error occurred while uploading file: {e}")
                 raise
 
+    async def upload_bytes(
+        self,
+        content: bytes,
+        object_name: str,
+        content_type: str | None = None,
+    ) -> None:
+        """
+        Upload bytes to a Cloudflare R2 bucket.
+
+        Args:
+            content: The content to upload.
+            object_name: The object name in the bucket.
+            content_type: The content type of the data.
+
+        Raises:
+            ClientError: If an error occurs during the upload process.
+        """
+        async with await self._get_s3_client() as s3:  # type: ignore
+            try:
+                extra_args = {}
+                if content_type:
+                    extra_args["ContentType"] = content_type
+
+                await s3.put_object(Bucket=self.bucket_name, Key=object_name, Body=content, **extra_args)
+                logger.info(f"Content uploaded successfully to " f"{self.bucket_public_url}{object_name}")
+            except ClientError as e:
+                logger.error(f"An error occurred while uploading content: {e}")
+                raise
+
     async def upload_content(
         self,
         content: str,
@@ -113,18 +143,23 @@ cloudflare_uploader = CloudflareR2Uploader(region="apac")
 
 
 async def main():
+    import sys
+
     uploader = CloudflareR2Uploader(region="apac")
 
-    # Example of uploading a file
-    file_path = "settings.txt"
-    logger.debug(f"Uploading {file_path} to {settings.s3_bucket_name}")
-    await uploader.upload_file(file_path, content_type="text/plain")
+    if not sys.argv[1]:
+        print("Please provide a file path to upload")
+        return
 
-    # Example of uploading content as a string
-    content = "This is some example content."
-    object_name = "example_content.txt"
-    logger.debug(f"Uploading content to {settings.s3_bucket_name}/{object_name}")
-    await uploader.upload_content(content, object_name, content_type="text/plain")
+    filepath = sys.argv[1]
+    content_type = mime_from_filename(filepath)
+
+    logger.info(f"Uploading file {filepath} with content type {content_type}")
+
+    with open(filepath, "rb") as fh:
+        content = fh.read()
+
+    await uploader.upload_bytes(content, filepath, content_type="text/plain")
 
 
 if __name__ == "__main__":
