@@ -1,5 +1,22 @@
+#!/usr/bin/env python
+"""
+Storage bucket uploader module for OpenNEM
+
+This module provides functionality to upload files to cloud storage buckets, specifically
+Cloudflare R2 storage. It handles file uploads, content type detection, and provides
+a consistent interface for storing OpenNEM data files.
+
+The module supports:
+ * Uploading files from disk
+ * Uploading bytes from memory
+ * Content type detection
+ * Async operations using aioboto3
+ * Error handling and logging
+"""
+
 import asyncio
 import logging
+import os
 
 import aioboto3
 from botocore.exceptions import ClientError
@@ -44,7 +61,7 @@ class CloudflareR2Uploader:
         file_path: str,
         object_name: str | None = None,
         content_type: str | None = None,
-    ) -> None:
+    ) -> int:
         """
         Upload a file to a Cloudflare R2 bucket.
 
@@ -71,6 +88,8 @@ class CloudflareR2Uploader:
 
                 await s3.upload_file(file_path, self.bucket_name, object_name, ExtraArgs=extra_args)
                 logger.info(f"File {file_path} uploaded successfully to {self.bucket_name}/{object_name}")
+                return os.path.getsize(file_path)
+
             except ClientError as e:
                 logger.error(f"An error occurred while uploading file: {e}")
                 raise
@@ -80,7 +99,7 @@ class CloudflareR2Uploader:
         content: bytes,
         object_name: str,
         content_type: str | None = None,
-    ) -> None:
+    ) -> int:
         """
         Upload bytes to a Cloudflare R2 bucket.
 
@@ -99,7 +118,8 @@ class CloudflareR2Uploader:
                     extra_args["ContentType"] = content_type
 
                 await s3.put_object(Bucket=self.bucket_name, Key=object_name, Body=content, **extra_args)
-                logger.info(f"Content uploaded successfully to " f"{self.bucket_public_url}{object_name}")
+
+                return len(content)
             except ClientError as e:
                 logger.error(f"An error occurred while uploading content: {e}")
                 raise
@@ -109,7 +129,7 @@ class CloudflareR2Uploader:
         content: str,
         object_name: str,
         content_type: str | None = None,
-    ) -> None:
+    ) -> int:
         """
         Upload content as a string to a Cloudflare R2 bucket.
 
@@ -133,7 +153,7 @@ class CloudflareR2Uploader:
                     extra_args["ContentType"] = content_type
 
                 await s3.put_object(Bucket=self.bucket_name, Key=object_name, Body=content, **extra_args)
-                logger.info(f"Content uploaded successfully to " f"{self.bucket_public_url}{object_name}")
+                return len(content)
             except ClientError as e:
                 logger.error(f"An error occurred while uploading content: {e}")
                 raise
@@ -142,7 +162,7 @@ class CloudflareR2Uploader:
 cloudflare_uploader = CloudflareR2Uploader(region="apac")
 
 
-async def main():
+async def _main():
     import sys
 
     uploader = CloudflareR2Uploader(region="apac")
@@ -163,4 +183,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(_main())
