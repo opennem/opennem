@@ -71,7 +71,7 @@ class WorkerSettings:
         # NEM Rooftop
         cron(
             task_nem_rooftop_crawl,
-            minute={0, 1, 2, 3, 30, 31, 32, 33},
+            minute={0, 1, 2, 3, 4, 30, 31, 32, 33, 34},
             second=50,
             timeout=None,
             unique=True,
