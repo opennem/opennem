@@ -58,7 +58,7 @@ async def update_facility_aggregates(
                     locf(
                         avg(bs.price)
                     ) AS price
-                FROM balancing_summary bs
+                FROM mv_balancing_summary bs
                 WHERE
                     bs.interval >= :start_time
                     AND bs.interval <= :end_time
