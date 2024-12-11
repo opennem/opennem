@@ -28,7 +28,7 @@ from opennem.crawlers.nemweb import (
 )
 from opennem.crawlers.wemde import run_all_wem_crawlers
 from opennem.db.views import refresh_recent_aggregates
-from opennem.exporter.archive import sync_archive_exports
+from opennem.exporter.archive import generate_archive_dirlisting, sync_archive_exports
 from opennem.exporter.facilities import export_facilities_static
 
 # from opennem.exporter.historic import export_historic_intervals
@@ -186,6 +186,7 @@ async def task_export_facility_geojson(ctx) -> None:
 async def task_sync_archive_exports(ctx) -> None:
     """Run and sync parquet exports to output bucket"""
     await sync_archive_exports()
+    await generate_archive_dirlisting()
 
 
 @logfire.instrument("task_export_daily_monthly")

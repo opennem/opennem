@@ -23,6 +23,7 @@ import polars as pl
 from humanize import naturalsize
 
 from opennem import settings
+from opennem.core.templates import serve_template
 from opennem.db import db_connect_sync
 from opennem.exporter.storage_bucket import cloudflare_uploader
 from opennem.schema.network import NetworkNEM
@@ -204,6 +205,26 @@ async def sync_archive_exports() -> None:
         logger.info(f"Uploaded {file_size_human} to {export.get_output_url}")
 
 
+async def generate_archive_dirlisting() -> None:
+    dir_listing = await cloudflare_uploader.list_directory(_BUCKET_UPLOAD_DIRECTORY)
+
+    logger.info(f"Listing {dir_listing.bucket_name} {dir_listing.path}")
+
+    # remove index.html from the dir_listings.files
+    dir_listing.files = [file for file in dir_listing.files if file.file_name != "index.html"]
+
+    dirlisting_html = serve_template(template_name="dirlisting.html", **{"directory": dir_listing})
+
+    if isinstance(dirlisting_html, str):
+        dirlisting_html = dirlisting_html.encode("utf-8")
+
+    dirlisting_size = await cloudflare_uploader.upload_bytes(
+        dirlisting_html, f"{_BUCKET_UPLOAD_DIRECTORY}index.html", "text/html"
+    )
+
+    logger.info(f"Uploaded directory listing{naturalsize(dirlisting_size, binary=True)} to {dir_listing.url}")
+
+
 def _test_polars_read() -> None:
     """Test reading parquet files from the bucket"""
 
@@ -224,4 +245,4 @@ if __name__ == "__main__":
         await sync_archive_exports()
         _test_polars_read()
 
-    asyncio.run(main())
+    asyncio.run(generate_archive_dirlisting())
