@@ -47,7 +47,7 @@ async def get_facilities() -> APIV4ResponseSchema:
 
 
 @api_version(4)
-@cache(expire=60 * 5)
+@cache(expire=60 * 60)
 @router.get(
     "/au/{network_id}/{station_code:path}",
     name="Get station information",
