@@ -123,7 +123,7 @@ class APVIForecastInterval(BaseConfig):
         energy_quantity: float | None = None
 
         if generated and is_number(generated):
-            energy_quantity = float(generated) / 4
+            energy_quantity = round(float(generated), 2)
 
         return energy_quantity
 
