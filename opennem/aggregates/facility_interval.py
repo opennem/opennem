@@ -6,8 +6,8 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem.db import get_write_session
-from opennem.schema.network import NetworkSchema
-from opennem.utils.dates import get_today_opennem
+from opennem.schema.network import NetworkAPVI, NetworkSchema
+from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
 
 logger = logging.getLogger("opennem.aggregates.facility_interval")
 
@@ -271,6 +271,34 @@ async def run_facility_aggregate_updates(
         raise
 
 
+async def run_facility_aggregate_for_network(network: NetworkSchema) -> None:
+    """Run facility aggregate updates for a specific network.
+
+    This function calculates and updates facility aggregate data from the
+    first date data was seen for the given network up to the last completed
+    interval.
+
+    Args:
+        network (NetworkSchema): The network for which to run aggregate updates.
+
+    Raises:
+        Exception: If the network's data_first_seen attribute is not set.
+    """
+
+    if not network.data_first_seen:
+        raise Exception("Network data first seen is not set")
+
+    end_date = get_last_completed_interval_for_network(network=network).replace(tzinfo=None)
+
+    await update_facility_aggregates_chunked(
+        start_date=network.data_first_seen,
+        end_date=end_date,
+        chunk_days=30,
+        max_concurrent=2,
+        network=network,
+    )
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     # Example: Update last 7 days of data in chunks
@@ -290,4 +318,5 @@ if __name__ == "__main__":
     #     )
     # )
 
-    asyncio.run(update_facility_aggregate_last_days(days_back=30))
+    # asyncio.run(update_facility_aggregate_last_days(days_back=30))
+    asyncio.run(run_facility_aggregate_for_network(NetworkAPVI))
