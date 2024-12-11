@@ -20,8 +20,8 @@ async def update_facility_aggregates(
     network: NetworkSchema | None = None,
 ) -> None:
     """
-    Updates facility aggregates for the given time range.
-    Uses an INSERT ... ON CONFLICT DO UPDATE approach for efficient upserts.
+    Updates facility aggregates for the given time range using partition-aware approach.
+    Uses an INSERT ... ON CONFLICT DO UPDATE with improved locking strategy.
 
     Args:
         db_session (AsyncSession): Database session
@@ -42,14 +42,11 @@ async def update_facility_aggregates(
         network_filter = f"AND fs.network_id = '{network.code}'"
 
     try:
-        # The aggregation query
+        # The optimized aggregation query with improved locking strategy
         query = text(f"""
             WITH filled_balancing_summary AS (
                 SELECT
-                    time_bucket_gapfill(
-                        '5 minutes'::interval,
-                        bs.interval
-                    ) AS interval,
+                    time_bucket('5 minutes', bs.interval) as interval,
                     bs.network_id,
                     bs.network_region,
                     locf(
@@ -62,7 +59,6 @@ async def update_facility_aggregates(
                 WHERE
                     bs.interval >= :start_time
                     AND bs.interval <= :end_time
-                GROUP BY 1, 2, 3
             )
             INSERT INTO at_facility_intervals (
                 interval,
@@ -125,6 +121,7 @@ async def update_facility_aggregates(
                 emissions_intensity = EXCLUDED.emissions_intensity,
                 market_value = EXCLUDED.market_value,
                 last_updated = EXCLUDED.last_updated
+            WHERE at_facility_intervals.last_updated < EXCLUDED.last_updated
         """)
 
         await db_session.execute(
@@ -151,12 +148,13 @@ async def _process_aggregate_chunk(
     network: NetworkSchema | None = None,
 ) -> None:
     """
-    Process a single chunk of facility aggregates with semaphore control
+    Process a single chunk of facility aggregates with semaphore control and retry logic
 
     Args:
         semaphore (asyncio.Semaphore): Semaphore to control concurrent executions
         start_time (datetime): Start time for the chunk
         end_time (datetime): End time for the chunk
+        network (NetworkSchema | None): Optional network to filter by
     """
     async with semaphore:
         async with get_write_session() as session:
@@ -332,4 +330,4 @@ if __name__ == "__main__":
     # )
 
     # asyncio.run(update_facility_aggregate_last_hours(hours_back=24))
-    asyncio.run(run_facility_aggregate_all(max_concurrent=1))
+    asyncio.run(run_facility_aggregate_updates(lookback_days=30, max_concurrent=4, chunk_days=3))
