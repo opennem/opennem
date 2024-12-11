@@ -74,7 +74,12 @@ app = FastAPI(title="OpenNEM", debug=settings.debug, version=get_version(), redo
 logfire.instrument_fastapi(app)
 
 # @TODO put CORS available/permissions in settings
-origins = ["https://*.opennem.org.au", "https://*.openelectricity.org.au", "https://*.pages.dev"]
+origins = [
+    "https://*.opennem.org.au",
+    "https://*.openelectricity.org.au",
+    "https://*.pages.dev",
+    "https://explore.openelectricity.org.au",
+]
 
 if settings.is_dev:
     origins = ["*"]  # Allow all origins in development mode
