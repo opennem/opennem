@@ -9,7 +9,7 @@ mypy = uv run mypy $(projectname)
 pytest = uv run pytest tests -v
 pyright = uv run pyright -v .venv $(projectname)
 version_file = $(projectname)/__init__.py
-bump=prerelease
+BUMP_TYPE ?= pre_n
 
 .PHONY: test
 test:
@@ -37,7 +37,7 @@ build:
 .PHONY: version
 version:
 	@git diff --cached --exit-code || (echo "There are staged but uncommitted changes. Please commit or unstage them first." && exit 1)
-	poetry version $(bump)
+	poetry version $(BUMP_TYPE)
 	@new_version=$$(poetry version -s); \
 	current_branch=$$(git rev-parse --abbrev-ref HEAD); \
 	echo "Updating $(version_file) to $$new_version"; \
@@ -54,13 +54,20 @@ version:
 
 .PHONE: push
 push:
-	@uv run bump-my-version bump pre_n
+	@if ! echo "major minor patch pre_l pre_n" | grep -w "$(BUMP_TYPE)" > /dev/null; then \
+		echo "Error: BUMP_TYPE must be one of: major, minor, patch, pre_l, pre_n"; \
+		exit 1; \
+	fi
+	@uv run bump-my-version bump $(BUMP_TYPE)
 	@new_version=$$(uv run --python 3.12 python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])"); \
 	echo "Pushing $$new_version"; \
 	git push -u origin $$new_version
 
 .PHONY: release-pre
 release-pre: format lint
+
+.PHONY: release
+release: release-pre push
 
 .PHONY: image
 image:
