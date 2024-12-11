@@ -3,9 +3,7 @@
 This module provides CLI commands for managing OpenNEM crawlers using Typer.
 """
 
-import asyncio
 import logging
-from functools import wraps
 
 import typer
 from rich.table import Table
@@ -13,6 +11,7 @@ from rich.table import Table
 from opennem import console
 from opennem.core.crawlers.crawler import crawlers_flush_metadata, crawlers_get_crawl_metadata
 from opennem.crawl import get_crawl_set, run_crawl
+from opennem.utils.async_sync import async_to_sync
 from opennem.utils.timesince import timesince
 
 logger = logging.getLogger("opennem.cli")
@@ -20,16 +19,8 @@ logger = logging.getLogger("opennem.cli")
 crawl_app = typer.Typer(help="Crawler management commands")
 
 
-def coro(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        return asyncio.run(f(*args, **kwargs))
-
-    return wrapper
-
-
 @crawl_app.command("run")
-@coro
+@async_to_sync
 async def crawl_run(
     name: str = typer.Argument(..., help="Crawler name pattern to match"),
     all: bool = typer.Option(False, help="Run all crawlers"),
