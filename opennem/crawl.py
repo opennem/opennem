@@ -17,6 +17,7 @@ from opennem.crawlers.apvi import (
     APVIRooftopLatestCrawler,
     APVIRooftopMonthCrawler,
     APVIRooftopTodayCrawler,
+    APVIRooftopYearCrawler,
 )
 from opennem.crawlers.bom import BOMCapitals
 from opennem.crawlers.mms import (
@@ -80,6 +81,7 @@ async def load_crawlers(live_load: bool = False) -> CrawlerSet:
         APVIRooftopTodayCrawler,
         APVIRooftopLatestCrawler,
         APVIRooftopMonthCrawler,
+        APVIRooftopYearCrawler,
         APVIRooftopAllCrawler,
         # BOM
         BOMCapitals,

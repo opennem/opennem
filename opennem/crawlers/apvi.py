@@ -125,7 +125,7 @@ APVIRooftopMonthCrawler = CrawlerDefinition(
 )
 
 
-APVIRooftopAllCrawler = CrawlerDefinition(
+APVIRooftopYearCrawler = CrawlerDefinition(
     priority=CrawlerPriority.medium,
     schedule=CrawlerSchedule.daily,
     name="apvi.year.data",
@@ -136,11 +136,16 @@ APVIRooftopAllCrawler = CrawlerDefinition(
 )
 
 
-if __name__ == "__main__":
-    r = get_apvi_rooftop_data()
+APVIRooftopAllCrawler = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.daily,
+    name="apvi.all.data",
+    limit=None,
+    url="none",
+    latest=False,
+    processor=crawl_apvi_forecasts,
+)
 
-    if not r:
-        print("no result")
-    else:
-        cr = store_apvi_forecastset(r)
-        print(cr)
+
+if __name__ == "__main__":
+    pass
