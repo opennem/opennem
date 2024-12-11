@@ -265,7 +265,6 @@ async def energy_station(
 
     results_market_value = [DataQueryResult(interval=i[0], group_by=i[2], result=i[5] if len(i) > 1 else None) for i in row]
 
-    print(results_market_value)
     if len(results_energy) < 1:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
