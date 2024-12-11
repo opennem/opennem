@@ -8,7 +8,6 @@ ruff-check = uv run ruff check $(projectname)
 mypy = uv run mypy $(projectname)
 pytest = uv run pytest tests -v
 pyright = uv run pyright -v .venv $(projectname)
-version_file = $(projectname)/__init__.py
 BUMP_TYPE ?= pre_n
 
 .PHONY: test
@@ -34,26 +33,9 @@ build:
 	pip install wheel
 	python setup.py sdist bdist_wheel
 
-.PHONY: version
-version:
-	@git diff --cached --exit-code || (echo "There are staged but uncommitted changes. Please commit or unstage them first." && exit 1)
-	poetry version $(BUMP_TYPE)
-	@new_version=$$(poetry version -s); \
-	current_branch=$$(git rev-parse --abbrev-ref HEAD); \
-	echo "Updating $(version_file) to $$new_version"; \
-	if [ "$$(uname)" = "Darwin" ]; then \
-		sed -i '' "s/__version__ = \".*\"/__version__ = \"$$new_version\"/g" $(version_file); \
-	else \
-		sed -i "s/__version__ = \".*\"/__version__ = \"$$new_version\"/g" $(version_file); \
-	fi; \
-	git add $(version_file) pyproject.toml requirements.txt; \
-	git commit -m "Bump version: $$new_version"; \
-	git tag $$new_version; \
-	git push origin $$current_branch; \
-	git push origin $$new_version
 
-.PHONE: push
-push:
+.PHONE: version
+version:
 	@if ! echo "major minor patch pre_l pre_n" | grep -w "$(BUMP_TYPE)" > /dev/null; then \
 		echo "Error: BUMP_TYPE must be one of: major, minor, patch, pre_l, pre_n"; \
 		exit 1; \
@@ -67,7 +49,7 @@ push:
 release-pre: format lint
 
 .PHONY: release
-release: release-pre push
+release: release-pre version
 
 .PHONY: image
 image:
@@ -98,5 +80,3 @@ clean:
 .PHONY: codecov
 codecov:
 	pytest --cov=./$(projectname)
-
-release: release-pre version
