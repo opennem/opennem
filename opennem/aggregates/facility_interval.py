@@ -162,15 +162,17 @@ async def _process_aggregate_chunk(
             await update_facility_aggregates(session, start_time, end_time, network=network)
 
 
-async def update_current_day_facility_aggregates() -> None:
+async def update_facility_aggregate_last_days(days_back: int = 1) -> None:
     """
     Updates facility aggregates for the current day, looking back a specified number of hours.
     This is designed to be called frequently to keep current day data up to date.
 
+    Args:
+        days_back (int): Number of days to look back from current day
     """
     start_time = get_today_opennem().replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
     # end time is end of today
-    end_time = start_time + timedelta(days=1)
+    end_time = start_time + timedelta(days=days_back)
 
     async with get_write_session() as session:
         await update_facility_aggregates(session, start_time, end_time)
@@ -261,7 +263,7 @@ async def run_facility_aggregate_updates(
             )
         else:
             # Default behaviour - just update current day
-            await update_current_day_facility_aggregates(network=network)
+            await update_facility_aggregate_last_days(network=network)
 
     except Exception as e:
         logger.error(f"Error in aggregate update: {str(e)}")
@@ -287,4 +289,4 @@ if __name__ == "__main__":
     #     )
     # )
 
-    asyncio.run(update_current_day_facility_aggregates())
+    asyncio.run(update_facility_aggregate_last_days(days_back=30))
