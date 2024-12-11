@@ -25,7 +25,7 @@ class UserFeedbackSubmission(BaseModel):
     user_agent: str | None = None
 
 
-def persist_and_alert_user_feedback(
+async def persist_and_alert_user_feedback(
     user_feedback: UserFeedbackSubmission,
 ) -> None:
     """User feedback submission"""
@@ -40,17 +40,22 @@ def persist_and_alert_user_feedback(
         alert_sent=False,
     )
 
-    with SessionLocal() as session:
+    async with SessionLocal() as session:
         try:
             session.add(feedback)
-            session.commit()
-            session.refresh(feedback)
+            await session.commit()
+            await session.refresh(feedback)
         except Exception as e:
             logger.error(f"Error saving feedback: {e}")
 
     try:
-        slack_message_format = serve_template(template_name="feedback_slack_message.md", **{"feedback": feedback})
-        slack_message(
+        slack_message_format: str | bytes = serve_template(template_name="feedback_slack_message.md", **{"feedback": feedback})
+
+        # if the message is bytes then decode it
+        if isinstance(slack_message_format, bytes):
+            slack_message_format = slack_message_format.decode("utf-8")
+
+        await slack_message(
             message=slack_message_format, webhook_url=settings.slack_hook_feedback, tag_users=settings.slack_admin_alert
         )
     except Exception as e:

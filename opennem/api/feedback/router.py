@@ -13,10 +13,10 @@ logger = logging.getLogger("opennem.api.feedback")
 router = APIRouter()
 
 
-@api_version(3)
+@api_version(4)
 @router.post("")
 @router.post("/")
-def feedback_submissions(
+async def feedback_submissions(
     user_feedback: UserFeedbackSubmission,
     request: Request,
     # app_auth: AuthApiKeyRecord = Depends(get_api_key),  # type: ignore
@@ -36,9 +36,8 @@ def feedback_submissions(
         twitter=user_feedback.twitter,
         user_ip=user_ip,
         user_agent=user_agent,
-        alert_sent=False,
     )
 
-    persist_and_alert_user_feedback(feedback)
+    await persist_and_alert_user_feedback(feedback)
 
     return OpennemBaseSchema()
