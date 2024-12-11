@@ -2,10 +2,11 @@
 
 import asyncio
 import logging
+from datetime import timedelta
 
 import logfire
 
-from opennem.aggregates.facility_interval import run_update_facility_intervals
+from opennem.aggregates.facility_interval import update_current_day_facility_aggregates, update_facility_aggregates_chunked
 from opennem.aggregates.network_demand import run_aggregates_demand_network_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.api.export.tasks import export_electricitymap, export_energy, export_flows, export_power
@@ -33,6 +34,7 @@ from opennem.exporter.facilities import export_facilities_static
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.tasks.exceptions import OpenNEMPipelineRetryTask
+from opennem.utils.dates import get_last_completed_interval_for_network
 from opennem.workers.energy import process_energy_from_now
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
@@ -59,7 +61,7 @@ async def task_nem_interval_check(ctx) -> None:
     # await process_energy_from_now(hours=4)
 
     # update facility aggregates
-    await run_update_facility_intervals(hours=4)
+    await update_current_day_facility_aggregates()
 
     # run flows
     run_flows_for_last_days(days=1, network=NetworkNEM)
@@ -87,7 +89,7 @@ async def task_nem_rooftop_crawl(ctx) -> None:
 async def task_wem_day_crawl(ctx) -> None:
     """This task runs per interval and checks for new data"""
     await run_all_wem_crawlers(latest=True, limit=3)
-    await run_update_facility_intervals(hours=24 * 3)
+    await update_current_day_facility_aggregates()
     await run_export_power_latest_for_network(network=NetworkWEM)
     await run_export_energy_for_year(network=NetworkWEM)
 
@@ -120,10 +122,10 @@ async def task_run_flows_for_last_days(ctx) -> None:
 
 
 @logfire.instrument("task_update_facility_aggregates_chunked")
-async def task_update_facility_aggregates_chunked(ctx) -> None:
+async def task_update_current_day_facility_aggregates(ctx) -> None:
     """Updates facility aggregates in chunks"""
 
-    await run_update_facility_intervals(hours=4)
+    await update_current_day_facility_aggregates()
 
 
 @logfire.instrument("task_run_aggregates_demand_network_days")
@@ -266,7 +268,10 @@ async def task_catchup(ctx) -> None:
 
     # processing
     # await process_energy_from_now(hours=24 * 30)
-    await run_update_facility_intervals(hours=24 * 30)
+    latest_interval = get_last_completed_interval_for_network(network=NetworkNEM)
+    await update_facility_aggregates_chunked(
+        end_date=latest_interval, start_date=latest_interval - timedelta(days=30), max_concurrent=1, chunk_days=30
+    )
 
     try:
         run_flows_for_last_days(days=30, network=NetworkNEM)

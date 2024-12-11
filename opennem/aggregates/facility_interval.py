@@ -1,29 +1,56 @@
 import asyncio
 import logging
-from datetime import datetime, timedelta
+from datetime import date, datetime, time, timedelta
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem.db import get_write_session
-from opennem.schema.network import NetworkNEM
-from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
+from opennem.schema.network import NetworkSchema
+from opennem.utils.dates import get_today_opennem
 
 logger = logging.getLogger("opennem.aggregates.facility_interval")
+
+
+def _datetime_to_date_bounds(dt: datetime) -> tuple[datetime, datetime]:
+    """
+    Convert a datetime to start and end bounds for that day
+
+    Args:
+        dt (datetime): Input datetime
+
+    Returns:
+        tuple[datetime, datetime]: Tuple of (start_of_day, end_of_day)
+    """
+    start = datetime.combine(dt.date(), time.min)
+    end = datetime.combine(dt.date(), time.max)
+    return start, end
 
 
 async def update_facility_aggregates(
     db_session: AsyncSession,
     start_time: datetime,
     end_time: datetime,
+    network: NetworkSchema | None = None,
 ) -> None:
     """
     Updates facility aggregates for the given time range.
     Uses an INSERT ... ON CONFLICT DO UPDATE approach for efficient upserts.
+
+    Args:
+        db_session (AsyncSession): Database session
+        start_time (datetime): Start time for aggregation
+        end_time (datetime): End time for aggregation
+        network (NetworkSchema | None): Optional network to filter by
     """
+    network_filter = ""
+
+    if network:
+        network_filter = f"AND fs.network_id = '{network.code}'"
+
     try:
         # The aggregation query
-        query = text("""
+        query = text(f"""
             WITH filled_balancing_summary AS (
                 SELECT
                     time_bucket_gapfill(
@@ -96,6 +123,7 @@ async def update_facility_aggregates(
                 AND u.fueltech_id NOT IN ('imports', 'exports', 'interconnector', 'battery')
                 AND fs.interval >= :start_time
                 AND fs.interval <= :end_time
+                {network_filter}
             GROUP BY 1, 2, 3, 4, 5, 6, 7
             ON CONFLICT (interval, network_id, facility_code, unit_code)
             DO UPDATE SET
@@ -128,6 +156,7 @@ async def _process_aggregate_chunk(
     semaphore: asyncio.Semaphore,
     start_time: datetime,
     end_time: datetime,
+    network: NetworkSchema | None = None,
 ) -> None:
     """
     Process a single chunk of facility aggregates with semaphore control
@@ -139,64 +168,68 @@ async def _process_aggregate_chunk(
     """
     async with semaphore:
         async with get_write_session() as session:
-            await update_facility_aggregates(session, start_time, end_time)
+            await update_facility_aggregates(session, start_time, end_time, network=network)
 
 
-async def run_update_facility_intervals(hours: int = 4) -> None:
+async def update_current_day_facility_aggregates() -> None:
     """
-    Updates facility intervals for the last x hours (default 4)
+    Updates facility aggregates for the current day, looking back a specified number of hours.
+    This is designed to be called frequently to keep current day data up to date.
 
     """
     end_time = get_today_opennem().replace(second=0, microsecond=0, tzinfo=None)
-    start_time = end_time - timedelta(hours=hours)
+    # end time is end of today
+    start_time = end_time.replace(hour=23, minute=59, second=0, microsecond=0)
+
     async with get_write_session() as session:
         await update_facility_aggregates(session, start_time, end_time)
 
 
 async def update_facility_aggregates_chunked(
-    start_date: datetime,
-    end_date: datetime,
+    start_date: date,
+    end_date: date,
     chunk_days: int = 30,
     max_concurrent: int = 2,
+    network: NetworkSchema | None = None,
 ) -> None:
     """
-    Updates facility aggregates in chunks working backwards from end_time to start_time.
+    Updates facility aggregates in chunks working backwards from end_date to start_date.
     Processes multiple chunks concurrently to improve performance.
 
     Args:
-        start_date (datetime): Start date for updates
-        end_date (datetime): End date for updates
+        start_date (date): Start date for updates
+        end_date (date): End date for updates
         chunk_days (int): Number of days to process in each chunk
         max_concurrent (int): Maximum number of concurrent update operations
+        network (NetworkSchema | None): Optional network to filter by
     """
+    # Convert dates to datetime bounds
+    start_dt = datetime.combine(start_date, time.min)
+    end_dt = datetime.combine(end_date, time.max)
+
     # Create chunks
     chunks: list[tuple[datetime, datetime]] = []
-    current_end = end_date
+    current_end = end_dt
 
-    # strip timzones
-    start_date = start_date.replace(tzinfo=None)
-    end_date = end_date.replace(tzinfo=None)
-
-    while current_end > start_date:
+    while current_end > start_dt:
         current_start = current_end - timedelta(days=chunk_days)
 
         # Ensure we don't go before our target start time
-        if current_start < start_date:
-            current_start = start_date
+        if current_start < start_dt:
+            current_start = start_dt
 
         chunks.append((current_start, current_end))
-        current_end = current_start - timedelta(days=1)
+        current_end = current_start - timedelta(microseconds=1)  # Ensure no overlap
 
     # Create semaphore to limit concurrent operations
     semaphore = asyncio.Semaphore(max_concurrent)
 
     # Create tasks for all chunks
-    tasks = [_process_aggregate_chunk(semaphore, chunk_start, chunk_end) for chunk_start, chunk_end in chunks]
+    tasks = [_process_aggregate_chunk(semaphore, chunk_start, chunk_end, network=network) for chunk_start, chunk_end in chunks]
 
     logger.info(f"Processing {len(chunks)} chunks with max {max_concurrent} concurrent operations")
 
     try:
-        # Execute all tasks and wait for completion
         await asyncio.gather(*tasks)
         logger.info("All chunks processed successfully")
     except Exception as e:
@@ -208,32 +241,33 @@ async def run_facility_aggregate_updates(
     lookback_days: int | None = None,
     chunk_days: int = 30,
     max_concurrent: int = 4,
+    network: NetworkSchema | None = None,
 ) -> None:
     """
     Main function to run facility aggregate updates for a specified time range
 
     Args:
-        lookback_days (Optional[int]): Number of days to look back from current time.
-            If None, defaults to 30 minutes
+        lookback_days (int | None): Number of days to look back from current time.
+            If None, defaults to current day only
         chunk_days (int): Number of days to process in each chunk when processing historical data
         max_concurrent (int): Maximum number of concurrent update operations
+        network (NetworkSchema | None): Optional network to filter by
     """
     try:
-        end_time = get_today_opennem().replace(second=0, microsecond=0)
+        today = get_today_opennem().date()
 
         if lookback_days:
-            start_time = end_time - timedelta(days=lookback_days)
+            start_date = today - timedelta(days=lookback_days)
             await update_facility_aggregates_chunked(
-                start_time,
-                end_time,
+                start_date,
+                today,
                 chunk_days=chunk_days,
                 max_concurrent=max_concurrent,
+                network=network,
             )
         else:
-            # Default behaviour - just update last 30 minutes
-            start_time = end_time - timedelta(minutes=30)
-            async with get_write_session() as session:
-                await update_facility_aggregates(session, start_time, end_time)
+            # Default behaviour - just update current day
+            await update_current_day_facility_aggregates(network=network)
 
     except Exception as e:
         logger.error(f"Error in aggregate update: {str(e)}")
@@ -244,14 +278,19 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     # Example: Update last 7 days of data in chunks
     # asyncio.run(run_facility_aggregate_updates(lookback_days=7))
-    interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
+    # interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
 
     # asyncio.run(
     #     update_facility_aggregates_chunked(
-    #         start_date=interval - timedelta(days=7),
+    #         # start_date=interval - timedelta(days=30),
+    #         start_date=datetime(2024, 1, 1),
+    #         # start_date=NetworkNEM.data_first_seen,
+    #         # end_date=datetime(2012, 11, 1),
     #         end_date=interval,
+    #         max_concurrent=2,
     #         chunk_days=30,
+    #         # network=NetworkWEM,
     #     )
     # )
 
-    asyncio.run(run_update_facility_intervals(hours=24))
+    asyncio.run(update_current_day_facility_aggregates())

@@ -49,7 +49,7 @@ from opennem.tasks.tasks import (
     task_refresh_from_cms,
     task_run_aggregates_demand_network_days,
     task_sync_archive_exports,
-    task_update_facility_aggregates_chunked,
+    task_update_current_day_facility_aggregates,
     task_update_facility_seen_range,
     task_wem_day_crawl,
 )
@@ -137,8 +137,8 @@ class WorkerSettings:
         ),
         # facility aggregates
         cron(
-            task_update_facility_aggregates_chunked,
-            minute={23},
+            task_update_current_day_facility_aggregates,
+            minute=23,
             second=0,
             timeout=None,
             unique=True,
