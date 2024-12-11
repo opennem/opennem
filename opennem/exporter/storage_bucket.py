@@ -15,7 +15,6 @@ The module supports:
  * Directory listing and file information retrieval
 """
 
-import asyncio
 import logging
 import os
 from dataclasses import dataclass
@@ -61,18 +60,39 @@ class BucketFile:
 
     @property
     def url(self) -> str:
-        return f"{settings.s3_bucket_public_url}{self.file_path}"
+        bucket_url = settings.s3_bucket_public_url
+
+        if not bucket_url.endswith("/"):
+            bucket_url += "/"
+
+        return f"{bucket_url}{self.file_path}"
+
+
+@dataclass
+class BucketDirectory:
+    bucket_name: str
+    path: str
+    files: list[BucketFile]
+
+    @property
+    def url(self) -> str:
+        bucket_url = settings.s3_bucket_public_url
+
+        if not bucket_url.endswith("/"):
+            bucket_url += "/"
+
+        return f"{bucket_url}{self.path}"
 
 
 class CloudflareR2Uploader:
-    def __init__(self, region: str = "apac"):
+    def __init__(self, bucket_name: str | None = None, bucket_url: str | None = None, region: str = "apac"):
         self.account_id = settings.s3_access_key_id
         self.access_key_id = settings.s3_access_key_id
         self.secret_access_key = settings.s3_secret_access_key
         self.endpoint_url = settings.s3_endpoint_url
-        self.bucket_name = settings.s3_bucket_name
+        self.bucket_name = bucket_name or settings.s3_bucket_name
         self.region = region
-        self.bucket_public_url = settings.s3_bucket_public_url
+        self.bucket_public_url = bucket_url or settings.s3_bucket_public_url
 
         if not self.bucket_public_url.endswith("/"):
             self.bucket_public_url += "/"
@@ -195,7 +215,7 @@ class CloudflareR2Uploader:
                 logger.error(f"An error occurred while uploading content: {e}")
                 raise
 
-    async def list_directory(self, prefix: str = "") -> list[BucketFile]:
+    async def list_directory(self, prefix: str = "") -> BucketDirectory:
         """
         Get a listing of files in the bucket under the specified prefix.
 
@@ -225,8 +245,6 @@ class CloudflareR2Uploader:
                         if obj["Key"].endswith("/"):
                             continue
 
-                        logger.info(f"Listing {obj['Key']} with size {obj['Size']}")
-
                         file_list.append(
                             BucketFile(
                                 name=os.path.basename(obj["Key"]),
@@ -236,7 +254,11 @@ class CloudflareR2Uploader:
                             )
                         )
 
-                return sorted(file_list, key=lambda x: x.last_modified, reverse=True)
+                return BucketDirectory(
+                    bucket_name=self.bucket_name,
+                    path=prefix,
+                    files=sorted(file_list, key=lambda x: x.last_modified, reverse=True),
+                )
 
             except ClientError as e:
                 logger.error(f"Error listing directory {prefix}: {e}")
@@ -244,16 +266,3 @@ class CloudflareR2Uploader:
 
 
 cloudflare_uploader = CloudflareR2Uploader(region="apac")
-
-
-async def _main():
-    uploader = CloudflareR2Uploader(region="apac")
-
-    dir_listings = await uploader.list_directory("archive/nem/")
-
-    for dir_listing in dir_listings:
-        print(f"{dir_listing.file_name} - {dir_listing.size_human} - {dir_listing.last_modified_human} - {dir_listing.url}")
-
-
-if __name__ == "__main__":
-    asyncio.run(_main())
