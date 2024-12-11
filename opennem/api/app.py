@@ -69,7 +69,9 @@ async def lifespan(app: FastAPI):
     await unkey_client.close()
 
 
-app = FastAPI(title="OpenNEM", debug=settings.debug, version=get_version(), redoc_url="/docs", docs_url=None, lifespan=lifespan)
+app = FastAPI(
+    title="OpenElectricity", debug=settings.debug, version=get_version(), redoc_url="/docs", docs_url=None, lifespan=lifespan
+)
 
 logfire.instrument_fastapi(app)
 
@@ -141,6 +143,24 @@ async def http_type_exception_handler(request: Request, exc: HTTPException) -> O
         status_code=exc.status_code,
         response_class=resp_content,
     )
+
+
+# log API requests
+api_request_counter = logfire.metric_counter("api_request_counter")
+api_exception_counter = logfire.metric_counter("api_exception_counter")
+
+
+@app.middleware("http")
+async def log_api_request(request: Request, call_next):
+    api_request_counter.add(1)
+    response = await call_next(request)
+    return response
+
+
+@app.exception_handler(Exception)
+async def log_api_exception(request: Request, exc: Exception):
+    api_exception_counter.add(1)
+    return await http_exception_handler(request, exc)
 
 
 # sub-routers
