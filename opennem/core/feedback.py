@@ -56,7 +56,9 @@ async def persist_and_alert_user_feedback(
             slack_message_format = slack_message_format.decode("utf-8")
 
         await slack_message(
-            message=slack_message_format, webhook_url=settings.slack_hook_feedback, tag_users=settings.slack_admin_alert
+            message=slack_message_format,  # type: ignore
+            webhook_url=settings.slack_hook_feedback,
+            tag_users=settings.slack_admin_alert,
         )
     except Exception as e:
         logger.error(f"Error sending slack feedback message: {e}")
@@ -67,4 +69,6 @@ async def persist_and_alert_user_feedback(
 if __name__ == "__main__":
     user_feedback = UserFeedbackSubmission(subject="test", description="test", email="test@test.com")
 
-    persist_and_alert_user_feedback(user_feedback=user_feedback)
+    import asyncio
+
+    asyncio.run(persist_and_alert_user_feedback(user_feedback=user_feedback))
