@@ -65,6 +65,7 @@ dependencies = [
     "tenacity>=9.0.0",
     "psycopg[binary]>=3.2.3",
     "polars>=1.14.0",
+    "typer>=0.15.1",
 ]
 
 [tool.uv]
