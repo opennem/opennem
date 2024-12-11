@@ -8,10 +8,10 @@ import logging
 from opennem.utils.datatable import datatable_print
 from opennem.utils.http import http
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("opennem.inspector")
 
 
-def main(url: str):
+def inspect_opennem_json(url: str):
     logger.info(f"Getting {url}")
     response = http.get(url)
 
@@ -59,4 +59,4 @@ if __name__ == "__main__":
     else:
         test_url = "https://data.dev.opennem.org.au/v4/stats/au/NEM/NSW1/energy/2024.json"
 
-    main(test_url)
+    inspect_opennem_json(test_url)
