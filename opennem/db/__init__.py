@@ -30,7 +30,7 @@ _engine_sync = None
 _engine_no_transaction = None
 
 
-def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int = 10) -> AsyncEngine:
+def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int = 30) -> AsyncEngine:
     """
     Performs database connection using database settings from settings.py.
 
@@ -56,7 +56,7 @@ def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int
             future=True,
             pool_size=30,
             max_overflow=20,
-            pool_recycle=100,
+            pool_recycle=1800,
             pool_timeout=timeout,
             pool_pre_ping=True,
             pool_use_lifo=True,
