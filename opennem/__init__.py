@@ -66,9 +66,6 @@ PYTHON_VERSION = ".".join([str(i) for i in (sys.version_info.major, sys.version_
 SYSTEM_STRING = platform()
 ENV = os.getenv("ENV", default="local")
 
-# setup logfire
-logfire.configure(service_name="opennem", service_version=__version__, environment=ENV)
-logfire.instrument_system_metrics()
 
 console.print(f" * Loading OpenNEM ENV: [b magenta]{ENV}[/b magenta]")
 console.print(
@@ -87,6 +84,11 @@ for _env_file in env_files:
     load_dotenv(dotenv_path=_env_file, override=True)
 
 settings: OpennemSettings = OpennemSettings()  # type: ignore
+
+# setup logfire
+if not settings.is_local:
+    logfire.configure(service_name="opennem", service_version=__version__, environment=ENV)
+    logfire.instrument_system_metrics()
 
 if settings.dry_run:
     console.print(" * Dry run (no database actions)")
