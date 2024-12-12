@@ -6,7 +6,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem.db import get_write_session
-from opennem.schema.network import NetworkSchema
+from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.dates import get_today_opennem
 
 logger = logging.getLogger("opennem.aggregates.facility_interval")
@@ -179,7 +179,7 @@ async def update_current_day_facility_aggregates() -> None:
     """
     end_time = get_today_opennem().replace(second=0, microsecond=0, tzinfo=None)
     # end time is end of today
-    start_time = end_time.replace(hour=23, minute=59, second=0, microsecond=0)
+    start_time = end_time.replace(hour=23, minute=59)
 
     async with get_write_session() as session:
         await update_facility_aggregates(session, start_time, end_time)
@@ -204,8 +204,11 @@ async def update_facility_aggregates_chunked(
         network (NetworkSchema | None): Optional network to filter by
     """
     # Convert dates to datetime bounds
-    start_dt = datetime.combine(start_date, time.min)
-    end_dt = datetime.combine(end_date, time.max)
+    start_dt = datetime.combine(start_date, time.min).replace(second=0, microsecond=0, tzinfo=None)
+    end_dt = datetime.combine(end_date, time.max).replace(second=0, microsecond=0, tzinfo=None)
+
+    if start_dt >= end_dt:
+        raise Exception("Start date should be earlier than end date")
 
     # Create chunks
     chunks: list[tuple[datetime, datetime]] = []
@@ -280,17 +283,17 @@ if __name__ == "__main__":
     # asyncio.run(run_facility_aggregate_updates(lookback_days=7))
     # interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
 
-    # asyncio.run(
-    #     update_facility_aggregates_chunked(
-    #         # start_date=interval - timedelta(days=30),
-    #         start_date=datetime(2024, 1, 1),
-    #         # start_date=NetworkNEM.data_first_seen,
-    #         # end_date=datetime(2012, 11, 1),
-    #         end_date=interval,
-    #         max_concurrent=2,
-    #         chunk_days=30,
-    #         # network=NetworkWEM,
-    #     )
-    # )
+    asyncio.run(
+        update_facility_aggregates_chunked(
+            # start_date=interval - timedelta(days=30),
+            end_date=datetime(2024, 1, 1),
+            start_date=NetworkNEM.data_first_seen,
+            # end_date=datetime(2012, 11, 1),
+            # end_date=interval,
+            max_concurrent=2,
+            chunk_days=30,
+            # network=NetworkWEM,
+        )
+    )
 
-    asyncio.run(update_current_day_facility_aggregates())
+    # asyncio.run(update_current_day_facility_aggregates())
