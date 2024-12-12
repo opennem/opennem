@@ -165,25 +165,33 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]
 
             for photo in facility_photos:
                 if not photo:
-                    logger.info("No photo found")
-                    print(photo)
                     continue
 
-                photo_dict = {
-                    "url": photo.get("url"),
-                    "url_source": photo.get("url"),
-                    "caption": photo.get("caption"),
-                    "attribution": photo.get("attribution"),
-                    "alt": photo.get("alt"),
-                    "width": photo.get("metadata", {}).get("dimensions", {}).get("width"),
-                    "height": photo.get("metadata", {}).get("dimensions", {}).get("height"),
-                }
+                if not photo.get("url"):
+                    continue
 
                 try:
+                    photo_dict = {
+                        "url": photo.get("url"),
+                        "url_source": photo.get("url_source"),
+                        "caption": photo.get("caption"),
+                        "attribution": photo.get("attribution"),
+                        "alt": photo.get("alt"),
+                    }
+
+                    if photo.get("metadata"):
+                        metadata = photo.get("metadata", None)
+
+                        if metadata:
+                            photo_dict["width"] = metadata.get("dimensions", {}).get("width")
+                            photo_dict["height"] = metadata.get("dimensions", {}).get("height")
+
                     photo_model = FacilityPhotoOutputSchema(**photo_dict)
                     facility["photos"].append(photo_model.model_dump())
-                except ValidationError:
+                except Exception as e:
+                    print(photo)
                     logger.error("Error adding photo")
+                    print(e)
 
         try:
             result_models[facility["code"]] = FacilitySchema(**facility)
