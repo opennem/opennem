@@ -16,10 +16,10 @@ from portabletext_html import PortableTextRenderer
 from pydantic import ValidationError
 
 from opennem.cms.client import sanity_client
-from opennem.schema.facility import FacilitySchema
+from opennem.schema.facility import FacilityPhotoOutputSchema, FacilitySchema
 from opennem.schema.unit import UnitSchema
 
-logger = logging.getLogger("opennem.cms.update")
+logger = logging.getLogger("opennem.cms.queries")
 
 
 class CMSQueryError(Exception):
@@ -41,9 +41,8 @@ def get_cms_owners() -> list[dict]:
 
     res = sanity_client.query(query)
 
-    from pprint import pprint
-
-    pprint(res)
+    if not res or not isinstance(res, dict) or "result" not in res or not res["result"]:
+        raise CMSQueryError("No owners found")
 
     return res["result"]
 
@@ -96,10 +95,13 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]
         description,
         "network_id": upper(network->code),
         "network_region": upper(region->code),
-        photos[0]-> {{
+        photos[] {{
             "url": asset->url,
-            caption,
-            attribution
+            "url_source": url,
+            "caption": caption,
+            "attribution": attribution,
+            "alt": alt,
+            "metadata": asset->metadata
         }},
         owners[]-> {{
             name,
@@ -154,6 +156,34 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]
                 # f" existing {result_models[facility['code']].id}"
             )
             continue
+
+        if facility.get("photos", None):
+            facility_photos = facility.get("photos", [])
+
+            # clear the photos list
+            facility["photos"] = []
+
+            for photo in facility_photos:
+                if not photo:
+                    logger.info("No photo found")
+                    print(photo)
+                    continue
+
+                photo_dict = {
+                    "url": photo.get("url"),
+                    "url_source": photo.get("url"),
+                    "caption": photo.get("caption"),
+                    "attribution": photo.get("attribution"),
+                    "alt": photo.get("alt"),
+                    "width": photo.get("metadata", {}).get("dimensions", {}).get("width"),
+                    "height": photo.get("metadata", {}).get("dimensions", {}).get("height"),
+                }
+
+                try:
+                    photo_model = FacilityPhotoOutputSchema(**photo_dict)
+                    facility["photos"].append(photo_model.model_dump())
+                except ValidationError:
+                    logger.error("Error adding photo")
 
         try:
             result_models[facility["code"]] = FacilitySchema(**facility)

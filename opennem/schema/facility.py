@@ -9,8 +9,12 @@ class FacilityPhotoOutputSchema(BaseModel):
     """Facility photo output schema"""
 
     url: str
+    url_source: str | None = None
     caption: str | None = None
     attribution: str | None = None
+    alt: str | None = None
+    width: int | None = None
+    height: int | None = None
 
 
 class FacilityLocationSchema(BaseModel):
