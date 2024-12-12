@@ -173,6 +173,10 @@ class OpennemSettings(BaseSettings):
         return self.env.lower() in ("local", "dev", "development", "staging")
 
     @property
+    def is_local(self) -> bool:
+        return self.env.lower() in ("local")
+
+    @property
     def celery_broker(self) -> str:
         broker_url = change_url_path(str(self.redis_url), "/1")
         return str(broker_url)
