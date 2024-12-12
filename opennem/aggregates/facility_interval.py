@@ -45,6 +45,12 @@ async def update_facility_aggregates(
     """
     network_filter = ""
 
+    start_time = start_time.replace(tzinfo=None, second=0, microsecond=0)
+    end_time = end_time.replace(tzinfo=None, second=0, microsecond=0)
+
+    if end_time <= start_time:
+        raise Exception("Start time must be before end time")
+
     if network:
         network_filter = f"AND fs.network_id = '{network.code}'"
 
