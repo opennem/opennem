@@ -183,9 +183,9 @@ async def update_current_day_facility_aggregates() -> None:
     This is designed to be called frequently to keep current day data up to date.
 
     """
-    end_time = get_today_opennem().replace(second=0, microsecond=0, tzinfo=None)
+    start_time = get_today_opennem().replace(second=0, microsecond=0, tzinfo=None)
     # end time is end of today
-    start_time = end_time.replace(hour=23, minute=59)
+    end_time = start_time.replace(hour=23, minute=59)
 
     async with get_write_session() as session:
         await update_facility_aggregates(session, start_time, end_time)
