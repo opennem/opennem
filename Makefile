@@ -42,6 +42,7 @@ version:
 	fi
 	@uv run bump-my-version bump $(BUMP_TYPE)
 	@new_version=$$(uv run --python 3.12 python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['tool']['bumpversion']['current_version'])"); \
+	@git tag $$new_version; \
 	echo "Pushing $$new_version"; \
 	git push -u origin $$new_version
 
