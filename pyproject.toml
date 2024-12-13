@@ -167,7 +167,7 @@ requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
 [tool.bumpversion]
-current_version = "4.0.0-dev8"
+current_version = "4.0.0-rc0"
 parse = """(?x)
     (?P<major>0|[1-9]\\d*)\\.
     (?P<minor>0|[1-9]\\d*)\\.
