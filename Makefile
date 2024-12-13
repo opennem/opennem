@@ -56,7 +56,8 @@ version:
 push:
 	@uv run bump-my-version bump pre_n
 	@new_version=$$(uv run --python 3.12 python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])"); \
-	git push -u origin $new_version
+	echo "Pushing $$new_version"; \
+	git push -u origin $$new_version
 
 .PHONY: release-pre
 release-pre: format lint
