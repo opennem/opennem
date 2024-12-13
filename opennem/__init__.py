@@ -31,6 +31,7 @@ import logging.config
 import os
 import sys
 from datetime import datetime
+from importlib.metadata import version
 from pathlib import Path
 from platform import platform
 
@@ -50,7 +51,8 @@ from opennem.utils.settings import load_env_file
 logger = logging.getLogger("opennem")
 
 # Module variables
-__version__ = "4.0.0-dev0"
+
+__version__ = version("opennem-backend")
 
 # Check minimum required Python version
 
