@@ -10,7 +10,6 @@ from datetime import datetime
 from pydantic import BaseModel
 from sqlalchemy import text
 
-from opennem.core.units import get_unit
 from opennem.db import get_read_session
 from opennem.recordreactor.persistence import persist_milestones
 from opennem.recordreactor.schema import (
@@ -20,6 +19,7 @@ from opennem.recordreactor.schema import (
     MilestoneRecordSchema,
     MilestoneType,
 )
+from opennem.recordreactor.unit import get_milestone_unit
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.recordreactor.controllers.demand")
@@ -52,10 +52,10 @@ async def aggregate_demand_and_price_data(
             interval,
             network_id,
             {query_network_region}
-            sum(bs.demand_total) as demand_total,
+            sum(bs.demand) as demand,
             avg(bs.price) as price
         FROM
-            balancing_summary bs
+            mv_balancing_summary bs
         WHERE
             bs.network_id = :network_id AND
             bs.interval = :interval_date
@@ -86,11 +86,13 @@ async def aggregate_demand_and_price_data(
                     aggregate=aggregate,
                     metric=metric,
                     period=MilestonePeriod.interval,
-                    unit=get_unit("demand_mega") if metric == MilestoneType.demand else get_unit("price_energy_mega"),
+                    unit=get_milestone_unit(MilestoneType.demand)
+                    if metric == MilestoneType.demand
+                    else get_milestone_unit(MilestoneType.price),
                     network=network,
                     network_region=row.network_region if region_group else None,
                     fueltech=MilestoneFueltechGrouping.demand if metric == MilestoneType.demand else None,
-                    value=row.price if metric == MilestoneType.price else row.demand_total,
+                    value=row.price if metric == MilestoneType.price else row.demand,
                 )
             )
 

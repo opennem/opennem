@@ -9,7 +9,6 @@ from itertools import product
 
 from sqlalchemy import text
 
-from opennem.core.units import get_unit
 from opennem.db import get_read_session
 from opennem.recordreactor.persistence import persist_milestones
 from opennem.recordreactor.schema import (
@@ -42,18 +41,16 @@ async def milestone_aggregate_renewable_power_data(
     query = text(f"""
         SELECT
             '{network.code.upper()}' AS network_id,
-            CASE WHEN {group_by_region} THEN f.network_region ELSE 'all' end as network_region,
+            CASE WHEN {group_by_region} THEN fs.network_region ELSE 'all' end as network_region,
             CASE WHEN ftg.renewable THEN 'renewables'  ELSE 'fossils' end as fueltech_group,
             time_bucket('{interval_size} minutes', fs.interval) AS interval,
             COALESCE(sum(generated), 0) AS generation
-        FROM facility_scada fs
-        JOIN facility f ON f.code = fs.facility_code
-        JOIN fueltech ft ON ft.code = f.fueltech_id
+        FROM at_facility_intervals fs
+        JOIN fueltech ft ON ft.code = fs.fueltech_code
         JOIN fueltech_group ftg ON ftg.code = ft.fueltech_group_id
         WHERE
             fs.interval = '{date_start}' AND
-            fs.network_id IN ('{network.code.upper()}', {', '.join([f"'{i.code.upper()}'" for i in network.subnetworks])}) AND
-            fs.is_forecast is False
+            fs.network_id IN ('{network.code.upper()}', {', '.join([f"'{i.code.upper()}'" for i in network.subnetworks])})
         GROUP BY
             1, 2, 3, 4
         ORDER BY
@@ -107,18 +104,16 @@ async def milestone_aggregate_power_data(
     query = text(f"""
         SELECT
             '{network.code.upper()}' AS network_id,
-            CASE WHEN {group_by_region} THEN f.network_region ELSE 'all' end as network_region,
+            CASE WHEN {group_by_region} THEN fs.network_region ELSE 'all' end as network_region,
             CASE WHEN {group_by_fueltech}  THEN ftg.code         ELSE 'all' end as fueltech_group,
             time_bucket('{interval_size} minutes', fs.interval) AS interval,
             COALESCE(sum(generated), 0) AS generation
-        FROM facility_scada fs
-        JOIN facility f ON f.code = fs.facility_code
-        JOIN fueltech ft ON ft.code = f.fueltech_id
+        FROM at_facility_intervals fs
+        JOIN fueltech ft ON ft.code = fs.fueltech_code
         JOIN fueltech_group ftg ON ftg.code = ft.fueltech_group_id
         WHERE
             fs.interval = '{date_start}' AND
-            fs.network_id IN ('{network.code.upper()}', {', '.join([f"'{i.code.upper()}'" for i in network.subnetworks])}) AND
-            fs.is_forecast is False
+            fs.network_id IN ('{network.code.upper()}', {', '.join([f"'{i.code.upper()}'" for i in network.subnetworks])})
         GROUP BY
             1, 2, 3, 4
         ORDER BY
@@ -142,7 +137,7 @@ async def milestone_aggregate_power_data(
                     aggregate=agg,
                     metric=MilestoneType.power,
                     period=bucket_size,
-                    unit=get_unit("power_mega"),
+                    unit=get_milestone_unit(MilestoneType.power),
                     network=network,
                     network_region=row.network_region if group_by_region else None,
                     fueltech=MilestoneFueltechGrouping(row.fueltech_group) if group_by_fueltech else None,

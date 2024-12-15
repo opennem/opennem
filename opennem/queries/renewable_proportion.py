@@ -3,18 +3,20 @@ OpenNEM queries for renewable proportion
 
 """
 
+import logging
 from datetime import datetime
 
-from sqlalchemy import case, cast, func, select, text
-from sqlalchemy.sql import expression as sql
-from sqlalchemy.types import Numeric
+from sqlalchemy import text
 
 from opennem.db import get_read_session
-from opennem.db.models.opennem import BalancingSummary, FacilityScada, FuelTech, FuelTechGroup, Unit
+from opennem.queries.utils import list_to_case
 from opennem.recordreactor.buckets import get_bucket_interval
 from opennem.recordreactor.schema import MilestonePeriod
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM, NetworkWEMDE
 from opennem.utils.datatable import datatable_print
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 
 async def get_renewable_energy_proportion(
@@ -30,156 +32,134 @@ async def get_renewable_energy_proportion(
     """
     Get the renewable energy proportion for a given network region and date range
 
+    Args:
+        network: Network schema to query
+        bucket_size: Time bucket size for aggregation
+        start_date: Start date for query range
+        end_date: End date for query range
+        network_region: Optional network region filter
+        group_by_region: Group results by network region
+        group_by_fueltech: Group results by fuel tech
+        group_by_renewable: Group results by renewable status
 
+    Returns:
+        List of dicts containing renewable proportion data
     """
-    rooftop_networks = ["AEMO_ROOFTOP", "AEMO_ROOFTOP_BACKFILL"]
+    # Input validation
+    assert group_by_fueltech or group_by_renewable, "one of group_by_fueltech or group_by_renewable must be true"
 
+    rooftop_networks = ["AEMO_ROOFTOP", "AEMO_ROOFTOP_BACKFILL"]
     if network in [NetworkWEM, NetworkWEMDE]:
         rooftop_networks = ["APVI"]
 
-    # one of group_by_fueltech or group_by_renewable must be true
-    assert group_by_fueltech or group_by_renewable, "one of group_by_fueltech or group_by_renewable must be true"
-
-    # Subquery for generation_rooftop
-    generation_rooftop = (
-        select(
-            func.time_bucket_gapfill(text("'5 min'"), FacilityScada.interval).label("interval"),
-            Unit.network_region,
-            case((group_by_fueltech, text("'solar'")), else_=text("NULL")).label("fueltech_id"),
-            func.locf(func.sum(FacilityScada.generated)).label("generation"),
-        )
-        .select_from(FacilityScada)
-        .join(Unit, Unit.code == FacilityScada.facility_code)
-        .join(FuelTech, FuelTech.code == Unit.fueltech_id)
-        .where(
-            Unit.network_id.in_(rooftop_networks),
-            Unit.fueltech_id == "solar_rooftop",
-            FacilityScada.interval >= start_date,
-            FacilityScada.interval < end_date,
-        )
-        .group_by(text("1"), text("2"), text("3"))
-        .alias("generation_rooftop")
-    )
-
-    # Subquery for generation_renewable
-    generation = (
-        select(
-            func.time_bucket_gapfill(text("'5 min'"), FacilityScada.interval).label("interval"),
-            Unit.network_id,
-            Unit.network_region,
-            case(
-                (group_by_fueltech, FuelTechGroup.code), else_=text("'renewables'") if group_by_renewable else text("NULL")
-            ).label("fueltech_id"),
-            func.sum(FacilityScada.generated).label("generation"),
-        )
-        .select_from(FacilityScada)
-        .join(Unit, Unit.code == FacilityScada.facility_code)
-        .join(FuelTech, FuelTech.code == Unit.fueltech_id)
-        .join(FuelTechGroup, FuelTechGroup.code == FuelTech.fueltech_group_id)
-        .where(
-            Unit.network_id.in_(["NEM", "AEMO_ROOFTOP", "AEMO_ROOFTOP_BACKFILL"]),
-            Unit.fueltech_id != "solar_rooftop",
-            FacilityScada.interval >= start_date,
-            FacilityScada.interval < end_date,
-        )
-    )
-
-    if group_by_renewable:
-        generation = generation.where(FuelTech.renewable.is_(True))
-
-    generation = generation.group_by(text("1"), text("2"), text("3"), text("4")).alias("generation_renewable")
-
-    # Subquery for demand
-    demand = (
-        select(
-            func.time_bucket_gapfill(text("'5 min'"), BalancingSummary.interval).label("interval"),
-            BalancingSummary.network_region,
-            func.locf(func.coalesce(func.max(BalancingSummary.demand_total), func.max(BalancingSummary.demand))).label(
-                "demand_total"
-            ),
-        )
-        .select_from(BalancingSummary)
-        .where(
-            BalancingSummary.network_id == "NEM",
-            BalancingSummary.interval >= start_date,
-            BalancingSummary.interval < end_date,
-        )
-        .group_by(text("1"), text("2"))
-        .alias("demand")
-    )
-
-    # Main query
     bucket_size_sql = get_bucket_interval(bucket_size)
 
-    query = (
-        select(
-            func.time_bucket(text(f"'{bucket_size_sql}'"), generation.c.interval).label("interval"),
-            generation.c.network_id.label("network_id"),
-            case((group_by_region, generation.c.network_region), else_=sql.null()).label("network_region"),
-            case(
-                (group_by_fueltech, generation.c.fueltech_id),
-                (group_by_renewable, text("'renewables'")),
-                else_=sql.null(),
-            ).label("fueltech_id"),
-            func.round(cast(func.max(generation.c.generation), Numeric), 2).label("generation"),
-            func.round(cast(func.max(generation_rooftop.c.generation), Numeric), 2).label("generation_rooftop"),
-            func.round(cast(func.avg(demand.c.demand_total), Numeric), 2).label("demand_total"),
-            case(
-                (
-                    func.sum(demand.c.demand_total) > 0,
-                    func.round(
-                        cast(
-                            (
-                                (
-                                    func.sum(generation_rooftop.c.generation)
-                                    if not group_by_fueltech
-                                    else 0 + func.coalesce(func.sum(generation.c.generation), 0)
-                                )
-                                / cast(
-                                    (
-                                        func.sum(demand.c.demand_total)
-                                        + func.coalesce(func.sum(generation_rooftop.c.generation), 0)
-                                    ),
-                                    Numeric,
-                                )
-                            )
-                            * 100,
-                            Numeric,
-                        ),
-                        4,
-                    ),
-                ),
-                else_=sql.null(),
-            ).label("proportion"),
-        )
-        .select_from(generation)
-        .join(
-            generation_rooftop,
-            (generation_rooftop.c.interval == generation.c.interval)
-            & (generation_rooftop.c.network_region == generation.c.network_region),
-        )
-        .join(
-            demand,
-            (demand.c.interval == generation.c.interval) & (demand.c.network_region == generation.c.network_region),
-        )
+    sql_query = text(f"""
+    WITH generation_rooftop AS (
+        SELECT
+            time_bucket_gapfill('5 min', fs.interval) as interval,
+            fs.network_region,
+            CASE WHEN :group_by_fueltech THEN 'solar' ELSE NULL END as fueltech_id,
+            locf(max(fs.generated)) as generation
+        FROM at_facility_intervals fs
+        WHERE fs.network_id IN ({list_to_case(rooftop_networks)})
+            AND fs.fueltech_code = 'solar_rooftop'
+            AND fs.interval >= :start_date
+            AND fs.interval < :end_date
+        GROUP BY 1, 2, 3
+    ),
+    generation AS (
+        SELECT
+            time_bucket_gapfill('5 min', fs.interval) as interval,
+            fs.network_id,
+            fs.network_region,
+            CASE
+                WHEN :group_by_fueltech THEN ftg.code
+                WHEN :group_by_renewable THEN 'renewables'
+                ELSE NULL
+            END as fueltech_id,
+            sum(fs.generated) as generation
+        FROM at_facility_intervals fs
+        JOIN fueltech ft ON ft.code = fs.fueltech_code
+        JOIN fueltech_group ftg ON ftg.code = ft.fueltech_group_id
+        WHERE fs.network_id IN ('NEM', 'AEMO_ROOFTOP', 'AEMO_ROOFTOP_BACKFILL')
+            AND fs.fueltech_code != 'solar_rooftop'
+            AND fs.interval >= :start_date
+            AND fs.interval < :end_date
+            AND (:group_by_renewable = false OR ft.renewable = true)
+        GROUP BY 1, 2, 3, 4
+    ),
+    demand AS (
+        SELECT
+            time_bucket_gapfill('5 min', interval) as interval,
+            network_region,
+            locf(max(demand)) as demand_total
+        FROM mv_balancing_summary
+        WHERE network_id = 'NEM'
+            AND interval >= :start_date
+            AND interval < :end_date
+        GROUP BY 1, 2
     )
+    SELECT
+        time_bucket('{bucket_size_sql}', g.interval) as interval,
+        g.network_id,
+        CASE WHEN :group_by_region THEN g.network_region ELSE NULL END as network_region,
+        CASE
+            WHEN :group_by_fueltech THEN g.fueltech_id
+            WHEN :group_by_renewable THEN 'renewables'
+            ELSE NULL
+        END as fueltech_id,
+        round(cast(max(g.generation) as numeric), 2) as generation,
+        round(cast(max(gr.generation) as numeric), 2) as generation_rooftop,
+        round(cast(avg(d.demand_total) as numeric), 2) as demand_total,
+        CASE
+            WHEN sum(d.demand_total) > 0 THEN
+                round(cast(
+                    (
+                        (CASE WHEN NOT :group_by_fueltech
+                            THEN sum(gr.generation)
+                            ELSE 0
+                        END + coalesce(sum(g.generation), 0)) /
+                        cast((sum(d.demand_total) + coalesce(sum(gr.generation), 0)) as numeric)
+                    ) * 100 as numeric
+                ), 4)
+            ELSE NULL
+        END as proportion
+    FROM generation g
+    JOIN generation_rooftop gr ON gr.interval = g.interval
+        AND gr.network_region = g.network_region
+    JOIN demand d ON d.interval = g.interval
+        AND d.network_region = g.network_region
+    WHERE ({network_region or "NULL"} IS NULL OR d.network_region = {network_region or "NULL"})
+    GROUP BY 1, 2, 3, 4
+    ORDER BY 1, 2, 3, 4
+    """)
 
-    if network_region:
-        query = query.where(demand.c.network_region == network_region)
-
-    query = query.group_by(text("1"), text("2"), text("3"), text("4")).order_by(text("1"), text("2"), text("3"), text("4"))
+    params = {
+        "group_by_fueltech": group_by_fueltech,
+        "start_date": start_date,
+        "end_date": end_date,
+        "group_by_renewable": group_by_renewable,
+        "group_by_region": group_by_region,
+    }
 
     async with get_read_session() as session:
-        result = await session.execute(query)
-        rows = result.fetchall()
+        # Log the raw SQL with parameters
+        compiled_query = sql_query.bindparams(**params).compile(compile_kwargs={"literal_binds": True})  # noqa: F841
+        # logger.debug(dedent(str(compiled_query)))
 
-        # Create a list of dictionaries with column names as keys
+        # Execute the query
+        result = await session.execute(sql_query, params)
+        rows = result.fetchall()
         column_names = result.keys()
         return [dict(zip(column_names, row, strict=False)) for row in rows]
 
 
 if __name__ == "__main__":
     import asyncio
+
+    # Set up logging for the main execution
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
     async def main():
         results = await get_renewable_energy_proportion(
@@ -188,7 +168,7 @@ if __name__ == "__main__":
             start_date=datetime.fromisoformat("2024-08-01 12:00:00"),
             end_date=datetime.fromisoformat("2024-08-01 12:10:00"),
             group_by_region=True,
-            group_by_fueltech=True,
+            group_by_fueltech=False,
             group_by_renewable=False,
         )
         datatable_print(results)

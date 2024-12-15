@@ -19,20 +19,18 @@ from opennem.recordreactor.unit import get_milestone_unit
 from opennem.recordreactor.utils import get_bucket_query
 from opennem.schema.network import NetworkSchema, NetworkWEM, NetworkWEMDE
 
-logger = logging.getLogger("opennem.recordreactor.controllers.generation")
+logger = logging.getLogger("opennem.recordreactor.controllers.energy")
 
 
-async def aggregate_generation_and_emissions_data(
+async def _aggregate_energy_and_emissions_data(
     network: NetworkSchema,
     bucket_size: MilestonePeriod,
     date_start: datetime,
     date_end: datetime,
     region_group: bool = True,
 ) -> list[MilestoneRecordSchema]:
-    # logger.info(f"Aggregating generation & emissions data for {network.code} bucket size {bucket_size} for {date_start}")
-
     _query_method = get_fueltech_generated_energy_emissions
-    bucket_interval = get_bucket_query(bucket_size, field_name="fs.trading_day")
+    bucket_interval = get_bucket_query(bucket_size, field_name="fs.interval")
 
     # @NOTE we never run this.
     if bucket_size == MilestonePeriod.interval:
@@ -133,13 +131,13 @@ async def aggregate_generation_and_emissions_data(
     return milestone_records
 
 
-async def run_generation_energy_emissions_milestones(
+async def run_energy_emissions_milestones(
     network: NetworkSchema, bucket_size: MilestonePeriod, period_start: datetime, period_end: datetime
 ):
     if bucket_size == MilestonePeriod.interval:
         return
 
-    milestone_data = await aggregate_generation_and_emissions_data(
+    milestone_data = await _aggregate_energy_and_emissions_data(
         network=network,
         bucket_size=bucket_size,
         date_start=period_start,
@@ -155,7 +153,7 @@ async def run_generation_energy_emissions_milestones(
     if network in [NetworkWEM, NetworkWEMDE]:
         return
 
-    milestone_data = await aggregate_generation_and_emissions_data(
+    milestone_data = await _aggregate_energy_and_emissions_data(
         network=network,
         bucket_size=bucket_size,
         date_start=period_start,
@@ -178,7 +176,7 @@ if __name__ == "__main__":
     start_interval = datetime.fromisoformat("2024-08-01 00:00:00")
     end_interval = start_interval + timedelta(days=1)
     res = asyncio.run(
-        aggregate_generation_and_emissions_data(
+        _aggregate_energy_and_emissions_data(
             network=NetworkNEM, bucket_size="1 day", date_start=start_interval, date_end=end_interval
         )
     )

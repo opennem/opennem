@@ -199,7 +199,7 @@ async def get_fueltech_generated_energy_emissions(
 
     network_region_query = "fs.network_region as network_region," if region_group else ""
     group_by = "1,2,3,4" if region_group else "1,2,3"
-    network_query = "'NEM','AEMO_ROOFTOP','AEMO_ROOFTOP_BACKFILL'" if network == NetworkNEM else "'WEM', 'WEMDE', 'APVI'"
+    network_query = "'NEM','AEMO_ROOFTOP','AEMO_ROOFTOP_BACKFILL'" if network == NetworkNEM else "'WEM', 'APVI'"
     network_region_filter_query = "fs.network_region IN ('WEM', 'WEMDE') and " if network in [NetworkWEM, NetworkWEMDE] else ""
 
     query = text(
@@ -219,8 +219,8 @@ async def get_fueltech_generated_energy_emissions(
             WHERE
                 fs.network_id IN ({network_query}) AND
                 {network_region_filter_query}
-                fs.trading_day >= :date_start AND
-                fs.trading_day < :date_end
+                fs.interval >= :date_start AND
+                fs.interval < :date_end
             GROUP BY
                 {group_by}
             ORDER BY
@@ -230,7 +230,9 @@ async def get_fueltech_generated_energy_emissions(
 
     async with get_read_session() as session:
         result = await session.execute(query, {"date_start": date_start, "date_end": date_end})
-        return result.all()
+        results = result.fetchall()
+
+    return results
 
 
 if __name__ == "__main__":

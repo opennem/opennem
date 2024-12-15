@@ -47,7 +47,7 @@ async def persist_milestones(
                     metric=record.metric.value,
                     period=record.period.value,
                     significance=significance,
-                    value=record.value,
+                    value=round(record.value, 4),
                     value_unit=record.unit.unit,
                     network_id=record.network.code,
                     description=description,
