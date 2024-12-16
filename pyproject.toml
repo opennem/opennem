@@ -98,6 +98,7 @@ dev-dependencies = [
 ]
 
 [project.scripts]
+openelectricity = "opennem.cli:main"
 opennem = "opennem.cli:main"
 api = "bin.run_server:run_server"
 worker = "opennem.tasks.app:main"
