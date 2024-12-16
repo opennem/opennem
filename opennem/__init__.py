@@ -95,7 +95,6 @@ if not settings.is_local:
         environment=ENV,
         code_source=logfire.CodeSource(repository="https://github.com/opennem/opennem", revision="master"),
     )
-    logfire.instrument_system_metrics()
 
 if settings.dry_run:
     console.print(" * Dry run (no database actions)")
