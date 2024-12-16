@@ -1,0 +1,113 @@
+---
+title: 'OpenElectricity API'
+description: 'Documentation for the OpenElectricity REST API - Australian Electricity Market Data'
+---
+
+## Introduction
+
+The OpenElectricity API provides programmatic access to Australian electricity market data, including real-time generation, demand, price information and historical data across the National Electricity Market (NEM) and Western Australian Wholesale Electricity Market (WEM).
+
+## Authentication
+
+All API endpoints require authentication using an API key. You'll need to include your API key in the Authorization header of your requests:
+
+```bash
+Authorization: Bearer your_api_key_here
+```
+
+To obtain an API key, please [register for an account](https://openelectricity.org.au/register).
+
+## Base URL
+
+The base URL for all API endpoints is:
+
+```
+https://api.openelectricity.org.au/v4
+```
+
+## Response Format
+
+All responses are returned in JSON format. Successful responses will have a 2xx status code and follow this structure:
+
+```json
+{
+  "version": "4.0",
+  "created_at": "2024-03-20T10:00:00Z",
+  "success": true,
+  "data": [
+    // Response data
+  ],
+  "total_records": 100
+}
+```
+
+## Error Handling
+
+Errors are returned with appropriate HTTP status codes and include detailed error messages:
+
+```json
+{
+  "error": {
+    "code": "validation_error",
+    "message": "Invalid parameters",
+    "details": [
+      {
+        "loc": ["parameter_name"],
+        "msg": "Error description",
+        "type": "error_type"
+      }
+    ]
+  }
+}
+```
+
+Common error status codes:
+
+- `400` Bad Request - Invalid parameters or request
+- `401` Unauthorized - Missing or invalid API key
+- `403` Forbidden - Insufficient permissions
+- `422` Validation Error - Invalid input parameters
+- `500` Internal Server Error - Server-side error
+
+## Available Data
+
+The API provides access to:
+
+### Core Data
+- Networks and Network Regions
+- Fuel Technologies
+- Units and Intervals
+- Time Periods
+
+### Statistics
+- Real-time Power Generation
+- Energy Production
+- Price Information
+- Network Flow Data
+- Emission Factors
+- Facility Information
+
+### Facilities
+- Station Information
+- Facility Details
+- Generation Data
+
+## Time Zones
+
+All timestamps in the API are provided in UTC. You can request data in a specific timezone by using the `timezone` parameter where supported. Network timezones are specified in the network metadata.
+
+## Support
+
+For technical support or questions about the API:
+
+- Email: api@openelectricity.org.au
+- GitHub Issues: [OpenElectricity GitHub Repository](https://github.com/openelectricity/openelectricity)
+- Documentation: [Full API Documentation](https://docs.openelectricity.org.au)
+
+<Card
+  title="API Reference"
+  icon="bolt"
+  href="/api-reference/endpoints"
+>
+  View detailed API endpoint documentation
+</Card>

@@ -1,0 +1,169 @@
+---
+title: 'Facilities and Generation'
+description: 'Understanding electricity generation facilities and their data structures'
+icon: 'industry'
+---
+
+# Facilities and Generation Data
+
+## Overview
+
+The OpenElectricity platform tracks electricity generation facilities across Australia's electricity markets. This guide explains how facility data is structured, accessed, and interpreted.
+
+## Facility Structure
+
+Each facility in the system is represented by several interconnected data structures:
+
+### Core Facility Data
+- Unique facility code
+- Facility name and description
+- Network location (NEM/WEM)
+- Network region (e.g., NSW1, VIC1)
+- Operational status
+- Wikipedia references and external links
+
+### Generation Units
+Units within facilities are tracked with:
+- Unit codes and numbers
+- Registered capacity
+- Fuel technology type
+- Emissions factors
+- Registration and deregistration dates
+- Expected closure dates
+
+## Fuel Technologies
+
+Facilities are categorized by fuel technology types:
+
+### Renewable Technologies
+- Solar (utility and rooftop)
+- Wind
+- Hydro
+- Battery storage (charging/discharging)
+- Bioenergy (biomass, biogas)
+
+### Non-Renewable Technologies
+- Coal (black and brown)
+- Gas (OCGT, CCGT)
+- Distillate
+- Liquid fuel
+
+## Data Collection
+
+Generation data is collected at regular intervals:
+
+### Facility SCADA Data
+- 5-minute intervals for NEM
+- 30-minute intervals for WEM
+- Includes generated output and energy
+- Quality flags for data validation
+
+### Historical Storage
+Data is stored in the following tables:
+- `facility_scada`: Raw generation data
+- `at_facility_intervals`: Processed interval data
+- `facilities`: Core facility information
+- `units`: Individual generation unit details
+
+## Accessing Facility Data
+
+### API Endpoints
+The API provides several endpoints for accessing facility data:
+
+```
+GET /v4/facility/ - List all facilities
+GET /v4/facility/au/{network_id}/{station_code} - Get specific facility
+```
+
+### Query Parameters
+- `network_id`: Filter by network (NEM/WEM)
+- `network_region`: Filter by region
+- `fueltech`: Filter by fuel technology
+- `status`: Filter by operational status
+
+## Data Analysis
+
+### Generation Analysis
+Track facility performance through:
+- Real-time generation levels
+- Historical generation patterns
+- Capacity factors
+- Emissions intensity
+
+### Aggregation Options
+Data can be aggregated by:
+- Facility
+- Region
+- Fuel technology
+- Time period
+
+## Status Tracking
+
+Facilities are tracked through various operational states:
+
+### Status Types
+- Operating: Currently generating
+- Commissioning: Being tested
+- Announced: Planned facility
+- Mothballed: Temporarily closed
+- Retired: Permanently closed
+
+### Status Updates
+- Status changes are tracked historically
+- Includes dates of status changes
+- Maintains audit trail of facility lifecycle
+
+## Emissions Tracking
+
+### Emissions Data
+- CO2 emissions factors per facility
+- Total emissions calculations
+- Emissions intensity tracking
+- Source references for emissions factors
+
+### Environmental Impact
+Track environmental performance through:
+- Carbon intensity metrics
+- Renewable vs non-renewable generation
+- Emissions reduction tracking
+
+## Best Practices
+
+When working with facility data:
+
+1. Always verify facility codes against the master list
+2. Check data quality flags for SCADA readings
+3. Consider timezone differences between regions
+4. Account for facility status changes in analysis
+5. Validate emissions calculations against source data
+
+## Data Quality
+
+### Quality Assurance
+- SCADA data quality flags
+- Data validation processes
+- Missing data handling
+- Anomaly detection
+
+### Data Corrections
+- Historical data corrections
+- SCADA calibration adjustments
+- Manual data verification processes
+
+## Future Developments
+
+The facility tracking system is continuously evolving:
+
+### Planned Enhancements
+- Enhanced emissions tracking
+- Improved facility metadata
+- Better status change tracking
+- Advanced aggregation capabilities
+
+### Integration Opportunities
+- Weather data correlation
+- Market price integration
+- Network constraint mapping
+- Demand response tracking
+
+This guide provides a comprehensive overview of how OpenElectricity tracks and manages facility data. For specific implementation details, refer to the API documentation and database schema.

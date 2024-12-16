@@ -1,0 +1,81 @@
+---
+title: 'Data Collection and Processing'
+description: 'Understanding data collection, processing and storage systems'
+sidebarTitle: 'Crawlers'
+icon: 'spider'
+---
+
+# Data Collection and Processing
+
+## Overview
+
+OpenElectricity collects and processes data from multiple sources, storing it in a structured format for analysis and presentation.
+
+## Data Sources
+
+### Market Data
+
+Tracked in `crawl_history`:
+- Source: `nemweb`
+- Crawler names
+- Network identifiers
+- Interval timestamps
+- Record counts
+
+### Weather Data
+
+From Bureau of Meteorology:
+- Station observations
+- Weather metrics
+- Quality controlled data
+
+## Processing Pipeline
+
+### Data Collection
+
+Crawler metadata stored in `crawl_meta`:
+- Spider configurations
+- Last crawl times
+- Processing status
+- Version tracking
+
+### Data Storage
+
+Primary storage tables:
+- `facility_scada`: Raw generation data
+- `at_facility_intervals`: Processed intervals
+- `at_network_flows`: Network flow data
+- `at_network_demand`: Demand data
+
+## Quality Control
+
+### Validation Steps
+
+- Data quality flags
+- Timestamp validation
+- Value range checks
+- Source verification
+
+### Error Handling
+
+- Missing data management
+- Duplicate detection
+- Anomaly identification
+- Correction procedures
+
+## Data Access
+
+### API Endpoints
+
+```
+GET /v4/stats/power/network/fueltech/{network_code}/{network_region_code} - Get power data
+GET /v4/stats/energy/station/{network_code}/{facility_code} - Get energy data
+```
+
+## Best Practices
+
+1. Monitor collection status
+2. Validate data completeness
+3. Check processing logs
+4. Verify data consistency
+5. Track quality metrics

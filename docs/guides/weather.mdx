@@ -1,0 +1,77 @@
+---
+title: 'Weather and Environmental Data'
+description: 'Weather station data and environmental metrics'
+icon: 'cloud-sun'
+sidebarTitle: 'Weather'
+---
+
+# Weather and Environmental Data
+
+## Overview
+
+OpenElectricity integrates weather data from Bureau of Meteorology (BoM) stations and tracks environmental metrics for generation facilities.
+
+## Weather Stations
+
+### Station Data
+
+Stored in `bom_station`:
+- Station code and name
+- Geographic location
+- Altitude
+- State jurisdiction
+- Priority level
+
+### Observations
+
+Stored in `bom_observation`:
+- Temperature (apparent and air)
+- Wind speed and direction
+- Pressure
+- Humidity
+- Cloud cover
+
+## Data Collection
+
+### Weather Metrics
+
+Observations include:
+- `temp_air`: Air temperature
+- `temp_apparent`: Feels-like temperature
+- `wind_spd`: Wind speed
+- `wind_dir`: Wind direction
+- `press_qnh`: Pressure
+- `humidity`: Relative humidity
+
+### Collection Intervals
+
+- Regular interval observations
+- Quality controlled measurements
+- Station-specific collection frequencies
+
+## Environmental Impact
+
+### Emissions Tracking
+
+Tracked in `at_facility_intervals`:
+- `emissions`: CO2 equivalent emissions
+- `emissions_intensity`: Emissions per MWh
+- Facility-specific factors
+- Regional emissions intensity
+
+## Data Access
+
+### API Endpoints
+
+```
+GET /v4/stats/emissionfactor/network/{network_code} - Get emission factors
+GET /v4/stats/emissionfactor/network/{network_code}/{network_region_code} - Get regional factors
+```
+
+## Best Practices
+
+1. Verify weather station proximity to facilities
+2. Check observation quality flags
+3. Consider seasonal variations
+4. Account for missing data
+5. Validate emissions calculations

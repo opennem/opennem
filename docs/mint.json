@@ -1,0 +1,105 @@
+{
+    "$schema": "https://mintlify.com/schema.json",
+    "name": "OpenElectricity Documentation",
+    "logo": {
+        "dark": "/images/oe_logo_light.png",
+        "light": "/images/oe_logo_light.png"
+    },
+    "favicon": "/images/favicon/favicon.svg",
+    "colors": {
+        "primary": "#8b3119",
+        "light": "#9b3f23",
+        "dark": "#7b2315",
+        "anchors": {
+            "from": "#A29D66",
+            "to": "#928D56"
+        }
+    },
+    "font": {
+        "headings": {
+            "family": "DM Sans, sans-serif",
+            "weight": 400
+        },
+        "body": {
+            "family": "DM Sans, sans-serif",
+            "weight": 400
+        }
+    },
+    "topbarLinks": [
+        {
+            "name": "Tracker",
+            "url": "https://explorer.openelectricity.org.au"
+        },
+        {
+            "name": "GitHub",
+            "url": "https://github.com/opennem/opennem"
+        }
+    ],
+    "topbarCtaButton": {
+        "name": "Platform",
+        "url": "https://platform.openelectricity.org.au"
+    },
+    "tabs": [
+        {
+            "name": "API Reference",
+            "url": "api-reference"
+        }
+    ],
+    "anchors": [
+        {
+            "name": "Documentation",
+            "icon": "book-open-cover",
+            "url": "/"
+        },
+        {
+            "name": "API Reference",
+            "icon": "terminal",
+            "url": "/api-reference",
+            "openapi": "https://api.openelectricity.org.au/v4/openapi.json"
+        },
+        {
+            "name": "Community Slack",
+            "icon": "slack",
+            "url": "https://opennem.slack.com"
+        },
+        {
+            "name": "Blog",
+            "icon": "newspaper",
+            "url": "https://openelectricity.org.au/analysis"
+        }
+    ],
+    "navigation": [
+        {
+            "group": "Get Started",
+            "pages": ["introduction", "quickstart", "development"]
+        },
+        {
+            "group": "Essentials",
+            "pages": [
+                "essentials/markdown",
+                "essentials/code",
+                "essentials/images",
+                "essentials/settings",
+                "essentials/navigation",
+                "essentials/reusable-snippets"
+            ]
+        },
+        {
+            "group": "Backend",
+            "pages": [
+                "backend/introduction",
+                "backend/cli",
+                "backend/crawlers",
+                "backend/database_schema"
+            ]
+        },
+        {
+            "group": "API Documentation",
+            "pages": ["api-reference/introduction"]
+        }
+    ],
+    "footerSocials": {
+        "x": "https://x.com/opennem",
+        "github": "https://github.com/opennem/opennem"
+    }
+}

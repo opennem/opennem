@@ -1,14 +1,21 @@
+---
+title: 'Command Line Interface'
+description: 'The OpenNEM Command Line Interface'
+icon: 'terminal'
+sidebarTitle: 'Command Line'
+---
+
 # OpenNEM Command Line Interface
 
 The OpenNEM CLI provides various commands for managing the OpenNEM platform. The CLI can be run using either:
 
-<pre>
+<code>
 # Using UV (recommended)
 uv run opennem
 
 # Using Python directly
 python -m opennem.cli
-</pre>
+</code>
 
 ## Command Groups
 
@@ -16,19 +23,19 @@ python -m opennem.cli
 
 Commands for managing the OpenNEM database.
 
-<pre>
+<code>
 # Initialize database schema and tables
 opennem db init
 
 # Load initial data fixtures
 opennem db fixtures
-</pre>
+</code>
 
 ### Import Commands (import)
 
 Commands for importing data into OpenNEM.
 
-<pre>
+<code>
 # Import facility data
 opennem import facilities
 
@@ -37,13 +44,13 @@ opennem import fueltechs
 
 # Import BOM weather station data
 opennem import bom
-</pre>
+</code>
 
 ### Crawler Commands (crawl)
 
 Commands for managing data crawlers.
 
-<pre>
+<code>
 # List all available crawlers and their status
 opennem crawl list
 
@@ -63,31 +70,31 @@ opennem crawl run nem --reverse
 # Flush crawler metadata
 opennem crawl flush
 opennem crawl flush --days 7 --crawler "my-crawler"
-</pre>
+</code>
 
 ### Inspect Command
 
 Inspect OpenNEM JSON data from a URL.
 
-<pre>
+<code>
 opennem inspect <url>
-</pre>
+</code>
 
 ### Export Commands (export)
 
 Commands for exporting data from OpenNEM.
 
-<pre>
+<code>
 # Currently no export commands implemented
-</pre>
+</code>
 
 ### Task Commands (task)
 
 Commands for managing background tasks.
 
-<pre>
+<code>
 # Currently no task commands implemented
-</pre>
+</code>
 
 ## Error Handling
 
@@ -102,7 +109,7 @@ All commands include proper error handling and will:
 
 The CLI respects the following environment variables:
 
-- DEBUG: Enable debug output (default: false)
+- `DEBUG`: Enable debug output (default: false)
 - Other OpenNEM settings as defined in opennem/settings_schema.py
 
 ## Development
@@ -118,9 +125,9 @@ When developing new CLI commands:
 
 ## Exit Codes
 
-- 0: Success
-- 1: General error
-- 130: User interrupted (Ctrl+C)
+- `0`: Success
+- `1`: General error
+- `130`: User interrupted (Ctrl+C)
 
 ## Logging
 
@@ -135,26 +142,26 @@ The CLI uses the standard Python logging framework with:
 
 The CLI requires the following key dependencies:
 
-- typer[all]: Modern CLI framework
-- rich: Terminal formatting
-- asyncio: Async support
+- `typer[all]`: Modern CLI framework
+- `rich`: Terminal formatting
+- `asyncio`: Async support
 - Other OpenNEM dependencies as specified in pyproject.toml
 
 ## Best Practices
 
 When using the CLI:
 
-1. Use uv run opennem for better performance
+1. Use `uv run opennem` for better performance
 2. Set appropriate environment variables before running commands
-3. Check command help with --help flag
+3. Check command help with `--help` flag
 4. Use debug mode when troubleshooting
 5. Monitor logs for detailed operation information
 
 ## Command Help
 
-Every command supports the --help flag for detailed usage information:
+Every command supports the `--help` flag for detailed usage information:
 
-<pre>
+<code>
 # Show main help
 opennem --help
 
@@ -166,13 +173,13 @@ opennem crawl --help
 # Show help for a specific command
 opennem crawl run --help
 opennem db init --help
-</pre>
+</code>
 
 ## Common Workflows
 
 ### Initial Setup
 
-<pre>
+<code>
 # Initialize the database
 opennem db init
 
@@ -182,11 +189,11 @@ opennem db fixtures
 # Import initial facility data
 opennem import facilities
 opennem import fueltechs
-</pre>
+</code>
 
 ### Data Collection
 
-<pre>
+<code>
 # List available crawlers
 opennem crawl list
 
@@ -196,27 +203,27 @@ opennem crawl run wem
 
 # Run with specific options
 opennem crawl run nem --all --limit 1000
-</pre>
+</code>
 
 ## Troubleshooting
 
 If you encounter issues:
 
 1. Enable debug mode:
-   <pre>
+   <code>
    export DEBUG=true
    opennem <command>
-   </pre>
+   </code>
 
 2. Check logs:
-   <pre>
+   <code>
    tail -f logs/opennem.log
-   </pre>
+   </code>
 
 3. Verify database connection:
-   <pre>
+   <code>
    opennem db init
-   </pre>
+   </code>
 
 ## Support
 
@@ -247,4 +254,3 @@ Planned improvements to the CLI include:
 3. Enhanced crawler controls
 4. Better progress reporting
 5. Configuration management commands
-</pre>
