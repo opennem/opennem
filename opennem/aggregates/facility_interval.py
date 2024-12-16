@@ -59,6 +59,7 @@ async def update_facility_aggregates(
                 WHERE
                     bs.interval >= :start_time
                     AND bs.interval <= :end_time
+                GROUP BY 1, 2, 3
             )
             INSERT INTO at_facility_intervals (
                 interval,
@@ -329,5 +330,5 @@ if __name__ == "__main__":
     #     )
     # )
 
-    # asyncio.run(update_facility_aggregate_last_hours(hours_back=24))
-    asyncio.run(run_facility_aggregate_updates(lookback_days=30, max_concurrent=4, chunk_days=3))
+    asyncio.run(update_facility_aggregate_last_hours(hours_back=6))
+    # asyncio.run(run_facility_aggregate_updates(lookback_days=30, max_concurrent=4, chunk_days=3))
