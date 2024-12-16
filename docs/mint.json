@@ -74,14 +74,17 @@
             "pages": ["introduction", "quickstart", "development"]
         },
         {
-            "group": "Essentials",
+            "group": "Guides",
             "pages": [
-                "essentials/markdown",
-                "essentials/code",
-                "essentials/images",
-                "essentials/settings",
-                "essentials/navigation",
-                "essentials/reusable-snippets"
+                "guides/networks",
+                "guides/power",
+                "guides/energy",
+                "guides/emissions",
+                "guides/price",
+                "guides/fueltechs",
+                "guides/facilities",
+                "guides/batteries",
+                "guides/weather"
             ]
         },
         {
