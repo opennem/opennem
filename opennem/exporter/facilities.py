@@ -12,15 +12,20 @@ from opennem.api.schema import APIV4ResponseSchema
 from opennem.clients.slack import slack_message
 from opennem.cms.importer import get_cms_facilities
 from opennem.exporter.storage_bucket import cloudflare_uploader
-from opennem.schema.unit import UnitDispatchType, UnitFueltechType
-from opennem.utils.dates import get_today_opennem
-from opennem.utils.version import get_version
+from opennem.schema.unit import UnitDispatchType, UnitFueltechType, UnitStatusType
 
 logger = logging.getLogger("opennem.exporter.facilities")
 
 
 async def export_facilities_static() -> None:
-    """Export facilities to a static JSON file"""
+    """Export facilities to a static JSON file
+
+    This will filter out bidirectional battery units that are operating since we split them into two units
+    in opennem.core.battery.
+
+    It will also perform some sanity checks on the units and facilities.
+
+    """
 
     # get all facilities
     facilities = get_cms_facilities()
@@ -29,7 +34,11 @@ async def export_facilities_static() -> None:
     facilities_clean = []
 
     for facility in facilities:
-        units = [u for u in facility.units if u.fueltech_id != UnitFueltechType.battery]
+        units = [
+            u
+            for u in facility.units
+            if not (u.fueltech_id == UnitFueltechType.battery and u.status_id == UnitStatusType.operating)
+        ]
 
         # sanity check the units are not empty
         if not units:
@@ -66,12 +75,11 @@ async def export_facilities_static() -> None:
                     )
                     await slack_message(webhook_url=settings.slack_hook_new_facilities, message=message)
                     logger.warning(message)
+
         facility.units = units
         facilities_clean.append(facility)
 
     model_output = APIV4ResponseSchema(
-        version=get_version(),
-        created_at=get_today_opennem(),
         success=True,
         total_records=len(facilities_clean),
         data=facilities_clean,
