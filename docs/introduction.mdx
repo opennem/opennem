@@ -1,7 +1,14 @@
 ---
 title: Introduction
-description: 'Welcome to the home of your new documentation'
+description: 'An Introduction to OpenElectricity'
+icon: 'house'
 ---
+
+<Note>OpenElectricity is currently in the process of being renamed from OpenNEM. There are still some repostories and projects yet to be renamed</Note>
+
+OpenElectricity is a platform for tracking and visualizing electricity data from across Australia.
+
+The OpenElectricity project aims to make energy network data accessible to a wider audience of users and developersthrough a website portal and data access API's and tools.
 
 <img
   className="block"
@@ -10,58 +17,52 @@ description: 'Welcome to the home of your new documentation'
   style={{ borderRadius: '0.5rem' }}
 />
 
-## Setting up
 
-The first step to world-class documentation is setting up your editing environments.
+## Project Links
+
+ * Project homepage at [https://openelectricity.org.au](https://openelectricity.org.au)
+ * Developer Documentation (what you're reading now) at [https://docs.openelectricity.org.au](https://docs.openelectricity.org.au)
+ * OpenAPI documentation at [https://api.openelectricity.org.au/v4/docs](https://api.openelectricity.org.au/docs)
+ * Our GitHub organization is `opennem` and at [https://github.com/opennem](https://github.com/opennem)
+ * The client library package is on PyPI at [https://pypi.org/project/openelectricity/](https://pypi.org/project/openelectricity/)
+ * Twitter username is `@opennem` and we are at [https://twitter.com/opennem](https://twitter.com/opennem)
+
+
+## Project Overview
+
+The OpenNEM project ([GitHub organization `opennem`](https://github.com/opennem/)) consists of three primary projects in separate source code repositories:
+
+ * `opennem-backend` - [GitHub](https://github.com/opennem/opennem)  - GitHub project name `opennem`. The primary backend stack that crawls all the data sources, parses them, generates outputs, the database schema and the API interface for integrations. The primary development language is Python.
+ * `opennem-fe` - [GitHub](https://github.com/opennem/opennem-fe) - This is the web frontend for OpenNEM written in Javascript and powering the [OpenElectricity tracker website](https://explorer.openelectricity.org.au)
+ * `openelectricity-py` - [GitHub](https://github.com/opennem/openelectricity-py) - GitHUB project name `openelectricity-py`. This is the Python client library for accessing OpenElectricity data via the API. It also contains a set of tools for dealing with energy data.
+
+
+## Supported Data Sets
+
+Currently supported electricity networks and data sources:
+
+* `NEM` - [Australia National Electricity Market](https://www.nemweb.com.au/) - energy network data for Queensland, New South Wales, Victoria, South Australia, Tasmania and the Australian Capital Territory
+* `WEM` - [Australia Western Electricity Market](http://data.wa.aemo.com.au/) - energy network data for Western Australia
+* `APVI` - [APVI](https://apvi.org.au) - Rooftop solar data for Australia
+* `BoM` - [Bureau of Meteorology](https://www.bom.gov.au/climate/data/) - weather data for Australia
+
+## Next Steps
+
+Follow the next steps based on being a user of OpenElectricity, a developer using the API or a developer looking to contribute to the project.
 
 <CardGroup cols={2}>
   <Card
-    title="Edit Your Docs"
+    title="API Introduction"
     icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
+    href="/api/introduction"
   >
-    Get your docs set up locally for easy development
+    Get started with the OpenElectricity API
   </Card>
   <Card
-    title="Preview Changes"
+    title="Development"
     icon="image"
-    href="https://mintlify.com/docs/development"
+    href="/backend/introduction"
   >
-    Preview your changes before you push to make sure they're perfect
-  </Card>
-</CardGroup>
-
-## Make it yours
-
-Update your docs to your brand and add valuable content for the best user conversion.
-
-<CardGroup cols={2}>
-  <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
-  >
-    Customize your docs to your company's colors and brands
-  </Card>
-  <Card
-    title="Reference APIs"
-    icon="code"
-    href="https://mintlify.com/docs/api-playground/openapi"
-  >
-    Automatically generate endpoints from an OpenAPI spec
-  </Card>
-  <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/components/accordion"
-  >
-    Build interactive features and designs to guide your users
-  </Card>
-  <Card
-    title="Get Inspiration"
-    icon="stars"
-    href="https://mintlify.com/customers"
-  >
-    Check out our showcase of our favorite documentation
+    Contribute to OpenElectricity
   </Card>
 </CardGroup>

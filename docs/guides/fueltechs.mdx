@@ -1,0 +1,44 @@
+---
+title: Fueltechs
+icon: "plug"
+sidebarTitle: 'Fueltechs'
+---
+
+Below is a table representing various fuel technologies, their groupings, and whether they are renewable:
+
+| Fueltech Code         | Label                | Fueltech Group Code  | Fueltech Group Label | Renewable |
+|-----------------------|----------------------|----------------------|----------------------|-----------|
+| battery_charging      | Battery (Charging)   | battery_charging     | Battery (Charging)   | TRUE      |
+| battery_discharging   | Battery (Discharging)| battery_discharging  | Battery (Discharging)| TRUE      |
+| bioenergy_biogas      | Biogas               | bioenergy            | Bioenergy            | FALSE     |
+| bioenergy_biomass     | Biomass              | bioenergy            | Bioenergy            | FALSE     |
+| coal_black            | Coal (Black)         | coal                 | Coal                 | FALSE     |
+| coal_brown            | Coal (Brown)         | coal                 | Coal                 | FALSE     |
+| distillate            | Distillate           | distillate           | Distillate           | FALSE     |
+| gas_ccgt              | Gas (CCGT)           | gas                  | Gas                  | FALSE     |
+| gas_ocgt              | Gas (OCGT)           | gas                  | Gas                  | FALSE     |
+| gas_recip             | Gas (Reciprocating)  | gas                  | Gas                  | FALSE     |
+| gas_steam             | Gas (Steam)          | gas                  | Gas                  | FALSE     |
+| gas_wcmg              | Gas (Coal Mine Waste)| gas                  | Gas                  | FALSE     |
+| hydro                 | Hydro                | hydro                | Hydro                | TRUE      |
+| pumps                 | Pumps                | pumps                | Pumps                | TRUE      |
+| solar_rooftop         | Solar (Rooftop)      | solar                | Solar                | TRUE      |
+| solar_thermal         | Solar (Thermal)      | solar                | Solar                | TRUE      |
+| solar_utility         | Solar (Utility)      | solar                | Solar                | TRUE      |
+| wind                  | Wind                 | wind                 | Wind                 | TRUE      |
+| wind_offshore         | Offshore Wind        | wind                 | Wind                 | TRUE      |
+
+# Fixtures
+
+The fueltechs are defined in [opennem/db/fixtures/fueltechs.json](https://github.com/opennem/opennem/blob/master/opennem/db/fixtures/fueltechs.json)
+
+# Schema
+
+The fueltech schema is defined in `pydantic` as:
+
+```python
+class FueltechSchema(BaseConfig):
+    code: str
+    label: str
+    renewable: bool = False
+```

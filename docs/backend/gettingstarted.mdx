@@ -1,0 +1,192 @@
+---
+title: 'Development Setup'
+description: 'Getting started with OpenElectricity development'
+icon: 'code'
+---
+
+# Development Guide
+
+This guide will help you set up OpenElectricity for local development. The project consists of two main components:
+- A FastAPI web API server
+- An Arq background worker for processing tasks
+
+## Prerequisites
+
+### Installing uv
+
+We use [uv](https://github.com/astral-sh/uv) as our package manager and virtual environment tool. It's significantly faster than pip and provides better dependency resolution.
+
+Install uv using one of these methods:
+
+**macOS/Linux:**
+<CodeGroup>
+```bash macOS/Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+```powershell Windows
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+</CodeGroup>
+
+## Project Setup
+
+1. Clone the repository:
+```bash
+git clone https://github.com/opennem/opennem.git
+cd opennem
+```
+
+2. Create the virtual environment and install dependencies:
+
+<CodeGroup>
+```bash macOS/Linux
+uv install
+source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
+```
+
+```powershell Windows
+uv install
+.venv\Scripts\activate
+```
+</CodeGroup>
+
+
+## Core Dependencies
+
+OpenElectricity uses several key libraries:
+
+- **FastAPI** - Modern web framework for building APIs
+- **SQLAlchemy 2.0** - SQL toolkit and ORM
+- **asyncpg** - Async PostgreSQL driver
+- **Alembic** - Database migration tool
+- **Arq** - Async job queue and worker
+- **Pydantic** - Data validation using Python type annotations
+- **uvicorn** - ASGI server for running the API
+- **TimescaleDB** - Time-series database extension for PostgreSQL
+- **Redis** - In-memory data store used by Arq
+
+## Running the Application
+
+The application consists of two main processes that need to be run:
+
+### 1. API Server
+
+The FastAPI application serves the REST API endpoints. Run it with:
+
+```bash
+uv run api
+```
+
+This will start the API server at http://localhost:8000
+
+The OpenAPI documentation will be available at:
+
+- http://localhost:8000/docs (Swagger UI)
+
+### 2. Background Worker
+
+The Arq worker processes background tasks like data ingestion and exports. Run it with:
+
+```bash
+uv run worker
+```
+
+## Development Database
+
+1. Install PostgreSQL 17 locally
+
+2. Create a database:
+<code>
+createdb opennem
+</code>
+
+3. Run migrations:
+<code>
+uv run alembic upgrade head
+</code>
+
+## Local Services
+
+We provide a Docker Compose configuration for running required services locally. Start the services with:
+
+<code>
+docker-compose up -d
+</code>
+
+This will start:
+- PostgreSQL 17 with TimescaleDB extension
+- Redis server for the task queue
+
+## Environment Setup
+
+1. Copy the example environment file:
+<code>
+cp .env.example .env
+</code>
+
+2. Edit the `.env` file with your local settings. The example file contains all required variables with sensible defaults for local development.
+
+### Configuration Settings
+
+All application settings are defined in `opennem/settings_schema.py` and are loaded from environment variables. Key settings include:
+
+- Database connection details
+- Redis configuration
+- API settings
+- Authentication settings
+- Logging configuration
+
+You can view all available settings and their documentation in the schema file. Each setting can be overridden using environment variables with the `OPENNEM_` prefix.
+
+Example settings from settings_schema.py:
+<code>
+OPENNEM_DB_HOST: Database hostname (default: "localhost")
+OPENNEM_REDIS_HOST: Redis hostname (default: "localhost")
+OPENNEM_API_HOST: API server host (default: "0.0.0.0")
+OPENNEM_API_PORT: API server port (default: 8000)
+</code>
+
+## Code Quality Tools
+
+We use several tools to maintain code quality:
+
+- **Ruff** - Fast Python linter and formatter
+- **mypy** - Static type checker
+- **pytest** - Testing framework
+
+Run the quality checks:
+
+<code>
+uv run ruff check .
+uv run mypy .
+uv run pytest
+</code>
+
+## API Documentation
+
+The API documentation is automatically generated from the OpenAPI schema. You can view it at:
+
+- Local development: http://localhost:8000/docs
+- Production: https://api.openelectricity.org.au/docs
+
+## Getting Help
+
+If you need help:
+
+1. Check the [project documentation](https://docs.openelectricity.org.au)
+2. Open an issue on GitHub
+3. Join our community discussions
+
+## Contributing
+
+1. Create a new branch for your feature
+2. Make your changes
+3. Run the test suite
+4. Submit a pull request
+
+Please follow our coding standards:
+- Use type hints for all function parameters and returns
+- Write docstrings for all functions and modules
+- Follow PEP 8 style guidelines
+- Write tests for new functionality

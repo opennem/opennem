@@ -16,15 +16,21 @@ OpenElectricity tracks data across multiple Australian electricity networks. Eac
 
 - **National Electricity Market (`NEM`)**:
   - 5-minute intervals
-  - Timezone: Australia/Sydney
+  - Timezone: `UTC+10`
   - Regions: `NSW1`, `QLD1`, `SA1`, `TAS1`, `VIC1`
-  - Data since: 1998-12-06
+  - Data since: `1998-12-06`
 
 - **Wholesale Electricity Market (`WEM`)**:
-  - 30-minute intervals
-  - Timezone: Australia/Perth
+  - 5-minute intervals (since October 2023)
+  - Timezone: `UTC+8`
   - Single region covering Western Australia
-  - Data since: 2006-09-19
+  - Data since: `2006-09-19`
+
+- **Australian Power System Virtual Interconnection (`APVI`)**:
+  - 15-minute intervals
+  - Timezone: `UTC+10`
+  - Regions: Every Australian state
+  - Data since: `2016-09-01`
 
 ## Network Regions
 
@@ -37,7 +43,11 @@ Each region represents a state-based jurisdiction:
 - `SA1`: South Australia
 - `TAS1`: Tasmania
 - `VIC1`: Victoria
-- `SNOWY1`: Snowy Mountains region
+- `SNOWY1`: Snowy Mountains region (deprecated)
+
+### WEM Region
+
+- `WEM`: Western Australia
 
 ### Region Properties
 
@@ -55,13 +65,15 @@ Networks collect data at different intervals:
 
 - `NEM`:
   - Dispatch: 5-minute intervals
-  - Settlement: 30-minute intervals
   - Price: 5-minute intervals
+  - Rooftop solar: 30-minute intervals
 
 - `WEM`:
-  - Dispatch: 30-minute intervals
-  - Settlement: 30-minute intervals
-  - Price: 30-minute intervals
+  - Dispatch: 5-minute intervals
+  - Price: 5-minute intervals
+
+- `APVI`:
+  - Dispatch: 15-minute intervals
 
 ### Data Types
 
@@ -100,9 +112,8 @@ Regional demand includes:
 - Large industrial loads
 - Network losses
 
-### Demand Data Storage
+### Demand Data
 
-Stored in `at_network_demand`:
 - Trading interval demand
 - Energy volumes
 - Market values
@@ -120,7 +131,7 @@ Each network has distinct price formation:
   - Market price caps/floors
 
 - `WEM`:
-  - 30-minute balancing price
+  - 5-minute balancing price
   - Capacity mechanism
   - Ancillary services
 
@@ -129,14 +140,9 @@ Each network has distinct price formation:
 ### Timezone Management
 
 Networks operate in different timezones:
-- `NEM`: AEST/AEDT (UTC+10/11)
-- `WEM`: AWST (UTC+8)
+- `NEM`: AEST/AEDT (`UTC+10`)
+- `WEM`: AWST (`UTC+8`)
 
-### Interval Alignment
-
-- Start times aligned to network intervals
-- Daylight savings time handling
-- Historical time adjustments
 
 ## Data Access
 
@@ -157,55 +163,3 @@ Common parameters:
 - `network_region`: Region code
 - `interval`: Data interval
 - `period`: Time period
-
-## Data Quality
-
-### Quality Flags
-
-Data quality is tracked through:
-- SCADA quality flags
-- Settlement revision numbers
-- Data source identifiers
-- Validation status
-
-### Historical Data
-
-Historical data considerations:
-- Market start dates
-- Rule change implementations
-- System upgrades
-- Data corrections
-
-## Best Practices
-
-When working with network data:
-
-1. Always specify network and region codes explicitly
-2. Handle timezone conversions carefully
-3. Consider interval boundaries
-4. Check data quality flags
-5. Account for market events
-
-## Network Rules
-
-### Operating Procedures
-
-Networks operate under different rules:
-
-- `NEM`:
-  - National Electricity Rules
-  - AEMO procedures
-  - Regional requirements
-
-- `WEM`:
-  - Wholesale Market Rules
-  - System Management procedures
-  - Technical requirements
-
-### Compliance Requirements
-
-Data handling must comply with:
-- Market rules
-- Privacy requirements
-- Data retention policies
-- Quality standards

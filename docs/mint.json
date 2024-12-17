@@ -71,7 +71,7 @@
     "navigation": [
         {
             "group": "Get Started",
-            "pages": ["introduction", "quickstart", "development"]
+            "pages": ["introduction"]
         },
         {
             "group": "Guides",
@@ -88,9 +88,26 @@
             ]
         },
         {
+            "group": "Website",
+            "pages": [
+                "website/introduction",
+                "website/generation",
+                "website/facilities"
+            ]
+        },
+        {
+            "group": "API Platform",
+            "pages": [
+                "platform/introduction",
+                "platform/quickstart",
+                "platform/development"
+            ]
+        },
+        {
             "group": "Backend",
             "pages": [
                 "backend/introduction",
+                "backend/gettingstarted",
                 "backend/cli",
                 "backend/crawlers",
                 "backend/database_schema"
