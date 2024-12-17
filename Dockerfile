@@ -31,6 +31,7 @@ RUN apt-get update \
   && apt-get install --no-install-recommends -y \
   build-essential \
   curl \
+  git \
   ca-certificates \
   pkg-config \
   libssl-dev \
