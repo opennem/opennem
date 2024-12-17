@@ -11,7 +11,7 @@ from pathlib import Path
 from pydantic import AliasChoices, Field, RedisDsn, field_validator
 from pydantic_settings import BaseSettings
 
-from opennem.utils.url import change_url_path
+from opennem.schema.field_types import URLNoPath
 
 SUPPORTED_LOG_LEVEL_NAMES = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
@@ -33,7 +33,7 @@ class OpennemSettings(BaseSettings):
     db_url: str = Field("postgresql://user:pass@127.0.0.1:15444/opennem", validation_alias=AliasChoices("DATABASE_HOST_URL"))
 
     redis_url: RedisDsn = Field(
-        "redis://127.0.0.1",
+        RedisDsn("redis://127.0.0.1"),
         validation_alias=AliasChoices("REDIS_HOST_URL", "cache_url"),
     )
 
@@ -54,14 +54,14 @@ class OpennemSettings(BaseSettings):
     apvi_token: str | None = None
 
     # R2 settings
-    s3_access_key_id: str = Field(None, description="The access key ID for the S3 bucket")
-    s3_secret_access_key: str = Field(None, description="The secret access key for the S3 bucket")
+    s3_access_key_id: str | None = Field(None, description="The access key ID for the S3 bucket")
+    s3_secret_access_key: str | None = Field(None, description="The secret access key for the S3 bucket")
     s3_bucket_name: str = Field("opennem-dev", description="The name of the S3 bucket")
-    s3_endpoint_url: str = Field(
+    s3_endpoint_url: URLNoPath = Field(
         "https://17399e149aeaa08c0c7bbb15382fa5c3.r2.cloudflarestorage.com",
         description="The endpoint URL for the S3 bucket",
     )
-    s3_bucket_public_url: str = Field("https://data.opennem.org.au", description="The public URL of the S3 bucket")
+    s3_bucket_public_url: URLNoPath = Field("https://data.opennem.org.au", description="The public URL of the S3 bucket")
     s3_region: str = "apac"
 
     # show database debug
@@ -133,8 +133,6 @@ class OpennemSettings(BaseSettings):
     # webhooks
     webhook_secret: str | None = None
 
-    r2_token: str | None = None
-
     # sanity cms setup
     sanity_project_id: str | None = None
     sanity_dataset_id: str | None = None
@@ -175,13 +173,3 @@ class OpennemSettings(BaseSettings):
     @property
     def is_local(self) -> bool:
         return self.env.lower() in ("local")
-
-    @property
-    def celery_broker(self) -> str:
-        broker_url = change_url_path(str(self.redis_url), "/1")
-        return str(broker_url)
-
-    @property
-    def celery_backend(self) -> str:
-        broker_url = change_url_path(str(self.redis_url), "/2")
-        return str(broker_url)
