@@ -35,7 +35,7 @@ def get_version(dev_tag: bool = True) -> str:
         version_parts.append("dev")
 
         # get current git hash
-        git_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("utf-8").strip()[:8]
+        git_hash = subprocess.check_output(["/usr/bin/git", "rev-parse", "HEAD"]).decode("utf-8").strip()[:8]
         version_parts.append(git_hash)
 
     return ".".join(version_parts)
