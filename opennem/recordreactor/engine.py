@@ -181,13 +181,13 @@ if __name__ == "__main__":
     test_start_interval = datetime.fromisoformat("2010-01-01 00:00:00")
 
     # Test entry point
-    start_interval = datetime.fromisoformat("2023-01-01 00:00:00")
+    start_interval = datetime.fromisoformat("2014-05-16 00:00:00")
     end_interval = get_last_completed_interval_for_network(network=NetworkNEM)
     asyncio.run(
         run_milestone_engine(
             start_interval=start_interval,
             end_interval=end_interval,
-            # metrics=[MilestoneType.energy, MilestoneType.proportion],
+            # metrics=[MilestoneType.proportion],
             # periods=[
             #     # MilestonePeriod.interval,
             #     MilestonePeriod.day,

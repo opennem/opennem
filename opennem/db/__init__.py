@@ -111,7 +111,10 @@ engine = db_connect()
 
 
 @deprecation.deprecated(
-    deprecated_in="4.0", removed_in="4.1", current_version=get_version(), details="Use the db_connect function instead"
+    deprecated_in="4.0",
+    removed_in="4.1",
+    current_version=get_version(dev_tag=False),
+    details="Use the db_connect function instead",
 )
 def get_database_engine() -> AsyncEngine:
     """

@@ -8,7 +8,7 @@ ruff-check = uv run ruff check $(projectname)
 mypy = uv run mypy $(projectname)
 pytest = uv run pytest tests -v
 pyright = uv run pyright -v .venv $(projectname)
-BUMP_TYPE ?= pre_n
+BUMP_TYPE ?= dev
 
 .PHONY: test
 test:
@@ -34,23 +34,34 @@ build:
 	python setup.py sdist bdist_wheel
 
 
-.PHONE: version
+.PHONY: version
 version:
-	@if ! echo "major minor patch pre_l pre_n" | grep -w "$(BUMP_TYPE)" > /dev/null; then \
-		echo "Error: BUMP_TYPE must be one of: major, minor, patch, pre_l, pre_n"; \
+	@if ! echo "release major minor patch fix alpha beta rc rev post dev" | grep -w "$(BUMP_TYPE)" > /dev/null; then \
+		echo "Error: BUMP_TYPE must be one of: release, major, minor, patch, fix, alpha, beta, rc, rev, post, dev"; \
 		exit 1; \
 	fi
-	@uv run bump-my-version bump $(BUMP_TYPE)
-	@new_version=$$(uv run --python 3.12 python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['tool']['bumpversion']['current_version'])"); \
+	@uvx hatch version $(BUMP_TYPE)
+
+.PHONY: tag
+tag:
+	@current_branch=$$(git rev-parse --abbrev-ref HEAD); \
+	@new_version=$$(uvx hatch version); \
+	# if we're on master only allow release tags
+	if [ "$$current_branch" = "master" ]; then \
+		if [ "$$new_version" != "release" ]; then \
+			echo "Error: Cannot tag non-release on master branch"; \
+			exit 1; \
+		fi \
+	fi; \
 	git tag $$new_version; \
 	echo "Pushing $$new_version"; \
-	git push -u origin $$new_version
+	git push -u origin $$new_version $$current_branch
 
 .PHONY: release-pre
 release-pre: format lint
 
 .PHONY: release
-release: release-pre version
+release: release-pre version tag
 
 .PHONY: image
 image:
