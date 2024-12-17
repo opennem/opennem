@@ -103,9 +103,6 @@ opennem = "opennem.cli:main"
 api = "bin.run_server:run_server"
 worker = "opennem.tasks.app:main"
 
-[tool.rooster]
-version_files = ["opennem/__init__.py", "README.md"]
-
 [tool.ruff]
 target-version = "py312"
 line-length = 130
