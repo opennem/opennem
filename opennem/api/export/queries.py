@@ -13,75 +13,25 @@ from opennem.schema.stats import StatTypes
 logger = logging.getLogger("opennem.api.export.queries")
 
 
-def interconnector_power_flow(time_series: OpennemExportSeries, network_region: str) -> str:
-    """Get interconnector region flows using materialized view"""
-
-    ___query = """
-    select
-        time_bucket_gapfill(INTERVAL '5 minutes', bs.interval) as interval,
-        bs.network_region,
-        case when max(bs.net_interchange) < 0 then
-            max(bs.net_interchange)
-        else 0
-        end as imports,
-        case when max(bs.net_interchange) > 0 then
-            max(bs.net_interchange)
-        else 0
-        end as exports
-    from balancing_summary bs
-    where
-        bs.network_id = '{network_id}' and
-        bs.network_region= '{region}' and
-        bs.trading_interval <= '{date_end}' and
-        bs.trading_interval >= '{date_start}'
-    group by 1, 2
-    order by interval desc;
-
-
-    """
-
-    time_series_range = time_series.get_range()
-    date_max = time_series_range.end
-    date_min = time_series_range.start
-
-    query = ___query.format(
-        network_id=time_series.network.code,
-        region=network_region,
-        date_start=date_min,
-        date_end=date_max,
-    )
-
-    return text(query)
-
-
 def interconnector_flow_network_regions_query(time_series: OpennemExportSeries, network_region: str | None = None) -> TextClause:
     """ """
 
     __query = """
     select
-        t.trading_interval at time zone '{timezone}' as trading_interval,
-        t.flow_region,
-        t.network_region,
-        t.interconnector_region_to,
-        coalesce(sum(t.flow_power), NULL) as flow_power
-    from
-    (
-        select
-            time_bucket_gapfill('{interval_size}', fs.trading_interval) as trading_interval,
-            f.network_region || '->' || f.interconnector_region_to as flow_region,
-            f.network_region,
-            f.interconnector_region_to,
-            sum(fs.generated) as flow_power
-        from facility_scada fs
-        left join facility f on fs.facility_code = f.code
-        where
-            f.interconnector is True
-            and f.network_id='{network_id}'
-            and fs.trading_interval <= '{date_end}'
-            and fs.trading_interval >= '{date_start}'
-            {region_query}
-        group by 1, 2, 3, 4
-    ) as t
+        time_bucket_gapfill('{interval_size}', fs.interval) as interval,
+        f.network_region || '->' || u.interconnector_region_to as flow_region,
+        f.network_region,
+        u.interconnector_region_to,
+        sum(fs.generated) as flow_power
+    from facility_scada fs
+    join units u on fs.facility_code = u.code
+    left join facilities f on f.id = u.station_id
+    where
+        u.interconnector is True
+        and f.network_id='{network_id}'
+        and fs.interval <= '{date_end}'
+        and fs.interval >= '{date_start}'
+        {region_query}
     group by 1, 2, 3, 4
     order by
         1 desc,
@@ -95,8 +45,8 @@ def interconnector_flow_network_regions_query(time_series: OpennemExportSeries, 
 
     # Get the time range using either the old way or the new v4 way
     time_series_range = time_series.get_range()
-    date_max = time_series_range.end
-    date_min = time_series_range.start
+    date_max = time_series_range.end.replace(tzinfo=None)
+    date_min = time_series_range.start.replace(tzinfo=None)
 
     query = __query.format(
         timezone=time_series.network.timezone_database,

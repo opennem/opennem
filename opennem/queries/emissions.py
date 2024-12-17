@@ -24,32 +24,32 @@ def get_emission_factor_region_query(
 
     __query = """
         select
-            t.trading_interval at time zone '{timezone}',
+            t.interval,
             t.network_region,
             coalesce(sum(t.power), 0) as generated,
             coalesce(sum(t.emissions), 0) as emissions,
             case when sum(t.power) > 0 then
-                sum(t.emissions) / sum(t.power)
+                round((sum(t.emissions) / sum(t.power))::numeric, 4)
             else 0
             end as emissions_factor
         from
         (
             select
-                time_bucket_gapfill('{trunc}', fs.trading_interval) as trading_interval,
+                time_bucket_gapfill('{trunc}', fs.interval) as interval,
                 f.network_region as network_region,
                 coalesce(sum(fs.generated), 0) as power,
-                coalesce(sum(fs.generated) * max(f.emissions_factor_co2), 0) as emissions
+                coalesce(sum(fs.generated) * max(u.emissions_factor_co2), 0) as emissions
             from facility_scada fs
-            left join facility f on fs.facility_code = f.code
-            left join network n on f.network_id = n.code
+            join units u on u.code = fs.facility_code
+            join facilities f on f.id = u.station_id
             where
                 fs.is_forecast is False and
-                f.interconnector = False and
+                u.interconnector = False and
                 f.network_id = '{network_id}' and
                 fs.generated > 0 and
                 {network_regions_query}
-                fs.trading_interval >= '{date_min}' and
-                fs.trading_interval <= '{date_max}'
+                fs.interval >= '{date_min}' and
+                fs.interval <= '{date_max}'
             group by
                 1, f.code, 2
         ) as t
@@ -76,7 +76,6 @@ def get_emission_factor_region_query(
                 date_max=date_max,
                 date_min=date_min,
                 network_regions_query=network_regions_query,
-                timezone=network.timezone_database,
             )
         )
     )

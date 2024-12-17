@@ -9,7 +9,6 @@ from opennem.api.export.queries import (
     country_stats_query,
     demand_network_region_query,
     interconnector_flow_network_regions_query,
-    interconnector_power_flow,
     power_and_emissions_network_fueltech_query,
     power_network_fueltech_query,
     power_network_interconnector_emissions_query,
@@ -59,61 +58,6 @@ async def gov_stats_cpi() -> OpennemDataSet | None:
         units=get_unit("cpi"),
         group_field="gov",
     )
-
-    return result
-
-
-async def power_flows_region_week(
-    time_series: OpennemExportSeries,
-    network_region_code: str,
-) -> OpennemDataSet | None:
-    """Gets the power flows for the most recent week for a region. Used in export_power for the JSON export sets
-
-    from old flows
-    """
-    engine = get_database_engine()
-    unit_power = get_unit("power")
-
-    query = interconnector_power_flow(
-        time_series=time_series,
-        network_region=network_region_code,
-    )
-
-    async with engine.begin() as conn:
-        logger.debug(query)
-        result = await conn.execute(query)
-        rows = result.fetchall()
-
-    if not rows:
-        logger.error(f"No results from interconnector_power_flow query for {time_series.interval}")
-        return None
-
-    imports = [DataQueryResult(interval=i[0], result=i[2], group_by="imports" if len(i) > 1 else None) for i in rows]
-    exports = [DataQueryResult(interval=i[0], result=i[3], group_by="exports" if len(i) > 1 else None) for i in rows]
-
-    result = stats_factory(
-        imports,
-        network=time_series.network,
-        interval=time_series.interval,
-        units=unit_power,
-        region=network_region_code,
-        fueltech_group=True,
-    )
-
-    if not result:
-        logger.error(f"No results from interconnector_power_flow stats facoty for {time_series}")
-        return None
-
-    result_exports = stats_factory(
-        exports,
-        network=time_series.network,
-        interval=time_series.interval,
-        units=unit_power,
-        region=network_region_code,
-        fueltech_group=True,
-    )
-
-    result.append_set(result_exports)
 
     return result
 

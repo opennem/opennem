@@ -25,14 +25,14 @@ def get_network_region_price_query(
 
     __query = """
         select
-            time_bucket_gapfill('{trunc}', bs.trading_interval) as trading_interval,
+            time_bucket_gapfill('{trunc}', bs.interval) as interval,
             bs.network_id,
             bs.network_region,
-            coalesce(avg(bs.price), avg(bs.price_dispatch)) as price
-        from balancing_summary bs
+            avg(bs.price) as price
+        from mv_balancing_summary bs
         where
-            bs.trading_interval >= '{date_min}'
-            and bs.trading_interval <= '{date_max}'
+            bs.interval >= '{date_min}'
+            and bs.interval <= '{date_max}'
             and bs.network_id = '{network_id}'
             {forecast_clause}
             {network_regions_query}

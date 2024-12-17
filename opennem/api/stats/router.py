@@ -335,7 +335,7 @@ Flows endpoints
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
 )
-@cache(expire=60 * 15)
+@cache(expire=60 * 5)
 async def power_flows_network_week(
     network_code: str,
     network_region_code: str | None = None,
@@ -377,9 +377,9 @@ async def power_flows_network_week(
 
     query = interconnector_flow_network_regions_query(time_series=time_series, network_region=network_region_code)
 
-    with engine.connect() as c:
+    async with engine.connect() as c:
         logger.debug(query)
-        row = list(c.execute(query))
+        row = list((await c.execute(query)).all())
 
     if not row:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No results")
@@ -568,9 +568,9 @@ async def emission_factor_per_network(  # type: ignore
         interval=interval_obj,
     )
 
-    with engine.connect() as c:
+    async with engine.connect() as c:
         logger.debug(query)
-        row = list(c.execute(query))
+        row = list((await c.execute(query)).all())
 
     if not row:
         raise HTTPException(
@@ -696,9 +696,9 @@ async def price_network_endpoint(
         forecast=forecasts,
     )
 
-    with engine.begin() as c:
+    async with engine.begin() as c:
         logger.debug(query)
-        row = list(c.execute(query))
+        row = list((await c.execute(query)).all())
 
     if not row:
         raise HTTPException(
