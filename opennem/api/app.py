@@ -20,12 +20,10 @@ from fastapi_versionizer.versionizer import Versionizer
 from redis import asyncio as aioredis
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 from starlette.requests import Request
 
 from opennem import settings
 from opennem.api import throttle
-from opennem.api.dash.router import router as dash_router
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
 from opennem.api.feedback.router import router as feedback_router
 from opennem.api.keys import ApiAuthorization, api_protected, unkey_client
@@ -37,7 +35,7 @@ from opennem.api.webhooks.router import router as webhooks_router
 from opennem.clients.unkey import OpenNEMUser
 from opennem.core.time import INTERVALS, PERIODS
 from opennem.core.units import UNITS
-from opennem.db import get_read_session, get_scoped_session
+from opennem.db import get_read_session
 from opennem.db.models.opennem import FuelTech, Network, NetworkRegion
 from opennem.schema.opennem import FueltechSchema, OpennemErrorSchema
 from opennem.schema.time import TimeInterval, TimePeriod
@@ -167,11 +165,10 @@ async def log_api_exception(request: Request, exc: Exception):
 app.include_router(stats_router, tags=["Stats"], prefix="/stats")
 app.include_router(station_router, tags=["Facilities"], prefix="/facility")
 app.include_router(feedback_router, tags=["Feedback"], prefix="/feedback", include_in_schema=False)
-app.include_router(dash_router, tags=["Dashboard"], prefix="/dash", include_in_schema=False)
-app.include_router(milestones_router, tags=["Milestones"], prefix="/milestones", include_in_schema=True)
+app.include_router(milestones_router, tags=["Milestones"], prefix="/milestones", include_in_schema=False)
 app.include_router(webhooks_router, tags=["Webhooks"], prefix="/webhooks", include_in_schema=False)
 
-
+# new v4 routes
 try:
     from fastapi.staticfiles import StaticFiles
 
@@ -184,19 +181,27 @@ except Exception as e:
     logger.info(f"Error initializing static hosting: {e}")
 
 
+# static files
 @app.get(
     "/robots.txt",
     response_class=FileResponse,
     include_in_schema=False,
 )
-def robots_txt() -> str:
-    if not settings.debug:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-
+async def robots_txt() -> str:
     return f"{settings.static_folder_path}/robots.txt"
 
 
-@api_version(3)
+@app.get(
+    "/favicon.ico",
+    response_class=FileResponse,
+    include_in_schema=False,
+)
+async def favicon_ico() -> str:
+    return f"{settings.static_folder_path}/favicon.png"
+
+
+# base routes for types
+@api_version(4)
 @app.get(
     "/networks",
     response_model=list[APINetworkSchema],
@@ -205,9 +210,7 @@ def robots_txt() -> str:
     tags=["Core"],
     description="Get networks",
 )
-async def get_networks(
-    session: AsyncSession = Depends(get_scoped_session),
-) -> list[APINetworkSchema]:
+async def get_networks() -> list[APINetworkSchema]:
     """
     Retrieve all networks with their associated regions.
 
@@ -219,8 +222,9 @@ async def get_networks(
 
     Raises:
         HTTPException: If no networks are found or if there's an error.
+
     """
-    try:
+    async with get_read_session() as session:
         stmt = select(Network).join(NetworkRegion, NetworkRegion.network_id == Network.code).distinct()
         result = await session.execute(stmt)
         networks = result.scalars().all()
@@ -229,9 +233,6 @@ async def get_networks(
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No networks found")
 
         return [APINetworkSchema.from_orm(network) for network in networks]
-    except Exception as e:
-        logger.error(f"Error retrieving networks: {str(e)}")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error") from e
 
 
 @api_version(3)
@@ -262,7 +263,7 @@ async def get_network_regions(
     return response
 
 
-@api_version(3)
+@api_version(4)
 @app.get(
     "/fueltechs",
     response_model=list[FueltechSchema],
@@ -271,10 +272,11 @@ async def get_network_regions(
     tags=["Core"],
     description="Get all fueltechs",
 )
-def fueltechs(
-    session: Session = Depends(get_read_session),
+async def fueltechs(
+    session: AsyncSession = Depends(get_read_session),
 ) -> list[FueltechSchema]:
-    fueltechs = session.query(FuelTech).all()
+    fueltechs = await session.execute(select(FuelTech))
+    fueltechs = fueltechs.scalars().all()
 
     if not fueltechs:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
