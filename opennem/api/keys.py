@@ -78,6 +78,10 @@ def api_protected(
                     raise HTTPException(status_code=403, detail=message)
 
                 # dev hard coded internalkey bypasses unkey
+                if not key or not len(key) > 10:
+                    raise HTTPException(status_code=403, detail="Permission denied: no key provided")
+
+                # dev key bypasses unkey
                 if key == settings.api_dev_key:
                     user = OpenNEMUser(
                         valid=True,
