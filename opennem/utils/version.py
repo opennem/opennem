@@ -3,7 +3,6 @@
 @NOTE updated to dynamically update with build scripts
 """
 
-import subprocess
 from dataclasses import dataclass
 
 from opennem import __version__, settings
@@ -33,10 +32,6 @@ def get_version(dev_tag: bool = True) -> str:
     if settings.env in ["local", "development"] and dev_tag:
         # append dev tag
         version_parts.append("dev")
-
-        # get current git hash
-        git_hash = subprocess.check_output(["/usr/bin/git", "rev-parse", "HEAD"]).decode("utf-8").strip()[:8]
-        version_parts.append(git_hash)
 
     return ".".join(version_parts)
 
