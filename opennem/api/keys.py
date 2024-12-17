@@ -7,6 +7,7 @@ from collections.abc import Callable, Coroutine
 from typing import Annotated, Any, TypeVar
 
 import unkey
+from clerk_backend_api import Clerk
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from unkey import models
@@ -33,7 +34,11 @@ ExcHandlerT = Callable[[Exception], Any]
 """The type of a callback used to handle exceptions during verification."""
 
 # API Keys
+if not settings.unkey_root_key or not settings.clerk_secret_key:
+    raise ValueError("No API key or clerk secret key set")
+
 unkey_client = unkey.Client(api_key=settings.unkey_root_key)
+clerk_client = Clerk(bearer_auth=settings.clerk_secret_key)
 
 api_token_scheme = HTTPBearer()
 
@@ -105,6 +110,12 @@ def api_protected(
                     raise HTTPException(status_code=403, detail="Permission denied")
 
                 user = unkey_verification
+
+                # attach the clerk user to the user
+                clerk_user = await clerk_client.users.get_async(user_id=user.owner_id)
+
+                if clerk_user:
+                    user.clerk_meta = clerk_user
 
                 if "user" in inspect.signature(func).parameters:
                     kwargs["user"] = user
