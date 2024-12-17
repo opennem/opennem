@@ -4,15 +4,15 @@ import functools
 import inspect
 import logging
 from collections.abc import Callable, Coroutine
-from typing import Any, TypeVar
+from typing import Annotated, Any, TypeVar
 
 import unkey
 from fastapi import Depends, HTTPException
-from fastapi.security import APIKeyHeader
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from unkey import models
 
 from opennem import settings
-from opennem.clients.unkey import OpenNEMUser, unkey_validate
+from opennem.clients.unkey import OpenNEMUser, UnkeyInvalidUserException, unkey_validate
 from opennem.users.schema import OpenNEMRoles
 
 logger = logging.getLogger("opennem.api.keys")
@@ -35,20 +35,9 @@ ExcHandlerT = Callable[[Exception], Any]
 # API Keys
 unkey_client = unkey.Client(api_key=settings.unkey_root_key)
 
-api_key_header = APIKeyHeader(name="X-API-Key")
+api_token_scheme = HTTPBearer()
 
-
-async def verify_api_key(api_key: str = Depends(api_key_header)):
-    if not api_key:
-        raise HTTPException(status_code=403, detail="Invalid API key")
-
-    if not settings.unkey_api_id:
-        raise HTTPException(status_code=403, detail="Invalid API key")
-
-    result = await unkey_client.keys.verify_key(api_key, settings.unkey_api_id)
-    if not result.is_ok or not result.unwrap().valid:
-        raise HTTPException(status_code=403, detail="Invalid API key")
-    return result.unwrap()
+ApiAuthorization = Annotated[HTTPAuthorizationCredentials, Depends(api_token_scheme)]
 
 
 def api_protected(
@@ -57,15 +46,8 @@ def api_protected(
     on_exc: ExcHandlerT | None = None,
 ) -> DecoratorT:
     """ """
-
     if not settings.unkey_api_id:
         raise ValueError("No API ID set")
-
-    def _on_invalid_key(data: dict[str, Any], verification: models.ApiKeyVerification | None = None) -> Any:
-        if on_invalid_key:
-            return on_invalid_key(data, verification)
-
-        return data
 
     def _on_exc(exc: Exception) -> Any:
         if on_exc:
@@ -74,8 +56,9 @@ def api_protected(
         raise exc
 
     def _key_extractor(*args: Any, **kwargs: Any) -> str | None:
-        if isinstance(auth := kwargs.get("authorization"), str):
-            return auth.split(" ")[-1]
+        """Extracts the API key from the request as a bearer token"""
+        if isinstance(auth := kwargs.get("authorization", None), HTTPAuthorizationCredentials):
+            return auth.credentials
 
         return None
 
@@ -89,30 +72,45 @@ def api_protected(
                     message = "Failed to get API key"
                     raise HTTPException(status_code=403, detail=message)
 
-                # dev key bypasses unkey
+                # dev hard coded internalkey bypasses unkey
                 if key == settings.api_dev_key:
-                    verification = OpenNEMUser(
+                    user = OpenNEMUser(
                         valid=True,
                         id="dev",
                         owner_id="dev",
                         roles=[OpenNEMRoles.admin, OpenNEMRoles.user, OpenNEMRoles.anonymous],
                     )
-                    kwargs["user"] = verification
+
+                    if "user" in inspect.signature(func).parameters:
+                        kwargs["user"] = user
+
+                    # if the function is a coroutine, call it as a coroutine
                     if inspect.iscoroutinefunction(func):
+                        logger.info(f"calling coroutine {func.__name__}")
                         value = await func(*args, **kwargs)
                     else:
+                        logger.info(f"calling function {func.__name__}")
                         value = func(*args, **kwargs)
                     return value
 
-                verification = await unkey_validate(api_key=key)
+                # try unkey verification of the API key in bearer
+                unkey_verification = None
 
-                if not verification:
+                try:
+                    unkey_verification = await unkey_validate(api_key=key)
+                except UnkeyInvalidUserException as e:
+                    raise HTTPException(status_code=403, detail=str(e)) from e
+
+                if not unkey_verification:
                     raise HTTPException(status_code=403, detail="Permission denied")
 
-                kwargs["user"] = verification
+                user = unkey_verification
+
+                if "user" in inspect.signature(func).parameters:
+                    kwargs["user"] = user
 
                 if roles:
-                    if not any(r in verification.roles for r in roles):
+                    if not any(r in user.roles for r in roles):
                         raise HTTPException(status_code=403, detail="Permission denied")
 
                 if inspect.iscoroutinefunction(func):

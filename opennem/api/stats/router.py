@@ -3,7 +3,6 @@ from datetime import date, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
-from fastapi_cache.decorator import cache
 from fastapi_versionizer import api_version
 from sqlalchemy import select
 from sqlalchemy.engine.base import Engine
@@ -13,6 +12,7 @@ from starlette import status
 from opennem import settings
 from opennem.api.export.controllers import power_week
 from opennem.api.export.queries import interconnector_flow_network_regions_query
+from opennem.api.keys import ApiAuthorization, api_protected
 from opennem.api.time import human_to_interval, human_to_period, valid_database_interval
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
@@ -25,6 +25,7 @@ from opennem.queries.energy import get_energy_facility_query
 from opennem.queries.price import get_network_region_price_query
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.schema.time import TimePeriod
+from opennem.users.schema import OpenNEMRoles
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem
 
 from .controllers import get_scada_range, get_scada_range_optimized, stats_factory
@@ -36,16 +37,19 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-@api_version(4)
+@api_version(3)
+@api_protected()
 @router.get(
     "/power/station/{network_code}/{facility_code:path}",
     name="Power by Station",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
     description="Get the power outputs for a station",
+    include_in_schema=False,
 )
-@cache(expire=60 * 5)
+@api_protected(roles=[OpenNEMRoles.admin])
 async def power_station(
+    authorization: ApiAuthorization,
     facility_code: str | None = None,
     network_code: str | None = None,
     interval_human: str | None = None,
@@ -148,15 +152,17 @@ async def power_station(
 """
 
 
-@api_version(4)
+@api_version(3)
 @router.get(
     "/energy/station/{network_code}/{facility_code:path}",
     name="Energy by Station",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
-@cache(expire=60 * 60 * 12)
+@api_protected(roles=[OpenNEMRoles.admin])
 async def energy_station(
+    authorization: ApiAuthorization,
     network_code: str,
     facility_code: str,
     interval: str | None = None,
@@ -328,15 +334,18 @@ Flows endpoints
     name="Interconnector Flow Network for network region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
 @router.get(
     "/flow/network/{network_code}",
     name="Interconnector Flow Network",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
-@cache(expire=60 * 5)
+@api_protected(roles=[OpenNEMRoles.admin])
 async def power_flows_network_week(
+    authorization: ApiAuthorization,
     network_code: str,
     network_region_code: str | None = None,
     month: date | None = None,
@@ -423,9 +432,21 @@ async def power_flows_network_week(
     name="Power Network Region by Fueltech",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
+@router.get(
+    "/power/network/fueltech/{network_code}",
+    name="Power Network Region by Fueltech",
+    response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
+    include_in_schema=False,
+)
+@api_protected(roles=[OpenNEMRoles.admin])
 async def power_network_region_fueltech(
-    network_code: str, network_region_code: str | None = None, month: date | None = None
+    authorization: ApiAuthorization,
+    network_code: str,
+    network_region_code: str | None = None,
+    month: date | None = None,
 ) -> OpennemDataSet | RedirectResponse:
     network = None
 
@@ -503,15 +524,18 @@ async def power_network_region_fueltech(
     name="Emission Factor per Network Region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
 @router.get(
     "/emissionfactor/network/{network_code}/{network_region_code}",
     name="Emission Factor for a Network Region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
-@cache(expire=60 * 5)
+@api_protected(roles=[OpenNEMRoles.admin])
 async def emission_factor_per_network(  # type: ignore
+    authorization: ApiAuthorization,
     network_code: str,
     interval: str = "5m",
     network_region_code: str | None = None,
@@ -609,27 +633,32 @@ async def emission_factor_per_network(  # type: ignore
     name="Price history by network and network region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
 @router.get(
     "/price/{network_code}",
     name="Price history by network and network region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
 @router.get(
     "/price/network/{network_code}/{network_region_code}",
     name="Price history by network and network region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
 @router.get(
     "/price/network/{network_code}",
     name="Price history by network and network region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
-@cache(expire=60 * 5)
+@api_protected(roles=[OpenNEMRoles.admin])
 async def price_network_endpoint(
+    authorization: ApiAuthorization,
     network_code: str,
     network_region_code: str | None = None,
     forecasts: bool = False,

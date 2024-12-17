@@ -14,6 +14,10 @@ from opennem.users.schema import OpenNEMRoles, OpenNEMUser, OpenNEMUserRateLimit
 logger = logging.getLogger("opennem.clients.unkey")
 
 
+class UnkeyInvalidUserException(Exception):
+    pass
+
+
 # @ttl_cache(maxsize=100, ttl=60 * 5)
 async def unkey_validate(api_key: str) -> None | OpenNEMUser:
     """Validate a key with unkey"""
@@ -33,13 +37,13 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
 
         if not result.is_ok:
             logger.warning("Unkey verification failed")
-            return None
+            raise UnkeyInvalidUserException("Unkey verification failed")
 
         if result.is_err:
             err = result.unwrap_err()
             code = (err.code or unkey.models.ErrorCode.Unknown).value
             logger.info(f"Unkey verification failed: {code}")
-            return None
+            raise UnkeyInvalidUserException(f"Unkey verification failed: error {code}")
 
         data = result.unwrap()
         logger.debug(f"Unkey response data: {data}")
@@ -47,19 +51,19 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
         # Check if the code is NOT_FOUND and return None if so
         if data.code == ErrorCode.NotFound:
             logger.info("API key not found")
-            return None
+            raise UnkeyInvalidUserException("Unkey verification failed: not found")
 
         if not data.valid:
             logger.info("API key is not valid")
-            return None
+            raise UnkeyInvalidUserException("Unkey verification failed: not valid")
 
         if data.error:
             logger.info(f"API key error: {data.error}")
-            return None
+            raise UnkeyInvalidUserException("Unkey verification failed: data error")
 
         if not data.id:
             logger.info("API key id is not valid no id")
-            return None
+            raise UnkeyInvalidUserException("Unkey verification failed: no id")
 
         try:
             model = OpenNEMUser(id=data.id, valid=data.valid, owner_id=data.owner_id, meta=data.meta, error=data.error)
@@ -78,12 +82,12 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
         except ValidationError as ve:
             logger.error(f"Pydantic validation error: {ve}")
             for error in ve.errors():
-                logger.error(f"Field: {error["loc"][0]}, Error: {error["msg"]}")
-            return None
+                logger.error(f"Field: {error['loc'][0]}, Error: {error['msg']}")
+            raise UnkeyInvalidUserException("Unkey verification failed: model validation error") from ve
 
     except Exception as e:
         logger.exception(f"Unexpected error in unkey_validate: {e}")
-        return None
+        raise UnkeyInvalidUserException("Unkey verification failed: unexpected error") from e
 
     finally:
         await client.close()

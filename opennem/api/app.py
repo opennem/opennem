@@ -7,7 +7,6 @@ Primary Router. All the main setup of the API is here.
 import logging
 from contextlib import asynccontextmanager
 
-import fastapi
 import logfire
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -29,7 +28,7 @@ from opennem.api import throttle
 from opennem.api.dash.router import router as dash_router
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
 from opennem.api.feedback.router import router as feedback_router
-from opennem.api.keys import api_protected, unkey_client
+from opennem.api.keys import ApiAuthorization, api_protected, unkey_client
 from opennem.api.milestones.router import milestones_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
 from opennem.api.station.router import router as station_router
@@ -350,11 +349,7 @@ def health_check() -> str:
     description="Get the current user",
 )
 @api_protected()
-async def user_me(
-    *,
-    authorization: str = fastapi.Header(None),
-    user: OpenNEMUser | None = None,
-) -> OpenNEMUser:
+async def get_user_me(authorization: ApiAuthorization, user: OpenNEMUser | None = None) -> OpenNEMUser:
     if not user:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized")
 
