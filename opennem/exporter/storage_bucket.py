@@ -211,6 +211,9 @@ class CloudflareR2Uploader:
                     extra_args["ContentType"] = content_type
 
                 await s3.put_object(Bucket=self.bucket_name, Key=object_name, Body=content, **extra_args)
+
+                logger.info(f"Uploaded content {naturalsize(len(content), binary=True)} to {self.bucket_public_url}{object_name}")
+
                 return len(content)
             except ClientError as e:
                 logger.error(f"An error occurred while uploading content: {e}")
