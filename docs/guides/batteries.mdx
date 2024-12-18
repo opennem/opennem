@@ -1,4 +1,156 @@
 ---
-title: 'Batteries'
+title: 'Batteries in the Australian Electricity Network'
 icon: 'battery-full'
+sidebarTitle: 'Batteries'
 ---
+
+Batteries play a crucial role in the Australian electricity network by providing energy storage solutions that enhance grid stability, support renewable energy integration, and improve energy security. This guide explores the purpose and benefits of batteries within the network.
+
+<Frame>
+  <img src="/images/battery.png" alt="Diagram showing battery storage and operation in electricity networks" />
+</Frame>
+
+
+## Purpose of Batteries
+
+1. **Energy Storage**: Batteries store excess energy generated during periods of low demand or high renewable output, such as solar and wind. This stored energy can be released back into the grid during peak demand times, ensuring a stable and reliable electricity supply.
+
+2. **Grid Stability**: By providing rapid response capabilities, batteries help maintain grid frequency and voltage levels, which are essential for the stable operation of the electricity network.
+
+3. **Renewable Integration**: Batteries facilitate the integration of renewable energy sources by smoothing out the variability and intermittency associated with solar and wind power. This helps in reducing reliance on fossil fuels and lowering carbon emissions.
+
+4. **Energy Security**: Batteries enhance energy security by providing backup power during outages or emergencies, ensuring continuous electricity supply to critical infrastructure and services.
+
+5. **Cost Efficiency**: By reducing the need for expensive peaking power plants and minimizing transmission losses, batteries contribute to a more cost-effective electricity system.
+
+## Battery Specifications and Performance
+
+### Key Battery Specifications
+
+Grid-scale batteries are defined by two key specifications:
+
+1. **Power Capacity (MW)**: The maximum rate at which the battery can charge or discharge power. This determines how quickly the battery can respond to grid demands. For example, a 100 MW battery can provide or absorb up to 100 megawatts of power instantaneously.
+
+2. **Energy Storage Capacity (MWh)**: The total amount of energy the battery can store. This determines how long the battery can sustain its power output. For example, a 100 MWh battery can provide 100 megawatts of power for one hour, or 50 megawatts for two hours.
+
+The relationship between these specifications is often expressed as a ratio. For example, a battery with 100 MW power capacity and 200 MWh storage capacity has a 2:1 storage-to-power ratio, meaning it can operate at full power for 2 hours.
+
+### Rapid Dispatch Capabilities
+
+Batteries excel at rapid power dispatch, with several key characteristics:
+
+- **Response Time**: Grid-scale batteries can respond to dispatch signals within milliseconds, compared to minutes or hours for conventional generators.
+- **Ramp Rate**: Batteries can ramp from zero to full power almost instantaneously, providing crucial grid support during sudden changes in supply or demand.
+- **Bidirectional Operation**: Batteries can switch between charging and discharging rapidly, making them ideal for frequency control and grid stabilisation services.
+
+For example, the Hornsdale Power Reserve can deliver its full 150 MW capacity in less than 250 milliseconds, providing critical frequency control services to maintain grid stability.
+
+### Operational Example
+
+Consider a 100 MW / 150 MWh battery:
+
+- It can provide 100 MW of power for 1.5 hours at maximum discharge
+- It can operate at 50 MW for 3 hours
+- It can provide frequency control services by rapidly varying its output between -100 MW (charging) and +100 MW (discharging)
+
+This flexibility allows batteries to serve multiple grid functions:
+- Peak shaving during high demand periods
+- Grid frequency stabilisation
+- Renewable energy integration
+- Emergency backup power
+
+## Growth of Battery Storage in Australia
+
+The Australian electricity grid has undergone significant transformation with the rapid deployment of grid-scale batteries. This expansion has been driven by:
+
+- Declining battery costs
+- Government support and incentives
+- Growing need for grid stability services
+- Increasing renewable energy penetration
+
+### Current Battery Deployment
+
+As of 2024, Australia has over 1.5 GW of operational grid-scale battery storage capacity across more than 30 projects. Notable installations include:
+
+- Hornsdale Power Reserve (150 MW/194 MWh) in South Australia
+- Victorian Big Battery (300 MW/450 MWh) in Victoria
+- Wallgrove Grid Battery (50 MW/75 MWh) in New South Wales
+
+## Bidirectional Batteries
+
+### Introduction
+
+The NEM (National Electricity Market) changed its approach to managing battery facilities in October 2024. Historically, batteries were represented as two separate units (DUIDs): one for charging (considered load) and one for discharging (considered generation). With the new change, AEMO transitioned battery facilities into a single bidirectional unit, where:
+
+- Positive generation values represent discharging (export to the grid).
+- Negative generation values represent charging (import from the grid).
+
+This change simplifies implementation for AEMO by consolidating batteries into a single unit, but it introduces challenges for OpenElectricity (formerly OpenNEM), which relies on the legacy method of splitting batteries into two distinct units.
+
+The reasons for splitting the new bidirectional units back into two separate units in OpenElectricity are:
+
+- **Visual Clarity**: Separating charging and discharging makes it easier for users to visualize and understand battery behavior, as they can clearly see when batteries are importing versus exporting power to the grid.
+
+- **Net Calculations**: Separating load and generation values enables accurate net calculations and regional demand analysis. This is particularly important when calculating total regional demand and generation, as battery charging (load) needs to be included in demand calculations while discharging (generation) contributes to supply calculations.
+
+- **Granular Representation**: Splitting the values allows for clear and consistent representation of battery performance, ensuring better understanding and reporting of energy data.
+
+### How OpenElectricity Splits Bidirectional Units
+
+The splitting of bidirectional units into two distinct units (for load and generation) is being achieved through a series of steps in the OpenElectricity backend. Here’s a detailed breakdown of the process:
+
+A new dispatch type named `BIDIRECTIONAL` was added to identify batteries that use the single-unit model. This allows OpenElectricity to distinguish between legacy units and new bidirectional units.
+
+In the generation pipeline, which processes incoming real-time power data from AEMO, is intercepted in memory and transformed. This enables quick and efficient data processing before persisting the results to the main database.
+
+The splitting logic is implemented as follows:
+
+- Positive generation values (representing discharging) are assigned to a generation unit.
+- Negative generation values (representing charging) are assigned to a load unit.
+
+For example, consider the battery facility BHB1 (Broken Hill Battery), which was previously represented as:
+
+- `BHBG1`  for generation (`battery_discharging` fueltech type).
+- `BHBL1` for load (`battery_charging` fueltech type).
+
+After the AEMO change, BHB1 becomes a single unit with bidirectional values. OpenElectricity re-splits it in memory as:
+
+- `BHBG1` → Generation unit (positive values).
+- `BHBL1` → Load unit (negative values).
+
+The old unit DUIDs are retained even though they do not exist in new generation data.
+
+### Example Splitting Bidirectional Units
+
+For a single bidirectional unit, let’s say BHB reports the following generation data:
+
+| Timestamp | Generation (MW) |
+|-----------|-----------------|
+| `10:00 AM`  | `-10`             |
+| `10:05 AM`  | `15`              |
+
+Here:
+
+- **-10 MW** indicates charging (import from grid).
+- **15 MW** indicates discharging (export to grid).
+
+The data is split into two separate units in memory:
+
+1. **BHBL1 (Load Unit)**:
+   - `10:00 AM` → `10 MW` (absolute value of `-10 MW`).
+   - `10:05 AM` → `0 MW` (no charging when generation is positive).
+
+2. **BHBG1 (Generation Unit)**:
+   - `10:00 AM` → `0 MW` (no discharging when generation is negative).
+   - `10:05 AM` → `15 MW`.
+
+Resulting table after splitting:
+
+| Timestamp | BHBL1 (MW) | BHBG1 (MW) |
+|-----------|------------|------------|
+| `10:00 AM`  | `10`         | `0`          |
+| `10:05 AM`  | `0`          | `15`         |
+
+### Implementation
+
+The bidirectional splitting logic is implemented in `opennem.core.battery` [Source](https://github.com/opennem/opennem/blob/master/opennem/core/battery.py)
