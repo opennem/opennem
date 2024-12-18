@@ -37,13 +37,13 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
 
         if not result.is_ok:
             logger.warning("Unkey verification failed")
-            raise UnkeyInvalidUserException("Unkey verification failed")
+            raise UnkeyInvalidUserException("Verification failed: invalid key")
 
         if result.is_err:
             err = result.unwrap_err()
             code = (err.code or unkey.models.ErrorCode.Unknown).value
             logger.info(f"Unkey verification failed: {code}")
-            raise UnkeyInvalidUserException(f"Unkey verification failed: error {code}")
+            raise UnkeyInvalidUserException("Verification failed: error")
 
         data = result.unwrap()
         logger.debug(f"Unkey response data: {data}")
@@ -51,19 +51,19 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
         # Check if the code is NOT_FOUND and return None if so
         if data.code == ErrorCode.NotFound:
             logger.info("API key not found")
-            raise UnkeyInvalidUserException("Unkey verification failed: not found")
+            raise UnkeyInvalidUserException("Verification failed: not found")
 
         if not data.valid:
             logger.info("API key is not valid")
-            raise UnkeyInvalidUserException("Unkey verification failed: not valid")
+            raise UnkeyInvalidUserException("Verification failed: not valid")
 
         if data.error:
             logger.info(f"API key error: {data.error}")
-            raise UnkeyInvalidUserException("Unkey verification failed: data error")
+            raise UnkeyInvalidUserException("Verification failed: data error")
 
         if not data.id:
             logger.info("API key id is not valid no id")
-            raise UnkeyInvalidUserException("Unkey verification failed: no id")
+            raise UnkeyInvalidUserException("Verification failed: no id")
 
         try:
             model = OpenNEMUser(id=data.id, valid=data.valid, owner_id=data.owner_id, meta=data.meta, error=data.error)
