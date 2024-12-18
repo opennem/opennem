@@ -25,6 +25,12 @@
             "weight": 400
         }
     },
+    "api": {
+        "baseUrl": "https://api.openelectricity.org.au/v4",
+        "auth": {
+            "method": "bearer"
+        }
+    },
     "topbarLinks": [
         {
             "name": "Tracker",
@@ -79,12 +85,13 @@
                 "guides/networks",
                 "guides/power",
                 "guides/energy",
-                "guides/emissions",
                 "guides/price",
+                "guides/emissions",
                 "guides/fueltechs",
                 "guides/facilities",
                 "guides/batteries",
-                "guides/weather"
+                "guides/weather",
+                "guides/interconnectors"
             ]
         },
         {

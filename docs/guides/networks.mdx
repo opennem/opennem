@@ -2,52 +2,87 @@
 title: 'Networks and Regions'
 description: 'Understanding Australian electricity networks and regional structures'
 icon: 'network-wired'
+sidebarTitle: 'Networks'
 ---
-
-# Networks and Regions
 
 ## Overview
 
 OpenElectricity tracks data across multiple Australian electricity networks. Each network has distinct characteristics, regions, and operational parameters.
+
+OpenElectricity currently supports the `NEM` and `WEM` as primary networks, which covers the majority of the Australian electricity market outside of the Northern Territory and North-West Australia.
+
+OpenElectricity also supports the `AEMO_ROOFTOP` and `APVI` as secondary networks, which covers the rooftop solar market in Australia.
+
+## National Electricity Market (NEM)
+
+The National Electricity Market (NEM) is Australia's primary electricity system, spanning approximately 5,000 kilometers from Port Douglas, Queensland, to Port Lincoln, South Australia. It supplies around 80% of Australia's electricity consumption, generating approximately 200 terawatt hours annually.
+
+The NEM transports electricity via high-voltage transmission lines from generators to distributors, who deliver it to homes and businesses.
+
+While the NEM covers much of the country, Western Australia and the Northern Territory operate independent electricity systems with separate regulatory frameworks.
+
+<Frame>
+  <img src="/images/NEM.png" alt="Map of the National Electricity Market showing interconnected regions across eastern Australia" />
+</Frame>
+
+## Wholesale Electricity Market (WEM)
+
+The Wholesale Electricity Market (WEM) is the electricity market for the state of Western Australia. It is an isolated network, with no interconnections.
+
+<Frame>
+  <img src="/images/SWIS.webp" alt="Map of the Wholesale Electricity Market showing isolated network in Western Australia" />
+</Frame>
 
 ## Network Structure
 
 ### Primary Networks
 
 - **National Electricity Market (`NEM`)**:
-  - 5-minute intervals
+  - 5-minute intervals for generation, price and demand for each region
   - Timezone: `UTC+10`
   - Regions: `NSW1`, `QLD1`, `SA1`, `TAS1`, `VIC1`
   - Data since: `1998-12-06`
 
 - **Wholesale Electricity Market (`WEM`)**:
-  - 5-minute intervals (since October 2023)
+  - 5-minute intervals for generation, price and demand (since October 2023)
   - Timezone: `UTC+8`
   - Single region covering Western Australia
   - Data since: `2006-09-19`
+
+### Secondary Networks
+
+- **AEMO Rooftop Solar (`AEMO_ROOFTOP`)**:
+  - 30-minute intervals
+  - Timezone: `UTC+10`
+  - Regions: Every Australian state
+  - Data since: `2018-03-01`
 
 - **Australian Power System Virtual Interconnection (`APVI`)**:
   - 15-minute intervals
   - Timezone: `UTC+10`
   - Regions: Every Australian state
-  - Data since: `2016-09-01`
+  - Data since: `2015-03-19`
 
 ## Network Regions
+
+Networks are split into regions, which for the NEM represent each state a generation facility is located in.
+
+Network regions have their own market pricing and demand data, as well as interconnector flows and generation facilities.
 
 ### NEM Regions
 
 Each region represents a state-based jurisdiction:
 
-- `NSW1`: New South Wales
+- `NSW1`: New South Wales (including the ACT)
 - `QLD1`: Queensland
 - `SA1`: South Australia
-- `TAS1`: Tasmania
+- `TAS1`: Tasmania (since `2005-05-16`)
 - `VIC1`: Victoria
 - `SNOWY1`: Snowy Mountains region (deprecated)
 
 ### WEM Region
 
-- `WEM`: Western Australia
+- `WEM`: Western Australia. Covering the southern half of the state on the SWIS grid.
 
 ### Region Properties
 
@@ -61,105 +96,35 @@ Each region contains:
 ## Data Collection
 
 ### Interval Data
+
 Networks collect data at different intervals:
 
 - `NEM`:
   - Dispatch: 5-minute intervals
   - Price: 5-minute intervals
+  - Demand: 5-minute intervals
   - Rooftop solar: 30-minute intervals
 
 - `WEM`:
   - Dispatch: 5-minute intervals
   - Price: 5-minute intervals
+  - Demand: 5-minute intervals
+  - Rooftop solar: 30-minute intervals
 
 - `APVI`:
   - Dispatch: 15-minute intervals
 
-### Data Types
-
-For each network region:
-- Generation by facility
-- Regional demand
-- Interconnector flows
-- Price information
-- Emissions data
-
 ## Network Flows
 
-### Interconnectors
+### NEM Interconnectors
 
-Interconnectors link different regions:
+Interconnectors link different regions and allow the import and export of generation between regions:
 
 - `NSW1-QLD1`: Queensland to NSW
 - `VIC1-NSW1`: Victoria to NSW
 - `VIC1-SA1`: Victoria to South Australia
 - `VIC1-TAS1`: Victoria to Tasmania (Basslink)
 
-### Flow Data
-Tracked in `at_network_flows`:
-- Energy imports/exports
-- Emissions transfers
-- Market value transfers
-- Flow constraints
+### WEM Interconnectors
 
-## Network Demand
-
-### Demand Components
-
-Regional demand includes:
-- Operational demand
-- Behind-the-meter generation
-- Large industrial loads
-- Network losses
-
-### Demand Data
-
-- Trading interval demand
-- Energy volumes
-- Market values
-- Regional aggregations
-
-## Price Mechanisms
-
-### Price Formation
-
-Each network has distinct price formation:
-
-- `NEM`:
-  - 5-minute dispatch price
-  - Regional reference price
-  - Market price caps/floors
-
-- `WEM`:
-  - 5-minute balancing price
-  - Capacity mechanism
-  - Ancillary services
-
-## Network Time Handling
-
-### Timezone Management
-
-Networks operate in different timezones:
-- `NEM`: AEST/AEDT (`UTC+10`)
-- `WEM`: AWST (`UTC+8`)
-
-
-## Data Access
-
-### API Endpoints
-
-Network data is accessible via:
-
-```
-GET /v4/networks - List all networks
-GET /v4/networks/regions - Get network regions
-GET /v4/stats/flow/network/{network_code} - Get network flows
-```
-
-### Query Parameters
-
-Common parameters:
-- `network_id`: Network identifier
-- `network_region`: Region code
-- `interval`: Data interval
-- `period`: Time period
+WEM is an isolated network, with no interconnections.

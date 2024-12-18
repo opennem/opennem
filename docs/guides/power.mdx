@@ -1,4 +1,63 @@
 ---
-title: Power
+title: Power in Electricity Networks
 icon: "lightbulb"
+sidebarTitle: Power
 ---
+
+<Frame>
+  <img src="/images/generation.png" alt="Diagram showing electricity generation and transmission in Australia" />
+</Frame>
+
+Power in electricity markets represents the instantaneous rate of electrical energy generation, transmission and consumption. It is measured in watts (W), though at grid scale it is typically expressed in megawatts (MW) or gigawatts (GW). Power plants generate electricity through various means:
+
+- **Thermal Generation**: Coal, gas and nuclear plants generate electricity by heating water to create steam that drives turbines connected to generators. The spinning generators create electricity through electromagnetic induction.
+
+- **Renewable Generation**: Wind turbines harness kinetic energy from wind, while solar panels convert sunlight directly into electricity through the photovoltaic effect. Hydroelectric plants use falling water to spin turbines.
+
+- **Energy Storage**: Batteries and pumped hydro facilities store energy when supply exceeds demand and release it back as electrical power when needed. This helps balance supply and demand across the grid.
+
+Power must be generated at the exact moment it is consumed since electricity cannot be easily stored at grid scale. This requires sophisticated systems to match generation with demand in real-time, coordinating hundreds of power plants across vast transmission networks.
+
+The Australian electricity system operates on an alternating current (AC) system at 50 Hz frequency, requiring careful management of voltage, frequency and other technical parameters to maintain stable power delivery. Sophisticated control systems at power plants and across the transmission network work together to maintain these parameters within strict tolerances.
+
+## Key Concepts
+
+- **Power**: The rate at which electrical energy is transferred by an electric circuit. It is typically measured in megawatts (MW) in the context of electricity markets. Power measurements are instantaneous, reflecting the current rate of energy transfer.
+
+- **Dispatch**: The process of determining which power plants will generate electricity at any given time to meet demand. This involves selecting the most cost-effective combination of available generation resources. Dispatch is also driven by the market price for each network region.
+
+- **Generation**: The production of electricity from various energy sources such as coal, gas, wind, solar, and hydroelectric power. The mix of these sources can vary significantly between markets.
+
+- **Demand**: The total amount of electricity required by consumers at any given time. Demand fluctuates based on factors like weather, time of day, and economic activity. It also varies by season, with higher demand typically occurring during extreme weather conditions in summer and winter.
+
+## National Electricity Market (NEM) and Wholesale Electricity Market (WEM)
+
+### Power Generation
+
+Both the NEM and WEM rely on a diverse mix of energy sources, including coal, gas, wind, solar, and hydroelectric power. The generation mix is evolving with a significant increase in renewable energy sources in both markets.
+
+### Scheduled vs Non-Scheduled Generation in the NEM
+
+In the NEM, generation is classified as either scheduled or non-scheduled. Scheduled generators are typically larger and must submit bids to the market operator, AEMO, indicating how much electricity they can supply at different price points. Non-scheduled generators, often smaller renewable sources like wind and solar, are not required to submit bids and are dispatched based on their availability and capacity.
+
+### Dispatch
+
+Dispatch in both the NEM and WEM is managed by the Australian Energy Market Operator (AEMO). Generators submit bids to supply electricity, and AEMO dispatches the lowest-cost combination of available generation to meet demand every five minutes. This process ensures that electricity is supplied reliably and at the lowest possible cost, while also considering the market price for each network region.
+
+### Demand
+
+Demand in both markets is influenced by various factors, including weather conditions, time of day, and economic activity. AEMO forecasts demand and ensures that there is enough generation capacity to meet it. Demand patterns vary by time of day and season, with peak demand often occurring during the late afternoon and early evening, especially in summer and winter.
+
+### Total Capacity and Generation
+
+- **NEM**: The NEM has a total installed capacity of approximately 65,000 MW, with an average daily generation of around 600 GWh. It comprises over 300 power stations, ranging from large coal-fired plants to small renewable energy installations.
+
+- **WEM**: The WEM has a total installed capacity of about 6,000 MW, with an average daily generation of approximately 60 GWh. It includes around 50 power stations, with a mix of traditional and renewable energy sources.
+
+### Capacity Market in the WEM
+
+The WEM operates as a capacity market, which means that generators are compensated not only for the electricity they produce but also for their availability to produce electricity when needed. This ensures that there is sufficient capacity to meet peak demand and provides financial incentives for maintaining and investing in generation capacity.
+
+## Data
+
+OpenElectricity retrieves and stores power dispatch data for each power generation plant and unit from the NEM and WEM.
