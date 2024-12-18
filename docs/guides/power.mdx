@@ -44,6 +44,12 @@ In the NEM, generation is classified as either scheduled or non-scheduled. Sched
 
 Dispatch in both the NEM and WEM is managed by the Australian Energy Market Operator (AEMO). Generators submit bids to supply electricity, and AEMO dispatches the lowest-cost combination of available generation to meet demand every five minutes. This process ensures that electricity is supplied reliably and at the lowest possible cost, while also considering the market price for each network region.
 
+There are three dispatch types in the NEM:
+
+- **Load** - A load is a facility that is consuming power. It is represented as negative numbers in the generation data.
+- **Generation** - A generation facility is a facility that is generating power. It is represented as positive numbers in the generation data.
+- **Bidirectional** - A bidirectional facility is a facility that can both consume and generate power. It is represented as both positive and negative numbers in the generation data where negative numbers represent consumption and positive numbers represent generation.
+
 ### Demand
 
 Demand in both markets is influenced by various factors, including weather conditions, time of day, and economic activity. AEMO forecasts demand and ensures that there is enough generation capacity to meet it. Demand patterns vary by time of day and season, with peak demand often occurring during the late afternoon and early evening, especially in summer and winter.
