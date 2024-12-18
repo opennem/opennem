@@ -1,7 +1,7 @@
 [project]
-name = "opennem-backend"
+name = "opennem"
 description = "OpenElectricity (OpenNEM) Australian Energy Data Platform"
-license = "MIT"
+license = {file = "LICENSE"}
 keywords = ["openelectricity", "opennem", "analysis", "australia", "energy"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
@@ -164,6 +164,13 @@ testpaths = [
     "tests",
 ]
 
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-dirty = true
+allow-direct-references = true
 [tool.hatch.version]
 path = "opennem/__init__.py"
 pattern = "__version__ = \"(?P<version>[^\"]+)\""

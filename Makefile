@@ -8,7 +8,7 @@ ruff-check = uv run ruff check $(projectname)
 mypy = uv run mypy $(projectname)
 pytest = uv run pytest tests -v
 pyright = uv run pyright -v .venv $(projectname)
-hatch = .venv/bin/hatch
+hatch = uvx hatch
 BUMP_TYPE ?= dev
 
 .PHONY: test
@@ -52,18 +52,17 @@ version:
 
 .PHONY: tag
 tag:
-	@current_branch=$$(git rev-parse --abbrev-ref HEAD); \
-	@new_version=$$(hatch version); \
-	# if we're on master only allow release tags
-	if [ "$$current_branch" = "master" ]; then \
-		if [ "$$new_version" != "release" ]; then \
+	$(eval CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD))
+	$(eval NEW_VERSION := $(shell uvx hatch version))
+	@if [ "$(CURRENT_BRANCH)" = "master" ]; then \
+		if [[ "$(NEW_VERSION)" != *"release"* ]]; then \
 			echo "Error: Cannot tag non-release on master branch"; \
 			exit 1; \
 		fi \
-	fi; \
-	git tag $$new_version; \
-	echo "Pushing $$new_version"; \
-	git push -u origin $$new_version $$current_branch
+	fi
+	git tag $(NEW_VERSION)
+	@echo "Pushing $(NEW_VERSION)"
+	git push -u origin $(NEW_VERSION) $(CURRENT_BRANCH)
 
 .PHONY: release-pre
 release-pre: format lint
