@@ -164,10 +164,9 @@ testpaths = [
     "tests",
 ]
 
-[build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
-
 [tool.hatch.version]
 path = "opennem/__init__.py"
 pattern = "__version__ = \"(?P<version>[^\"]+)\""
+
+[tool.hatch.envs.default]
+python = "3.12"

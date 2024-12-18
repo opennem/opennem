@@ -8,6 +8,7 @@ ruff-check = uv run ruff check $(projectname)
 mypy = uv run mypy $(projectname)
 pytest = uv run pytest tests -v
 pyright = uv run pyright -v .venv $(projectname)
+hatch = .venv/bin/hatch
 BUMP_TYPE ?= dev
 
 .PHONY: test
@@ -40,12 +41,19 @@ version:
 		echo "Error: BUMP_TYPE must be one of: release, major, minor, patch, fix, alpha, beta, rc, rev, post, dev"; \
 		exit 1; \
 	fi
-	@uvx hatch version $(BUMP_TYPE)
+	# if the branch is master then bump needs to be either major minor patch or release
+	if [ "$$current_branch" = "master" ]; then \
+		if [ "$$BUMP_TYPE" != "major" ] && [ "$$BUMP_TYPE" != "minor" ] && [ "$$BUMP_TYPE" != "patch" ] && [ "$$BUMP_TYPE" != "release" ]; then \
+			echo "Error: Cannot bump on master branch unless it is major, minor, patch or release"; \
+			exit 1; \
+		fi \
+	fi; \
+	$(hatch) version $(BUMP_TYPE)
 
 .PHONY: tag
 tag:
 	@current_branch=$$(git rev-parse --abbrev-ref HEAD); \
-	@new_version=$$(uvx hatch version); \
+	@new_version=$$(hatch version); \
 	# if we're on master only allow release tags
 	if [ "$$current_branch" = "master" ]; then \
 		if [ "$$new_version" != "release" ]; then \
