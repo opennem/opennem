@@ -49,6 +49,8 @@ version:
 		fi \
 	fi; \
 	$(hatch) version $(BUMP_TYPE)
+	git add opennem/__init__.py
+	git commit -m "Bump version to $(NEW_VERSION)"
 
 .PHONY: tag
 tag:
