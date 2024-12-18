@@ -165,16 +165,9 @@ testpaths = [
     "tests",
 ]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.hatch.metadata]
-allow-dirty = true
-allow-direct-references = true
 [tool.hatch.version]
 path = "opennem/__init__.py"
-pattern = "__version__ = \"(?P<version>[^\"]+)\""
 
-[tool.hatch.envs.default]
-python = "3.12"
+[tool.setuptools]
+include-package-data = true
+packages = ["opennem"]
