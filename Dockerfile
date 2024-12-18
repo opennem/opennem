@@ -50,7 +50,9 @@ COPY uv.lock pyproject.toml ./
 
 # workaround for if you have packages-include in your pyproject.toml
 RUN mkdir ${PROJECT_NAME}
+RUN mkdir bin
 ADD opennem/__init__.py ${PROJECT_NAME}/__init__.py
+ADD bin/run_server.py bin/run_server.py
 
 # install runtime deps - using UV
 RUN uv sync --frozen
