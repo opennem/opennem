@@ -1,12 +1,10 @@
 import logging
 from datetime import date, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
 from fastapi_versionizer import api_version
 from sqlalchemy import select
-from sqlalchemy.engine.base import Engine
-from sqlalchemy.orm import Session
 from starlette import status
 
 from opennem import settings
@@ -18,7 +16,7 @@ from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
 from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
-from opennem.db import db_connect, get_scoped_session
+from opennem.db import db_connect, get_read_session
 from opennem.db.models.opennem import Facility
 from opennem.queries.emissions import get_emission_factor_region_query
 from opennem.queries.energy import get_energy_facility_query
@@ -55,8 +53,6 @@ async def power_station(
     interval_human: str | None = None,
     period_human: str | None = None,
     period: str | None = None,  # type: ignore
-    session: Session = Depends(get_scoped_session),
-    engine: Engine = Depends(db_connect),  # type: ignore
 ) -> OpennemDataSet:
     if not network_code:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No network code")
@@ -88,18 +84,19 @@ async def power_station(
     period_obj: TimePeriod = human_to_period(period_human)
     units = get_unit("power")
 
-    facility_lookup: Facility | None = (
-        (
-            await session.execute(
-                select(Facility)
-                .filter(Facility.code == facility_code)
-                .filter(Facility.network_id == network.code)
-                .filter(Facility.approved.is_(True))
+    async with get_read_session() as session:
+        facility_lookup: Facility | None = (
+            (
+                await session.execute(
+                    select(Facility)
+                    .filter(Facility.code == facility_code)
+                    .filter(Facility.network_id == network.code)
+                    .filter(Facility.approved.is_(True))
+                )
             )
+            .scalars()
+            .one_or_none()
         )
-        .scalars()
-        .one_or_none()
-    )
 
     if not facility_lookup:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Station not found")
@@ -117,6 +114,8 @@ async def power_station(
     query = power_facility_query(time_series=time_series, facility_code=facility_code)
 
     logger.debug(query)
+
+    engine = db_connect()
 
     async with engine.begin() as c:
         results = list(await c.execute(query))
@@ -167,8 +166,6 @@ async def energy_station(
     facility_code: str,
     interval: str | None = None,
     period: str | None = None,
-    engine: Engine = Depends(db_connect),  # type: ignore
-    session: Session = Depends(get_scoped_session),
 ) -> OpennemDataSet:
     """
     Get energy output for a station (list of facilities)
@@ -209,16 +206,17 @@ async def energy_station(
     period_obj = human_to_period(period)
     units = get_unit("energy")
 
-    # ensure the facility exists
-    facility_lookup: Facility | None = (
-        (
-            await session.execute(
-                select(Facility).filter(Facility.code == facility_code).filter(Facility.network_id == network.code)
+    async with get_read_session() as session:
+        # ensure the facility exists
+        facility_lookup: Facility | None = (
+            (
+                await session.execute(
+                    select(Facility).filter(Facility.code == facility_code).filter(Facility.network_id == network.code)
+                )
             )
+            .scalars()
+            .one_or_none()
         )
-        .scalars()
-        .one_or_none()
-    )
 
     if not facility_lookup:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Station not found")
@@ -257,6 +255,8 @@ async def energy_station(
     )
 
     logger.debug(query)
+
+    engine = db_connect()
 
     async with engine.begin() as connection:
         result = await connection.execute(query)
@@ -349,9 +349,10 @@ async def power_flows_network_week(
     network_code: str,
     network_region_code: str | None = None,
     month: date | None = None,
-    engine: Engine = Depends(db_connect),  # type: ignore
 ) -> OpennemDataSet | None:
     """Get the last day of network flow data"""
+
+    engine = db_connect()
 
     network = network_from_network_code(network_code)
 
@@ -539,9 +540,10 @@ async def emission_factor_per_network(  # type: ignore
     network_code: str,
     interval: str = "5m",
     network_region_code: str | None = None,
-    engine=Depends(db_connect),  # type: ignore
 ) -> OpennemDataSet | None:
     network = None
+
+    engine = db_connect()
 
     try:
         network = network_from_network_code(network_code)
@@ -662,7 +664,6 @@ async def price_network_endpoint(
     network_code: str,
     network_region_code: str | None = None,
     forecasts: bool = False,
-    engine: Engine = Depends(db_connect),
 ) -> OpennemDataSet:
     """Returns network and network region price info for interval which defaults to network
     interval size
@@ -676,6 +677,8 @@ async def price_network_endpoint(
     Returns:
         OpennemData: data set
     """
+
+    engine = db_connect()
 
     try:
         network = network_from_network_code(network_code)
