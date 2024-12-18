@@ -170,4 +170,4 @@ path = "opennem/__init__.py"
 
 [tool.setuptools]
 include-package-data = true
-packages = ["opennem"]
+packages = ["opennem", "bin"]
