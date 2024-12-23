@@ -300,6 +300,15 @@ class Unit(Base):
     __table_args__ = (
         Index("idx_facility_station_id", "station_id", postgresql_using="btree"),
         Index("idx_facility_fueltech_id", "fueltech_id"),
+        Index(
+            "idx_units_lookup",
+            code,
+            fueltech_id,
+            postgresql_where=text(
+                "(fueltech_id IS NOT NULL) AND "
+                "(fueltech_id <> ALL (ARRAY['imports'::text, 'exports'::text, 'interconnector'::text]))"
+            ),
+        ),
     )
 
     def __str__(self) -> str:
@@ -346,7 +355,14 @@ class FacilityScada(Base):
         Index("idx_facility_scada_facility_code_interval", facility_code, interval.desc()),
         Index("idx_facility_scada_network_id", network_id),
         Index("idx_facility_scada_interval_facility_code", interval, facility_code),
-        # Additional optimization hints
+        Index(
+            "idx_facility_scada_lookup",
+            interval,
+            facility_code,
+            is_forecast,
+            postgresql_where=text("is_forecast = false"),
+            postgresql_using="btree",
+        ),
     )
 
     def __str__(self) -> str:
@@ -375,29 +391,27 @@ class BalancingSummary(Base):
     is_forecast = Column(Boolean, default=False, nullable=False, primary_key=True)
 
     __table_args__ = (
-        # Index("idx_balancing_summary_network_id_interval", "network_id", "interval", postgresql_using="btree"),
         Index(
             "idx_balancing_summary_interval_network_region",
-            "interval",
-            "network_id",
-            "network_region",
-            postgresql_ops={"interval": "DESC"},
+            text("interval DESC"),
+            network_id,
+            network_region,
         ),
         # 1. Primary Index optimized for time bucket operations and filtering
-        Index("idx_balancing_time_lookup", "interval", "network_id", "network_region", "is_forecast", postgresql_using="btree"),
+        Index("idx_balancing_time_lookup", interval, network_id, network_region, is_forecast, postgresql_using="btree"),
         # 2. Partial index for non-forecast records with price
         # This helps with the LOCF operation on price
         Index(
             "idx_balancing_price_lookup",
-            "interval",
-            "network_id",
-            "network_region",
-            "price",
+            interval,
+            network_id,
+            network_region,
+            price,
             postgresql_where=text("is_forecast = false AND price IS NOT NULL"),
             postgresql_using="btree",
         ),
         # 3. Index for region-based querying
-        Index("idx_balancing_region_time", "network_region", "interval", "is_forecast", postgresql_using="btree"),
+        Index("idx_balancing_region_time", network_region, interval, is_forecast, postgresql_using="btree"),
     )
 
 
@@ -427,9 +441,9 @@ class AggregateNetworkFlows(Base):
 class AggregateNetworkDemand(Base):
     __tablename__ = "at_network_demand"
 
-    trading_day = Column(TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False)
+    trading_day = Column(TIMESTAMP(timezone=True), primary_key=True, nullable=False)
     network_id = Column(
-        Text, ForeignKey("network.code", name="fk_at_facility_daily_network_code"), primary_key=True, index=True, nullable=False
+        Text, ForeignKey("network.code", name="fk_at_facility_daily_network_code"), primary_key=True, nullable=False
     )
     network_region = Column(Text, primary_key=True)
     demand_energy = Column(Numeric, nullable=True)
@@ -438,16 +452,23 @@ class AggregateNetworkDemand(Base):
     network = relationship("Network")
 
     __table_args__ = (
-        Index("idx_at_network_demand_network_id_trading_interval", "network_id", "trading_day", postgresql_using="btree"),
-        Index("idx_at_network_demand_trading_interval_network_region", "trading_day", "network_id", "network_region"),
+        Index("idx_at_network_demand_network_id_trading_interval", network_id, trading_day, postgresql_using="btree"),
+        Index("idx_at_network_demand_trading_interval_network_region", trading_day, network_id, network_region),
+        Index(
+            "idx_at_network_demand_query_optimization",
+            network_id,
+            network_region,
+            trading_day,
+            postgresql_include=["demand_energy", "demand_market_value"],
+        ),
     )
 
 
 class Milestones(Base):
     __tablename__ = "milestones"
 
-    record_id: Mapped[str] = mapped_column(Text, primary_key=True, index=True)
-    interval: Mapped[datetime] = mapped_column(DateTime(timezone=False), primary_key=True, index=True)
+    record_id: Mapped[str] = mapped_column(Text, primary_key=True)
+    interval: Mapped[datetime] = mapped_column(DateTime(timezone=False), primary_key=True)
     instance_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), default=uuid.uuid4)
     aggregate = Column(String, nullable=False)
     metric = Column(String, nullable=True)
@@ -464,9 +485,10 @@ class Milestones(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), server_default=func.now())
 
     __table_args__ = (
-        UniqueConstraint("record_id", "interval", name="excl_milestone_record_id_interval"),
         Index("idx_milestone_network_id", "network_id", postgresql_using="btree"),
         Index("idx_milestone_fueltech_id", "fueltech_id", postgresql_using="btree"),
+        Index("ix_milestones_interval", interval),
+        Index("ix_milestones_record_id", record_id),
     )
 
 
@@ -508,9 +530,31 @@ class FacilityAggregate(Base):
     last_updated: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("now()"))
 
     __table_args__ = (
+        Index("at_facility_intervals_interval_idx", interval.desc()),
         Index("idx_at_facility_intervals_interval_network", interval.desc(), network_id),
         Index("idx_at_facility_intervals_facility_interval", facility_code, interval.desc()),
         Index("idx_at_facility_intervals_network_region", network_region),
+        Index(
+            "idx_facility_intervals_monthly_agg",
+            network_id,
+            interval,
+            fueltech_code,
+            postgresql_where=text(
+                "network_id = ANY (ARRAY['NEM'::text, 'AEMO_ROOFTOP'::text, 'OPENNEM_ROOFTOP_BACKFILL'::text])"
+            ),
+            postgresql_include=["energy", "market_value", "emissions"],
+        ),
+        Index(
+            "idx_facility_intervals_region_monthly_agg",
+            network_id,
+            network_region,
+            interval,
+            fueltech_code,
+            postgresql_where=text(
+                "network_id = ANY (ARRAY['NEM'::text, 'AEMO_ROOFTOP'::text, 'OPENNEM_ROOFTOP_BACKFILL'::text])"
+            ),
+            postgresql_include=["energy", "market_value", "emissions"],
+        ),
         # Index for time bucket operations
         Index(
             "idx_at_facility_intervals_time_facility",
@@ -523,5 +567,4 @@ class FacilityAggregate(Base):
             unit_code,
             interval.desc(),
         ),
-        # Partial index for recent data
     )
