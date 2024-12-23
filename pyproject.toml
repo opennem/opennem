@@ -69,6 +69,7 @@ dependencies = [
     "humanize>=4.11.0",
     "clerk-backend-api>=1.5.0",
     "pyarrow>=18.1.0",
+    "curl-cffi>=0.7.4",
 ]
 
 [tool.uv]

@@ -24,18 +24,6 @@ DEFAULT_BROWSER_HEADERS = {
     "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
     "Cache-Control": "no-cache",
     "Connection": "keep-alive",
-    # "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*",
-    # "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
-    # "accept-encoding": "gzip, deflate",
-    # "scheme": "https",
-    # "sec-ch-prefers-color-scheme": "light",
-    # "sec-ch-ua-mobile": "?0",
-    # "sec-ch-ua-platform": '"macOS"',
-    # "sec-fetch-dest": "document",
-    # "sec-fetch-mode": "navigate",
-    # "sec-fetch-site": "none",
-    # "sec-fetch-user": "?1",
-    # "upgrade-insecure-requests": "1",
 }
 
 

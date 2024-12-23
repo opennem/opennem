@@ -537,6 +537,28 @@ wheels = [
 ]
 
 [[package]]
+name = "curl-cffi"
+version = "0.7.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "certifi" },
+    { name = "cffi" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d8/b6/81ea20376e1440a2bcb0f0574c158bccb0948621e437f5634b6fc210d2ba/curl_cffi-0.7.4.tar.gz", hash = "sha256:37a2c8ec77b9914b0c14c74f604991751948d9d5def58fcddcbe73e3b62111c1", size = 137276 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d1/c7/f2133c98a9956baa720dc775ba43b2cf7bf22b0feb0f921aab9bbeb2b58c/curl_cffi-0.7.4-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:417f5264fa746d2680ebb20fbfbcfe5d77fa11a735548d9db6734e839a238e22", size = 5106509 },
+    { url = "https://files.pythonhosted.org/packages/29/e9/141ff25c5e35f4afc998cf60134df94e0a9157427da69d6ee1d2a045c554/curl_cffi-0.7.4-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:fb76b654fcf9f3e0400cf13be949e4fc525aeb0f9e2e90e61ae48d5bd8557d25", size = 2564082 },
+    { url = "https://files.pythonhosted.org/packages/66/c4/442094831e7017347e866809bfba29f116864a046478e013848f272ba7b7/curl_cffi-0.7.4-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:bb9db59b164f2b6be65be62add5896a6fe125c52572aca3046caffbd7eb38f46", size = 5716431 },
+    { url = "https://files.pythonhosted.org/packages/99/95/6ac63d489167f712bdc14a2cfbe5df252a2e2e95c5b376ea37bda5646fa8/curl_cffi-0.7.4-cp38-abi3-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:4593b120c8101b327e4e2d2c278652c5ef58c42dd39dc4586c2789e42a8bc8b1", size = 5521870 },
+    { url = "https://files.pythonhosted.org/packages/06/83/2de6b27ba8b3ac394252cadb8783f5c57219068489456d8bb58a180d4aa6/curl_cffi-0.7.4-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c4b5685fab3984aae559e6590a6434a7e34f5d615c562c29c1554a90fffbf0bd", size = 6076887 },
+    { url = "https://files.pythonhosted.org/packages/86/1d/29b2cf2b7c82c61aeff0076b02531b49420beb5fa89c5a0529f5c06480fe/curl_cffi-0.7.4-cp38-abi3-musllinux_1_1_aarch64.whl", hash = "sha256:3f8c19b5ca979e806fcf4de24f606eff745c85b43e9e88956d1db3c07516cc4b", size = 6221911 },
+    { url = "https://files.pythonhosted.org/packages/1b/7e/a9ba49576373e26169e163878cbb8d4e02cfabf3694c686e22243c12f0dd/curl_cffi-0.7.4-cp38-abi3-musllinux_1_1_x86_64.whl", hash = "sha256:9957464013b1f76b0e9259ab846fa60faef7ff08e96e7a1764dd63c83005b836", size = 6004845 },
+    { url = "https://files.pythonhosted.org/packages/c8/d3/79175cf310f0b1c7149e5a2f25cba997aec83a2bcedc85c744a6456e33af/curl_cffi-0.7.4-cp38-abi3-win32.whl", hash = "sha256:8e9019cf6996bf508e4a51751d7217f22d5902405878679a3ac4757159251741", size = 4188474 },
+    { url = "https://files.pythonhosted.org/packages/1c/86/6054fcc3fd28ec024ad36a667fa49a05b0c9caf26724186918b7c0ef8217/curl_cffi-0.7.4-cp38-abi3-win_amd64.whl", hash = "sha256:31a80d5ab1bc0f9d4bc0f98d91dc1a3ed4aa08566f21b76ecfde23ece08e0fa9", size = 3993713 },
+]
+
+[[package]]
 name = "cycler"
 version = "0.12.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1643,6 +1665,7 @@ dependencies = [
     { name = "cachetools" },
     { name = "chardet" },
     { name = "clerk-backend-api" },
+    { name = "curl-cffi" },
     { name = "datedelta" },
     { name = "datetime-truncate" },
     { name = "datetype" },
@@ -1727,6 +1750,7 @@ requires-dist = [
     { name = "cachetools", specifier = ">=5.0.0,<6.0.0" },
     { name = "chardet", specifier = ">=5.2.0,<6.0.0" },
     { name = "clerk-backend-api", specifier = ">=1.5.0" },
+    { name = "curl-cffi", specifier = ">=0.7.4" },
     { name = "datedelta", specifier = ">=1.3,<2.0" },
     { name = "datetime-truncate", specifier = ">=1.1.1,<2.0.0" },
     { name = "datetype", specifier = ">=2024.2.8,<2025.0.0" },

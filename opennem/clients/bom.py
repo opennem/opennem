@@ -5,10 +5,11 @@ from datetime import UTC, datetime
 from typing import Annotated, Any
 from zoneinfo import ZoneInfo
 
+from curl_cffi.requests import AsyncSession
 from pydantic import BeforeValidator, model_validator
 
 from opennem.schema.core import BaseConfig
-from opennem.utils.httpx import httpx_factory
+from opennem.utils.httpx import DEFAULT_BROWSER_HEADERS
 from opennem.utils.timezone import get_timezone_for_state
 
 logger = logging.getLogger("opennem.clients.bom")
@@ -95,7 +96,7 @@ async def get_bom_observations(observation_url: str, station_code: str) -> BOMOb
 
     logger.info(f"Fetching {observation_url}")
 
-    async with httpx_factory(mimic_browser=True, proxy=False) as http:
+    async with AsyncSession(headers=DEFAULT_BROWSER_HEADERS) as http:
         response = await http.get(observation_url)
 
     if response.status_code == 403:
