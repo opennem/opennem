@@ -89,7 +89,8 @@ async def get_milestone_records(
         select_query = select_query.where(Milestones.record_id.ilike(f"{record_id_filter}"))
 
     total_query = select(func.count()).select_from(select_query.subquery())
-    total_records = await session.scalar(total_query)
+    total_records = await session.execute(total_query)
+    total_records = total_records.scalar_one_or_none()
 
     select_query = select_query.order_by(Milestones.interval.desc())
 
