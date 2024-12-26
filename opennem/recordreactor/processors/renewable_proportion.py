@@ -80,6 +80,10 @@ async def run_renewable_proportion_milestones(
     ]:
         return
 
+    # for interval size, we can only run proportion on the hour or on minute 30
+    if bucket_size == MilestonePeriod.interval and (start_date.minute != 0 and start_date.minute != 30):
+        return
+
     for group_by_region in [True, False]:
         milestone_data = await _aggregate_renewable_proportion_data(
             network=network,
