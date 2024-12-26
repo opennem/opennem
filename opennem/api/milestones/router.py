@@ -10,7 +10,7 @@ from starlette.exceptions import HTTPException
 
 from opennem.api.keys import api_protected
 from opennem.api.schema import APIV4ResponseSchema
-from opennem.db import get_scoped_session
+from opennem.db import get_scoped_read_session
 from opennem.recordreactor.controllers import map_milestone_output_records_from_db
 from opennem.recordreactor.schema import (
     MILESTONE_SUPPORTED_NETWORKS,
@@ -55,7 +55,7 @@ async def get_milestones(
     significance_max: int | None = Query(None, description="Significance maximum filter"),
     record_id_filter: str | None = Query(None, description="Filter by record_id - supports wildcards"),
     period: list[MilestonePeriod] | None = Query(None, description="Period filter"),
-    db: AsyncSession = Depends(get_scoped_session),
+    db: AsyncSession = Depends(get_scoped_read_session),
 ) -> APIV4ResponseSchema:
     """Get a list of milestones"""
 
@@ -190,7 +190,7 @@ async def get_milestone_by_record_id(
     record_id: str,
     limit: int = 1000,
     page: int = 1,
-    db: AsyncSession = Depends(get_scoped_session),
+    db: AsyncSession = Depends(get_scoped_read_session),
 ) -> APIV4ResponseSchema:
     """Get a single milestone by record id"""
 
@@ -203,6 +203,7 @@ async def get_milestone_by_record_id(
     try:
         db_record, total_records = await get_milestone_records(session=db, record_id=record_id, page_number=page, limit=limit)
     except Exception as e:
+        logger.debug(e)
         logger.error(f"Error getting milestone record: {e}")
         response_schema = APIV4ResponseSchema(success=False, error="Error getting milestone record")
         return response_schema
@@ -210,6 +211,7 @@ async def get_milestone_by_record_id(
     try:
         milestone_record = map_milestone_output_records_from_db(db_records=db_record)
     except Exception as e:
+        logger.debug(e)
         logger.error(f"Error mapping milestone record: {e}")
         response_schema = APIV4ResponseSchema(success=False, error="Error mapping milestone record")
         return response_schema
@@ -234,7 +236,7 @@ async def get_milestone_by_record_id(
 async def get_milestone(
     instance_id: uuid.UUID,
     include_history: bool = Query(False, description="Include historical milestone records"),
-    db: AsyncSession = Depends(get_scoped_session),
+    db: AsyncSession = Depends(get_scoped_read_session),
 ) -> APIV4ResponseSchema:
     """Get a single milestone"""
 
@@ -281,7 +283,7 @@ async def get_milestone(
     include_in_schema=True,
 )
 async def api_get_milestone_record_ids(
-    db: AsyncSession = Depends(get_scoped_session),
+    db: AsyncSession = Depends(get_scoped_read_session),
     record_id: str | None = Query(None, description="Filter by record_id"),
     date_start: datetime | None = None,
     date_end: datetime | None = None,
