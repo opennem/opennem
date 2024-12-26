@@ -4,6 +4,7 @@ RecordReactor peristence methods
 
 import logging
 
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.exc import IntegrityError
 
 from opennem.db import get_write_session
@@ -14,6 +15,103 @@ from opennem.recordreactor.state import get_current_milestone_state
 from opennem.recordreactor.utils import check_milestone_is_new, get_record_description
 
 logger = logging.getLogger("opennem.recordreactor.persistence")
+
+# PostgreSQL has a limit of 32767 parameters per query
+# Each record has 13 fields, so we'll set chunk size to ensure we stay well under the limit
+CHUNK_SIZE = 2000  # This gives us max 26000 parameters per query
+
+
+def _chunks(lst: list, n: int):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), n):
+        yield lst[i : i + n]
+
+
+async def persist_milestones(milestones: list[MilestoneRecordSchema]) -> int:
+    """
+    Persist milestones using bulk insert
+
+    This takes all the milestone records and persists them using a bulk insert operation
+    for better performance. Records are processed in chunks to avoid PostgreSQL parameter limits.
+
+    Args:
+        milestones: list[MilestoneRecordSchema] - the milestones to persist
+
+    Returns:
+        int - the number of records inserted
+    """
+    if not milestones:
+        return 0
+
+    logger.info(f"Bulk persisting {len(milestones)} milestones")
+
+    # Pre-process records into a list of dictionaries for bulk insert
+    milestone_records = []
+
+    for record in milestones:
+        if not record.value or not record.instance_id:
+            logger.warning(f"Skipping milestone {record.record_id} because it has no value or instance_id")
+            continue
+
+        description = get_record_description(record)
+        significance = calculate_milestone_significance(record)
+
+        milestone_dict = {
+            "record_id": record.record_id,
+            "instance_id": record.instance_id,
+            "interval": record.interval,
+            "aggregate": record.aggregate.value,
+            "metric": record.metric.value,
+            "period": record.period.value,
+            "significance": significance,
+            "value": round(record.value, 4),
+            "value_unit": record.unit.unit,
+            "network_id": record.network.code,
+            "description": description,
+            "previous_instance_id": record.previous_instance_id,
+            "network_region": record.network_region if record.network_region else None,
+            "fueltech_id": record.fueltech.value if record.fueltech else None,
+        }
+        milestone_records.append(milestone_dict)
+
+    if not milestone_records:
+        return 0
+
+    total_inserted = 0
+    async with get_write_session() as session:
+        try:
+            # Process records in chunks
+            for chunk in _chunks(milestone_records, CHUNK_SIZE):
+                stmt = pg_insert(Milestones.__table__).values(chunk)
+                stmt = stmt.on_conflict_do_update(
+                    constraint="excl_milestone_record_id_interval",
+                    set_={
+                        "aggregate": stmt.excluded.aggregate,
+                        "metric": stmt.excluded.metric,
+                        "period": stmt.excluded.period,
+                        "significance": stmt.excluded.significance,
+                        "value": stmt.excluded.value,
+                        "value_unit": stmt.excluded.value_unit,
+                        "network_id": stmt.excluded.network_id,
+                        "description": stmt.excluded.description,
+                        "previous_instance_id": stmt.excluded.previous_instance_id,
+                        "network_region": stmt.excluded.network_region,
+                        "fueltech_id": stmt.excluded.fueltech_id,
+                    },
+                )
+
+                await session.execute(stmt)
+                total_inserted += len(chunk)
+                logger.debug(f"Inserted chunk of {len(chunk)} records")
+
+            await session.commit()
+            logger.info(f"Successfully inserted {total_inserted} records")
+            return total_inserted
+
+        except Exception as e:
+            logger.error(f"Error during bulk milestone insertion: {str(e)}")
+            await session.rollback()
+            raise
 
 
 async def check_and_persist_milestones(
