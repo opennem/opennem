@@ -68,22 +68,36 @@ class OpenNEMDataExport:
 # queries for archive exports
 
 
+def _get_time_chunks(date_start: datetime, date_end: datetime, chunk_days: int = 90) -> list[tuple[datetime, datetime]]:
+    """
+    Generate time chunks for processing large date ranges.
+
+    Args:
+        date_start: Start date
+        date_end: End date
+        chunk_days: Number of days per chunk
+
+    Returns:
+        list[tuple[datetime, datetime]]: List of (chunk_start, chunk_end) tuples
+    """
+    chunks = []
+    chunk_start = date_start
+
+    while chunk_start < date_end:
+        chunk_end = min(chunk_start + timedelta(days=chunk_days), date_end)
+        chunks.append((chunk_start, chunk_end))
+        chunk_start = chunk_end
+
+    return chunks
+
+
 def _get_fueltech_interval_query(
     date_start: datetime, date_end: datetime, limit: int | None = None, offset: int | None = None
 ) -> str:
     """
-    Get fueltech interval data query with optional pagination.
-
-    Args:
-        date_start: Start date for query
-        date_end: End date for query
-        limit: Optional row limit
-        offset: Optional row offset
-
-    Returns:
-        str: SQL query string
+    Get fueltech interval data query optimized for time-based chunking.
     """
-    query = dedent(f"""
+    return dedent(f"""
         select
             fs.interval as interval,
             fs.network_id,
@@ -103,13 +117,6 @@ def _get_fueltech_interval_query(
         group by 1,2,3,4,5,6
         order by interval desc, network_id, network_region, fueltech_code
     """)
-
-    if limit is not None:
-        query += f"\nLIMIT {limit}"
-    if offset is not None:
-        query += f"\nOFFSET {offset}"
-
-    return query
 
 
 def _get_fueltech_generation_query(
@@ -263,74 +270,49 @@ def _get_memory_chunk_size() -> int:
 
 async def _stream_to_parquet(export_definition: OpenNEMDataExport, buffer: io.BytesIO) -> tuple[int, int]:
     """
-    Streams query results directly to parquet format using PyArrow with chunked processing.
-
-    Args:
-        query_func: Function that returns SQL query with offset/limit parameters
-        buffer: BytesIO buffer to write parquet data to
-
-    Returns:
-        tuple[int, int]: Total rows processed and buffer size in bytes
-
-    Raises:
-        Exception: If database connection fails
+    Streams query results using time-based chunking.
     """
     engine = db_connect_sync()
-    chunk_size = _get_memory_chunk_size()
-
-    logger.debug(f"Using chunk size of {chunk_size:,} rows based on available memory")
-
-    # Wrap query func to add offset/limit
-    def _get_paginated_query(export_definition: OpenNEMDataExport, offset: int, limit: int) -> str:
-        date_start = NetworkNEM.data_first_seen
-        date_end = get_last_complete_day_for_network(network=NetworkNEM).replace(tzinfo=None)
-
-        if export_definition.time_period:
-            date_start = date_end - export_definition.time_period
-
-        if not date_start:
-            raise ValueError(f"Date start for {export_definition.file_name} is not set")
-
-        return export_definition.query(date_start, date_end, limit, offset)
 
     try:
         with engine.connect() as conn:
-            # Get schema from first row
-            first_query = _get_paginated_query(export_definition, offset=0, limit=1)
+            # Get date range
+            date_start = NetworkNEM.data_first_seen.replace(tzinfo=None)
+            date_end = get_last_complete_day_for_network(network=NetworkNEM).replace(tzinfo=None)
 
-            logger.debug(f"First query: {first_query}")
+            if export_definition.time_period:
+                date_start = date_end - export_definition.time_period
 
+            if not date_start:
+                raise ValueError(f"Date start for {export_definition.file_name} is not set")
+
+            # Get schema from first chunk
+            first_query = export_definition.query(date_start, date_start + timedelta(days=1), None, None)
             first_chunk = pl.read_database(first_query, conn, schema_overrides={})
             schema = first_chunk.to_arrow().schema
 
             # Create PyArrow writer
             writer = pq.ParquetWriter(buffer, schema, compression="snappy", version="2.6", write_statistics=True)
 
-            # Process chunks
-            offset = 0
+            # Process time chunks
             total_rows = 0
+            chunks = _get_time_chunks(date_start, date_end)
 
-            while True:
-                chunked_query = _get_paginated_query(export_definition, offset, chunk_size)
+            for chunk_start, chunk_end in chunks:
+                logger.debug(f"Processing chunk {chunk_start} to {chunk_end}")
 
-                logger.debug(f"Chunked query: {chunked_query}")
-                df_chunk = pl.read_database(chunked_query, conn, schema_overrides={})
+                query = export_definition.query(chunk_start, chunk_end, None, None)
+                df_chunk = pl.read_database(query, conn, schema_overrides={})
 
                 if df_chunk.height == 0:
-                    break
+                    continue
 
                 arrow_table = df_chunk.to_arrow()
                 for batch in arrow_table.to_batches():
                     writer.write_batch(batch)
                     total_rows += batch.num_rows
 
-                offset += chunk_size
-                logger.debug(f"Processed chunk at offset {offset:,}")
-
-                # if the number of rows is less than the chunk size, we've
-                # reached the end of the data and don't need to process any more
-                if df_chunk.height < chunk_size:
-                    break
+                logger.debug(f"Processed chunk with {df_chunk.height:,} rows")
 
             writer.close()
             logger.info(f"Processed total of {total_rows:,} rows")
