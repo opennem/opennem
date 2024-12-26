@@ -3,6 +3,7 @@ RecordReactor peristence methods
 """
 
 import logging
+from datetime import datetime
 
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.exc import IntegrityError
@@ -79,39 +80,46 @@ async def persist_milestones(milestones: list[MilestoneRecordSchema]) -> int:
 
     total_inserted = 0
     async with get_write_session() as session:
-        try:
-            # Process records in chunks
-            for chunk in _chunks(milestone_records, CHUNK_SIZE):
-                stmt = pg_insert(Milestones.__table__).values(chunk)
-                stmt = stmt.on_conflict_do_update(
-                    constraint="excl_milestone_record_id_interval",
-                    set_={
-                        "aggregate": stmt.excluded.aggregate,
-                        "metric": stmt.excluded.metric,
-                        "period": stmt.excluded.period,
-                        "significance": stmt.excluded.significance,
-                        "value": stmt.excluded.value,
-                        "value_unit": stmt.excluded.value_unit,
-                        "network_id": stmt.excluded.network_id,
-                        "description": stmt.excluded.description,
-                        "previous_instance_id": stmt.excluded.previous_instance_id,
-                        "network_region": stmt.excluded.network_region,
-                        "fueltech_id": stmt.excluded.fueltech_id,
-                    },
-                )
+        for chunk in _chunks(milestone_records, CHUNK_SIZE):
+            stmt = pg_insert(Milestones.__table__).values(chunk)
+            stmt = stmt.on_conflict_do_update(
+                constraint="excl_milestone_record_id_interval",
+                set_={
+                    "aggregate": stmt.excluded.aggregate,
+                    "metric": stmt.excluded.metric,
+                    "period": stmt.excluded.period,
+                    "significance": stmt.excluded.significance,
+                    "value": stmt.excluded.value,
+                    "value_unit": stmt.excluded.value_unit,
+                    "network_id": stmt.excluded.network_id,
+                    "description": stmt.excluded.description,
+                    "previous_instance_id": stmt.excluded.previous_instance_id,
+                    "network_region": stmt.excluded.network_region,
+                    "fueltech_id": stmt.excluded.fueltech_id,
+                },
+            )
+            try:
+                # Process records in chunks
 
                 await session.execute(stmt)
                 total_inserted += len(chunk)
                 logger.debug(f"Inserted chunk of {len(chunk)} records")
 
-            await session.commit()
-            logger.info(f"Successfully inserted {total_inserted} records")
-            return total_inserted
+                await session.commit()
+                logger.info(f"Successfully inserted {total_inserted} records")
+                return total_inserted
 
-        except Exception as e:
-            logger.error(f"Error during bulk milestone insertion: {str(e)}")
-            await session.rollback()
-            raise
+            except Exception as e:
+                logger.error(f"Error during bulk milestone insertion: {str(e)}")
+                # write the records for the current chunk as a csv to a file
+                with open(f"milestone_records_{datetime.now().strftime('%Y%m%d%H%M%S')}.csv", "w") as f:
+                    for record in chunk:
+                        f.write(
+                            f"{record['record_id']},{record['instance_id']},{record['interval']},{record['aggregate']},{record['metric']},{record['period']},{record['value']},{record['value_unit']},{record['network_id']},{record['description']},{record['previous_instance_id']},{record['network_region']},{record['fueltech_id']}\n"
+                        )
+
+                await session.rollback()
+                raise
 
 
 async def check_and_persist_milestones(
