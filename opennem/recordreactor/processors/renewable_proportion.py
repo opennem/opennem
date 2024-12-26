@@ -6,7 +6,7 @@ import logging
 from datetime import datetime
 
 from opennem.queries.renewable_proportion import get_renewable_energy_proportion
-from opennem.recordreactor.persistence import persist_milestones
+from opennem.recordreactor.persistence import check_and_persist_milestones
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
     MilestoneFueltechGrouping,
@@ -91,6 +91,6 @@ async def run_renewable_proportion_milestones(
             group_by_renewable=True,
         )
 
-        await persist_milestones(
+        await check_and_persist_milestones(
             milestones=milestone_data,
         )

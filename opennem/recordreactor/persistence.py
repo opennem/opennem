@@ -16,10 +16,20 @@ from opennem.recordreactor.utils import check_milestone_is_new, get_record_descr
 logger = logging.getLogger("opennem.recordreactor.persistence")
 
 
-async def persist_milestones(
+async def check_and_persist_milestones(
     milestones: list[MilestoneRecordSchema],
 ):
-    """ """
+    """
+    This checks that the milestone is a record and then persists it if it is
+
+    @TODO: This should be a transaction
+
+    params:
+        milestones: list[MilestoneRecordSchema] - the milestones to check and persist
+
+    returns:
+        None
+    """
 
     if not milestones:
         return

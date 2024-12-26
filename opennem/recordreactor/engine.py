@@ -27,7 +27,7 @@ _DEFAULT_METRICS = [
     MilestoneType.power,
     MilestoneType.energy,
     MilestoneType.emissions,
-    # MilestoneType.renewable_proportion
+    MilestoneType.proportion,
 ]
 
 _DEFAULT_BUCKET_SIZES = [
@@ -55,6 +55,7 @@ async def run_milestone_engine(
 ):
     # normalise start and end intervals with no timezone info (ie. make unaware)
     start_interval = start_interval.replace(tzinfo=None)
+
     if end_interval:
         end_interval = end_interval.replace(tzinfo=None)
 
@@ -66,6 +67,11 @@ async def run_milestone_engine(
 
     if not periods:
         periods = _DEFAULT_BUCKET_SIZES
+
+    logger.info(
+        f"Running milestone engine for {networks}, {len(periods)} periods and"
+        f" {len(metrics)} metrics from {start_interval} to {end_interval}"
+    )
 
     for network in networks:
         if not network.interval_size:
@@ -177,11 +183,11 @@ if __name__ == "__main__":
     import asyncio
 
     nem_start = datetime.fromisoformat("1998-12-08 00:00:00")
-    start_interval = datetime.fromisoformat("1999-03-26 04:55:00")
-    test_start_interval = datetime.fromisoformat("2010-01-01 00:00:00")
+    # start_interval = datetime.fromisoformat("1999-03-26 04:55:00")
+    # test_start_interval = datetime.fromisoformat("2010-01-01 00:00:00")
 
     # Test entry point
-    start_interval = datetime.fromisoformat("2014-05-16 00:00:00")
+    start_interval = datetime.fromisoformat("2024-12-16 00:00:00")
     end_interval = get_last_completed_interval_for_network(network=NetworkNEM)
     asyncio.run(
         run_milestone_engine(
