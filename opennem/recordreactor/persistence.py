@@ -105,10 +105,6 @@ async def persist_milestones(milestones: list[MilestoneRecordSchema]) -> int:
                 total_inserted += len(chunk)
                 logger.debug(f"Inserted chunk of {len(chunk)} records")
 
-                await session.commit()
-                logger.info(f"Successfully inserted {total_inserted} records")
-                return total_inserted
-
             except Exception as e:
                 logger.error(f"Error during bulk milestone insertion: {str(e)}")
                 # write the records for the current chunk as a csv to a file
@@ -120,6 +116,10 @@ async def persist_milestones(milestones: list[MilestoneRecordSchema]) -> int:
 
                 await session.rollback()
                 raise
+
+        await session.commit()
+        logger.info(f"Successfully inserted {total_inserted} records")
+        return total_inserted
 
 
 async def check_and_persist_milestones(
@@ -182,16 +182,16 @@ async def check_and_persist_milestones(
 
                     # update state to point to this new milestone
                     milestone_state[record.record_id] = MilestoneRecordOutputSchema(
-                        **record.model_dump(),
+                        **record.model_dump(exclude={"instance_id", "value_unit", "network_id"}),
                         network_id=record.network.code,
                         value_unit=record.unit.unit,
                         instance_id=milestone_new.instance_id,
                         significance=significance,
                     )
 
-                    # logger.info(
-                    #     f"Added milestone for interval {record.aggregate.value} {record.record_id} with value {record.value}"
-                    # )
+                    logger.info(
+                        f"Added milestone for interval {record.aggregate.value} {record.record_id} with value {record.value}"
+                    )
                 except IntegrityError:
                     logger.warning(f"Milestone already exists: {record.record_id} for interval {record.interval}")
 
