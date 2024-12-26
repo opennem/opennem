@@ -101,11 +101,21 @@ def analyze_generation_records(
     # Handle group by fields in SELECT statements
     group_by_select = f", {', '.join(grouping.group_by_fields)}" if grouping.group_by_fields else ""
 
+    # convert the metric to the parquer column name
+    metric_column = ""
+
+    if milestone_type == MilestoneType.power:
+        metric_column = "generated"
+    elif milestone_type == MilestoneType.energy:
+        metric_column = "energy"
+    elif milestone_type == MilestoneType.emissions:
+        metric_column = "emissions"
+
     base_query = f"""
     WITH regional_generation AS (
       SELECT
         {time_bucket_sql} as interval{group_by_select},
-        SUM(generated) as total_generation
+        SUM({metric_column}) as total_generation
       FROM read_parquet(?)
       WHERE
         network_id in (
@@ -191,7 +201,6 @@ def analyze_generation_records(
         ELSE ((total_generation - prev_max) / prev_max * 100)
       END as pct_change,
       'high' as record_type,
-      '{milestone_type.value}' as metric,
       '{period.value}' as period,
       instance_id,
       prev_instance_id
@@ -210,7 +219,6 @@ def analyze_generation_records(
         ELSE ((total_generation - prev_min) / prev_min * 100)
       END as pct_change,
       'low' as record_type,
-      '{milestone_type.value}' as metric,
       '{period.value}' as period,
       instance_id,
       prev_instance_id
@@ -219,7 +227,7 @@ def analyze_generation_records(
       total_generation = running_min
       AND (prev_min IS NULL OR total_generation < prev_min))
 
-    ORDER BY interval, metric;
+    ORDER BY interval;
     """
 
     try:
@@ -241,6 +249,15 @@ _DEFAULT_PERIODS = [
     # MilestonePeriod.quarter,
     MilestonePeriod.year,
     # MilestonePeriod.financial_year,
+]
+
+_DEFAULT_METRICS = [
+    MilestoneType.demand,
+    MilestoneType.price,
+    MilestoneType.power,
+    MilestoneType.energy,
+    MilestoneType.emissions,
+    MilestoneType.proportion,
 ]
 
 
@@ -330,22 +347,32 @@ async def run_milestone_analysis(parquet_path: str) -> None:
     milestone_records: list[MilestoneRecordSchema] = []
 
     # Iterate through all periods and grouping configurations
-    for network in [NetworkNEM, NetworkWEM]:
-        for period in _DEFAULT_PERIODS:
-            for grouping in GROUPING_CONFIGS:
-                logger.info(f"Analyzing {network.code} {period.value} records with grouping: {grouping.name}")
+    for metric in _DEFAULT_METRICS:
+        for network in [NetworkNEM, NetworkWEM]:
+            for period in _DEFAULT_PERIODS:
+                for grouping in GROUPING_CONFIGS:
+                    if metric in [MilestoneType.power, MilestoneType.energy, MilestoneType.emissions]:
+                        if period == MilestonePeriod.interval and metric not in [MilestoneType.power]:
+                            continue
 
-                records_df = analyze_generation_records(
-                    parquet_path=parquet_path,
-                    network=network,
-                    period=period,
-                    milestone_type=MilestoneType.power,
-                    grouping=grouping,
-                )
+                        if period != MilestonePeriod.interval and metric == MilestoneType.power:
+                            continue
 
-                milestone_records.extend(
-                    _analyzed_record_to_milestone_schema(records_df, network, period, MilestoneType.power, grouping)
-                )
+                        logger.info(
+                            f"Analyzing {network.code} {metric.value} {period.value} records with grouping: {grouping.name}"
+                        )
+
+                        records_df = analyze_generation_records(
+                            parquet_path=parquet_path,
+                            network=network,
+                            milestone_type=metric,
+                            period=period,
+                            grouping=grouping,
+                        )
+
+                        milestone_records.extend(
+                            _analyzed_record_to_milestone_schema(records_df, network, period, metric, grouping)
+                        )
 
     logger.info(f"Found {len(milestone_records)} milestone records")
 
@@ -356,7 +383,7 @@ async def run_milestone_analysis(parquet_path: str) -> None:
 if __name__ == "__main__":
     # Path to your parquet file
     parquet_path = "data/fueltech_interval_all.parquet"
-    parquet_path = "data/1y_fueltech_interval_data.parquet"
+    # parquet_path = "data/1y_fueltech_interval_data.parquet"
 
     # Run analysis
     import asyncio
