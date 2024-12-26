@@ -107,6 +107,7 @@ def _get_fueltech_interval_query(
             ftg.renewable as renewable,
             round(sum(fs.generated)::numeric, 4) as generated,
             round(sum(fs.energy)::numeric, 4) as energy,
+            round(sum(fs.market_value)::numeric, 4) as market_value,
             round(sum(fs.emissions)::numeric, 4) as emissions
         FROM at_facility_intervals fs
         JOIN fueltech ft ON ft.code = fs.fueltech_code
