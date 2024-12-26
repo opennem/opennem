@@ -160,6 +160,11 @@ async def get_write_session() -> AsyncGenerator[AsyncSession, None]:
             raise
 
 
+async def get_scoped_read_session() -> AsyncGenerator[AsyncSession, None]:
+    async with SessionLocal() as session:
+        yield session
+
+
 @asynccontextmanager
 async def get_notransaction_session() -> AsyncGenerator[AsyncSession, None]:
     """
