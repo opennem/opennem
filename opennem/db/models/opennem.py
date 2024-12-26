@@ -453,7 +453,7 @@ class Milestones(Base):
     metric = Column(String, nullable=True)
     period = Column(String, nullable=True)
     significance = Column(Integer, nullable=False, default=0)
-    value = Column(Float, nullable=False)
+    value: Mapped[float] = mapped_column(Numeric(precision=20, scale=6), nullable=False)
     value_unit = Column(String, nullable=True)
     network_id = Column(Text, ForeignKey("network.code"), nullable=True)
     network_region: Mapped[str | None] = mapped_column(Text, nullable=True)
