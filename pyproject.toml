@@ -56,7 +56,7 @@ dependencies = [
     "tqdm<5.0.0,>=4.66.5",
     "logfire[asyncpg,fastapi,httpx,redis,requests,sqlalchemy,system-metrics]",
     "aioboto3<14.0.0,>=13.1.1",
-    "arq<1.0.0,>=0.26.1",
+    "arq>=0.26.1,<1.0.0",
     "asyncclick<9.0.0.0,>=8.1.7.2",
     "openai<2.0.0,>=1.43.1",
     "instructor<2.0.0,>=1.4.0",
