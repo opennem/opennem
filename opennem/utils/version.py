@@ -23,7 +23,7 @@ class Version:
         return f"{self.major}.{self.minor}.{self.patch}"
 
 
-def get_version(dev_tag: bool = True) -> str:
+def get_version(dev_tag: bool = False) -> str:
     """Read the version from the package __version__ variable"""
     version_parts = [
         __version__,

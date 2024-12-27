@@ -62,10 +62,15 @@ tag:
 			echo "Error: Cannot tag non-release on master branch"; \
 			exit 1; \
 		fi \
+		git tag $(NEW_VERSION)
+		@echo "Pushing $(NEW_VERSION)"
+		git push -u origin $(NEW_VERSION) $(CURRENT_BRANCH)
+
+		# else if the branch is not master then don't tag and just push the branch
+	else \
+		git push -u origin $(CURRENT_BRANCH)
 	fi
-	git tag $(NEW_VERSION)
-	@echo "Pushing $(NEW_VERSION)"
-	git push -u origin $(NEW_VERSION) $(CURRENT_BRANCH)
+
 
 .PHONY: release-pre
 release-pre: format lint
