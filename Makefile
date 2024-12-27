@@ -48,6 +48,15 @@ version:
 			exit 1; \
 		fi \
 	fi; \
+
+	# if the current branch is dev then the bump type must be dev
+	if [ "$$current_branch" = "dev" ]; then \
+		if [ "$$BUMP_TYPE" != "dev" ]; then \
+			echo "Error: Cannot bump on dev branch unless it is dev"; \
+			exit 1; \
+		fi \
+	fi; \
+
 	$(hatch) version $(BUMP_TYPE)
 	git add opennem/__init__.py
 	$(eval NEW_VERSION := $(shell uvx hatch version))
