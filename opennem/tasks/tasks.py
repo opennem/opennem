@@ -89,7 +89,7 @@ async def task_nem_rooftop_crawl(ctx) -> None:
 async def task_wem_day_crawl(ctx) -> None:
     """This task runs per interval and checks for new data"""
     await run_all_wem_crawlers(latest=True, limit=3)
-    await update_facility_aggregate_last_hours()
+    await update_facility_aggregate_last_hours(hours_back=36, network=NetworkWEM)
     await run_export_power_latest_for_network(network=NetworkWEM)
     await run_export_energy_for_year(network=NetworkWEM)
 
