@@ -70,7 +70,7 @@ async def run_energy_calculation_for_interval(interval: datetime) -> int:
     This method is intended to be called by a cron job every 5 minutes.
     """
     async with get_write_session() as session:
-        start_time = interval
+        start_time = interval - timedelta(minutes=5)
         end_time = interval + timedelta(minutes=5)
 
         if settings.dry_run:
