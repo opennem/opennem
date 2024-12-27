@@ -34,7 +34,7 @@ from opennem.exporter.facilities import export_facilities_static
 # from opennem.exporter.historic import export_historic_intervals
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
-from opennem.utils.dates import get_last_completed_interval_for_network
+from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
 from opennem.workers.energy import process_energy_from_now
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
@@ -171,7 +171,14 @@ async def task_export_flows(ctx) -> None:
 async def task_export_energy(ctx) -> None:
     """Runs the energy export"""
     await export_energy(latest=True)
-    # await run_export_current_year()
+
+    current_date = get_today_opennem()
+
+    # @NOTE new years day fix for energy exports - run last year and current year
+    if current_date.day == 1 and current_date.month == 1:
+        await run_export_energy_for_year(year=current_date.year - 1)
+        await run_export_energy_for_year(year=current_date.year)
+
     await run_export_energy_all()
 
 
