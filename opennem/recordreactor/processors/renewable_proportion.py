@@ -71,7 +71,7 @@ async def run_renewable_proportion_milestones(
     """
 
     # we can't calculate the renewable proportion before the rooftop data was available
-    if start_date < NetworkAEMORooftop.data_first_seen:  # type: ignore
+    if start_date < NetworkAEMORooftop.data_first_seen.replace(tzinfo=None):  # type: ignore
         return
 
     # only run on interval, day and week rolling for now
