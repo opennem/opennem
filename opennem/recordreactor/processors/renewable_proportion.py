@@ -15,7 +15,7 @@ from opennem.recordreactor.schema import (
     MilestoneType,
 )
 from opennem.recordreactor.unit import get_milestone_unit
-from opennem.schema.network import NetworkSchema
+from opennem.schema.network import NetworkAEMORooftop, NetworkSchema
 
 logger = logging.getLogger("opennem.recordreactor.processors.renewable_proportion")
 
@@ -69,6 +69,10 @@ async def run_renewable_proportion_milestones(
     """
     Run the renewable proportion milestone for a given network and date range.
     """
+
+    # we can't calculate the renewable proportion before the rooftop data was available
+    if start_date < NetworkAEMORooftop.data_first_seen:  # type: ignore
+        return
 
     # only run on interval, day and week rolling for now
     if bucket_size not in [
