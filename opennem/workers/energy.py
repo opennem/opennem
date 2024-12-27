@@ -7,9 +7,9 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem import settings
-from opennem.db import get_read_session, get_write_session
+from opennem.db import get_write_session
 from opennem.schema.network import NetworkNEM
-from opennem.utils.dates import get_datetime_now_for_network, get_today_opennem
+from opennem.utils.dates import get_datetime_now_for_network, get_last_completed_interval_for_network
 
 logger = logging.getLogger("opennem.workers.energy")
 
@@ -134,46 +134,14 @@ async def _process_date_range(
     await asyncio.gather(*tasks)
 
 
-async def _get_energy_start_end_dates() -> tuple[datetime, datetime]:
-    """
-    Get the start and end dates for energy calculations.
-    """
-    async with get_read_session() as session:
-        # Find the earliest date with null energy values
-        query = text("SELECT MIN(interval) FROM facility_scada WHERE energy IS NULL")
-        result = await session.execute(query)
-        start_date = result.scalar()
-
-        if not start_date:
-            raise Exception("No backlog to process.")
-
-        # Get the latest date in the facility_scada table
-        query = text("SELECT MAX(interval) FROM facility_scada")
-        result = await session.execute(query)
-        end_date = result.scalar()
-
-        if not end_date:
-            raise Exception("No end date found.")
-
-    return start_date, end_date
-
-
-async def run_energy_backlog(date_start: datetime | None = None, date_end: datetime | None = None) -> None:
+async def run_energy_backlog(date_start: datetime, date_end: datetime) -> None:
     """
     Run energy calculation for all historical data that hasn't been processed yet.
     """
 
-    date_start_scada, date_end_scada = await _get_energy_start_end_dates()
-
-    if date_start is None:
-        date_start = date_start_scada
-
-    if date_end is None:
-        date_end = date_end_scada
-
     logger.info(f"Processing backlog from {date_start} to {date_end}")
 
-    await _process_date_range(date_start=date_start, date_end=date_end)
+    await _process_date_range(date_start=date_start, date_end=date_end, chunk_size=timedelta(days=10), max_workers=4)
 
 
 # Example usage
@@ -183,10 +151,10 @@ async def main():
     # Run backlog
     print("Processing backlog...")
     date_start = datetime.fromisoformat("2019-09-25 00:00:00")
-    date_end = get_today_opennem().replace(tzinfo=None)
+    date_end = get_last_completed_interval_for_network().replace(tzinfo=None)
+    date_start = NetworkNEM.data_first_seen.replace(tzinfo=None)
     await run_energy_backlog(date_start=date_start, date_end=date_end)
-    await process_energy_from_now()
 
 
 if __name__ == "__main__":
-    asyncio.run(process_energy_from_now(hours=1))
+    asyncio.run(main())
