@@ -62,7 +62,7 @@ async def task_nem_interval_check(ctx) -> None:
         raise Retry(defer=ctx["job_try"] * 15)
 
     # update energy
-    # await process_energy_from_now(hours=4)
+    await process_energy_from_now(hours=1)
 
     # update facility aggregates
     await update_facility_aggregate_last_hours()
@@ -83,6 +83,8 @@ async def task_nem_per_day_check(ctx) -> None:
 
     if not dispatch_actuals or not dispatch_actuals.inserted_records:
         raise Retry(defer=ctx["job_try"] * 15)
+
+    await process_energy_from_now(hours=24 * 3)
 
     await run_facility_aggregate_updates(lookback_days=7)
 
@@ -278,7 +280,7 @@ async def task_catchup(ctx) -> None:
 
     # processing
     # await process_energy_from_now(hours=24 * 30)
-    latest_interval = get_last_completed_interval_for_network(network=NetworkNEM)
+    latest_interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
     await update_facility_aggregates_chunked(
         end_date=latest_interval, start_date=latest_interval - timedelta(days=30), max_concurrent=1, chunk_days=30
     )
