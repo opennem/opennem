@@ -6,7 +6,7 @@ from sqlalchemy.sql.elements import TextClause
 
 from opennem.api.stats.controllers import networks_to_in
 from opennem.controllers.output.schema import OpennemExportSeries
-from opennem.schema.network import NetworkSchema, NetworkWEM
+from opennem.schema.network import NetworkSchema
 from opennem.schema.stats import StatTypes
 
 logger = logging.getLogger("opennem.api.export.queries")
@@ -184,75 +184,6 @@ def price_network_query(
             group_field=group_field,
         )
     )
-
-
-def power_network_fueltech_query(
-    time_series: OpennemExportSeries,
-    network_region: str | None = None,
-    networks_query: list[NetworkSchema] | None = None,
-) -> TextClause:
-    """Query power stats"""
-
-    if not networks_query:
-        networks_query = [time_series.network]
-
-    if time_series.network not in networks_query:
-        networks_query.append(time_series.network)
-
-    __query = """
-    SELECT
-        time_bucket_gapfill('{interval}', interval) as interval,
-        fueltech_code,
-        sum(generated) as fueltech_power,
-        sum(emissions) as fueltech_emissions,
-        case when
-            sum(generated) > 0 then round(sum(emissions)::numeric / sum(generated)::numeric, 4)
-            else 0
-        end as fueltech_emissions_intensity
-    FROM at_facility_intervals
-    WHERE
-        interval between '{date_min}' and '{date_max}' and
-        {network_query}
-        {network_region_query}
-        1=1
-    group by 1, 2
-    ORDER BY interval DESC, 2;
-    """
-
-    network_region_query: str = ""
-    wem_apvi_case: str = ""
-
-    if network_region:
-        network_region_query = f"network_region='{network_region}' and "
-
-    if NetworkWEM in networks_query:
-        # silly single case we'll refactor out
-        # APVI network is used to provide rooftop for WEM so we require it
-        # in country-wide totals
-        wem_apvi_case = "or (network_id='APVI' and network_region='WEM')"
-
-    network_query = f"(network_id IN ({networks_to_in(networks_query)}) {wem_apvi_case}) and "
-
-    # Get the data time range
-    # use the new v2 feature if it has been provided otherwise use the old method
-    time_series_range = time_series.get_range()
-    date_max = time_series_range.end
-    date_min = time_series_range.start
-
-    # If we have a fueltech filter, add it to the query
-
-    query = dedent(
-        __query.format(
-            interval=time_series.interval.interval_human,
-            network_query=network_query,
-            network_region_query=network_region_query,
-            date_max=date_max,
-            date_min=date_min,
-            wem_apvi_case=wem_apvi_case,
-        )
-    )
-
-    return text(query)
 
 
 """ Emission Queries """

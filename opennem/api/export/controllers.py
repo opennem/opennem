@@ -11,7 +11,6 @@ from opennem.api.export.queries import (
     interconnector_flow_network_regions_query,
     interconnector_power_flow,
     power_and_emissions_network_fueltech_query,
-    power_network_fueltech_query,
     power_network_interconnector_emissions_query,
     price_network_query,
 )
@@ -22,7 +21,8 @@ from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.units import get_unit
 from opennem.db import db_connect, get_database_engine
 from opennem.queries.flows import get_network_flows_emissions_market_value_query
-from opennem.schema.network import NetworkNEM, NetworkSchema
+from opennem.queries.power import get_fueltech_generation_query, get_rooftop_generation_query
+from opennem.schema.network import NetworkAU, NetworkNEM, NetworkSchema
 from opennem.schema.stats import StatTypes
 
 _valid_region = re.compile(r"^\w{1,4}\d?$")
@@ -283,7 +283,7 @@ async def power_week(
     if network_region_code and not re.match(_valid_region, network_region_code):
         raise OpenNEMInvalidNetworkRegion()
 
-    query = power_network_fueltech_query(
+    query = get_fueltech_generation_query(
         time_series=time_series,
         networks_query=networks_query,
         network_region=network_region_code,
@@ -346,6 +346,37 @@ async def power_week(
 
         result.append_set(stats_emission_factors)
 
+    # rooftop solar
+    query = get_rooftop_generation_query(
+        network=time_series.network,
+        date_start=time_series.get_range().start,
+        date_end=time_series.end,
+        network_region=network_region_code,
+    )
+
+    async with engine.begin() as conn:
+        logger.debug(query)
+        result_rooftop = await conn.execute(query)
+        row = result_rooftop.fetchall()
+
+    rooftop_generation = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
+
+    result_rooftop = stats_factory(
+        rooftop_generation,
+        network=time_series.network,
+        # @NOTE dirty dirty hack to get APVI and AEMO_ROOFTOP to match the 30min interval
+        interval=time_series.interval if time_series.network != NetworkAU else human_to_interval("30m"),
+        units=get_unit("power"),
+        region=network_region_code,
+        fueltech_group=True,
+        cast_nulls=True,
+        include_code=True,
+    )
+
+    result.append_set(result_rooftop)
+
+    # price
+
     query: TextClause = price_network_query(
         time_series=time_series,
         networks_query=networks_query,
@@ -374,9 +405,6 @@ async def power_week(
     # rooftop solar
 
     # time_series_rooftop = time_series.copy()
-
-    # if time_series.network == NetworkNEM:
-    #     time_series_rooftop.end = await get_latest_interval_live(network=NetworkAEMORooftop)
 
     # time_series_rooftop.interval = human_to_interval("30m")
 
