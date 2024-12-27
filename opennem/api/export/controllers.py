@@ -1,5 +1,6 @@
 import logging
 import re
+from datetime import timedelta
 
 from sqlalchemy import TextClause
 
@@ -21,7 +22,11 @@ from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.units import get_unit
 from opennem.db import db_connect, get_database_engine
 from opennem.queries.flows import get_network_flows_emissions_market_value_query
-from opennem.queries.power import get_fueltech_generation_query, get_rooftop_generation_query
+from opennem.queries.power import (
+    get_fueltech_generation_query,
+    get_rooftop_forecast_generation_query,
+    get_rooftop_generation_query,
+)
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkSchema
 from opennem.schema.stats import StatTypes
 
@@ -373,6 +378,44 @@ async def power_week(
         include_code=True,
     )
 
+    # rooftop forecast
+    query = get_rooftop_forecast_generation_query(
+        network=time_series.network,
+        date_start=time_series.get_range().end,
+        date_end=time_series.get_range().end + timedelta(days=1),
+        network_region=network_region_code,
+    )
+
+    async with engine.begin() as conn:
+        logger.debug(query)
+        result_rooftop_forecast = await conn.execute(query)
+        row = result_rooftop_forecast.fetchall()
+
+    rooftop_forecast_generation = [
+        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row
+    ]
+
+    result_rooftop_forecast = stats_factory(
+        rooftop_forecast_generation,
+        network=time_series.network,
+        # @NOTE dirty dirty hack to get APVI and AEMO_ROOFTOP to match the 30min interval
+        interval=time_series.interval if time_series.network != NetworkAU else human_to_interval("30m"),
+        units=get_unit("power"),
+        region=network_region_code,
+        fueltech_group=True,
+        cast_nulls=True,
+    )
+
+    # insert the forecast data into the rooftop forecast set
+    if result_rooftop and result_rooftop_forecast:
+        if (
+            hasattr(result_rooftop, "data")
+            and len(result_rooftop.data) > 0
+            and result_rooftop_forecast.data
+            and len(result_rooftop_forecast.data) > 0
+        ):
+            result_rooftop.data[0].forecast = result_rooftop_forecast.data[0].history
+
     result.append_set(result_rooftop)
 
     # price
@@ -401,39 +444,6 @@ async def power_week(
     )
 
     result.append_set(stats_market_value)
-
-    # rooftop solar
-
-    # time_series_rooftop = time_series.copy()
-
-    # time_series_rooftop.interval = human_to_interval("30m")
-
-    # logger.debug(time_series_rooftop)
-
-    # query = power_network_rooftop_query(
-    #     time_series=time_series_rooftop,
-    #     networks_query=networks_query,
-    #     network_region=network_region_code,
-    # )
-
-    # async with engine.begin() as conn:
-    #     logger.debug(query)
-    #     result_rooftop = await conn.execute(query)
-    #     row = result_rooftop.fetchall()
-
-    # rooftop_power = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
-
-    # rooftop = stats_factory(
-    #     rooftop_power,
-    #     # code=network_region_code or network.code,
-    #     network=time_series.network,
-    #     interval=human_to_interval("30m"),
-    #     units=get_unit("power"),
-    #     region=network_region_code,
-    #     fueltech_group=True,
-    #     cast_nulls=False,
-    #     include_code=True,
-    # )
 
     # # rooftop forecast
     # rooftop_forecast = None
@@ -464,14 +474,6 @@ async def power_week(
     #         region=network_region_code,
     #         fueltech_group=True,
     #     )
-
-    # if rooftop and rooftop_forecast:
-    #     if hasattr(rooftop, "data") and len(rooftop.data) > 0 and rooftop_forecast.data and len(rooftop_forecast.data) > 0:
-    #         rooftop.data[0].forecast = rooftop_forecast.data[0].history
-    # else:
-    #     logger.warning("No rooftop or rooftop forecast")
-
-    # result.append_set(rooftop)
 
     return result
 

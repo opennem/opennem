@@ -127,3 +127,53 @@ def get_rooftop_generation_query(
     """
 
     return text(__query)
+
+
+def get_rooftop_forecast_generation_query(
+    network: NetworkSchema, date_start: datetime, date_end: datetime, network_region: str | None = None
+) -> TextClause:
+    """For a network and network region get rooftop forecast generation"""
+
+    # network query filter
+    networks = [i.code for i in network.subnetworks] if network.subnetworks else [network.code]
+
+    if network == NetworkAU:
+        networks.extend(["AEMO_ROOFTOP", "AEMO_ROOFTOP_BACKFILL", "APVI"])
+
+    network_query = f"and fs.network_id in ({list_to_case(networks)})"
+
+    # network region query filter
+    if network_region:
+        network_region_query = f"and f.network_region = '{network_region}'"
+    else:
+        network_region_query = ""
+
+    # bucket size
+    bucket_size = "5min"
+
+    if network == NetworkAU:
+        bucket_size = "30min"
+
+    __query = f"""
+        select
+            time_bucket_gapfill('{bucket_size}', fs.interval) as interval,
+            u.fueltech_id,
+            interpolate(coalesce(sum(fs.generated), 0)) as generated,
+            interpolate(coalesce(sum(fs.energy), 0)) as energy
+        from facility_scada fs
+        join units u on fs.facility_code = u.code
+        join facilities f on f.id = u.station_id
+        where
+            (
+                fs.network_id in ('AEMO_ROOFTOP', 'AEMO_ROOFTOP_BACKFILL') or
+                (fs.network_id = 'APVI' and f.network_region = 'WEM')
+            )
+            and fs.interval between '{date_start}' and '{date_end}'
+            and fs.is_forecast = true
+            {network_query}
+            {network_region_query}
+        group by 1, 2
+        order by 1 desc, 2;
+    """
+
+    return text(__query)
