@@ -5,6 +5,7 @@ import logging
 from datetime import timedelta
 
 import logfire
+from arq import Retry
 
 from opennem.aggregates.facility_interval import update_facility_aggregate_last_hours, update_facility_aggregates_chunked
 from opennem.aggregates.network_demand import run_aggregates_demand_network_days
@@ -12,7 +13,6 @@ from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
 from opennem.cms.importer import update_database_facilities_from_cms
 from opennem.controllers.export import run_export_energy_all, run_export_energy_for_year
-from opennem.controllers.schema import ControllerReturn
 from opennem.crawl import run_crawl
 from opennem.crawlers.aemo_market_notice import run_market_notice_update
 from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopMonthCrawler
@@ -34,7 +34,6 @@ from opennem.exporter.facilities import export_facilities_static
 # from opennem.exporter.historic import export_historic_intervals
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
-from opennem.tasks.exceptions import OpenNEMPipelineRetryTask
 from opennem.utils.dates import get_last_completed_interval_for_network
 from opennem.workers.energy import process_energy_from_now
 from opennem.workers.facility_data_seen import update_facility_seen_range
@@ -56,7 +55,7 @@ async def task_nem_interval_check(ctx) -> None:
 
     if not dispatch_scada.inserted_records:
         logger.warning("No new data from crawlers")
-        raise OpenNEMPipelineRetryTask()
+        raise Retry(defer=ctx["job_try"] * 15)
 
     # update energy
     # await process_energy_from_now(hours=4)
@@ -83,7 +82,7 @@ async def task_nem_rooftop_crawl(ctx) -> None:
     rooftop = await asyncio.gather(*tasks)
 
     if not rooftop or not any(r.inserted_records for r in rooftop if r):
-        raise OpenNEMPipelineRetryTask()
+        raise Retry(defer=ctx["job_try"] * 15)
 
 
 @logfire.instrument("task_wem_day_crawl")
@@ -197,13 +196,13 @@ async def task_export_daily_monthly(ctx) -> None:
 
 
 @logfire.instrument("task_nem_per_day_check")
-async def task_nem_per_day_check(ctx) -> ControllerReturn:
+async def task_nem_per_day_check(ctx) -> None:
     """This task is run daily for NEM"""
     dispatch_actuals = await run_crawl(AEMONEMDispatchActualGEN)
     await run_crawl(AEMONEMNextDayDispatch)
 
     if not dispatch_actuals or not dispatch_actuals.inserted_records:
-        raise OpenNEMPipelineRetryTask()
+        raise Retry(defer=ctx["job_try"] * 15)
 
     # await daily_runner()
 
@@ -211,11 +210,6 @@ async def task_nem_per_day_check(ctx) -> ControllerReturn:
     for _network in [NetworkNEM, NetworkWEM]:
         pass
         # export_historic_intervals(limit=2, networks=[network])
-
-    return ControllerReturn(
-        server_latest=dispatch_actuals.server_latest,
-        last_modified=None,
-    )
 
 
 # cms tasks from webhooks
