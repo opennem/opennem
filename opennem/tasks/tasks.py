@@ -7,7 +7,11 @@ from datetime import timedelta
 import logfire
 from arq import Retry
 
-from opennem.aggregates.facility_interval import update_facility_aggregate_last_hours, update_facility_aggregates_chunked
+from opennem.aggregates.facility_interval import (
+    run_facility_aggregate_updates,
+    update_facility_aggregate_last_hours,
+    update_facility_aggregates_chunked,
+)
 from opennem.aggregates.network_demand import run_aggregates_demand_network_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
@@ -69,6 +73,18 @@ async def task_nem_interval_check(ctx) -> None:
     await asyncio.gather(
         run_export_power_latest_for_network(network=NetworkNEM), run_export_power_latest_for_network(network=NetworkAU)
     )
+
+
+@logfire.instrument("task_nem_per_day_check")
+async def task_nem_per_day_check(ctx) -> None:
+    """This task is run daily for NEM"""
+    dispatch_actuals = await run_crawl(AEMONEMDispatchActualGEN)
+    await run_crawl(AEMONEMNextDayDispatch)
+
+    if not dispatch_actuals or not dispatch_actuals.inserted_records:
+        raise Retry(defer=ctx["job_try"] * 15)
+
+    await run_facility_aggregate_updates(lookback_days=7)
 
 
 async def task_nem_rooftop_crawl(ctx) -> None:
@@ -200,23 +216,6 @@ async def task_export_daily_monthly(ctx) -> None:
     """Runs the daily and monthly exports"""
     await export_all_daily()
     await export_all_monthly()
-
-
-@logfire.instrument("task_nem_per_day_check")
-async def task_nem_per_day_check(ctx) -> None:
-    """This task is run daily for NEM"""
-    dispatch_actuals = await run_crawl(AEMONEMDispatchActualGEN)
-    await run_crawl(AEMONEMNextDayDispatch)
-
-    if not dispatch_actuals or not dispatch_actuals.inserted_records:
-        raise Retry(defer=ctx["job_try"] * 15)
-
-    # await daily_runner()
-
-    # export historic intervals
-    for _network in [NetworkNEM, NetworkWEM]:
-        pass
-        # export_historic_intervals(limit=2, networks=[network])
 
 
 # cms tasks from webhooks
