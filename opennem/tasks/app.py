@@ -64,7 +64,7 @@ class WorkerSettings:
         # NEM Interval Check
         cron(
             task_nem_interval_check,
-            minute=set(range(0, 60, 5)),
+            minute=set(range(0, 60, 1)),
             second=45,
             timeout=None,
             unique=True,
@@ -72,7 +72,7 @@ class WorkerSettings:
         # NEM Rooftop
         cron(
             task_nem_rooftop_crawl,
-            minute={0, 1, 2, 3, 4, 30, 31, 32, 33, 34},
+            minute=set(range(0, 60, 5)),
             second=50,
             timeout=None,
             unique=True,
@@ -251,7 +251,7 @@ class WorkerSettings:
     ]
     redis_settings = REDIS_SETTINGS
     retry_jobs = True
-    max_tries = 5
+    max_retries = 5
     job_timeout = 60 * 60 * 12  # 12 hours max task time
     timezone = timezone(timedelta(hours=10))
 
