@@ -95,10 +95,8 @@ def api_protected(
 
                     # if the function is a coroutine, call it as a coroutine
                     if inspect.iscoroutinefunction(func):
-                        logger.info(f"calling coroutine {func.__name__}")
                         value = await func(*args, **kwargs)
                     else:
-                        logger.info(f"calling function {func.__name__}")
                         value = func(*args, **kwargs)
                     return value
 
