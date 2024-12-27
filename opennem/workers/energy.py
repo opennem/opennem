@@ -8,7 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem import settings
 from opennem.db import get_read_session, get_write_session
-from opennem.utils.dates import get_today_opennem
+from opennem.schema.network import NetworkNEM
+from opennem.utils.dates import get_datetime_now_for_network, get_today_opennem
 
 logger = logging.getLogger("opennem.workers.energy")
 
@@ -16,6 +17,10 @@ logger = logging.getLogger("opennem.workers.energy")
 async def _calculate_energy_for_interval(session: AsyncSession, start_time: datetime, end_time: datetime) -> int:
     """
     Calculate energy for a an interval range and update the energy column in the facility_scada table.
+
+    The energy calculation requires both the current and previous interval's generated values
+    to compute the average power over the interval. We explicitly exclude the first interval
+    in each facility's range since we won't have access to its previous value.
     """
 
     query = text("""
@@ -36,17 +41,13 @@ async def _calculate_energy_for_interval(session: AsyncSession, start_time: date
             LAG(generated, 1) OVER (
                 PARTITION BY network_id, facility_code
                 ORDER BY interval
-            ) AS prev_generated,
-            ROW_NUMBER() OVER (
-                PARTITION BY network_id, facility_code, (interval::date)
-                ORDER BY interval
-            ) AS rn
+            ) AS prev_generated
         FROM facility_scada
         WHERE interval BETWEEN :start_time AND :end_time
     )
     UPDATE facility_scada fs
     SET
-        energy = (rs.generated + COALESCE(rs.prev_generated, 0)) / 2 / nd.intervals_per_hour,
+        energy = (rs.generated + rs.prev_generated) / 2 / nd.intervals_per_hour,
         energy_quality_flag = 2
     FROM ranked_scada rs
     JOIN network_data nd ON nd.code = rs.network_id
@@ -54,6 +55,8 @@ async def _calculate_energy_for_interval(session: AsyncSession, start_time: date
       AND fs.facility_code = rs.facility_code
       AND fs.interval = rs.interval
       AND fs.interval BETWEEN :start_time AND :end_time
+      -- Only update where we have both current and previous values
+      AND rs.prev_generated IS NOT NULL
     """)
 
     result = await session.execute(query, {"start_time": start_time, "end_time": end_time})
@@ -85,7 +88,7 @@ async def process_energy_from_now(hours: int = 2) -> None:
     """
 
     async with get_write_session() as session:
-        end_time = get_today_opennem().replace(tzinfo=None)
+        end_time = get_datetime_now_for_network(network=NetworkNEM, tz_aware=False).replace(tzinfo=None)
         start_time = end_time - timedelta(hours=hours)
 
         logger.info(f"Processing energy calculations from {start_time} to {end_time}")
@@ -186,4 +189,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(process_energy_from_now(hours=1))
