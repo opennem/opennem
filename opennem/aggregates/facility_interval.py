@@ -178,12 +178,12 @@ async def update_facility_aggregate_last_hours(hours_back: int = 1, network: Net
         await update_facility_aggregates(session, start_time, end_time, network=network)
 
 
-async def run_update_facility_aggregate_last_interval() -> None:
+async def run_update_facility_aggregate_last_interval(num_intervals: int = 6) -> None:
     """
     Runs the facility aggregate update for the last 30 minute interval
     """
     end_time = get_last_completed_interval_for_network(network=NetworkNEM, tz_aware=False).replace(tzinfo=None)
-    start_time = end_time - timedelta(minutes=30)
+    start_time = end_time - timedelta(minutes=num_intervals * 5)
 
     async with get_write_session() as session:
         await update_facility_aggregates(session, start_time, end_time)
@@ -328,11 +328,13 @@ if __name__ == "__main__":
     # asyncio.run(run_facility_aggregate_updates(lookback_days=7))
     interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
 
+    up_to_interval = datetime.fromisoformat("2024-04-07T00:00:00")
+
     asyncio.run(
         update_facility_aggregates_chunked(
             # start_date=interval - timedelta(days=30),
             start_date=NetworkAEMORooftop.data_first_seen.replace(tzinfo=None),  # type: ignore
-            end_date=interval,
+            end_date=up_to_interval,
             # end_date=datetime(2012, 11, 1),
             # end_date=interval,
             max_concurrent=2,
