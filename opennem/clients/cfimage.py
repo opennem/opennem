@@ -3,14 +3,13 @@
 import logging
 from datetime import datetime
 from io import BytesIO
-from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel
 from requests.exceptions import RequestException
 
 from opennem import settings
-from opennem.utils.http import API_CLIENT_HEADERS, http
+from opennem.utils.httpx import API_CLIENT_HEADERS, http
 
 logger = logging.getLogger("opennem.clients.cfimage")
 
@@ -31,7 +30,7 @@ class CloudflareImageResponse(BaseModel):
         return self.variants.pop() if self.variants else None
 
 
-def save_image_to_cloudflare(image: bytes | BytesIO) -> CloudflareImageResponse:
+async def save_image_to_cloudflare(image: bytes | BytesIO) -> CloudflareImageResponse:
     if not settings.cloudflare_api_key or not settings.cloudflare_account_id:
         raise CloudflareImageException("API not configured with account id and key")
 
@@ -47,12 +46,12 @@ def save_image_to_cloudflare(image: bytes | BytesIO) -> CloudflareImageResponse:
     json_response: dict[str, Any] | None = None
 
     try:
-        response = http.post(cfimage_url, headers=headers, files=file_upload)
+        response = await http.post(cfimage_url, headers=headers, files=file_upload)
 
     except RequestException as e:
         raise CloudflareImageException(f"Request error: {e}") from e
 
-    if not response.ok:
+    if not response.is_success:
         logger.debug(response.text)
         raise CloudflareImageException(f"Response error: {response.status_code}. {response.text}")
 
@@ -82,13 +81,3 @@ def save_image_to_cloudflare(image: bytes | BytesIO) -> CloudflareImageResponse:
     logger.info(f"Uploaded to cf and got {len(model.variants)} varianes: {",".join(model.variants)}")
 
     return model
-
-
-if __name__ == "__main__":
-    path = Path("data/opennem-logo.png")
-
-    with path.open("br") as fh:
-        image_content = fh.read()
-
-    r = save_image_to_cloudflare(image_content)
-    logger.info(r.variants)

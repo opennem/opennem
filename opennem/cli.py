@@ -20,6 +20,7 @@ from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures, load
 from opennem.exporter.inspect import inspect_opennem_json
 from opennem.importer.db import import_all_facilities
 from opennem.importer.db import init as db_init
+from opennem.utils.async_sync import async_to_sync
 
 # Initialize typer apps
 app = typer.Typer(help="OpenNEM CLI tool for managing the OpenNEM platform")
@@ -99,7 +100,8 @@ def import_bom_stations_command() -> None:
 
 # Inspect command
 @app.command("inspect")
-def inspect_command(url: str) -> None:
+@async_to_sync
+async def inspect_command(url: str) -> None:
     """
     Inspect OpenNEM JSON data from a given URL.
 
@@ -107,7 +109,7 @@ def inspect_command(url: str) -> None:
         url: The URL of the OpenNEM JSON data to inspect
     """
     try:
-        inspect_opennem_json(url)
+        await inspect_opennem_json(url)
     except Exception as e:
         logger.error(f"Failed to inspect JSON: {e}")
         raise typer.Exit(1) from e

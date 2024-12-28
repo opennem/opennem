@@ -26,6 +26,8 @@ DEFAULT_BROWSER_HEADERS = {
     "Connection": "keep-alive",
 }
 
+API_CLIENT_HEADERS = {"user-agent": f"OpenNEM (v {get_version()})", "accept": "*/*"}
+
 
 def autodetect_encoding(content) -> str | None:
     return chardet.detect(content).get("encoding")
@@ -95,12 +97,3 @@ def httpx_factory(mimic_browser: bool = False, debug: bool = True, proxy: bool =
 
 
 http = httpx_factory(debug=settings.is_dev, timeout=settings.http_timeout)
-
-
-async def get_http(*args, **kwargs) -> AsyncClient:
-    """Used in api"""
-    http = httpx_factory(*args, **kwargs)
-    try:
-        yield http
-    finally:
-        http.aclose()

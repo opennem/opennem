@@ -12,18 +12,18 @@ import xlrd
 from pydantic import ValidationError
 
 from opennem.schema.stats import AUCpiData, StatDatabase, StatsSet, StatTypes
-from opennem.utils.http import http
+from opennem.utils.httpx import http
 
 logger = logging.getLogger("opennem.stats.au.api")
 
 AU_CPI_URL = "https://www.rba.gov.au/statistics/tables/xls/g01hist.xls"
 
 
-def fetch_au_cpi() -> list[AUCpiData]:
+async def fetch_au_cpi() -> list[AUCpiData]:
     """Gets australian CPI figures and parses into JSON"""
-    r = http.get(AU_CPI_URL)
+    r = await http.get(AU_CPI_URL)
 
-    if not r.ok:
+    if not r.is_success:
         raise Exception(f"Problem grabbing CPI source: {r.status_code}")
 
     wb = xlrd.open_workbook(file_contents=r.content)
@@ -75,10 +75,13 @@ def au_cpi_to_statset(records: list[AUCpiData]) -> StatsSet:
     return s
 
 
-def stat_au_cpi() -> StatsSet:
-    records = fetch_au_cpi()
+async def stat_au_cpi() -> StatsSet:
+    records = await fetch_au_cpi()
     return au_cpi_to_statset(records)
 
 
 if __name__ == "__main__":
-    r = stat_au_cpi()
+    import asyncio
+
+    r = asyncio.run(stat_au_cpi())
+    print(r)
