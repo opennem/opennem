@@ -40,6 +40,12 @@ class OpennemSettings(BaseSettings):
     # if we're doing a dry run
     dry_run: bool = False
 
+    # API server settings
+    api_server_host: str = "0.0.0.0"
+    api_server_port: int = 8000
+    api_server_workers: int = 2
+
+    # sentry DSN for error reporting
     sentry_url: str | None = None
 
     # Slack notifications
@@ -75,7 +81,6 @@ class OpennemSettings(BaseSettings):
     http_retries: int = 5
 
     # cache http requests locally
-    http_cache_local: bool = False
     http_verify_ssl: bool = True
     http_proxy_url: str | None = None  # @note don't let it confict with env HTTP_PROXY
 
