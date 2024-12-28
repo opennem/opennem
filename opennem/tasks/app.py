@@ -39,6 +39,7 @@ from opennem.tasks.broker import REDIS_SETTINGS
 from opennem.tasks.tasks import (
     task_apvi_crawl,
     task_bom_capitals_crawl,
+    task_catchup_check,
     task_clean_tmp_dir,
     task_export_daily_monthly,
     task_export_energy,
@@ -215,6 +216,14 @@ class WorkerSettings:
             task_refresh_from_cms,
             minute=1,
             second=0,
+            timeout=None,
+            unique=True,
+        ),
+        # Monitor catchup
+        cron(
+            task_catchup_check,
+            minute={7, 37},
+            second=30,
             timeout=None,
             unique=True,
         ),

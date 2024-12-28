@@ -40,6 +40,7 @@ from opennem.exporter.facilities import export_facilities_static
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
+from opennem.workers.catchup import run_catchup_check
 from opennem.workers.energy import process_energy_last_intervals
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
@@ -298,6 +299,12 @@ async def refresh_continuous_aggregates() -> None:
     This task should be scheduled to run periodically.
     """
     await refresh_recent_aggregates()
+
+
+@logfire.instrument("task_catchup_check")
+async def task_catchup_check(ctx) -> None:
+    """Check for data gaps and trigger catchup processes if needed"""
+    await run_catchup_check()
 
 
 if __name__ == "__main__":
