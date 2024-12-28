@@ -43,7 +43,7 @@ version:
 	fi
 	# if the branch is master then bump needs to be either major minor patch or release
 	if [ "$$current_branch" = "master" ]; then \
-		if [ "$$BUMP_TYPE" != "major" ] && [ "$$BUMP_TYPE" != "minor" ] && [ "$$BUMP_TYPE" != "patch" ] && [ "$$BUMP_TYPE" != "release" ]; then \
+		if [ "$$BUMP_TYPE" != "major" ] && [ "$$BUMP_TYPE" != "minor" ] && [ "$$BUMP_TYPE" != "patch" ] && [ "$$BUMP_TYPE" != "release" ] && [ "$$BUMP_TYPE" != "rc" ]; then \
 			echo "Error: Cannot bump on master branch unless it is major, minor, patch or release"; \
 			exit 1; \
 		fi \
