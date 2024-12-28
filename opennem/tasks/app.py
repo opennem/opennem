@@ -34,6 +34,7 @@ from datetime import timedelta, timezone
 from arq import cron
 from arq.worker import create_worker
 
+from opennem.api.maintenance_app import run_maintenance_app
 from opennem.tasks.broker import REDIS_SETTINGS
 from opennem.tasks.tasks import (
     task_apvi_crawl,
@@ -249,8 +250,14 @@ class WorkerSettings:
 
 def main() -> None:
     """Run the main worker"""
-    worker = create_worker(settings_cls=WorkerSettings)  # type: ignore
-    worker.run()
+    from opennem import settings
+
+    if settings.run_worker:
+        worker = create_worker(settings_cls=WorkerSettings)  # type: ignore
+        worker.run()
+    else:
+        print(" * Worker not enabled - waiting for worker to restart")
+        run_maintenance_app()
 
 
 if __name__ == "__main__":

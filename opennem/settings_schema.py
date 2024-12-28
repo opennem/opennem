@@ -138,6 +138,8 @@ class OpennemSettings(BaseSettings):
     sanity_dataset_id: str | None = None
     sanity_api_key: str | None = None
 
+    run_worker: bool = True
+
     # pylint: disable=no-self-argument
     @field_validator("log_level")
     @classmethod
