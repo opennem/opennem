@@ -70,6 +70,7 @@ dependencies = [
     "clerk-backend-api>=1.5.0",
     "pyarrow>=18.1.0",
     "curl-cffi>=0.7.4",
+    "hypercorn>=0.17.3",
 ]
 
 [tool.uv]
@@ -104,7 +105,8 @@ dev-dependencies = [
 [project.scripts]
 openelectricity = "opennem.cli:main"
 opennem = "opennem.cli:main"
-api = "bin.run_server:run_server"
+api = "bin.run_hypercorn:serve"
+dev = "bin.run_server:run_server"
 worker = "opennem.tasks.app:main"
 
 [tool.ruff]

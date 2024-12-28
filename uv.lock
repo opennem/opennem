@@ -1089,6 +1089,21 @@ wheels = [
 ]
 
 [[package]]
+name = "hypercorn"
+version = "0.17.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "h11" },
+    { name = "h2" },
+    { name = "priority" },
+    { name = "wsproto" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7e/3a/df6c27642e0dcb7aff688ca4be982f0fb5d89f2afd3096dc75347c16140f/hypercorn-0.17.3.tar.gz", hash = "sha256:1b37802ee3ac52d2d85270700d565787ab16cf19e1462ccfa9f089ca17574165", size = 44409 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0e/3b/dfa13a8d96aa24e40ea74a975a9906cfdc2ab2f4e3b498862a57052f04eb/hypercorn-0.17.3-py3-none-any.whl", hash = "sha256:059215dec34537f9d40a69258d323f56344805efb462959e727152b0aa504547", size = 61742 },
+]
+
+[[package]]
 name = "hyperframe"
 version = "6.0.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1665,6 +1680,7 @@ dependencies = [
     { name = "gunicorn" },
     { name = "httpx", extra = ["http2", "socks"] },
     { name = "humanize" },
+    { name = "hypercorn" },
     { name = "instructor" },
     { name = "logfire", extra = ["asyncpg", "fastapi", "httpx", "redis", "requests", "sqlalchemy", "system-metrics"] },
     { name = "mako" },
@@ -1750,6 +1766,7 @@ requires-dist = [
     { name = "gunicorn", specifier = ">=22.0.0,<23.0.0" },
     { name = "httpx", extras = ["http2", "socks"], specifier = ">=0.27.0,<1.0.0" },
     { name = "humanize", specifier = ">=4.11.0" },
+    { name = "hypercorn", specifier = ">=0.17.3" },
     { name = "instructor", specifier = ">=1.4.0,<2.0.0" },
     { name = "logfire", extras = ["asyncpg", "fastapi", "httpx", "redis", "requests", "sqlalchemy", "system-metrics"] },
     { name = "mako", specifier = ">=1.1.4,<2.0.0" },
@@ -2225,6 +2242,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f9/ac/d89fc1c925f4d501a7c31400c5f68b692e986b487ada0a7a0322dda53324/portabletext-html-1.1.3.tar.gz", hash = "sha256:cdf8237aa720d71d38017ad80c27b0fe0a70732f30093ed741697b9f3a0f0cff", size = 14960 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d6/8d/7b27041d2c69744bc4b14ed7bf5bf7b6aa39ee4b2f77525c6c68ef9932b4/portabletext_html-1.1.3-py3-none-any.whl", hash = "sha256:1e87a1d60e7371bb39484db636e9a4ab35820d94a1a1c3bf8985a22d42853039", size = 14983 },
+]
+
+[[package]]
+name = "priority"
+version = "2.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f5/3c/eb7c35f4dcede96fca1842dac5f4f5d15511aa4b52f3a961219e68ae9204/priority-2.0.0.tar.gz", hash = "sha256:c965d54f1b8d0d0b19479db3924c7c36cf672dbf2aec92d43fbdaf4492ba18c0", size = 24792 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5e/5f/82c8074f7e84978129347c2c6ec8b6c59f3584ff1a20bc3c940a3e061790/priority-2.0.0-py3-none-any.whl", hash = "sha256:6f8eefce5f3ad59baf2c080a664037bb4725cd0a790d53d59ab4059288faf6aa", size = 8946 },
 ]
 
 [[package]]
@@ -3413,6 +3439,18 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/64/85/c77a331b2c06af49a687f8b926fc2d111047a51e6f0b0a4baa01ff3a673a/wrapt-1.17.0-cp313-cp313t-win32.whl", hash = "sha256:a4192b45dff127c7d69b3bdfb4d3e47b64179a0b9900b6351859f3001397dabf", size = 37971 },
     { url = "https://files.pythonhosted.org/packages/05/9b/b2469f8be9efed24283fd7b9eeb8e913e9bc0715cf919ea8645e428ab7af/wrapt-1.17.0-cp313-cp313t-win_amd64.whl", hash = "sha256:4f643df3d4419ea3f856c5c3f40fec1d65ea2e89ec812c83f7767c8730f9827a", size = 40755 },
     { url = "https://files.pythonhosted.org/packages/4b/d9/a8ba5e9507a9af1917285d118388c5eb7a81834873f45df213a6fe923774/wrapt-1.17.0-py3-none-any.whl", hash = "sha256:d2c63b93548eda58abf5188e505ffed0229bf675f7c3090f8e36ad55b8cbc371", size = 23592 },
+]
+
+[[package]]
+name = "wsproto"
+version = "1.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "h11" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c9/4a/44d3c295350d776427904d73c189e10aeae66d7f555bb2feee16d1e4ba5a/wsproto-1.2.0.tar.gz", hash = "sha256:ad565f26ecb92588a3e43bc3d96164de84cd9902482b130d0ddbaa9664a85065", size = 53425 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/78/58/e860788190eba3bcce367f74d29c4675466ce8dddfba85f7827588416f01/wsproto-1.2.0-py3-none-any.whl", hash = "sha256:b9acddd652b585d75b20477888c56642fdade28bdfd3579aa24a4d2c037dd736", size = 24226 },
 ]
 
 [[package]]
