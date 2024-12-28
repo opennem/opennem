@@ -43,7 +43,9 @@ async def _calculate_energy_for_interval(session: AsyncSession, start_time: date
                 ORDER BY interval
             ) AS prev_generated
         FROM facility_scada
-        WHERE interval BETWEEN :start_time AND :end_time
+        WHERE
+            interval BETWEEN :start_time AND :end_time
+            AND energy_quality_flag < 2
     )
     UPDATE facility_scada fs
     SET
@@ -159,6 +161,7 @@ async def main():
     date_start = datetime.fromisoformat("2019-09-25 00:00:00")
     date_end = get_last_completed_interval_for_network().replace(tzinfo=None)
     date_start = NetworkNEM.data_first_seen.replace(tzinfo=None)  # type: ignore
+    date_start = date_end - timedelta(years=1)
     await run_energy_backlog(date_start=date_start, date_end=date_end)
 
 
