@@ -64,8 +64,8 @@ class WorkerSettings:
         # NEM Interval Check
         cron(
             task_nem_interval_check,
-            minute=set(range(0, 60, 1)),
-            second=45,
+            minute=set(range(0, 60, 5)),
+            second=50,
             timeout=None,
             unique=True,
         ),
