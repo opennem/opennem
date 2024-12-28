@@ -438,7 +438,7 @@ def get_last_complete_day_for_network(network: NetworkSchema) -> datetime:
     return today_midnight
 
 
-def get_last_completed_interval_for_network(network: NetworkSchema, tz_aware: bool = True) -> datetime:
+def get_last_completed_interval_for_network(network: NetworkSchema = NetworkNEM, tz_aware: bool = True) -> datetime:
     """Get the last completed network time for a network. Live wall clock"""
     now_network = datetime.now(network.get_fixed_offset())
 
