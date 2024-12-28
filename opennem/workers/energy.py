@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from opennem import settings
 from opennem.db import get_write_session
 from opennem.schema.network import NetworkNEM
-from opennem.utils.dates import get_datetime_now_for_network, get_last_completed_interval_for_network
+from opennem.utils.dates import get_last_completed_interval_for_network
 
 logger = logging.getLogger("opennem.workers.energy")
 
@@ -80,16 +80,22 @@ async def run_energy_calculation_for_interval(interval: datetime) -> int:
         return await _calculate_energy_for_interval(session, start_time, end_time)
 
 
-async def process_energy_from_now(hours: int = 2) -> None:
+async def process_energy_last_intervals(num_intervals: int = 6) -> None:
     """
-    Process energy calculations from now.
+    Process energy calculations for the last num_intervals intervals.
 
-    Defaults to running the last 2 hours.
+    This is intended to be run by a cron job every 5 minutes.
+
+    params:
+        num_intervals: int = 6 - the number of 5 minute intervals to process back from the last completed interval
+
+    returns:
+        None
     """
 
     async with get_write_session() as session:
-        end_time = get_datetime_now_for_network(network=NetworkNEM, tz_aware=False).replace(tzinfo=None)
-        start_time = end_time - timedelta(hours=hours)
+        end_time = get_last_completed_interval_for_network(network=NetworkNEM, tz_aware=False).replace(tzinfo=None)
+        start_time = end_time - timedelta(minutes=5 * num_intervals)
 
         logger.info(f"Processing energy calculations from {start_time} to {end_time}")
 

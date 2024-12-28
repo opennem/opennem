@@ -9,6 +9,7 @@ from arq import Retry
 
 from opennem.aggregates.facility_interval import (
     run_facility_aggregate_updates,
+    run_update_facility_aggregate_last_interval,
     update_facility_aggregate_last_hours,
     update_facility_aggregates_chunked,
 )
@@ -39,7 +40,7 @@ from opennem.exporter.facilities import export_facilities_static
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
-from opennem.workers.energy import process_energy_from_now
+from opennem.workers.energy import process_energy_last_intervals
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
 from opennem.workers.system import clean_tmp_dir
@@ -61,11 +62,8 @@ async def task_nem_interval_check(ctx) -> None:
         logger.warning("No new data from crawlers")
         raise Retry(defer=ctx["job_try"] * 15)
 
-    # update energy
-    await process_energy_from_now(hours=1)
-
     # update facility aggregates
-    await update_facility_aggregate_last_hours()
+    await run_update_facility_aggregate_last_interval()
 
     # run flows
     run_flows_for_last_days(days=1, network=NetworkNEM)
@@ -73,6 +71,9 @@ async def task_nem_interval_check(ctx) -> None:
     await asyncio.gather(
         run_export_power_latest_for_network(network=NetworkNEM), run_export_power_latest_for_network(network=NetworkAU)
     )
+
+    # update energy
+    await process_energy_last_intervals(num_intervals=3)
 
 
 @logfire.instrument("task_nem_per_day_check")
@@ -84,7 +85,7 @@ async def task_nem_per_day_check(ctx) -> None:
     if not dispatch_actuals or not dispatch_actuals.inserted_records:
         raise Retry(defer=ctx["job_try"] * 15)
 
-    await process_energy_from_now(hours=24 * 3)
+    await process_energy_last_intervals(num_intervals=24 * 3)
 
     await run_facility_aggregate_updates(lookback_days=7)
 
@@ -130,20 +131,13 @@ async def task_bom_capitals_crawl(ctx) -> None:
 @logfire.instrument("task_run_energy_calculation")
 async def task_run_energy_calculation(ctx) -> None:
     """Runs the energy calculation for the last 2 hours"""
-    await process_energy_from_now(hours=4)
+    await process_energy_last_intervals(num_intervals=4)
 
 
 @logfire.instrument("task_run_flows_for_last_days")
 async def task_run_flows_for_last_days(ctx) -> None:
     """Runs the flows for the last 2 days"""
     run_flows_for_last_days(days=2, network=NetworkNEM)
-
-
-@logfire.instrument("task_update_facility_aggregates_chunked")
-async def task_update_current_day_facility_aggregates(ctx) -> None:
-    """Updates facility aggregates in chunks"""
-
-    await update_facility_aggregate_last_hours()
 
 
 @logfire.instrument("task_run_aggregates_demand_network_days")
