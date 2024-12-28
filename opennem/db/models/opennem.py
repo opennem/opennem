@@ -18,6 +18,7 @@ from sqlalchemy import (
     Index,
     Integer,
     Numeric,
+    SmallInteger,
     String,
     Text,
     UniqueConstraint,
@@ -326,7 +327,7 @@ class FacilityScada(Base):
     generated: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
     is_forecast = Column(Boolean, default=False, primary_key=True)
     energy: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
-    energy_quality_flag = Column(Numeric, nullable=False, default=0)
+    energy_quality_flag: Mapped[int] = mapped_column(SmallInteger, nullable=False, default=0)
 
     __table_args__ = (
         # 1. Primary Index for Time Bucketing
