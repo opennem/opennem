@@ -67,10 +67,6 @@ tag:
 	$(eval CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD))
 	$(eval NEW_VERSION := $(shell uvx hatch version))
 	@if [ "$(CURRENT_BRANCH)" = "master" ]; then \
-		if ! echo "$(NEW_VERSION)" | grep -q "release"; then \
-			echo "Error: Cannot tag non-release on master branch"; \
-			exit 1; \
-		fi; \
 		git tag "$(NEW_VERSION)"; \
 		echo "Pushing $(NEW_VERSION)"; \
 		git push origin "$(NEW_VERSION)" "$(CURRENT_BRANCH)"; \
