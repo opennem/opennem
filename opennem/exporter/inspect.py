@@ -6,16 +6,16 @@ Takes an OpenNEM JSON output and debugs it
 import logging
 
 from opennem.utils.datatable import datatable_print
-from opennem.utils.http import http
+from opennem.utils.httpx import http
 
 logger = logging.getLogger("opennem.inspector")
 
 
-def inspect_opennem_json(url: str):
+async def inspect_opennem_json(url: str):
     logger.info(f"Getting {url}")
-    response = http.get(url)
+    response = await http.get(url)
 
-    if not response.ok:
+    if not response.is_success:
         logger.error(f"Failed to get {url}")
         return
 
@@ -52,6 +52,7 @@ def inspect_opennem_json(url: str):
 
 
 if __name__ == "__main__":
+    import asyncio
     import sys
 
     if len(sys.argv) > 1:
@@ -59,4 +60,4 @@ if __name__ == "__main__":
     else:
         test_url = "https://data.dev.opennem.org.au/v4/stats/au/NEM/NSW1/energy/2024.json"
 
-    inspect_opennem_json(test_url)
+    asyncio.run(inspect_opennem_json(test_url))

@@ -20,13 +20,6 @@ RELOAD_PATH = Path(__file__).parent.parent.resolve() / "opennem"
 
 
 def run_server(host: str = "0.0.0.0", port: int = 8000, server_ssl: bool = False, workers: int | None = 2) -> None:
-    import multiprocessing
-
-    server_workers = multiprocessing.cpu_count()
-
-    if not workers:
-        workers = server_workers
-
     log_level = settings.log_level.lower()
     reload_enabled = False
     reload_dirs = None
@@ -61,7 +54,7 @@ def run_server(host: str = "0.0.0.0", port: int = 8000, server_ssl: bool = False
 
 if __name__ == "__main__":
     try:
-        run_server(workers=4)
+        run_server(host=settings.api_server_host, port=settings.api_server_port, workers=settings.api_server_workers)
     except KeyboardInterrupt:
         logger.info("User interrupted")
     except Exception as e:

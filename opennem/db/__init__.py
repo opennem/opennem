@@ -111,7 +111,10 @@ engine = db_connect()
 
 
 @deprecation.deprecated(
-    deprecated_in="4.0", removed_in="4.1", current_version=get_version(), details="Use the db_connect function instead"
+    deprecated_in="4.0",
+    removed_in="4.1",
+    current_version=get_version(dev_tag=False),
+    details="Use the db_connect function instead",
 )
 def get_database_engine() -> AsyncEngine:
     """
@@ -157,6 +160,11 @@ async def get_write_session() -> AsyncGenerator[AsyncSession, None]:
             raise
 
 
+async def get_scoped_read_session() -> AsyncGenerator[AsyncSession, None]:
+    async with SessionLocal() as session:
+        yield session
+
+
 @asynccontextmanager
 async def get_notransaction_session() -> AsyncGenerator[AsyncSession, None]:
     """
@@ -170,11 +178,23 @@ async def get_notransaction_session() -> AsyncGenerator[AsyncSession, None]:
             await session.close()
 
 
+@deprecation.deprecated(
+    deprecated_in="4.0",
+    removed_in="4.1",
+    current_version=get_version(dev_tag=False),
+    details="Use get_read_session and get_write_session instead",
+)
 async def get_scoped_session() -> AsyncGenerator[AsyncSession, None]:
     async with SessionLocalAsync() as session:
         yield session
 
 
+@deprecation.deprecated(
+    deprecated_in="4.0",
+    removed_in="4.1",
+    current_version=get_version(dev_tag=False),
+    details="Use the db_connect function instead",
+)
 async def get_scoped_connection() -> AsyncGenerator[AsyncConnection, None]:
     async with engine.begin() as connection:
         yield connection

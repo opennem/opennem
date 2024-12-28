@@ -29,14 +29,14 @@ In any code you generate:
 - Use functional, declarative programming and avoid classes where possible
 - Write async methods in almost all cases
 - Include modern type definitions for method signatures and returns
-- Include docstrings for all methods
+- Include docstrings for all functions and modules
 - Methods that are private to a module or file should be preceeded with an underscore to keep them private
 - Documentation for the project is available in the `docs/` folder
 - For any major changes write out a documentation file or update existing documentation in `docs/`
 - The database model are written in SqlAlchemy ORM and are stored in `opennem/db/models/opennem.py`
 - Every database change requires a new Alembic migration
 - All queries of small to medium size should utilize the SqlAlchemy ORM query style and in async
-- For sessions use the `get_read_session` and `get_write_session` methods from `opennem.db` where each is appropriate
+- For database sessions use the `get_read_session` and `get_write_session` methods from `opennem.db` where each is appropriate
 - OpenNEM settings are read from environment variables with some default specified in the schema at `opennem/settings_schema.py`
 - You can utilise the settings object by importing settings via `from opennem import settings`
 - prefer Pydantic models over dictionaries or any other structure to parse data
@@ -45,3 +45,10 @@ In any code you generate:
 - This application is deployed as a docker container where both the API and scheduler are run as separate docker processes
 - The FastAPI API is located at `opennem.api.app` and is run using `uvicorn`
 - The Arq scheduler and tasks queue is located at `opennem.tasks.app` and is run by calling that module
+- prefer using polars over pandas
+
+In any docs you generate:
+
+- store them in docs/ and a relevant subfolder
+- write as an MDX file
+- include a document header (bound with ---) that includes a title, description and icon (which is a favicon)

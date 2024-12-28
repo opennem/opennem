@@ -9,7 +9,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 from opennem import settings
 from opennem.clients.unkey import unkey_validate
-from opennem.utils.http import http
+from opennem.utils.httpx import http
 
 logger = logging.getLogger("pagecog.api.security")
 
@@ -23,14 +23,14 @@ credentials_exception = HTTPException(
 
 
 @cached(TTLCache(maxsize=1, ttl=3600))
-def get_jwks() -> KeySet:
+async def get_jwks() -> KeySet:
     """
     Get cached or new JWKS from clerk.dev.
     """
     logger.info("Fetching JWKS from %s", settings.api_jwks_url)
-    with http.get(settings.api_jwks_url) as response:
-        response.raise_for_status()
-        return JsonWebKey.import_key_set(response.json())
+    response = await http.get(settings.api_jwks_url)
+    response.raise_for_status()
+    return JsonWebKey.import_key_set(response.json())
 
 
 def decode_token(

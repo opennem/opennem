@@ -24,19 +24,9 @@ DEFAULT_BROWSER_HEADERS = {
     "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
     "Cache-Control": "no-cache",
     "Connection": "keep-alive",
-    # "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*",
-    # "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
-    # "accept-encoding": "gzip, deflate",
-    # "scheme": "https",
-    # "sec-ch-prefers-color-scheme": "light",
-    # "sec-ch-ua-mobile": "?0",
-    # "sec-ch-ua-platform": '"macOS"',
-    # "sec-fetch-dest": "document",
-    # "sec-fetch-mode": "navigate",
-    # "sec-fetch-site": "none",
-    # "sec-fetch-user": "?1",
-    # "upgrade-insecure-requests": "1",
 }
+
+API_CLIENT_HEADERS = {"user-agent": f"OpenNEM (v {get_version()})", "accept": "*/*"}
 
 
 def autodetect_encoding(content) -> str | None:
@@ -107,12 +97,3 @@ def httpx_factory(mimic_browser: bool = False, debug: bool = True, proxy: bool =
 
 
 http = httpx_factory(debug=settings.is_dev, timeout=settings.http_timeout)
-
-
-async def get_http(*args, **kwargs) -> AsyncClient:
-    """Used in api"""
-    http = httpx_factory(*args, **kwargs)
-    try:
-        yield http
-    finally:
-        http.aclose()

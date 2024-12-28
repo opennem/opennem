@@ -31,6 +31,7 @@ RUN apt-get update \
   && apt-get install --no-install-recommends -y \
   build-essential \
   curl \
+  git \
   ca-certificates \
   pkg-config \
   libssl-dev \
@@ -48,7 +49,11 @@ WORKDIR $PYSETUP_PATH
 COPY uv.lock pyproject.toml ./
 
 # workaround for if you have packages-include in your pyproject.toml
-RUN mkdir ${PROJECT_NAME} && touch ${PROJECT_NAME}/__init__.py
+RUN mkdir ${PROJECT_NAME}
+RUN mkdir bin
+ADD opennem/__init__.py ${PROJECT_NAME}/__init__.py
+ADD LICENSE LICENSE
+ADD bin/run_server.py bin/run_server.py
 
 # install runtime deps - using UV
 RUN uv sync --frozen

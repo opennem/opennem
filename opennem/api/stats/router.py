@@ -1,30 +1,29 @@
 import logging
 from datetime import date, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
-from fastapi_cache.decorator import cache
 from fastapi_versionizer import api_version
 from sqlalchemy import select
-from sqlalchemy.engine.base import Engine
-from sqlalchemy.orm import Session
 from starlette import status
 
 from opennem import settings
 from opennem.api.export.controllers import power_week
 from opennem.api.export.queries import interconnector_flow_network_regions_query
+from opennem.api.keys import ApiAuthorization, api_protected
 from opennem.api.time import human_to_interval, human_to_period, valid_database_interval
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
 from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
-from opennem.db import db_connect, get_scoped_session
+from opennem.db import db_connect, get_read_session
 from opennem.db.models.opennem import Facility
 from opennem.queries.emissions import get_emission_factor_region_query
 from opennem.queries.energy import get_energy_facility_query
 from opennem.queries.price import get_network_region_price_query
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.schema.time import TimePeriod
+from opennem.users.schema import OpenNEMRoles
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem
 
 from .controllers import get_scada_range, get_scada_range_optimized, stats_factory
@@ -36,23 +35,24 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-@api_version(4)
+@api_version(3)
+@api_protected()
 @router.get(
     "/power/station/{network_code}/{facility_code:path}",
     name="Power by Station",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
     description="Get the power outputs for a station",
+    include_in_schema=False,
 )
-@cache(expire=60 * 5)
+@api_protected(roles=[OpenNEMRoles.admin])
 async def power_station(
+    authorization: ApiAuthorization,
     facility_code: str | None = None,
     network_code: str | None = None,
     interval_human: str | None = None,
     period_human: str | None = None,
     period: str | None = None,  # type: ignore
-    session: Session = Depends(get_scoped_session),
-    engine: Engine = Depends(db_connect),  # type: ignore
 ) -> OpennemDataSet:
     if not network_code:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No network code")
@@ -84,18 +84,19 @@ async def power_station(
     period_obj: TimePeriod = human_to_period(period_human)
     units = get_unit("power")
 
-    facility_lookup: Facility | None = (
-        (
-            await session.execute(
-                select(Facility)
-                .filter(Facility.code == facility_code)
-                .filter(Facility.network_id == network.code)
-                .filter(Facility.approved.is_(True))
+    async with get_read_session() as session:
+        facility_lookup: Facility | None = (
+            (
+                await session.execute(
+                    select(Facility)
+                    .filter(Facility.code == facility_code)
+                    .filter(Facility.network_id == network.code)
+                    .filter(Facility.approved.is_(True))
+                )
             )
+            .scalars()
+            .one_or_none()
         )
-        .scalars()
-        .one_or_none()
-    )
 
     if not facility_lookup:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Station not found")
@@ -113,6 +114,8 @@ async def power_station(
     query = power_facility_query(time_series=time_series, facility_code=facility_code)
 
     logger.debug(query)
+
+    engine = db_connect()
 
     async with engine.begin() as c:
         results = list(await c.execute(query))
@@ -148,21 +151,21 @@ async def power_station(
 """
 
 
-@api_version(4)
+@api_version(3)
 @router.get(
     "/energy/station/{network_code}/{facility_code:path}",
     name="Energy by Station",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
-@cache(expire=60 * 60 * 12)
+@api_protected(roles=[OpenNEMRoles.admin])
 async def energy_station(
+    authorization: ApiAuthorization,
     network_code: str,
     facility_code: str,
     interval: str | None = None,
     period: str | None = None,
-    engine: Engine = Depends(db_connect),  # type: ignore
-    session: Session = Depends(get_scoped_session),
 ) -> OpennemDataSet:
     """
     Get energy output for a station (list of facilities)
@@ -203,16 +206,17 @@ async def energy_station(
     period_obj = human_to_period(period)
     units = get_unit("energy")
 
-    # ensure the facility exists
-    facility_lookup: Facility | None = (
-        (
-            await session.execute(
-                select(Facility).filter(Facility.code == facility_code).filter(Facility.network_id == network.code)
+    async with get_read_session() as session:
+        # ensure the facility exists
+        facility_lookup: Facility | None = (
+            (
+                await session.execute(
+                    select(Facility).filter(Facility.code == facility_code).filter(Facility.network_id == network.code)
+                )
             )
+            .scalars()
+            .one_or_none()
         )
-        .scalars()
-        .one_or_none()
-    )
 
     if not facility_lookup:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Station not found")
@@ -251,6 +255,8 @@ async def energy_station(
     )
 
     logger.debug(query)
+
+    engine = db_connect()
 
     async with engine.begin() as connection:
         result = await connection.execute(query)
@@ -328,21 +334,25 @@ Flows endpoints
     name="Interconnector Flow Network for network region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
 @router.get(
     "/flow/network/{network_code}",
     name="Interconnector Flow Network",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
-@cache(expire=60 * 15)
+@api_protected(roles=[OpenNEMRoles.admin])
 async def power_flows_network_week(
+    authorization: ApiAuthorization,
     network_code: str,
     network_region_code: str | None = None,
     month: date | None = None,
-    engine: Engine = Depends(db_connect),  # type: ignore
 ) -> OpennemDataSet | None:
     """Get the last day of network flow data"""
+
+    engine = db_connect()
 
     network = network_from_network_code(network_code)
 
@@ -377,9 +387,9 @@ async def power_flows_network_week(
 
     query = interconnector_flow_network_regions_query(time_series=time_series, network_region=network_region_code)
 
-    with engine.connect() as c:
+    async with engine.connect() as c:
         logger.debug(query)
-        row = list(c.execute(query))
+        row = list((await c.execute(query)).all())
 
     if not row:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No results")
@@ -423,9 +433,21 @@ async def power_flows_network_week(
     name="Power Network Region by Fueltech",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
+@router.get(
+    "/power/network/fueltech/{network_code}",
+    name="Power Network Region by Fueltech",
+    response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
+    include_in_schema=False,
+)
+@api_protected(roles=[OpenNEMRoles.admin])
 async def power_network_region_fueltech(
-    network_code: str, network_region_code: str | None = None, month: date | None = None
+    authorization: ApiAuthorization,
+    network_code: str,
+    network_region_code: str | None = None,
+    month: date | None = None,
 ) -> OpennemDataSet | RedirectResponse:
     network = None
 
@@ -503,21 +525,25 @@ async def power_network_region_fueltech(
     name="Emission Factor per Network Region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
 @router.get(
     "/emissionfactor/network/{network_code}/{network_region_code}",
     name="Emission Factor for a Network Region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
-@cache(expire=60 * 5)
+@api_protected(roles=[OpenNEMRoles.admin])
 async def emission_factor_per_network(  # type: ignore
+    authorization: ApiAuthorization,
     network_code: str,
     interval: str = "5m",
     network_region_code: str | None = None,
-    engine=Depends(db_connect),  # type: ignore
 ) -> OpennemDataSet | None:
     network = None
+
+    engine = db_connect()
 
     try:
         network = network_from_network_code(network_code)
@@ -568,9 +594,9 @@ async def emission_factor_per_network(  # type: ignore
         interval=interval_obj,
     )
 
-    with engine.connect() as c:
+    async with engine.connect() as c:
         logger.debug(query)
-        row = list(c.execute(query))
+        row = list((await c.execute(query)).all())
 
     if not row:
         raise HTTPException(
@@ -609,31 +635,35 @@ async def emission_factor_per_network(  # type: ignore
     name="Price history by network and network region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
 @router.get(
     "/price/{network_code}",
     name="Price history by network and network region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
 @router.get(
     "/price/network/{network_code}/{network_region_code}",
     name="Price history by network and network region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
 @router.get(
     "/price/network/{network_code}",
     name="Price history by network and network region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    include_in_schema=False,
 )
-@cache(expire=60 * 5)
+@api_protected(roles=[OpenNEMRoles.admin])
 async def price_network_endpoint(
+    authorization: ApiAuthorization,
     network_code: str,
     network_region_code: str | None = None,
     forecasts: bool = False,
-    engine: Engine = Depends(db_connect),
 ) -> OpennemDataSet:
     """Returns network and network region price info for interval which defaults to network
     interval size
@@ -647,6 +677,8 @@ async def price_network_endpoint(
     Returns:
         OpennemData: data set
     """
+
+    engine = db_connect()
 
     try:
         network = network_from_network_code(network_code)
@@ -696,9 +728,9 @@ async def price_network_endpoint(
         forecast=forecasts,
     )
 
-    with engine.begin() as c:
+    async with engine.begin() as c:
         logger.debug(query)
-        row = list(c.execute(query))
+        row = list((await c.execute(query)).all())
 
     if not row:
         raise HTTPException(

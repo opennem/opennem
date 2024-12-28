@@ -16,7 +16,7 @@ async def parse_aemo_url_optimized(
 ) -> ControllerReturn | AEMOTableSet:
     """Optimized version of aemo url parser that stores the files locally in tmp
     and parses them individually to resolve memory pressure"""
-    download_path = download_and_unzip(url)
+    download_path = await download_and_unzip(url)
     cr = ControllerReturn()
 
     download_path_files = [f for f in download_path.iterdir() if f.is_file()]
@@ -63,7 +63,7 @@ async def parse_aemo_url_optimized_bulk(
 ) -> ControllerReturn | AEMOTableSet:
     """Optimized version of aemo url parser that stores the files locally in tmp
     and parses them individually to resolve memory pressure"""
-    download_path = download_and_unzip(url)
+    download_path = await download_and_unzip(url)
     cr = ControllerReturn()
 
     download_path_files = [f for f in download_path.iterdir() if f.is_file()]

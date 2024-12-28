@@ -8,7 +8,8 @@ ruff-check = uv run ruff check $(projectname)
 mypy = uv run mypy $(projectname)
 pytest = uv run pytest tests -v
 pyright = uv run pyright -v .venv $(projectname)
-BUMP_TYPE ?= pre_n
+hatch = uvx hatch
+BUMP_TYPE ?= dev
 
 .PHONY: test
 test:
@@ -34,23 +35,55 @@ build:
 	python setup.py sdist bdist_wheel
 
 
-.PHONE: version
+.PHONY: version
 version:
-	@if ! echo "major minor patch pre_l pre_n" | grep -w "$(BUMP_TYPE)" > /dev/null; then \
-		echo "Error: BUMP_TYPE must be one of: major, minor, patch, pre_l, pre_n"; \
+	@if ! echo "release major minor patch fix alpha beta rc rev post dev" | grep -w "$(BUMP_TYPE)" > /dev/null; then \
+		echo "Error: BUMP_TYPE must be one of: release, major, minor, patch, fix, alpha, beta, rc, rev, post, dev"; \
 		exit 1; \
 	fi
-	@uv run bump-my-version bump $(BUMP_TYPE)
-	@new_version=$$(uv run --python 3.12 python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['tool']['bumpversion']['current_version'])"); \
-	git tag $$new_version; \
-	echo "Pushing $$new_version"; \
-	git push -u origin $$new_version
+	# if the branch is master then bump needs to be either major minor patch or release
+	if [ "$$current_branch" = "master" ]; then \
+		if [ "$$BUMP_TYPE" != "major" ] && [ "$$BUMP_TYPE" != "minor" ] && [ "$$BUMP_TYPE" != "patch" ] && [ "$$BUMP_TYPE" != "release" ]; then \
+			echo "Error: Cannot bump on master branch unless it is major, minor, patch or release"; \
+			exit 1; \
+		fi \
+	fi; \
+
+	# if the current branch is dev then the bump type must be dev
+	if [ "$$current_branch" = "dev" ]; then \
+		if [ "$$BUMP_TYPE" != "dev" ]; then \
+			echo "Error: Cannot bump on dev branch unless it is dev"; \
+			exit 1; \
+		fi \
+	fi; \
+
+	$(hatch) version $(BUMP_TYPE)
+	git add opennem/__init__.py
+	$(eval NEW_VERSION := $(shell uvx hatch version))
+	git commit -m "Bump version to $(NEW_VERSION)"
+
+.PHONY: tag
+tag:
+	$(eval CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD))
+	$(eval NEW_VERSION := $(shell uvx hatch version))
+	@if [ "$(CURRENT_BRANCH)" = "master" ]; then \
+		if ! echo "$(NEW_VERSION)" | grep -q "release"; then \
+			echo "Error: Cannot tag non-release on master branch"; \
+			exit 1; \
+		fi; \
+		git tag "$(NEW_VERSION)"; \
+		echo "Pushing $(NEW_VERSION)"; \
+		git push origin "$(NEW_VERSION)" "$(CURRENT_BRANCH)"; \
+	else \
+		git push -u origin "$(CURRENT_BRANCH)"; \
+	fi
+
 
 .PHONY: release-pre
 release-pre: format lint
 
 .PHONY: release
-release: release-pre version
+release: release-pre version tag
 
 .PHONY: image
 image:

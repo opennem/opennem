@@ -7,7 +7,7 @@ from datetime import datetime
 
 from opennem.queries.energy import get_fueltech_generated_energy_emissions, get_fueltech_interval_energy_emissions
 from opennem.recordreactor.buckets import get_bucket_interval
-from opennem.recordreactor.persistence import persist_milestones
+from opennem.recordreactor.persistence import check_and_persist_milestones
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
     MilestoneFueltechGrouping,
@@ -145,7 +145,7 @@ async def run_energy_emissions_milestones(
         region_group=False,
     )
 
-    await persist_milestones(
+    await check_and_persist_milestones(
         milestones=milestone_data,
     )
 
@@ -161,7 +161,7 @@ async def run_energy_emissions_milestones(
         region_group=True,
     )
 
-    await persist_milestones(
+    await check_and_persist_milestones(
         milestones=milestone_data,
     )
 

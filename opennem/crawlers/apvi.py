@@ -98,8 +98,9 @@ APVIRooftopTodayCrawler = CrawlerDefinition(
     priority=CrawlerPriority.medium,
     schedule=CrawlerSchedule.frequent,
     name="apvi.today.data",
+    limit=2,
     url="none",
-    latest=True,
+    latest=False,
     processor=crawl_apvi_forecasts,
 )
 

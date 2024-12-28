@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from sqlalchemy import text
 
 from opennem.db import get_read_session
-from opennem.recordreactor.persistence import persist_milestones
+from opennem.recordreactor.persistence import check_and_persist_milestones
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
     MilestoneFueltechGrouping,
@@ -110,7 +110,7 @@ async def run_price_demand_milestone_for_interval(network: NetworkSchema, bucket
             region_group=region_group,
         )
 
-        await persist_milestones(
+        await check_and_persist_milestones(
             milestones=milestone_data,
         )
 

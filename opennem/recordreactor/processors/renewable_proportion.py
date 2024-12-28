@@ -6,7 +6,7 @@ import logging
 from datetime import datetime
 
 from opennem.queries.renewable_proportion import get_renewable_energy_proportion
-from opennem.recordreactor.persistence import persist_milestones
+from opennem.recordreactor.persistence import check_and_persist_milestones
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
     MilestoneFueltechGrouping,
@@ -15,7 +15,7 @@ from opennem.recordreactor.schema import (
     MilestoneType,
 )
 from opennem.recordreactor.unit import get_milestone_unit
-from opennem.schema.network import NetworkSchema
+from opennem.schema.network import NetworkAEMORooftop, NetworkSchema
 
 logger = logging.getLogger("opennem.recordreactor.processors.renewable_proportion")
 
@@ -70,6 +70,10 @@ async def run_renewable_proportion_milestones(
     Run the renewable proportion milestone for a given network and date range.
     """
 
+    # we can't calculate the renewable proportion before the rooftop data was available
+    if start_date < NetworkAEMORooftop.data_first_seen.replace(tzinfo=None):  # type: ignore
+        return
+
     # only run on interval, day and week rolling for now
     if bucket_size not in [
         MilestonePeriod.interval,
@@ -78,6 +82,10 @@ async def run_renewable_proportion_milestones(
         MilestonePeriod.month,
         MilestonePeriod.year,
     ]:
+        return
+
+    # for interval size, we can only run proportion on the hour or on minute 30
+    if bucket_size == MilestonePeriod.interval and (start_date.minute != 0 and start_date.minute != 30):
         return
 
     for group_by_region in [True, False]:
@@ -91,6 +99,6 @@ async def run_renewable_proportion_milestones(
             group_by_renewable=True,
         )
 
-        await persist_milestones(
+        await check_and_persist_milestones(
             milestones=milestone_data,
         )

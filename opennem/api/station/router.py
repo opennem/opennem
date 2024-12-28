@@ -10,8 +10,6 @@ from opennem.api.exceptions import OpennemBaseHttpException
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.cms.importer import get_cms_facilities
 from opennem.schema.unit import UnitFueltechType
-from opennem.utils.dates import get_today_opennem
-from opennem.utils.version import get_version
 
 logger = logging.getLogger("opennem.api.station")
 
@@ -85,8 +83,6 @@ async def get_facility(
 
     try:
         model = APIV4ResponseSchema(
-            version=get_version(),
-            created_at=get_today_opennem(),
             success=True,
             data=[facility],
             total_records=1,

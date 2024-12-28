@@ -10,7 +10,7 @@ from geoalchemy2.elements import WKBElement
 from geoalchemy2.shape import from_shape
 from shapely.geometry import shape
 
-from opennem.utils.http import http
+from opennem.utils.httpx import http
 
 logger = logging.getLogger(__name__)
 
@@ -22,13 +22,13 @@ def get_osm_way_url(way_id: str) -> str:
     return OSM_API_WAY_URI.format(way_id=way_id)
 
 
-def get_osm_way(way_id: str) -> dict:
+async def get_osm_way(way_id: str) -> dict:
     """Returns the xml payload from the osm api"""
     way_url = get_osm_way_url(way_id)
 
-    way_resp = http.get(way_url)
+    way_resp = await http.get(way_url)
 
-    if not way_resp.ok:
+    if not way_resp.is_success:
         logger.error("No way")
         raise Exception(f"Could not get way: {way_resp.status_code}")
 
@@ -51,18 +51,18 @@ def get_osm_way(way_id: str) -> dict:
     return geojson_response
 
 
-def get_osm_geom(way_id: str, srid: int = 4326) -> WKBElement:
+async def get_osm_geom(way_id: str, srid: int = 4326) -> WKBElement:
     """Returns an WKT element from an osm way id"""
     poly = None
 
-    osm_way = get_osm_way(way_id)
+    osm_way = await get_osm_way(way_id)
 
     for feature in osm_way["features"]:
         if feature["geometry"]["type"] == "Polygon":
             poly = feature["geometry"]
 
     if not poly:
-        return None
+        raise Exception("No polygon found in OSM way")
 
     geom = from_shape(shape(poly), srid=srid)
 

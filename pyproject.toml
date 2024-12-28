@@ -1,8 +1,7 @@
 [project]
-name = "opennem-backend"
-version = "4.0.0-rc7"
+name = "opennem"
 description = "OpenElectricity (OpenNEM) Australian Energy Data Platform"
-license = "MIT"
+license = {file = "LICENSE"}
 keywords = ["openelectricity", "opennem", "analysis", "australia", "energy"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
@@ -15,10 +14,11 @@ authors = [
     {name = "Nik Cubrilovic", email = "git@nikcub.me"},
 ]
 requires-python = "<4.0,>=3.12"
+dynamic = ["version"]
 
 dependencies = [
     "requests<3.0.0,>=2.23.0",
-    "sentry-sdk[asyncpg,fastapi,httpx,sqlalchemy]>=2.1.1,<3.0.0",
+    "sentry-sdk[asyncpg,fastapi,httpx,sqlalchemy]",
     "pydantic[email]<3.0.0,>=2.6.4",
     "alembic<2.0.0,>=1.6.2",
     "geojson<4.0.0,>=3.1.0",
@@ -54,9 +54,9 @@ dependencies = [
     "asgiref<4.0.0,>=3.8.1",
     "chardet<6.0.0,>=5.2.0",
     "tqdm<5.0.0,>=4.66.5",
-    "logfire[asyncpg,fastapi,httpx,redis,requests,sqlalchemy,system-metrics]>=0.52.0,<3.0.0",
+    "logfire[asyncpg,fastapi,httpx,redis,requests,sqlalchemy,system-metrics]",
     "aioboto3<14.0.0,>=13.1.1",
-    "arq<1.0.0,>=0.26.1",
+    "arq>=0.26.1,<1.0.0",
     "asyncclick<9.0.0.0,>=8.1.7.2",
     "openai<2.0.0,>=1.43.1",
     "instructor<2.0.0,>=1.4.0",
@@ -67,9 +67,13 @@ dependencies = [
     "polars>=1.14.0",
     "typer>=0.15.1",
     "humanize>=4.11.0",
+    "clerk-backend-api>=1.5.0",
+    "pyarrow>=18.1.0",
+    "curl-cffi>=0.7.4",
 ]
 
 [tool.uv]
+package = true
 dev-dependencies = [
     "python-dotenv<2.0.0,>=1.0.0",
     "rope<2.0.0,>=1.0.0",
@@ -89,12 +93,12 @@ dev-dependencies = [
     "pyright<2.0.0,>=1.1.299",
     "ruff<1.0.0,>=0.6.5",
     "pytest-asyncio<1.0.0,>=0.24.0",
-    "hatch<2.0.0,>=1.7.0",
     "types-redis<5.0.0.0,>=4.6.0.11",
     "requests-cache<2.0.0,>=1.1.1",
     "hypothesis<7.0.0,>=6.108.5",
     "psycopg2-binary>=2.9.10",
-    "bump-my-version>=0.28.1",
+    "hatch>=1.14.0",
+    "duckdb>=1.1.3",
 ]
 
 [project.scripts]
@@ -161,39 +165,9 @@ testpaths = [
     "tests",
 ]
 
-[build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+[tool.hatch.version]
+path = "opennem/__init__.py"
 
-[tool.bumpversion]
-current_version = "4.0.0-rc7"
-parse = """(?x)
-    (?P<major>0|[1-9]\\d*)\\.
-    (?P<minor>0|[1-9]\\d*)\\.
-    (?P<patch>0|[1-9]\\d*)
-    (?:
-        -                             # dash separator for pre-release section
-        (?P<pre_l>[a-zA-Z-]+)         # pre-release label
-        (?P<pre_n>0|[1-9]\\d*)        # pre-release version number
-    )?                                # pre-release section is optional
-"""
-serialize = [
-    "{major}.{minor}.{patch}-{pre_l}{pre_n}",
-    "{major}.{minor}.{patch}",
-]
-search = "{current_version}"
-replace = "{new_version}"
-regex = false
-ignore_missing_version = true
-tag = true
-sign_tags = false
-tag_name = "v{new_version}"
-tag_message = "Bump version: {current_version} → {new_version}"
-allow_dirty = false
-commit = true
-message = "Bump version: {current_version} → {new_version}"
-commit_args = ""
-
-[tool.bumpversion.parts.pre_l]
-values = ["dev", "rc", "final"]
-optional_value = "final"
+[tool.setuptools]
+include-package-data = true
+packages = ["opennem", "bin"]

@@ -503,7 +503,7 @@ def cast_float_or_none(value: float | None) -> float | None:
     if value is None:
         return None
 
-    return float(value)
+    return round(float(value), 4)
 
 
 def clean_capacity(capacity: str | int | float, round_to: int = 6) -> float | None:

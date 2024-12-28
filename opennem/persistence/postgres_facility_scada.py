@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 @deprecation.deprecated(
-    deprecated_in="4.0", removed_in="4.1", current_version=get_version(), details="persist_facility_scada_bulk"
+    deprecated_in="4.0", removed_in="4.1", current_version=get_version(dev_tag=False), details="persist_facility_scada_bulk"
 )
 async def persist_postgres_facility_scada(records: list[FacilityScadaSchema]) -> int:
     """Persist WEM facility intervals"""

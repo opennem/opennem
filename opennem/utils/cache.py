@@ -15,7 +15,7 @@ from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger(__name__)
 
-CACHE_AGE = 60 * 5
+CACHE_AGE = 60 * 2
 
 scada_cache: TTLCache = TTLCache(maxsize=100, ttl=CACHE_AGE)
 

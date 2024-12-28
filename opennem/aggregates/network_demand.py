@@ -69,7 +69,6 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
 
 async def exec_aggregates_network_demand_query(date_min: datetime, date_max: datetime, network: NetworkSchema) -> bool:
     engine = get_database_engine()
-    result = None
 
     if date_max < date_min:
         raise AggregateDemandException(
@@ -82,9 +81,7 @@ async def exec_aggregates_network_demand_query(date_min: datetime, date_max: dat
         logger.debug(query)
 
         if not settings.dry_run:
-            result = await conn.execute(query)
-
-    logger.debug(result)
+            await conn.execute(query)
 
     return False
 

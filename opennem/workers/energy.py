@@ -7,8 +7,9 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem import settings
-from opennem.db import get_read_session, get_write_session
-from opennem.utils.dates import get_today_opennem
+from opennem.db import get_write_session
+from opennem.schema.network import NetworkNEM
+from opennem.utils.dates import get_last_completed_interval_for_network
 
 logger = logging.getLogger("opennem.workers.energy")
 
@@ -16,6 +17,10 @@ logger = logging.getLogger("opennem.workers.energy")
 async def _calculate_energy_for_interval(session: AsyncSession, start_time: datetime, end_time: datetime) -> int:
     """
     Calculate energy for a an interval range and update the energy column in the facility_scada table.
+
+    The energy calculation requires both the current and previous interval's generated values
+    to compute the average power over the interval. We explicitly exclude the first interval
+    in each facility's range since we won't have access to its previous value.
     """
 
     query = text("""
@@ -36,17 +41,13 @@ async def _calculate_energy_for_interval(session: AsyncSession, start_time: date
             LAG(generated, 1) OVER (
                 PARTITION BY network_id, facility_code
                 ORDER BY interval
-            ) AS prev_generated,
-            ROW_NUMBER() OVER (
-                PARTITION BY network_id, facility_code, (interval::date)
-                ORDER BY interval
-            ) AS rn
+            ) AS prev_generated
         FROM facility_scada
         WHERE interval BETWEEN :start_time AND :end_time
     )
     UPDATE facility_scada fs
     SET
-        energy = (rs.generated + COALESCE(rs.prev_generated, 0)) / 2 / nd.intervals_per_hour,
+        energy = (rs.generated + rs.prev_generated) / 2 / nd.intervals_per_hour,
         energy_quality_flag = 2
     FROM ranked_scada rs
     JOIN network_data nd ON nd.code = rs.network_id
@@ -54,6 +55,8 @@ async def _calculate_energy_for_interval(session: AsyncSession, start_time: date
       AND fs.facility_code = rs.facility_code
       AND fs.interval = rs.interval
       AND fs.interval BETWEEN :start_time AND :end_time
+      -- Only update where we have both current and previous values
+      AND rs.prev_generated IS NOT NULL
     """)
 
     result = await session.execute(query, {"start_time": start_time, "end_time": end_time})
@@ -67,7 +70,7 @@ async def run_energy_calculation_for_interval(interval: datetime) -> int:
     This method is intended to be called by a cron job every 5 minutes.
     """
     async with get_write_session() as session:
-        start_time = interval
+        start_time = interval - timedelta(minutes=5)
         end_time = interval + timedelta(minutes=5)
 
         if settings.dry_run:
@@ -77,16 +80,22 @@ async def run_energy_calculation_for_interval(interval: datetime) -> int:
         return await _calculate_energy_for_interval(session, start_time, end_time)
 
 
-async def process_energy_from_now(hours: int = 2) -> None:
+async def process_energy_last_intervals(num_intervals: int = 6) -> None:
     """
-    Process energy calculations from now.
+    Process energy calculations for the last num_intervals intervals.
 
-    Defaults to running the last 2 hours.
+    This is intended to be run by a cron job every 5 minutes.
+
+    params:
+        num_intervals: int = 6 - the number of 5 minute intervals to process back from the last completed interval
+
+    returns:
+        None
     """
 
     async with get_write_session() as session:
-        end_time = get_today_opennem().replace(tzinfo=None)
-        start_time = end_time - timedelta(hours=hours)
+        end_time = get_last_completed_interval_for_network(network=NetworkNEM, tz_aware=False).replace(tzinfo=None)
+        start_time = end_time - timedelta(minutes=5 * num_intervals)
 
         logger.info(f"Processing energy calculations from {start_time} to {end_time}")
 
@@ -131,46 +140,14 @@ async def _process_date_range(
     await asyncio.gather(*tasks)
 
 
-async def _get_energy_start_end_dates() -> tuple[datetime, datetime]:
-    """
-    Get the start and end dates for energy calculations.
-    """
-    async with get_read_session() as session:
-        # Find the earliest date with null energy values
-        query = text("SELECT MIN(interval) FROM facility_scada WHERE energy IS NULL")
-        result = await session.execute(query)
-        start_date = result.scalar()
-
-        if not start_date:
-            raise Exception("No backlog to process.")
-
-        # Get the latest date in the facility_scada table
-        query = text("SELECT MAX(interval) FROM facility_scada")
-        result = await session.execute(query)
-        end_date = result.scalar()
-
-        if not end_date:
-            raise Exception("No end date found.")
-
-    return start_date, end_date
-
-
-async def run_energy_backlog(date_start: datetime | None = None, date_end: datetime | None = None) -> None:
+async def run_energy_backlog(date_start: datetime, date_end: datetime) -> None:
     """
     Run energy calculation for all historical data that hasn't been processed yet.
     """
 
-    date_start_scada, date_end_scada = await _get_energy_start_end_dates()
-
-    if date_start is None:
-        date_start = date_start_scada
-
-    if date_end is None:
-        date_end = date_end_scada
-
     logger.info(f"Processing backlog from {date_start} to {date_end}")
 
-    await _process_date_range(date_start=date_start, date_end=date_end)
+    await _process_date_range(date_start=date_start, date_end=date_end, chunk_size=timedelta(days=10), max_workers=4)
 
 
 # Example usage
@@ -180,9 +157,9 @@ async def main():
     # Run backlog
     print("Processing backlog...")
     date_start = datetime.fromisoformat("2019-09-25 00:00:00")
-    date_end = get_today_opennem().replace(tzinfo=None)
+    date_end = get_last_completed_interval_for_network().replace(tzinfo=None)
+    date_start = NetworkNEM.data_first_seen.replace(tzinfo=None)  # type: ignore
     await run_energy_backlog(date_start=date_start, date_end=date_end)
-    await process_energy_from_now()
 
 
 if __name__ == "__main__":

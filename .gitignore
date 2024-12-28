@@ -129,3 +129,4 @@ infra/backups/
 sanity_response.py
 test.db
 .secrets.baseline
+.tmp/

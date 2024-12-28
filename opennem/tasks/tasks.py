@@ -5,17 +5,22 @@ import logging
 from datetime import timedelta
 
 import logfire
+from arq import Retry
 
-from opennem.aggregates.facility_interval import update_facility_aggregate_last_hours, update_facility_aggregates_chunked
+from opennem.aggregates.facility_interval import (
+    run_facility_aggregate_updates,
+    run_update_facility_aggregate_last_interval,
+    update_facility_aggregate_last_hours,
+    update_facility_aggregates_chunked,
+)
 from opennem.aggregates.network_demand import run_aggregates_demand_network_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
 from opennem.cms.importer import update_database_facilities_from_cms
 from opennem.controllers.export import run_export_energy_all, run_export_energy_for_year
-from opennem.controllers.schema import ControllerReturn
 from opennem.crawl import run_crawl
 from opennem.crawlers.aemo_market_notice import run_market_notice_update
-from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopMonthCrawler
+from opennem.crawlers.apvi import APVIRooftopMonthCrawler, APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
 from opennem.crawlers.nemweb import (
     AEMONEMDispatchActualGEN,
@@ -34,9 +39,9 @@ from opennem.exporter.facilities import export_facilities_static
 # from opennem.exporter.historic import export_historic_intervals
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
-from opennem.tasks.exceptions import OpenNEMPipelineRetryTask
-from opennem.utils.dates import get_last_completed_interval_for_network
-from opennem.workers.energy import process_energy_from_now
+from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
+from opennem.workers.catchup import run_catchup_check
+from opennem.workers.energy import process_energy_last_intervals
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
 from opennem.workers.system import clean_tmp_dir
@@ -56,13 +61,10 @@ async def task_nem_interval_check(ctx) -> None:
 
     if not dispatch_scada.inserted_records:
         logger.warning("No new data from crawlers")
-        raise OpenNEMPipelineRetryTask()
-
-    # update energy
-    # await process_energy_from_now(hours=4)
+        raise Retry(defer=ctx["job_try"] * 15)
 
     # update facility aggregates
-    await update_facility_aggregate_last_hours()
+    await run_update_facility_aggregate_last_interval()
 
     # run flows
     run_flows_for_last_days(days=1, network=NetworkNEM)
@@ -70,6 +72,23 @@ async def task_nem_interval_check(ctx) -> None:
     await asyncio.gather(
         run_export_power_latest_for_network(network=NetworkNEM), run_export_power_latest_for_network(network=NetworkAU)
     )
+
+    # update energy
+    await process_energy_last_intervals(num_intervals=3)
+
+
+@logfire.instrument("task_nem_per_day_check")
+async def task_nem_per_day_check(ctx) -> None:
+    """This task is run daily for NEM"""
+    dispatch_actuals = await run_crawl(AEMONEMDispatchActualGEN)
+    await run_crawl(AEMONEMNextDayDispatch)
+
+    if not dispatch_actuals or not dispatch_actuals.inserted_records:
+        raise Retry(defer=ctx["job_try"] * 15)
+
+    await process_energy_last_intervals(num_intervals=24 * 3)
+
+    await run_facility_aggregate_updates(lookback_days=7)
 
 
 async def task_nem_rooftop_crawl(ctx) -> None:
@@ -83,14 +102,14 @@ async def task_nem_rooftop_crawl(ctx) -> None:
     rooftop = await asyncio.gather(*tasks)
 
     if not rooftop or not any(r.inserted_records for r in rooftop if r):
-        raise OpenNEMPipelineRetryTask()
+        raise Retry(defer=ctx["job_try"] * 15)
 
 
 @logfire.instrument("task_wem_day_crawl")
 async def task_wem_day_crawl(ctx) -> None:
     """This task runs per interval and checks for new data"""
     await run_all_wem_crawlers(latest=True, limit=3)
-    await update_facility_aggregate_last_hours()
+    await update_facility_aggregate_last_hours(hours_back=36, network=NetworkWEM)
     await run_export_power_latest_for_network(network=NetworkWEM)
     await run_export_energy_for_year(network=NetworkWEM)
 
@@ -98,7 +117,7 @@ async def task_wem_day_crawl(ctx) -> None:
 @logfire.instrument("task_apvi_crawl")
 async def task_apvi_crawl(ctx) -> None:
     """Runs the APVI crawler every 10 minutes"""
-    await run_crawl(APVIRooftopLatestCrawler)
+    await run_crawl(APVIRooftopTodayCrawler)
 
 
 @logfire.instrument("task_bom_capitals_crawl")
@@ -113,20 +132,13 @@ async def task_bom_capitals_crawl(ctx) -> None:
 @logfire.instrument("task_run_energy_calculation")
 async def task_run_energy_calculation(ctx) -> None:
     """Runs the energy calculation for the last 2 hours"""
-    await process_energy_from_now(hours=4)
+    await process_energy_last_intervals(num_intervals=4)
 
 
 @logfire.instrument("task_run_flows_for_last_days")
 async def task_run_flows_for_last_days(ctx) -> None:
     """Runs the flows for the last 2 days"""
     run_flows_for_last_days(days=2, network=NetworkNEM)
-
-
-@logfire.instrument("task_update_facility_aggregates_chunked")
-async def task_update_current_day_facility_aggregates(ctx) -> None:
-    """Updates facility aggregates in chunks"""
-
-    await update_facility_aggregate_last_hours()
 
 
 @logfire.instrument("task_run_aggregates_demand_network_days")
@@ -172,7 +184,14 @@ async def task_export_flows(ctx) -> None:
 async def task_export_energy(ctx) -> None:
     """Runs the energy export"""
     await export_energy(latest=True)
-    # await run_export_current_year()
+
+    current_date = get_today_opennem()
+
+    # @NOTE new years day fix for energy exports - run last year and current year
+    if current_date.day == 1 and current_date.month == 1:
+        await run_export_energy_for_year(year=current_date.year - 1)
+        await run_export_energy_for_year(year=current_date.year)
+
     await run_export_energy_all()
 
 
@@ -194,28 +213,6 @@ async def task_export_daily_monthly(ctx) -> None:
     """Runs the daily and monthly exports"""
     await export_all_daily()
     await export_all_monthly()
-
-
-@logfire.instrument("task_nem_per_day_check")
-async def task_nem_per_day_check(ctx) -> ControllerReturn:
-    """This task is run daily for NEM"""
-    dispatch_actuals = await run_crawl(AEMONEMDispatchActualGEN)
-    await run_crawl(AEMONEMNextDayDispatch)
-
-    if not dispatch_actuals or not dispatch_actuals.inserted_records:
-        raise OpenNEMPipelineRetryTask()
-
-    # await daily_runner()
-
-    # export historic intervals
-    for _network in [NetworkNEM, NetworkWEM]:
-        pass
-        # export_historic_intervals(limit=2, networks=[network])
-
-    return ControllerReturn(
-        server_latest=dispatch_actuals.server_latest,
-        last_modified=None,
-    )
 
 
 # cms tasks from webhooks
@@ -278,7 +275,7 @@ async def task_catchup(ctx) -> None:
 
     # processing
     # await process_energy_from_now(hours=24 * 30)
-    latest_interval = get_last_completed_interval_for_network(network=NetworkNEM)
+    latest_interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
     await update_facility_aggregates_chunked(
         end_date=latest_interval, start_date=latest_interval - timedelta(days=30), max_concurrent=1, chunk_days=30
     )
@@ -302,6 +299,12 @@ async def refresh_continuous_aggregates() -> None:
     This task should be scheduled to run periodically.
     """
     await refresh_recent_aggregates()
+
+
+@logfire.instrument("task_catchup_check")
+async def task_catchup_check(ctx) -> None:
+    """Check for data gaps and trigger catchup processes if needed"""
+    await run_catchup_check()
 
 
 if __name__ == "__main__":

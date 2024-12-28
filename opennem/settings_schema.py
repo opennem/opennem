@@ -11,7 +11,7 @@ from pathlib import Path
 from pydantic import AliasChoices, Field, RedisDsn, field_validator
 from pydantic_settings import BaseSettings
 
-from opennem.utils.url import change_url_path
+from opennem.schema.field_types import URLNoPath
 
 SUPPORTED_LOG_LEVEL_NAMES = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
@@ -33,13 +33,36 @@ class OpennemSettings(BaseSettings):
     db_url: str = Field("postgresql://user:pass@127.0.0.1:15444/opennem", validation_alias=AliasChoices("DATABASE_HOST_URL"))
 
     redis_url: RedisDsn = Field(
-        "redis://127.0.0.1",
+        RedisDsn("redis://127.0.0.1"),
         validation_alias=AliasChoices("REDIS_HOST_URL", "cache_url"),
     )
 
     # if we're doing a dry run
     dry_run: bool = False
 
+    # API server settings
+    api_server_host: str = "0.0.0.0"
+    api_server_port: int = 8000
+    api_server_workers: int = 2
+
+    # api messages
+    api_messages: list[str] = [
+        "OpenNEM API has migrated to require authentication. Please see the discssion at https://github.com/opennem/opennem/discussions/243"
+    ]
+
+    # percentage of old API requests to return deprecation messages
+    api_deprecation_proportion: int = 0
+
+    # throttle rate of api
+    api_throttle_rate: float = 0
+
+    # API Dev key
+    api_dev_key: str | None = None
+
+    # webhooks
+    webhook_secret: str | None = None
+
+    # sentry DSN for error reporting
     sentry_url: str | None = None
 
     # Slack notifications
@@ -50,18 +73,15 @@ class OpennemSettings(BaseSettings):
     slack_hook_aemo_market_notices: str | None = None
     slack_admin_alert: list[str] | None = ["nik"]
 
-    # APVI
-    apvi_token: str | None = None
-
     # R2 settings
-    s3_access_key_id: str = Field(None, description="The access key ID for the S3 bucket")
-    s3_secret_access_key: str = Field(None, description="The secret access key for the S3 bucket")
+    s3_access_key_id: str | None = Field(None, description="The access key ID for the S3 bucket")
+    s3_secret_access_key: str | None = Field(None, description="The secret access key for the S3 bucket")
     s3_bucket_name: str = Field("opennem-dev", description="The name of the S3 bucket")
-    s3_endpoint_url: str = Field(
+    s3_endpoint_url: URLNoPath = Field(
         "https://17399e149aeaa08c0c7bbb15382fa5c3.r2.cloudflarestorage.com",
         description="The endpoint URL for the S3 bucket",
     )
-    s3_bucket_public_url: str = Field("https://data.opennem.org.au", description="The public URL of the S3 bucket")
+    s3_bucket_public_url: URLNoPath = Field("https://data.opennem.org.au", description="The public URL of the S3 bucket")
     s3_region: str = "apac"
 
     # show database debug
@@ -75,19 +95,15 @@ class OpennemSettings(BaseSettings):
     http_retries: int = 5
 
     # cache http requests locally
-    http_cache_local: bool = False
     http_verify_ssl: bool = True
     http_proxy_url: str | None = None  # @note don't let it confict with env HTTP_PROXY
 
     _static_folder_path: str = "opennem/static/"
 
-    # api key cookie settings
-    api_app_auth_name: str = "onau"
-    api_user_auth_name: str = "onuu"
-    api_app_auth_key_length: int = 24
-    api_auth_cookie_domain: str = "opennem.org.au"
-
     # API Keys
+
+    # APVI
+    apvi_token: str | None = None
 
     # willy weather client
     willyweather_api_key: str | None = None
@@ -116,29 +132,13 @@ class OpennemSettings(BaseSettings):
     # mailgun
     mailgun_api_key: str | None = None
 
-    # api messages
-    api_messages: list[str] = [
-        "OpenNEM API has migrated to require authentication. Please see the discssion at https://github.com/opennem/opennem/discussions/243"
-    ]
-
-    # percentage of old API requests to return deprecation messages
-    api_deprecation_proportion: int = 0
-
-    # throttle rate of api
-    api_throttle_rate: float = 0
-
-    # API Dev key
-    api_dev_key: str | None = None
-
-    # webhooks
-    webhook_secret: str | None = None
-
-    r2_token: str | None = None
-
     # sanity cms setup
     sanity_project_id: str | None = None
     sanity_dataset_id: str | None = None
     sanity_api_key: str | None = None
+
+    # if the worker should run or fallback to maintenance mode
+    run_worker: bool = True
 
     # pylint: disable=no-self-argument
     @field_validator("log_level")
@@ -175,13 +175,3 @@ class OpennemSettings(BaseSettings):
     @property
     def is_local(self) -> bool:
         return self.env.lower() in ("local")
-
-    @property
-    def celery_broker(self) -> str:
-        broker_url = change_url_path(str(self.redis_url), "/1")
-        return str(broker_url)
-
-    @property
-    def celery_backend(self) -> str:
-        broker_url = change_url_path(str(self.redis_url), "/2")
-        return str(broker_url)

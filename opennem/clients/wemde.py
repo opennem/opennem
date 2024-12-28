@@ -30,9 +30,9 @@ class WEMDEDownloadException(Exception):
     pass
 
 
-def _wemde_download_dataset(url: str) -> dict:
+async def _wemde_download_dataset(url: str) -> dict:
     try:
-        json_dict = download_and_parse_json_zip(url)
+        json_dict = await download_and_parse_json_zip(url)
 
         if "data" not in json_dict:
             raise Exception("No data in JSON")
@@ -51,7 +51,7 @@ async def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
     # key to extract
     key_field = "facilityScadaDispatchIntervals"
 
-    download_json = _wemde_download_dataset(url)
+    download_json = await _wemde_download_dataset(url)
 
     if key_field not in download_json:
         raise Exception(f"No {key_field} in JSON")
@@ -107,13 +107,13 @@ async def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
     return models
 
 
-def wemde_parse_trading_price(url: str) -> list[BalancingSummarySchema]:
+async def wemde_parse_trading_price(url: str) -> list[BalancingSummarySchema]:
     """Parse WEMDE trading price"""
 
     # key to extract
     key_field = "referenceTradingPrices"
 
-    download_json = _wemde_download_dataset(url)
+    download_json = await _wemde_download_dataset(url)
 
     if key_field not in download_json:
         raise Exception(f"No {key_field} in JSON")

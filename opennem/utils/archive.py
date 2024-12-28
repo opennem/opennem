@@ -15,7 +15,7 @@ from tempfile import mkdtemp
 from typing import IO, Any
 from zipfile import ZipFile
 
-from opennem.utils.http import http
+from opennem.utils.httpx import http
 from opennem.utils.url import get_filename_from_url
 
 logger = logging.getLogger("opennem.archive.utils")
@@ -147,35 +147,7 @@ def fix_central_directory_file(zip_file_path: Path) -> Path:
     return zip_file_path
 
 
-def stream_zip_contents(file_obj: IO[bytes], mode: str = "w"):  # type: ignore
-    """
-    Steram out the entire contents of a zipfile
-    handling embedded zips
-
-    mode param is to compat with external libs like smart_open
-    """
-    with ZipFile(file_obj) as zf:
-        # If there is only one file in the archive return it
-        if len(zf.namelist()) == 1:
-            return zf.open(zf.namelist()[0])
-
-        c = []
-        stream_count = 0
-
-        for filename in zf.namelist():
-            if filename.endswith(".zip"):
-                if ZIP_LIMIT > 0 and stream_count >= ZIP_LIMIT:
-                    continue
-
-                c.append(stream_zip_contents(zf.open(filename), mode))
-                stream_count += 1
-            else:
-                c.append(zf.open(filename))
-
-        return chain_streams(c)
-
-
-def download_and_unzip(url: str) -> Path:
+async def download_and_unzip(url: str) -> Path:
     """Download and unzip a multi-zip file into a temporary directory"""
 
     dest_dir = Path(mkdtemp(prefix="opennem_"))
@@ -184,9 +156,9 @@ def download_and_unzip(url: str) -> Path:
 
     filename = get_filename_from_url(url)
 
-    response = http.get(url)
+    response = await http.get(url)
 
-    if not response.ok:
+    if not response.is_success:
         raise Exception(f"Failed to download file: Status code {response.status_code}")
 
     content_type = response.headers.get("Content-Type", None)
@@ -206,7 +178,7 @@ def download_and_unzip(url: str) -> Path:
             zf.extractall(dest_dir)
         except Exception as e:
             logger.error(e)
-            zf = fix_central_directory_file(save_path)
+            fix_central_directory_file(save_path)
             zf.extractall(dest_dir)
 
     os.remove(save_path)
@@ -222,7 +194,7 @@ def download_and_unzip(url: str) -> Path:
     return dest_dir
 
 
-def download_and_parse_json_zip(url: str, indent: int | None = None) -> Any:
+async def download_and_parse_json_zip(url: str, indent: int | None = None) -> Any:
     """
     Downloads a file from the given URL. If the file is a ZIP archive, it is unzipped.
     The function then attempts to parse the contained or downloaded file as JSON.
@@ -242,8 +214,8 @@ def download_and_parse_json_zip(url: str, indent: int | None = None) -> Any:
 
     try:
         # Download the file
-        response = http.get(url)
-        if not response.ok:
+        response = await http.get(url)
+        if not response.is_success:
             raise Exception(f"Failed to download file: Status code {response.status_code}")
 
         # Check the content type of the downloaded file
@@ -280,5 +252,8 @@ if __name__ == "__main__":
     # d = download_and_unzip(u)
     # print(d)
     # Usage example
+    import asyncio
+
     url = "https://data.wa.aemo.com.au/public/market-data/wemde/tradingReport/tradingDayReport/previous/TradingDayReport_20231004.zip"
-    json_data = download_and_parse_json_zip(url)
+    json_data = asyncio.run(download_and_parse_json_zip(url))
+    print(json_data)

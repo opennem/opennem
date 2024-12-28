@@ -38,6 +38,8 @@ class OpenNEMUser(BaseModel):
     meta: dict | None = Field(exclude=True, default={})
     error: str | None = None
     rate_limit: OpenNEMUserRateLimit | None = None
+    unkey_meta: dict | None = None
+    clerk_meta: dict | None = None
     roles: list[OpenNEMRoles] = [OpenNEMRoles.anonymous]
 
 

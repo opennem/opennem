@@ -5,15 +5,13 @@ from textwrap import dedent
 from typing import Any
 
 from datetime_truncate import truncate as date_trunc
-from sqlalchemy import select
 from sqlalchemy import text as sql
 
 from opennem import settings
 from opennem.api.time import human_to_interval
 from opennem.core.feature_flags import get_list_of_enabled_features
 from opennem.core.normalizers import cast_float_or_none
-from opennem.db import db_connect, get_read_session
-from opennem.db.models.opennem import FacilityScada
+from opennem.db import db_connect
 from opennem.queries.utils import duid_to_case
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkSchema
 from opennem.schema.time import TimeInterval
@@ -21,7 +19,6 @@ from opennem.schema.units import UnitDefinition
 from opennem.utils.cache import cache_scada_result
 from opennem.utils.dates import (
     chop_timezone,
-    get_datetime_now_for_network,
     get_last_completed_interval_for_network,
     get_today_for_network,
 )
@@ -275,41 +272,6 @@ def networks_to_in(networks: list[NetworkSchema]) -> str:
     codes = [f"'{n.code}'" for n in networks]
 
     return ", ".join(codes)
-
-
-async def get_latest_interval_live(network: NetworkSchema, days_back: int = 14) -> datetime:
-    """Get the latest live interval for a network"""
-    if not network.get_timezone():
-        raise Exception(f"No timezone for {network.code}")
-
-    datetime_now_network = get_datetime_now_for_network(network=network)
-
-    query = (
-        select(FacilityScada.interval)
-        .where(
-            FacilityScada.network_id == network.code,
-            FacilityScada.interval <= datetime_now_network,
-            FacilityScada.interval > datetime_now_network - timedelta(days=days_back),
-        )
-        .order_by(FacilityScada.interval.desc())
-        .limit(1)
-    )
-
-    async with get_read_session() as session:
-        result = await session.execute(query)
-        latest_interval = result.scalar_one_or_none()
-
-    if not latest_interval:
-        raise Exception(f"Could not fetch latest live interval for {network.code}")
-
-    try:
-        latest_interval = latest_interval.replace(tzinfo=network.get_fixed_offset())
-    except Exception:
-        raise Exception(
-            f"Could not convert {latest_interval} to timezone {network.timezone_database} for {network.code}"
-        ) from None
-
-    return latest_interval
 
 
 def get_scada_range_optimized(network: NetworkSchema) -> ScadaDateRange:

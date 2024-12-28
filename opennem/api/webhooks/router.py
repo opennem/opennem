@@ -18,7 +18,6 @@ router = APIRouter(tags=["Webhooks"], include_in_schema=False)
     response_model_exclude_unset=True,
     description="Webhooks",
 )
-@api_version(4)
 async def webhook_sanity_update(webhook_secret: str, request: Request) -> str:
     """
     Sanity webhook endpoint

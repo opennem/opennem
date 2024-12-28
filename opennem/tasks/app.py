@@ -34,10 +34,12 @@ from datetime import timedelta, timezone
 from arq import cron
 from arq.worker import create_worker
 
+from opennem.api.maintenance_app import run_maintenance_app
 from opennem.tasks.broker import REDIS_SETTINGS
 from opennem.tasks.tasks import (
     task_apvi_crawl,
     task_bom_capitals_crawl,
+    task_catchup_check,
     task_clean_tmp_dir,
     task_export_daily_monthly,
     task_export_energy,
@@ -50,7 +52,6 @@ from opennem.tasks.tasks import (
     task_refresh_from_cms,
     task_run_aggregates_demand_network_days,
     task_sync_archive_exports,
-    task_update_current_day_facility_aggregates,
     task_update_facility_seen_range,
     task_wem_day_crawl,
 )
@@ -65,14 +66,14 @@ class WorkerSettings:
         cron(
             task_nem_interval_check,
             minute=set(range(0, 60, 5)),
-            second=45,
+            second=50,
             timeout=None,
             unique=True,
         ),
         # NEM Rooftop
         cron(
             task_nem_rooftop_crawl,
-            minute={0, 1, 2, 3, 4, 30, 31, 32, 33, 34},
+            minute=set(range(0, 60, 5)),
             second=50,
             timeout=None,
             unique=True,
@@ -142,14 +143,6 @@ class WorkerSettings:
             task_sync_archive_exports,
             hour=7,
             minute=0,
-            timeout=None,
-            unique=True,
-        ),
-        # facility aggregates
-        cron(
-            task_update_current_day_facility_aggregates,
-            minute=23,
-            second=0,
             timeout=None,
             unique=True,
         ),
@@ -226,6 +219,14 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
+        # Monitor catchup
+        cron(
+            task_catchup_check,
+            minute={7, 37},
+            second=30,
+            timeout=None,
+            unique=True,
+        ),
         # cron(
         #     crawler_run_nem_dispatch_is_crawl,
         #     minute=set(range(0, 60, 5)),
@@ -251,15 +252,21 @@ class WorkerSettings:
     ]
     redis_settings = REDIS_SETTINGS
     retry_jobs = True
-    max_tries = 5
+    max_retries = 5
     job_timeout = 60 * 60 * 12  # 12 hours max task time
     timezone = timezone(timedelta(hours=10))
 
 
 def main() -> None:
     """Run the main worker"""
-    worker = create_worker(settings_cls=WorkerSettings)  # type: ignore
-    worker.run()
+    from opennem import settings
+
+    if settings.run_worker:
+        worker = create_worker(settings_cls=WorkerSettings)  # type: ignore
+        worker.run()
+    else:
+        print(" * Worker not enabled - waiting for worker to restart")
+        run_maintenance_app()
 
 
 if __name__ == "__main__":

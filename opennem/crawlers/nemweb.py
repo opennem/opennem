@@ -137,7 +137,7 @@ async def run_nemweb_aemo_crawl(
     for entry in entries_to_fetch:
         tasks.append(process_nemweb_entry(crawler=crawler, entry=entry, max_date=max_date))
 
-        if len(tasks) >= 10:
+        if len(tasks) >= 3:
             task_results = await asyncio.gather(*tasks)
 
             for task_result in task_results:
@@ -268,22 +268,12 @@ AEMONemwebRooftopArchive = CrawlerDefinition(
 
 # next day crawlers
 
+# METER_DATA_GEN_DUID
 AEMONEMDispatchActualGEN = CrawlerDefinition(
     priority=CrawlerPriority.medium,
     schedule=CrawlerSchedule.twice_a_day,
     name="au.nemweb.dispatch_actual_gen",
     url="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
-    latest=False,
-    network=NetworkNEM,
-    bucket_size=AEMODataBucketSize.day,
-    processor=run_nemweb_aemo_crawl,
-)
-
-AEMONEMNextDayDispatch = CrawlerDefinition(
-    priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.twice_a_day,
-    name="au.nemweb.dispatch",
-    url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
     latest=False,
     network=NetworkNEM,
     bucket_size=AEMODataBucketSize.day,
@@ -299,6 +289,18 @@ AEMONEMDispatchActualGENArchvie = CrawlerDefinition(
     latest=False,
     network=NetworkNEM,
     bucket_size=AEMODataBucketSize.month,
+    processor=run_nemweb_aemo_crawl,
+)
+
+# DISPATCH_UNIT_SOLUTION
+AEMONEMNextDayDispatch = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.twice_a_day,
+    name="au.nemweb.dispatch",
+    url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
+    latest=False,
+    network=NetworkNEM,
+    bucket_size=AEMODataBucketSize.day,
     processor=run_nemweb_aemo_crawl,
 )
 

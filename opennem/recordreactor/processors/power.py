@@ -10,7 +10,7 @@ from itertools import product
 from sqlalchemy import text
 
 from opennem.db import get_read_session
-from opennem.recordreactor.persistence import persist_milestones
+from opennem.recordreactor.persistence import check_and_persist_milestones
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
     MilestoneFueltechGrouping,
@@ -163,7 +163,7 @@ async def run_power_milestones(
             group_by_fueltech=fueltech_group,
         )
 
-        await persist_milestones(
+        await check_and_persist_milestones(
             milestones=milestone_data,
         )
 
@@ -189,7 +189,7 @@ async def run_renewable_power_milestones(
             group_by_region=region_group,
         )
 
-        await persist_milestones(
+        await check_and_persist_milestones(
             milestones=milestone_data,
         )
 

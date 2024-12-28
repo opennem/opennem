@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from opennem.schema.field_types import RoundedFloat6
 from opennem.schema.unit import UnitSchema
 
 
@@ -21,8 +22,8 @@ class FacilityLocationSchema(BaseModel):
     """Facility location schema"""
 
     _type: str
-    lat: float | None = None
-    lng: float | None = None
+    lat: RoundedFloat6 | None = None
+    lng: RoundedFloat6 | None = None
 
 
 class FacilityOwnerSchema(BaseModel):

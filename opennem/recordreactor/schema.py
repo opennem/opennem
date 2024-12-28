@@ -141,6 +141,8 @@ class MilestoneRecordSchema(BaseModel):
     network_region: str | None = None
     fueltech: MilestoneFueltechGrouping | None = None
     value: int | float | None = None
+    instance_id: UUID4 | None = None
+    previous_instance_id: UUID4 | None = None
 
     @computed_field
     @property

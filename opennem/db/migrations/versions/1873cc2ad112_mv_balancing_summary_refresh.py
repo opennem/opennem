@@ -8,11 +8,10 @@ Create Date: 2024-12-15 13:16:25.853155
 
 """
 from alembic import op
-x
 
 # revision identifiers, used by Alembic.
-revision = '1873cc2ad112'
-down_revision = '33d5a1b7eea9'
+revision = "1873cc2ad112"
+down_revision = "33d5a1b7eea9"
 branch_labels = None
 depends_on = None
 
