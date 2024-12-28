@@ -11,7 +11,7 @@ The task scheduler is an essential component of the OpenNEM system, ensuring tha
 processed, and updated in a timely manner.
 
 Functions:
-    startup(ctx): Initializes the HTTP client for the task scheduler.
+    startup(ctx): Initializes the HTTP client for the task scheduler and flushes the Redis queue.
     shutdown(ctx): Closes the HTTP client for the task scheduler.
 
 Classes:
@@ -35,7 +35,7 @@ from arq import cron
 from arq.worker import create_worker
 
 from opennem.api.maintenance_app import run_maintenance_app
-from opennem.tasks.broker import REDIS_SETTINGS
+from opennem.tasks.broker import REDIS_SETTINGS, get_redis_pool
 from opennem.tasks.tasks import (
     task_apvi_crawl,
     task_bom_capitals_crawl,
@@ -59,8 +59,23 @@ from opennem.tasks.tasks import (
 logger = logging.getLogger("openenm.tasks.app")
 
 
+async def startup(ctx: dict) -> None:
+    """Initialize the worker and flush the Redis queue on startup.
+
+    This function is called when the worker starts up. It flushes the Redis queue
+    to ensure we start with a clean slate and no stale tasks.
+
+    Args:
+        ctx (dict): The worker context
+    """
+    redis = await get_redis_pool()
+    await redis.flushdb()
+    logger.info("Redis queue flushed on startup")
+
+
 class WorkerSettings:
     # queue_name = "opennem"
+    on_startup = startup
     cron_jobs = [
         # NEM Interval Check
         cron(
