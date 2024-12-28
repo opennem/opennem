@@ -58,9 +58,10 @@ version:
 	fi; \
 
 	$(hatch) version $(BUMP_TYPE)
-	git add opennem/__init__.py
-	$(eval NEW_VERSION := $(shell uvx hatch version))
-	git commit -m "Bump version to $(NEW_VERSION)"
+	@NEW_VERSION=$$(sed -n 's/__version__ = "\([^"]*\)".*/\1/p' opennem/__init__.py); \
+	echo "New version: $$NEW_VERSION"; \
+	git add opennem/__init__.py; \
+	git commit -m "Bump version to $$NEW_VERSION"
 
 .PHONY: tag
 tag:
