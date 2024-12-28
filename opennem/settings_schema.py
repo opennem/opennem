@@ -45,6 +45,23 @@ class OpennemSettings(BaseSettings):
     api_server_port: int = 8000
     api_server_workers: int = 2
 
+    # api messages
+    api_messages: list[str] = [
+        "OpenNEM API has migrated to require authentication. Please see the discssion at https://github.com/opennem/opennem/discussions/243"
+    ]
+
+    # percentage of old API requests to return deprecation messages
+    api_deprecation_proportion: int = 0
+
+    # throttle rate of api
+    api_throttle_rate: float = 0
+
+    # API Dev key
+    api_dev_key: str | None = None
+
+    # webhooks
+    webhook_secret: str | None = None
+
     # sentry DSN for error reporting
     sentry_url: str | None = None
 
@@ -55,9 +72,6 @@ class OpennemSettings(BaseSettings):
     slack_hook_feedback: str | None = None
     slack_hook_aemo_market_notices: str | None = None
     slack_admin_alert: list[str] | None = ["nik"]
-
-    # APVI
-    apvi_token: str | None = None
 
     # R2 settings
     s3_access_key_id: str | None = Field(None, description="The access key ID for the S3 bucket")
@@ -88,6 +102,9 @@ class OpennemSettings(BaseSettings):
 
     # API Keys
 
+    # APVI
+    apvi_token: str | None = None
+
     # willy weather client
     willyweather_api_key: str | None = None
 
@@ -115,28 +132,12 @@ class OpennemSettings(BaseSettings):
     # mailgun
     mailgun_api_key: str | None = None
 
-    # api messages
-    api_messages: list[str] = [
-        "OpenNEM API has migrated to require authentication. Please see the discssion at https://github.com/opennem/opennem/discussions/243"
-    ]
-
-    # percentage of old API requests to return deprecation messages
-    api_deprecation_proportion: int = 0
-
-    # throttle rate of api
-    api_throttle_rate: float = 0
-
-    # API Dev key
-    api_dev_key: str | None = None
-
-    # webhooks
-    webhook_secret: str | None = None
-
     # sanity cms setup
     sanity_project_id: str | None = None
     sanity_dataset_id: str | None = None
     sanity_api_key: str | None = None
 
+    # if the worker should run or fallback to maintenance mode
     run_worker: bool = True
 
     # pylint: disable=no-self-argument
