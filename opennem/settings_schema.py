@@ -81,12 +81,6 @@ class OpennemSettings(BaseSettings):
 
     _static_folder_path: str = "opennem/static/"
 
-    # api key cookie settings
-    api_app_auth_name: str = "onau"
-    api_user_auth_name: str = "onuu"
-    api_app_auth_key_length: int = 24
-    api_auth_cookie_domain: str = "opennem.org.au"
-
     # API Keys
 
     # willy weather client
