@@ -15,6 +15,7 @@ from textwrap import dedent
 import duckdb
 import polars as pl
 
+from opennem import settings
 from opennem.recordreactor.persistence import persist_milestones
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
@@ -27,6 +28,26 @@ from opennem.recordreactor.unit import get_milestone_unit
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 
 logger = logging.getLogger("opennem.recordreactor.bulk")
+
+
+@dataclass
+class IntervalThresholds:
+    """Minimum number of intervals required for each period bucket to be considered valid minimum record"""
+
+    interval: int = 1
+    day: int = 288  # day has to be complete for a min record to be valid
+    month: int = 8000  # some leeway with months since we have missing intervals in every early month
+    quarter: int = 24000
+    year: int = 98000
+    financial_year: int = 98000
+
+    def get_for_period(self, period: MilestonePeriod) -> int:
+        """Get threshold for a given period"""
+        return getattr(self, period.value)
+
+
+# Create a global instance for use in queries
+INTERVAL_THRESHOLDS = IntervalThresholds()
 
 
 def get_time_bucket_sql(period: MilestonePeriod) -> str:
@@ -81,6 +102,7 @@ def analyze_generation_records(
     con = duckdb.connect("data/opennem.duckdb")
 
     time_bucket_sql = get_time_bucket_sql(period)
+    interval_threshold = INTERVAL_THRESHOLDS.get_for_period(period)
 
     # Build the GROUP BY clause from the configuration
     group_by_fields = [time_bucket_sql]
@@ -115,18 +137,19 @@ def analyze_generation_records(
     WITH regional_generation AS (
       SELECT
         {time_bucket_sql} as interval{group_by_select},
+        COUNT(*) as interval_count,
         SUM({metric_column}) as total_generation
       FROM read_parquet(?)
       WHERE
         network_id in (
-            '{network.code.upper()}',
-            {', '.join([
-                f"'{i.code.upper()}'"
-                for i in network.subnetworks
-                if network.subnetworks is not None
-            ])}
+            '{network.code.upper()}'
+            {
+                ', ' + ', '.join([f"'{i.code.upper()}'" for i in network.subnetworks])
+                if network.subnetworks
+                else ''
+            }
         ) and
-        network_region in ({', '.join([f"'{i}'" for i in network.regions])})
+        network_region in ({', '.join([f"'{i}'" for i in (network.regions or [])])})
       GROUP BY
         {group_by_clause}
     ),
@@ -135,6 +158,7 @@ def analyze_generation_records(
       SELECT
         {time_bucket_sql} as interval{group_by_select},
         total_generation,
+        interval_count,
         MAX(total_generation) OVER (
           PARTITION BY {partition_clause}
           ORDER BY {time_bucket_sql}
@@ -149,6 +173,7 @@ def analyze_generation_records(
       SELECT
         {time_bucket_sql} as interval{group_by_select},
         total_generation,
+        interval_count,
         running_max,
         instance_id,
         LAG(running_max) OVER (
@@ -166,7 +191,12 @@ def analyze_generation_records(
       SELECT
         {time_bucket_sql} as interval{group_by_select},
         total_generation,
-        MIN(CASE WHEN total_generation > 0 THEN total_generation END) OVER (
+        interval_count,
+        MIN(CASE
+          WHEN total_generation > 0
+          AND interval_count >= {interval_threshold}  -- Only include buckets with enough intervals for minimums
+          THEN total_generation
+        END) OVER (
           PARTITION BY {partition_clause}
           ORDER BY {time_bucket_sql}
           ROWS UNBOUNDED PRECEDING
@@ -180,6 +210,7 @@ def analyze_generation_records(
       SELECT
         {time_bucket_sql} as interval{group_by_select},
         total_generation,
+        interval_count,
         running_min,
         instance_id,
         LAG(running_min) OVER (
@@ -196,6 +227,7 @@ def analyze_generation_records(
     (SELECT
       {time_bucket_sql} as interval{group_by_select},
       total_generation,
+      interval_count,
       CASE
         WHEN prev_max IS NULL THEN 0
         ELSE ((total_generation - prev_max) / prev_max * 100)
@@ -214,6 +246,7 @@ def analyze_generation_records(
     (SELECT
       {time_bucket_sql} as interval{group_by_select},
       total_generation,
+      interval_count,
       CASE
         WHEN prev_min IS NULL THEN 0
         ELSE ((total_generation - prev_min) / prev_min * 100)
@@ -225,6 +258,7 @@ def analyze_generation_records(
     FROM min_records
     WHERE
       total_generation = running_min
+      AND interval_count >= {interval_threshold}  -- Additional check for minimums
       AND (prev_min IS NULL OR total_generation < prev_min))
 
     ORDER BY interval;
@@ -246,9 +280,9 @@ _DEFAULT_PERIODS = [
     MilestonePeriod.interval,
     MilestonePeriod.day,
     MilestonePeriod.month,
-    # MilestonePeriod.quarter,
+    MilestonePeriod.quarter,
     MilestonePeriod.year,
-    # MilestonePeriod.financial_year,
+    MilestonePeriod.financial_year,
 ]
 
 _DEFAULT_METRICS = [
@@ -340,9 +374,13 @@ async def run_milestone_analysis(parquet_path: str) -> None:
     Run milestone analysis for a given parquet file across all grouping configurations.
     """
     df = pl.read_parquet(parquet_path)
-    print(df.shape)
-    print(df.columns)
-    print(df.head())
+
+    # preview the parquet file
+    if settings.is_local:
+        print(df.shape)
+        print(df.columns)
+        print(df.dtypes)
+        print(df.head())
 
     milestone_records: list[MilestoneRecordSchema] = []
 
