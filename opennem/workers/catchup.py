@@ -141,7 +141,7 @@ async def run_catchup_check(max_gap_minutes: int = 30) -> None:
 
         for crawler in historical_crawlers:
             try:
-                await run_crawl(crawler, latest=False, limit=30, reverse=True)
+                await run_crawl(crawler, latest=True, limit=3, reverse=True)
             except Exception as e:
                 logger.error(f"Error running historical crawler {crawler.__name__}: {e}")
 
