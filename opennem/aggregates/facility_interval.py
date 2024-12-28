@@ -328,22 +328,15 @@ if __name__ == "__main__":
     # asyncio.run(run_facility_aggregate_updates(lookback_days=7))
     interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
     nem_start = NetworkAEMORooftop.data_first_seen.replace(tzinfo=None)  # type: ignore
+    rooftop_start = NetworkAEMORooftop.data_first_seen.replace(tzinfo=None)  # type: ignore
 
     up_to_interval = datetime.fromisoformat("2023-02-06T00:00:00")
 
-    # asyncio.run(
-    #     update_facility_aggregates_chunked(
-    #         # start_date=interval - timedelta(days=30),
-    #         start_date=nem_start,
-    #         end_date=up_to_interval,
-    #         # end_date=datetime(2012, 11, 1),
-    #         # end_date=interval,
-    #         max_concurrent=2,
-    #         chunk_days=3,
-    #         # network=NetworkWEM,
-    #     )
-    # )
-
-    asyncio.run(run_update_facility_aggregate_last_interval(num_intervals=3))
-    # asyncio.run(update_facility_aggregate_last_hours(hours_back=6))
-    # asyncio.run(run_facility_aggregate_updates(lookback_days=30, max_concurrent=4, chunk_days=3))
+    asyncio.run(
+        update_facility_aggregates_chunked(
+            start_date=nem_start,
+            end_date=rooftop_start,
+            max_concurrent=2,
+            chunk_days=3,
+        )
+    )
