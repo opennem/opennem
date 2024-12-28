@@ -25,7 +25,7 @@ from opennem.queries.flows import get_network_flows_emissions_market_value_query
 from opennem.queries.power import (
     get_fueltech_generation_query,
     get_rooftop_forecast_generation_query,
-    get_rooftop_generation_query,
+    get_rooftop_generation_combined_query,
 )
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkSchema
 from opennem.schema.stats import StatTypes
@@ -352,7 +352,7 @@ async def power_week(
         result.append_set(stats_emission_factors)
 
     # rooftop solar
-    query = get_rooftop_generation_query(
+    query = get_rooftop_generation_combined_query(
         network=time_series.network,
         date_start=time_series.get_range().start,
         date_end=time_series.end,
