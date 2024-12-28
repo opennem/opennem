@@ -19,7 +19,7 @@ from opennem.cms.importer import update_database_facilities_from_cms
 from opennem.controllers.export import run_export_energy_all, run_export_energy_for_year
 from opennem.crawl import run_crawl
 from opennem.crawlers.aemo_market_notice import run_market_notice_update
-from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopMonthCrawler
+from opennem.crawlers.apvi import APVIRooftopMonthCrawler, APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
 from opennem.crawlers.nemweb import (
     AEMONEMDispatchActualGEN,
@@ -115,7 +115,7 @@ async def task_wem_day_crawl(ctx) -> None:
 @logfire.instrument("task_apvi_crawl")
 async def task_apvi_crawl(ctx) -> None:
     """Runs the APVI crawler every 10 minutes"""
-    await run_crawl(APVIRooftopLatestCrawler)
+    await run_crawl(APVIRooftopTodayCrawler)
 
 
 @logfire.instrument("task_bom_capitals_crawl")
