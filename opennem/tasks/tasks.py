@@ -64,7 +64,7 @@ async def task_nem_interval_check(ctx) -> None:
         raise Retry(defer=ctx["job_try"] * 15)
 
     # update facility aggregates
-    await run_update_facility_aggregate_last_interval()
+    await run_update_facility_aggregate_last_interval(num_intervals=3)
 
     # run flows
     run_flows_for_last_days(days=1, network=NetworkNEM)

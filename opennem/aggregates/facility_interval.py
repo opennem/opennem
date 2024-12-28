@@ -171,7 +171,7 @@ async def update_facility_aggregate_last_hours(hours_back: int = 1, network: Net
     Args:
         days_back (int): Number of days to look back from current day
     """
-    end_time = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
+    end_time = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None) + timedelta(minutes=5)
     start_time = end_time - timedelta(hours=hours_back)
 
     async with get_write_session() as session:
@@ -182,7 +182,7 @@ async def run_update_facility_aggregate_last_interval(num_intervals: int = 6) ->
     """
     Runs the facility aggregate update for the last 30 minute interval
     """
-    end_time = get_last_completed_interval_for_network(network=NetworkNEM, tz_aware=False).replace(tzinfo=None)
+    end_time = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None) + timedelta(minutes=5)
     start_time = end_time - timedelta(minutes=num_intervals * 5)
 
     async with get_write_session() as session:
@@ -327,21 +327,23 @@ if __name__ == "__main__":
     # Example: Update last 7 days of data in chunks
     # asyncio.run(run_facility_aggregate_updates(lookback_days=7))
     interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
+    nem_start = NetworkAEMORooftop.data_first_seen.replace(tzinfo=None)  # type: ignore
 
-    up_to_interval = datetime.fromisoformat("2024-04-07T00:00:00")
+    up_to_interval = datetime.fromisoformat("2023-02-06T00:00:00")
 
-    asyncio.run(
-        update_facility_aggregates_chunked(
-            # start_date=interval - timedelta(days=30),
-            start_date=NetworkAEMORooftop.data_first_seen.replace(tzinfo=None),  # type: ignore
-            end_date=up_to_interval,
-            # end_date=datetime(2012, 11, 1),
-            # end_date=interval,
-            max_concurrent=2,
-            chunk_days=30,
-            # network=NetworkWEM,
-        )
-    )
+    # asyncio.run(
+    #     update_facility_aggregates_chunked(
+    #         # start_date=interval - timedelta(days=30),
+    #         start_date=nem_start,
+    #         end_date=up_to_interval,
+    #         # end_date=datetime(2012, 11, 1),
+    #         # end_date=interval,
+    #         max_concurrent=2,
+    #         chunk_days=3,
+    #         # network=NetworkWEM,
+    #     )
+    # )
 
+    asyncio.run(run_update_facility_aggregate_last_interval(num_intervals=3))
     # asyncio.run(update_facility_aggregate_last_hours(hours_back=6))
     # asyncio.run(run_facility_aggregate_updates(lookback_days=30, max_concurrent=4, chunk_days=3))
