@@ -327,7 +327,7 @@ if __name__ == "__main__":
     # Example: Update last 7 days of data in chunks
     # asyncio.run(run_facility_aggregate_updates(lookback_days=7))
     interval = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
-    nem_start = NetworkAEMORooftop.data_first_seen.replace(tzinfo=None)  # type: ignore
+    nem_start = NetworkNEM.data_first_seen.replace(tzinfo=None)  # type: ignore
     rooftop_start = NetworkAEMORooftop.data_first_seen.replace(tzinfo=None)  # type: ignore
 
     up_to_interval = datetime.fromisoformat("2023-02-06T00:00:00")
