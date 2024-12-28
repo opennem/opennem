@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from textwrap import dedent
 
 from sqlalchemy import TextClause, text
@@ -193,12 +193,6 @@ def get_rooftop_generation_combined_query(
     Returns:
         TextClause: SQL query that returns combined rooftop data
     """
-    # Adjust date_end to next 30 minute boundary if needed
-    minutes = date_end.minute
-    if minutes % 30 != 0:
-        # Round up to next 30 minute interval
-        additional_minutes = 30 - (minutes % 30)
-        date_end = date_end + timedelta(minutes=additional_minutes)
 
     # Network query filter
     networks = [i.code for i in network.subnetworks] if network.subnetworks else [network.code]
