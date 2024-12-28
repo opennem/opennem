@@ -14,7 +14,6 @@ from sqlalchemy import (
     Date,
     DateTime,
     Enum,
-    Float,
     ForeignKey,
     Index,
     Integer,
@@ -285,8 +284,8 @@ class Unit(Base):
     unit_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
     unit_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
     unit_alias: Mapped[str | None] = mapped_column(Text, nullable=True)
-    unit_capacity: Mapped[float | None] = mapped_column(Numeric, nullable=True)
-    emissions_factor_co2: Mapped[float | None] = mapped_column(Numeric, nullable=True)
+    unit_capacity: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    emissions_factor_co2: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
     emission_factor_source: Mapped[str | None] = mapped_column(Text, nullable=True)
     interconnector: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     interconnector_region_to: Mapped[str | None] = mapped_column(Text, nullable=True, index=True)
@@ -324,9 +323,9 @@ class FacilityScada(Base):
     interval = Column(TIMESTAMP(timezone=False), index=True, primary_key=True, nullable=False)
     network_id = Column(Text, primary_key=True, nullable=False, index=True)
     facility_code = Column(Text, nullable=False, primary_key=True, index=True)
-    generated = Column(Numeric, nullable=True)
+    generated: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
     is_forecast = Column(Boolean, default=False, primary_key=True)
-    energy: Mapped[float] = mapped_column(Numeric, nullable=True)
+    energy: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
     energy_quality_flag = Column(Numeric, nullable=False, default=0)
 
     __table_args__ = (
@@ -378,16 +377,16 @@ class BalancingSummary(Base):
     network_id = Column(Text, primary_key=True)
     interval: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=False), index=True, primary_key=True)
     network_region = Column(Text, primary_key=True, index=True)
-    forecast_load = Column(Numeric, nullable=True)
-    generation_scheduled = Column(Numeric, nullable=True)
-    generation_non_scheduled = Column(Numeric, nullable=True)
-    generation_total = Column(Numeric, nullable=True)
-    net_interchange = Column(Numeric, nullable=True)
-    demand = Column(Numeric, nullable=True)
-    demand_total = Column(Numeric, nullable=True)
-    price = Column(Numeric, nullable=True)
-    price_dispatch = Column(Numeric, nullable=True)
-    net_interchange_trading = Column(Numeric, nullable=True)
+    forecast_load: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    generation_scheduled: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    generation_non_scheduled: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    generation_total: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    net_interchange: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    demand: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    demand_total: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    price: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    price_dispatch: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    net_interchange_trading: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
     is_forecast = Column(Boolean, default=False, nullable=False, primary_key=True)
 
     __table_args__ = (
@@ -520,11 +519,11 @@ class FacilityAggregate(Base):
     fueltech_code: Mapped[str | None] = mapped_column(Text, nullable=False)
     network_region: Mapped[str] = mapped_column(Text, nullable=False)
     status_id: Mapped[str | None] = mapped_column(Text, nullable=True)
-    generated: Mapped[float | None] = mapped_column(Float, nullable=True)
-    energy: Mapped[float | None] = mapped_column(Float, nullable=True)
-    emissions: Mapped[float | None] = mapped_column(Float, nullable=True)
-    emissions_intensity: Mapped[float | None] = mapped_column(Float, nullable=True)
-    market_value: Mapped[float | None] = mapped_column(Float, nullable=True)
+    generated: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    energy: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    emissions: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    emissions_intensity: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    market_value: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
 
     # Metadata
     last_updated: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("now()"))
