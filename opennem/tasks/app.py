@@ -112,9 +112,9 @@ class WorkerSettings:
         # NEM Next Day Dispatch
         cron(
             task_nem_per_day_check,
-            hour={4, 5, 6},
+            hour={5},
             minute=25,
-            second=58,
+            second=0,
             timeout=None,
             unique=True,
         ),
