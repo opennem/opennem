@@ -13,6 +13,7 @@ from opennem import settings
 from opennem.core.normalizers import is_number
 from opennem.importer.rooftop import ROOFTOP_CODE
 from opennem.schema.core import BaseConfig
+from opennem.schema.field_types import RoundedFloat4
 from opennem.utils.dates import get_today_opennem, parse_date
 from opennem.utils.httpx import httpx_factory
 from opennem.utils.version import get_version
@@ -94,8 +95,8 @@ class APVIForecastInterval(BaseConfig):
     network_id: str = APVI_NETWORK_CODE
     state: str | None = None
     facility_code: str | None = None
-    generated: float | None = None
-    energy: float | None = None
+    generated: RoundedFloat4 | None = None
+    energy: RoundedFloat4 | None = None
 
     @field_validator("state", mode="before")
     def _validate_state(cls, value: str | None) -> str | None:
@@ -115,17 +116,6 @@ class APVIForecastInterval(BaseConfig):
             raise Exception(f"Invalid APVI forecast interval: {value}")
 
         return interval_time.replace(tzinfo=None)
-
-    @field_validator("energy", mode="before")
-    def _validate_energy(cls, values: dict[str, Any]) -> float | None:
-        """Calculate energy value."""
-        generated = values.get("generated")
-        energy_quantity: float | None = None
-
-        if generated and is_number(generated):
-            energy_quantity = round(float(generated), 2)
-
-        return energy_quantity
 
 
 class APVIStateRooftopCapacity(BaseConfig):
