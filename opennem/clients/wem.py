@@ -15,13 +15,19 @@ import csv
 import logging
 from datetime import datetime, timedelta
 from io import StringIO
-from typing import Any
+from typing import Annotated, Any
 
-import requests
-from pydantic import ConfigDict, ValidationError, field_validator, validator
+import aiohttp
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationError,
+    field_validator,
+)
 
 from opennem import settings
-from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkWEM
 from opennem.utils.dates import get_date_component, parse_date
 from opennem.utils.random_agent import get_random_agent
@@ -45,42 +51,40 @@ _AEMO_WEM_BALANCING_SUMMARY_URL = (
 
 _AEMO_WEM2_GENERATION_URL = "https://aemo.com.au/aemo/data/wa/infographic/generation.csv"
 
+# Create aiohttp session
+_wem_session = aiohttp.ClientSession(headers={"User-Agent": get_random_agent()})
+
 
 def _wem_balancing_summary_field_alias(field_name: str) -> str:
     """Generates field aliases to map balancing summary CSV to schema"""
     return field_name.strip().upper()
 
 
-def _empty_string_to_none(field_value: str | float | None) -> str | float | None:
+def _empty_string_to_none(field_value: str | float | None) -> float | None:
+    """Convert empty strings to None and strings to floats"""
     if not field_value:
         return None
-
     if field_value == "":
         return None
-
+    if isinstance(field_value, str):
+        try:
+            return float(field_value)
+        except ValueError:
+            return None
     return field_value
 
 
-class WEMBalancingSummaryInterval(BaseConfig):
+FloatField = Annotated[float | None, AfterValidator(_empty_string_to_none)]
+
+
+class WEMBalancingSummaryInterval(BaseModel):
     trading_day_interval: datetime
-    forecast_eoi_mw: float | None = None
-    forecast_mw: float | None = None
-    price: float | None = None  # some forecasts don't have a price
-    forecast_nsg_mw: float | None = None
-    actual_nsg_mw: float | None = None
-    actual_total_generation: float | None = None
-
-    _validator_forecast_mw = validator("forecast_mw", pre=True, allow_reuse=True)(_empty_string_to_none)
-
-    _validator_price = validator("price", pre=True, allow_reuse=True)(_empty_string_to_none)
-
-    _validator_actual_nsw = validator("actual_nsg_mw", pre=True, allow_reuse=True)(_empty_string_to_none)
-
-    _validator_actual_total_gen = validator("actual_total_generation", pre=True, allow_reuse=True)(_empty_string_to_none)
-
-    _validator_forecast_eoi_mw = validator("forecast_eoi_mw", pre=True, allow_reuse=True)(_empty_string_to_none)
-
-    _validator_forecast_nsg_mw = validator("forecast_nsg_mw", pre=True, allow_reuse=True)(_empty_string_to_none)
+    forecast_eoi_mw: FloatField = None
+    forecast_mw: FloatField = None
+    price: FloatField = None
+    forecast_nsg_mw: FloatField = None
+    actual_nsg_mw: FloatField = None
+    actual_total_generation: FloatField = None
 
     @field_validator("trading_day_interval", mode="before")
     @classmethod
@@ -88,7 +92,7 @@ class WEMBalancingSummaryInterval(BaseConfig):
         interval_time = parse_date(value, network=NetworkWEM)
 
         if not interval_time:
-            raise Exception(f"Invalid APVI forecast interval: {value}")
+            raise ValueError(f"Invalid APVI forecast interval: {value}")
 
         return interval_time
 
@@ -99,7 +103,7 @@ class WEMBalancingSummaryInterval(BaseConfig):
     model_config = ConfigDict(alias_generator=_wem_balancing_summary_field_alias)
 
 
-class WEMBalancingSummarySet(BaseConfig):
+class WEMBalancingSummarySet(BaseModel):
     crawled_at: datetime
     live: bool = True
     intervals: list[WEMBalancingSummaryInterval]
@@ -111,17 +115,17 @@ class WEMBalancingSummarySet(BaseConfig):
         return len(self.intervals)
 
 
-class WEMGenerationInterval(BaseConfig):
+class WEMGenerationInterval(BaseModel):
     trading_interval: datetime
     network_id: str = "WEM"
     facility_code: str
-    power: float | None = None
-    eoi_quantity: float | None = None
-    generated_scheduled: float | None = None
-    generated_non_scheduled: float | None = None
+    power: FloatField = None
+    eoi_quantity: FloatField = None
+    generated_scheduled: FloatField = None
+    generated_non_scheduled: FloatField = None
 
     created_by: str = "controllers.wem"
-    created_at: datetime = datetime.now()
+    created_at: datetime = Field(default_factory=datetime.now)
 
     @property
     def generated(self) -> float | None:
@@ -139,26 +143,18 @@ class WEMGenerationInterval(BaseConfig):
 
         return None
 
-    _validator_power = validator("power", pre=True, allow_reuse=True)(_empty_string_to_none)
-
-    _validator_eoi_quantity = validator("eoi_quantity", pre=True, allow_reuse=True)(_empty_string_to_none)
-
-    _validator_generated_scheduled = validator("generated_scheduled", pre=True, allow_reuse=True)(_empty_string_to_none)
-
-    _validator_generated_non_scheduled = validator("generated_non_scheduled", pre=True, allow_reuse=True)(_empty_string_to_none)
-
     @field_validator("trading_interval", mode="before")
     @classmethod
     def _validate_trading_interval(cls, value: Any) -> datetime:
         interval_time = parse_date(value, network=NetworkWEM)
 
         if not interval_time:
-            raise Exception(f"Invalid APVI forecast interval: {value}")
+            raise ValueError(f"Invalid APVI forecast interval: {value}")
 
         return interval_time
 
 
-class WEMFacilityIntervalSet(BaseConfig):
+class WEMFacilityIntervalSet(BaseModel):
     crawled_at: datetime
     live: bool = True
     intervals: list[WEMGenerationInterval]
@@ -170,15 +166,11 @@ class WEMFacilityIntervalSet(BaseConfig):
         return len(self.intervals)
 
 
-_wem_session = requests.Session()
-_wem_session.headers.update({"User-Agent": get_random_agent()})
-
-
 class WEMFileNotFoundException(Exception):
     pass
 
 
-def wem_downloader(url: str, for_date: datetime | None = None, decode_content: bool = True) -> str:
+async def wem_downloader(url: str, for_date: datetime | None = None, decode_content: bool = True) -> str:
     """Downloads WEM content using the session"""
     url_params = {
         "day": get_date_component("%d", dt=for_date),
@@ -190,20 +182,29 @@ def wem_downloader(url: str, for_date: datetime | None = None, decode_content: b
 
     logger.info(f"Fetching {_url_parsed}")
 
-    response = _wem_session.get(_url_parsed, verify=settings.http_verify_ssl)
+    async with _wem_session.get(_url_parsed, ssl=settings.http_verify_ssl) as response:
+        # sometimes with the WEM delay the current
+        # month isn't up
+        if response.status == 404:
+            raise WEMFileNotFoundException()
 
-    # sometimes with the WEM delay the current
-    # month isn't up
-    if response.status_code == 404:
-        raise WEMFileNotFoundException()
+        if not response.ok:
+            raise Exception(f"Get WEM facility intervals summary error: {response.status}")
 
-    if not response.ok:
-        raise Exception(f"Get WEM facility intervals summary error: {response.status_code}")
+        # @TODO mime detect and decoding
+        _content = await response.text()
 
-    # @TODO mime detect and decoding
-    _content = response.content.decode("utf-8")
+        return _content
 
-    return _content
+
+def _parse_csv_record(record: dict[str, str], model_class: type[BaseModel]) -> BaseModel | None:
+    """Parse a CSV record into a Pydantic model with proper type coercion"""
+    try:
+        return model_class.model_validate(record)
+    except ValidationError as e:
+        logger.error(f"Validation error for record: {e}")
+        logger.debug(record)
+        return None
 
 
 def parse_wem_live_balancing_summary(content: str) -> list[WEMBalancingSummaryInterval]:
@@ -214,17 +215,9 @@ def parse_wem_live_balancing_summary(content: str) -> list[WEMBalancingSummaryIn
     logger.debug("CSV has fields: {}".format(", ".join(csvreader.fieldnames)))  # type: ignore
 
     for _csv_rec in csvreader:
-        # adapts the fields from balancing-summary history to match our schema
-        _m = None
-
-        try:
-            _m = WEMBalancingSummaryInterval(**_csv_rec)
-        except ValidationError as e:
-            logger.error(f"Validation error for record: {e}")
-            logger.debug(_csv_rec)
-
-        if _m:
-            _models.append(_m)
+        model = _parse_csv_record(_csv_rec, WEMBalancingSummaryInterval)
+        if model:
+            _models.append(model)
 
     logger.debug(f"Got {len(_models)} balancing summary records")
 
@@ -248,26 +241,19 @@ def parse_wem_balancing_summary(content: str) -> list[WEMBalancingSummaryInterva
             **_csv_rec,
         }
 
-        _m = None
-
-        try:
-            _m = WEMBalancingSummaryInterval(**_csv_rec)
-        except ValidationError as e:
-            logger.error(f"Validation error for record: {e}")
-            logger.debug(_csv_rec)
-
-        if _m:
-            _models.append(_m)
+        model = _parse_csv_record(_csv_rec, WEMBalancingSummaryInterval)
+        if model:
+            _models.append(model)
 
     logger.debug(f"Got {len(_models)} balancing summary records")
 
     return _models
 
 
-def get_wem_live_balancing_summary() -> WEMBalancingSummarySet:
+async def get_wem_live_balancing_summary() -> WEMBalancingSummarySet:
     """Obtains WEM live balancing summary from pulse with forecasts
     (price, generation etc.) and returns a summary set model"""
-    resp = wem_downloader(_AEMO_WEM_LIVE_BALANCING_URL)
+    resp = await wem_downloader(_AEMO_WEM_LIVE_BALANCING_URL)
 
     _models = parse_wem_live_balancing_summary(resp)
 
@@ -291,10 +277,10 @@ def get_wem_live_balancing_summary() -> WEMBalancingSummarySet:
     return wem_set
 
 
-def get_wem_balancing_summary() -> WEMBalancingSummarySet:
+async def get_wem_balancing_summary() -> WEMBalancingSummarySet:
     """Obtains WEM balancing summary (price, generation etc.) and returns a
     summary set model"""
-    resp = wem_downloader(_AEMO_WEM_BALANCING_SUMMARY_URL)
+    resp = await wem_downloader(_AEMO_WEM_BALANCING_SUMMARY_URL)
 
     _models = parse_wem_balancing_summary(resp)
 
@@ -354,27 +340,20 @@ def parse_wem_facility_intervals(content: str) -> list[WEMGenerationInterval]:
         if "power" in _csv_rec and _csv_rec["power"] and float(_csv_rec["power"]) > 0:
             _csv_rec["eoi_quantity"] = str(float(_csv_rec["power"]) / 2.0)
 
-        _m = None
-
-        try:
-            _m = WEMGenerationInterval(**_csv_rec)
-        except ValidationError as e:
-            logger.error(f"Validation error for record: {e}")
-            logger.debug(_csv_rec)
-
-        if _m:
-            _models.append(_m)
+        model = _parse_csv_record(_csv_rec, WEMGenerationInterval)
+        if model:
+            _models.append(model)
 
     logger.debug(f"Got {len(_models)} facility interval records")
 
     return _models
 
 
-def get_wem_live_facility_intervals(
+async def get_wem_live_facility_intervals(
     trim_intervals: bool = False, from_interval: datetime | None = None
 ) -> WEMFacilityIntervalSet:
     """Obtains WEM live facility intervals from infogrphic feeds"""
-    content = wem_downloader(_AEMO_WEM_LIVE_SCADA_URL)
+    content = await wem_downloader(_AEMO_WEM_LIVE_SCADA_URL)
     _models = parse_wem_facility_intervals(content)
 
     server_latest: datetime | None = None
@@ -405,7 +384,7 @@ def get_wem_live_facility_intervals(
     return wem_set
 
 
-def get_wem_facility_intervals(from_date: datetime | None = None) -> WEMFacilityIntervalSet:
+async def get_wem_facility_intervals(from_date: datetime | None = None) -> WEMFacilityIntervalSet:
     """Obtains WEM facility intervals from NEM web. Will default to most recent date
 
     @TODO not yet smart enough to know if it should check current or archive
@@ -413,11 +392,11 @@ def get_wem_facility_intervals(from_date: datetime | None = None) -> WEMFacility
     content: str | None = None
 
     try:
-        content = wem_downloader(_AEMO_WEM_SCADA_URL, from_date)
+        content = await wem_downloader(_AEMO_WEM_SCADA_URL, from_date)
     except WEMFileNotFoundException:
         _now = datetime.now()
         from_date = _now - timedelta(days=30)
-        content = wem_downloader(_AEMO_WEM_SCADA_URL, from_date)
+        content = await wem_downloader(_AEMO_WEM_SCADA_URL, from_date)
 
     if not content:
         raise Exception("No content for wem facility intervals")
@@ -442,9 +421,9 @@ def get_wem_facility_intervals(from_date: datetime | None = None) -> WEMFacility
     return wem_set
 
 
-def get_wem2_live_generation_models() -> list[WEMGenerationInterval]:
+async def get_wem2_live_generation_models() -> list[WEMGenerationInterval]:
     """Gets the latest WEM live generation CSV"""
-    resp = wem_downloader(_AEMO_WEM2_GENERATION_URL, decode_content=True)
+    resp = await wem_downloader(_AEMO_WEM2_GENERATION_URL, decode_content=True)
 
     if not isinstance(resp, str):
         raise Exception("Invalid response from WEM2 generation - not string")
@@ -470,10 +449,10 @@ def get_wem2_live_generation_models() -> list[WEMGenerationInterval]:
                 latest_interval = parse_as_at
                 logger.info(f"Latest interval is {latest_interval} found via AS_AT")
             else:
-                raise Exception(f"Invalid AS_AT date: {facility_record["AS_AT"]}")
+                raise ValueError(f"Invalid AS_AT date: {facility_record["AS_AT"]}")
 
         if not latest_interval:
-            raise Exception("No latest interval found")
+            raise ValueError("No latest interval found")
 
         facility_code = facility_record["FACILITY_CODE"]
 
@@ -501,11 +480,11 @@ def get_wem2_live_generation_models() -> list[WEMGenerationInterval]:
     return models
 
 
-def get_wem2_live_facility_intervals(
+async def get_wem2_live_facility_intervals(
     trim_intervals: bool = False, from_interval: datetime | None = None
 ) -> WEMFacilityIntervalSet:
     """Obtains WEM v2 live facility intervals from infogrphic feeds"""
-    _models = get_wem2_live_generation_models()
+    _models = await get_wem2_live_generation_models()
 
     server_latest: datetime | None = None
 
@@ -537,20 +516,11 @@ def get_wem2_live_facility_intervals(
 
 # debug entry point
 if __name__ == "__main__":
-    # m = get_wem_facility_intervals(live=False)
+    import asyncio
 
-    # m = get_wem_facility_intervals()
+    async def main():
+        balancing_set = await get_wem_live_balancing_summary()
+        for model in balancing_set.intervals:
+            print(dict(model))
 
-    # with open("wem.json", "w") as fh:
-    #     fh.write(m.json(indent=4))
-
-    from pprint import pprint
-
-    balancing_set = get_wem_live_balancing_summary()
-
-    for model in balancing_set.intervals:
-        pprint(dict(model))
-        # print(dict(models[0]))
-
-    # with open("wem-live.json", "w") as fh:
-    # fh.write(m.json(indent=4))
+    asyncio.run(main())
