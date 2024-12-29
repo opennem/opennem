@@ -7,7 +7,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem.db import get_write_session
-from opennem.schema.network import NetworkAEMORooftop, NetworkNEM, NetworkSchema
+from opennem.schema.network import NetworkAEMORooftop, NetworkNEM, NetworkSchema, NetworkWEM, NetworkWEMDE
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
 
 logger = logging.getLogger("opennem.aggregates.facility_interval")
@@ -46,7 +46,7 @@ async def update_facility_aggregates(
         query = text(f"""
             WITH filled_balancing_summary AS (
                 SELECT
-                    time_bucket('5 minutes', bs.interval) as interval,
+                    time_bucket_gapfill('5 minutes', bs.interval) as interval,
                     bs.network_id,
                     bs.network_region,
                     locf(
@@ -330,13 +330,14 @@ if __name__ == "__main__":
     nem_start = NetworkNEM.data_first_seen.replace(tzinfo=None)  # type: ignore
     rooftop_start = NetworkAEMORooftop.data_first_seen.replace(tzinfo=None)  # type: ignore
 
-    up_to_interval = datetime.fromisoformat("2023-02-06T00:00:00")
+    up_to_interval = datetime.fromisoformat("2003-06-16T00:00:00")
 
     asyncio.run(
         update_facility_aggregates_chunked(
-            start_date=nem_start,
-            end_date=rooftop_start,
+            start_date=NetworkWEMDE.data_first_seen,
+            end_date=interval,
             max_concurrent=2,
             chunk_days=3,
+            network=NetworkWEM,
         )
     )
