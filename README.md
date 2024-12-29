@@ -1,27 +1,26 @@
-# OpenNEM Energy Market Data Access
+# OpenElectricity: Australian Energy Market Data Platform
 
-![logo](https://developers.opennem.org.au/_static/logo.png)
+![logo](https://platform.openelectricity.org.au/oe_logo_full.png)
 
 **NOTE: This is the backend project** For the client python project see [opennem/opennempy](https://github.com/opennem/opennempy)
 
 ![Tests](https://github.com/opennem/opennem/workflows/Tests/badge.svg) [![codecov](https://codecov.io/gh/opennem/opennem/branch/master/graph/badge.svg?token=HSJP632WBX)](https://codecov.io/gh/opennem/opennem)
 
-The OpenElectricity project (formerly OpenNEM) aims to make the wealth of public National Electricity Market (NEM) data more accessible to a wider audience.
+The OpenElectricity project (formerly OpenNEM) aims to make the wealth of public Australian energy data more accessible to a wider audience.
 
 This toolkit enables downloading, mirroring and accessing energy data from various networks
 
 Project homepage at https://openelectricity.org.au
 
-Currently supports:
+Currently supported networks:
 
 - Australian NEM: https://www.nemweb.com.au/
 - West Australia Energy Market: http://data.wa.aemo.com.au/
 
 ## Documentation
 
- - The [OpenNEM Wiki](https://github.com/opennem/opennem/wiki)
- - [Developer Documentation](https://developers.opennem.org.au)
- - [API Interface and documentation](https://api.opennem.org.au/docs)
+ - [Documentation Website](https://docs.openelectricity.org.au/)
+ - [API Interface and documentation](https://api.openelectricity.org.au/v4/docs)
 
 ## Contact
 
