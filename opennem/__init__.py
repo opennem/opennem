@@ -51,7 +51,7 @@ logger = logging.getLogger("opennem")
 
 # Module variables
 
-__version__ = "4.0.0rc13"
+__version__ = "4.0.0rc13.dev0"
 
 # Check minimum required Python version
 
