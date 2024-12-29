@@ -130,3 +130,4 @@ sanity_response.py
 test.db
 .secrets.baseline
 .tmp/
+.cursorrules
