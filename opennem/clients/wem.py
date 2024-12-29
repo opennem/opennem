@@ -17,7 +17,6 @@ from datetime import datetime, timedelta
 from io import StringIO
 from typing import Annotated, Any
 
-import aiohttp
 from pydantic import (
     AfterValidator,
     BaseModel,
@@ -27,10 +26,9 @@ from pydantic import (
     field_validator,
 )
 
-from opennem import settings
 from opennem.schema.network import NetworkWEM
 from opennem.utils.dates import get_date_component, parse_date
-from opennem.utils.random_agent import get_random_agent
+from opennem.utils.httpx import http
 
 logger = logging.getLogger("opennem.client.wem")
 
@@ -52,7 +50,6 @@ _AEMO_WEM_BALANCING_SUMMARY_URL = (
 _AEMO_WEM2_GENERATION_URL = "https://aemo.com.au/aemo/data/wa/infographic/generation.csv"
 
 # Create aiohttp session
-_wem_session = aiohttp.ClientSession(headers={"User-Agent": get_random_agent()})
 
 
 def _wem_balancing_summary_field_alias(field_name: str) -> str:
@@ -170,7 +167,7 @@ class WEMFileNotFoundException(Exception):
     pass
 
 
-async def wem_downloader(url: str, for_date: datetime | None = None, decode_content: bool = True) -> str:
+async def wem_downloader(url: str, for_date: datetime | None = None) -> str:
     """Downloads WEM content using the session"""
     url_params = {
         "day": get_date_component("%d", dt=for_date),
@@ -182,19 +179,18 @@ async def wem_downloader(url: str, for_date: datetime | None = None, decode_cont
 
     logger.info(f"Fetching {_url_parsed}")
 
-    async with _wem_session.get(_url_parsed, ssl=settings.http_verify_ssl) as response:
-        # sometimes with the WEM delay the current
-        # month isn't up
-        if response.status == 404:
-            raise WEMFileNotFoundException()
+    response = await http.get(_url_parsed)
 
-        if not response.ok:
-            raise Exception(f"Get WEM facility intervals summary error: {response.status}")
+    # sometimes with the WEM delay the current
+    # month isn't up
+    if response.status_code == 404:
+        raise WEMFileNotFoundException()
 
-        # @TODO mime detect and decoding
-        _content = await response.text()
+    if not response.is_success:
+        raise Exception(f"Get WEM facility intervals summary error: {response.status_code}")
 
-        return _content
+    # @TODO mime detect and decoding
+    return response.text
 
 
 def _parse_csv_record(record: dict[str, str], model_class: type[BaseModel]) -> BaseModel | None:
@@ -423,7 +419,7 @@ async def get_wem_facility_intervals(from_date: datetime | None = None) -> WEMFa
 
 async def get_wem2_live_generation_models() -> list[WEMGenerationInterval]:
     """Gets the latest WEM live generation CSV"""
-    resp = await wem_downloader(_AEMO_WEM2_GENERATION_URL, decode_content=True)
+    resp = await wem_downloader(_AEMO_WEM2_GENERATION_URL)
 
     if not isinstance(resp, str):
         raise Exception("Invalid response from WEM2 generation - not string")
