@@ -96,6 +96,7 @@ async def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
                     "facility_code": facility_code,
                     "generated": quantity * 12,  # convert to MW
                     "energy": quantity,
+                    "energy_quality_flag": 2,
                 }
             )
             models.append(m)
@@ -131,12 +132,18 @@ async def wemde_parse_trading_price(url: str) -> list[BalancingSummarySchema]:
         # strip timezone from interval
         interval = interval.replace(tzinfo=None)
 
+        price = entry.get("referenceTradingPrice", 0)
+
+        if not price:
+            logger.warning(f"No price for {interval}")
+            continue
+
         try:
             m = BalancingSummarySchema(
                 **{
                     "network_id": "WEM",
                     "interval": interval,
-                    "price": entry.get("referenceTradingPrice", 0),
+                    "price": price,
                     "network_region": "WEM",
                 }
             )
