@@ -117,23 +117,6 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
-        # Energy Calculation
-        # cron(
-        #     task_run_energy_calculation,
-        #     minute={2, 32},
-        #     second=55,
-        #     timeout=None,
-        #     unique=True,
-        # ),
-        # NEM exports
-        # @NOTE this is done in per-interval check
-        # cron(
-        #     task_nem_power_exports,
-        #     minute=set(range(1, 60, 5)),
-        #     second=58,
-        #     timeout=None,
-        #     unique=True,
-        # ),
         # energy latest export
         cron(
             task_export_energy,
@@ -168,14 +151,6 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
-        # flow aggregates
-        # cron(
-        #     task_run_flows_for_last_days,
-        #     minute=set(range(0, 60, 5)),
-        #     second=58,
-        #     timeout=None,
-        #     unique=True,
-        # ),
         # export flows and electricitymap
         cron(
             task_export_flows,
@@ -240,20 +215,6 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
-        # cron(
-        #     crawler_run_nem_dispatch_is_crawl,
-        #     minute=set(range(0, 60, 5)),
-        #     second=30,
-        #     timeout=None,
-        #     unique=True,
-        # ),
-        # cron(
-        #     crawler_run_nem_trading_is_crawl,
-        #     minute=set(range(0, 60, 5)),
-        #     second=30,
-        #     timeout=None,
-        #     unique=True,
-        # ),
         # clean tmp dir
         cron(
             task_clean_tmp_dir,
