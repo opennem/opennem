@@ -21,6 +21,8 @@ async def _calculate_energy_for_interval(session: AsyncSession, start_time: date
     The energy calculation requires both the current and previous interval's generated values
     to compute the average power over the interval. We explicitly exclude the first interval
     in each facility's range since we won't have access to its previous value.
+
+    We also exclude WEM, WEMDE and AEMO_ROOFTOP_BACKFILL since they have their own energy calculations
     """
 
     query = text("""
@@ -46,7 +48,9 @@ async def _calculate_energy_for_interval(session: AsyncSession, start_time: date
         WHERE
             interval BETWEEN :start_time AND :end_time
             AND energy_quality_flag < 2
-    )
+            AND network_id not in ('WEM', 'WEMDE', 'AEMO_ROOFTOP_BACKFILL')
+
+        )
     UPDATE facility_scada fs
     SET
         energy = (rs.generated + rs.prev_generated) / 2 / nd.intervals_per_hour,
@@ -158,10 +162,11 @@ async def main():
 
     # Run backlog
     print("Processing backlog...")
-    date_start = datetime.fromisoformat("2019-09-25 00:00:00")
+    date_start = datetime.fromisoformat("2023-01-01 00:00:00")
     date_end = get_last_completed_interval_for_network().replace(tzinfo=None)
-    date_start = NetworkNEM.data_first_seen.replace(tzinfo=None)  # type: ignore
-    date_start = date_end - timedelta(years=1)
+
+    print(f"Processing {date_start} to {date_end}")
+
     await run_energy_backlog(date_start=date_start, date_end=date_end)
 
 
