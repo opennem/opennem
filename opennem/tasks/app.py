@@ -17,14 +17,10 @@ Functions:
 Classes:
     WorkerSettings: Configuration class for the arq worker, including queue name and cron jobs.
 
-Cron Jobs:
-    - task_nem_interval_check: Runs every 5 minutes to check NEM intervals.
-    - task_bom_capitals_crawl: (Not shown in the snippet) Crawls BOM capitals data.
-    - task_run_market_notice_update: (Not shown in the snippet) Updates market notices.
-
 Running the script:
     - The script can be run directly using Python, which will start the worker.
     - python -m opennem.tasks.app
+    - uv run worker
     - Alternatively, it can be run through the Docker container using the `run_worker` command.
 """
 
