@@ -229,6 +229,8 @@ async def bulkinsert_mms_items(
                             # Convert string to boolean
                             value = str(value).lower()
                             record_values.append(value in ("true", "t", "yes", "y", "1"))
+                        elif column_types[col] in ("integer", "bigint", "smallint"):
+                            record_values.append(int(value) if value is not None else None)
                         else:
                             record_values.append(str(value))
                     records_to_insert.append(record_values)
