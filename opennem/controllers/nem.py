@@ -407,7 +407,7 @@ async def process_unit_scada_optimized(table: AEMOTableSchema) -> ControllerRetu
     )
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy", "energy_quality_flag"])  # type: ignore
+    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy"])  # type: ignore
     cr.server_latest = max([i["interval"] for i in records if i["interval"]])
 
     return cr
@@ -424,7 +424,7 @@ async def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
     )
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy", "energy_quality_flag"])
+    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy"])
     cr.server_latest = max([i["interval"] for i in records if i["interval"]])
 
     return cr
@@ -441,7 +441,7 @@ async def process_meter_data_gen_duid(table: AEMOTableSchema) -> ControllerRetur
     )
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy", "energy_quality_flag"])
+    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy"])
     cr.server_latest = max([i["interval"] for i in records])
 
     return cr
@@ -462,7 +462,7 @@ async def process_rooftop_actual(table: AEMOTableSchema) -> ControllerReturn:
     records = [i for i in records if i]
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy", "energy_quality_flag"])
+    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy"])
     cr.server_latest = max([i["interval"] for i in records])
 
     return cr
@@ -484,7 +484,7 @@ async def process_rooftop_forecast(table: AEMOTableSchema) -> ControllerReturn:
     records = [i for i in records if i]
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy", "energy_quality_flag"])  # type: ignore
+    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy"])  # type: ignore
     cr.server_latest = max([i["interval"] for i in records]) if records else None
 
     return cr
