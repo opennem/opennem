@@ -80,8 +80,8 @@ async def task_nem_interval_check(ctx) -> None:
 @logfire.instrument("task_nem_per_day_check")
 async def task_nem_per_day_check(ctx) -> None:
     """This task is run daily for NEM"""
-    dispatch_actuals = await run_crawl(AEMONEMDispatchActualGEN)
-    await run_crawl(AEMONEMNextDayDispatch)
+    dispatch_actuals = await run_crawl(AEMONEMDispatchActualGEN, latest=True, limit=3)
+    await run_crawl(AEMONEMNextDayDispatch, latest=True, limit=3)
 
     if not dispatch_actuals or not dispatch_actuals.inserted_records:
         raise Retry(defer=ctx["job_try"] * 15)
