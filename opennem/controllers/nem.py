@@ -19,7 +19,6 @@ from opennem.db import get_write_session
 from opennem.db.bulk_insert_csv import bulkinsert_mms_items
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
 from opennem.importer.rooftop import rooftop_remap_regionids
-from opennem.schema.aemo.mms import MMSBaseClass
 from opennem.schema.network import NetworkAEMORooftop, NetworkSchema
 from opennem.utils.dates import parse_date
 
@@ -41,7 +40,7 @@ FACILITY_SCADA_COLUMN_NAMES = [
 
 
 async def generate_facility_scada(
-    records: list[dict[str, Any] | MMSBaseClass],
+    records: list[dict[str, Any]],
     network: NetworkSchema = NetworkNEM,
     interval_field: str = "settlementdate",
     facility_code_field: str = "duid",
