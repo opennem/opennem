@@ -3,6 +3,7 @@
     "**/__pycache__/": true,
     ".venv": true,
     "dist": true,
+    ".logfire": true,
     "**/.pynb_checkpoints": true,
     "**/.mypy_cache": true,
     "**/.ruff_cache": true,
