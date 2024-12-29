@@ -27,7 +27,7 @@ from opennem.queries.power import (
     get_rooftop_forecast_generation_query,
     get_rooftop_generation_combined_query,
 )
-from opennem.schema.network import NetworkAU, NetworkNEM, NetworkSchema
+from opennem.schema.network import NetworkAU, NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.stats import StatTypes
 
 _valid_region = re.compile(r"^\w{1,4}\d?$")
@@ -419,9 +419,14 @@ async def power_week(
     result.append_set(result_rooftop)
 
     # price
+    # if it's WEM then it's 30 min for price
+    time_series_price = time_series.model_copy()
+
+    if time_series.network == NetworkWEM:
+        time_series_price.interval = human_to_interval("30m")
 
     query: TextClause = price_network_query(
-        time_series=time_series,
+        time_series=time_series_price,
         networks_query=networks_query,
         network_region=network_region_code,
     )
@@ -435,45 +440,14 @@ async def power_week(
 
     stats_market_value = stats_factory(
         stats=stats_price,
-        code=network_region_code or time_series.network.code.lower(),
         units=get_unit("price_energy_mega"),
-        network=time_series.network,
-        interval=time_series.interval,
-        region=network_region_code,
-        include_code=True,
+        network=time_series_price.network,
+        interval=time_series_price.interval,
+        region=network_region_code.lower() if network_region_code else None,
+        include_code=False,
     )
 
     result.append_set(stats_market_value)
-
-    # # rooftop forecast
-    # rooftop_forecast = None
-
-    # if rooftop and rooftop.data:
-    #     time_series_rooftop_forecast = time_series_rooftop.copy()
-    #     time_series_rooftop_forecast.forecast = True
-
-    #     logger.debug(time_series_rooftop_forecast)
-
-    #     query = power_network_rooftop_query(
-    #         time_series=time_series_rooftop_forecast, networks_query=networks_query, network_region=network_region_code
-    #     )
-
-    #     async with engine.begin() as conn:
-    #         logger.debug(query)
-    #         result_rooftop = await conn.execute(query)
-    #         row = result_rooftop.fetchall()
-
-    #     rooftop_forecast_power = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
-    # for i in row]
-
-    #     rooftop_forecast = stats_factory(
-    #         rooftop_forecast_power,
-    #         network=time_series.network,
-    #         interval=human_to_interval("30m"),
-    #         units=get_unit("power"),
-    #         region=network_region_code,
-    #         fueltech_group=True,
-    #     )
 
     return result
 
