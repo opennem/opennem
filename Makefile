@@ -9,7 +9,7 @@ mypy = uv run mypy $(projectname)
 pytest = uv run pytest tests -v
 pyright = uv run pyright -v .venv $(projectname)
 hatch = uvx hatch
-BUMP_TYPE ?= dev
+BUMP ?= dev
 
 .PHONY: test
 test:
@@ -37,13 +37,13 @@ build:
 
 .PHONY: version
 version:
-	@if ! echo "release major minor patch fix alpha beta rc rev post dev" | grep -w "$(BUMP_TYPE)" > /dev/null; then \
-		echo "Error: BUMP_TYPE must be one of: release, major, minor, patch, fix, alpha, beta, rc, rev, post, dev"; \
+	@if ! echo "release major minor patch fix alpha beta rc rev post dev" | grep -w "$(BUMP)" > /dev/null; then \
+		echo "Error: BUMP must be one of: release, major, minor, patch, fix, alpha, beta, rc, rev, post, dev"; \
 		exit 1; \
 	fi
 	# if the branch is master then bump needs to be either major minor patch or release
 	if [ "$$current_branch" = "master" ]; then \
-		if [ "$$BUMP_TYPE" != "major" ] && [ "$$BUMP_TYPE" != "minor" ] && [ "$$BUMP_TYPE" != "patch" ] && [ "$$BUMP_TYPE" != "release" ] && [ "$$BUMP_TYPE" != "rc" ]; then \
+		if [ "$$BUMP" != "major" ] && [ "$$BUMP" != "minor" ] && [ "$$BUMP" != "patch" ] && [ "$$BUMP" != "release" ] && [ "$$BUMP" != "rc" ]; then \
 			echo "Error: Cannot bump on master branch unless it is major, minor, patch or release"; \
 			exit 1; \
 		fi \
@@ -51,13 +51,13 @@ version:
 
 	# if the current branch is dev then the bump type must be dev
 	if [ "$$current_branch" = "dev" ]; then \
-		if [ "$$BUMP_TYPE" != "dev" ]; then \
+		if [ "$$BUMP" != "dev" ]; then \
 			echo "Error: Cannot bump on dev branch unless it is dev"; \
 			exit 1; \
 		fi \
 	fi; \
 
-	$(hatch) version $(BUMP_TYPE)
+	$(hatch) version $(BUMP)
 	@NEW_VERSION=$$(sed -n 's/__version__ = "\([^"]*\)".*/\1/p' opennem/__init__.py); \
 	echo "New version: $$NEW_VERSION"; \
 	git add opennem/__init__.py; \
