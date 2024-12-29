@@ -27,7 +27,7 @@ from opennem.queries.power import (
     get_rooftop_forecast_generation_query,
     get_rooftop_generation_combined_query,
 )
-from opennem.schema.network import NetworkAU, NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.schema.network import NetworkAU, NetworkNEM, NetworkSchema
 from opennem.schema.stats import StatTypes
 
 _valid_region = re.compile(r"^\w{1,4}\d?$")
@@ -419,14 +419,9 @@ async def power_week(
     result.append_set(result_rooftop)
 
     # price
-    # if it's WEM then it's 30 min for price
-    time_series_price = time_series.model_copy()
-
-    if time_series.network == NetworkWEM:
-        time_series_price.interval = human_to_interval("30m")
 
     query: TextClause = price_network_query(
-        time_series=time_series_price,
+        time_series=time_series,
         networks_query=networks_query,
         network_region=network_region_code,
     )
@@ -441,8 +436,8 @@ async def power_week(
     stats_market_value = stats_factory(
         stats=stats_price,
         units=get_unit("price_energy_mega"),
-        network=time_series_price.network,
-        interval=time_series_price.interval,
+        network=time_series.network,
+        interval=time_series.interval,
         region=network_region_code.lower() if network_region_code else None,
         include_code=False,
     )

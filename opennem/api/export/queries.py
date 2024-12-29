@@ -144,7 +144,7 @@ def price_network_query(
         select
             time_bucket_gapfill('{trunc}', bs.interval) as interval,
             {group_field},
-            coalesce(avg(bs.price), avg(bs.price_dispatch)) as price
+            locf(coalesce(avg(bs.price), avg(bs.price_dispatch))) as price
         from balancing_summary bs
         where
             bs.interval >= '{date_min}' and
