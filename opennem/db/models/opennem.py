@@ -72,7 +72,7 @@ class CrawlMeta(Base):
     __tablename__ = "crawl_meta"
 
     spider_name = Column(Text, nullable=False, primary_key=True)
-    data = Column(MutableDict.as_mutable(JSONB), nullable=True, index=True)
+    data = Column(MutableDict.as_mutable(JSONB), nullable=True, index=True)  # type: ignore
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -189,14 +189,14 @@ class BomStation(Base):
 
     @hybrid_property
     def lat(self) -> float | None:
-        if self.geom:
-            return wkb.loads(bytes(self.geom.data)).y
+        if self.geom:  # type: ignore
+            return wkb.loads(bytes(self.geom.data)).y  # type: ignore
         return None
 
     @hybrid_property
     def lng(self) -> float | None:
-        if self.geom:
-            return wkb.loads(bytes(self.geom.data)).x
+        if self.geom:  # type: ignore
+            return wkb.loads(bytes(self.geom.data)).x  # type: ignore
         return None
 
 

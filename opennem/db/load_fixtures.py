@@ -215,7 +215,7 @@ async def load_bom_stations_csv() -> None:
                     registered=registered,
                 )
 
-            station.geom = f"SRID=4326;POINT({lat} {lng})"
+            station.geom = f"SRID=4326;POINT({lat} {lng})"  # type: ignore
 
             try:
                 session.add(station)
@@ -277,7 +277,7 @@ async def load_bom_stations_json() -> None:
                 station.is_capital = True
                 station.priority = 1
 
-            station.geom = "SRID=4326;POINT({} {})".format(bom_station["lng"], bom_station["lat"])
+            station.geom = "SRID=4326;POINT({} {})".format(bom_station["lng"], bom_station["lat"])  # type: ignore
 
             stations_imported += 1
             session.add(station)

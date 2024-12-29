@@ -6,6 +6,8 @@ import logging
 from datetime import datetime
 from operator import attrgetter
 
+from sqlalchemy import text
+
 from opennem import settings
 from opennem.clients.slack import slack_message
 from opennem.core.templates import serve_template
@@ -45,16 +47,16 @@ class DailySummary(BaseConfig):
         return sorted(self.results, key=attrgetter("energy"), reverse=True)
 
 
-def get_daily_fueltech_summary(network: NetworkSchema) -> DailySummary:
+async def get_daily_fueltech_summary(network: NetworkSchema) -> DailySummary:
     engine = get_database_engine()
     _result = []
     day = get_last_complete_day_for_network(network)
 
     query = get_daily_fueltech_summary_query(day=day, network=network)
 
-    with engine.connect() as c:
+    async with engine.connect() as conn:
         logger.debug(query)
-        _result = list(c.execute(query))
+        _result = list(await conn.execute(text(query)))
 
     records = [
         TimeOfDaySummaryResult(

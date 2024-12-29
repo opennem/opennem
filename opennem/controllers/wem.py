@@ -61,7 +61,7 @@ def store_wem_balancingsummary_set(balancing_set: WEMBalancingSummarySet) -> Con
         return cr
 
     stmt = insert(BalancingSummary).values(records_to_store)
-    stmt.bind = engine
+    stmt.bind = engine  # type: ignore
     stmt = stmt.on_conflict_do_update(
         index_elements=[
             "trading_interval",

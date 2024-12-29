@@ -9,7 +9,7 @@ import typer
 from rich.table import Table
 
 from opennem import console
-from opennem.core.crawlers.crawler import crawlers_flush_metadata, crawlers_get_crawl_metadata
+from opennem.core.crawlers.crawler import crawlers_get_crawl_metadata
 from opennem.crawl import get_crawl_set, run_crawl
 from opennem.utils.async_sync import async_to_sync
 from opennem.utils.timesince import timesince
@@ -55,21 +55,6 @@ async def crawl_run(
         except Exception as e:
             console.log(f"[red]Error running crawler[/red]: {e}")
             raise typer.Exit(1) from e
-
-
-@crawl_app.command("flush")
-def crawl_flush(
-    days: int | None = typer.Option(None, help="Only flush days"),
-    crawler: str | None = typer.Option(None, help="Crawler name to flush"),
-) -> None:
-    """Flush crawler metadata."""
-    console.log("[blue]Flushing crawlers[/blue]")
-    try:
-        crawlers_flush_metadata(days=days, crawler_name=crawler)
-        console.log("[green]Successfully flushed crawler metadata[/green]")
-    except Exception as e:
-        console.log(f"[red]Error flushing crawler metadata[/red]: {e}")
-        raise typer.Exit(1) from e
 
 
 @crawl_app.command("list")

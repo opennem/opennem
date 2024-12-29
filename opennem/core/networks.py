@@ -2,49 +2,6 @@ from datetime import datetime
 
 from opennem.schema.network import NETWORKS, NetworkAPVI, NetworkAU, NetworkNEM, NetworkSchema, NetworkWEM, NetworkWEMDE
 
-NEM_STATES = ["QLD", "NSW", "VIC", "ACT", "TAS", "SA", "NT"]
-
-
-def state_from_network_region(network_region: str) -> str:
-    _state = network_region
-
-    if _state.endswith("1"):
-        _state = _state[:-1]
-
-    _state = _state.strip().upper()
-
-    if _state in NEM_STATES:
-        return _state
-
-    raise Exception(f"State {network_region} not found")
-
-
-def network_from_state(state: str) -> NetworkSchema:
-    state = state.upper().strip()
-
-    if state == "WA":
-        return NetworkWEM
-
-    if state in ["QLD", "NSW", "VIC", "ACT", "TAS", "SA", "NT"]:
-        return NetworkNEM
-
-    raise Exception(f"Unknown network {state}")
-
-
-def network_from_network_region(
-    network_region: str,
-) -> NetworkSchema:
-    network_region = network_region.upper()
-
-    if network_region in ["WEM", "WA1"]:
-        return NetworkWEM
-    if network_region == "WEMDE":
-        return NetworkWEMDE
-    if network_region in ["NEM", "NSW1", "QLD1", "SA1", "VIC1", "TAS1"]:
-        return NetworkNEM
-
-    raise Exception(f"Unknown network {network_region}")
-
 
 def network_from_network_code(network_code: str) -> NetworkSchema:
     network_code = network_code.upper().strip()

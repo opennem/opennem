@@ -142,12 +142,12 @@ class OpennemExportSeries(BaseConfig):
         # subtract the period (ie. 7d from the end for start if not all)
         if self.period == human_to_period("all"):
             start = date_trunc(start, self.interval.trunc)
-            start = start.replace(hour=0, minute=0, second=0, tzinfo=self.network.get_fixed_offset())
+            start = start.replace(hour=0, minute=0, second=0, tzinfo=self.network.get_fixed_offset())  # type: ignore
 
             # If its all per month take the end of the last month
             if self.interval == human_to_interval("1M"):
                 end = date_trunc(get_end_of_last_month(end), "day")
-                end = end.replace(hour=23, minute=59, second=59, tzinfo=self.network.get_fixed_offset())
+                end = end.replace(hour=23, minute=59, second=59, tzinfo=self.network.get_fixed_offset())  # type: ignore
 
             self.year = None
 
@@ -173,9 +173,9 @@ class OpennemExportSeries(BaseConfig):
                 year=self.year,
                 month=1,
                 day=1,
-                hour=0,
-                minute=0,
-                second=0,
+                hour=0,  # type: ignore
+                minute=0,  # type: ignore
+                second=0,  # type: ignore
             )
 
             end = datetime(
@@ -215,16 +215,16 @@ class OpennemExportSeries(BaseConfig):
             end = start + get_human_interval("1M") - timedelta(days=1)
 
             end = end.replace(
-                hour=23,
-                minute=59,
-                second=59,
-                microsecond=0,
+                hour=23,  # type: ignore
+                minute=59,  # type: ignore
+                second=59,  # type: ignore
+                microsecond=0,  # type: ignore
             )
 
         # localize times
         if not is_aware(start) and tz_aware:
-            start = start.replace(tzinfo=self.network.get_fixed_offset())
+            start = start.replace(tzinfo=self.network.get_fixed_offset())  # type: ignore
         if not is_aware(end) and tz_aware:
-            end = end.replace(tzinfo=self.network.get_fixed_offset())
+            end = end.replace(tzinfo=self.network.get_fixed_offset())  # type: ignore
 
         return ExportDatetimeRange(start=start, end=end, interval=self.interval)

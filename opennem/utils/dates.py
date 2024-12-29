@@ -1,5 +1,4 @@
 import logging
-import math
 from collections.abc import Generator
 from datetime import UTC, date, datetime, timedelta
 from datetime import timezone as pytimezone
@@ -13,7 +12,7 @@ from dateutil.relativedelta import relativedelta
 
 from opennem.core.networks import NetworkSchema
 from opennem.core.normalizers import normalize_whitespace
-from opennem.schema.network import NetworkNEM, NetworkWEM
+from opennem.schema.network import NetworkNEM
 from opennem.utils.timezone import is_aware, make_aware
 
 logger = logging.getLogger(__name__)
@@ -100,9 +99,6 @@ def parse_date(
             except ParserError:
                 raise ValueError("Invalid date string passed") from None
 
-    else:
-        raise ValueError(f"Require a datetime or string object to parse date: {date_str}")
-
     if network:
         tz = network.get_timezone()
 
@@ -111,9 +107,9 @@ def parse_date(
                 if hasattr(tz, "localize"):
                     dt_return = tz.localize()  # type: ignore
                 else:
-                    dt_return = dt_return.replace(tzinfo=tz)
+                    dt_return = dt_return.replace(tzinfo=tz)  # type: ignore
             else:
-                dt_return = make_aware(dt_return, timezone=tz)
+                dt_return = make_aware(dt_return, timezone=tz)  # type: ignore
 
     if is_utc:
         tz = UTC
@@ -185,7 +181,7 @@ def total_weeks(d1: datetime | date, d2: datetime | date) -> int:
     monday1 = d1 - timedelta(days=d1.weekday())
     monday2 = d2 - timedelta(days=d2.weekday())
 
-    return abs(int((monday2 - monday1).days / 7))
+    return abs(int((monday2 - monday1).days / 7))  # type: ignore
 
 
 def month_series(
@@ -297,9 +293,6 @@ def chop_delta_microseconds(delta: timedelta) -> timedelta:
 def chop_datetime_microseconds(dt: datetime) -> datetime:
     """Removes the microseconds portion of a datetime"""
 
-    if not dt:
-        raise ValueError("Datetime is required")
-
     if not dt.microsecond:
         return dt
 
@@ -308,9 +301,6 @@ def chop_datetime_microseconds(dt: datetime) -> datetime:
 
 def chop_timezone(dt: datetime) -> datetime:
     """Removes the timezone of a datetime"""
-
-    if not dt:
-        raise ValueError("Datetime is required")
 
     if not dt.tzinfo:
         return dt
@@ -340,17 +330,6 @@ def get_date_component(format_str: str, dt: datetime | None = None, tz: Any | No
     return date_str_component
 
 
-def subtract_week(subject: datetime) -> datetime:
-    return subject - timedelta(days=7)
-
-
-def subtract_days(subject: datetime | None = None, days: int = 30) -> datetime:
-    if not subject:
-        subject = datetime.now(tz=UTC)
-
-    return subject - timedelta(days=days)
-
-
 def num_intervals_between_datetimes(interval: timedelta | datedelta, start_date: datetime, end_date: datetime) -> int:
     """
     Returns the number of intervals between two datetimes. If the interval is a day or larger it is inclusive.
@@ -365,38 +344,8 @@ def num_intervals_between_datetimes(interval: timedelta | datedelta, start_date:
             if start_date > end_date:
                 break
             intervals += 1
-    else:
-        raise Exception(f"Invalid interval type: {type(interval)}")
 
     return intervals
-
-
-def is_valid_isodate(date: str, check_timezone: bool = False) -> bool:
-    """Check if a string is a valid ISO formatted datestring"""
-    dt = None
-
-    try:
-        dt = datetime.fromisoformat(date)
-    except ValueError:
-        return False
-
-    if check_timezone:
-        if dt.tzinfo:
-            return True
-        else:
-            return False
-
-    return True
-
-
-def get_current_timezone() -> str:
-    """Get the current timezone"""
-    return str(DATE_CURRENT.astimezone().tzinfo)
-
-
-def get_quarter(dt: datetime) -> int:
-    """Get the quarter from a datetime"""
-    return math.ceil(dt.month / 3.0)
 
 
 def get_end_of_last_month(dt: datetime) -> datetime:
@@ -406,44 +355,16 @@ def get_end_of_last_month(dt: datetime) -> datetime:
     return dtn
 
 
-def strip_timezone(dt: datetime) -> datetime:
-    return dt.replace(tzinfo=None)
-
-
-def optionally_parse_string_datetime(value: str | datetime | date | None = None) -> str | datetime | date | None:
-    """Parse a string or date or datetime back into a datetime optionally"""
-    if not value:
-        return value
-
-    if isinstance(value, str):
-        try:
-            return datetime.fromisoformat(value)
-        except ValueError:
-            logger.error(f"Could not parse optional date: {value}")
-            return None
-
-    if isinstance(value, datetime):
-        # @TODO here optionally set to network time
-        return value
-
-    return value
-
-
 def get_last_complete_day_for_network(network: NetworkSchema) -> datetime:
     # today_midnight in network time
-    today_midnight = datetime.now(pytimezone(timedelta(seconds=network.offset * 60))).replace(
-        tzinfo=network.get_fixed_offset(), microsecond=0, hour=0, minute=0, second=0
-    )
+    today_midnight = datetime.now(network.get_fixed_offset()).replace(tzinfo=None, microsecond=0, hour=0, minute=0, second=0)
 
     return today_midnight
 
 
 def get_last_completed_interval_for_network(network: NetworkSchema = NetworkNEM, tz_aware: bool = True) -> datetime:
     """Get the last completed network time for a network. Live wall clock"""
-    now_network = datetime.now(network.get_fixed_offset())
-
-    if not tz_aware:
-        now_network = chop_timezone(now_network)
+    now_network = datetime.now(network.get_fixed_offset()).replace(tzinfo=None)
 
     return now_network.replace(minute=now_network.minute - (now_network.minute % network.interval_size), second=0, microsecond=0)
 
@@ -456,20 +377,6 @@ def get_today_nem() -> datetime:
 
     # NEM is fixed offset at +10
     nem_tz = NetworkNEM.get_fixed_offset()
-
-    nem_dt = now_no_microseconds.astimezone(nem_tz)
-
-    return nem_dt
-
-
-def get_today_wem() -> datetime:
-    """Gets today in NEM time"""
-    now = datetime.now()
-
-    now_no_microseconds = now.replace(microsecond=0)
-
-    # NEM is fixed offset at +10
-    nem_tz = NetworkWEM.get_fixed_offset()
 
     nem_dt = now_no_microseconds.astimezone(nem_tz)
 
@@ -490,29 +397,6 @@ def get_today_for_network(network: NetworkSchema) -> datetime:
     return nem_dt
 
 
-def get_datetime_now_for_network(network: NetworkSchema, tz_aware: bool = False) -> datetime:
-    """Get the current datetime for a network"""
-    dt_now = datetime.now(network.get_fixed_offset())
-
-    if not tz_aware:
-        dt_now = chop_timezone(dt_now)
-
-    return chop_datetime_microseconds(dt_now)
-
-
 def get_today_opennem() -> datetime:
     """OpenNEM time is Sydney / Melbourne"""
     return datetime.now(ZoneInfo("Australia/Sydney")).replace(microsecond=0)
-
-
-def make_aware_for_network(dt: datetime, network: NetworkSchema) -> datetime:
-    """Make a datetime aware for a network"""
-    if not dt:
-        raise ValueError("dt cannot be None")
-
-    if not network:
-        raise ValueError("network cannot be None")
-
-    dt_aware = dt.replace(tzinfo=network.get_fixed_offset())
-
-    return dt_aware

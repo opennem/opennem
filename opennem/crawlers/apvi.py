@@ -59,7 +59,8 @@ async def crawl_apvi_forecasts(
             raise Exception("Require data_first_seen for network to parse")
 
         for day_run in date_series(get_today_nem().date(), NetworkAPVI.data_first_seen, reverse=False):
-            apvi_forecast_return = run_apvi_crawl(day_run)
+            apvi_forecast_return = await run_apvi_crawl(day_run)
+
             apvi_return.processed_records += apvi_forecast_return.processed_records
             apvi_return.total_records += apvi_forecast_return.total_records
             apvi_return.inserted_records += apvi_forecast_return.inserted_records

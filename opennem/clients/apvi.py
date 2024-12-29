@@ -117,9 +117,9 @@ class APVIForecastInterval(BaseConfig):
         return interval_time.replace(tzinfo=None)
 
     @field_validator("energy", mode="before")
-    def _validate_energy(cls, value: Any, values: dict[str, Any]) -> float | None:
+    def _validate_energy(cls, values: dict[str, Any]) -> float | None:
         """Calculate energy value."""
-        generated = value
+        generated = values.get("generated")
         energy_quantity: float | None = None
 
         if generated and is_number(generated):
@@ -135,7 +135,7 @@ class APVIStateRooftopCapacity(BaseConfig):
     unit_number: int | None = None
 
     @field_validator("facility_code", mode="before")
-    def _validate_facility_code(cls, value: Any, values: dict[str, Any]) -> str:
+    def _validate_facility_code(cls, values: dict[str, Any]) -> str:
         """Generate an OpenNEM derived facility code for APVI facilities."""
         state = values["state"]
 

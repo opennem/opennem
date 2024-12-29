@@ -14,13 +14,3 @@ def load_fueltechs() -> dict:
 
 
 FACILITY_FUELTECH_FIXTURE = load_fueltechs()
-
-
-def parse_facility_fueltech(fueltech_code: str | None) -> dict | None:
-    if fueltech_code is None:
-        return None
-
-    if fueltech_code not in FACILITY_FUELTECH_FIXTURE.keys():
-        raise Exception(f"Invalid facility fueltech: {fueltech_code}")
-
-    return FACILITY_FUELTECH_FIXTURE[fueltech_code]

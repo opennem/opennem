@@ -9,24 +9,12 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
-from pydantic.fields import PrivateAttr
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from opennem.core.downloader import url_downloader
 from opennem.core.normalizers import normalize_duid
-from opennem.schema.aemo.mms import MMSBaseClass, get_mms_schema_for_table
 from opennem.schema.core import BaseConfig
 from opennem.utils.version import get_version
-
-_HAVE_PANDAS = False
-
-try:
-    import pandas as pd
-
-    _HAVE_PANDAS = True
-except ImportError:
-    pass
-
 
 logger = logging.getLogger(__name__)
 
@@ -38,9 +26,6 @@ class AEMOTableSchema(BaseConfig):
     fieldnames: list[str]
     records: list[dict[str, Any]] = Field(default_factory=list)
 
-    # optionally it has a schema
-    _record_schema: MMSBaseClass | None = PrivateAttr()
-
     # the url this table was taken from if any
     url_source: str | None = None
 
@@ -51,17 +36,6 @@ class AEMOTableSchema(BaseConfig):
     @property
     def full_name(self) -> str:
         return f"{self.namespace}_{self.name}"
-
-    @property
-    def primary_key(self) -> list[str] | None:
-        if (
-            hasattr(self, "_record_schema")
-            and isinstance(self._record_schema, MMSBaseClass)
-            and hasattr(self._record_schema, "_primary_keys")
-        ):
-            return self._record_schema._primary_keys
-
-        return None
 
     @field_validator("name")
     @classmethod
@@ -87,74 +61,15 @@ class AEMOTableSchema(BaseConfig):
 
         return _fieldnames
 
-    def set_schema(self, schema: MMSBaseClass) -> bool:
-        self._record_schema = schema
-
-        return True
-
-    def add_record(self, record: dict | MMSBaseClass, values_only: bool = False) -> bool:
-        if isinstance(record, dict) and hasattr(self, "_record_schema") and self._record_schema:
-            _record = None
-
-            if not isinstance(record, dict):
-                raise Exception(f"Could not add record, not a dict: {record}")
-
-            try:
-                _record = self._record_schema(**record)  # type: ignore
-            except ValidationError as e:
-                val_errors = e.errors()
-                logger.debug(record)
-
-                for ve in val_errors:
-                    ve_fieldname = ve["loc"][0]
-                    ve_val = ""
-
-                    if record and isinstance(record, dict) and ve_fieldname in record:
-                        ve_val = record[ve_fieldname]
-                        logger.debug(f"Error: {ve_val}")
-
-                return False
-
-            except Exception as e:
-                logger.error(f"Record error: {e}")
-                return False
-
-            if values_only:
-                self.records.append(list(_record.values()))
-            else:
-                self.records.append(_record)
-
+    def add_record(self, record: dict, values_only: bool = False) -> bool:
+        if values_only and isinstance(record, dict):
+            self.records.append(list(record.values()))
+        elif values_only and isinstance(record, list):
+            self.records.append(record)
         else:
-            if values_only and isinstance(record, dict):
-                self.records.append(list(record.values()))
-            elif values_only and isinstance(record, list):
-                self.records.append(record)
-            else:
-                self.records.append(record)
+            self.records.append(record)
 
         return True
-
-    def to_frame(self) -> Any:
-        """Return a pandas dataframe for the table"""
-        if not _HAVE_PANDAS:
-            return None
-
-        _index_keys = []
-
-        _df = pd.DataFrame(self.records)
-
-        if hasattr(self, "_record_schema") and self._record_schema:
-            if hasattr(self._record_schema, "_primary_keys"):
-                _index_keys = self._record_schema._primary_keys  # type: ignore
-
-        if len(_index_keys) > 0:
-            logger.debug(f"Setting index to {_index_keys}")
-            try:
-                _df = _df.set_index(_index_keys)
-            except KeyError:
-                logger.warning("Could not set index with columns: {}".format(", ".join(_index_keys)))
-
-        return _df
 
     def to_csv(self, filename: str) -> None:
         logger.info(f"Writing table {self.full_name} with {len(self.records)} records")
@@ -251,7 +166,6 @@ def parse_aemo_mms_csv(
     content: str,
     table_set: AEMOTableSet | None = None,
     namespace_filter: list[str] | None = None,
-    parse_table_schemas: bool = False,
     skip_records: bool = False,
     url: str | None = None,
     values_only: bool = False,
@@ -311,13 +225,6 @@ def parse_aemo_mms_csv(
                     fieldnames=table_fields,
                     url_source=url,
                 )
-
-                # do we have a custom shema for the table?
-                if parse_table_schemas:
-                    table_schema = get_mms_schema_for_table(table_current.full_name)
-
-                    if table_schema:
-                        table_current.set_schema(table_schema)
 
             # new record
             case "D":
@@ -379,24 +286,6 @@ async def parse_aemo_url(
     return table_set
 
 
-def parse_aemo_urls(urls: list[str], skip_records: bool = False, values_only: bool = False) -> AEMOTableSet:
-    """Parse a list of URLs into an AEMOTableSet"""
-    aemo = AEMOTableSet()
-
-    for url in urls:
-        aemo = parse_aemo_url(url, table_set=aemo, skip_records=skip_records, values_only=values_only)
-
-    # Count number of records
-    total_records = 0
-
-    for table in aemo.tables:
-        total_records += len(table.records)
-
-    logger.info(f"Parsed {total_records} records")
-
-    return aemo
-
-
 def parse_aemo_file(file: str, table_set: AEMOTableSet | None = None, values_only: bool = False) -> AEMOTableSet:
     """Parses a local AEMO file"""
     if not table_set:
@@ -414,11 +303,6 @@ def parse_aemo_file(file: str, table_set: AEMOTableSet | None = None, values_onl
         table_set = parse_aemo_mms_csv(fh.read(), table_set=table_set, values_only=values_only)
 
     return table_set
-
-
-def parse_aemo_directory(directory_path: str) -> AEMOTableSet | None:
-    """Parse an entire AEMO directory"""
-    return None
 
 
 # debug entry point

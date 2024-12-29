@@ -86,7 +86,7 @@ async def rooftop_facilities() -> None:
             rooftop_fac.fueltech_id = "solar_rooftop"
             rooftop_fac.status_id = "operating"
             rooftop_fac.active = False
-            rooftop_fac.dispatch_type = DispatchType.GENERATOR
+            rooftop_fac.dispatch_type = DispatchType.GENERATOR.value
 
             rooftop_station.units.append(rooftop_fac)
             session.add(rooftop_fac)
