@@ -53,9 +53,6 @@ logger = logging.getLogger("opennem")
 
 __version__ = "4.0.0rc16"
 
-# Check minimum required Python version
-
-
 # console
 console = Console()
 
@@ -120,7 +117,7 @@ if LOGGING_CONFIG:
 
 # Setup sentry
 if settings.sentry_url:
-    setup_sentry(sentry_url=settings.sentry_url, environment=settings.env)
+    setup_sentry(sentry_url=settings.sentry_url)
     console.print(f" * Sentry configured at [red bold encircle]{obfuscate_dsn_password(settings.sentry_url)}[/]")
 else:
     console.print(" * Sentry not configured")
