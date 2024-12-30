@@ -27,9 +27,11 @@ Running the script:
 import logging
 from datetime import timedelta, timezone
 
+import logfire
 from arq import cron
 from arq.worker import create_worker
 
+from opennem import settings
 from opennem.api.maintenance_app import run_maintenance_app
 from opennem.tasks.broker import REDIS_SETTINGS, get_redis_pool
 from opennem.tasks.tasks import (
@@ -50,6 +52,8 @@ from opennem.tasks.tasks import (
     task_update_facility_seen_range,
     task_wem_day_crawl,
 )
+from opennem.utils.host import get_hostname
+from opennem.utils.version import get_version
 
 logger = logging.getLogger("openenm.tasks.app")
 
@@ -63,6 +67,8 @@ async def startup(ctx: dict) -> None:
     Args:
         ctx (dict): The worker context
     """
+    logfire.info(f"OpenNEM worker starting up on {settings.env}: v{get_version()} on host {get_hostname()}", service="worker")
+
     redis = await get_redis_pool()
     await redis.flushdb()
     logger.info("Redis queue flushed on startup")

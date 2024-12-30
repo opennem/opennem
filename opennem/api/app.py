@@ -41,6 +41,7 @@ from opennem.schema.opennem import FueltechSchema, OpennemErrorSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.users.schema import OpenNEMRoles
+from opennem.utils.host import get_hostname
 from opennem.utils.version import get_version
 
 logger = logging.getLogger("opennem.api")
@@ -51,7 +52,13 @@ logger = logging.getLogger("opennem.api")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """
+    Lifecycle events for the API
+    """
     # Startup logic
+
+    logfire.info(f"OpenElectricity API starting up on {settings.env}: v{get_version()} on host {get_hostname()}", service="api")
+
     if settings.is_dev:
         logger.info("Cache disabled")
         FastAPICache.init(backend=InMemoryBackend())
@@ -61,7 +68,9 @@ async def lifespan(app: FastAPI):
         logger.info("Enabled API cache")
 
     await unkey_client.start()
+
     yield
+
     # Shutdown logic
     await unkey_client.close()
 
