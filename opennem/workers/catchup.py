@@ -14,7 +14,7 @@ import logfire
 from sqlalchemy import text
 
 from opennem import settings
-from opennem.aggregates.facility_interval import run_update_facility_aggregate_last_interval
+from opennem.aggregates.facility_interval import run_update_facility_aggregate_last_interval, update_facility_aggregate_last_hours
 from opennem.clients.slack import slack_message
 from opennem.crawl import run_crawl
 from opennem.crawlers.apvi import APVIRooftopTodayCrawler
@@ -29,6 +29,8 @@ from opennem.crawlers.nemweb import (
 )
 from opennem.crawlers.wemde import run_all_wem_crawlers
 from opennem.db import get_read_session
+from opennem.pipelines.export import run_export_power_latest_for_network
+from opennem.schema.network import NetworkAU, NetworkNEM
 from opennem.workers.energy import process_energy_last_intervals
 from opennem.workers.facility_data_seen import update_facility_seen_range
 
@@ -164,7 +166,31 @@ async def run_catchup_check(max_gap_minutes: int = 30) -> None:
     await run_update_facility_aggregate_last_interval(num_intervals=num_intervals)
 
 
+async def catchup_day():
+    """Run a catchup for the last 24 hours"""
+
+    crawlers = [
+        AEMONNemwebDispatchScada,
+        AEMONemwebDispatchIS,
+        AEMONemwebTradingIS,
+        AEMONemwebRooftop,
+        AEMONemwebRooftopForecast,
+    ]
+
+    for crawler in crawlers:
+        await run_crawl(crawler, latest=False, limit=24)
+
+    await process_energy_last_intervals(num_intervals=12 * 24)
+
+    await update_facility_aggregate_last_hours(hours_back=24)
+
+    await asyncio.gather(
+        run_export_power_latest_for_network(network=NetworkNEM), run_export_power_latest_for_network(network=NetworkAU)
+    )
+
+
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(run_catchup_check(max_gap_minutes=15))
+    # asyncio.run(run_catchup_check(max_gap_minutes=15))
+    asyncio.run(catchup_day())
