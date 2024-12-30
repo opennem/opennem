@@ -3,8 +3,6 @@ import logging
 import sentry_sdk
 from fastapi import HTTPException
 
-from opennem import settings
-
 logger = logging.getLogger("opennem.utils.sentry")
 
 _SENTRY_IGNORE_EXCEPTION_TYPES = [HTTPException]
@@ -19,37 +17,23 @@ def _sentry_before_send(event, hint):
     return event
 
 
-def setup_sentry(sentry_url: str) -> None:
+def setup_sentry(sentry_url: str, environment: str) -> None:
     """
     Setup sentry for the application
     """
-    sentry_sdk.init(
-        sentry_url,
-        environment=settings.env,
-    )
-
-    logger.info(f"Sentry enabled in {settings.env} mode")
-
-
-def setup_sentry_from_env(sentry_url: str) -> None:
-    """
-    Setup sentry for the application
-    """
-    if settings.is_local:
+    if environment == "local":
         logger.info("Sentry not enabled in local mode")
         return
 
-    elif settings.is_dev:
+    elif environment == "development":
         sentry_sdk.init(
             sentry_url,
             environment="development",
-            traces_sample_rate=1.0,
-            profiles_sample_rate=1.0,
         )
         logger.info("Sentry enabled in dev mode")
         return
 
-    elif settings.is_prod:
+    elif environment == "production":
         sentry_sdk.init(
             sentry_url,
             traces_sample_rate=0.1,

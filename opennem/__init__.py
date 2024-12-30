@@ -83,6 +83,14 @@ for _env_file in env_files:
 
 settings: OpennemSettings = OpennemSettings()  # type: ignore
 
+# Setup sentry
+if settings.sentry_url:
+    setup_sentry(sentry_url=settings.sentry_url, environment=ENV)
+    console.print(f" * Sentry configured at [red bold encircle]{obfuscate_dsn_password(settings.sentry_url)}[/]")
+else:
+    console.print(" * Sentry not configured")
+
+
 # setup logfire
 if not settings.is_local:
     logfire.configure(
@@ -114,13 +122,6 @@ if LOGGING_CONFIG:
 
     # other misc loggers
     logging.getLogger("PIL").setLevel(logging.ERROR)
-
-# Setup sentry
-if settings.sentry_url:
-    setup_sentry(sentry_url=settings.sentry_url)
-    console.print(f" * Sentry configured at [red bold encircle]{obfuscate_dsn_password(settings.sentry_url)}[/]")
-else:
-    console.print(" * Sentry not configured")
 
 PROJECT_PATH = get_project_path()
 
