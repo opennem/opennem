@@ -221,8 +221,8 @@ def get_rooftop_generation_combined_query(
             f.network_id,
             f.network_region,
             fs.is_forecast,
-            sum(fs.generated) as generated,
-            sum(fs.energy) as energy
+            max(fs.generated) as generated,
+            max(fs.energy) as energy
         FROM facility_scada fs
         JOIN units u on fs.facility_code = u.code
         JOIN facilities f on u.station_id = f.id
