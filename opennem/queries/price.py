@@ -6,6 +6,7 @@ from textwrap import dedent
 from sqlalchemy import text as sql
 from sqlalchemy.sql.expression import TextClause
 
+from opennem.db.utils import get_clickhouse_interval
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval
 from opennem.utils.dates import num_intervals_between_datetimes
@@ -60,7 +61,7 @@ def get_network_region_price_query(
 
     num_intervals = num_intervals_between_datetimes(interval.get_timedelta(), date_min, date_max)
 
-    if num_intervals > 1000:
+    if num_intervals > 2016:  # max 7 days of 5 minute intervals
         raise TooManyIntervals("Too many intervals: {num_intervals}. Try reducing date range or interval size")
 
     return sql(
@@ -75,3 +76,73 @@ def get_network_region_price_query(
             )
         )
     )
+
+
+def get_network_price_demand_query_analytics(
+    network: NetworkSchema,
+    date_min: datetime,
+    date_max: datetime | None = None,
+    interval: TimeInterval | None = None,
+    network_region_code: str | None = None,
+) -> str:
+    """
+    Get price and demand from ClickHouse market_summary table.
+
+    Args:
+        network: Network schema
+        date_min: Start date
+        date_max: End date (optional)
+        interval: Time interval for aggregation (optional)
+
+    Returns:
+        str: ClickHouse SQL query
+    """
+    # If only a single interval with date_min set date_max
+    if not date_max:
+        date_max = date_min
+
+    # If no interval provided get the default from the network
+    if not interval:
+        interval = network.get_interval()
+
+    # Validate number of intervals
+    num_intervals = num_intervals_between_datetimes(interval.get_timedelta(), date_min, date_max)
+
+    if num_intervals > 9216:  # max 7 days of 5 minute intervals
+        raise TooManyIntervals(
+            f"Too many intervals: {num_intervals}. Try reducing date range or interval size: {date_min} to {date_max}"
+        )
+
+    time_bucket = get_clickhouse_interval(interval)
+
+    # network regions query
+    network_regions_query = ""
+
+    if network_region_code:
+        network_regions_query = f"and network_region = '{network_region_code.upper()}'"
+
+    # strip timezone from date_min and date_max
+    date_min = date_min.replace(tzinfo=None)
+    date_max = date_max.replace(tzinfo=None)
+
+    query = f"""
+        SELECT
+            {time_bucket}(interval) AS interval,
+            network_id,
+            network_region,
+            sum(price) AS price,
+            sum(demand) AS demand,
+            sum(demand_total) AS demand_total
+        FROM market_summary
+        WHERE network_id = '{network.code}'
+            AND interval >= parseDateTimeBestEffort('{date_min}')
+            AND interval <= parseDateTimeBestEffort('{date_max}')
+            {network_regions_query}
+        GROUP BY
+            interval,
+            network_id,
+            network_region
+        ORDER BY interval desc, network_id, network_region
+    """
+
+    return query

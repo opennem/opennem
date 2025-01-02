@@ -2,8 +2,6 @@ import logging
 import re
 from datetime import timedelta
 
-from sqlalchemy import TextClause
-
 from opennem import settings
 from opennem.api.exceptions import OpennemBaseHttpException, OpenNEMInvalidNetworkRegion
 from opennem.api.export.queries import (
@@ -21,12 +19,14 @@ from opennem.api.time import human_to_interval
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.units import get_unit
 from opennem.db import db_connect, get_database_engine
+from opennem.db.clickhouse import get_clickhouse_client
 from opennem.queries.flows import get_network_flows_emissions_market_value_query
 from opennem.queries.power import (
     get_fueltech_generation_query,
     get_rooftop_forecast_generation_query,
     get_rooftop_generation_combined_query,
 )
+from opennem.queries.price import get_network_price_demand_query_analytics
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkSchema
 from opennem.schema.stats import StatTypes
 
@@ -420,21 +420,23 @@ async def power_week(
 
     # price
 
-    query: TextClause = price_network_query(
-        time_series=time_series,
-        networks_query=networks_query,
-        network_region=network_region_code,
+    query: str = get_network_price_demand_query_analytics(
+        network=time_series.network,
+        date_min=time_series.get_range().start,
+        date_max=time_series.get_range().end,
+        network_region_code=network_region_code,
     )
 
-    async with engine.begin() as conn:
-        logger.debug(query)
-        result_rooftop = await conn.execute(query)
-        row = result_rooftop.fetchall()
+    ch_client = get_clickhouse_client()
 
-    stats_price = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
+    result_price_and_demand = ch_client.execute(query)
 
-    stats_market_value = stats_factory(
-        stats=stats_price,
+    stats_price_results = [
+        DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None) for i in result_price_and_demand
+    ]
+
+    stats_price = stats_factory(
+        stats=stats_price_results,
         units=get_unit("price_energy_mega"),
         network=time_series.network,
         interval=time_series.interval,
@@ -442,7 +444,22 @@ async def power_week(
         include_code=False,
     )
 
-    result.append_set(stats_market_value)
+    result.append_set(stats_price)
+
+    #  demand
+    stats_demand_results = [
+        DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in result_price_and_demand
+    ]
+
+    stats_demand = stats_factory(
+        stats=stats_demand_results,
+        units=get_unit("demand"),
+        network=time_series.network,
+        interval=time_series.interval,
+        region=network_region_code,
+    )
+
+    result.append_set(stats_demand)
 
     return result
 
