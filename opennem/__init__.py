@@ -37,7 +37,6 @@ from platform import platform
 import logfire
 from dotenv import load_dotenv
 from rich.console import Console
-from rich.prompt import Prompt
 
 from opennem.settings_schema import OpennemSettings
 from opennem.utils.log_config import LOGGING_CONFIG
@@ -100,13 +99,14 @@ if not settings.is_local:
         code_source=logfire.CodeSource(repository="https://github.com/opennem/opennem", revision="master"),
     )
 
-if settings.dry_run:
-    console.print(" * Dry run (no database actions)")
-elif settings.db_url:
+if settings.db_url:
     console.print(f" * Using database connection: [red bold encircle]{obfuscate_dsn_password(settings.db_url)}[/]")
 
 if settings.redis_url:
     console.print(f" * Using redis connection: [red bold encircle]{obfuscate_dsn_password(str(settings.redis_url))}[/]")
+
+if settings.clickhouse_url:
+    console.print(f" * Using clickhouse connection: [red bold encircle]{obfuscate_dsn_password(str(settings.clickhouse_url))}[/]")
 
 # skip if logging not configed
 if LOGGING_CONFIG:
@@ -131,11 +131,4 @@ from opennem.core.feature_flags import get_list_of_enabled_features  # noqa: E40
 
 # Log current timezone to console
 console.print(f" * Current timezone: {datetime.now().astimezone().tzinfo} (settings: {settings.timezone})")
-console.print(f" * Running from {PROJECT_PATH}")
 console.print(f" * Enabled feature flags: {", ".join(get_list_of_enabled_features())}")
-
-# Prod safety feature
-if settings.is_prod and not os.environ.get("OPENNEM_CONFIRM_PROD", False):
-    if Prompt.ask(" [bold red]* ⛔️ Running in PRODUCTION mode ⛔️ Continue? [/]", default="n", choices=["y", "n"]) == "n":
-        console.print(" * [red]Exiting[/]")
-        sys.exit(-1)
