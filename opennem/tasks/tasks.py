@@ -11,6 +11,7 @@ from opennem.aggregates.facility_interval import (
     run_update_facility_aggregate_last_interval,
     update_facility_aggregate_last_hours,
 )
+from opennem.aggregates.market_summary import run_market_summary_aggregate_to_now
 from opennem.aggregates.network_demand import run_aggregates_demand_network_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy
@@ -62,6 +63,9 @@ async def task_nem_interval_check(ctx) -> None:
 
     # update facility aggregates
     await run_update_facility_aggregate_last_interval(num_intervals=3)
+
+    # update market summary
+    await run_market_summary_aggregate_to_now()
 
     # run flows
     run_flows_for_last_days(days=1, network=NetworkNEM)

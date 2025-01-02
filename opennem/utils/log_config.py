@@ -39,5 +39,6 @@ LOGGING_CONFIG = {
         "httpx": {"level": "ERROR"},
         "openai": {"level": "ERROR"},
         "arq.worker": {"level": "INFO"},
+        "clickhouse_driver": {"level": "INFO"},
     },
 }

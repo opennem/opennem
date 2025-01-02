@@ -23,5 +23,23 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/
 
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    hostname: clickhouse
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - TZ
+      - CLICKHOUSE_USER=default
+      - CLICKHOUSE_PASSWORD=
+    ports:
+      - ${HOST:-127.0.0.1}:${CLICKHOUSE_HTTP_PORT:-8123}:8123
+      - ${HOST:-127.0.0.1}:${CLICKHOUSE_NATIVE_PORT:-9000}:9000
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse/
+      - clickhouse_logs:/var/log/clickhouse-server/
+
 volumes:
   db_data:
+  clickhouse_data:
+  clickhouse_logs:

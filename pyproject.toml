@@ -71,6 +71,8 @@ dependencies = [
     "pyarrow>=18.1.0",
     "curl-cffi>=0.7.4",
     "hypercorn>=0.17.3",
+    "clickhouse-driver>=0.2.7",
+    "clickhouse-sqlalchemy>=0.3.0",
 ]
 
 [tool.uv]
