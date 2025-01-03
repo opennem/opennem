@@ -79,7 +79,6 @@ async def _get_market_summary_data(
         prev_demand,
         prev_demand_total
     FROM ranked_data
-    WHERE prev_demand IS NOT NULL
     """)
 
     result = await session.execute(query, {"start_time": start_time_naive, "end_time": end_time_naive})
@@ -368,11 +367,11 @@ async def run_market_summary_backlog() -> None:
 if __name__ == "__main__":
     # Run the test
     async def main():
-        _refresh_clickhouse_schema()
+        # _refresh_clickhouse_schema()
         await run_market_summary_backlog()
         # await run_market_summary_aggregate_for_last_intervals(num_intervals=12 * 24 * 1)
         # await run_market_summary_aggregate_for_last_intervals(num_intervals=12 * 24 * 1)
 
     import asyncio
 
-    asyncio.run(run_market_summary_aggregate_to_now())
+    asyncio.run(main())
