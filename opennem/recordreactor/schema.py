@@ -3,10 +3,11 @@
 see matching ORM schema in database. This applies within record reactor and the API output
 """
 
+import uuid
 from datetime import datetime
 from enum import Enum
 
-from pydantic import UUID4, BaseModel, Field, computed_field
+from pydantic import BaseModel, Field, computed_field
 
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.utils.seasons import map_date_start_to_season
@@ -141,8 +142,8 @@ class MilestoneRecordSchema(BaseModel):
     network_region: str | None = None
     fueltech: MilestoneFueltechGrouping | None = None
     value: int | float | None = None
-    instance_id: UUID4 | None = None
-    previous_instance_id: UUID4 | None = None
+    instance_id: uuid.UUID | None = None
+    previous_instance_id: uuid.UUID | None = None
 
     @computed_field
     @property
@@ -164,7 +165,7 @@ class MilestoneRecordOutputSchema(BaseModel):
 
     record_id: str
     interval: datetime
-    instance_id: UUID4
+    instance_id: uuid.UUID
     aggregate: str
     metric: str
     period: str
@@ -176,7 +177,7 @@ class MilestoneRecordOutputSchema(BaseModel):
     fueltech_id: str | None = None
     description: str | None = None
     description_long: str | None = None
-    previous_instance_id: UUID4 | None = None
+    previous_instance_id: uuid.UUID | None = None
     history: list["MilestoneRecordOutputSchema"] | None = None
 
 
