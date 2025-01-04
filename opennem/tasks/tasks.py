@@ -57,9 +57,9 @@ async def task_nem_interval_check(ctx) -> None:
         dispatch_scada = await run_crawl(AEMONNemwebDispatchScada, latest=True)
         _ = await run_crawl(AEMONemwebTradingIS, latest=True)
 
-    if not dispatch_scada.inserted_records:
-        logger.warning("No new data from crawlers")
-        raise Retry(defer=ctx["job_try"] * 15)
+        if not dispatch_scada.inserted_records:
+            logfire.warning("No new data from crawlers")
+            raise Retry(defer=ctx["job_try"] * 15)
 
     # update facility aggregates
     await run_update_facility_aggregate_last_interval(num_intervals=3)
