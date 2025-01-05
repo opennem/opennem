@@ -120,6 +120,42 @@ def _get_source_table_and_interval_name(
         raise ValueError(f"Unsupported milestone type: {milestone_type}")
 
 
+def _trim_end_date(time_col: str, end_date: datetime, period: MilestonePeriod) -> str:
+    """
+    Generate SQL condition to trim end date to last complete period.
+
+    Args:
+        time_col: The column name containing the timestamp
+        end_date: The end date to trim
+        period: The period type to trim to
+
+    Returns:
+        str: SQL condition for the trimmed end date
+    """
+    end_date_str = end_date.strftime("%Y-%m-%d %H:%M:%S")
+    end_date_dt = f"toDateTime('{end_date_str}')"
+
+    if period == MilestonePeriod.day:
+        return f"{time_col} < toStartOfDay({end_date_dt})"
+    elif period == MilestonePeriod.month:
+        return f"{time_col} < toStartOfMonth({end_date_dt})"
+    elif period == MilestonePeriod.quarter:
+        return f"{time_col} < toStartOfQuarter({end_date_dt})"
+    elif period == MilestonePeriod.year:
+        return f"{time_col} < toStartOfYear({end_date_dt})"
+    elif period == MilestonePeriod.financial_year:
+        return f"""
+            {time_col} < if(
+                toMonth({end_date_dt}) >= 7,
+                toStartOfYear({end_date_dt}) + interval '1 year',
+                toStartOfYear({end_date_dt})
+            )
+        """
+    else:
+        # For interval period or any other, use the exact end date
+        return f"{time_col} < {end_date_dt}"
+
+
 def analyze_generation_records(
     client: Client,
     network: NetworkSchema,
@@ -175,7 +211,7 @@ def analyze_generation_records(
     if start_date:
         date_conditions.append(f"{time_col} >= toDateTime('{start_date.strftime('%Y-%m-%d %H:%M:%S')}')")
     if end_date:
-        date_conditions.append(f"{time_col} <= toDateTime('{end_date.strftime('%Y-%m-%d %H:%M:%S')}')")
+        date_conditions.append(_trim_end_date(time_col, end_date, period))
 
     date_clause = f"AND {' AND '.join(date_conditions)}" if date_conditions else ""
 
@@ -405,7 +441,7 @@ def analyze_market_summary_records(
     if start_date:
         date_conditions.append(f"{time_col} >= toDateTime('{start_date.strftime('%Y-%m-%d %H:%M:%S')}')")
     if end_date:
-        date_conditions.append(f"{time_col} < toDateTime('{end_date.strftime('%Y-%m-%d %H:%M:%S')}')")
+        date_conditions.append(_trim_end_date(time_col, end_date, period))
 
     date_clause = f"AND {' AND '.join(date_conditions)}" if date_conditions else ""
 
@@ -625,19 +661,19 @@ def _analyzed_record_to_milestone_schema(
 
 
 _DEFAULT_PERIODS = [
-    # MilestonePeriod.interval,
-    # MilestonePeriod.day,
+    MilestonePeriod.interval,
+    MilestonePeriod.day,
     MilestonePeriod.month,
-    # MilestonePeriod.quarter,
-    # MilestonePeriod.year,
+    MilestonePeriod.quarter,
+    MilestonePeriod.year,
 ]
 
 _DEFAULT_METRICS = [
-    # MilestoneType.demand,
-    # MilestoneType.price,
-    # MilestoneType.power,
+    MilestoneType.demand,
+    MilestoneType.price,
+    MilestoneType.power,
     MilestoneType.energy,
-    # MilestoneType.emissions,
+    MilestoneType.emissions,
 ]
 
 _DEFAULT_NETWORKS = [NetworkNEM]
