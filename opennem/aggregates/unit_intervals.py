@@ -23,6 +23,8 @@ from opennem.db.clickhouse_schema import UNIT_INTERVALS_TABLE_SCHEMA
 from opennem.db.clickhouse_views import (
     FUELTECH_INTERVALS_DAILY_VIEW,
     FUELTECH_INTERVALS_VIEW,
+    RENEWABLE_INTERVALS_DAILY_VIEW,
+    RENEWABLE_INTERVALS_VIEW,
     UNIT_INTERVALS_DAILY_VIEW,
     UNIT_INTERVALS_MONTHLY_VIEW,
     MaterializedView,
@@ -38,6 +40,8 @@ MATERIALIZED_VIEWS = [
     UNIT_INTERVALS_MONTHLY_VIEW,
     FUELTECH_INTERVALS_VIEW,
     FUELTECH_INTERVALS_DAILY_VIEW,
+    RENEWABLE_INTERVALS_VIEW,
+    RENEWABLE_INTERVALS_DAILY_VIEW,
 ]
 
 
@@ -476,7 +480,10 @@ if __name__ == "__main__":
         # await run_unit_intervals_backlog()
         # await run_unit_intervals_aggregate_for_last_intervals(num_intervals=12 * 24 * 1)
         # Uncomment to backfill views:
-        backfill_materialized_views(view="fueltech_intervals_daily_mv")
+        # backfill_materialized_views(view="fueltech_intervals_mv")
+        # backfill_materialized_views(view="fueltech_intervals_daily_mv")
+        backfill_materialized_views(view="renewable_intervals_mv")
+        backfill_materialized_views(view="renewable_intervals_daily_mv")
 
     import asyncio
 

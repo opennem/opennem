@@ -10,6 +10,7 @@ The live engine which runs per interval is located at opennem.recordreactor.engi
 import logging
 from dataclasses import dataclass
 from datetime import datetime
+from textwrap import dedent
 from typing import Any
 
 from clickhouse_driver.client import Client
@@ -24,7 +25,7 @@ from opennem.recordreactor.schema import (
     MilestoneType,
 )
 from opennem.recordreactor.unit import get_milestone_unit
-from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.dates import get_last_completed_interval_for_network
 
 logger = logging.getLogger("opennem.recordreactor.bulk")
@@ -60,7 +61,7 @@ class GroupingConfig:
 
 # Define all possible grouping configurations
 GROUPING_CONFIGS = [
-    GroupingConfig(name="network", group_by_fields=None),
+    GroupingConfig(name="network", group_by_fields=[]),
     GroupingConfig(name="region", group_by_fields=["network_region"]),
     GroupingConfig(name="fueltech", group_by_fields=["fueltech_group_id"]),
     GroupingConfig(name="renewable", group_by_fields=["renewable"]),
@@ -69,10 +70,8 @@ GROUPING_CONFIGS = [
 ]
 
 
-def get_time_bucket_sql(period: MilestonePeriod, source_table: str = "unit_intervals_daily_mv") -> str:
+def get_time_bucket_sql(period: MilestonePeriod, source_table: str = "unit_intervals_daily_mv", time_col: str = "date") -> str:
     """Generate SQL for different time bucket periods."""
-    # Different tables use different column names for timestamps
-    time_col = "date" if source_table in ["unit_intervals_daily_mv", "fueltech_intervals_daily_mv"] else "interval"
 
     if period == MilestonePeriod.interval:
         return f"{source_table}.{time_col}"
@@ -96,6 +95,31 @@ def get_time_bucket_sql(period: MilestonePeriod, source_table: str = "unit_inter
         raise ValueError(f"Unsupported period: {period}")
 
 
+def _get_source_table_and_interval_name(
+    milestone_type: MilestoneType, period: MilestonePeriod, grouping: GroupingConfig
+) -> tuple[str, str]:
+    if milestone_type in [MilestoneType.power, MilestoneType.energy, MilestoneType.emissions]:
+        if "fueltech_group_id" in grouping.group_by_fields:
+            if period == MilestonePeriod.interval:
+                return "fueltech_intervals_mv", "interval"
+            else:
+                return "fueltech_intervals_daily_mv", "date"
+        elif "renewable" in grouping.group_by_fields:
+            if period == MilestonePeriod.interval:
+                return "renewable_intervals_mv", "interval"
+            else:
+                return "renewable_intervals_daily_mv", "date"
+        else:
+            if period == MilestonePeriod.interval:
+                return "fueltech_intervals_mv", "interval"
+            else:
+                return "fueltech_intervals_daily_mv", "date"
+    elif milestone_type in [MilestoneType.price, MilestoneType.demand]:
+        return "market_summary", "interval"
+    else:
+        raise ValueError(f"Unsupported milestone type: {milestone_type}")
+
+
 def analyze_generation_records(
     client: Client,
     network: NetworkSchema,
@@ -109,10 +133,9 @@ def analyze_generation_records(
     Analyze historical generation records using configurable grouping options.
     """
     # For power we use the base table, for others we use the daily materialized view
-    source_table = "fueltech_intervals_mv" if period == MilestonePeriod.interval else "fueltech_intervals_daily_mv"
-    time_bucket_sql = get_time_bucket_sql(period, source_table)
+    source_table, time_col = _get_source_table_and_interval_name(milestone_type, period, grouping)
+    time_bucket_sql = get_time_bucket_sql(period, source_table, time_col)
     interval_threshold = INTERVAL_THRESHOLDS.get_for_period(period)
-    time_col = "date" if source_table == "fueltech_intervals_daily_mv" else "interval"
 
     # Build the GROUP BY clause from the configuration
     group_by_fields = []
@@ -152,7 +175,7 @@ def analyze_generation_records(
     if start_date:
         date_conditions.append(f"{time_col} >= toDateTime('{start_date.strftime('%Y-%m-%d %H:%M:%S')}')")
     if end_date:
-        date_conditions.append(f"{time_col} < toDateTime('{end_date.strftime('%Y-%m-%d %H:%M:%S')}')")
+        date_conditions.append(f"{time_col} <= toDateTime('{end_date.strftime('%Y-%m-%d %H:%M:%S')}')")
 
     date_clause = f"AND {' AND '.join(date_conditions)}" if date_conditions else ""
 
@@ -308,7 +331,7 @@ def analyze_generation_records(
         logger.info(
             f"running query for {network.code} {milestone_type.value} {period.value} {grouping.name} and metric {metric_column}"
         )
-        # print(dedent(base_query))
+        print(dedent(base_query))
 
         records = client.execute(base_query)
         # Convert to list of dicts for easier processing
@@ -602,20 +625,22 @@ def _analyzed_record_to_milestone_schema(
 
 
 _DEFAULT_PERIODS = [
-    MilestonePeriod.interval,
-    MilestonePeriod.day,
+    # MilestonePeriod.interval,
+    # MilestonePeriod.day,
     MilestonePeriod.month,
-    MilestonePeriod.quarter,
-    MilestonePeriod.year,
+    # MilestonePeriod.quarter,
+    # MilestonePeriod.year,
 ]
 
 _DEFAULT_METRICS = [
     # MilestoneType.demand,
     # MilestoneType.price,
-    MilestoneType.power,
+    # MilestoneType.power,
     MilestoneType.energy,
-    MilestoneType.emissions,
+    # MilestoneType.emissions,
 ]
+
+_DEFAULT_NETWORKS = [NetworkNEM]
 
 
 async def run_milestone_analysis(
@@ -633,7 +658,7 @@ async def run_milestone_analysis(
 
     # Iterate through all periods and grouping configurations
     for metric in _DEFAULT_METRICS:
-        for network in [NetworkNEM, NetworkWEM]:
+        for network in _DEFAULT_NETWORKS:
             for period in _DEFAULT_PERIODS:
                 milestone_records: list[MilestoneRecordSchema] = []
 

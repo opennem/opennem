@@ -169,7 +169,6 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
             network_id,
             network_region,
             fueltech_group_id,
-            any(renewable) as renewable,
             sum(generated) as generated,
             sum(energy) as energy,
             sum(emissions) as emissions,
@@ -189,7 +188,6 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
             network_id,
             network_region,
             fueltech_group_id,
-            any(renewable) as renewable,
             sum(generated) as generated,
             sum(energy) as energy,
             sum(emissions) as emissions,
@@ -216,7 +214,6 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             network_id,
             network_region,
             fueltech_group_id,
-            any(renewable) as renewable,
             sum(generated) as generated,
             sum(energy) as energy,
             sum(emissions) as emissions,
@@ -241,7 +238,6 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             network_id,
             network_region,
             fueltech_group_id,
-            any(renewable) as renewable,
             sum(generated) as generated,
             sum(energy) as energy,
             sum(emissions) as emissions,
@@ -254,5 +250,79 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             network_id,
             network_region,
             fueltech_group_id
+    """,
+)
+
+RENEWABLE_INTERVALS_VIEW = MaterializedView(
+    name="renewable_intervals_mv",
+    schema="""
+        CREATE MATERIALIZED VIEW renewable_intervals_mv
+        ENGINE = SummingMergeTree()
+        ORDER BY (interval, network_id, network_region, renewable)
+        AS SELECT
+            interval,
+            network_id,
+            network_region,
+            renewable,
+            sum(generated) as generated,
+            sum(energy) as energy,
+            sum(emissions) as emissions,
+            sum(market_value) as market_value,
+            count() as unit_count
+        FROM unit_intervals
+        GROUP BY interval, network_id, network_region, renewable
+    """,
+    backfill_query="""
+        INSERT INTO renewable_intervals_mv
+        SELECT
+            interval,
+            network_id,
+            network_region,
+            renewable,
+            sum(generated) as generated,
+            sum(energy) as energy,
+            sum(emissions) as emissions,
+            sum(market_value) as market_value,
+            count() as unit_count
+        FROM unit_intervals
+        WHERE interval >= %(start)s AND interval < %(end)s
+        GROUP BY interval, network_id, network_region, renewable
+    """,
+)
+
+RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
+    name="renewable_intervals_daily_mv",
+    schema="""
+        CREATE MATERIALIZED VIEW renewable_intervals_daily_mv
+        ENGINE = SummingMergeTree()
+        ORDER BY (date, network_id, network_region, renewable)
+        AS SELECT
+            toDate(interval) as date,
+            network_id,
+            network_region,
+            renewable,
+            sum(generated) as generated,
+            sum(energy) as energy,
+            sum(emissions) as emissions,
+            sum(market_value) as market_value,
+            count() as unit_count
+        FROM unit_intervals
+        GROUP BY date, network_id, network_region, renewable
+    """,
+    backfill_query="""
+        INSERT INTO renewable_intervals_daily_mv
+        SELECT
+            toDate(interval) as date,
+            network_id,
+            network_region,
+            renewable,
+            sum(generated) as generated,
+            sum(energy) as energy,
+            sum(emissions) as emissions,
+            sum(market_value) as market_value,
+            count() as unit_count
+        FROM unit_intervals
+        WHERE interval >= %(start)s AND interval < %(end)s
+        GROUP BY date, network_id, network_region, renewable
     """,
 )
