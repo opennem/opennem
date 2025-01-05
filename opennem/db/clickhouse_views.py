@@ -216,13 +216,23 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             network_id,
             network_region,
             fueltech_group_id,
+            any(renewable) as renewable,
             sum(generated) as generated,
             sum(energy) as energy,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count
         FROM unit_intervals
-        GROUP BY date, network_id, network_region, fueltech_group_id
+        GROUP BY
+            date,
+            network_id,
+            network_region,
+            fueltech_group_id
+        ORDER BY
+            date,
+            network_id,
+            network_region,
+            fueltech_group_id
     """,
     backfill_query="""
         INSERT INTO fueltech_intervals_daily_mv
@@ -231,6 +241,7 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             network_id,
             network_region,
             fueltech_group_id,
+            any(renewable) as renewable,
             sum(generated) as generated,
             sum(energy) as energy,
             sum(emissions) as emissions,
@@ -238,6 +249,10 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             count() as unit_count
         FROM unit_intervals
         WHERE interval >= %(start)s AND interval < %(end)s
-        GROUP BY date, network_id, network_region, fueltech_group_id
+        GROUP BY
+            toDate(interval),
+            network_id,
+            network_region,
+            fueltech_group_id
     """,
 )
