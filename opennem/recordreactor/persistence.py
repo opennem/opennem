@@ -47,10 +47,20 @@ async def persist_milestones(milestones: list[MilestoneRecordSchema]) -> int:
     # Pre-process records into a list of dictionaries for bulk insert
     milestone_records = []
 
+    # check for duplicate primary keys
+    primary_keys: list[tuple[str, datetime]] = []
+
     for record in milestones:
         if not record.value or not record.instance_id:
             logger.warning(f"Skipping milestone {record.record_id} because it has no value or instance_id")
             continue
+
+        primary_key = (record.record_id, record.interval)
+
+        if primary_key in primary_keys:
+            raise ValueError(f"Duplicate primary key: {primary_key}")
+
+        primary_keys.append(primary_key)
 
         description = get_record_description(record)
         significance = calculate_milestone_significance(record)
