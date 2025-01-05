@@ -156,7 +156,7 @@ def _trim_end_date(time_col: str, end_date: datetime, period: MilestonePeriod) -
         return f"{time_col} < {end_date_dt}"
 
 
-def analyze_generation_records(
+def analyze_milestone_records(
     client: Client,
     network: NetworkSchema,
     period: MilestonePeriod,
@@ -166,9 +166,24 @@ def analyze_generation_records(
     end_date: datetime | None = None,
 ) -> list[dict[str, Any]]:
     """
-    Analyze historical generation records using configurable grouping options.
+    Analyze historical records to find milestone records.
+
+    This function handles both generation and market summary records based on the milestone type.
+    For generation records (power, energy, emissions) it uses SUM aggregation.
+    For market records (price, demand) it uses AVG aggregation.
+
+    Args:
+        client: ClickHouse client
+        network: Network to analyze
+        period: Period bucket to analyze
+        milestone_type: Type of milestone to find
+        grouping: How to group the records
+        start_date: Optional start date to limit analysis
+        end_date: Optional end date to limit analysis
+
+    Returns:
+        list[dict[str, Any]]: List of milestone records
     """
-    # For power we use the base table, for others we use the daily materialized view
     source_table, time_col = _get_source_table_and_interval_name(milestone_type, period, grouping)
     time_bucket_sql = get_time_bucket_sql(period, source_table, time_col)
     interval_threshold = INTERVAL_THRESHOLDS.get_for_period(period)
@@ -196,8 +211,9 @@ def analyze_generation_records(
             mapped_fields.append(field)
         group_by_select = f", {', '.join(mapped_fields)}"
 
-    # convert the metric to the column name
+    # convert the metric to the column name and determine aggregation
     metric_column = ""
+    is_market_data = milestone_type in [MilestoneType.price, MilestoneType.demand]
 
     if milestone_type == MilestoneType.power:
         metric_column = "generated"
@@ -205,233 +221,7 @@ def analyze_generation_records(
         metric_column = "energy"
     elif milestone_type == MilestoneType.emissions:
         metric_column = "emissions"
-
-    # Build date range conditions
-    date_conditions = []
-    if start_date:
-        date_conditions.append(f"{time_col} >= toDateTime('{start_date.strftime('%Y-%m-%d %H:%M:%S')}')")
-    if end_date:
-        date_conditions.append(_trim_end_date(time_col, end_date, period))
-
-    date_clause = f"AND {' AND '.join(date_conditions)}" if date_conditions else ""
-
-    base_query = f"""
-    WITH regional_generation AS (
-      SELECT
-        {time_bucket_sql} as time_bucket{group_by_select},
-        COUNT(*) as interval_count,
-        SUM({metric_column}) as total_generation
-      FROM {source_table}
-      WHERE
-        network_id = '{network.code.upper()}'
-        {date_clause}
-      GROUP BY
-        {time_bucket_sql}{group_by_select}
-    ),
-
-    running_maxes AS (
-      SELECT
-        time_bucket{group_by_select},
-        total_generation,
-        interval_count,
-        max(total_generation) OVER (
-          PARTITION BY {partition_clause}
-          ORDER BY time_bucket
-          ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-        ) as running_max
-      FROM regional_generation
-      WHERE total_generation > 0
-    ),
-
-    max_records AS (
-      SELECT
-        time_bucket{group_by_select},
-        total_generation,
-        interval_count,
-        running_max,
-        lagInFrame(running_max) OVER (
-          PARTITION BY {partition_clause}
-          ORDER BY time_bucket
-          ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
-        ) as prev_max,
-        generateUUIDv7() as instance_id,
-        ROW_NUMBER() OVER (
-          PARTITION BY time_bucket{group_by_select}
-          ORDER BY total_generation DESC, interval_count DESC
-        ) AS rn
-      FROM running_maxes
-      WHERE total_generation = running_max
-    ),
-
-    running_mins AS (
-      SELECT
-        time_bucket{group_by_select},
-        total_generation,
-        interval_count,
-        min(
-          if(
-            total_generation > 0 AND interval_count >= {interval_threshold},
-            total_generation,
-            NULL
-          )
-        ) OVER (
-          PARTITION BY {partition_clause}
-          ORDER BY time_bucket
-          ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-        ) as running_min
-      FROM regional_generation
-      WHERE total_generation > 0
-    ),
-
-    min_records AS (
-      SELECT
-        time_bucket{group_by_select},
-        total_generation,
-        interval_count,
-        running_min,
-        lagInFrame(running_min) OVER (
-          PARTITION BY {partition_clause}
-          ORDER BY time_bucket
-          ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
-        ) as prev_min,
-        generateUUIDv7() as instance_id,
-        ROW_NUMBER() OVER (
-          PARTITION BY time_bucket{group_by_select}
-          ORDER BY total_generation ASC, interval_count DESC
-        ) AS rn
-      FROM running_mins
-      WHERE total_generation = running_min
-    ),
-
-    -- Add a final CTE to deduplicate records across network and region levels
-    final_records AS (
-      SELECT
-        time_bucket{group_by_select},
-        total_generation,
-        interval_count,
-        if(
-          prev_max IS NULL,
-          0,
-          ((total_generation - prev_max) / prev_max) * 100
-        ) as pct_change,
-        'high' as record_type,
-        '{period.value}' as period,
-        instance_id,
-        NULL as prev_instance_id,
-        ROW_NUMBER() OVER (
-          PARTITION BY time_bucket, record_type
-          ORDER BY total_generation DESC, interval_count DESC
-        ) AS final_rn
-      FROM max_records
-      WHERE (prev_max IS NULL OR total_generation > prev_max)
-        AND rn = 1
-
-      UNION ALL
-
-      SELECT
-        time_bucket{group_by_select},
-        total_generation,
-        interval_count,
-        if(
-          prev_min IS NULL,
-          0,
-          ((total_generation - prev_min) / prev_min) * 100
-        ) as pct_change,
-        'low' as record_type,
-        '{period.value}' as period,
-        instance_id,
-        NULL as prev_instance_id,
-        ROW_NUMBER() OVER (
-          PARTITION BY time_bucket, record_type
-          ORDER BY total_generation ASC, interval_count DESC
-        ) AS final_rn
-      FROM min_records
-      WHERE (prev_min IS NULL OR total_generation < prev_min)
-        AND rn = 1
-    )
-
-    SELECT
-      time_bucket{group_by_select},
-      total_generation,
-      interval_count,
-      pct_change,
-      record_type,
-      period,
-      instance_id,
-      prev_instance_id
-    FROM final_records
-    WHERE final_rn = 1
-    ORDER BY time_bucket"""
-
-    try:
-        logger.info(
-            f"running query for {network.code} {milestone_type.value} {period.value} {grouping.name} and metric {metric_column}"
-        )
-        print(dedent(base_query))
-
-        records = client.execute(base_query)
-        # Convert to list of dicts for easier processing
-        field_names = [
-            "interval",
-            *(list(grouping.group_by_fields) if grouping.group_by_fields else []),
-            "total_generation",
-            "interval_count",
-            "pct_change",
-            "record_type",
-            "period",
-            "instance_id",
-            "prev_instance_id",
-        ]
-
-        records = [dict(zip(field_names, record, strict=False)) for record in records]
-
-        # debug print first 5 records
-        # pprint(records[0])
-
-        return records
-
-    except Exception as e:
-        logger.error(f"Error during milestone analysis: {str(e)}")
-        raise
-
-
-def analyze_market_summary_records(
-    client: Client,
-    network: NetworkSchema,
-    period: MilestonePeriod,
-    milestone_type: MilestoneType,
-    grouping: GroupingConfig,
-    start_date: datetime | None = None,
-    end_date: datetime | None = None,
-) -> list[dict[str, Any]]:
-    """
-    Analyze market summary records to find milestone records.
-    """
-    time_bucket_sql = get_time_bucket_sql(period, "market_summary")
-    interval_threshold = INTERVAL_THRESHOLDS.get_for_period(period)
-    time_col = "interval"  # market_summary table uses interval column
-
-    # Build the GROUP BY clause from the configuration
-    group_by_fields = []
-
-    if grouping.group_by_fields:
-        group_by_fields.extend(grouping.group_by_fields)
-
-    # Build partition fields for window functions
-    partition_fields = []
-
-    if grouping.group_by_fields:
-        partition_fields = [f for f in grouping.group_by_fields if f != "network_id"]
-
-    partition_clause = ", ".join(partition_fields) if partition_fields else "1"
-
-    # Handle group by fields in SELECT statements
-    group_by_select = f", {', '.join(grouping.group_by_fields)}" if grouping.group_by_fields else ""
-
-    # convert the metric to the column name
-    metric_column = ""
-
-    if milestone_type == MilestoneType.price:
+    elif milestone_type == MilestoneType.price:
         metric_column = "price"
     elif milestone_type == MilestoneType.demand:
         metric_column = "demand"
@@ -445,16 +235,18 @@ def analyze_market_summary_records(
 
     date_clause = f"AND {' AND '.join(date_conditions)}" if date_conditions else ""
 
+    # Determine aggregation function and value column name
+    agg_function = "AVG" if is_market_data else "SUM"
+
     base_query = f"""
-    WITH market_data AS (
+    WITH base_stats AS (
       SELECT
         {time_bucket_sql} as time_bucket{group_by_select},
         COUNT(*) as interval_count,
-        AVG({metric_column}) as total_value
-      FROM market_summary
+        {agg_function}({metric_column}) as total_value
+      FROM {source_table}
       WHERE
         network_id = '{network.code.upper()}'
-        AND network_region IN ({', '.join([f"'{i}'" for i in (network.regions or [])])})
         {date_clause}
       GROUP BY
         {time_bucket_sql}{group_by_select}
@@ -471,7 +263,7 @@ def analyze_market_summary_records(
           ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
         ) as running_max,
         generateUUIDv7() as instance_id
-      FROM market_data
+      FROM base_stats
       WHERE total_value > 0
     ),
 
@@ -512,7 +304,7 @@ def analyze_market_summary_records(
           ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
         ) as running_min,
         generateUUIDv7() as instance_id
-      FROM market_data
+      FROM base_stats
       WHERE total_value > 0
     ),
 
@@ -580,6 +372,9 @@ def analyze_market_summary_records(
     ORDER BY interval"""
 
     try:
+        logger.info(f"running query for {network.code} {milestone_type.value} {period.value} {grouping.name}")
+        print(dedent(base_query))
+
         records = client.execute(base_query)
         # Convert to list of dicts for easier processing
         field_names = [
@@ -661,16 +456,16 @@ def _analyzed_record_to_milestone_schema(
 
 
 _DEFAULT_PERIODS = [
-    MilestonePeriod.interval,
+    # MilestonePeriod.interval,
     MilestonePeriod.day,
-    MilestonePeriod.month,
-    MilestonePeriod.quarter,
-    MilestonePeriod.year,
+    # MilestonePeriod.month,
+    # MilestonePeriod.quarter,
+    # MilestonePeriod.year,
 ]
 
 _DEFAULT_METRICS = [
-    MilestoneType.demand,
-    MilestoneType.price,
+    # MilestoneType.demand,
+    # MilestoneType.price,
     MilestoneType.power,
     MilestoneType.energy,
     MilestoneType.emissions,
@@ -706,18 +501,6 @@ async def run_milestone_analysis(
                         if period != MilestonePeriod.interval and metric == MilestoneType.power:
                             continue
 
-                        records = analyze_generation_records(
-                            client=client,
-                            network=network,
-                            milestone_type=metric,
-                            period=period,
-                            grouping=grouping,
-                            start_date=start_date,
-                            end_date=end_date,
-                        )
-
-                        milestone_records.extend(_analyzed_record_to_milestone_schema(records, network, period, metric, grouping))
-
                     elif metric in [MilestoneType.price, MilestoneType.demand]:
                         # Skip fueltech-related groupings for market summary records
                         if grouping.name in [
@@ -728,17 +511,17 @@ async def run_milestone_analysis(
                         ]:
                             continue
 
-                        records = analyze_market_summary_records(
-                            client=client,
-                            network=network,
-                            milestone_type=metric,
-                            period=period,
-                            grouping=grouping,
-                            start_date=start_date,
-                            end_date=end_date,
-                        )
+                    records = analyze_milestone_records(
+                        client=client,
+                        network=network,
+                        milestone_type=metric,
+                        period=period,
+                        grouping=grouping,
+                        start_date=start_date,
+                        end_date=end_date,
+                    )
 
-                        milestone_records.extend(_analyzed_record_to_milestone_schema(records, network, period, metric, grouping))
+                    milestone_records.extend(_analyzed_record_to_milestone_schema(records, network, period, metric, grouping))
 
                 if milestone_records:
                     logger.info(
