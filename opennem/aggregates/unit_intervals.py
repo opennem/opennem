@@ -19,11 +19,26 @@ from opennem.db.clickhouse import (
     get_clickhouse_client,
     table_exists,
 )
-from opennem.db.clickhouse_schema import UNIT_INTERVALS_DAILY_MV, UNIT_INTERVALS_MONTHLY_MV, UNIT_INTERVALS_TABLE_SCHEMA
+from opennem.db.clickhouse_schema import UNIT_INTERVALS_TABLE_SCHEMA
+from opennem.db.clickhouse_views import (
+    FUELTECH_INTERVALS_DAILY_VIEW,
+    FUELTECH_INTERVALS_VIEW,
+    UNIT_INTERVALS_DAILY_VIEW,
+    UNIT_INTERVALS_MONTHLY_VIEW,
+    MaterializedView,
+)
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_last_completed_interval_for_network
 
 logger = logging.getLogger("opennem.aggregates.unit_intervals")
+
+# List of all materialized views to manage
+MATERIALIZED_VIEWS = [
+    UNIT_INTERVALS_DAILY_VIEW,
+    UNIT_INTERVALS_MONTHLY_VIEW,
+    FUELTECH_INTERVALS_VIEW,
+    FUELTECH_INTERVALS_DAILY_VIEW,
+]
 
 
 async def _get_unit_interval_data(session: AsyncSession, start_time: datetime, end_time: datetime) -> list[tuple]:
@@ -155,40 +170,38 @@ def _prepare_unit_interval_data(records: Sequence[tuple]) -> list[tuple]:
 def _ensure_clickhouse_schema() -> None:
     """
     Ensure ClickHouse schema exists by creating tables and views if needed.
-
-    Args:
-        client: ClickHouse client
     """
     client = get_clickhouse_client()
     if not table_exists(client, "unit_intervals"):
         create_table_if_not_exists(client, "unit_intervals", UNIT_INTERVALS_TABLE_SCHEMA)
         logger.info("Created unit_intervals")
 
-    if not table_exists(client, "unit_intervals_daily_mv"):
-        client.execute(UNIT_INTERVALS_DAILY_MV)
-        logger.info("Created unit_intervals_daily_mv")
-
-    if not table_exists(client, "unit_intervals_monthly_mv"):
-        client.execute(UNIT_INTERVALS_MONTHLY_MV)
-        logger.info("Created unit_intervals_monthly_mv")
+    for view in MATERIALIZED_VIEWS:
+        if not table_exists(client, view.name):
+            client.execute(view.schema)
+            logger.info(f"Created {view.name}")
 
 
 def _refresh_clickhouse_schema() -> None:
     """
     Refresh ClickHouse schema by dropping and recreating tables and views.
     """
-
-    # insert a prompt here for the user to confirm
     print("This will drop and recreate all unit_intervals tables and views. Are you sure you want to continue? (y/n)")
     if input().lower() != "y":
         logger.info("User cancelled")
         return
 
     client = get_clickhouse_client()
-    client.execute("DROP TABLE IF EXISTS unit_intervals_monthly_mv")
-    client.execute("DROP TABLE IF EXISTS unit_intervals_daily_mv")
+
+    # Drop views first (in reverse order of creation to handle dependencies)
+    for view in reversed(MATERIALIZED_VIEWS):
+        client.execute(f"DROP TABLE IF EXISTS {view.name}")
+        logger.info(f"Dropped {view.name}")
+
     client.execute("DROP TABLE IF EXISTS unit_intervals")
-    _ensure_clickhouse_schema(client)
+    logger.info("Dropped unit_intervals")
+
+    _ensure_clickhouse_schema()
 
 
 async def process_unit_intervals_backlog(
@@ -355,22 +368,72 @@ async def run_unit_intervals_backlog() -> None:
         )
 
 
-def backfill_materialized_views() -> None:
+def _backfill_materialized_view(client: any, view: MaterializedView, start_date: datetime, end_date: datetime) -> int:
     """
-    Backfill the materialized views from the base unit_intervals table.
+    Backfill a single materialized view for a given date range.
+
+    Args:
+        client: ClickHouse client
+        view: MaterializedView definition
+        start_date: Start date for backfill
+        end_date: End date for backfill
+
+    Returns:
+        int: Number of records processed
+    """
+    logger.info(f"Dropping existing materialized view {view.name}...")
+    client.execute(f"DROP TABLE IF EXISTS {view.name}")
+
+    logger.info(f"Recreating materialized view {view.name}...")
+    client.execute(view.schema)
+
+    # Process month by month
+    current_date = start_date.replace(day=1)
+    while current_date <= end_date:
+        next_month = (current_date.replace(day=1) + timedelta(days=32)).replace(day=1)
+        logger.info(f"Processing month {current_date.strftime('%Y-%m')} for {view.name}")
+
+        client.execute(
+            view.backfill_query,
+            {"start": current_date, "end": next_month},
+        )
+
+        current_date = next_month
+
+    # Return count of records
+    result = client.execute(f"SELECT count() FROM {view.name}")
+    return result[0][0]
+
+
+def _get_view_by_name(view_name: str) -> MaterializedView:
+    """
+    Get a materialized view definition by its name.
+
+    Args:
+        view_name: Name of the view to find
+
+    Returns:
+        MaterializedView if found, None otherwise
+    """
+    for view in MATERIALIZED_VIEWS:
+        if view.name == view_name:
+            return view
+    raise ValueError(f"View {view_name} not found")
+
+
+def backfill_materialized_views(view: MaterializedView | str | None = None) -> None:
+    """
+    Backfill materialized views from the base unit_intervals table.
     This should be run after bulk loading data into unit_intervals if the views are empty.
+
+    Args:
+        view: Optional view to backfill. Can be either a MaterializedView instance or a view name.
+              If None, all views will be backfilled.
+
+    Raises:
+        ValueError: If a view name is provided but not found
     """
     client = get_clickhouse_client()
-
-    # Drop existing views
-    logger.info("Dropping existing materialized views...")
-    client.execute("DROP TABLE IF EXISTS unit_intervals_monthly_mv")
-    client.execute("DROP TABLE IF EXISTS unit_intervals_daily_mv")
-
-    # Recreate views
-    logger.info("Recreating materialized views...")
-    client.execute(UNIT_INTERVALS_DAILY_MV)
-    client.execute(UNIT_INTERVALS_MONTHLY_MV)
 
     # Get date range from base table
     result = client.execute("""
@@ -381,101 +444,39 @@ def backfill_materialized_views() -> None:
     """)
     start_date, end_date = result[0]
 
-    # Process month by month
-    current_date = start_date.replace(day=1)
-    while current_date <= end_date:
-        next_month = (current_date.replace(day=1) + timedelta(days=32)).replace(day=1)
+    # Determine which views to process
+    views_to_process = []
+    if view is None:
+        views_to_process = MATERIALIZED_VIEWS
+    elif isinstance(view, MaterializedView):
+        views_to_process = [view]
+    elif isinstance(view, str):
+        found_view = _get_view_by_name(view)
+        if found_view is None:
+            raise ValueError(f"View {view} not found")
+        views_to_process = [found_view]
+    else:
+        raise ValueError("view parameter must be None, a MaterializedView instance, or a view name string")
 
-        logger.info(f"Processing month {current_date.strftime('%Y-%m')}")
-
-        # Backfill daily view for this month
-        client.execute(
-            """
-            INSERT INTO unit_intervals_daily_mv
-            SELECT
-                toDate(interval) as date,
-                network_id,
-                network_region,
-                facility_code,
-                unit_code,
-                fueltech_id,
-                fueltech_group_id,
-                any(renewable) as renewable,
-                any(status_id) as status_id,
-                avg(generated) as generated_avg,
-                max(generated) as generated_max,
-                min(generated) as generated_min,
-                sum(energy) as energy_sum,
-                sum(emissions) as emissions_sum,
-                avg(emission_factor) as emission_factor_avg,
-                sum(market_value) as market_value_sum,
-                count() as count
-            FROM unit_intervals
-            WHERE interval >= %(start)s AND interval < %(end)s
-            GROUP BY
-                date,
-                network_id,
-                network_region,
-                facility_code,
-                unit_code,
-                fueltech_id,
-                fueltech_group_id
-        """,
-            {"start": current_date, "end": next_month},
+    # Process each view
+    for view in views_to_process:
+        record_count = _backfill_materialized_view(
+            client=client,
+            view=view,
+            start_date=start_date,
+            end_date=end_date,
         )
-
-        # Backfill monthly view for this month
-        client.execute(
-            """
-            INSERT INTO unit_intervals_monthly_mv
-            SELECT
-                toStartOfMonth(interval) as month,
-                network_id,
-                network_region,
-                facility_code,
-                unit_code,
-                fueltech_id,
-                fueltech_group_id,
-                any(renewable) as renewable,
-                any(status_id) as status_id,
-                avg(generated) as generated_avg,
-                max(generated) as generated_max,
-                min(generated) as generated_min,
-                sum(energy) as energy_sum,
-                sum(emissions) as emissions_sum,
-                avg(emission_factor) as emission_factor_avg,
-                sum(market_value) as market_value_sum,
-                count() as count
-            FROM unit_intervals
-            WHERE interval >= %(start)s AND interval < %(end)s
-            GROUP BY
-                month,
-                network_id,
-                network_region,
-                facility_code,
-                unit_code,
-                fueltech_id,
-                fueltech_group_id
-        """,
-            {"start": current_date, "end": next_month},
-        )
-
-        current_date = next_month
-
-    # Verify the backfill
-    daily_count = client.execute("SELECT count() FROM unit_intervals_daily_mv")[0][0]
-    monthly_count = client.execute("SELECT count() FROM unit_intervals_monthly_mv")[0][0]
-    logger.info(f"Backfill complete. Daily records: {daily_count}, Monthly records: {monthly_count}")
+        logger.info(f"Backfill complete for {view.name}. Records: {record_count}")
 
 
 if __name__ == "__main__":
     # Run the test
     async def main():
-        _ensure_clickhouse_schema()
+        # _ensure_clickhouse_schema()
         # await run_unit_intervals_backlog()
         # await run_unit_intervals_aggregate_for_last_intervals(num_intervals=12 * 24 * 1)
         # Uncomment to backfill views:
-        backfill_materialized_views()
+        backfill_materialized_views(view="fueltech_intervals_daily_mv")
 
     import asyncio
 
