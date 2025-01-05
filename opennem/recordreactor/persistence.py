@@ -44,8 +44,6 @@ async def persist_milestones(milestones: list[MilestoneRecordSchema]) -> int:
     if not milestones:
         return 0
 
-    logger.info(f"Bulk persisting {len(milestones)} milestones")
-
     # Pre-process records into a list of dictionaries for bulk insert
     milestone_records = []
 
@@ -103,7 +101,6 @@ async def persist_milestones(milestones: list[MilestoneRecordSchema]) -> int:
 
                 await session.execute(stmt)
                 total_inserted += len(chunk)
-                logger.debug(f"Inserted chunk of {len(chunk)} records")
 
             except Exception as e:
                 logger.error(f"Error during bulk milestone insertion: {str(e)}")
