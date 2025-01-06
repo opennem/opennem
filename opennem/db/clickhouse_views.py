@@ -219,7 +219,7 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
-            count(interval) as interval_count
+            count(distinct interval) as interval_count
         FROM unit_intervals
         GROUP BY
             date,
@@ -252,10 +252,6 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             network_id,
             network_region,
             fueltech_group_id
-        HAVING (
-            (count(distinct interval) = 288 and network_id = 'NEM') or
-            (count(distinct interval) >= 24 and network_id = 'WEM')
-        )
     """,
 )
 
@@ -332,9 +328,5 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
         FROM unit_intervals
         WHERE interval >= %(start)s AND interval < %(end)s
         GROUP BY date, network_id, network_region, renewable
-        HAVING (
-            (count(distinct interval) = 288 and network_id = 'NEM') or
-            (count(distinct interval) >= 24 and network_id = 'WEM')
-        )
     """,
 )
