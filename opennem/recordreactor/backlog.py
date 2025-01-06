@@ -10,7 +10,6 @@ The live engine which runs per interval is located at opennem.recordreactor.engi
 import logging
 from dataclasses import dataclass
 from datetime import datetime
-from textwrap import dedent
 from typing import Any
 
 from clickhouse_driver.client import Client
@@ -25,7 +24,7 @@ from opennem.recordreactor.schema import (
     MilestoneType,
 )
 from opennem.recordreactor.unit import get_milestone_unit
-from opennem.schema.network import NetworkNEM, NetworkSchema
+from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network
 
 logger = logging.getLogger("opennem.recordreactor.bulk")
@@ -238,11 +237,13 @@ def analyze_milestone_records(
     # Determine aggregation function and value column name
     agg_function = "AVG" if is_market_data else "SUM"
 
+    interval_count = "1" if period == MilestonePeriod.interval else "min(interval_count)"
+
     base_query = f"""
     WITH base_stats AS (
       SELECT
         {time_bucket_sql} as time_bucket{group_by_select},
-        COUNT(*) as interval_count,
+        {interval_count} as interval_count,
         {agg_function}({metric_column}) as total_value
       FROM {source_table}
       WHERE
@@ -305,7 +306,6 @@ def analyze_milestone_records(
         ) as running_min,
         generateUUIDv7() as instance_id
       FROM base_stats
-      WHERE total_value > 0
     ),
 
     min_records AS (
@@ -366,14 +366,12 @@ def analyze_milestone_records(
       FROM min_records
       WHERE
         total_value = running_min
-        AND interval_count >= {interval_threshold}
         AND (prev_min IS NULL OR total_value < prev_min)
     )
     ORDER BY interval"""
 
     try:
         logger.info(f"running query for {network.code} {milestone_type.value} {period.value} {grouping.name}")
-        print(dedent(base_query))
 
         records = client.execute(base_query)
         # Convert to list of dicts for easier processing
@@ -456,22 +454,22 @@ def _analyzed_record_to_milestone_schema(
 
 
 _DEFAULT_PERIODS = [
-    # MilestonePeriod.interval,
+    MilestonePeriod.interval,
     MilestonePeriod.day,
-    # MilestonePeriod.month,
-    # MilestonePeriod.quarter,
-    # MilestonePeriod.year,
+    MilestonePeriod.month,
+    MilestonePeriod.quarter,
+    MilestonePeriod.year,
 ]
 
 _DEFAULT_METRICS = [
-    # MilestoneType.demand,
-    # MilestoneType.price,
+    MilestoneType.demand,
+    MilestoneType.price,
     MilestoneType.power,
     MilestoneType.energy,
     MilestoneType.emissions,
 ]
 
-_DEFAULT_NETWORKS = [NetworkNEM]
+_DEFAULT_NETWORKS = [NetworkNEM, NetworkWEM]
 
 
 async def run_milestone_analysis(
@@ -502,6 +500,9 @@ async def run_milestone_analysis(
                             continue
 
                     elif metric in [MilestoneType.price, MilestoneType.demand]:
+                        if period != MilestonePeriod.interval:
+                            continue
+
                         # Skip fueltech-related groupings for market summary records
                         if grouping.name in [
                             "fueltech",
