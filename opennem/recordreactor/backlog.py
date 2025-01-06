@@ -15,6 +15,7 @@ from typing import Any
 from clickhouse_driver.client import Client
 
 from opennem.db.clickhouse import get_clickhouse_client
+from opennem.queries.utils import list_to_case
 from opennem.recordreactor.persistence import persist_milestones
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
@@ -76,6 +77,8 @@ def get_time_bucket_sql(period: MilestonePeriod, source_table: str = "unit_inter
         return f"{source_table}.{time_col}"
     elif period == MilestonePeriod.day:
         return f"toStartOfDay({source_table}.{time_col})"
+    elif period == MilestonePeriod.week_rolling:
+        return f"toStartOfWeek({source_table}.{time_col})"
     elif period == MilestonePeriod.month:
         return f"toStartOfMonth({source_table}.{time_col})"
     elif period == MilestonePeriod.quarter:
@@ -183,9 +186,14 @@ def analyze_milestone_records(
     Returns:
         list[dict[str, Any]]: List of milestone records
     """
+
+    # skip WEM region queries
+    if network == NetworkWEM and "network_region" in grouping.group_by_fields:
+        return []
+
     source_table, time_col = _get_source_table_and_interval_name(milestone_type, period, grouping)
     time_bucket_sql = get_time_bucket_sql(period, source_table, time_col)
-    interval_threshold = INTERVAL_THRESHOLDS.get_for_period(period)
+    # interval_threshold = INTERVAL_THRESHOLDS.get_for_period(period)
 
     # Build the GROUP BY clause from the configuration
     group_by_fields = []
@@ -237,7 +245,10 @@ def analyze_milestone_records(
     # Determine aggregation function and value column name
     agg_function = "AVG" if is_market_data else "SUM"
 
-    interval_count = "1" if period == MilestonePeriod.interval else "min(interval_count)"
+    interval_count = "1" if period == MilestonePeriod.interval else "max(interval_count)"
+
+    interval_threshold = INTERVAL_THRESHOLDS.get_for_period(period)
+    # interval_threshold = 1
 
     base_query = f"""
     WITH base_stats AS (
@@ -247,10 +258,11 @@ def analyze_milestone_records(
         {agg_function}({metric_column}) as total_value
       FROM {source_table}
       WHERE
-        network_id = '{network.code.upper()}'
+        network_id in ('{network.code.upper()}', {list_to_case([i.code for i in network.subnetworks])})
         {date_clause}
       GROUP BY
         {time_bucket_sql}{group_by_select}
+      ORDER BY 1 asc, 2
     ),
 
     running_maxes AS (
@@ -366,12 +378,14 @@ def analyze_milestone_records(
       FROM min_records
       WHERE
         total_value = running_min
-        AND (prev_min IS NULL OR total_value < prev_min)
+        AND (prev_min IS NULL OR total_value < prev_min AND interval_count >= {interval_threshold})
     )
     ORDER BY interval"""
 
     try:
         logger.info(f"running query for {network.code} {milestone_type.value} {period.value} {grouping.name}")
+
+        # print(dedent(base_query))
 
         records = client.execute(base_query)
         # Convert to list of dicts for easier processing
@@ -408,7 +422,7 @@ def _analyzed_record_to_milestone_schema(
     """
     unit = get_milestone_unit(milestone_type)
     milestone_records = []
-    milestone_primary_keys: list[set(str, str)] = []
+    milestone_primary_keys: list[set(str, str)] = []  # type: ignore
 
     for record in records:
         # Get network region and fueltech from grouping if present
@@ -456,6 +470,7 @@ def _analyzed_record_to_milestone_schema(
 _DEFAULT_PERIODS = [
     MilestonePeriod.interval,
     MilestonePeriod.day,
+    # MilestonePeriod.week_rolling,
     MilestonePeriod.month,
     MilestonePeriod.quarter,
     MilestonePeriod.year,
@@ -469,7 +484,10 @@ _DEFAULT_METRICS = [
     MilestoneType.emissions,
 ]
 
-_DEFAULT_NETWORKS = [NetworkNEM, NetworkWEM]
+_DEFAULT_NETWORKS = [
+    NetworkNEM,
+    NetworkWEM,
+]
 
 
 async def run_milestone_analysis(
@@ -539,7 +557,7 @@ async def run_milestone_analysis_backlog():
     Runs in year chunks
     """
     end_date = get_last_completed_interval_for_network(NetworkNEM)
-    start_date = NetworkNEM.data_first_seen
+    start_date = datetime.fromisoformat("1999-01-01T00:00:00")
     # start_date = end_date - timedelta(days=90)
 
     await run_milestone_analysis(start_date=start_date, end_date=end_date)
