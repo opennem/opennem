@@ -220,7 +220,12 @@ def analyze_milestone_records(
 
     # convert the metric to the column name and determine aggregation
     metric_column = ""
-    is_market_data = milestone_type in [MilestoneType.price, MilestoneType.demand]
+
+    # Determine aggregation function and value column name
+    agg_function = "SUM"
+
+    # interval count value
+    interval_count = "max(interval_count)"
 
     if milestone_type == MilestoneType.power:
         metric_column = "generated"
@@ -229,9 +234,20 @@ def analyze_milestone_records(
     elif milestone_type == MilestoneType.emissions:
         metric_column = "emissions"
     elif milestone_type == MilestoneType.price:
-        metric_column = "price"
+        interval_count = "1"
+        if period == MilestonePeriod.interval:
+            metric_column = "price"
+            agg_function = "AVG"
+        else:
+            raise ValueError("Price records are only supported at the interval period")
     elif milestone_type == MilestoneType.demand:
-        metric_column = "demand"
+        interval_count = "1"
+        if period == MilestonePeriod.interval:
+            metric_column = "demand"
+            agg_function = "AVG"
+        else:
+            metric_column = "demand_energy"
+            agg_function = "SUM"
 
     # Build date range conditions
     date_conditions = []
@@ -241,11 +257,6 @@ def analyze_milestone_records(
         date_conditions.append(_trim_end_date(time_col, end_date, period))
 
     date_clause = f"AND {' AND '.join(date_conditions)}" if date_conditions else ""
-
-    # Determine aggregation function and value column name
-    agg_function = "AVG" if is_market_data else "SUM"
-
-    interval_count = "1" if period == MilestonePeriod.interval else "max(interval_count)"
 
     interval_threshold = INTERVAL_THRESHOLDS.get_for_period(period)
     # interval_threshold = 1
@@ -428,6 +439,8 @@ def _analyzed_record_to_milestone_schema(
     milestone_primary_keys: list[set(str, str)] = []  # type: ignore
 
     for record in records:
+        milestone_type_out = milestone_type
+
         # Get network region and fueltech from grouping if present
         network_region = record.get("network_region") if "network_region" in record else None
         fueltech = None
@@ -437,6 +450,12 @@ def _analyzed_record_to_milestone_schema(
         elif "renewable" in record:
             fueltech = MilestoneFueltechGrouping("renewables" if record["renewable"] else "fossils")
 
+        if milestone_type == MilestoneType.demand:
+            fueltech = MilestoneFueltechGrouping.demand
+            milestone_type_out = MilestoneType.energy
+            if period == MilestonePeriod.interval:
+                milestone_type_out = MilestoneType.power
+
         value = record.get("total_value", record.get("total_generation"))
 
         # Only include previous_instance_id if it's not NULL
@@ -445,7 +464,7 @@ def _analyzed_record_to_milestone_schema(
         milestone_schema = MilestoneRecordSchema(
             interval=record["interval"],
             aggregate=MilestoneAggregate(record["record_type"]),
-            metric=milestone_type,
+            metric=milestone_type_out,
             period=period,
             network=network,
             unit=unit,
@@ -513,6 +532,8 @@ async def run_milestone_analysis(
                 milestone_records: list[MilestoneRecordSchema] = []
 
                 for grouping in GROUPING_CONFIGS:
+                    # filter out the metrics that don't make sense for the period
+
                     if metric in [MilestoneType.power, MilestoneType.energy, MilestoneType.emissions]:
                         if period == MilestonePeriod.interval and metric not in [MilestoneType.power]:
                             continue
@@ -520,10 +541,11 @@ async def run_milestone_analysis(
                         if period != MilestonePeriod.interval and metric == MilestoneType.power:
                             continue
 
-                    elif metric in [MilestoneType.price, MilestoneType.demand]:
+                    if metric in [MilestoneType.price]:
                         if period != MilestonePeriod.interval:
                             continue
 
+                    if metric in [MilestoneType.demand, MilestoneType.price]:
                         # Skip fueltech-related groupings for market summary records
                         if grouping.name in [
                             "fueltech",
