@@ -263,7 +263,7 @@ async def run_market_summary_aggregate_to_now() -> int:
     result = client.execute("SELECT MAX(interval) FROM market_summary")
     max_interval = result[0][0]
 
-    date_from = max_interval + timedelta(minutes=5)
+    date_from = max_interval
     date_to = get_last_completed_interval_for_network(network=NetworkNEM)
 
     if date_from > date_to:
