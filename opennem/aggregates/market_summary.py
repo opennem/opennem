@@ -71,7 +71,7 @@ async def _get_market_summary_data(
                 ORDER BY interval
             ) as prev_demand_total
         FROM balancing_summary bs
-        WHERE interval BETWEEN :start_time - INTERVAL '1 hour' AND :end_time
+        WHERE interval BETWEEN :start_time_window AND :end_time
         AND is_forecast = false
         ORDER BY interval
     )
@@ -91,7 +91,14 @@ async def _get_market_summary_data(
     ORDER BY interval
     """)
 
-    result = await session.execute(query, {"start_time": start_time_naive, "end_time": end_time_naive})
+    result = await session.execute(
+        query,
+        {
+            "start_time": start_time_naive,
+            "start_time_window": start_time_naive - timedelta(hours=1),
+            "end_time": end_time_naive,
+        },
+    )
     return result.fetchall()
 
 
@@ -385,7 +392,7 @@ if __name__ == "__main__":
     # Run the test
     async def main():
         # _refresh_clickhouse_schema()
-        await run_market_summary_aggregate_to_now()
+        await run_market_summary_aggregate_for_last_intervals(num_intervals=5)
         # await run_market_summary_aggregate_for_last_intervals(num_intervals=12 * 24 * 1)
         # await run_market_summary_aggregate_for_last_intervals(num_intervals=12 * 24 * 1)
 
