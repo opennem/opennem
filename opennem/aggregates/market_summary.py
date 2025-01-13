@@ -286,10 +286,10 @@ async def run_market_summary_aggregate_to_now() -> int:
     result = client.execute("SELECT MAX(interval) FROM market_summary")
     max_interval = result[0][0]
 
-    date_from = max_interval
+    date_from = max_interval + timedelta(minutes=5)
     date_to = get_last_completed_interval_for_network(network=NetworkNEM)
 
-    if date_from >= date_to:
+    if date_from > date_to:
         logger.info("No new data to process")
         return 0
 
@@ -392,7 +392,8 @@ if __name__ == "__main__":
     # Run the test
     async def main():
         # _refresh_clickhouse_schema()
-        await run_market_summary_aggregate_for_last_intervals(num_intervals=5)
+        # await run_market_summary_aggregate_for_last_intervals(num_intervals=5)
+        await run_market_summary_backlog()
         # await run_market_summary_aggregate_for_last_intervals(num_intervals=12 * 24 * 1)
         # await run_market_summary_aggregate_for_last_intervals(num_intervals=12 * 24 * 1)
 
