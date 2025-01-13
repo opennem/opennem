@@ -23,6 +23,10 @@ from opennem.db.clickhouse import (
 from opennem.db.clickhouse_schema import (
     MARKET_SUMMARY_TABLE_SCHEMA,
 )
+
+# from opennem.db.clickhouse_views import (
+# MARKET_SUMMARY_DAILY_MV_TABLE_SCHEMA,
+# )
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_last_completed_interval_for_network
 
@@ -31,7 +35,7 @@ logger = logging.getLogger("opennem.aggregates.market_summary")
 
 async def _get_market_summary_data(
     session: AsyncSession, start_time: datetime, end_time: datetime
-) -> list[tuple[datetime, str, str, float | None, float | None, float | None]]:
+) -> list[tuple[datetime, str, str, float | None, float | None, float | None, float | None, float | None]]:
     """
     Get market summary data from PostgreSQL for a given time range.
 
@@ -41,7 +45,9 @@ async def _get_market_summary_data(
         end_time: End date for data range
 
     Returns:
-        List of tuples containing (interval, network_id, network_region, price, demand, demand_total)
+        List of tuples containing
+        (interval, network_id, network_region, price, demand, demand_total, prev_demand, prev_demand_total)
+        Note: Only returns complete interval pairs where both current and previous intervals are available
     """
     # Strip timezone info
     start_time_naive = start_time.replace(tzinfo=None)
@@ -64,8 +70,8 @@ async def _get_market_summary_data(
                 PARTITION BY network_id, network_region
                 ORDER BY interval
             ) as prev_demand_total
-        FROM balancing_summary
-        WHERE interval BETWEEN :start_time AND :end_time
+        FROM balancing_summary bs
+        WHERE interval BETWEEN :start_time - INTERVAL '1 hour' AND :end_time
         AND is_forecast = false
         ORDER BY interval
     )
@@ -79,6 +85,10 @@ async def _get_market_summary_data(
         prev_demand,
         prev_demand_total
     FROM ranked_data
+    WHERE interval BETWEEN :start_time AND :end_time
+    AND prev_demand IS NOT NULL
+    AND prev_demand_total IS NOT NULL
+    ORDER BY interval
     """)
 
     result = await session.execute(query, {"start_time": start_time_naive, "end_time": end_time_naive})
@@ -139,7 +149,7 @@ def _prepare_market_summary_data(
                         )
                     )
                     .otherwise(default_intervals)
-                ).round(4)
+                ).round(2)
             ).alias("demand_energy"),
             (
                 (
@@ -152,7 +162,7 @@ def _prepare_market_summary_data(
                         )
                     )
                     .otherwise(default_intervals)
-                ).round(4)
+                ).round(2)
             ).alias("demand_total_energy"),
         ]
     )
@@ -160,8 +170,8 @@ def _prepare_market_summary_data(
     # Calculate market values
     df = df.with_columns(
         [
-            (pl.col("demand_energy") * pl.col("price")).round(4).alias("demand_market_value"),
-            (pl.col("demand_total_energy") * pl.col("price")).round(4).alias("demand_total_market_value"),
+            (pl.col("demand_energy") * pl.col("price")).round(2).alias("demand_market_value"),
+            (pl.col("demand_total_energy") * pl.col("price")).round(2).alias("demand_total_market_value"),
         ]
     )
 
@@ -194,8 +204,14 @@ def _ensure_clickhouse_schema(client: Client) -> None:
     """
     if not table_exists(client, "market_summary"):
         create_table_if_not_exists(client, "market_summary", MARKET_SUMMARY_TABLE_SCHEMA)
-        # client.execute(MARKET_SUMMARY_DAILY_MV)
-        # client.execute(MARKET_SUMMARY_MONTHLY_MV)
+
+    if not table_exists(client, "market_summary_daily_mv"):
+        # create_table_if_not_exists(client, "market_summary_daily_mv", MARKET_SUMMARY_DAILY_MV_TABLE_SCHEMA)
+        pass
+
+    if not table_exists(client, "market_summary_monthly_mv"):
+        # create_table_if_not_exists(client, "market_summary_monthly_mv", MARKET_SUMMARY_MONTHLY_MV_TABLE_SCHEMA)
+        pass
 
 
 def _refresh_clickhouse_schema() -> None:
@@ -266,7 +282,7 @@ async def run_market_summary_aggregate_to_now() -> int:
     date_from = max_interval
     date_to = get_last_completed_interval_for_network(network=NetworkNEM)
 
-    if date_from > date_to:
+    if date_from >= date_to:
         logger.info("No new data to process")
         return 0
 
@@ -325,7 +341,8 @@ async def run_market_summary_backlog() -> None:
 
     # Calculate date range for the past week
     end_date = get_last_completed_interval_for_network(network=NetworkNEM)
-    start_date = NetworkNEM.data_first_seen.replace(tzinfo=None)
+    # start_date = NetworkNEM.data_first_seen.replace(tzinfo=None)
+    start_date = datetime.fromisoformat("2025-01-01 00:00:00")
 
     # Ensure ClickHouse schema exists
     client = get_clickhouse_client()
@@ -368,7 +385,7 @@ if __name__ == "__main__":
     # Run the test
     async def main():
         # _refresh_clickhouse_schema()
-        await run_market_summary_backlog()
+        await run_market_summary_aggregate_to_now()
         # await run_market_summary_aggregate_for_last_intervals(num_intervals=12 * 24 * 1)
         # await run_market_summary_aggregate_for_last_intervals(num_intervals=12 * 24 * 1)
 
