@@ -15,7 +15,13 @@ from opennem.api.milestones.queries import get_milestone_record
 from opennem.db import get_write_session
 from opennem.db.models.opennem import Milestones
 from opennem.recordreactor.controllers import map_milestone_output_records_from_db, map_milestone_output_schema_to_record
-from opennem.recordreactor.schema import MilestoneAggregate, MilestonePeriod, MilestoneRecordSchema, MilestoneType
+from opennem.recordreactor.schema import (
+    MilestoneAggregate,
+    MilestoneFueltechGrouping,
+    MilestonePeriod,
+    MilestoneRecordSchema,
+    MilestoneType,
+)
 from opennem.schema.network import NetworkNEM
 
 logger = logging.getLogger("opennem.recordreactor.significance")
@@ -59,7 +65,10 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
             else:
                 return 9  # @NOTE temporary
 
-    if milestone.metric == MilestoneType.demand and milestone.period in [MilestonePeriod.interval, MilestonePeriod.day]:
+    if milestone.fueltech == MilestoneFueltechGrouping.demand and milestone.period in [
+        MilestonePeriod.interval,
+        MilestonePeriod.day,
+    ]:
         if milestone.aggregate == MilestoneAggregate.high:
             if milestone.network_region is None:
                 return 10
