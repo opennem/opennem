@@ -16,7 +16,7 @@ from clickhouse_driver.client import Client
 
 from opennem.db.clickhouse import get_clickhouse_client
 from opennem.queries.utils import list_to_case
-from opennem.recordreactor.persistence import persist_milestones
+from opennem.recordreactor.persistence import check_and_persist_milestones_chunked
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
     MilestoneFueltechGrouping,
@@ -550,7 +550,7 @@ async def run_milestone_analysis(
                         f"Found {len(milestone_records)} milestone records for {network.code} {metric.value} {period.value}"
                     )
 
-                    await persist_milestones(milestone_records)
+                    await check_and_persist_milestones_chunked(milestone_records)
 
     logger.info("Milestone analysis complete")
 

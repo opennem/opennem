@@ -16,7 +16,7 @@ import duckdb
 import polars as pl
 
 from opennem import settings
-from opennem.recordreactor.persistence import persist_milestones
+from opennem.recordreactor.persistence import check_and_persist_milestones_chunked
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
     MilestoneFueltechGrouping,
@@ -415,7 +415,7 @@ async def run_milestone_analysis(parquet_path: str) -> None:
     logger.info(f"Found {len(milestone_records)} milestone records")
 
     # Persist in chunks to avoid memory issues
-    await persist_milestones(milestone_records)
+    await check_and_persist_milestones_chunked(milestone_records)
 
 
 if __name__ == "__main__":
