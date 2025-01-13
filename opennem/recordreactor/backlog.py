@@ -227,6 +227,9 @@ def analyze_milestone_records(
     # interval count value
     interval_count = "max(interval_count)"
 
+    if period == MilestonePeriod.interval:
+        interval_count = "1"
+
     if milestone_type == MilestoneType.power:
         metric_column = "generated"
     elif milestone_type == MilestoneType.energy:
