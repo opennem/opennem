@@ -28,7 +28,7 @@ from opennem.recordreactor.unit import get_milestone_unit
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network
 
-logger = logging.getLogger("opennem.recordreactor.bulk")
+logger = logging.getLogger("opennem.recordreactor.backlog")
 
 
 @dataclass
@@ -250,6 +250,9 @@ def analyze_milestone_records(
     interval_threshold = INTERVAL_THRESHOLDS.get_for_period(period)
     # interval_threshold = 1
 
+    # value limit. 0 is the default but for values that can go negative we exclude it
+    value_limit_clause = "" if milestone_type in [MilestoneType.price] else "total_value > 0 and "
+
     base_query = f"""
     WITH base_stats AS (
       SELECT
@@ -307,7 +310,7 @@ def analyze_milestone_records(
         interval_count,
         min(
           if(
-            total_value > 0 AND interval_count >= {interval_threshold},
+            {value_limit_clause} interval_count >= {interval_threshold},
             total_value,
             NULL
           )
