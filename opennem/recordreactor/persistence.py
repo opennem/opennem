@@ -51,8 +51,12 @@ async def persist_milestones(milestones: list[MilestoneRecordSchema]) -> int:
     primary_keys: list[tuple[str, datetime]] = []
 
     for record in milestones:
-        if not record.value or not record.instance_id:
-            logger.warning(f"Skipping milestone {record.record_id} because it has no value or instance_id")
+        if record.value is None:
+            logger.warning(f"Skipping milestone {record.record_id} because it has no value")
+            continue
+
+        if record.instance_id is None:
+            logger.warning(f"Skipping milestone {record.record_id} because it has no instance_id")
             continue
 
         primary_key = (record.record_id, record.interval)
