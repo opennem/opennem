@@ -71,6 +71,8 @@ def check_milestone_is_new(milestone: MilestoneRecordSchema, milestone_previous:
     if not milestone.value:
         return False
 
+    #
+
     # @NOTE we round to 0 for all metrics except proportion
     round_to = 2 if milestone.metric in [MilestoneType.proportion] else 0
 
