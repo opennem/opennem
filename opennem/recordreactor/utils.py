@@ -71,7 +71,10 @@ def check_milestone_is_new(milestone: MilestoneRecordSchema, milestone_previous:
     if not milestone.value:
         return False
 
-    return _op(milestone.value, milestone_previous.value)
+    # @NOTE we round to 0 for all metrics except proportion
+    round_to = 2 if milestone.metric in [MilestoneType.proportion] else 0
+
+    return _op(round(milestone.value, round_to), round(milestone_previous.value, round_to))
 
 
 def get_milestone_fueltech_label(fueltech: MilestoneFueltechGrouping) -> str:
