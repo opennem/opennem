@@ -2,13 +2,13 @@
     {
         "code": "battery_charging",
         "label": "Battery (Charging)",
-        "renewable": true,
+        "renewable": false,
         "fueltech_group_id": "battery_charging"
     },
     {
         "code": "battery_discharging",
         "label": "Battery (Discharging)",
-        "renewable": true,
+        "renewable": false,
         "fueltech_group_id": "battery_discharging"
     },
     {
@@ -80,7 +80,7 @@
     {
         "code": "pumps",
         "label": "Pumps",
-        "renewable": true,
+        "renewable": false,
         "fueltech_group_id": "pumps"
     },
     {
