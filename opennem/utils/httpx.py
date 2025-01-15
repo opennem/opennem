@@ -1,11 +1,16 @@
 """ " httpx async client for async http requests"""
 
+import asyncio
 import logging
+from typing import Any
 
 import chardet
 import httpx
 import logfire
-from httpx import AsyncClient, AsyncHTTPTransport
+
+# from curl_cffi.requests import AsyncSession  # noqa: F401
+from httpx import AsyncClient, AsyncHTTPTransport, Request, Response
+from httpx._transports.default import AsyncHTTPTransport as DefaultAsyncTransport
 
 from opennem import settings
 from opennem.utils.random_agent import get_random_agent
@@ -44,12 +49,74 @@ def debug_log_response(response) -> None:
 
 
 class OpenNEMHTTPTransport(AsyncHTTPTransport):
-    def __init__(self, *args, **kwargs):
+    """Custom transport that implements retry logic for 403 responses"""
+
+    def __init__(
+        self, *args: Any, retries: int = 3, retry_delay: float = 1.0, retry_codes: list[int] | None = None, **kwargs: Any
+    ) -> None:
         super().__init__(*args, **kwargs)
 
+        if not retry_codes:
+            retry_codes = [403]
 
-def httpx_factory(mimic_browser: bool = False, debug: bool = True, proxy: bool = False, *args, **kwargs) -> AsyncClient:
-    """Create a new httpx client with default settings"""
+        self._retries = retries
+        self._retry_delay = retry_delay
+        self._retry_codes = retry_codes
+        self._transport = DefaultAsyncTransport(*args, **kwargs)
+
+    async def handle_async_request(self, request: Request) -> Response:
+        attempts = 0
+        last_exception = None
+
+        while attempts <= self._retries:
+            try:
+                response = await self._transport.handle_async_request(request)
+
+                if response.status_code not in self._retry_codes:
+                    return response
+
+                if attempts == self._retries:
+                    return response
+
+                attempts += 1
+                retry_delay = self._retry_delay * (2 ** (attempts - 1))  # exponential backoff
+                logger.warning(
+                    f"Received {response.status_code} for {request.url}. "
+                    f"Attempt {attempts}/{self._retries}. Retrying in {retry_delay}s"
+                )
+                await asyncio.sleep(retry_delay)
+
+            except Exception as e:
+                last_exception = e
+                if attempts == self._retries:
+                    raise
+                attempts += 1
+                retry_delay = self._retry_delay * (2 ** (attempts - 1))
+                logger.warning(
+                    f"Request failed for {request.url}. " f"Attempt {attempts}/{self._retries}. Retrying in {retry_delay}s"
+                )
+                await asyncio.sleep(retry_delay)
+
+        if last_exception:
+            raise last_exception
+
+        return response  # type: ignore
+
+
+def httpx_factory(
+    mimic_browser: bool = False, debug: bool = True, proxy: bool = False, retry_403: bool = True, *args: Any, **kwargs: Any
+) -> AsyncClient:
+    """Create a new httpx client with default settings
+
+    Args:
+        mimic_browser: Whether to mimic a browser with headers
+        debug: Enable debug logging
+        proxy: Whether to use proxy settings
+        retry_403: Whether to enable 403 retries
+
+    Returns:
+        AsyncClient: Configured httpx client
+    """
 
     # set default request headers
     headers = kwargs.get("headers", {})
@@ -88,12 +155,27 @@ def httpx_factory(mimic_browser: bool = False, debug: bool = True, proxy: bool =
         else:
             event_hooks["request"] = [debug_log_request]
 
+    transport_kwargs = {
+        "retries": settings.http_retries,
+    }
+
+    if retry_403:
+        transport_kwargs.update(
+            {
+                "retry_codes": [403],
+                "retry_delay": 1.0,
+            }
+        )
+
     return httpx.AsyncClient(
         *args,
         **kwargs,
-        transport=OpenNEMHTTPTransport(retries=settings.http_retries),
+        transport=OpenNEMHTTPTransport(**transport_kwargs),
         default_encoding=autodetect_encoding,  # type: ignore
     )
 
 
 http = httpx_factory(debug=settings.is_dev, timeout=settings.http_timeout)
+
+if __name__ == "__main__":
+    asyncio.run(http.get("https://httpbin.org/status/403"))
