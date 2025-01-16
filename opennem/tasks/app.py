@@ -38,6 +38,7 @@ from opennem.tasks.tasks import (
     task_apvi_crawl,
     task_bom_capitals_crawl,
     task_catchup_check,
+    task_catchup_days,
     task_clean_tmp_dir,
     task_export_daily_monthly,
     task_export_energy,
@@ -222,6 +223,14 @@ class WorkerSettings:
             task_clean_tmp_dir,
             hour=1,
             minute=0,
+            timeout=None,
+            unique=True,
+        ),
+        # catchup
+        cron(
+            task_catchup_days,
+            minute=15,
+            second=0,
             timeout=None,
             unique=True,
         ),
