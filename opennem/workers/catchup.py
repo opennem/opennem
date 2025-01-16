@@ -6,6 +6,7 @@ It monitors the last seen times for facilities and initiates crawlers and aggreg
 when data gaps are detected.
 """
 
+import asyncio
 import logging
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
