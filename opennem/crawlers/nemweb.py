@@ -29,8 +29,12 @@ async def process_nemweb_entry(crawler: CrawlerDefinition, entry: DirlistingEntr
         elif entry.file_size and entry.file_size > 100_000:
             controller_return = await parse_aemo_url_optimized(entry.link)  # type: ignore
         else:
-            ts = await parse_aemo_url(entry.link)
-            controller_return = await store_aemo_tableset(ts)
+            try:
+                ts = await parse_aemo_url(entry.link)
+                controller_return = await store_aemo_tableset(ts)
+            except Exception as e:
+                logger.error(f"Error parsing {entry.link}: {e}")
+                return None
     except Exception as e:
         logger.error(f"Processing error: {e}")
         raise e
