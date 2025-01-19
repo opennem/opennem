@@ -39,7 +39,7 @@ from opennem.exporter.facilities import export_facilities_static
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_today_opennem
-from opennem.workers.catchup import catchup_days, run_catchup_check
+from opennem.workers.catchup import catchup_last_intervals, run_catchup_check
 from opennem.workers.energy import process_energy_last_intervals
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
@@ -253,4 +253,4 @@ async def task_catchup_check(ctx) -> None:
 @logfire.instrument("task_catchup_days")
 async def task_catchup_days(ctx) -> None:
     """Run a catchup for the last 24 hours"""
-    await catchup_days(days=1)
+    await catchup_last_intervals(num_intervals=14)

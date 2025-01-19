@@ -35,6 +35,7 @@ from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM
 from opennem.workers.energy import process_energy_last_intervals
 from opennem.workers.facility_data_seen import update_facility_seen_range
+from opennem.workers.incident import create_incident, has_active_incident, resolve_incident
 
 logger = logging.getLogger("opennem.workers.catchup")
 
@@ -93,6 +94,11 @@ async def run_catchup_check(max_gap_minutes: int = 30) -> None:
     Args:
         max_gap_minutes: Maximum allowable gap in minutes before triggering catchup
     """
+    # Check if there's already an active incident
+    if await has_active_incident():
+        logger.info("Skipping catchup check - there is already an active incident")
+        return
+
     has_gap, last_seen = await check_facility_data_gaps(max_gap_minutes=max_gap_minutes)
 
     if not has_gap:
@@ -104,6 +110,9 @@ async def run_catchup_check(max_gap_minutes: int = 30) -> None:
         return
 
     datetime_now = datetime.now(ZoneInfo("Australia/Brisbane")).replace(tzinfo=None)
+
+    # Create a new incident
+    await create_incident(start_time=datetime_now, last_seen=last_seen)
 
     # Alert about the gap
     gap_msg = f"[{settings.env.upper()}] Data gap detected - Last seen: {last_seen}, Current time: {datetime_now}"
@@ -167,8 +176,34 @@ async def run_catchup_check(max_gap_minutes: int = 30) -> None:
     # run facility aggregate updates
     await run_update_facility_aggregate_last_interval(num_intervals=num_intervals)
 
+    # Check if the gap is now resolved
+    has_gap, _ = await check_facility_data_gaps(max_gap_minutes=max_gap_minutes)
+
+    if not has_gap:
+        # Mark the incident as resolved
+        resolution_time = datetime.now(ZoneInfo("Australia/Brisbane")).replace(tzinfo=None)
+        await resolve_incident(resolution_time)
+
+        # Send resolution notification
+        resolution_msg = f"[{settings.env.upper()}] Data gap resolved at {resolution_time}"
+        logger.info(resolution_msg)
+        try:
+            await slack_message(
+                webhook_url=settings.slack_hook_monitoring,
+                message=resolution_msg,
+                tag_users=settings.slack_admin_alert,
+            )
+        except Exception as e:
+            logger.error(f"Failed to send resolution Slack alert: {e}")
+
 
 async def catchup_days(days: int = 1):
+    """Run a catchup for the last 24 hours"""
+
+    await catchup_last_intervals(num_intervals=days * 12 * 24)
+
+
+async def catchup_last_intervals(num_intervals: int = 12):
     """Run a catchup for the last 24 hours"""
 
     crawlers = [
@@ -180,11 +215,11 @@ async def catchup_days(days: int = 1):
     ]
 
     for crawler in crawlers:
-        await run_crawl(crawler, latest=False, limit=12 * 24 * days)
+        await run_crawl(crawler, latest=False, limit=num_intervals)
 
-    await process_energy_last_intervals(num_intervals=12 * 24 * days)
+    await process_energy_last_intervals(num_intervals=num_intervals)
 
-    await update_facility_aggregate_last_hours(hours_back=24 * days)
+    await update_facility_aggregate_last_hours(hours_back=num_intervals / 12)
 
     await asyncio.gather(
         run_export_power_latest_for_network(network=NetworkNEM), run_export_power_latest_for_network(network=NetworkAU)
@@ -204,4 +239,4 @@ if __name__ == "__main__":
     import asyncio
 
     # asyncio.run(run_catchup_check(max_gap_minutes=15))
-    asyncio.run(catchup_days(days=1))
+    asyncio.run(catchup_last_intervals(num_intervals=1))
