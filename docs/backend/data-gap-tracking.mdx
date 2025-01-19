@@ -1,0 +1,75 @@
+---
+title: Data Gap Tracking
+description: Documentation for the data gap incident tracking system
+icon: clock-gap
+---
+
+# Data Gap Tracking
+
+The OpenNEM system includes functionality to track data gaps in facility data. This helps prevent multiple catchup processes from running simultaneously and provides a history of data gap incidents.
+
+## Overview
+
+When a data gap is detected (defined as no new data being received for a configurable period), the system:
+
+1. Creates a new data gap incident record in Redis
+2. Runs the catchup process to attempt to fill the gap
+3. Marks the incident as resolved once data flow resumes
+4. Archives the incident for historical tracking
+
+## Implementation
+
+The data gap tracking system uses Redis to store both active and historical incidents. Each incident contains:
+
+- Start time: When the gap was first detected
+- Last seen time: The last time data was seen before the gap
+- Resolution status: Whether the gap has been resolved
+- Resolution time: When the gap was resolved (if applicable)
+
+### Redis Keys
+
+The system uses the following Redis key patterns:
+
+- `opennem:datagap:active`: The currently active incident (if any)
+- `opennem:datagap:archive:<timestamp>`: Historical archived incidents
+
+### Preventing Duplicate Catchups
+
+Before starting a new catchup process, the system checks for any active incidents. If an incident is already being handled, the new catchup process is skipped to prevent duplicate work.
+
+## Configuration
+
+The data gap detection threshold is configured via the `max_gap_minutes` parameter in the `run_catchup_check` function. By default, this is set to 30 minutes.
+
+## Monitoring
+
+Data gap incidents are logged and notifications are sent via Slack when:
+
+- A new data gap is detected
+- A data gap is resolved
+
+The notifications include:
+- The environment (e.g. PROD, DEV)
+- Last seen timestamp
+- Current time
+- Gap duration
+
+## Code Example
+
+Here's an example of how the system handles a data gap:
+
+```python
+# Check for data gaps
+has_gap, last_seen = await check_facility_data_gaps(max_gap_minutes=30)
+
+if has_gap:
+    # Create incident record
+    await create_incident(start_time=datetime.now(), last_seen=last_seen)
+
+    # Run catchup processes...
+
+    # Check if resolved
+    has_gap, _ = await check_facility_data_gaps(max_gap_minutes=30)
+    if not has_gap:
+        await resolve_incident(resolution_time=datetime.now())
+```
