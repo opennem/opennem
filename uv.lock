@@ -3912,8 +3912,8 @@ name = "taskgroup"
 version = "0.2.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "exceptiongroup" },
-    { name = "typing-extensions" },
+    { name = "exceptiongroup", marker = "python_full_version < '3.11'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/f0/8d/e218e0160cc1b692e6e0e5ba34e8865dbb171efeb5fc9a704544b3020605/taskgroup-0.2.2.tar.gz", hash = "sha256:078483ac3e78f2e3f973e2edbf6941374fbea81b9c5d0a96f51d297717f4752d", size = 11504 }
 wheels = [
@@ -4633,7 +4633,4 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/f6/2f/3d346dcf2c525f1c3e4b0efebf653cc1da69f287bc4084391fb3a449f691/zstd-1.5.5.1-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:edea52a0109f48fd46f4763689d3d356dcafd20ddf6789c559a1bd2e62b40a32", size = 1930928 },
     { url = "https://files.pythonhosted.org/packages/a2/f3/c7d49044609ad59bf4e09cf182215474b229128514885f1f0db82386c5a8/zstd-1.5.5.1-cp311-cp311-win32.whl", hash = "sha256:88410481209520298ec4430e0d1d57e004c45e0b27c3035674fb182ccd2d8b7b", size = 150758 },
     { url = "https://files.pythonhosted.org/packages/af/39/6314d344793ca78556832b281c4a4916362bfca0943ced3eff25221b5385/zstd-1.5.5.1-cp311-cp311-win_amd64.whl", hash = "sha256:dce18aaefbacf8b133367be86beec670baf68c0420bfcca49be08dbdbf933db6", size = 167971 },
-    { url = "https://files.pythonhosted.org/packages/e4/1c/b86aeee12cc1edd59f5a2aae7c15c9651f92ff2de59f2eed9b54f3571954/zstd-1.5.5.1-pp27-pypy_73-macosx_10_14_x86_64.whl", hash = "sha256:c63f916732e3e309e49ec95e7a0af5d37ff1321f3df2aac10e507bd2b56fceda", size = 279624 },
-    { url = "https://files.pythonhosted.org/packages/50/3c/d0064d52f83ef0b0927ca38a117df1dc413312499f409fcc6314208e2e7b/zstd-1.5.5.1-pp27-pypy_73-manylinux1_x86_64.whl", hash = "sha256:50d4850d758bb033df50722cc13ed913b2afcd5385250be4f3ffb79a26b319c3", size = 253751 },
-    { url = "https://files.pythonhosted.org/packages/99/08/222f3f732c4af90239c0f09703d8b82089846451621d27194467f864cf85/zstd-1.5.5.1-pp27-pypy_73-manylinux2010_x86_64.whl", hash = "sha256:0412d666515e78a91ada7e2d78e9dd6b25ddda1b41623b145b99653275c7f3ce", size = 253752 },
 ]
