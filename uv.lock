@@ -2373,7 +2373,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "aioboto3", specifier = ">=13.1.1,<14.0.0" },
+    { name = "aioboto3", specifier = "==13.3.0" },
     { name = "alembic", specifier = ">=1.6.2,<2.0.0" },
     { name = "arq", specifier = ">=0.26.1,<1.0.0" },
     { name = "asgiref", specifier = ">=3.8.1,<4.0.0" },

@@ -55,7 +55,7 @@ dependencies = [
     "chardet<6.0.0,>=5.2.0",
     "tqdm<5.0.0,>=4.66.5",
     "logfire[asyncpg,fastapi,httpx,redis,requests,sqlalchemy,system-metrics]",
-    "aioboto3<14.0.0,>=13.1.1",
+    "aioboto3==13.3.0",
     "arq>=0.26.1,<1.0.0",
     "asyncclick<9.0.0.0,>=8.1.7.2",
     "openai<2.0.0,>=1.43.1",
