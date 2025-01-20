@@ -6,6 +6,7 @@ import logging
 import logfire
 from arq import Retry
 
+from opennem import settings
 from opennem.aggregates.facility_interval import (
     run_facility_aggregate_updates,
     run_update_facility_aggregate_last_interval,
@@ -240,7 +241,7 @@ async def task_run_market_notice_update(ctx):
 @logfire.instrument("task_catchup_check")
 async def task_catchup_check(ctx) -> None:
     """Check for data gaps and trigger catchup processes if needed"""
-    await run_catchup_check()
+    await run_catchup_check(max_gap_minutes=settings.catchup_max_gap_minutes)
 
 
 @logfire.instrument("task_catchup_days")
