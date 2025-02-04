@@ -50,7 +50,7 @@ logger = logging.getLogger("opennem")
 
 # Module variables
 
-__version__ = "4.0.0rc20.dev2"
+__version__ = "4.0.0rc20.dev3"
 
 # console
 console = Console()
@@ -131,4 +131,4 @@ from opennem.core.feature_flags import get_list_of_enabled_features  # noqa: E40
 
 # Log current timezone to console
 console.print(f" * Current timezone: {datetime.now().astimezone().tzinfo} (settings: {settings.timezone})")
-console.print(f" * Enabled feature flags: {", ".join(get_list_of_enabled_features())}")
+console.print(f" * Enabled feature flags: {', '.join(get_list_of_enabled_features())}")
