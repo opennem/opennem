@@ -109,7 +109,7 @@ async def _generate_battery_unit_map() -> dict[str, BatteryUnitMap]:
     return unit_map
 
 
-async def process_battery_history(facility_code: str | None = None):
+async def process_battery_history(facility_code: str | None = None, clear_old_records: bool = False):
     """This processes the history of facility_scada and updates the battery units so that
     bidirectional units are split into two separate units
     """
@@ -136,21 +136,23 @@ async def process_battery_history(facility_code: str | None = None):
     async with get_write_session() as session:
         for unit in unit_map.values():  # type: ignore  # noqa: B020
             # clear out old records
-            result = await session.execute(
-                text(
-                    "delete from facility_scada where facility_code in (:discharge_facility_code, :charge_facility_code) "
-                    "and interval >= (select min(interval) from facility_scada where facility_code=:bidirectional_facility_code);"
-                ),
-                {
-                    "discharge_facility_code": unit.discharge_unit,
-                    "charge_facility_code": unit.charge_unit,
-                    "bidirectional_facility_code": unit.unit,
-                },
-            )
+            if clear_old_records:
+                result = await session.execute(
+                    text(
+                        "delete from facility_scada where facility_code in (:discharge_facility_code, :charge_facility_code) "
+                        "and interval >= (select min(interval) from facility_scada where "
+                        "facility_code=:bidirectional_facility_code);"
+                    ),
+                    {
+                        "discharge_facility_code": unit.discharge_unit,
+                        "charge_facility_code": unit.charge_unit,
+                        "bidirectional_facility_code": unit.unit,
+                    },
+                )
 
-            logger.info(
-                f"Deleted {unit.discharge_unit} and {unit.charge_unit} records newer than {unit.unit}: {result.rowcount}"  # type: ignore
-            )
+                logger.info(
+                    f"Deleted {unit.discharge_unit} and {unit.charge_unit} records newer than {unit.unit}: {result.rowcount}"  # type: ignore
+                )
 
             await session.execute(
                 query_load_template,

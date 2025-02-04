@@ -143,13 +143,9 @@ def analyze_generation_records(
       WHERE
         network_id in (
             '{network.code.upper()}'
-            {
-                ', ' + ', '.join([f"'{i.code.upper()}'" for i in network.subnetworks])
-                if network.subnetworks
-                else ''
-            }
+            {", " + ", ".join([f"'{i.code.upper()}'" for i in network.subnetworks]) if network.subnetworks else ""}
         ) and
-        network_region in ({', '.join([f"'{i}'" for i in (network.regions or [])])})
+        network_region in ({", ".join([f"'{i}'" for i in (network.regions or [])])})
       GROUP BY
         {group_by_clause}
     ),

@@ -243,7 +243,7 @@ class OpennemDataSet(BaseConfig):
                 _duplicate_ids = ", ".join(_id_duplicates)
                 _msg = f"{len(_id_values)} ids and {len(_duplicate_ids)} duplicates: {_duplicate_ids} "
 
-            raise ValueError(f"OpennemDataSet has duplicate id{"s" if len(_id_duplicates) > 1 else ""}: {_msg}")
+            raise ValueError(f"OpennemDataSet has duplicate id{'s' if len(_id_duplicates) > 1 else ''}: {_msg}")
 
         # validate end and start datetimes.
         # if they are not set, set them to the first and last values

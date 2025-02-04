@@ -113,7 +113,7 @@ def get_record_description(
         if milestone.network_region
         else None,
         # value
-        f"({round(milestone.value, 2) if milestone.value else ""} {milestone.unit.value if milestone.unit else ""})"
+        f"({round(milestone.value, 2) if milestone.value else ''} {milestone.unit.value if milestone.unit else ''})"
         if include_value
         else None,
     ]

@@ -242,7 +242,7 @@ async def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
 
                 logger.debug(f"Inserted {len(chunk)} records for NEM price")
             except Exception as e:
-                logger.error(f"Error inserting NEM price records (chunk {i//chunk_size + 1})")
+                logger.error(f"Error inserting NEM price records (chunk {i // chunk_size + 1})")
                 logger.error(e)
                 cr.errors += len(chunk)
                 await session.rollback()

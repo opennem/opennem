@@ -87,6 +87,7 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
 
         session.add(facility_db)
         # await session.commit()
+        # continue
 
         for unit in facility.units:
             unit_db = next((x for x in facility_db.units if x.code == unit.code), None)
@@ -139,9 +140,8 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
 
             unit_db.approved = True
 
-        session.add(facility_db)
-
         try:
+            session.add(facility_db)
             await session.commit()
             update_type = "New" if facility_new else "Updated"
 
