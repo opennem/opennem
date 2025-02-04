@@ -216,6 +216,8 @@ async def get_milestone_record_ids(
 
     if network_region:
         query = query.where(Milestones.network_region.in_(network_region))
+    else:
+        query = query.where(Milestones.network_region == None)  # noqa: E711
 
     if network_schemas:
         network_codes = [schema.code for schema in network_schemas]

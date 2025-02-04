@@ -114,6 +114,9 @@ async def run_catchup_check(max_gap_minutes: int = 30) -> None:
     # Create a new incident
     await create_incident(start_time=datetime_now, last_seen=last_seen)
 
+    # Create a new incident
+    await create_incident(start_time=datetime_now, last_seen=last_seen)
+
     # Alert about the gap
     gap_msg = (
         f"[{settings.env.upper()}] Data gap detected - Last seen: {last_seen.replace(tzinfo=None, microsecond=None)},",
@@ -242,4 +245,4 @@ if __name__ == "__main__":
     import asyncio
 
     # asyncio.run(run_catchup_check(max_gap_minutes=15))
-    asyncio.run(catchup_last_intervals(num_intervals=1))
+    asyncio.run(catchup_days(days=7))

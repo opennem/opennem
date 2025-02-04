@@ -44,7 +44,7 @@ def run_server(
     }
 
     # Configure development settings
-    if settings.debug or settings.is_dev:
+    if settings.debug or settings.is_local:
         config_options.update(
             {
                 "use_reloader": True,
@@ -66,7 +66,8 @@ def run_server(
     logger.info(f"Running Hypercorn server on {host}:{port}")
 
     try:
-        run(config)
+        exit_code = run(config)
+        logger.info(f"Server exited with code {exit_code}")
     except KeyboardInterrupt:
         logger.info("Server stopped by user")
     except Exception as e:
@@ -74,16 +75,11 @@ def run_server(
 
 
 def serve():
-    try:
-        run_server(
-            host=settings.api_server_host,
-            port=settings.api_server_port,
-            workers=settings.api_server_workers,
-        )
-    except KeyboardInterrupt:
-        logger.info("User interrupted")
-    except Exception as e:
-        logger.error(e)
+    run_server(
+        host=settings.api_server_host,
+        port=settings.api_server_port,
+        workers=settings.api_server_workers,
+    )
 
 
 if __name__ == "__main__":

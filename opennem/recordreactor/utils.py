@@ -2,6 +2,7 @@
 RecordReactor utils
 """
 
+import logging
 import operator
 
 from opennem.core.fueltech_group import get_fueltech_group
@@ -17,6 +18,8 @@ from opennem.recordreactor.schema import (
 )
 from opennem.schema.units import UnitDefinition
 from opennem.utils.seasons import map_date_start_to_season
+
+logger = logging.getLogger("opennem.recordreactor.utils")
 
 
 def translate_bucket_size_to_english(bucket_size: str) -> str:
@@ -59,12 +62,21 @@ def check_milestone_is_new(milestone: MilestoneRecordSchema, milestone_previous:
     Returns:
         bool: True if the milestone is new, False if it has changed
     """
+    if milestone.interval <= milestone_previous.interval:
+        logger.warning(f"Skipping milestone {milestone.record_id} because it is not greater than the previous milestone")
+        return False
+
     _op = operator.gt if milestone.aggregate == MilestoneAggregate.high else operator.lt
 
     if not milestone.value:
         return False
 
-    return _op(milestone.value, milestone_previous.value)
+    #
+
+    # @NOTE we round to 0 for all metrics except proportion
+    round_to = 2 if milestone.metric in [MilestoneType.proportion] else 0
+
+    return _op(round(milestone.value, round_to), round(milestone_previous.value, round_to))
 
 
 def get_milestone_fueltech_label(fueltech: MilestoneFueltechGrouping) -> str:

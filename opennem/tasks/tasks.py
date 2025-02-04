@@ -12,8 +12,10 @@ from opennem.aggregates.facility_interval import (
     run_update_facility_aggregate_last_interval,
     update_facility_aggregate_last_hours,
 )
+from opennem.aggregates.market_summary import run_market_summary_aggregate_to_now
 from opennem.aggregates.network_demand import run_aggregates_demand_network_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
+from opennem.aggregates.unit_intervals import run_unit_intervals_aggregate_to_now
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy
 from opennem.cms.importer import update_database_facilities_from_cms
 from opennem.controllers.export import run_export_energy_all, run_export_energy_for_year
@@ -57,12 +59,20 @@ async def task_nem_interval_check(ctx) -> None:
         dispatch_scada = await run_crawl(AEMONNemwebDispatchScada, latest=True)
         _ = await run_crawl(AEMONemwebTradingIS, latest=True)
 
-    if not dispatch_scada.inserted_records:
-        logger.warning("No new data from crawlers")
-        raise Retry(defer=ctx["job_try"] * 15)
+        if not dispatch_scada.inserted_records:
+            logfire.warning("No new data from crawlers")
+            raise Retry(defer=ctx["job_try"] * 15)
 
     # update facility aggregates
     await run_update_facility_aggregate_last_interval(num_intervals=3)
+
+    # update aggregates
+    # update market summary
+    await run_market_summary_aggregate_to_now()
+    await run_unit_intervals_aggregate_to_now()
+
+    # update energy
+    await process_energy_last_intervals(num_intervals=3)
 
     # run flows
     run_flows_for_last_days(days=1, network=NetworkNEM)
@@ -70,9 +80,6 @@ async def task_nem_interval_check(ctx) -> None:
     await asyncio.gather(
         run_export_power_latest_for_network(network=NetworkNEM), run_export_power_latest_for_network(network=NetworkAU)
     )
-
-    # update energy
-    await process_energy_last_intervals(num_intervals=3)
 
 
 @logfire.instrument("task_nem_per_day_check")

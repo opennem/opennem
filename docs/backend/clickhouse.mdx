@@ -1,0 +1,107 @@
+---
+title: 'ClickHouse Integration'
+description: 'OpenNEM ClickHouse Integration for Time Series Data'
+icon: 'database'
+sidebarTitle: 'ClickHouse'
+---
+
+# ClickHouse Integration
+
+OpenNEM uses ClickHouse for efficient storage and querying of time series data. This document describes the ClickHouse integration, table schemas, and usage patterns.
+
+## Configuration
+
+ClickHouse connection is configured through environment variables:
+
+```bash
+CLICKHOUSE_URL=clickhouse://user:pass@host:port/database
+```
+
+The default URL is `clickhouse://localhost:9000/opennem` if not specified.
+
+## Tables
+
+### Market Summary
+
+The market summary table stores aggregated market data including price, demand, and energy calculations.
+
+```sql
+CREATE TABLE market_summary (
+    interval DateTime64(3),
+    network_id String,
+    network_region String,
+    price Nullable(Float64),
+    demand Nullable(Float64),
+    demand_total Nullable(Float64),
+    demand_energy Nullable(Float64),
+    demand_total_energy Nullable(Float64)
+)
+ENGINE = MergeTree()
+ORDER BY (interval, network_id, network_region)
+PARTITION BY toYYYYMM(interval)
+```
+
+#### Materialized Views
+
+Two materialized views provide pre-aggregated data for common queries:
+
+1. `market_summary_daily_mv`: Daily aggregations including average/min/max values and energy sums
+2. `market_summary_monthly_mv`: Monthly aggregations including average/min/max values and energy sums
+
+## Usage
+
+### Energy Calculation
+
+Energy values are calculated from demand readings using the average between current and previous intervals:
+
+```python
+demand_energy = (current_demand + previous_demand) / 2 / intervals_per_hour
+```
+
+### Data Processing
+
+Data is processed in two ways:
+
+1. Real-time processing of new intervals
+2. Backlog processing for historical data
+
+The system handles both single interval updates and bulk historical data loading efficiently.
+
+## Query Examples
+
+### Daily Aggregations
+
+```sql
+SELECT
+    date,
+    network_id,
+    network_region,
+    price_avg,
+    demand_avg,
+    demand_energy_sum,
+    demand_total_energy_sum
+FROM market_summary_daily_mv
+WHERE date BETWEEN '2024-01-01' AND '2024-01-31'
+```
+
+### Monthly Aggregations
+
+```sql
+SELECT
+    month,
+    network_id,
+    network_region,
+    price_avg,
+    demand_avg,
+    demand_energy_sum,
+    demand_total_energy_sum
+FROM market_summary_monthly_mv
+WHERE month BETWEEN '2024-01-01' AND '2024-12-31'
+```
+
+## Performance Considerations
+
+- Data is partitioned by month for efficient historical queries
+- The table uses the MergeTree engine for high insert and query performance
+- Materialized views maintain pre-aggregated data for common query patterns
+- Batch processing is used for historical data loading

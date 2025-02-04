@@ -55,4 +55,3 @@ def setup_sentry(sentry_url: str, environment: str) -> None:
         sentry_options["profiles_sample_rate"] = 0.1
 
     sentry_sdk.init(**{**sentry_options, "dsn": sentry_url})
-    logger.info(f"Sentry enabled in {environment} mode")

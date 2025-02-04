@@ -73,6 +73,31 @@ def get_cms_unit(unit_code: str) -> UnitSchema:
     return UnitSchema(**res["result"][0])
 
 
+def get_unit_factors() -> list[dict]:
+    """
+    Get unit factors from the CMS
+    """
+    query = """*[_type == "facility" && !(_id in path("drafts.**"))] {
+        _id,
+        _createdAt,
+        _updatedAt,
+        code,
+        name,
+        "network_id": upper(network->code),
+        "network_region": upper(region->code),
+        units[]-> {
+            code,
+            "fueltech_id": fuel_technology->code,
+            "emissions_factor_co2": emissions_factor_co2,
+            "emissions_factor_source": emissions_factor_source
+        }
+    }"""
+
+    res = sanity_client.query(query)
+
+    return res["result"]
+
+
 def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]:
     """
     Get facilities from the CMS

@@ -85,6 +85,9 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
         # if facility_db.location and (facility_db.location.lat and facility_db.location.lng):
         # facility_db.geom = f"SRID=4326;POINT({facility_db.location.lng} {facility_db.location.lat})"
 
+        session.add(facility_db)
+        # await session.commit()
+
         for unit in facility.units:
             unit_db = next((x for x in facility_db.units if x.code == unit.code), None)
 
@@ -95,7 +98,7 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 unit_db_lookup_mismatch.station_id = facility_db.id
                 unit_db = unit_db_lookup_mismatch
                 record_updated = True
-                logger.info(f"Moved unit {unit.code} to facility {facility.code}")
+                logger.info(f"Moved unit {unit.code} to facility {facility.code} ({facility_db.id})")
 
             if not unit_db:
                 unit_db = Unit(
@@ -229,5 +232,5 @@ if __name__ == "__main__":
     import asyncio
 
     # opennem_stations = get_opennem_stations()
-    # asyncio.run(update_database_facilities_from_cms(send_slack=False))
-    asyncio.run(update_facility_from_cms(facility_code="CROOKWF3", send_slack=False))
+    asyncio.run(update_database_facilities_from_cms(send_slack=False))
+    # asyncio.run(update_facility_from_cms(facility_code="0BSSF", send_slack=False))

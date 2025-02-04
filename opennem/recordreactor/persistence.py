@@ -28,7 +28,7 @@ def _chunks(lst: list, n: int):
         yield lst[i : i + n]
 
 
-async def persist_milestones(milestones: list[MilestoneRecordSchema]) -> int:
+async def check_and_persist_milestones_chunked(milestones: list[MilestoneRecordSchema]) -> int:
     """
     Persist milestones using bulk insert
 
@@ -44,16 +44,45 @@ async def persist_milestones(milestones: list[MilestoneRecordSchema]) -> int:
     if not milestones:
         return 0
 
-    logger.info(f"Bulk persisting {len(milestones)} milestones")
+    # ensure milestones are sorted from earliest to latest
+    milestones = sorted(milestones, key=lambda x: x.interval)
 
     # Pre-process records into a list of dictionaries for bulk insert
     milestone_records = []
 
+    # get the current milestone state
+    milestone_state = await get_current_milestone_state()
+
+    # check for duplicate primary keys
+    primary_keys: list[tuple[str, datetime]] = []
+
     for record in milestones:
-        if not record.value or not record.instance_id:
-            logger.warning(f"Skipping milestone {record.record_id} because it has no value or instance_id")
+        if record.value is None:
+            logger.warning(f"Skipping milestone {record.record_id} because it has no value")
             continue
 
+        if record.instance_id is None:
+            logger.warning(f"Skipping milestone {record.record_id} because it has no instance_id")
+            continue
+
+        # check if the milestone is already in the state
+        milestone_prev: MilestoneRecordOutputSchema | None = None
+
+        if record.record_id in milestone_state:
+            milestone_prev = milestone_state[record.record_id]
+
+        if milestone_prev and not check_milestone_is_new(record, milestone_prev):
+            continue
+
+        # check primary key to make sure we don't have duplicates
+        primary_key = (record.record_id, record.interval)
+
+        if primary_key in primary_keys:
+            raise ValueError(f"Duplicate primary key: {primary_key}")
+
+        primary_keys.append(primary_key)
+
+        # get the new milestone record details
         description = get_record_description(record)
         significance = calculate_milestone_significance(record)
 
@@ -103,7 +132,6 @@ async def persist_milestones(milestones: list[MilestoneRecordSchema]) -> int:
 
                 await session.execute(stmt)
                 total_inserted += len(chunk)
-                logger.debug(f"Inserted chunk of {len(chunk)} records")
 
             except Exception as e:
                 logger.error(f"Error during bulk milestone insertion: {str(e)}")
@@ -140,6 +168,10 @@ async def check_and_persist_milestones(
     if not milestones:
         return
 
+    # ensure milestones are sorted from earliest to latest
+    milestones = sorted(milestones, key=lambda x: x.interval)
+
+    # get the current milestone state
     milestone_state = await get_current_milestone_state()
 
     async with get_write_session() as session:
