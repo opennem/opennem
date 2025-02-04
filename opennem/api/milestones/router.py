@@ -93,7 +93,7 @@ async def get_milestones(
 
     if network:
         if not all(network in network_supported_ids for network in network):
-            raise HTTPException(status_code=400, detail=f"Invalid network: {", ".join(network)}")
+            raise HTTPException(status_code=400, detail=f"Invalid network: {', '.join(network)}")
 
         network_schemas = [n for n in MILESTONE_SUPPORTED_NETWORKS if n.code in network]
 
@@ -109,7 +109,7 @@ async def get_milestones(
         network_region = [n.upper() for n in network_region]
 
         if not all(network_region in network_supported_regions for network_region in network_region):
-            raise HTTPException(status_code=400, detail=f"Invalid network region: {", ".join(network_region)}")
+            raise HTTPException(status_code=400, detail=f"Invalid network region: {', '.join(network_region)}")
 
     # filter by either network or network_region
     if record_filter:
@@ -117,7 +117,7 @@ async def get_milestones(
         if not all(f in supported_networks_and_regions for f in record_filter):
             raise HTTPException(
                 status_code=400,
-                detail=f"Invalid filter: {", ".join(record_filter)} not in {", ".join(supported_networks_and_regions)}",
+                detail=f"Invalid filter: {', '.join(record_filter)} not in {', '.join(supported_networks_and_regions)}",
             )
 
     if period:
@@ -303,7 +303,7 @@ async def api_get_milestone_record_ids(
 
     if network:
         if not all(network in network_supported_ids for network in network):
-            raise HTTPException(status_code=400, detail=f"Invalid network: {", ".join(network)}")
+            raise HTTPException(status_code=400, detail=f"Invalid network: {', '.join(network)}")
 
         network_schemas = [n for n in MILESTONE_SUPPORTED_NETWORKS if n.code in network]
 
@@ -319,7 +319,7 @@ async def api_get_milestone_record_ids(
         network_region = [n.upper() for n in network_region]
 
         if not all(network_region in network_supported_regions for network_region in network_region):
-            raise HTTPException(status_code=400, detail=f"Invalid network region: {", ".join(network_region)}")
+            raise HTTPException(status_code=400, detail=f"Invalid network region: {', '.join(network_region)}")
 
     if significance and (significance_min or significance_max):
         raise HTTPException(status_code=400, detail="Cannot use significance with significance_min or significance_max")

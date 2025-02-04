@@ -50,7 +50,7 @@ async def milestone_aggregate_renewable_power_data(
         JOIN fueltech_group ftg ON ftg.code = ft.fueltech_group_id
         WHERE
             fs.interval = '{date_start}' AND
-            fs.network_id IN ('{network.code.upper()}', {', '.join([f"'{i.code.upper()}'" for i in network.subnetworks])})
+            fs.network_id IN ('{network.code.upper()}', {", ".join([f"'{i.code.upper()}'" for i in network.subnetworks])})
         GROUP BY
             1, 2, 3, 4
         ORDER BY
@@ -113,7 +113,7 @@ async def milestone_aggregate_power_data(
         JOIN fueltech_group ftg ON ftg.code = ft.fueltech_group_id
         WHERE
             fs.interval = '{date_start}' AND
-            fs.network_id IN ('{network.code.upper()}', {', '.join([f"'{i.code.upper()}'" for i in network.subnetworks])})
+            fs.network_id IN ('{network.code.upper()}', {", ".join([f"'{i.code.upper()}'" for i in network.subnetworks])})
         GROUP BY
             1, 2, 3, 4
         ORDER BY

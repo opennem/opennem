@@ -58,7 +58,7 @@ async def refresh_continuous_aggregate(
             await session_ctx.execute(refresh_sql)
             await session_ctx.commit()
 
-        logger.info(f"Successfully refreshed continuous aggregate {aggregate_name.value} " f"from {start_date} to {end_date}")
+        logger.info(f"Successfully refreshed continuous aggregate {aggregate_name.value} from {start_date} to {end_date}")
 
     except Exception as e:
         logger.error(f"Failed to refresh continuous aggregate {aggregate_name.value}: {str(e)}")

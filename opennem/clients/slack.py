@@ -56,7 +56,7 @@ def _slack_tag_list(user_list: list[str]) -> str:
     Returns:
         str: string to tag
     """
-    return " ".join([f"<@{i.strip().lstrip("@")}>" for i in user_list if i])
+    return " ".join([f"<@{i.strip().lstrip('@')}>" for i in user_list if i])
 
 
 async def slack_message(

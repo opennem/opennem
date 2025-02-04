@@ -384,7 +384,7 @@ async def run_market_summary_backlog() -> None:
     logger.info("Processing complete. Summary of inserted data:")
     for network_id, region, count, first, last in result:
         logger.info(
-            f"Network: {network_id}, Region: {region}, Records: {count}, " f"Period: {first.isoformat()} to {last.isoformat()}"
+            f"Network: {network_id}, Region: {region}, Records: {count}, Period: {first.isoformat()} to {last.isoformat()}"
         )
 
 
