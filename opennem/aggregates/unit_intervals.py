@@ -120,7 +120,7 @@ async def _get_unit_interval_data(session: AsyncSession, start_time: datetime, e
         AND u.fueltech_id IS NOT NULL
         AND u.fueltech_id NOT IN ('imports', 'exports', 'interconnector', 'battery')
         AND fs.interval >= :start_time
-        AND fs.interval < :end_time
+        AND fs.interval <= :end_time
     GROUP BY 1,2,3,4,5,6,7,8,9
     ORDER BY 1,2,3,4,5
     """)
@@ -394,12 +394,17 @@ def _backfill_materialized_view(client: any, view: MaterializedView, start_date:
     # Process month by month
     current_date = start_date.replace(day=1)
     while current_date <= end_date:
+        # Calculate next month's first day
         next_month = (current_date.replace(day=1) + timedelta(days=32)).replace(day=1)
+
+        # For the last chunk, use the actual end_date instead of month end
+        chunk_end = min(next_month, end_date + timedelta(days=1))
+
         logger.info(f"Processing month {current_date.strftime('%Y-%m')} for {view.name}")
 
         client.execute(
             view.backfill_query,
-            {"start": current_date, "end": next_month},
+            {"start": current_date, "end": chunk_end},
         )
 
         current_date = next_month
