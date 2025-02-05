@@ -225,10 +225,11 @@ async def process_unit_intervals_backlog(
     """
     current_start = start_date
     client = get_clickhouse_client()
-    _ensure_clickhouse_schema(client)
+    _ensure_clickhouse_schema()
 
-    while current_start < end_date:
-        chunk_end = min(current_start + chunk_size, end_date)
+    while current_start <= end_date:
+        # For the last chunk, ensure we include the full end date
+        chunk_end = min(current_start + chunk_size, end_date + timedelta(minutes=5))
 
         # Get and process data for this chunk
         records = await _get_unit_interval_data(session, current_start, chunk_end)
@@ -477,11 +478,11 @@ if __name__ == "__main__":
     # Run the test
     async def main():
         # _ensure_clickhouse_schema()
-        # await run_unit_intervals_backlog()
+        await run_unit_intervals_backlog()
         # await run_unit_intervals_aggregate_for_last_intervals(num_intervals=12 * 24 * 1)
         # Uncomment to backfill views:
-        # backfill_materialized_views(view="fueltech_intervals_mv")
-        # backfill_materialized_views(view="fueltech_intervals_daily_mv")
+        backfill_materialized_views(view="fueltech_intervals_mv")
+        backfill_materialized_views(view="fueltech_intervals_daily_mv")
         backfill_materialized_views(view="renewable_intervals_mv")
         backfill_materialized_views(view="renewable_intervals_daily_mv")
 
