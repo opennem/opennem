@@ -51,6 +51,7 @@ from opennem.tasks.tasks import (
     task_refresh_from_cms,
     task_run_aggregates_demand_network_days,
     task_update_facility_seen_range,
+    task_update_milestones,
     task_wem_day_crawl,
 )
 from opennem.utils.host import get_hostname
@@ -84,6 +85,14 @@ class WorkerSettings:
             task_nem_interval_check,
             minute=set(range(0, 60, 5)),
             second=50,
+            timeout=None,
+            unique=True,
+        ),
+        # Milestone Updates
+        cron(
+            task_update_milestones,
+            minute={5},  # Run at 5 minutes past every hour
+            second=0,
             timeout=None,
             unique=True,
         ),

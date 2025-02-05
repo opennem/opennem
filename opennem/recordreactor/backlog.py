@@ -13,8 +13,11 @@ from datetime import datetime
 from typing import Any
 
 from clickhouse_driver.client import Client
+from sqlalchemy import func, select
 
+from opennem.db import get_read_session
 from opennem.db.clickhouse import get_clickhouse_client
+from opennem.db.models.opennem import Milestones
 from opennem.queries.utils import list_to_case
 from opennem.recordreactor.persistence import check_and_persist_milestones_chunked
 from opennem.recordreactor.schema import (
@@ -506,7 +509,7 @@ _DEFAULT_METRICS = [
     MilestoneType.price,
     MilestoneType.power,
     MilestoneType.energy,
-    MilestoneType.emissions,
+    # MilestoneType.emissions,
 ]
 
 _DEFAULT_NETWORKS = [
@@ -591,9 +594,33 @@ async def run_milestone_analysis_backlog():
     await run_milestone_analysis(start_date=start_date, end_date=end_date)
 
 
+async def run_update_milestone_analysis_to_now() -> None:
+    """
+    Run milestone analysis from the last recorded milestone to now.
+
+    This function queries the max interval from the milestones table and runs the analysis
+    from that date to the current time.
+    """
+    async with get_read_session() as session:
+        # Get the max interval from milestones table
+        query = select(func.max(Milestones.interval))
+        result = await session.execute(query)
+        last_milestone_date = result.scalar()
+
+        if not last_milestone_date:
+            logger.warning("No existing milestones found. Run full backlog analysis.")
+            return
+
+        logger.info(f"Running milestone analysis from {last_milestone_date} to now")
+        end_date = get_last_completed_interval_for_network(NetworkNEM)
+
+        await run_milestone_analysis(start_date=last_milestone_date, end_date=end_date)
+
+        logger.info("Milestone update analysis complete")
+
+
 if __name__ == "__main__":
     # Run test for last year of data
     import asyncio
-    from datetime import datetime
 
-    asyncio.run(run_milestone_analysis_backlog())
+    asyncio.run(run_update_milestone_analysis_to_now())

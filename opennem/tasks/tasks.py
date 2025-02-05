@@ -254,3 +254,15 @@ async def task_catchup_check(ctx) -> None:
 async def task_catchup_days(ctx) -> None:
     """Run a catchup for the last 24 hours"""
     await catchup_last_intervals(num_intervals=14)
+
+
+async def task_update_milestones() -> None:
+    """
+    Task to update milestone records from the last recorded milestone to now.
+
+    This task runs hourly to find and record any new milestone records that have occurred
+    since the last update.
+    """
+    from opennem.recordreactor.backlog import run_update_milestone_analysis_to_now
+
+    await run_update_milestone_analysis_to_now()
