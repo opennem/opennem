@@ -264,6 +264,9 @@ async def task_update_milestones() -> None:
     This task runs hourly to find and record any new milestone records that have occurred
     since the last update.
     """
+    if not settings.run_milestones:
+        return
+
     from opennem.recordreactor.backlog import run_update_milestone_analysis_to_now
 
     await run_update_milestone_analysis_to_now()

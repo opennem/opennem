@@ -123,11 +123,24 @@ async def process_battery_history(facility_code: str | None = None, clear_old_re
         unit_map = {facility_code: unit_map[facility_code]}
 
     query_load_template = text(
-        "update facility_scada set facility_code = :new_facility_code where facility_code = :old_facility_code and generated < 0 "
+        "update facility_scada set facility_code = :new_facility_code, generated = abs(generated), energy = abs(energy) "
+        "where facility_code = :old_facility_code and generated < 0 "
+        # "on conflict (network_id, interval, facility_code, is_forecast) do nothing"
+    )
+
+    query_load_aggregate_template = text(
+        "update at_facility_intervals set unit_code = :new_facility_code, generated = abs(generated), energy = abs(energy) "
+        "where unit_code = :old_facility_code and generated < 0 "
         # "on conflict (network_id, interval, facility_code, is_forecast) do nothing"
     )
 
     query_generator = text(
+        "update facility_scada set facility_code = :new_facility_code where facility_code = :old_facility_code "
+        "and generated >= 0 "
+        # "on conflict (network_id, interval, facility_code, is_forecast) do nothing "
+    )
+
+    query_aggregate_generator = text(
         "update facility_scada set facility_code = :new_facility_code where facility_code = :old_facility_code "
         "and generated >= 0 "
         # "on conflict (network_id, interval, facility_code, is_forecast) do nothing "
@@ -159,7 +172,18 @@ async def process_battery_history(facility_code: str | None = None, clear_old_re
                 {"new_facility_code": unit.charge_unit, "old_facility_code": unit.unit},
             )
 
+            await session.execute(
+                query_load_aggregate_template,
+                {"new_facility_code": unit.charge_unit, "old_facility_code": unit.unit},
+            )
+
             logger.info(f"Updated {unit.unit} charge to {unit.charge_unit}")
+
+            await session.execute(
+                query_aggregate_generator,
+                {"new_facility_code": unit.discharge_unit, "old_facility_code": unit.unit},
+            )
+
             await session.execute(
                 query_generator,
                 {"new_facility_code": unit.discharge_unit, "old_facility_code": unit.unit},

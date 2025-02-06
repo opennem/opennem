@@ -5,6 +5,7 @@ and various other methods for persisting APVI data
 """
 
 import logging
+from datetime import timedelta
 
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
@@ -31,7 +32,13 @@ async def store_apvi_forecastset(forecast_set: APVIForecastSet) -> ControllerRet
     cr.total_records = len(forecast_set.intervals)
 
     for _rec in forecast_set.intervals:
+        if _rec.state.upper() != "WA":
+            continue
+
         _rec.facility_code = f"ROOFTOP_APVI_{_rec.state.upper()}"
+
+        # @NOTE set WA to WEM time
+        _rec.interval = _rec.interval - timedelta(hours=2)
 
         records_to_store.append({**_rec.dict(exclude={"state"}), "is_forecast": False})
         cr.processed_records += 1
