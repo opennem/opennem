@@ -347,12 +347,10 @@ async def run_market_summary_backlog() -> None:
 
     # Calculate date range for the past week
     end_date = get_last_completed_interval_for_network(network=NetworkNEM)
-    # start_date = NetworkNEM.data_first_seen.replace(tzinfo=None)
-    start_date = datetime.fromisoformat("2025-01-01 00:00:00")
+    start_date = NetworkNEM.data_first_seen.replace(tzinfo=None)
 
     # Ensure ClickHouse schema exists
     client = get_clickhouse_client()
-    _ensure_clickhouse_schema(client)
 
     # Process the data
     async with get_write_session() as session:
