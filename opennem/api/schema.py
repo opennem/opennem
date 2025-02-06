@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_today_opennem
 from opennem.utils.version import get_version
 
@@ -50,3 +51,10 @@ class APIV4ResponseSchema(ApiBase):
     error: str | None = None
     data: list = []
     total_records: int | None = None
+
+
+API_SUPPORTED_NETWORKS = {
+    "NEM": NetworkNEM,
+    "WEM": NetworkWEM,
+    "AU": NetworkAU,
+}

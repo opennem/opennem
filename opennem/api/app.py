@@ -24,6 +24,7 @@ from starlette.requests import Request
 
 from opennem import settings
 from opennem.api import throttle
+from opennem.api.data.router import router as data_router
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
 from opennem.api.feedback.router import router as feedback_router
 from opennem.api.keys import ApiAuthorization, api_protected, unkey_client
@@ -176,6 +177,7 @@ app.include_router(station_router, tags=["Facilities"], prefix="/facility")
 app.include_router(feedback_router, tags=["Feedback"], prefix="/feedback", include_in_schema=False)
 app.include_router(milestones_router, tags=["Milestones"], prefix="/milestones", include_in_schema=False)
 app.include_router(webhooks_router, tags=["Webhooks"], prefix="/webhooks", include_in_schema=False)
+app.include_router(data_router, tags=["Data"], prefix="/data")
 
 # new v4 routes
 try:
