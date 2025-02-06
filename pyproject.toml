@@ -73,6 +73,7 @@ dependencies = [
     "hypercorn>=0.17.3",
     "clickhouse-driver>=0.2.7",
     "clickhouse-sqlalchemy>=0.3.0",
+    "opentelemetry-sdk<1.30.0",
 ]
 
 [tool.uv]
