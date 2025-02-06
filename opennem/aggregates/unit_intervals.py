@@ -477,10 +477,11 @@ def backfill_materialized_views(view: MaterializedView | str | None = None) -> N
 if __name__ == "__main__":
     # Run the test
     async def main():
-        # _ensure_clickhouse_schema()
+        _ensure_clickhouse_schema()
         await run_unit_intervals_backlog()
-        # await run_unit_intervals_aggregate_for_last_intervals(num_intervals=12 * 24 * 1)
         # Uncomment to backfill views:
+        backfill_materialized_views(view="unit_intervals_mv")
+        backfill_materialized_views(view="unit_intervals_monthly_mv")
         backfill_materialized_views(view="fueltech_intervals_mv")
         backfill_materialized_views(view="fueltech_intervals_daily_mv")
         backfill_materialized_views(view="renewable_intervals_mv")

@@ -10,7 +10,6 @@ from collections.abc import Sequence
 from datetime import datetime, timedelta
 
 import polars as pl
-from clickhouse_driver.client import Client
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -202,13 +201,13 @@ def _prepare_market_summary_data(
     return result_df.rows()
 
 
-def _ensure_clickhouse_schema(client: Client) -> None:
+def _ensure_clickhouse_schema() -> None:
     """
     Ensure ClickHouse schema exists by creating tables and views if needed.
 
-    Args:
-        client: ClickHouse client
     """
+    client = get_clickhouse_client()
+
     if not table_exists(client, "market_summary"):
         create_table_if_not_exists(client, "market_summary", MARKET_SUMMARY_TABLE_SCHEMA)
 
@@ -391,11 +390,8 @@ async def run_market_summary_backlog() -> None:
 if __name__ == "__main__":
     # Run the test
     async def main():
-        # _refresh_clickhouse_schema()
-        # await run_market_summary_aggregate_for_last_intervals(num_intervals=5)
-        await run_market_summary_backlog()
-        # await run_market_summary_aggregate_for_last_intervals(num_intervals=12 * 24 * 1)
-        # await run_market_summary_aggregate_for_last_intervals(num_intervals=12 * 24 * 1)
+        _ensure_clickhouse_schema()
+        # await run_market_summary_backlog()
 
     import asyncio
 
