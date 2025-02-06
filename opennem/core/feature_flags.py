@@ -7,6 +7,7 @@ FEATURE_FLAG_LIST = [
     "run_crawlers",
     "redirect_api_static",
     "show_emission_factors_in_power_outputs",
+    "run_milestones",
 ]
 
 

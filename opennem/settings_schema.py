@@ -122,6 +122,7 @@ class OpennemSettings(BaseSettings):
     cloudflare_api_key: str | None = None
 
     # feature flags
+    run_milestones: bool = True  # do we enable the milestones
     run_crawlers: bool = True  # do we enable the crawlers
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
     show_emissions_in_power_outputs: bool = True  # show emissions in power outputs
