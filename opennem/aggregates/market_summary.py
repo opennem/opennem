@@ -230,7 +230,7 @@ def _refresh_clickhouse_schema() -> None:
     client.execute("DROP VIEW IF EXISTS market_summary_daily_mv")
     client.execute("DROP VIEW IF EXISTS market_summary_monthly_mv")
 
-    _ensure_clickhouse_schema(client)
+    _ensure_clickhouse_schema()
 
 
 async def process_market_summary_backlog(
@@ -251,7 +251,7 @@ async def process_market_summary_backlog(
     """
     current_start = start_date
     client = get_clickhouse_client()
-    _ensure_clickhouse_schema(client)
+    _ensure_clickhouse_schema()
 
     while current_start < end_date:
         chunk_end = min(current_start + chunk_size, end_date)
@@ -391,7 +391,7 @@ if __name__ == "__main__":
     # Run the test
     async def main():
         _ensure_clickhouse_schema()
-        # await run_market_summary_backlog()
+        await run_market_summary_backlog()
 
     import asyncio
 
