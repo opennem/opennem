@@ -329,13 +329,15 @@ async def run_unit_intervals_aggregate_for_last_intervals(num_intervals: int) ->
     return len(prepared_data)
 
 
-async def run_unit_intervals_backlog() -> None:
+async def run_unit_intervals_backlog(start_date: datetime | None = None) -> None:
     """
     Run the unit intervals aggregation for the history of the market.
     """
     # Calculate date range
     end_date = get_last_completed_interval_for_network(network=NetworkNEM)
-    start_date = NetworkNEM.data_first_seen.replace(tzinfo=None)
+
+    if not start_date:
+        start_date = NetworkNEM.data_first_seen.replace(tzinfo=None)
 
     # Ensure ClickHouse schema exists
     client = get_clickhouse_client()
@@ -478,7 +480,7 @@ if __name__ == "__main__":
     # Run the test
     async def main():
         _ensure_clickhouse_schema()
-        await run_unit_intervals_backlog()
+        await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2019-08-19T00:00:00"))
         # Uncomment to backfill views:
         backfill_materialized_views(view="unit_intervals_mv")
         backfill_materialized_views(view="unit_intervals_monthly_mv")
