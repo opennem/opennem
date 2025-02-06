@@ -223,6 +223,7 @@ class WorkerSettings:
         # Monitor catchup
         cron(
             task_catchup_check,
+            minute=set(range(1, 60, 5)),
             second=30,
             timeout=None,
             unique=True,

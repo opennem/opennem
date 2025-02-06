@@ -109,13 +109,19 @@ async def run_catchup_check(max_gap_minutes: int = 30) -> None:
         logger.error("No last seen data found")
         return
 
-    datetime_now = datetime.now(ZoneInfo("Australia/Brisbane")).replace(tzinfo=None)
+    datetime_now = datetime.now(ZoneInfo("Australia/Brisbane")).replace(tzinfo=None, microsecond=0)
+
+    # Create a new incident
+    await create_incident(start_time=datetime_now, last_seen=last_seen)
 
     # Create a new incident
     await create_incident(start_time=datetime_now, last_seen=last_seen)
 
     # Alert about the gap
-    gap_msg = f"[{settings.env.upper()}] Data gap detected - Last seen: {last_seen}, Current time: {datetime_now}"
+    gap_msg = (
+        f"[{settings.env.upper()}] Data gap detected - Last seen: {last_seen.replace(tzinfo=None, microsecond=None)},",
+        f" Current time: {datetime_now.replace(tzinfo=None, microsecond=None)}",
+    )
     logger.warning(gap_msg)
 
     try:

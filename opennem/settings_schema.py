@@ -104,6 +104,9 @@ class OpennemSettings(BaseSettings):
     http_verify_ssl: bool = True
     http_proxy_url: str | None = None  # @note don't let it confict with env HTTP_PROXY
 
+    # catchup and incident settings
+    catchup_max_gap_minutes: int = 60
+
     _static_folder_path: str = "opennem/static/"
 
     # API Keys
