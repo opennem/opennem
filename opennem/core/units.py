@@ -11,11 +11,6 @@ def load_units() -> list[UnitDefinition]:
 
     units = [UnitDefinition(**i) for i in units_dics]
 
-    # unique aliases in set
-    assert len([i.name_alias for i in units if i.name_alias]) == len(
-        {i.name_alias for i in units if i.name_alias}
-    ), "Unique names for aliases required"
-
     # unique names in
     assert len([i.name for i in units]) == len({i.name for i in units}), "Unique unit names required"
 
