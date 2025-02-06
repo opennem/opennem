@@ -123,7 +123,8 @@ async def process_battery_history(facility_code: str | None = None, clear_old_re
         unit_map = {facility_code: unit_map[facility_code]}
 
     query_load_template = text(
-        "update facility_scada set facility_code = :new_facility_code where facility_code = :old_facility_code and generated < 0 "
+        "update facility_scada set facility_code = :new_facility_code, generated = abs(generated), energy = abs(energy) "
+        "where facility_code = :old_facility_code and generated < 0 "
         # "on conflict (network_id, interval, facility_code, is_forecast) do nothing"
     )
 
