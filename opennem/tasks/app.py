@@ -39,6 +39,7 @@ from opennem.tasks.tasks import (
     task_bom_capitals_crawl,
     task_catchup_check,
     task_catchup_days,
+    task_check_unsplit_batteries,
     task_clean_tmp_dir,
     task_export_daily_monthly,
     task_export_energy,
@@ -240,6 +241,15 @@ class WorkerSettings:
         cron(
             task_catchup_days,
             minute=15,
+            second=0,
+            timeout=None,
+            unique=True,
+        ),
+        # Check for unsplit batteries
+        cron(
+            task_check_unsplit_batteries,
+            hour=10,
+            minute=0,
             second=0,
             timeout=None,
             unique=True,

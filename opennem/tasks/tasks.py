@@ -19,6 +19,7 @@ from opennem.aggregates.unit_intervals import run_unit_intervals_aggregate_to_no
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy
 from opennem.cms.importer import update_database_facilities_from_cms
 from opennem.controllers.export import run_export_energy_all, run_export_energy_for_year
+from opennem.core.battery import check_unsplit_batteries
 from opennem.crawl import run_crawl
 from opennem.crawlers.aemo_market_notice import run_market_notice_update
 from opennem.crawlers.apvi import APVIRooftopTodayCrawler
@@ -270,3 +271,18 @@ async def task_update_milestones() -> None:
     from opennem.recordreactor.backlog import run_update_milestone_analysis_to_now
 
     await run_update_milestone_analysis_to_now()
+
+
+async def task_check_unsplit_batteries(ctx: dict) -> None:
+    """Task to check for any battery units that haven't been split into charge/discharge units.
+
+    This task runs daily at 10am and alerts via Slack if any unsplit battery units are found.
+
+    Args:
+        ctx (dict): Task context
+    """
+    try:
+        await check_unsplit_batteries()
+    except Exception as e:
+        logger.error(f"Error checking unsplit batteries: {str(e)}")
+        raise
