@@ -41,7 +41,7 @@ from opennem.db.models.opennem import FuelTech, Network, NetworkRegion
 from opennem.schema.opennem import FueltechSchema, OpennemErrorSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
-from opennem.users.schema import OpenNEMRoles
+from opennem.users.schema import OpenNEMRoles, OpennemUserResponse
 from opennem.utils.host import get_hostname
 from opennem.utils.version import get_version
 
@@ -355,18 +355,18 @@ def health_check() -> str:
 @api_version(4)
 @app.get(
     "/me",
-    response_model=OpenNEMUser,
+    response_model=OpennemUserResponse,
     response_model_exclude_none=True,
     response_model_exclude_unset=True,
     tags=["User"],
     description="Get the current user",
 )
 @api_protected()
-async def get_user_me(authorization: ApiAuthorization, user: OpenNEMUser | None = None) -> OpenNEMUser:
+async def get_user_me(authorization: ApiAuthorization, user: OpenNEMUser | None = None) -> OpennemUserResponse:
     if not user:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized")
 
-    return user
+    return OpennemUserResponse(data=user)
 
 
 @app.get("/throttle_test", include_in_schema=False)

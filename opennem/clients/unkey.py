@@ -9,7 +9,7 @@ from unkey import ApiKey, ErrorCode
 
 from opennem import settings
 from opennem.users.ratelimit import OPENNEM_RATELIMIT_ADMIN, OPENNEM_RATELIMIT_PRO, OPENNEM_RATELIMIT_USER
-from opennem.users.schema import OpenNEMRoles, OpenNEMUser, OpenNEMUserRateLimit
+from opennem.users.schema import OpennemAPIRequestMeta, OpenNEMRoles, OpenNEMUser, OpenNEMUserRateLimit
 
 logger = logging.getLogger("opennem.clients.unkey")
 
@@ -46,6 +46,7 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
             raise UnkeyInvalidUserException("Verification failed: error")
 
         data = result.unwrap()
+
         logger.debug(f"Unkey response data: {data}")
 
         # Check if the code is NOT_FOUND and return None if so
@@ -66,7 +67,15 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
             raise UnkeyInvalidUserException("Verification failed: no id")
 
         try:
-            model = OpenNEMUser(id=data.id, valid=data.valid, owner_id=data.owner_id, meta=data.meta, error=data.error)
+            model = OpenNEMUser(
+                id=data.id,
+                valid=data.valid,
+                owner_id=data.owner_id,
+                meta=data.meta,
+                error=data.error,
+            )
+
+            model.meta = OpennemAPIRequestMeta(remaining=data.remaining, reset=data.expires)
 
             if data.ratelimit:
                 model.rate_limit = OpenNEMUserRateLimit(

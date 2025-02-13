@@ -116,8 +116,13 @@ def api_protected(
                 # attach the clerk user to the user
                 clerk_user = await clerk_client.users.get_async(user_id=user.owner_id)
 
-                if clerk_user:
-                    user.clerk_meta = clerk_user
+                if not clerk_user:
+                    logger.error(f"Clerk user not found for {user.owner_id}")
+                    raise HTTPException(status_code=403, detail="Permission denied")
+
+                user.full_name = clerk_user.first_name + " " + clerk_user.last_name
+                user.email = clerk_user.email_addresses[0].email_address
+                user.plan = clerk_user.private_metadata.get("plan")
 
                 if "user" in inspect.signature(func).parameters:
                     kwargs["user"] = user
