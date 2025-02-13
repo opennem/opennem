@@ -1,8 +1,9 @@
 from datetime import UTC, datetime
 from enum import Enum
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, field_validator
 
+from opennem.api.schema import APIV4ResponseSchema
 from opennem.utils.dates import chop_datetime_microseconds
 
 
@@ -31,16 +32,21 @@ class OpenNEMUserRateLimit(BaseModel):
         return dt
 
 
+class OpennemAPIRequestMeta(BaseModel):
+    remaining: int | None = None
+    reset: datetime | None = None
+
+
 class OpenNEMUser(BaseModel):
-    valid: bool
     id: str
+    full_name: str | None = None
+    email: str | None = None
     owner_id: str | None = None
-    meta: dict | None = Field(exclude=True, default={})
-    error: str | None = None
+    plan: str | None = None
     rate_limit: OpenNEMUserRateLimit | None = None
     unkey_meta: dict | None = None
-    clerk_meta: dict | None = None
     roles: list[OpenNEMRoles] = [OpenNEMRoles.anonymous]
+    meta: OpennemAPIRequestMeta | None = None
 
 
 class OpenNEMAPIInvite(BaseModel):
@@ -50,3 +56,7 @@ class OpenNEMAPIInvite(BaseModel):
     limit: int
     limit_interval: str
     domain: str = "opennem.org.au"
+
+
+class OpennemUserResponse(APIV4ResponseSchema):
+    data: OpenNEMUser
