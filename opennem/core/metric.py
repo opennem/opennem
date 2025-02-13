@@ -91,6 +91,20 @@ METRIC_METADATA = {
         default_agg="sum",
         precision=2,
     ),
+    Metric.DEMAND: MetricMetadata(
+        unit="MW",
+        description="Demand generation",
+        column_name="demand",
+        default_agg="avg",
+        precision=3,
+    ),
+    Metric.DEMAND_ENERGY: MetricMetadata(
+        unit="MWh",
+        description="Demand generation energy",
+        column_name="demand_energy",
+        default_agg="sum",
+        precision=3,
+    ),
     Metric.EMISSIONS: MetricMetadata(
         unit="t",
         description="CO2 equivalent emissions",

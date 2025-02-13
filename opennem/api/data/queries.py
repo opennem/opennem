@@ -127,10 +127,7 @@ def get_network_timeseries_query(
             group_by_parts.append(meta.column_name)
 
     # Add the metric value - handle special cases for market metrics
-    if metric in (Metric.DEMAND, Metric.DEMAND_ENERGY, Metric.PRICE):
-        select_parts.append(f"{metric_meta.default_agg}({metric}) as value")
-    else:
-        select_parts.append(f"{metric_meta.default_agg}({metric_meta.column_name}) as value")
+    select_parts.append(f"{metric_meta.default_agg}({metric_meta.column_name}) as value")
 
     # Build the query
     query = f"""
