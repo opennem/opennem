@@ -16,6 +16,9 @@ from sqlalchemy import text
 
 from opennem import settings
 from opennem.aggregates.facility_interval import run_update_facility_aggregate_last_interval, update_facility_aggregate_last_hours
+from opennem.aggregates.market_summary import run_market_summary_aggregate_for_last_intervals
+from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
+from opennem.aggregates.unit_intervals import run_unit_intervals_aggregate_for_last_intervals
 from opennem.clients.slack import slack_message
 from opennem.controllers.export import run_export_all, run_export_energy_for_year
 from opennem.crawl import run_crawl
@@ -225,6 +228,11 @@ async def catchup_last_intervals(num_intervals: int = 12):
 
     await process_energy_last_intervals(num_intervals=num_intervals)
 
+    await run_unit_intervals_aggregate_for_last_intervals(num_intervals=num_intervals)
+    await run_market_summary_aggregate_for_last_intervals(num_intervals=num_intervals)
+
+    run_flows_for_last_days(days=3, network=NetworkNEM)
+
     await update_facility_aggregate_last_hours(hours_back=num_intervals / 12)
 
     await asyncio.gather(
@@ -235,7 +243,7 @@ async def catchup_last_intervals(num_intervals: int = 12):
 
     await asyncio.gather(
         run_export_energy_for_year(year=CURRENT_YEAR),
-        run_export_energy_for_year(year=CURRENT_YEAR - 1),
+        # run_export_energy_for_year(year=CURRENT_YEAR - 1),
     )
 
     await run_export_all()
@@ -245,4 +253,4 @@ if __name__ == "__main__":
     import asyncio
 
     # asyncio.run(run_catchup_check(max_gap_minutes=15))
-    asyncio.run(catchup_days(days=7))
+    asyncio.run(catchup_days(days=2))
