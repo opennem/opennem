@@ -22,6 +22,7 @@ from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
 from opennem.core.metric import Metric
 from opennem.core.time_interval import Interval
 from opennem.db.clickhouse import Client, get_clickhouse_client
+from opennem.utils.dates import get_last_completed_interval_for_network
 
 router = APIRouter()
 
@@ -200,7 +201,7 @@ async def get_network_data(
 
     # Get default dates if not provided
     if date_end is None:
-        date_end = network.last_completed_interval
+        date_end = get_last_completed_interval_for_network(network=network)
 
     if date_start is None:
         date_start = get_default_start_date(interval, date_end)

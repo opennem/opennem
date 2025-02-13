@@ -19,11 +19,17 @@ def _round_float(v: float, precision: int) -> float:
     return v
 
 
-def _significant_figures(v: float, sig_figs: int) -> float:
+def _significant_figures(v: float | None, sig_figs: int) -> float | None:
     """Round a float value to specified significant figures"""
-    if isinstance(v, float):
-        return round(v, sig_figs - 1 - int(math.floor(math.log10(abs(v)))))
-    return v
+    if v is None:
+        return None
+
+    v = float(v)
+
+    if v == 0:
+        return 0
+
+    return round(v, sig_figs - 1 - int(math.floor(math.log10(abs(v)))))
 
 
 def _normalize_url_no_path(url: str) -> str:
