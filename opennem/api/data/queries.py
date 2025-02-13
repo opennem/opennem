@@ -59,13 +59,12 @@ def _get_source_table(metric: Metric, interval: Interval, secondary_groupings: S
         return "market_summary"
 
     # For other metrics, select based on interval size
-    match interval:
-        case (Interval.YEAR, Interval.FINANCIAL_YEAR, Interval.QUARTER, Interval.SEASON, Interval.MONTH):
-            return "unit_intervals_monthly_mv"
-        case (Interval.WEEK, Interval.DAY):
-            return "unit_intervals_daily_mv"
-        case _:
-            return "unit_intervals"
+    if interval.value < Interval.DAY.value:
+        return "unit_intervals"
+    elif interval.value < Interval.MONTH.value:
+        return "unit_intervals_daily_mv"
+    else:
+        return "unit_intervals_monthly_mv"
 
 
 def get_network_timeseries_query(
@@ -129,6 +128,14 @@ def get_network_timeseries_query(
     # Add the metric value - handle special cases for market metrics
     select_parts.append(f"{metric_meta.default_agg}({metric_meta.column_name}) as value")
 
+    # For intervals of a day or greater, convert datetime to date
+    query_date_start = date_start
+    query_date_end = date_end
+
+    if interval in (Interval.DAY, Interval.WEEK, Interval.MONTH, Interval.QUARTER, Interval.YEAR, Interval.FINANCIAL_YEAR):
+        query_date_start = date_start.date()
+        query_date_end = date_end.date()
+
     # Build the query
     query = f"""
     SELECT
@@ -154,8 +161,8 @@ def get_network_timeseries_query(
 
     params = {
         "network_id": network.code,
-        "date_start": date_start,
-        "date_end": date_end,
+        "date_start": query_date_start,
+        "date_end": query_date_end,
     }
 
     return query, params
