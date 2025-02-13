@@ -196,6 +196,10 @@ async def get_network_data(
     Raises:
         HTTPException: If the date range is too large for the interval
     """
+    # check metrics that don't support secondary groupings
+    if metric not in (Metric.DEMAND, Metric.DEMAND_ENERGY, Metric.PRICE, Metric.MARKET_VALUE):
+        secondary_grouping = None
+
     # Get the network schema
     network = get_api_network_from_code(network_code)
 
