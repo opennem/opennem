@@ -163,11 +163,12 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
     schema="""
         CREATE MATERIALIZED VIEW fueltech_intervals_mv
         ENGINE = SummingMergeTree()
-        ORDER BY (interval, network_id, network_region, fueltech_group_id)
+        ORDER BY (interval, network_id, network_region, fueltech_id, fueltech_group_id)
         AS SELECT
             interval,
             network_id,
             network_region,
+            fueltech_id,
             fueltech_group_id,
             sum(generated) as generated,
             sum(energy) as energy,
@@ -179,6 +180,7 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
             interval,
             network_id,
             network_region,
+            fueltech_id,
             fueltech_group_id
     """,
     backfill_query="""
@@ -187,6 +189,7 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
             interval,
             network_id,
             network_region,
+            fueltech_id,
             fueltech_group_id,
             sum(generated) as generated,
             sum(energy) as energy,
@@ -199,6 +202,7 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
             interval,
             network_id,
             network_region,
+            fueltech_id,
             fueltech_group_id
     """,
 )
@@ -208,11 +212,12 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
     schema="""
         CREATE MATERIALIZED VIEW fueltech_intervals_daily_mv
         ENGINE = SummingMergeTree()
-        ORDER BY (date, network_id, network_region, fueltech_group_id)
+        ORDER BY (date, network_id, network_region, fueltech_id, fueltech_group_id)
         AS SELECT
             toDate(interval) as date,
             network_id,
             network_region,
+            fueltech_id,
             fueltech_group_id,
             sum(generated) as generated,
             sum(energy) as energy,
@@ -225,11 +230,13 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             date,
             network_id,
             network_region,
+            fueltech_id,
             fueltech_group_id
         ORDER BY
             date,
             network_id,
             network_region,
+            fueltech_id,
             fueltech_group_id
     """,
     backfill_query="""
@@ -238,6 +245,7 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             toDate(interval) as date,
             network_id,
             network_region,
+            fueltech_id,
             fueltech_group_id,
             sum(generated) as generated,
             sum(energy) as energy,
@@ -251,6 +259,7 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             toDate(interval),
             network_id,
             network_region,
+            fueltech_id,
             fueltech_group_id
     """,
 )
