@@ -188,7 +188,7 @@ async def get_network_data(
         HTTPException: If the date range is too large for the interval
     """
     # check metrics that don't support secondary groupings
-    if metric not in (Metric.DEMAND, Metric.DEMAND_ENERGY, Metric.PRICE, Metric.EMISSIONS, Metric.MARKET_VALUE):
+    if metric in (Metric.DEMAND, Metric.DEMAND_ENERGY, Metric.PRICE, Metric.EMISSIONS, Metric.MARKET_VALUE):
         secondary_grouping = None
 
     # Get the network schema
@@ -221,6 +221,7 @@ async def get_network_data(
     # Execute query
     try:
         results = client.execute(query, params)
+        logger.debug(query)
     except Exception as e:
         logger.error(f"Error executing query: {e}")
         raise HTTPException(status_code=500, detail="Error executing query") from e
