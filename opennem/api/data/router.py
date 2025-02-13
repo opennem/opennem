@@ -171,15 +171,6 @@ async def get_network_data(
     by region and other dimensions. The data can be aggregated by different time
     intervals.
 
-    The date range must be appropriate for the requested interval:
-    - 5m intervals: max 7 days
-    - 1h intervals: max 30 days
-    - 1d intervals: max 1 year
-    - 7d intervals: max 1 year
-    - 1M intervals: max 2 years
-    - 3M/season intervals: max 5 years
-    - 1y/fy intervals: max 10 years
-
     Args:
         network_code: The network to get data for
         metric: The metric to query (e.g. energy, power, price)
