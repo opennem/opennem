@@ -5,6 +5,7 @@ This module provides custom field types and validators for use in Pydantic model
 throughout the OpenNEM project, including specialized URL and floating point handlers.
 """
 
+import math
 from typing import Annotated
 from urllib.parse import urlparse, urlunparse
 
@@ -15,6 +16,13 @@ def _round_float(v: float, precision: int) -> float:
     """Round a float value to specified precision"""
     if isinstance(v, float):
         return round(v, precision)
+    return v
+
+
+def _significant_figures(v: float, sig_figs: int) -> float:
+    """Round a float value to specified significant figures"""
+    if isinstance(v, float):
+        return round(v, sig_figs - 1 - int(math.floor(math.log10(abs(v)))))
     return v
 
 
@@ -108,6 +116,11 @@ RoundedFloat2 = Annotated[float, BeforeValidator(lambda v: _round_float(v, 2))]
 RoundedFloat4 = Annotated[float, BeforeValidator(lambda v: _round_float(v, 4))]
 RoundedFloat6 = Annotated[float, BeforeValidator(lambda v: _round_float(v, 6))]
 RoundedFloat8 = Annotated[float, BeforeValidator(lambda v: _round_float(v, 8))]  # used for lat, lng and polygons
+
+SignificantFigures2 = Annotated[float, BeforeValidator(lambda v: _significant_figures(v, 2))]
+SignificantFigures4 = Annotated[float, BeforeValidator(lambda v: _significant_figures(v, 4))]
+SignificantFigures6 = Annotated[float, BeforeValidator(lambda v: _significant_figures(v, 6))]
+SignificantFigures8 = Annotated[float, BeforeValidator(lambda v: _significant_figures(v, 8))]
 
 # valid DUID
 DUIDType = Annotated[str, StringConstraints(pattern=r"^[A-Z0-9_./\-#]{3,32}$")]

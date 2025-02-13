@@ -13,6 +13,7 @@ from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
 from opennem.core.metric import Metric, get_metric_metadata
 from opennem.core.time_interval import Interval
 from opennem.schema.core import BaseConfig
+from opennem.schema.field_types import SignificantFigures8
 
 
 class TimeSeriesResult(BaseConfig):
@@ -34,7 +35,7 @@ class TimeSeriesResult(BaseConfig):
     date_start: datetime
     date_end: datetime
     labels: dict[str, str] = {}
-    data: list[tuple[datetime, float | None]]
+    data: list[tuple[datetime, SignificantFigures8 | None]]
 
 
 class NetworkTimeSeries(BaseConfig):
