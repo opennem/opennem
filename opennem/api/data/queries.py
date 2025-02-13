@@ -19,6 +19,7 @@ from opennem.core.grouping import (
 )
 from opennem.core.metric import Metric, get_metric_metadata
 from opennem.core.time_interval import Interval, get_interval_function
+from opennem.db.clickhouse_views import CLICKHOUSE_MATERIALIZED_VIEWS
 from opennem.schema.network import NetworkSchema
 
 
@@ -59,9 +60,9 @@ def _get_source_table(metric: Metric, interval: Interval, secondary_groupings: S
         return "market_summary"
 
     # For other metrics, select based on interval size
-    if interval.value < Interval.DAY.value:
+    if interval in (Interval.INTERVAL, Interval.HOUR):
         return "unit_intervals"
-    elif interval.value < Interval.MONTH.value:
+    elif interval in (Interval.DAY, Interval.WEEK):
         return "unit_intervals_daily_mv"
     else:
         return "unit_intervals_monthly_mv"
@@ -100,8 +101,16 @@ def get_network_timeseries_query(
     # Get the source table based on metric and interval
     source_table = _get_source_table(metric, interval, secondary_groupings)
 
+    # Get the timestamp column name based on the source table
+    # - Raw tables use 'interval'
+    # - Materialized views use 'date'
+    timestamp_col = "interval"
+
+    if source_table in CLICKHOUSE_MATERIALIZED_VIEWS:
+        timestamp_col = CLICKHOUSE_MATERIALIZED_VIEWS[source_table].timestamp_column
+
     # Get the time bucket function for the interval
-    time_fn = get_interval_function(interval, "interval", database="clickhouse")
+    time_fn = get_interval_function(interval, timestamp_col, database="clickhouse")
 
     # Get the metric metadata
     metric_meta = get_metric_metadata(metric)
@@ -143,8 +152,8 @@ def get_network_timeseries_query(
     FROM {source_table}
     WHERE
         network_id = %(network_id)s AND
-        interval >= %(date_start)s AND
-        interval < %(date_end)s
+        {timestamp_col} >= %(date_start)s AND
+        {timestamp_col} < %(date_end)s
     GROUP BY
         {", ".join(group_by_parts)}
     ORDER BY

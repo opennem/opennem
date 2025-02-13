@@ -480,7 +480,7 @@ if __name__ == "__main__":
     # Run the test
     async def main():
         _ensure_clickhouse_schema()
-        await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2025-01-01T00:00:00"))
+        # await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2025-01-01T00:00:00"))
         # Uncomment to backfill views:
         backfill_materialized_views()
 

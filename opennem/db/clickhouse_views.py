@@ -20,18 +20,20 @@ class MaterializedView:
     """
 
     name: str
+    timestamp_column: str
     schema: str
     backfill_query: str
 
 
 UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
     name="unit_intervals_daily_mv",
+    timestamp_column="date",
     schema="""
         CREATE MATERIALIZED VIEW unit_intervals_daily_mv
         ENGINE = SummingMergeTree()
-        ORDER BY (interval, network_id, network_region, facility_code, unit_code, fueltech_id, fueltech_group_id)
+        ORDER BY (date, network_id, network_region, facility_code, unit_code, fueltech_id, fueltech_group_id)
         AS SELECT
-            toDate(interval) as interval,
+            toDate(interval) as date,
             network_id,
             network_region,
             facility_code,
@@ -47,7 +49,7 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             count() as count
         FROM unit_intervals
         GROUP BY
-            interval,
+            date,
             network_id,
             network_region,
             facility_code,
@@ -58,7 +60,7 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
     backfill_query="""
         INSERT INTO unit_intervals_daily_mv
         SELECT
-            toDate(interval) as interval,
+            toDate(interval) as date,
             network_id,
             network_region,
             facility_code,
@@ -75,7 +77,7 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
         FROM unit_intervals
         WHERE interval >= %(start)s AND interval < %(end)s
         GROUP BY
-            interval,
+            date,
             network_id,
             network_region,
             facility_code,
@@ -87,12 +89,13 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
 
 UNIT_INTERVALS_MONTHLY_VIEW = MaterializedView(
     name="unit_intervals_monthly_mv",
+    timestamp_column="date",
     schema="""
         CREATE MATERIALIZED VIEW unit_intervals_monthly_mv
         ENGINE = SummingMergeTree()
-        ORDER BY (interval, network_id, network_region, facility_code, unit_code, fueltech_id, fueltech_group_id)
+        ORDER BY (date, network_id, network_region, facility_code, unit_code, fueltech_id, fueltech_group_id)
         AS SELECT
-            toStartOfMonth(interval) as interval,
+            toStartOfMonth(interval) as date,
             network_id,
             network_region,
             facility_code,
@@ -108,7 +111,7 @@ UNIT_INTERVALS_MONTHLY_VIEW = MaterializedView(
             count() as count
         FROM unit_intervals
         GROUP BY
-            interval,
+            date,
             network_id,
             network_region,
             facility_code,
@@ -119,7 +122,7 @@ UNIT_INTERVALS_MONTHLY_VIEW = MaterializedView(
     backfill_query="""
         INSERT INTO unit_intervals_monthly_mv
         SELECT
-            toStartOfMonth(interval) as interval,
+            toStartOfMonth(interval) as date,
             network_id,
             network_region,
             facility_code,
@@ -136,7 +139,7 @@ UNIT_INTERVALS_MONTHLY_VIEW = MaterializedView(
         FROM unit_intervals
         WHERE interval >= %(start)s AND interval < %(end)s
         GROUP BY
-            interval,
+            date,
             network_id,
             network_region,
             facility_code,
@@ -148,6 +151,7 @@ UNIT_INTERVALS_MONTHLY_VIEW = MaterializedView(
 
 FUELTECH_INTERVALS_VIEW = MaterializedView(
     name="fueltech_intervals_mv",
+    timestamp_column="interval",
     schema="""
         CREATE MATERIALIZED VIEW fueltech_intervals_mv
         ENGINE = SummingMergeTree()
@@ -197,12 +201,13 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
 
 FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
     name="fueltech_intervals_daily_mv",
+    timestamp_column="date",
     schema="""
         CREATE MATERIALIZED VIEW fueltech_intervals_daily_mv
         ENGINE = SummingMergeTree()
-        ORDER BY (interval, network_id, network_region, fueltech_id, fueltech_group_id)
+        ORDER BY (date, network_id, network_region, fueltech_id, fueltech_group_id)
         AS SELECT
-            toDate(interval) as interval,
+            toDate(interval) as date,
             network_id,
             network_region,
             fueltech_id,
@@ -215,13 +220,13 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             count(distinct interval) as interval_count
         FROM unit_intervals
         GROUP BY
-            interval,
+            date,
             network_id,
             network_region,
             fueltech_id,
             fueltech_group_id
         ORDER BY
-            interval,
+            date,
             network_id,
             network_region,
             fueltech_id,
@@ -230,7 +235,7 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
     backfill_query="""
         INSERT INTO fueltech_intervals_daily_mv
         SELECT
-            toDate(interval) as interval,
+            toDate(interval) as date,
             network_id,
             network_region,
             fueltech_id,
@@ -254,6 +259,7 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
 
 RENEWABLE_INTERVALS_VIEW = MaterializedView(
     name="renewable_intervals_mv",
+    timestamp_column="interval",
     schema="""
         CREATE MATERIALIZED VIEW renewable_intervals_mv
         ENGINE = SummingMergeTree()
@@ -291,12 +297,13 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
 
 RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
     name="renewable_intervals_daily_mv",
+    timestamp_column="date",
     schema="""
         CREATE MATERIALIZED VIEW renewable_intervals_daily_mv
         ENGINE = SummingMergeTree()
-        ORDER BY (interval, network_id, network_region, renewable)
+        ORDER BY (date, network_id, network_region, renewable)
         AS SELECT
-            toDate(interval) as interval,
+            toDate(interval) as date,
             network_id,
             network_region,
             renewable,
@@ -307,12 +314,12 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             count() as unit_count,
             count(distinct interval) as interval_count
         FROM unit_intervals
-        GROUP BY interval, network_id, network_region, renewable
+        GROUP BY date, network_id, network_region, renewable
     """,
     backfill_query="""
         INSERT INTO renewable_intervals_daily_mv
         SELECT
-            toDate(interval) as interval,
+            toDate(interval) as date,
             network_id,
             network_region,
             renewable,
@@ -324,6 +331,15 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             count(distinct interval) as interval_count
         FROM unit_intervals
         WHERE interval >= %(start)s AND interval < %(end)s
-        GROUP BY interval, network_id, network_region, renewable
+        GROUP BY date, network_id, network_region, renewable
     """,
 )
+
+CLICKHOUSE_MATERIALIZED_VIEWS = {
+    "unit_intervals_daily_mv": UNIT_INTERVALS_DAILY_VIEW,
+    "unit_intervals_monthly_mv": UNIT_INTERVALS_MONTHLY_VIEW,
+    "fueltech_intervals_mv": FUELTECH_INTERVALS_VIEW,
+    "fueltech_intervals_daily_mv": FUELTECH_INTERVALS_DAILY_VIEW,
+    "renewable_intervals_mv": RENEWABLE_INTERVALS_VIEW,
+    "renewable_intervals_daily_mv": RENEWABLE_INTERVALS_DAILY_VIEW,
+}
