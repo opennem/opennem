@@ -29,9 +29,9 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
     schema="""
         CREATE MATERIALIZED VIEW unit_intervals_daily_mv
         ENGINE = SummingMergeTree()
-        ORDER BY (date, network_id, network_region, facility_code, unit_code, fueltech_id, fueltech_group_id)
+        ORDER BY (interval, network_id, network_region, facility_code, unit_code, fueltech_id, fueltech_group_id)
         AS SELECT
-            toDate(interval) as date,
+            toDate(interval) as interval,
             network_id,
             network_region,
             facility_code,
@@ -40,17 +40,14 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             fueltech_group_id,
             any(renewable) as renewable,
             any(status_id) as status_id,
-            avg(generated) as generated_avg,
-            max(generated) as generated_max,
-            min(generated) as generated_min,
-            sum(energy) as energy_sum,
-            sum(emissions) as emissions_sum,
-            avg(emission_factor) as emission_factor_avg,
-            sum(market_value) as market_value_sum,
+            sum(generated) as generated,
+            sum(energy) as energy,
+            sum(emissions) as emissions,
+            sum(market_value) as market_value,
             count() as count
         FROM unit_intervals
         GROUP BY
-            date,
+            interval,
             network_id,
             network_region,
             facility_code,
@@ -61,7 +58,7 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
     backfill_query="""
         INSERT INTO unit_intervals_daily_mv
         SELECT
-            toDate(interval) as date,
+            toDate(interval) as interval,
             network_id,
             network_region,
             facility_code,
@@ -70,18 +67,15 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             fueltech_group_id,
             any(renewable) as renewable,
             any(status_id) as status_id,
-            avg(generated) as generated_avg,
-            max(generated) as generated_max,
-            min(generated) as generated_min,
-            sum(energy) as energy_sum,
-            sum(emissions) as emissions_sum,
-            avg(emission_factor) as emission_factor_avg,
-            sum(market_value) as market_value_sum,
+            sum(generated) as generated,
+            sum(energy) as energy,
+            sum(emissions) as emissions,
+            sum(market_value) as market_value,
             count() as count
         FROM unit_intervals
         WHERE interval >= %(start)s AND interval < %(end)s
         GROUP BY
-            date,
+            interval,
             network_id,
             network_region,
             facility_code,
@@ -96,9 +90,9 @@ UNIT_INTERVALS_MONTHLY_VIEW = MaterializedView(
     schema="""
         CREATE MATERIALIZED VIEW unit_intervals_monthly_mv
         ENGINE = SummingMergeTree()
-        ORDER BY (month, network_id, network_region, facility_code, unit_code, fueltech_id, fueltech_group_id)
+        ORDER BY (interval, network_id, network_region, facility_code, unit_code, fueltech_id, fueltech_group_id)
         AS SELECT
-            toStartOfMonth(interval) as month,
+            toStartOfMonth(interval) as interval,
             network_id,
             network_region,
             facility_code,
@@ -107,17 +101,14 @@ UNIT_INTERVALS_MONTHLY_VIEW = MaterializedView(
             fueltech_group_id,
             any(renewable) as renewable,
             any(status_id) as status_id,
-            avg(generated) as generated_avg,
-            max(generated) as generated_max,
-            min(generated) as generated_min,
-            sum(energy) as energy_sum,
-            sum(emissions) as emissions_sum,
-            avg(emission_factor) as emission_factor_avg,
-            sum(market_value) as market_value_sum,
+            sum(generated) as generated,
+            sum(energy) as energy,
+            sum(emissions) as emissions,
+            sum(market_value) as market_value,
             count() as count
         FROM unit_intervals
         GROUP BY
-            month,
+            interval,
             network_id,
             network_region,
             facility_code,
@@ -128,7 +119,7 @@ UNIT_INTERVALS_MONTHLY_VIEW = MaterializedView(
     backfill_query="""
         INSERT INTO unit_intervals_monthly_mv
         SELECT
-            toStartOfMonth(interval) as month,
+            toStartOfMonth(interval) as interval,
             network_id,
             network_region,
             facility_code,
@@ -137,18 +128,15 @@ UNIT_INTERVALS_MONTHLY_VIEW = MaterializedView(
             fueltech_group_id,
             any(renewable) as renewable,
             any(status_id) as status_id,
-            avg(generated) as generated_avg,
-            max(generated) as generated_max,
-            min(generated) as generated_min,
-            sum(energy) as energy_sum,
-            sum(emissions) as emissions_sum,
-            avg(emission_factor) as emission_factor_avg,
-            sum(market_value) as market_value_sum,
+            sum(generated) as generated,
+            sum(energy) as energy,
+            sum(emissions) as emissions,
+            sum(market_value) as market_value,
             count() as count
         FROM unit_intervals
         WHERE interval >= %(start)s AND interval < %(end)s
         GROUP BY
-            month,
+            interval,
             network_id,
             network_region,
             facility_code,
@@ -212,9 +200,9 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
     schema="""
         CREATE MATERIALIZED VIEW fueltech_intervals_daily_mv
         ENGINE = SummingMergeTree()
-        ORDER BY (date, network_id, network_region, fueltech_id, fueltech_group_id)
+        ORDER BY (interval, network_id, network_region, fueltech_id, fueltech_group_id)
         AS SELECT
-            toDate(interval) as date,
+            toDate(interval) as interval,
             network_id,
             network_region,
             fueltech_id,
@@ -227,13 +215,13 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             count(distinct interval) as interval_count
         FROM unit_intervals
         GROUP BY
-            date,
+            interval,
             network_id,
             network_region,
             fueltech_id,
             fueltech_group_id
         ORDER BY
-            date,
+            interval,
             network_id,
             network_region,
             fueltech_id,
@@ -242,7 +230,7 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
     backfill_query="""
         INSERT INTO fueltech_intervals_daily_mv
         SELECT
-            toDate(interval) as date,
+            toDate(interval) as interval,
             network_id,
             network_region,
             fueltech_id,
@@ -306,9 +294,9 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
     schema="""
         CREATE MATERIALIZED VIEW renewable_intervals_daily_mv
         ENGINE = SummingMergeTree()
-        ORDER BY (date, network_id, network_region, renewable)
+        ORDER BY (interval, network_id, network_region, renewable)
         AS SELECT
-            toDate(interval) as date,
+            toDate(interval) as interval,
             network_id,
             network_region,
             renewable,
@@ -319,12 +307,12 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             count() as unit_count,
             count(distinct interval) as interval_count
         FROM unit_intervals
-        GROUP BY date, network_id, network_region, renewable
+        GROUP BY interval, network_id, network_region, renewable
     """,
     backfill_query="""
         INSERT INTO renewable_intervals_daily_mv
         SELECT
-            toDate(interval) as date,
+            toDate(interval) as interval,
             network_id,
             network_region,
             renewable,
@@ -336,6 +324,6 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             count(distinct interval) as interval_count
         FROM unit_intervals
         WHERE interval >= %(start)s AND interval < %(end)s
-        GROUP BY date, network_id, network_region, renewable
+        GROUP BY interval, network_id, network_region, renewable
     """,
 )
