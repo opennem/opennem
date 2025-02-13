@@ -7,6 +7,9 @@ ClickHouse.
 
 from collections.abc import Sequence
 from datetime import datetime
+from typing import NoReturn
+
+from fastapi import HTTPException
 
 from opennem.core.grouping import (
     PrimaryGrouping,
@@ -17,6 +20,52 @@ from opennem.core.grouping import (
 from opennem.core.metric import Metric, get_metric_metadata
 from opennem.core.time_interval import Interval, get_interval_function
 from opennem.schema.network import NetworkSchema
+
+
+def _raise_unsupported_grouping(metric: Metric) -> NoReturn:
+    """
+    Raise an HTTP error for unsupported groupings.
+
+    Args:
+        metric: The metric that doesn't support grouping
+
+    Raises:
+        HTTPException: Always raised with a descriptive message
+    """
+    raise HTTPException(
+        status_code=400, detail=f"Secondary groupings are not supported for {metric} as it is a market-level metric"
+    )
+
+
+def _get_source_table(metric: Metric, interval: Interval, secondary_groupings: Sequence[SecondaryGrouping] | None = None) -> str:
+    """
+    Get the appropriate source table or materialized view based on metric and interval.
+
+    Args:
+        metric: The metric being queried
+        interval: The time interval for aggregation
+        secondary_groupings: Optional sequence of secondary groupings
+
+    Returns:
+        str: The name of the table or view to query from
+
+    Raises:
+        HTTPException: If secondary groupings are used with market metrics
+    """
+    # Market metrics use market_summary table and don't support secondary groupings
+    if metric in (Metric.DEMAND, Metric.DEMAND_ENERGY, Metric.PRICE):
+        if secondary_groupings:
+            _raise_unsupported_grouping(metric)
+        return "market_summary"
+
+    # For other metrics, select based on interval size
+    match interval:
+        case (Interval.YEAR, Interval.FINANCIAL_YEAR, Interval.QUARTER, Interval.SEASON, Interval.MONTH):
+            return "unit_intervals_monthly_mv"
+        case (Interval.WEEK, Interval.DAY):
+            return "unit_intervals_daily_mv"
+        case _:
+            return "unit_intervals"
 
 
 def get_network_timeseries_query(
@@ -31,8 +80,8 @@ def get_network_timeseries_query(
     """
     Get time series data for a network.
 
-    This query uses the fueltech_intervals_mv materialized view which contains
-    pre-aggregated data.
+    This query selects from the appropriate table or materialized view based on
+    the metric and interval size requested.
 
     Args:
         network: The network to get data for
@@ -47,8 +96,11 @@ def get_network_timeseries_query(
         tuple[str, dict]: ClickHouse SQL query and parameters
 
     Raises:
-        ValueError: If the grouping combination is invalid
+        HTTPException: If the grouping combination is invalid or unsupported for the metric
     """
+    # Get the source table based on metric and interval
+    source_table = _get_source_table(metric, interval, secondary_groupings)
+
     # Get the time bucket function for the interval
     time_fn = get_interval_function(interval, "interval", database="clickhouse")
 
@@ -67,21 +119,24 @@ def get_network_timeseries_query(
         select_parts.append(f"{primary_meta.column_name}")
         group_by_parts.append(primary_meta.column_name)
 
-    # Add secondary groupings
-    if secondary_groupings:
+    # Add secondary groupings for non-market metrics
+    if secondary_groupings and source_table != "market_summary":
         for grouping in secondary_groupings:
             meta = get_secondary_grouping_metadata(grouping)
             select_parts.append(f"{meta.column_name}")
             group_by_parts.append(meta.column_name)
 
-    # Add the metric value
-    select_parts.append(f"{metric_meta.default_agg}({metric_meta.column_name}) as value")
+    # Add the metric value - handle special cases for market metrics
+    if metric in (Metric.DEMAND, Metric.DEMAND_ENERGY, Metric.PRICE):
+        select_parts.append(f"{metric_meta.default_agg}({metric}) as value")
+    else:
+        select_parts.append(f"{metric_meta.default_agg}({metric_meta.column_name}) as value")
 
     # Build the query
     query = f"""
     SELECT
         {", ".join(select_parts)}
-    FROM fueltech_intervals_mv
+    FROM {source_table}
     WHERE
         network_id = %(network_id)s AND
         interval >= %(date_start)s AND
@@ -95,7 +150,7 @@ def get_network_timeseries_query(
     if primary_grouping == PrimaryGrouping.NETWORK_REGION:
         query += ", network_region ASC"
 
-    if secondary_groupings:
+    if secondary_groupings and source_table != "market_summary":
         for grouping in secondary_groupings:
             meta = get_secondary_grouping_metadata(grouping)
             query += f", {meta.column_name} ASC"

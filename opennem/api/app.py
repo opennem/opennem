@@ -173,7 +173,7 @@ async def log_api_exception(request: Request, exc: Exception):
 
 # sub-routers
 app.include_router(stats_router, tags=["Stats"], prefix="/stats")
-app.include_router(station_router, tags=["Facilities"], prefix="/facility")
+app.include_router(station_router, tags=["Facilities"], prefix="/facility", include_in_schema=False)
 app.include_router(feedback_router, tags=["Feedback"], prefix="/feedback", include_in_schema=False)
 app.include_router(milestones_router, tags=["Milestones"], prefix="/milestones", include_in_schema=False)
 app.include_router(webhooks_router, tags=["Webhooks"], prefix="/webhooks", include_in_schema=False)

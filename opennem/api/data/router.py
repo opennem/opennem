@@ -1,171 +1,123 @@
 """
-Data router for the OpenNEM API v4.
+API router for OpenNEM data endpoints.
 
-This module provides endpoints for accessing energy data at various granularities
-and aggregation levels.
+This module contains the FastAPI router for data endpoints, including time series
+data queries.
 """
 
 import logging
+from collections.abc import Sequence
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Any
 
-from clickhouse_driver.client import Client
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.params import Path
 from fastapi_versionizer import api_version
 
 from opennem.api.data.queries import get_network_timeseries_query
 from opennem.api.data.schema import NetworkTimeSeries, NetworkTimeSeriesResponse, TimeSeriesResult
-from opennem.api.utils import get_api_network_from_code, get_default_period_for_interval
+from opennem.api.data.utils import get_default_start_date, validate_date_range
+from opennem.api.utils import get_api_network_from_code
 from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
 from opennem.core.metric import Metric
 from opennem.core.time_interval import Interval
-from opennem.db.clickhouse import get_clickhouse_client
-from opennem.utils.dates import get_last_completed_interval_for_network
+from opennem.db.clickhouse import Client, get_clickhouse_client
 
 router = APIRouter()
 
 logger = logging.getLogger("opennem.api.data")
 
 
-def _group_rows_by_column(rows, column_index: int) -> dict[str, list]:
+def _group_rows_by_column(rows: Sequence[Any], col_idx: int) -> dict[str, list[Any]]:
     """
     Group rows by a specific column value.
 
     Args:
-        rows: List of database rows
-        column_index: Index of the column to group by
+        rows: Sequence of rows to group
+        col_idx: Index of column to group by
 
     Returns:
-        dict: Mapping of column values to lists of rows
+        dict: Grouped rows with column value as key
     """
-    result = {}
+    groups: dict[str, list[Any]] = {}
     for row in rows:
-        key = row[column_index] if len(row) > column_index else None
-        if key is not None:
-            if key not in result:
-                result[key] = []
-            result[key].append(row)
-    return result
+        key = row[col_idx]
+        if key not in groups:
+            groups[key] = []
+        groups[key].append(row)
+    return groups
 
 
-@api_version(4)
-@router.get(
-    "/energy/network/{network_code}",
-    response_model=NetworkTimeSeriesResponse,
-    response_model_exclude_none=True,
-    response_model_exclude_unset=True,
-)
-async def get_energy_network(
-    network_code: str,
-    interval: Annotated[Interval, Query(description="The time interval to aggregate data by", example="1h")] = Interval.INTERVAL,
-    date_start: Annotated[
-        datetime | None, Query(description="Start time for the query (UTC)", example="2024-01-01T00:00:00Z")
-    ] = None,
-    date_end: Annotated[
-        datetime | None, Query(description="End time for the query (UTC)", example="2024-01-02T00:00:00Z")
-    ] = None,
-    primary_grouping: Annotated[
-        PrimaryGrouping, Query(description="Primary grouping to apply", example="network_region")
-    ] = PrimaryGrouping.NETWORK,
-    secondary_grouping: Annotated[
-        SecondaryGrouping | None, Query(description="Optional secondary grouping to apply", example="fueltech_group")
-    ] = None,
-    client: Client = Depends(get_clickhouse_client),
+def format_timeseries_response(
+    network: str,
+    metric: Metric,
+    interval: Interval,
+    date_start: datetime,
+    date_end: datetime,
+    primary_grouping: PrimaryGrouping,
+    secondary_groupings: Sequence[SecondaryGrouping] | None,
+    results: Sequence[Any],
 ) -> NetworkTimeSeriesResponse:
     """
-    Get energy data for a specific network.
-
-    This endpoint returns energy data for a network, optionally filtered by
-    time interval and date range. Data is aggregated according to the specified
-    groupings.
+    Format raw query results into a NetworkTimeSeriesResponse.
 
     Args:
-        network_code: The network code to get data for
-        interval: The time interval to aggregate by
-        date_start: Start time for the query (UTC)
-        date_end: End time for the query (UTC)
-        primary_grouping: Primary grouping to apply (network or network_region)
-        secondary_grouping: Optional secondary grouping to apply
-        client: ClickHouse client
+        network: The network code
+        metric: The metric queried
+        interval: The time interval used
+        date_start: Start time of the query
+        date_end: End time of the query
+        primary_grouping: Primary grouping applied
+        secondary_groupings: Secondary groupings applied
+        results: Raw query results
 
     Returns:
-        NetworkTimeSeriesResponse: The energy data response
-
-    Raises:
-        HTTPException: If the network is not found or parameters are invalid
+        NetworkTimeSeriesResponse: Formatted response
     """
-    # Validate network exists
-    network = get_api_network_from_code(network_code)
-
-    # Set default time range if not provided
-    if not date_end:
-        date_end = get_last_completed_interval_for_network(network=network, tz_aware=False)
-
-    if not date_start:
-        date_start = date_end - get_default_period_for_interval(interval)
-
-    # Validate time range
-    if date_start >= date_end:
-        raise HTTPException(status_code=400, detail="Start time must be before end time")
-
-    # Get the energy data
-    query, params = get_network_timeseries_query(
-        network=network,
-        metric=Metric.ENERGY,
-        interval=interval,
-        date_start=date_start,
-        date_end=date_end,
-        primary_grouping=primary_grouping,
-        secondary_groupings=[secondary_grouping] if secondary_grouping else None,
-    )
-    logger.info(query)
-    rows = client.execute(query, params)
-
-    # Create time series results
-    results = []
+    timeseries_results = []
 
     if primary_grouping == PrimaryGrouping.NETWORK:
         # Single result for the whole network
-        if secondary_grouping:
+        if secondary_groupings:
             # Group by secondary grouping
-            for group_id, group_rows in _group_rows_by_column(rows, 1).items():
-                results.append(
+            for group_id, group_rows in _group_rows_by_column(results, 1).items():
+                timeseries_results.append(
                     TimeSeriesResult(
                         name=group_id,
                         date_start=date_start,
                         date_end=date_end,
-                        labels={secondary_grouping: group_id},
+                        labels={secondary_groupings[0]: group_id},
                         data=[(row[0], float(row[-1]) if row[-1] is not None else None) for row in group_rows],
                     )
                 )
         else:
             # No grouping, just network total
-            results.append(
+            timeseries_results.append(
                 TimeSeriesResult(
-                    name=network_code,
+                    name=network,
                     date_start=date_start,
                     date_end=date_end,
-                    data=[(row[0], float(row[-1]) if row[-1] is not None else None) for row in rows],
+                    data=[(row[0], float(row[-1]) if row[-1] is not None else None) for row in results],
                 )
             )
     else:  # NETWORK_REGION
         # Group by region first
-        for region_id, region_rows in _group_rows_by_column(rows, 1).items():
-            if secondary_grouping:
+        for region_id, region_rows in _group_rows_by_column(results, 1).items():
+            if secondary_groupings:
                 # Then by secondary grouping
                 for group_id, group_rows in _group_rows_by_column(region_rows, 2).items():
-                    results.append(
+                    timeseries_results.append(
                         TimeSeriesResult(
                             name=f"{region_id}_{group_id}",
                             date_start=date_start,
                             date_end=date_end,
-                            labels={"region": region_id, secondary_grouping: group_id},
+                            labels={"region": region_id, secondary_groupings[0]: group_id},
                             data=[(row[0], float(row[-1]) if row[-1] is not None else None) for row in group_rows],
                         )
                     )
             else:
                 # Just regional totals
-                results.append(
+                timeseries_results.append(
                     TimeSeriesResult(
                         name=region_id,
                         date_start=date_start,
@@ -177,17 +129,119 @@ async def get_energy_network(
 
     # Create the response data
     network_data = NetworkTimeSeries(
-        network_code=network_code,
-        metric=Metric.ENERGY,
+        network_code=network,
+        metric=metric,
         interval=interval,
         start=date_start,
         end=date_end,
         primary_grouping=primary_grouping,
-        secondary_groupings=[secondary_grouping] if secondary_grouping else [],
-        results=results,
+        secondary_groupings=secondary_groupings or [],
+        results=timeseries_results,
     )
 
     return NetworkTimeSeriesResponse(data=network_data)
+
+
+@api_version(4)
+@router.get(
+    "/network/{network_code}/{metric}",
+    response_model=NetworkTimeSeriesResponse,
+    response_model_exclude_none=True,
+    response_model_exclude_unset=True,
+)
+async def get_network_data(
+    network_code: str,
+    metric: Annotated[Metric, Path(description="The metric to get data for", example="energy")],
+    interval: Annotated[Interval, Query(description="The time interval to aggregate data by", example="1h")] = Interval.INTERVAL,
+    date_start: Annotated[datetime | None, Query(description="Start time for the query", example="2024-01-01T00:00:00")] = None,
+    date_end: Annotated[datetime | None, Query(description="End time for the query", example="2024-01-02T00:00:00")] = None,
+    primary_grouping: Annotated[
+        PrimaryGrouping, Query(description="Primary grouping to apply", example="network_region")
+    ] = PrimaryGrouping.NETWORK,
+    secondary_grouping: Annotated[
+        SecondaryGrouping | None, Query(description="Optional secondary grouping to apply", example="fueltech_group")
+    ] = None,
+    client: Client = Depends(get_clickhouse_client),
+) -> NetworkTimeSeriesResponse:
+    """
+    Get time series data for a network.
+
+    This endpoint returns time series data for a network, with optional grouping
+    by region and other dimensions. The data can be aggregated by different time
+    intervals.
+
+    The date range must be appropriate for the requested interval:
+    - 5m intervals: max 7 days
+    - 1h intervals: max 30 days
+    - 1d intervals: max 1 year
+    - 7d intervals: max 1 year
+    - 1M intervals: max 2 years
+    - 3M/season intervals: max 5 years
+    - 1y/fy intervals: max 10 years
+
+    Args:
+        network_code: The network to get data for
+        metric: The metric to query (e.g. energy, power, price)
+        interval: The time interval to aggregate by
+        date_start: Start time for the query
+        date_end: End time for the query
+        primary_grouping: Primary grouping to apply
+        secondary_grouping: Optional secondary grouping to apply
+        client: ClickHouse client dependency
+
+    Returns:
+        NetworkTimeSeriesResponse: Time series data response
+
+    Raises:
+        HTTPException: If the date range is too large for the interval
+    """
+    # Get the network schema
+    network = get_api_network_from_code(network_code)
+
+    # Get default dates if not provided
+    if date_end is None:
+        date_end = network.last_completed_interval
+
+    if date_start is None:
+        date_start = get_default_start_date(interval, date_end)
+
+    # Validate the date range for the interval
+    validate_date_range(interval, date_start, date_end)
+
+    # Convert single secondary grouping to sequence
+    secondary_groupings = [secondary_grouping] if secondary_grouping else None
+
+    # Build and execute query
+    query, params = get_network_timeseries_query(
+        network=network,
+        metric=metric,
+        interval=interval,
+        date_start=date_start,
+        date_end=date_end,
+        primary_grouping=primary_grouping,
+        secondary_groupings=secondary_groupings,
+    )
+
+    # Execute query
+    try:
+        results = client.execute(query, params)
+    except Exception as e:
+        logger.error(f"Error executing query: {e}")
+        raise HTTPException(status_code=500, detail="Error executing query") from e
+
+    # Transform results into response format
+    response = format_timeseries_response(
+        network=network.code,
+        metric=metric,
+        interval=interval,
+        date_start=date_start,
+        date_end=date_end,
+        primary_grouping=primary_grouping,
+        secondary_groupings=secondary_groupings,
+        results=results,
+    )
+
+    return response
 
 
 @api_version(4)

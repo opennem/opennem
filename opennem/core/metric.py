@@ -22,6 +22,7 @@ class Metric(str, Enum):
         POWER: Instantaneous power output/consumption (MW)
         ENERGY: Energy generated/consumed over time (MWh)
         PRICE: Price per unit of energy ($/MWh)
+        DEMAND: Demand for energy (MW)
         MARKET_VALUE: Total market value ($)
         EMISSIONS: CO2 equivalent emissions (tonnes)
         RENEWABLE_PROPORTION: Percentage of renewable energy (%)
@@ -31,6 +32,8 @@ class Metric(str, Enum):
     ENERGY = "energy"
     PRICE = "price"
     MARKET_VALUE = "market_value"
+    DEMAND = "demand"
+    DEMAND_ENERGY = "demand_energy"
     EMISSIONS = "emissions"
     RENEWABLE_PROPORTION = "renewable_proportion"
 

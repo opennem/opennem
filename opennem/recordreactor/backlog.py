@@ -623,4 +623,4 @@ if __name__ == "__main__":
     # Run test for last year of data
     import asyncio
 
-    asyncio.run(run_update_milestone_analysis_to_now())
+    asyncio.run(run_milestone_analysis_backlog())
