@@ -35,6 +35,7 @@ from opennem import settings
 from opennem.api.maintenance_app import run_maintenance_app
 from opennem.tasks.broker import REDIS_SETTINGS, get_redis_pool
 from opennem.tasks.tasks import (
+    optimize_unit_intervals,
     task_apvi_crawl,
     task_bom_capitals_crawl,
     task_catchup_check,
@@ -93,6 +94,15 @@ class WorkerSettings:
         cron(
             task_update_milestones,
             minute={5},  # Run at 5 minutes past every hour
+            second=0,
+            timeout=None,
+            unique=True,
+        ),
+        # Optimize unit_intervals table daily
+        cron(
+            optimize_unit_intervals,
+            hour=2,  # Run at 2 AM
+            minute=0,
             second=0,
             timeout=None,
             unique=True,

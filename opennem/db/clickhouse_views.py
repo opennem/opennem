@@ -47,7 +47,11 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as count
-        FROM unit_intervals
+        FROM (
+            SELECT *
+            FROM unit_intervals
+            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+        )
         GROUP BY
             date,
             network_id,
@@ -74,8 +78,12 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as count
-        FROM unit_intervals
-        WHERE interval >= %(start)s AND interval < %(end)s
+        FROM (
+            SELECT *
+            FROM unit_intervals
+            WHERE interval >= %(start)s AND interval < %(end)s
+            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+        )
         GROUP BY
             date,
             network_id,
@@ -109,7 +117,11 @@ UNIT_INTERVALS_MONTHLY_VIEW = MaterializedView(
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as count
-        FROM unit_intervals
+        FROM (
+            SELECT *
+            FROM unit_intervals
+            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+        )
         GROUP BY
             date,
             network_id,
@@ -136,8 +148,12 @@ UNIT_INTERVALS_MONTHLY_VIEW = MaterializedView(
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as count
-        FROM unit_intervals
-        WHERE interval >= %(start)s AND interval < %(end)s
+        FROM (
+            SELECT *
+            FROM unit_intervals
+            WHERE interval >= %(start)s AND interval < %(end)s
+            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+        )
         GROUP BY
             date,
             network_id,
@@ -167,7 +183,11 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count
-        FROM unit_intervals
+        FROM (
+            SELECT *
+            FROM unit_intervals
+            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+        )
         GROUP BY
             interval,
             network_id,
@@ -188,8 +208,12 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count
-        FROM unit_intervals
-        WHERE interval >= %(start)s AND interval < %(end)s
+        FROM (
+            SELECT *
+            FROM unit_intervals
+            WHERE interval >= %(start)s AND interval < %(end)s
+            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+        )
         GROUP BY
             interval,
             network_id,
@@ -218,14 +242,12 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             sum(market_value) as market_value,
             count() as unit_count,
             count(distinct interval) as interval_count
-        FROM unit_intervals
+        FROM (
+            SELECT *
+            FROM unit_intervals
+            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+        )
         GROUP BY
-            date,
-            network_id,
-            network_region,
-            fueltech_id,
-            fueltech_group_id
-        ORDER BY
             date,
             network_id,
             network_region,
@@ -246,10 +268,14 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             sum(market_value) as market_value,
             count() as unit_count,
             count(distinct interval) as interval_count
-        FROM unit_intervals
-        WHERE interval >= %(start)s AND interval < %(end)s
+        FROM (
+            SELECT *
+            FROM unit_intervals
+            WHERE interval >= %(start)s AND interval < %(end)s
+            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+        )
         GROUP BY
-            toDate(interval),
+            date,
             network_id,
             network_region,
             fueltech_id,
@@ -274,7 +300,11 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count
-        FROM unit_intervals
+        FROM (
+            SELECT *
+            FROM unit_intervals
+            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+        )
         GROUP BY interval, network_id, network_region, renewable
     """,
     backfill_query="""
@@ -289,8 +319,12 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count
-        FROM unit_intervals
-        WHERE interval >= %(start)s AND interval < %(end)s
+        FROM (
+            SELECT *
+            FROM unit_intervals
+            WHERE interval >= %(start)s AND interval < %(end)s
+            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+        )
         GROUP BY interval, network_id, network_region, renewable
     """,
 )
@@ -313,7 +347,11 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             sum(market_value) as market_value,
             count() as unit_count,
             count(distinct interval) as interval_count
-        FROM unit_intervals
+        FROM (
+            SELECT *
+            FROM unit_intervals
+            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+        )
         GROUP BY date, network_id, network_region, renewable
     """,
     backfill_query="""
@@ -329,8 +367,12 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             sum(market_value) as market_value,
             count() as unit_count,
             count(distinct interval) as interval_count
-        FROM unit_intervals
-        WHERE interval >= %(start)s AND interval < %(end)s
+        FROM (
+            SELECT *
+            FROM unit_intervals
+            WHERE interval >= %(start)s AND interval < %(end)s
+            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+        )
         GROUP BY date, network_id, network_region, renewable
     """,
 )

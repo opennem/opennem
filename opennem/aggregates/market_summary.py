@@ -109,7 +109,6 @@ def _prepare_market_summary_data(
 
     Args:
         records: Raw records from PostgreSQL
-        network_intervals: Dictionary mapping network_id to interval size in minutes
 
     Returns:
         List of tuples ready for ClickHouse insertion
@@ -173,11 +172,12 @@ def _prepare_market_summary_data(
         ]
     )
 
-    # Calculate market values
+    # Calculate market values and add version
     df = df.with_columns(
         [
             (pl.col("demand_energy") * pl.col("price")).round(2).alias("demand_market_value"),
             (pl.col("demand_total_energy") * pl.col("price")).round(2).alias("demand_total_market_value"),
+            pl.lit(int(datetime.now().timestamp())).alias("version"),  # Add version column
         ]
     )
 
@@ -194,6 +194,7 @@ def _prepare_market_summary_data(
             "demand_total_energy",
             "demand_market_value",
             "demand_total_market_value",
+            "version",
         ]
     )
 
@@ -246,7 +247,6 @@ async def process_market_summary_backlog(
         session: Database session
         start_date: Start date for processing
         end_date: End date for processing
-        network_intervals: Dictionary mapping network_id to interval size
         chunk_size: Size of each processing chunk
     """
     current_start = start_date
@@ -265,8 +265,11 @@ async def process_market_summary_backlog(
             client.execute(
                 """
                 INSERT INTO market_summary
-                (interval, network_id, network_region, price, demand, demand_total,
-                 demand_energy, demand_total_energy, demand_market_value, demand_total_market_value)
+                (
+                    interval, network_id, network_region, price, demand, demand_total,
+                    demand_energy, demand_total_energy, demand_market_value,
+                    demand_total_market_value, version
+                )
                 VALUES
                 """,
                 prepared_data,
@@ -281,8 +284,8 @@ async def run_market_summary_aggregate_to_now() -> int:
     """ """
     client = get_clickhouse_client()
 
-    # get the max interval from market_summary
-    result = client.execute("SELECT MAX(interval) FROM market_summary")
+    # get the max interval from market_summary using FINAL modifier
+    result = client.execute("SELECT MAX(interval) FROM market_summary FINAL")
     max_interval = result[0][0]
 
     date_from = max_interval + timedelta(minutes=5)
@@ -304,8 +307,11 @@ async def run_market_summary_aggregate_to_now() -> int:
     client.execute(
         """
         INSERT INTO market_summary
-        (interval, network_id, network_region, price, demand, demand_total,
-         demand_energy, demand_total_energy, demand_market_value, demand_total_market_value)
+        (
+            interval, network_id, network_region, price, demand, demand_total,
+            demand_energy, demand_total_energy, demand_market_value,
+            demand_total_market_value, version
+        )
         VALUES
         """,
         prepared_data,
@@ -332,8 +338,11 @@ async def run_market_summary_aggregate_for_last_intervals(num_intervals: int) ->
     client.execute(
         """
         INSERT INTO market_summary
-        (interval, network_id, network_region, price, demand, demand_total,
-         demand_energy, demand_total_energy, demand_market_value, demand_total_market_value)
+        (
+            interval, network_id, network_region, price, demand, demand_total,
+            demand_energy, demand_total_energy, demand_market_value,
+            demand_total_market_value, version
+        )
         VALUES
         """,
         prepared_data,
@@ -392,7 +401,7 @@ async def run_market_summary_backlog() -> None:
 if __name__ == "__main__":
     # Run the test
     async def main():
-        _ensure_clickhouse_schema()
+        _refresh_clickhouse_schema()
         await run_market_summary_backlog()
 
     import asyncio

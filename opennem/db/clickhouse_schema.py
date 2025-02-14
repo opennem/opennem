@@ -15,12 +15,13 @@ MARKET_SUMMARY_TABLE_SCHEMA = """CREATE TABLE IF NOT EXISTS market_summary (
     demand_energy Nullable(Float64),
     demand_total_energy Nullable(Float64),
     demand_market_value Nullable(Float64),
-    demand_total_market_value Nullable(Float64)
-) ENGINE = ReplacingMergeTree()
+    demand_total_market_value Nullable(Float64),
+    version UInt64
+) ENGINE = ReplacingMergeTree(version)
 PRIMARY KEY (interval, network_id, network_region)
 ORDER BY (interval, network_id, network_region)
 PARTITION BY toYYYYMM(interval)
-SETTINGS index_granularity = 8192"""
+SETTINGS index_granularity = 8192, allow_experimental_replacing_merge_with_cleanup=1"""
 
 # Unit Intervals table schema
 UNIT_INTERVALS_TABLE_SCHEMA = """CREATE TABLE IF NOT EXISTS unit_intervals (
@@ -37,9 +38,10 @@ UNIT_INTERVALS_TABLE_SCHEMA = """CREATE TABLE IF NOT EXISTS unit_intervals (
     energy Nullable(Float64),
     emissions Nullable(Float64),
     emission_factor Nullable(Float64),
-    market_value Nullable(Float64)
-) ENGINE = ReplacingMergeTree()
+    market_value Nullable(Float64),
+    version UInt64
+) ENGINE = ReplacingMergeTree(version)
 PRIMARY KEY (interval, network_id, network_region, facility_code, unit_code)
 ORDER BY (interval, network_id, network_region, facility_code, unit_code)
 PARTITION BY toYYYYMM(interval)
-SETTINGS index_granularity = 8192"""
+SETTINGS index_granularity = 8192, allow_experimental_replacing_merge_with_cleanup=1"""

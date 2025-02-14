@@ -156,7 +156,7 @@ def get_network_timeseries_query(
     query = f"""
     SELECT
         {", ".join(select_parts)}
-    FROM {source_table}
+    FROM {source_table} FINAL
     WHERE
         network_id = %(network_id)s AND
         {timestamp_col} >= %(date_start)s AND

@@ -167,8 +167,40 @@ def _prepare_unit_interval_data(records: Sequence[tuple]) -> list[tuple]:
     numeric_cols = ["generated", "energy", "emissions", "emission_factor", "market_value"]
     df = df.with_columns([pl.col(col).round(4) for col in numeric_cols])
 
+    # Add version column based on current timestamp
+    df = df.with_columns(pl.lit(int(datetime.now().timestamp())).alias("version"))
+
+    # if network_region is SNOWY1 then set it to NSW1
+    df = df.with_columns(
+        pl.when(pl.col("network_region") == "SNOWY1")
+        .then(pl.lit("NSW1"))
+        .otherwise(pl.col("network_region"))
+        .alias("network_region")
+    )
+
+    # Ensure columns are in the exact order matching the table schema
+    result_df = df.select(
+        [
+            "interval",
+            "network_id",
+            "network_region",
+            "facility_code",
+            "unit_code",
+            "status_id",
+            "fueltech_id",
+            "fueltech_group_id",
+            "renewable",
+            "generated",
+            "energy",
+            "emissions",
+            "emission_factor",
+            "market_value",
+            "version",
+        ]
+    )
+
     # Convert back to list of tuples for ClickHouse insertion
-    return df.rows()
+    return result_df.rows()
 
 
 def _ensure_clickhouse_schema() -> None:
@@ -240,9 +272,12 @@ async def process_unit_intervals_backlog(
             client.execute(
                 """
                 INSERT INTO unit_intervals
-                (interval, network_id, network_region, facility_code, unit_code,
-                 status_id, fueltech_id, fueltech_group_id, renewable,
-                 generated, energy, emissions, emission_factor, market_value)
+                (
+                    interval, network_id, network_region, facility_code, unit_code,
+                    status_id, fueltech_id, fueltech_group_id, renewable,
+                    generated, energy, emissions, emission_factor, market_value,
+                    version
+                )
                 VALUES
                 """,
                 prepared_data,
@@ -262,8 +297,8 @@ async def run_unit_intervals_aggregate_to_now() -> int:
     """
     client = get_clickhouse_client()
 
-    # get the max interval from unit_intervals
-    result = client.execute("SELECT MAX(interval) FROM unit_intervals")
+    # get the max interval from unit_intervals using FINAL modifier
+    result = client.execute("SELECT MAX(interval) FROM unit_intervals FINAL")
     max_interval = result[0][0]
 
     date_from = max_interval + timedelta(minutes=5)
@@ -285,9 +320,12 @@ async def run_unit_intervals_aggregate_to_now() -> int:
     client.execute(
         """
         INSERT INTO unit_intervals
-        (interval, network_id, network_region, facility_code, unit_code,
-         status_id, fueltech_id, fueltech_group_id, renewable,
-         generated, energy, emissions, emission_factor, market_value)
+        (
+            interval, network_id, network_region, facility_code, unit_code,
+            status_id, fueltech_id, fueltech_group_id, renewable,
+            generated, energy, emissions, emission_factor, market_value,
+            version
+        )
         VALUES
         """,
         prepared_data,
@@ -320,9 +358,12 @@ async def run_unit_intervals_aggregate_for_last_intervals(num_intervals: int) ->
     client.execute(
         """
         INSERT INTO unit_intervals
-        (interval, network_id, network_region, facility_code, unit_code,
-         status_id, fueltech_id, fueltech_group_id, renewable,
-         generated, energy, emissions, emission_factor, market_value)
+        (
+            interval, network_id, network_region, facility_code, unit_code,
+            status_id, fueltech_id, fueltech_group_id, renewable,
+            generated, energy, emissions, emission_factor, market_value,
+            version
+        )
         VALUES
         """,
         prepared_data,
@@ -483,8 +524,8 @@ def backfill_materialized_views(view: MaterializedView | str | None = None) -> N
 if __name__ == "__main__":
     # Run the test
     async def main():
-        _refresh_clickhouse_schema()
-        await run_unit_intervals_backlog(start_date=NetworkNEM.data_first_seen.replace(tzinfo=None))
+        # _refresh_clickhouse_schema()
+        await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2021-04-20T08:30:00"))
         # Uncomment to backfill views:
         backfill_materialized_views()
 

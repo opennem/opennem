@@ -510,6 +510,7 @@ _DEFAULT_METRICS = [
     MilestoneType.power,
     MilestoneType.energy,
     MilestoneType.emissions,
+    MilestoneType.market_value,
 ]
 
 _DEFAULT_NETWORKS = [
