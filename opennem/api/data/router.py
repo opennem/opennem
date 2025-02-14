@@ -75,6 +75,10 @@ def format_timeseries_response(
     Returns:
         NetworkTimeSeriesResponse: Formatted response
     """
+    # Format dates to remove microseconds and timezone
+    formatted_start = date_start.replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%S")
+    formatted_end = date_end.replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%S")
+
     timeseries_results = []
 
     if primary_grouping == PrimaryGrouping.NETWORK:
@@ -82,12 +86,18 @@ def format_timeseries_response(
         if secondary_groupings:
             # Group by secondary grouping
             for group_id, group_rows in _group_rows_by_column(results, 1).items():
+                # For renewable grouping, convert boolean to string
+                if secondary_groupings[0] == SecondaryGrouping.RENEWABLE:
+                    group_name = "renewable" if group_id else "carbon"
+                else:
+                    group_name = str(group_id)
+
                 timeseries_results.append(
                     TimeSeriesResult(
-                        name=group_id,
-                        date_start=date_start,
-                        date_end=date_end,
-                        labels={secondary_groupings[0]: group_id},
+                        name=group_name,
+                        date_start=formatted_start,
+                        date_end=formatted_end,
+                        labels={secondary_groupings[0]: group_name},
                         data=[(row[0], float(row[-1]) if row[-1] is not None else None) for row in group_rows],
                     )
                 )
@@ -96,8 +106,8 @@ def format_timeseries_response(
             timeseries_results.append(
                 TimeSeriesResult(
                     name=network,
-                    date_start=date_start,
-                    date_end=date_end,
+                    date_start=formatted_start,
+                    date_end=formatted_end,
                     data=[(row[0], float(row[-1]) if row[-1] is not None else None) for row in results],
                 )
             )
@@ -107,12 +117,18 @@ def format_timeseries_response(
             if secondary_groupings:
                 # Then by secondary grouping
                 for group_id, group_rows in _group_rows_by_column(region_rows, 2).items():
+                    # For renewable grouping, convert boolean to string
+                    if secondary_groupings[0] == SecondaryGrouping.RENEWABLE:
+                        group_name = "renewable" if group_id else "carbon"
+                    else:
+                        group_name = str(group_id)
+
                     timeseries_results.append(
                         TimeSeriesResult(
-                            name=f"{region_id}_{group_id}",
-                            date_start=date_start,
-                            date_end=date_end,
-                            labels={"region": region_id, secondary_groupings[0]: group_id},
+                            name=f"{region_id}_{group_name}",
+                            date_start=formatted_start,
+                            date_end=formatted_end,
+                            labels={"region": region_id, secondary_groupings[0]: group_name},
                             data=[(row[0], float(row[-1]) if row[-1] is not None else None) for row in group_rows],
                         )
                     )
@@ -121,8 +137,8 @@ def format_timeseries_response(
                 timeseries_results.append(
                     TimeSeriesResult(
                         name=region_id,
-                        date_start=date_start,
-                        date_end=date_end,
+                        date_start=formatted_start,
+                        date_end=formatted_end,
                         labels={"region": region_id},
                         data=[(row[0], float(row[-1]) if row[-1] is not None else None) for row in region_rows],
                     )
@@ -133,8 +149,8 @@ def format_timeseries_response(
         network_code=network,
         metric=metric,
         interval=interval,
-        start=date_start,
-        end=date_end,
+        start=formatted_start,
+        end=formatted_end,
         primary_grouping=primary_grouping,
         secondary_groupings=secondary_groupings or [],
         results=timeseries_results,

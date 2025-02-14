@@ -59,7 +59,14 @@ def _get_source_table(metric: Metric, interval: Interval, secondary_groupings: S
             _raise_unsupported_grouping(metric)
         return "market_summary"
 
-    # For other metrics, select based on interval size
+    # Check if we're grouping by renewable status
+    if secondary_groupings and SecondaryGrouping.RENEWABLE in secondary_groupings:
+        if interval in (Interval.INTERVAL, Interval.HOUR):
+            return "renewable_intervals_mv"
+        else:
+            return "renewable_intervals_daily_mv"
+
+    # For other metrics and groupings, select based on interval size
     if interval in (Interval.INTERVAL, Interval.HOUR):
         return "unit_intervals"
     elif interval in (Interval.DAY, Interval.WEEK):
