@@ -247,6 +247,8 @@ def analyze_milestone_records(
         metric_column = "energy"
     elif milestone_type == MilestoneType.emissions:
         metric_column = "emissions"
+    elif milestone_type == MilestoneType.market_value:
+        metric_column = "market_value"
     elif milestone_type == MilestoneType.price:
         interval_count = "1"
         if period == MilestonePeriod.interval:
@@ -262,6 +264,9 @@ def analyze_milestone_records(
         else:
             metric_column = "demand_energy"
             agg_function = "SUM"
+
+    if not metric_column:
+        raise ValueError(f"Unsupported milestone type: {milestone_type}")
 
     # Build date range conditions
     date_conditions = []
@@ -519,7 +524,7 @@ _DEFAULT_METRICS = [
     MilestoneType.power,
     MilestoneType.energy,
     MilestoneType.emissions,
-    MilestoneType.market_value,
+    # MilestoneType.market_value,
 ]
 
 _DEFAULT_NETWORKS = [
