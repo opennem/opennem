@@ -473,7 +473,7 @@ def _get_view_by_name(view_name: str) -> MaterializedView:
     raise ValueError(f"View {view_name} not found")
 
 
-def backfill_materialized_views(view: MaterializedView | str | None = None) -> None:
+def backfill_materialized_views(view: MaterializedView | str | None = None, refresh_views: bool = False) -> None:
     """
     Backfill materialized views from the base unit_intervals table.
     This should be run after bulk loading data into unit_intervals if the views are empty.
@@ -507,11 +507,14 @@ def backfill_materialized_views(view: MaterializedView | str | None = None) -> N
         if found_view is None:
             raise ValueError(f"View {view} not found")
         views_to_process = [found_view]
-    else:
-        raise ValueError("view parameter must be None, a MaterializedView instance, or a view name string")
 
     # Process each view
     for view in views_to_process:
+        # delete and recreate the view if we are refreshing
+        if refresh_views:
+            client.execute(f"DROP TABLE IF EXISTS {view.name}")
+            client.execute(view.schema)
+
         record_count = _backfill_materialized_view(
             client=client,
             view=view,
@@ -525,9 +528,9 @@ if __name__ == "__main__":
     # Run the test
     async def main():
         # _refresh_clickhouse_schema()
-        await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2021-04-20T08:30:00"))
+        # await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2021-04-20T08:30:00"))
         # Uncomment to backfill views:
-        backfill_materialized_views()
+        backfill_materialized_views(refresh_views=True)
 
     import asyncio
 
