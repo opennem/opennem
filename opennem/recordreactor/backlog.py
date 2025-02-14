@@ -276,7 +276,7 @@ def analyze_milestone_records(
         {time_bucket_sql} as time_bucket{group_by_select},
         {interval_count} as interval_count,
         {agg_function}({metric_column}) as total_value
-      FROM {source_table}
+      FROM {source_table} FINAL
       WHERE
         network_id in ('{network.code.upper()}', {list_to_case([i.code for i in network.subnetworks])})
         {date_clause}
