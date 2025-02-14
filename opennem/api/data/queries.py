@@ -164,7 +164,7 @@ def get_network_timeseries_query(
     GROUP BY
         {", ".join(group_by_parts)}
     ORDER BY
-        interval DESC
+        interval ASC
     """
 
     if primary_grouping == PrimaryGrouping.NETWORK_REGION:
