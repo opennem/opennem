@@ -39,6 +39,7 @@ from opennem.exporter.facilities import export_facilities_static
 
 # from opennem.exporter.historic import export_historic_intervals
 from opennem.pipelines.export import run_export_power_latest_for_network
+from opennem.recordreactor.backlog import analyze_milestone_records
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_today_opennem
 from opennem.workers.catchup import catchup_last_intervals, run_catchup_check
@@ -268,9 +269,7 @@ async def task_update_milestones() -> None:
     if not settings.run_milestones:
         return
 
-    from opennem.recordreactor.backlog import run_update_milestone_analysis_to_now
-
-    await run_update_milestone_analysis_to_now()
+    await analyze_milestone_records()
 
 
 async def task_check_unsplit_batteries(ctx: dict) -> None:
