@@ -292,6 +292,10 @@ async def run_market_summary_aggregate_to_now() -> int:
         logger.info("No new data to process")
         return 0
 
+    if date_from - date_to > timedelta(days=1):
+        logger.info("Date range is greater than 1 day, skipping")
+        return 0
+
     # run market summary from max_interval to now
     async with get_write_session() as session:
         records = await _get_market_summary_data(session, date_from, date_to)

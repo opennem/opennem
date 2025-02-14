@@ -273,6 +273,10 @@ async def run_unit_intervals_aggregate_to_now() -> int:
         logger.info("No new data to process")
         return 0
 
+    if date_from - date_to > timedelta(days=1):
+        logger.info("Date range is greater than 1 day, skipping")
+        return 0
+
     # run unit intervals from max_interval to now
     async with get_write_session() as session:
         records = await _get_unit_interval_data(session, date_from, date_to)
@@ -479,8 +483,8 @@ def backfill_materialized_views(view: MaterializedView | str | None = None) -> N
 if __name__ == "__main__":
     # Run the test
     async def main():
-        _ensure_clickhouse_schema()
-        # await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2025-01-01T00:00:00"))
+        _refresh_clickhouse_schema()
+        await run_unit_intervals_backlog(start_date=NetworkNEM.data_first_seen.replace(tzinfo=None))
         # Uncomment to backfill views:
         backfill_materialized_views()
 
