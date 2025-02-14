@@ -506,10 +506,10 @@ _DEFAULT_PERIODS = [
 
 _DEFAULT_METRICS = [
     MilestoneType.demand,
-    MilestoneType.price,
+    # MilestoneType.price,
     MilestoneType.power,
     MilestoneType.energy,
-    # MilestoneType.emissions,
+    MilestoneType.emissions,
 ]
 
 _DEFAULT_NETWORKS = [
