@@ -81,6 +81,7 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
         in [
             MilestonePeriod.interval,
             MilestonePeriod.day,
+            MilestonePeriod.week,
             MilestonePeriod.week_rolling,
         ]
         and milestone.aggregate == MilestoneAggregate.high
@@ -96,6 +97,7 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
     period_scores = {
         MilestonePeriod.interval: 1,
         MilestonePeriod.day: 9,
+        MilestonePeriod.week: 2,
         MilestonePeriod.week_rolling: 2,
         MilestonePeriod.month: 9,
         MilestonePeriod.quarter: 5,

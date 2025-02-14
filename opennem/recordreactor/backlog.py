@@ -40,6 +40,8 @@ class IntervalThresholds:
 
     interval: int = 1
     day: int = 288  # day has to be complete for a min record to be valid
+    week: int = 2016  # week has to be complete for a min record to be valid
+    week_rolling: int = 2016  # week has to be complete for a min record to be valid
     month: int = 8000  # some leeway with months since we have missing intervals in every early month
     quarter: int = 24000
     year: int = 98000
@@ -80,6 +82,8 @@ def get_time_bucket_sql(period: MilestonePeriod, source_table: str = "unit_inter
         return f"{source_table}.{time_col}"
     elif period == MilestonePeriod.day:
         return f"toStartOfDay({source_table}.{time_col})"
+    elif period == MilestonePeriod.week:
+        return f"toStartOfWeek({source_table}.{time_col})"
     elif period == MilestonePeriod.week_rolling:
         return f"toStartOfWeek({source_table}.{time_col})"
     elif period == MilestonePeriod.month:
@@ -103,7 +107,7 @@ def get_time_bucket_sql(period: MilestonePeriod, source_table: str = "unit_inter
 def _get_source_table_and_interval_name(
     milestone_type: MilestoneType, period: MilestonePeriod, grouping: GroupingConfig
 ) -> tuple[str, str]:
-    if milestone_type in [MilestoneType.power, MilestoneType.energy, MilestoneType.emissions]:
+    if milestone_type in [MilestoneType.power, MilestoneType.energy, MilestoneType.emissions, MilestoneType.market_value]:
         if "fueltech_group_id" in grouping.group_by_fields:
             if period == MilestonePeriod.interval:
                 return "fueltech_intervals_mv", "interval"
@@ -142,6 +146,10 @@ def _trim_end_date(time_col: str, end_date: datetime, period: MilestonePeriod) -
 
     if period == MilestonePeriod.day:
         return f"{time_col} < toStartOfDay({end_date_dt})"
+    elif period == MilestonePeriod.week:
+        return f"{time_col} < toStartOfWeek({end_date_dt})"
+    elif period == MilestonePeriod.week_rolling:
+        return f"{time_col} < toStartOfWeek({end_date_dt})"
     elif period == MilestonePeriod.month:
         return f"{time_col} < toStartOfMonth({end_date_dt})"
     elif period == MilestonePeriod.quarter:
@@ -498,6 +506,7 @@ def _analyzed_record_to_milestone_schema(
 _DEFAULT_PERIODS = [
     MilestonePeriod.interval,
     MilestonePeriod.day,
+    # MilestonePeriod.week,
     # MilestonePeriod.week_rolling,
     MilestonePeriod.month,
     MilestonePeriod.quarter,
@@ -506,7 +515,7 @@ _DEFAULT_PERIODS = [
 
 _DEFAULT_METRICS = [
     MilestoneType.demand,
-    # MilestoneType.price,
+    MilestoneType.price,
     MilestoneType.power,
     MilestoneType.energy,
     MilestoneType.emissions,
