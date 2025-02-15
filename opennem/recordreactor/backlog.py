@@ -13,9 +13,9 @@ from datetime import datetime
 from typing import Any
 
 from clickhouse_driver.client import Client
-from sqlalchemy import func, select
+from sqlalchemy import func, select, text
 
-from opennem.db import get_read_session
+from opennem.db import get_read_session, get_write_session
 from opennem.db.clickhouse import get_clickhouse_client
 from opennem.db.models.opennem import Milestones
 from opennem.queries.utils import list_to_case
@@ -598,13 +598,18 @@ async def run_milestone_analysis(
     logger.info("Milestone analysis complete")
 
 
-async def run_milestone_analysis_backlog():
+async def run_milestone_analysis_backlog(refresh: bool = False):
     """
     Runs in year chunks
     """
     end_date = get_last_completed_interval_for_network(NetworkNEM)
     start_date = datetime.fromisoformat("1999-01-01T00:00:00")
     # start_date = end_date - timedelta(days=90)
+
+    if refresh:
+        async with get_write_session() as session:
+            await session.execute(text("delete from milestones"))
+        logger.info("Milestones table deleted")
 
     await run_milestone_analysis(start_date=start_date, end_date=end_date)
 
@@ -638,4 +643,4 @@ if __name__ == "__main__":
     # Run test for last year of data
     import asyncio
 
-    asyncio.run(run_milestone_analysis_backlog())
+    asyncio.run(run_milestone_analysis_backlog(refresh=True))
