@@ -8,8 +8,7 @@ import logging
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
-from clickhouse_driver.client import Client
-from clickhouse_driver.dbapi.connection import Connection
+from clickhouse_driver import Client
 
 from opennem import settings
 
@@ -23,32 +22,42 @@ def get_clickhouse_client() -> Client:
     Returns:
         Client: A configured ClickHouse client instance
     """
-    return Client.from_url(settings.clickhouse_url)
-
-
-def get_clickhouse_connection() -> Connection:
-    """
-    Get a ClickHouse DBAPI connection using settings from environment.
-
-    Returns:
-        Connection: A configured ClickHouse connection
-    """
-    return Connection.from_url(settings.clickhouse_url)
+    return Client(
+        host=settings.clickhouse_url.host,
+        port=settings.clickhouse_url.port,
+        user=settings.clickhouse_url.username,
+        password=settings.clickhouse_url.password,
+        compression="lz4",
+    )
 
 
 @asynccontextmanager
-async def get_clickhouse_session() -> AsyncGenerator[Client, None]:
+async def get_clickhouse_context() -> AsyncGenerator[Client, None]:
     """
-    Get a ClickHouse client session as an async context manager.
+    Async context manager for ClickHouse client connections.
 
     Yields:
-        Client: A configured ClickHouse client instance
+        Client: ClickHouse client for executing queries
+
+    Raises:
+        Exception: If connection fails
     """
     client = get_clickhouse_client()
     try:
         yield client
     finally:
         client.disconnect()
+
+
+async def get_clickhouse_dependency() -> AsyncGenerator[Client, None]:
+    """
+    FastAPI dependency for injecting ClickHouse client into route handlers.
+
+    Yields:
+        Client: ClickHouse client for executing queries
+    """
+    async with get_clickhouse_context() as client:
+        yield client
 
 
 def create_table_if_not_exists(client: Client, table_name: str, schema: str) -> None:

@@ -21,7 +21,7 @@ from opennem.api.utils import get_api_network_from_code
 from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
 from opennem.core.metric import Metric
 from opennem.core.time_interval import Interval
-from opennem.db.clickhouse import Client, get_clickhouse_client
+from opennem.db.clickhouse import get_clickhouse_dependency
 from opennem.utils.dates import get_last_completed_interval_for_network
 
 router = APIRouter()
@@ -177,7 +177,7 @@ async def get_network_data(
     secondary_grouping: Annotated[
         SecondaryGrouping | None, Query(description="Optional secondary grouping to apply", example="fueltech_group")
     ] = None,
-    client: Client = Depends(get_clickhouse_client),
+    client: Any = Depends(get_clickhouse_dependency),
 ) -> NetworkTimeSeriesResponse:
     """
     Get time series data for a network.

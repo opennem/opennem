@@ -8,7 +8,7 @@ from datetime import UTC
 from datetime import timezone as pytimezone
 from pathlib import Path
 
-from pydantic import AliasChoices, Field, RedisDsn, field_validator
+from pydantic import AliasChoices, AnyUrl, Field, RedisDsn, field_validator
 from pydantic_settings import BaseSettings
 
 from opennem.schema.field_types import URLNoPath
@@ -32,7 +32,7 @@ class OpennemSettings(BaseSettings):
 
     db_url: str = Field("postgresql://user:pass@127.0.0.1:15444/opennem", validation_alias=AliasChoices("DATABASE_HOST_URL"))
 
-    clickhouse_url: str = Field(
+    clickhouse_url: AnyUrl = Field(
         "clickhouse://localhost:9000/opennem",
         validation_alias=AliasChoices("CLICKHOUSE_URL"),
         description="ClickHouse connection URL in format clickhouse:// schema url",
