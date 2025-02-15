@@ -146,6 +146,6 @@
     {
         "code": "battery",
         "label": "Battery",
-        "renewable": true
+        "renewable": false
     }
 ]

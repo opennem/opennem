@@ -27,13 +27,13 @@
         "code": "battery_charging",
         "label": "Battery (Charging)",
         "color": "#B2DAEF",
-        "renewable": true
+        "renewable": false
     },
     {
         "code": "battery_discharging",
         "label": "Battery (Discharging)",
         "color": "#00A2FA",
-        "renewable": true
+        "renewable": false
     },
     {
         "code": "hydro",
@@ -57,6 +57,6 @@
         "code": "pumps",
         "label": "Pumps",
         "color": "#88AFD0",
-        "renewable": true
+        "renewable": false
     }
 ]
