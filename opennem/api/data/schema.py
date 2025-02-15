@@ -10,7 +10,6 @@ from pydantic import computed_field, model_validator
 
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.api.utils import get_api_network_from_code
-from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
 from opennem.core.metric import Metric, get_metric_metadata
 from opennem.core.time_interval import Interval
 from opennem.schema.core import BaseConfig
@@ -35,7 +34,7 @@ class TimeSeriesResult(BaseConfig):
     name: str
     date_start: datetime
     date_end: datetime
-    labels: dict[str, str] = {}
+    columns: dict[str, str | bool] = {}
     data: list[tuple[datetime, SignificantFigures8 | None]]
 
 
@@ -53,8 +52,7 @@ class NetworkTimeSeries(BaseConfig):
         interval: The time interval the data is aggregated by
         start: The start time of the data range (UTC)
         end: The end time of the data range (UTC)
-        primary_grouping: The primary grouping type (network or network_region)
-        secondary_groupings: Optional list of secondary groupings (fueltech, etc.)
+        groupings: List of groupings applied to the data (e.g. ["network_region", "fueltech"])
         results: List of time series results
     """
 
@@ -64,8 +62,7 @@ class NetworkTimeSeries(BaseConfig):
     interval: Interval
     start: datetime
     end: datetime
-    primary_grouping: PrimaryGrouping = PrimaryGrouping.NETWORK
-    secondary_groupings: list[SecondaryGrouping] = []
+    groupings: list[str] = []
     results: list[TimeSeriesResult]
 
     @computed_field

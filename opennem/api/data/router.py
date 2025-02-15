@@ -15,8 +15,9 @@ from fastapi.params import Path
 from fastapi_versionizer import api_version
 
 from opennem.api.data.queries import get_network_timeseries_query
-from opennem.api.data.schema import NetworkTimeSeries, NetworkTimeSeriesResponse, TimeSeriesResult
+from opennem.api.data.schema import NetworkTimeSeries, TimeSeriesResult
 from opennem.api.data.utils import get_default_start_date, validate_date_range
+from opennem.api.schema import APIV4ResponseSchema
 from opennem.api.utils import get_api_network_from_code
 from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
 from opennem.core.metric import Metric
@@ -53,31 +54,41 @@ def format_timeseries_response(
     network: str,
     metric: Metric,
     interval: Interval,
-    date_start: datetime,
-    date_end: datetime,
     primary_grouping: PrimaryGrouping,
     secondary_groupings: Sequence[SecondaryGrouping] | None,
     results: Sequence[Any],
-) -> NetworkTimeSeriesResponse:
+) -> NetworkTimeSeries:
     """
-    Format raw query results into a NetworkTimeSeriesResponse.
+    Format raw query results into a NetworkTimeSeries.
 
     Args:
         network: The network code
         metric: The metric queried
         interval: The time interval used
-        date_start: Start time of the query
-        date_end: End time of the query
         primary_grouping: Primary grouping applied
         secondary_groupings: Secondary groupings applied
         results: Raw query results
 
     Returns:
-        NetworkTimeSeriesResponse: Formatted response
+        NetworkTimeSeries: Formatted response
     """
+    # Get min and max dates from results
+    if not results:
+        raise HTTPException(status_code=404, detail="No data found for the specified parameters")
+
+    # Extract all timestamps from results
+    all_timestamps = [row[0] for row in results]
+    date_start = min(all_timestamps)
+    date_end = max(all_timestamps)
+
     # Format dates to remove microseconds and timezone
     formatted_start = date_start.replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%S")
     formatted_end = date_end.replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%S")
+
+    # Combine groupings into a single list
+    groupings = [primary_grouping.value]
+    if secondary_groupings:
+        groupings.extend(g.value.lower() for g in secondary_groupings)
 
     timeseries_results = []
 
@@ -97,7 +108,7 @@ def format_timeseries_response(
                         name=group_name,
                         date_start=formatted_start,
                         date_end=formatted_end,
-                        labels={secondary_groupings[0]: group_name},
+                        columns={secondary_groupings[0]: group_id},
                         data=[(row[0], float(row[-1]) if row[-1] is not None else None) for row in group_rows],
                     )
                 )
@@ -128,7 +139,7 @@ def format_timeseries_response(
                             name=f"{region_id}_{group_name}",
                             date_start=formatted_start,
                             date_end=formatted_end,
-                            labels={"region": region_id, secondary_groupings[0]: group_name},
+                            columns={"network_region": region_id, secondary_groupings[0]: group_id},
                             data=[(row[0], float(row[-1]) if row[-1] is not None else None) for row in group_rows],
                         )
                     )
@@ -139,7 +150,7 @@ def format_timeseries_response(
                         name=region_id,
                         date_start=formatted_start,
                         date_end=formatted_end,
-                        labels={"region": region_id},
+                        columns={"network_region": region_id},
                         data=[(row[0], float(row[-1]) if row[-1] is not None else None) for row in region_rows],
                     )
                 )
@@ -151,18 +162,17 @@ def format_timeseries_response(
         interval=interval,
         start=formatted_start,
         end=formatted_end,
-        primary_grouping=primary_grouping,
-        secondary_groupings=secondary_groupings or [],
+        groupings=groupings,
         results=timeseries_results,
     )
 
-    return NetworkTimeSeriesResponse(data=network_data)
+    return network_data
 
 
 @api_version(4)
 @router.get(
     "/network/{network_code}/{metric}",
-    response_model=NetworkTimeSeriesResponse,
+    response_model=APIV4ResponseSchema,
     response_model_exclude_none=True,
 )
 async def get_network_data(
@@ -178,7 +188,7 @@ async def get_network_data(
         SecondaryGrouping | None, Query(description="Optional secondary grouping to apply", example="fueltech_group")
     ] = None,
     client: Any = Depends(get_clickhouse_dependency),
-) -> NetworkTimeSeriesResponse:
+) -> APIV4ResponseSchema:
     """
     Get time series data for a network.
 
@@ -246,14 +256,12 @@ async def get_network_data(
         network=network.code,
         metric=metric,
         interval=interval,
-        date_start=date_start,
-        date_end=date_end,
         primary_grouping=primary_grouping,
         secondary_groupings=secondary_groupings,
         results=results,
     )
 
-    return response
+    return APIV4ResponseSchema(data=[response])
 
 
 @api_version(4)
