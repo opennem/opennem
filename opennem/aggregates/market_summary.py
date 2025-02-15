@@ -212,14 +212,6 @@ def _ensure_clickhouse_schema() -> None:
     if not table_exists(client, "market_summary"):
         create_table_if_not_exists(client, "market_summary", MARKET_SUMMARY_TABLE_SCHEMA)
 
-    if not table_exists(client, "market_summary_daily_mv"):
-        # create_table_if_not_exists(client, "market_summary_daily_mv", MARKET_SUMMARY_DAILY_MV_TABLE_SCHEMA)
-        pass
-
-    if not table_exists(client, "market_summary_monthly_mv"):
-        # create_table_if_not_exists(client, "market_summary_monthly_mv", MARKET_SUMMARY_MONTHLY_MV_TABLE_SCHEMA)
-        pass
-
 
 def _refresh_clickhouse_schema() -> None:
     """
@@ -228,10 +220,10 @@ def _refresh_clickhouse_schema() -> None:
     """
     client = get_clickhouse_client()
     client.execute("DROP TABLE IF EXISTS market_summary")
-    client.execute("DROP VIEW IF EXISTS market_summary_daily_mv")
-    client.execute("DROP VIEW IF EXISTS market_summary_monthly_mv")
 
     _ensure_clickhouse_schema()
+
+    logger.info("ClickHouse schema refreshed")
 
 
 async def process_market_summary_backlog(
