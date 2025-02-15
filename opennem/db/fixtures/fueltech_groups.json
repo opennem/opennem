@@ -51,7 +51,7 @@
         "code": "bioenergy",
         "label": "Bioenergy",
         "color": "#A3886F",
-        "renewable": false
+        "renewable": true
     },
     {
         "code": "pumps",
