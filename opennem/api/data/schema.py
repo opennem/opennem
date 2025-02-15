@@ -6,9 +6,10 @@ This module contains the Pydantic models used for data endpoint responses.
 
 from datetime import datetime
 
-from pydantic import model_validator
+from pydantic import computed_field, model_validator
 
 from opennem.api.schema import APIV4ResponseSchema
+from opennem.api.utils import get_api_network_from_code
 from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
 from opennem.core.metric import Metric, get_metric_metadata
 from opennem.core.time_interval import Interval
@@ -66,6 +67,14 @@ class NetworkTimeSeries(BaseConfig):
     primary_grouping: PrimaryGrouping = PrimaryGrouping.NETWORK
     secondary_groupings: list[SecondaryGrouping] = []
     results: list[TimeSeriesResult]
+
+    @computed_field
+    @property
+    def network_timezone_offset(self) -> int:
+        """
+        Get the timezone offset for the network.
+        """
+        return get_api_network_from_code(self.network_code).get_offset_string()
 
     @model_validator(mode="after")
     def set_unit_from_metric(self) -> "NetworkTimeSeries":
