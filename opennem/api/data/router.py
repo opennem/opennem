@@ -164,7 +164,6 @@ def format_timeseries_response(
     "/network/{network_code}/{metric}",
     response_model=NetworkTimeSeriesResponse,
     response_model_exclude_none=True,
-    response_model_exclude_unset=True,
 )
 async def get_network_data(
     network_code: str,
