@@ -27,7 +27,6 @@ def get_clickhouse_client() -> Client:
         port=settings.clickhouse_url.port,
         user=settings.clickhouse_url.username,
         password=settings.clickhouse_url.password,
-        compression="lz4",
     )
 
 
