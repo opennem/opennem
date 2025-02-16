@@ -13,9 +13,9 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi_versionizer import api_version
 
-from opennem.api.data.queries import get_network_timeseries_query
 from opennem.api.data.schema import DataMetric, NetworkTimeSeries, TimeSeriesResult
 from opennem.api.data.utils import get_default_start_date, validate_date_range
+from opennem.api.queries import QueryType, get_timeseries_query
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.api.utils import get_api_network_from_code, validate_metrics
 from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
@@ -26,7 +26,6 @@ from opennem.schema.field_types import SignificantFigures8
 from opennem.utils.dates import get_last_completed_interval_for_network
 
 router = APIRouter()
-
 logger = logging.getLogger("opennem.api.data")
 
 _SUPPORTED_METRICS = [
@@ -206,8 +205,9 @@ async def get_network_data(
     # Convert single secondary grouping to sequence
     secondary_groupings = [secondary_grouping] if secondary_grouping else None
 
-    # Build and execute query
-    query, params, column_names = get_network_timeseries_query(
+    # Build and execute query using the unified query builder
+    query, params, column_names = get_timeseries_query(
+        query_type=QueryType.DATA,
         network=network,
         metrics=[DataMetric(m.value) for m in metrics],
         interval=interval,

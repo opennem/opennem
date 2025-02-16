@@ -12,8 +12,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi_versionizer import api_version
 
 from opennem.api.data.schema import TimeSeriesResult
-from opennem.api.market.queries import get_market_timeseries_query
 from opennem.api.market.schema import MarketMetric, MarketTimeSeries
+from opennem.api.queries import QueryType, get_timeseries_query
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.api.utils import get_api_network_from_code, validate_metrics
 from opennem.core.grouping import PrimaryGrouping
@@ -174,8 +174,9 @@ async def get_network_data(
     if date_start is None:
         date_start = interval.default_start(date_end)
 
-    # Build and execute query
-    query, params, column_names = get_market_timeseries_query(
+    # Build and execute query using the unified query builder
+    query, params, column_names = get_timeseries_query(
+        query_type=QueryType.MARKET,
         network=network,
         metrics=metrics,
         interval=interval,
