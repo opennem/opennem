@@ -67,7 +67,7 @@ class QueryConfig:
         Returns:
             str: Table or view name to query from
         """
-        if interval == Interval.INTERVAL:
+        if interval in [Interval.INTERVAL, Interval.HOUR]:
             return self.base_table
         elif interval in [Interval.MONTH, Interval.QUARTER, Interval.YEAR]:
             return self.monthly_mv or self.base_table
@@ -81,7 +81,7 @@ class QueryConfig:
         if not self.daily_mv and not self.monthly_mv:
             return "interval"
 
-        if interval == Interval.INTERVAL:
+        if interval in [Interval.INTERVAL, Interval.HOUR]:
             return "interval"
         return "date"
 

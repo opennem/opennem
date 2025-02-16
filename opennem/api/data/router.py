@@ -6,23 +6,21 @@ data queries.
 """
 
 import logging
-from collections.abc import Sequence
 from datetime import datetime
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi_versionizer import api_version
 
-from opennem.api.data.schema import DataMetric, NetworkTimeSeries, TimeSeriesResult
 from opennem.api.data.utils import get_default_start_date, validate_date_range
 from opennem.api.queries import QueryType, get_timeseries_query
 from opennem.api.schema import APIV4ResponseSchema
+from opennem.api.timeseries import format_timeseries_response
 from opennem.api.utils import get_api_network_from_code, validate_metrics
 from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
 from opennem.core.metric import Metric
 from opennem.core.time_interval import Interval
 from opennem.db.clickhouse import get_clickhouse_dependency
-from opennem.schema.field_types import SignificantFigures8
 from opennem.utils.dates import get_last_completed_interval_for_network
 
 router = APIRouter()
@@ -34,115 +32,6 @@ _SUPPORTED_METRICS = [
     Metric.EMISSIONS,
     Metric.MARKET_VALUE,
 ]
-
-
-def format_timeseries_response(
-    network: str,
-    metrics: list[Metric],
-    interval: Interval,
-    primary_grouping: PrimaryGrouping,
-    secondary_groupings: Sequence[SecondaryGrouping] | None,
-    results: Sequence[dict[str, Any]],
-) -> list[NetworkTimeSeries]:
-    """
-    Format raw query results into NetworkTimeSeries objects, one per metric.
-
-    Args:
-        network: The network code.
-        metrics: The list of metrics queried.
-        interval: The time interval used.
-        primary_grouping: Primary grouping applied.
-        secondary_groupings: Secondary groupings applied.
-        results: Raw query results from ClickHouse as dictionaries.
-
-    Returns:
-        list[NetworkTimeSeries]: List of formatted responses, one per metric.
-    """
-    # Get min and max dates from results and preserve as datetime objects.
-    all_timestamps = [row["interval"] for row in results]
-    global_date_start = min(all_timestamps)
-    global_date_end = max(all_timestamps)
-    dt_start = global_date_start.replace(microsecond=0)
-    dt_end = global_date_end.replace(microsecond=0)
-
-    # Combine groupings into a single list (for overall metadata)
-    overall_groupings = [primary_grouping.value]
-    if secondary_groupings:
-        overall_groupings.extend(g.value.lower() for g in secondary_groupings)
-
-    # Build grouping columns list based on primary and secondary grouping.
-    group_cols: list[str] = ["network"]
-
-    if primary_grouping == PrimaryGrouping.NETWORK_REGION:
-        group_cols.append("network_region")
-
-    # Add secondary grouping columns if any
-    if secondary_groupings:
-        for grouping in secondary_groupings:
-            group_cols.append(grouping.value.lower())
-
-    # Group rows based on grouping columns. If no grouping, use default key.
-    groups: dict[str, list[dict[str, Any]]] = {}
-
-    logger.debug(f"grouping columns: {group_cols}")
-    if group_cols:
-        # Grouping key from columns
-        for row in results:
-            key = tuple(str(row[col]) for col in group_cols)
-            groups.setdefault(key, []).append(row)
-    else:
-        groups["default"] = list(results)
-
-    # Process each metric separately
-    network_timeseries_list = []
-    for metric in metrics:
-        timeseries_results = []
-
-        for group_key, rows in groups.items():
-            # Set columns and determine name prefix based on group key
-            columns = {}
-            name_prefix = f"{network}"
-            if group_key != "default":
-                # Map column names to their grouping names
-                columns = dict(zip(group_cols, group_key, strict=False))
-                name_prefix += "_".join(str(val).lower() for val in group_key)
-
-            # Create time series data points for this metric
-            data_points: list[tuple[datetime, SignificantFigures8 | None]] = []
-            for row in rows:
-                timestamp = row["interval"]
-                raw_value = row[metric.value.lower()]
-                value = float(raw_value) if raw_value is not None else None
-                data_points.append((timestamp, value))
-
-            # Sort data points by timestamp (ascending)
-            data_points.sort(key=lambda x: x[0])
-
-            # Create time series result for this group
-            series_name = f"{name_prefix}_{metric.value}".lower()
-            timeseries_results.append(
-                TimeSeriesResult(
-                    name=series_name,
-                    date_start=dt_start,
-                    date_end=dt_end,
-                    columns=columns,
-                    data=data_points,
-                )
-            )
-
-        # Create NetworkTimeSeries for this metric
-        network_data = NetworkTimeSeries(
-            network_code=network,
-            metric=DataMetric(metric.value),
-            interval=interval,
-            start=dt_start,
-            end=dt_end,
-            groupings=overall_groupings,
-            results=timeseries_results,
-        )
-        network_timeseries_list.append(network_data)
-
-    return network_timeseries_list
 
 
 @api_version(4)
@@ -183,7 +72,7 @@ async def get_network_data(
         client: ClickHouse client dependency
 
     Returns:
-        APIV4ResponseSchema: Time series data response containing a list of NetworkTimeSeries objects,
+        APIV4ResponseSchema: Time series data response containing a list of TimeSeries objects,
         one per requested metric
     """
     # Get the network schema
@@ -209,7 +98,7 @@ async def get_network_data(
     query, params, column_names = get_timeseries_query(
         query_type=QueryType.DATA,
         network=network,
-        metrics=[DataMetric(m.value) for m in metrics],
+        metrics=metrics,
         interval=interval,
         date_start=date_start,
         date_end=date_end,
@@ -230,8 +119,8 @@ async def get_network_data(
     result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
     logger.debug(f"first row: {result_dicts[0] if result_dicts else None}")
 
-    # Transform results into response format - returns one NetworkTimeSeries per metric
-    network_timeseries_list = format_timeseries_response(
+    # Transform results into response format - returns one TimeSeries per metric
+    timeseries_list = format_timeseries_response(
         network=network.code,
         metrics=metrics,
         interval=interval,
@@ -240,11 +129,5 @@ async def get_network_data(
         results=result_dicts,
     )
 
-    # Return all NetworkTimeSeries objects, one per metric
-    return APIV4ResponseSchema(data=network_timeseries_list)
-
-
-@api_version(4)
-@router.get("/energy/network/{network_code}/{facility_code}")
-async def get_energy_facility(network_code: str, facility_code: str):
-    return {"message": "Hello, World!"}
+    # Return all TimeSeries objects, one per metric
+    return APIV4ResponseSchema(data=timeseries_list)

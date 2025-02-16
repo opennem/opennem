@@ -11,16 +11,14 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi_versionizer import api_version
 
-from opennem.api.data.schema import TimeSeriesResult
-from opennem.api.market.schema import MarketMetric, MarketTimeSeries
 from opennem.api.queries import QueryType, get_timeseries_query
 from opennem.api.schema import APIV4ResponseSchema
+from opennem.api.timeseries import format_timeseries_response
 from opennem.api.utils import get_api_network_from_code, validate_metrics
 from opennem.core.grouping import PrimaryGrouping
 from opennem.core.metric import Metric
 from opennem.core.time_interval import Interval
 from opennem.db.clickhouse import get_clickhouse_dependency
-from opennem.schema.field_types import SignificantFigures8
 from opennem.utils.dates import get_last_completed_interval_for_network
 
 router = APIRouter()
@@ -33,98 +31,6 @@ _SUPPORTED_METRICS = [
 ]
 
 
-def format_market_timeseries_response(
-    network: str,
-    metrics: list[MarketMetric],
-    interval: Interval,
-    primary_grouping: PrimaryGrouping,
-    results: list[dict[str, Any]],
-) -> list[MarketTimeSeries]:
-    """
-    Format raw query results into MarketTimeSeries objects, one per metric.
-
-    Args:
-        network: The network code
-        metrics: List of metrics queried
-        interval: The time interval used
-        primary_grouping: Primary grouping applied
-        results: Raw query results from ClickHouse as dictionaries
-
-    Returns:
-        list[MarketTimeSeries]: List of formatted responses, one per metric
-    """
-    # Get min and max dates from results
-    all_timestamps = [row["interval"] for row in results]
-    global_date_start = min(all_timestamps)
-    global_date_end = max(all_timestamps)
-    dt_start = global_date_start.replace(microsecond=0)
-    dt_end = global_date_end.replace(microsecond=0)
-
-    # Build grouping columns list based on primary grouping
-    group_cols = ["network"]
-    if primary_grouping == PrimaryGrouping.NETWORK_REGION:
-        group_cols.append("network_region")
-
-    # Group rows based on grouping columns
-    groups: dict[str, list[dict[str, Any]]] = {}
-    if group_cols:
-        for row in results:
-            key = tuple(str(row[col]) for col in group_cols)
-            groups.setdefault(key, []).append(row)
-    else:
-        groups["default"] = list(results)
-
-    # Process each metric separately
-    market_timeseries_list = []
-    for metric in metrics:
-        timeseries_results = []
-
-        for group_key, rows in groups.items():
-            # Set columns and determine name prefix based on group key
-            columns = {}
-            name_prefix = f"{network}"
-            if group_key != "default":
-                columns = dict(zip(group_cols, group_key, strict=False))
-                name_prefix += "_".join(str(val).lower() for val in group_key)
-
-            # Create time series data points for this metric
-            data_points: list[tuple[datetime, SignificantFigures8 | None]] = []
-            for row in rows:
-                timestamp = row["interval"]
-                raw_value = row[metric.value.lower()]
-                value = float(raw_value) if raw_value is not None else None
-                data_points.append((timestamp, value))
-
-            # Sort data points by timestamp (ascending)
-            data_points.sort(key=lambda x: x[0])
-
-            # Create time series result for this group
-            series_name = f"{name_prefix}_{metric.value}".lower()
-            timeseries_results.append(
-                TimeSeriesResult(
-                    name=series_name,
-                    date_start=dt_start,
-                    date_end=dt_end,
-                    columns=columns,
-                    data=data_points,
-                )
-            )
-
-        # Create MarketTimeSeries for this metric
-        market_data = MarketTimeSeries(
-            network_code=network,
-            metric=metric,
-            interval=interval,
-            start=dt_start,
-            end=dt_end,
-            groupings=[primary_grouping.value],
-            results=timeseries_results,
-        )
-        market_timeseries_list.append(market_data)
-
-    return market_timeseries_list
-
-
 @api_version(4)
 @router.get(
     "/network/{network_code}",
@@ -133,7 +39,7 @@ def format_market_timeseries_response(
 )
 async def get_network_data(
     network_code: str,
-    metrics: Annotated[list[MarketMetric], Query(description="The metrics to get data for", example="price")],
+    metrics: Annotated[list[Metric], Query(description="The metrics to get data for", example="price")],
     interval: Annotated[Interval, Query(description="The time interval to aggregate data by", example="1h")] = Interval.INTERVAL,
     date_start: Annotated[datetime | None, Query(description="Start time for the query", example="2024-01-01T00:00:00")] = None,
     date_end: Annotated[datetime | None, Query(description="End time for the query", example="2024-01-02T00:00:00")] = None,
@@ -158,7 +64,7 @@ async def get_network_data(
         client: ClickHouse client dependency
 
     Returns:
-        APIV4ResponseSchema: Time series data response containing a list of MarketTimeSeries objects,
+        APIV4ResponseSchema: Time series data response containing a list of TimeSeries objects,
         one per requested metric
     """
     # Get the network schema
@@ -198,14 +104,15 @@ async def get_network_data(
     result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
     logger.debug(f"first row: {result_dicts[0] if result_dicts else None}")
 
-    # Transform results into response format - returns one MarketTimeSeries per metric
-    market_timeseries_list = format_market_timeseries_response(
+    # Transform results into response format - returns one TimeSeries per metric
+    timeseries_list = format_timeseries_response(
         network=network.code,
         metrics=metrics,
         interval=interval,
         primary_grouping=primary_grouping,
+        secondary_groupings=None,
         results=result_dicts,
     )
 
-    # Return all MarketTimeSeries objects, one per metric
-    return APIV4ResponseSchema(data=market_timeseries_list)
+    # Return all TimeSeries objects, one per metric
+    return APIV4ResponseSchema(data=timeseries_list)
