@@ -5,15 +5,30 @@ This module contains the Pydantic models used for data endpoint responses.
 """
 
 from datetime import datetime
+from enum import Enum
 
 from pydantic import computed_field, model_validator
 
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.api.utils import get_api_network_from_code
-from opennem.core.metric import Metric, get_metric_metadata
+from opennem.core.metric import get_metric_metadata
 from opennem.core.time_interval import Interval
 from opennem.schema.core import BaseConfig
 from opennem.schema.field_types import SignificantFigures8
+
+
+class DataMetric(str, Enum):
+    """
+    Data-specific metrics.
+
+    These metrics are specific to facility/generation data and support
+    grouping by region, fueltech, etc.
+    """
+
+    POWER = "power"
+    ENERGY = "energy"
+    EMISSIONS = "emissions"
+    MARKET_VALUE = "market_value"
 
 
 class TimeSeriesResult(BaseConfig):
@@ -27,7 +42,7 @@ class TimeSeriesResult(BaseConfig):
         name: The name/identifier for this time series (e.g., "QLD1", "NSW1")
         date_start: Start time of the data range
         date_end: End time of the data range
-        labels: Additional labels/tags for this series (e.g., fueltech="coal")
+        columns: Additional metadata as key-value pairs
         data: List of [timestamp, value] pairs
     """
 
@@ -47,7 +62,8 @@ class NetworkTimeSeries(BaseConfig):
 
     Attributes:
         network_code: The network code the data is for
-        metric: The type of metric being returned
+        metric: The primary metric being returned (for backward compatibility)
+        metrics: List of all metrics included in the response
         unit: The unit of measurement
         interval: The time interval the data is aggregated by
         start: The start time of the data range (UTC)
@@ -57,7 +73,7 @@ class NetworkTimeSeries(BaseConfig):
     """
 
     network_code: str
-    metric: Metric
+    metric: DataMetric  # For backward compatibility
     unit: str = ""  # Default empty string will be replaced in validation
     interval: Interval
     start: datetime
@@ -75,7 +91,7 @@ class NetworkTimeSeries(BaseConfig):
 
     @model_validator(mode="after")
     def set_unit_from_metric(self) -> "NetworkTimeSeries":
-        """Set the unit based on the metric if not explicitly provided."""
+        """Set the unit based on the primary metric if not explicitly provided."""
         if not self.unit:
             self.unit = get_metric_metadata(self.metric).unit
         return self
@@ -84,4 +100,4 @@ class NetworkTimeSeries(BaseConfig):
 class NetworkTimeSeriesResponse(APIV4ResponseSchema):
     """API v4 response for network time series data."""
 
-    data: NetworkTimeSeries
+    data: NetworkTimeSeries | None = None

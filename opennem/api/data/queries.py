@@ -11,15 +11,13 @@ from typing import NoReturn
 
 from fastapi import HTTPException
 
+from opennem.api.data.schema import DataMetric
 from opennem.core.grouping import (
     PrimaryGrouping,
     SecondaryGrouping,
-    get_primary_grouping_metadata,
-    get_secondary_grouping_metadata,
 )
-from opennem.core.metric import Metric, get_metric_metadata
-from opennem.core.time_interval import Interval, get_interval_function
-from opennem.db.clickhouse_views import CLICKHOUSE_MATERIALIZED_VIEWS
+from opennem.core.metric import Metric
+from opennem.core.time_interval import Interval
 from opennem.schema.network import NetworkSchema
 
 
@@ -77,108 +75,86 @@ def _get_source_table(metric: Metric, interval: Interval, secondary_groupings: S
 
 def get_network_timeseries_query(
     network: NetworkSchema,
-    metric: Metric,
+    metrics: list[DataMetric],
     interval: Interval,
     date_start: datetime,
     date_end: datetime,
-    primary_grouping: PrimaryGrouping = PrimaryGrouping.NETWORK,
-    secondary_groupings: Sequence[SecondaryGrouping] | None = None,
-) -> tuple[str, dict]:
+    primary_grouping: PrimaryGrouping,
+    secondary_groupings: Sequence[SecondaryGrouping] | None,
+) -> tuple[str, dict, list[str]]:
     """
-    Get time series data for a network.
+    Get time series data for market metrics.
 
-    This query selects from the appropriate table or materialized view based on
-    the metric and interval size requested.
+    This query selects from the market_summary table and supports multiple
+    metrics in a single query.
 
     Args:
         network: The network to get data for
-        metric: The metric to query
+        metrics: List of metrics to query
         interval: The time interval to aggregate by
         date_start: Start time for the query (network time)
         date_end: End time for the query (network time)
-        primary_grouping: The primary grouping to apply (network or network_region)
+        primary_grouping: Primary grouping to apply
         secondary_groupings: Optional sequence of secondary groupings to apply
 
     Returns:
-        tuple[str, dict]: ClickHouse SQL query and parameters
-
-    Raises:
-        HTTPException: If the grouping combination is invalid or unsupported for the metric
+        tuple[str, dict, list[str]]: ClickHouse SQL query, parameters, and list of column names
     """
-    # Get the source table based on metric and interval
-    source_table = _get_source_table(metric, interval, secondary_groupings)
+    # Map metrics to their column names
+    metric_columns = {
+        DataMetric.POWER: "generated",
+        DataMetric.ENERGY: "energy",
+        DataMetric.EMISSIONS: "emissions",
+        DataMetric.MARKET_VALUE: "market_value",
+    }
 
-    # Get the timestamp column name based on the source table
-    # - Raw tables use 'interval'
-    # - Materialized views use 'date'
-    timestamp_col = "interval"
+    # Build metric selection part
+    metric_selects = [f"sum({metric_columns[m]}) as {m.value.lower()}" for m in metrics]
 
-    if source_table in CLICKHOUSE_MATERIALIZED_VIEWS:
-        timestamp_col = CLICKHOUSE_MATERIALIZED_VIEWS[source_table].timestamp_column
-
-    # Get the time bucket function for the interval
-    time_fn = get_interval_function(interval, timestamp_col, database="clickhouse")
-
-    # Get the metric metadata
-    metric_meta = get_metric_metadata(metric)
-
-    # Build the select clause
-    select_parts = [
-        f"{time_fn} as interval",
-    ]
-
-    # Add primary grouping
-    group_by_parts = ["interval"]
+    # Build grouping columns
+    group_cols = []
     if primary_grouping == PrimaryGrouping.NETWORK_REGION:
-        primary_meta = get_primary_grouping_metadata(primary_grouping)
-        select_parts.append(f"{primary_meta.column_name}")
-        group_by_parts.append(primary_meta.column_name)
-
-    # Add secondary groupings for non-market metrics
-    if secondary_groupings and source_table != "market_summary":
+        group_cols.append("network_region")
+    elif primary_grouping == PrimaryGrouping.NETWORK and secondary_groupings:
         for grouping in secondary_groupings:
-            meta = get_secondary_grouping_metadata(grouping)
-            select_parts.append(f"{meta.column_name}")
-            group_by_parts.append(meta.column_name)
-
-    # Add the metric value - handle special cases for market metrics
-    select_parts.append(f"{metric_meta.default_agg}({metric_meta.column_name}) as value")
-
-    # For intervals of a day or greater, convert datetime to date
-    query_date_start = date_start
-    query_date_end = date_end
-
-    if interval in (Interval.DAY, Interval.WEEK, Interval.MONTH, Interval.QUARTER, Interval.YEAR, Interval.FINANCIAL_YEAR):
-        query_date_start = date_start.date()
-        query_date_end = date_end.date()
+            if grouping == SecondaryGrouping.RENEWABLE:
+                group_cols.append("renewable")
+            elif grouping == SecondaryGrouping.FUELTECH:
+                group_cols.append("fueltech_id")
+            elif grouping == SecondaryGrouping.FUELTECH_GROUP:
+                group_cols.append("fueltech_group_id")
 
     # Build the query
     query = f"""
-    SELECT
-        {", ".join(select_parts)}
-    FROM {source_table} FINAL
-    WHERE
-        network_id = %(network_id)s AND
-        {timestamp_col} >= %(date_start)s AND
-        {timestamp_col} < %(date_end)s
-    GROUP BY
-        {", ".join(group_by_parts)}
-    ORDER BY
-        interval ASC
+        SELECT
+            interval as interval,
+            {", ".join(group_cols) if group_cols else "network_id"},
+            {", ".join(metric_selects)}
+        FROM unit_intervals
+        WHERE
+            network_id = %(network)s AND
+            interval >= %(date_start)s AND
+            interval < %(date_end)s
+        GROUP BY
+            interval,
+            {", ".join(group_cols) if group_cols else "network_id"}
+        ORDER BY
+            interval DESC,
+            {", ".join(group_cols) if group_cols else "network_id"} ASC
     """
 
-    if primary_grouping == PrimaryGrouping.NETWORK_REGION:
-        query += ", network_region ASC"
-
-    if secondary_groupings and source_table != "market_summary":
-        for grouping in secondary_groupings:
-            meta = get_secondary_grouping_metadata(grouping)
-            query += f", {meta.column_name} ASC"
-
     params = {
-        "network_id": network.code,
-        "date_start": query_date_start,
-        "date_end": query_date_end,
+        "network": network.code,
+        "date_start": date_start,
+        "date_end": date_end,
     }
 
-    return query, params
+    # Build list of column names in order
+    column_names = ["interval"]
+    if group_cols:
+        column_names.extend(group_cols)
+    else:
+        column_names.append("network_id")
+    column_names.extend(m.value.lower() for m in metrics)
+
+    return query, params, column_names

@@ -4,6 +4,7 @@ from fastapi import HTTPException
 from sqlalchemy import func
 
 from opennem.api.schema import API_SUPPORTED_NETWORKS
+from opennem.core.metric import Metric
 from opennem.core.time_interval import Interval
 from opennem.schema.network import NetworkSchema
 
@@ -67,3 +68,10 @@ def get_default_period_for_interval(interval: Interval) -> timedelta:
 
     # Return the default period or 7 days if not specified
     return default_periods.get(interval, timedelta(days=7))
+
+
+def validate_metrics(metrics: list[Metric], supported_metrics: list[Metric]) -> None:
+    """Validate a list of metrics against a list of supported metrics"""
+    for metric in metrics:
+        if metric not in supported_metrics:
+            raise HTTPException(status_code=400, detail=f"Metric {metric} not supported")
