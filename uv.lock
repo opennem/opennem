@@ -715,10 +715,6 @@ lz4 = [
     { name = "lz4", version = "3.0.1", source = { registry = "https://pypi.org/simple" }, marker = "implementation_name == 'pypy'" },
     { name = "lz4", version = "4.4.3", source = { registry = "https://pypi.org/simple" }, marker = "implementation_name != 'pypy'" },
 ]
-zstd = [
-    { name = "clickhouse-cityhash" },
-    { name = "zstd" },
-]
 
 [[package]]
 name = "clickhouse-sqlalchemy"
@@ -2381,7 +2377,7 @@ dependencies = [
     { name = "cachetools" },
     { name = "chardet" },
     { name = "clerk-backend-api" },
-    { name = "clickhouse-driver", extra = ["lz4", "zstd"] },
+    { name = "clickhouse-driver", extra = ["lz4"] },
     { name = "clickhouse-sqlalchemy" },
     { name = "curl-cffi" },
     { name = "datedelta" },
@@ -2470,7 +2466,7 @@ requires-dist = [
     { name = "cachetools", specifier = ">=5.0.0,<6.0.0" },
     { name = "chardet", specifier = ">=5.2.0,<6.0.0" },
     { name = "clerk-backend-api", specifier = ">=1.5.0" },
-    { name = "clickhouse-driver", extras = ["lz4", "zstd"], specifier = ">=0.2.7" },
+    { name = "clickhouse-driver", extras = ["lz4"], specifier = ">=0.2.7" },
     { name = "clickhouse-sqlalchemy", specifier = ">=0.3.0" },
     { name = "curl-cffi", specifier = ">=0.7.4" },
     { name = "datedelta", specifier = ">=1.3,<2.0" },
