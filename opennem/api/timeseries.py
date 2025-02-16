@@ -88,7 +88,7 @@ class TimeSeries(BaseConfig):
 
     @computed_field
     @property
-    def network_timezone_offset(self) -> int:
+    def network_timezone_offset(self) -> str:
         """Get the timezone offset for the network."""
         return get_api_network_from_code(self.network_code).get_offset_string()
 
