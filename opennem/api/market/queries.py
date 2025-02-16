@@ -7,6 +7,7 @@ This module contains functions for building ClickHouse queries for market data.
 from datetime import datetime
 
 from opennem.api.market.schema import MarketMetric
+from opennem.core.grouping import PrimaryGrouping
 from opennem.core.time_interval import Interval, get_interval_function
 from opennem.schema.network import NetworkSchema
 
@@ -17,7 +18,8 @@ def get_market_timeseries_query(
     interval: Interval,
     date_start: datetime,
     date_end: datetime,
-) -> tuple[str, dict]:
+    primary_grouping: PrimaryGrouping = PrimaryGrouping.NETWORK,
+) -> tuple[str, dict, list[str]]:
     """
     Get time series data for market metrics.
 
@@ -30,9 +32,10 @@ def get_market_timeseries_query(
         interval: The time interval to aggregate by
         date_start: Start time for the query (network time)
         date_end: End time for the query (network time)
+        primary_grouping: Primary grouping to apply (network or network_region)
 
     Returns:
-        tuple[str, dict]: ClickHouse SQL query and parameters
+        tuple[str, dict, list[str]]: ClickHouse SQL query, parameters, and list of column names
     """
     # For 5-minute intervals, use raw base table without time bucket function
     if interval == Interval.INTERVAL:
@@ -74,10 +77,18 @@ def get_market_timeseries_query(
     # Build metric selection part
     metric_selects = [f"avg({metric_columns[m]}) as {m.value.lower()}" for m in metrics]
 
+    # Build grouping columns
+    group_cols = ["network_id as network"]
+    group_cols_names = ["network"]
+    if primary_grouping == PrimaryGrouping.NETWORK_REGION:
+        group_cols.append("network_region")
+        group_cols_names.append("network_region")
+
+    # Build the query
     query = f"""
         SELECT
             {time_fn} as interval,
-            network_region,
+            {", ".join(group_cols)},
             {", ".join(metric_selects)}
         FROM market_summary
         WHERE
@@ -86,10 +97,15 @@ def get_market_timeseries_query(
             {time_col} < %(date_end)s
         GROUP BY
             interval,
-            network_region
+            {", ".join([str(i) for i in range(2, len(group_cols) + 2)])}
         ORDER BY
             interval DESC,
-            network_region ASC
+            {", ".join([str(i) for i in range(2, len(group_cols) + 2)])}
     """
 
-    return query, params
+    # Build list of column names in order
+    column_names = ["interval"]
+    column_names.extend(group_cols_names)
+    column_names.extend(m.value.lower() for m in metrics)
+
+    return query, params, column_names
