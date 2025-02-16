@@ -112,23 +112,29 @@ def get_network_timeseries_query(
     metric_selects = [f"sum({metric_columns[m]}) as {m.value.lower()}" for m in metrics]
 
     # Build grouping columns
-    group_cols = []
+    group_cols = ["network_id as network"]
+    group_cols_names = ["network"]
     if primary_grouping == PrimaryGrouping.NETWORK_REGION:
         group_cols.append("network_region")
-    elif primary_grouping == PrimaryGrouping.NETWORK and secondary_groupings:
+        group_cols_names.append("network_region")
+
+    if secondary_groupings:
         for grouping in secondary_groupings:
             if grouping == SecondaryGrouping.RENEWABLE:
                 group_cols.append("renewable")
+                group_cols_names.append("renewable")
             elif grouping == SecondaryGrouping.FUELTECH:
                 group_cols.append("fueltech_id")
+                group_cols_names.append("fueltech")
             elif grouping == SecondaryGrouping.FUELTECH_GROUP:
                 group_cols.append("fueltech_group_id")
+                group_cols_names.append("fueltech_group")
 
     # Build the query
     query = f"""
         SELECT
             interval as interval,
-            {", ".join(group_cols) if group_cols else "network_id"},
+            {", ".join(group_cols)},
             {", ".join(metric_selects)}
         FROM unit_intervals
         WHERE
@@ -137,10 +143,10 @@ def get_network_timeseries_query(
             interval < %(date_end)s
         GROUP BY
             interval,
-            {", ".join(group_cols) if group_cols else "network_id"}
+            {", ".join([str(i) for i in range(2, len(group_cols) + 2)])}
         ORDER BY
             interval DESC,
-            {", ".join(group_cols) if group_cols else "network_id"} ASC
+            {", ".join([str(i) for i in range(2, len(group_cols) + 2)])}
     """
 
     params = {
@@ -152,7 +158,7 @@ def get_network_timeseries_query(
     # Build list of column names in order
     column_names = ["interval"]
     if group_cols:
-        column_names.extend(group_cols)
+        column_names.extend(group_cols_names)
     else:
         column_names.append("network_id")
     column_names.extend(m.value.lower() for m in metrics)

@@ -37,26 +37,6 @@ _SUPPORTED_METRICS = [
 ]
 
 
-def _group_rows_by_column(rows: Sequence[Any], col_idx: int) -> dict[str, list[Any]]:
-    """
-    Group rows by a specific column value.
-
-    Args:
-        rows: Sequence of rows to group
-        col_idx: Index of column to group by
-
-    Returns:
-        dict: Grouped rows with column value as key
-    """
-    groups: dict[str, list[Any]] = {}
-    for row in rows:
-        key = row[col_idx]
-        if key not in groups:
-            groups[key] = []
-        groups[key].append(row)
-    return groups
-
-
 def format_timeseries_response(
     network: str,
     metrics: list[Metric],
@@ -92,21 +72,20 @@ def format_timeseries_response(
         overall_groupings.extend(g.value.lower() for g in secondary_groupings)
 
     # Build grouping columns list based on primary and secondary grouping.
-    # When using primary NETWORK with no secondary grouping, we use no grouping (i.e. default).
-    group_cols: list[str] = []
+    group_cols: list[str] = ["network"]
+
     if primary_grouping == PrimaryGrouping.NETWORK_REGION:
         group_cols.append("network_region")
-    elif primary_grouping == PrimaryGrouping.NETWORK and secondary_groupings:
+
+    # Add secondary grouping columns if any
+    if secondary_groupings:
         for grouping in secondary_groupings:
-            if grouping == SecondaryGrouping.RENEWABLE:
-                group_cols.append("renewable")
-            elif grouping == SecondaryGrouping.FUELTECH:
-                group_cols.append("fueltech_id")
-            elif grouping == SecondaryGrouping.FUELTECH_GROUP:
-                group_cols.append("fueltech_group_id")
+            group_cols.append(grouping.value.lower())
 
     # Group rows based on grouping columns. If no grouping, use default key.
     groups: dict[str, list[dict[str, Any]]] = {}
+
+    logger.debug(f"grouping columns: {group_cols}")
     if group_cols:
         # Grouping key from columns
         for row in results:
@@ -123,13 +102,11 @@ def format_timeseries_response(
         for group_key, rows in groups.items():
             # Set columns and determine name prefix based on group key
             columns = {}
-            name_prefix = ""
+            name_prefix = f"{network}"
             if group_key != "default":
+                # Map column names to their grouping names
                 columns = dict(zip(group_cols, group_key, strict=False))
-                name_prefix = "_".join(str(val) for val in group_key) + "_"
-            else:
-                # For default group, include network code in series name.
-                name_prefix = f"{network}_"
+                name_prefix += "_".join(str(val).lower() for val in group_key)
 
             # Create time series data points for this metric
             data_points: list[tuple[datetime, SignificantFigures8 | None]] = []
@@ -143,8 +120,7 @@ def format_timeseries_response(
             data_points.sort(key=lambda x: x[0])
 
             # Create time series result for this group
-            series_name = f"{name_prefix}{metric.value}"
-
+            series_name = f"{name_prefix}_{metric.value}".lower()
             timeseries_results.append(
                 TimeSeriesResult(
                     name=series_name,

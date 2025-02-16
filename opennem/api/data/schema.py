@@ -52,6 +52,21 @@ class TimeSeriesResult(BaseConfig):
     columns: dict[str, str | bool] = {}
     data: list[tuple[datetime, SignificantFigures8 | None]]
 
+    @model_validator(mode="before")
+    def cast_columns_to_booleans(cls, values):
+        """
+        Pre-validator that converts string boolean values to actual booleans in the columns dict.
+        Only processes the 'columns' field if it exists in the input values.
+        """
+        if "columns" in values and isinstance(values["columns"], dict):
+            columns = values["columns"]
+            for key, value in columns.items():
+                if isinstance(value, str):
+                    lower_value = value.lower()
+                    if lower_value in ("true", "false"):
+                        columns[key] = lower_value == "true"
+        return values
+
 
 class NetworkTimeSeries(BaseConfig):
     """
