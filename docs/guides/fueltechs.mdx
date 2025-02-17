@@ -1,38 +1,81 @@
 ---
-title: Fueltechs
+title: Fueltechs and Fueltech Groups
 icon: "plug"
 sidebarTitle: 'Fueltechs'
+description: 'Documentation of fuel technologies and their groupings in the OpenNEM system'
 ---
 
-Below is a table representing various fuel technologies, their groupings, and whether they are renewable:
+# Overview
 
-| Fueltech Code         | Label                | Fueltech Group Code  | Fueltech Group Label | Renewable |
-|-----------------------|----------------------|----------------------|----------------------|-----------|
-| battery_charging      | Battery (Charging)   | battery_charging     | Battery (Charging)   | TRUE      |
-| battery_discharging   | Battery (Discharging)| battery_discharging  | Battery (Discharging)| TRUE      |
-| bioenergy_biogas      | Biogas               | bioenergy            | Bioenergy            | FALSE     |
-| bioenergy_biomass     | Biomass              | bioenergy            | Bioenergy            | FALSE     |
-| coal_black            | Coal (Black)         | coal                 | Coal                 | FALSE     |
-| coal_brown            | Coal (Brown)         | coal                 | Coal                 | FALSE     |
-| distillate            | Distillate           | distillate           | Distillate           | FALSE     |
-| gas_ccgt              | Gas (CCGT)           | gas                  | Gas                  | FALSE     |
-| gas_ocgt              | Gas (OCGT)           | gas                  | Gas                  | FALSE     |
-| gas_recip             | Gas (Reciprocating)  | gas                  | Gas                  | FALSE     |
-| gas_steam             | Gas (Steam)          | gas                  | Gas                  | FALSE     |
-| gas_wcmg              | Gas (Coal Mine Waste)| gas                  | Gas                  | FALSE     |
-| hydro                 | Hydro                | hydro                | Hydro                | TRUE      |
-| pumps                 | Pumps                | pumps                | Pumps                | TRUE      |
-| solar_rooftop         | Solar (Rooftop)      | solar                | Solar                | TRUE      |
-| solar_thermal         | Solar (Thermal)      | solar                | Solar                | TRUE      |
-| solar_utility         | Solar (Utility)      | solar                | Solar                | TRUE      |
-| wind                  | Wind                 | wind                 | Wind                 | TRUE      |
-| wind_offshore         | Offshore Wind        | wind                 | Wind                 | TRUE      |
+The OpenNEM system uses a hierarchical classification system for different types of electricity generation technologies:
 
-# Fixtures
+1. **Fueltechs** - Individual generation technologies (e.g., Coal Black, Solar Utility, Wind)
+2. **Fueltech Groups** - Broader categories that group similar technologies (e.g., Coal, Solar, Wind)
 
-The fueltechs are defined in [opennem/db/fixtures/fueltechs.json](https://github.com/opennem/opennem/blob/master/opennem/db/fixtures/fueltechs.json)
+This classification system is used throughout the OpenNEM API and visualisations to provide consistent grouping and coloring of generation types.
 
-# Schema
+# Fueltech Groups
+
+Fueltech groups are the high-level categories used to group similar generation technologies. Each group has a distinct color used in visualisations.
+
+| Group Code           | Label                | Renewable |
+|---------------------|----------------------|-----------|
+| coal                | Coal                 | FALSE     |
+| gas                 | Gas                  | FALSE     |
+| wind                | Wind                 | TRUE      |
+| solar               | Solar                | TRUE      |
+| battery_charging    | Battery (Charging)   | FALSE     |
+| battery_discharging | Battery (Discharging)| FALSE     |
+| hydro               | Hydro                | TRUE      |
+| distillate          | Distillate          | FALSE     |
+| bioenergy           | Bioenergy           | TRUE      |
+| pumps               | Pumps               | FALSE     |
+
+# Fueltechs
+
+Fueltechs represent specific generation technologies. Each fueltech belongs to a fueltech group and inherits properties like color from its group.
+
+| Fueltech Code         | Label                | Fueltech Group      | Renewable |
+|-----------------------|----------------------|---------------------|-----------|
+| battery_charging      | Battery (Charging)   | battery_charging    | FALSE     |
+| battery_discharging   | Battery (Discharging)| battery_discharging | FALSE     |
+| bioenergy_biogas      | Biogas              | bioenergy           | TRUE      |
+| bioenergy_biomass     | Biomass             | bioenergy           | TRUE      |
+| coal_black            | Coal (Black)        | coal                | FALSE     |
+| coal_brown            | Coal (Brown)        | coal                | FALSE     |
+| distillate            | Distillate          | distillate          | FALSE     |
+| gas_ccgt              | Gas (CCGT)          | gas                 | FALSE     |
+| gas_ocgt              | Gas (OCGT)          | gas                 | FALSE     |
+| gas_recip             | Gas (Reciprocating) | gas                 | FALSE     |
+| gas_steam             | Gas (Steam)         | gas                 | FALSE     |
+| gas_wcmg              | Gas (Coal Mine Waste)| gas                | FALSE     |
+| hydro                 | Hydro               | hydro               | TRUE      |
+| pumps                 | Pumps               | pumps               | FALSE     |
+| solar_rooftop         | Solar (Rooftop)     | solar               | TRUE      |
+| solar_thermal         | Solar (Thermal)     | solar               | TRUE      |
+| solar_utility         | Solar (Utility)     | solar               | TRUE      |
+| wind                  | Wind                | wind                | TRUE      |
+| wind_offshore         | Offshore Wind       | wind                | TRUE      |
+| aggregator_vpp        | Aggregator (VPP)    | -                   | TRUE      |
+| aggregator_dr         | Aggregator (DR)     | -                   | TRUE      |
+| nuclear               | Nuclear             | -                   | FALSE     |
+| imports               | Network Import      | -                   | FALSE     |
+| exports               | Network Export      | -                   | FALSE     |
+| interconnector        | Interconnector      | -                   | FALSE     |
+| battery               | Battery             | -                   | FALSE     |
+
+# Special Categories
+
+Some fueltechs don't belong to a specific fueltech group as they represent special cases:
+
+- **Aggregators** - Virtual Power Plants (VPP) and Demand Response (DR) units that combine multiple smaller generators
+- **Network** - Imports, exports and interconnector flows between regions
+- **Battery** - Generic battery category (distinct from charging/discharging)
+- **Nuclear** - Currently not used in Australia but maintained for international compatibility
+
+# Technical Implementation
+
+The fueltechs are defined in [opennem/db/fixtures/fueltechs.json](https://github.com/opennem/opennem/blob/master/opennem/db/fixtures/fueltechs.json) and fueltech groups in [opennem/db/fixtures/fueltech_groups.json](https://github.com/opennem/opennem/blob/master/opennem/db/fixtures/fueltech_groups.json).
 
 The fueltech schema is defined in `pydantic` as:
 
