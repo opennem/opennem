@@ -2,8 +2,10 @@
 
 import asyncio
 import logging
+from functools import wraps
 
 import unkey
+from cachetools import TTLCache
 from pydantic import ValidationError
 from unkey import ApiKey, ErrorCode
 
@@ -13,14 +15,60 @@ from opennem.users.schema import OpennemAPIRequestMeta, OpenNEMRoles, OpenNEMUse
 
 logger = logging.getLogger("opennem.clients.unkey")
 
+unkey_client = unkey.Client(api_key=settings.unkey_root_key)
+
+# Cache for unkey validation results - 5 minute TTL
+_unkey_cache = TTLCache(maxsize=1000, ttl=60 * 5)
+
+
+def cache_unkey_result(func):
+    """
+    Decorator to cache unkey validation results for 5 minutes.
+
+    Args:
+        func: The async function to cache
+
+    Returns:
+        Cached result if available, otherwise calls function and caches result
+    """
+
+    @wraps(func)
+    async def wrapper(api_key: str, *args, **kwargs) -> OpenNEMUser | None:
+        # Check cache first
+        if api_key in _unkey_cache:
+            return _unkey_cache[api_key]
+
+        # Call original function
+        result = await func(api_key, *args, **kwargs)
+
+        # Cache successful results
+        if result:
+            _unkey_cache[api_key] = result
+
+        return result
+
+    return wrapper
+
 
 class UnkeyInvalidUserException(Exception):
     pass
 
 
-# @ttl_cache(maxsize=100, ttl=60 * 5)
+@cache_unkey_result
 async def unkey_validate(api_key: str) -> None | OpenNEMUser:
-    """Validate a key with unkey"""
+    """
+    Validate a key with unkey.
+    Results are cached for 5 minutes to reduce API calls.
+
+    Args:
+        api_key: The API key to validate
+
+    Returns:
+        OpenNEMUser if validation successful, None otherwise
+
+    Raises:
+        UnkeyInvalidUserException: If validation fails
+    """
 
     if not settings.unkey_root_key:
         raise Exception("No unkey root key set")
@@ -28,11 +76,8 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
     if not settings.unkey_api_id:
         raise Exception("No unkey app id set")
 
-    client = unkey.Client(api_key=settings.unkey_root_key)
-    await client.start()
-
     try:
-        async with unkey.client.Client() as c:
+        async with unkey_client as c:
             result = await c.keys.verify_key(key=api_key, api_id=settings.unkey_api_id)  # type: ignore
 
         if not result.is_ok:
@@ -46,8 +91,6 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
             raise UnkeyInvalidUserException("Verification failed: error")
 
         data = result.unwrap()
-
-        logger.debug(f"Unkey response data: {data}")
 
         # Check if the code is NOT_FOUND and return None if so
         if data.code == ErrorCode.NotFound:
@@ -97,9 +140,6 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
     except Exception as e:
         logger.exception(f"Unexpected error in unkey_validate: {e}")
         raise UnkeyInvalidUserException("Unkey verification failed: unexpected error") from e
-
-    finally:
-        await client.close()
 
 
 async def unkey_create_key(

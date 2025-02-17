@@ -23,18 +23,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
 from opennem import settings
-from opennem.api import throttle
 from opennem.api.data.router import router as data_router
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
 from opennem.api.feedback.router import router as feedback_router
-from opennem.api.keys import ApiAuthorization, api_protected, unkey_client
 from opennem.api.market.router import router as market_router
 from opennem.api.milestones.router import milestones_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
+from opennem.api.security import authenticated_user
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
 from opennem.api.webhooks.router import router as webhooks_router
-from opennem.clients.unkey import OpenNEMUser
+from opennem.clients.unkey import unkey_client
 from opennem.core.time import INTERVALS, PERIODS
 from opennem.core.units import UNITS
 from opennem.db import get_read_session
@@ -42,7 +41,7 @@ from opennem.db.models.opennem import FuelTech, Network, NetworkRegion
 from opennem.schema.opennem import FueltechSchema, OpennemErrorSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
-from opennem.users.schema import OpenNEMRoles, OpennemUserResponse
+from opennem.users.schema import OpennemUserResponse
 from opennem.utils.host import get_hostname
 from opennem.utils.version import get_version
 
@@ -363,19 +362,8 @@ def health_check() -> str:
     tags=["User"],
     description="Get the current user",
 )
-@api_protected()
-async def get_user_me(authorization: ApiAuthorization, user: OpenNEMUser | None = None) -> OpennemUserResponse:
-    if not user:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized")
-
+async def get_user_me(user: authenticated_user) -> OpennemUserResponse:
     return OpennemUserResponse(data=user)
-
-
-@app.get("/throttle_test", include_in_schema=False)
-@throttle.throttle_request()
-@api_protected(roles=[OpenNEMRoles.admin])
-async def throttle_test() -> str:
-    return "OK"
 
 
 @app.get("/sentry-debug", include_in_schema=False)

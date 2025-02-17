@@ -6,7 +6,6 @@ import logging
 from collections.abc import Callable, Coroutine
 from typing import Annotated, Any, TypeVar
 
-import unkey
 from clerk_backend_api import Clerk
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -37,7 +36,6 @@ ExcHandlerT = Callable[[Exception], Any]
 if not settings.unkey_root_key or not settings.clerk_secret_key:
     raise ValueError("No API key or clerk secret key set")
 
-unkey_client = unkey.Client(api_key=settings.unkey_root_key)
 clerk_client = Clerk(bearer_auth=settings.clerk_secret_key)
 
 api_token_scheme = HTTPBearer()
@@ -50,7 +48,12 @@ def api_protected(
     on_invalid_key: InvalidKeyHandlerT | None = None,
     on_exc: ExcHandlerT | None = None,
 ) -> DecoratorT:
-    """ """
+    """
+    Decorator to protect API endpoints.
+
+    This decorator validates API keys and attaches the user to the request.
+    It also checks for specific roles if provided.
+    """
     if not settings.unkey_api_id:
         raise ValueError("No API ID set")
 
@@ -75,10 +78,12 @@ def api_protected(
             try:
                 if not (key := _key_extractor(*args, **kwargs)):
                     message = "Failed to get API key"
+                    logger.error(message)
                     raise HTTPException(status_code=403, detail=message)
 
                 # dev hard coded internalkey bypasses unkey
                 if not key or not len(key) > 10:
+                    logger.error(f"Failed to get API key: {key}")
                     raise HTTPException(status_code=403, detail="Permission denied: no key provided")
 
                 # dev key bypasses unkey
@@ -109,6 +114,7 @@ def api_protected(
                     raise HTTPException(status_code=403, detail=str(e)) from e
 
                 if not unkey_verification:
+                    logger.error(f"Unkey verification failed for key: {key}")
                     raise HTTPException(status_code=403, detail="Permission denied")
 
                 user = unkey_verification

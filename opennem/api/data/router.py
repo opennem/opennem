@@ -13,9 +13,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi_versionizer import api_version
 
 from opennem.api.data.utils import get_default_start_date, validate_date_range
-from opennem.api.keys import api_protected
 from opennem.api.queries import QueryType, get_timeseries_query
 from opennem.api.schema import APIV4ResponseSchema
+from opennem.api.security import authenticated_user
 from opennem.api.timeseries import format_timeseries_response
 from opennem.api.utils import get_api_network_from_code, validate_metrics
 from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
@@ -36,7 +36,7 @@ _SUPPORTED_METRICS = [
 
 
 @api_version(4)
-@api_protected()
+# @api_protected()
 @router.get(
     "/network/{network_code}",
     response_model=APIV4ResponseSchema,
@@ -55,6 +55,7 @@ async def get_network_data(
         SecondaryGrouping | None, Query(description="Optional secondary grouping to apply", example="fueltech_group")
     ] = None,
     client: Any = Depends(get_clickhouse_dependency),
+    user: authenticated_user = None,
 ) -> APIV4ResponseSchema:
     """
     Get time series data for a network.
@@ -112,14 +113,12 @@ async def get_network_data(
     try:
         logger.debug(query)
         results = client.execute(query, params)
-        logger.debug(f"got {len(results)} results")
     except Exception as e:
         logger.error(f"Error executing query: {e}")
         raise HTTPException(status_code=500, detail="Error executing query") from e
 
     # Convert results to list of dictionaries using column names
     result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
-    logger.debug(f"first row: {result_dicts[0] if result_dicts else None}")
 
     # Transform results into response format - returns one TimeSeries per metric
     timeseries_list = format_timeseries_response(

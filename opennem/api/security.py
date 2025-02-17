@@ -1,88 +1,112 @@
-"""API security"""
+"""
+OpenNEM API Security Module
+
+This module provides FastAPI dependencies for authentication and authorization.
+It handles API key validation using Unkey and user validation using Clerk.
+"""
 
 import logging
+from typing import Annotated
 
-from authlib.jose import JsonWebKey, JsonWebToken, JWTClaims, KeySet, errors
-from cachetools import TTLCache, cached
-from fastapi import Depends, HTTPException, security, status
-from fastapi.security import OAuth2PasswordBearer
+from clerk_backend_api import Clerk
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from opennem import settings
 from opennem.clients.unkey import unkey_validate
-from opennem.utils.httpx import http
+from opennem.users.schema import OpenNEMRoles, OpenNEMUser
 
-logger = logging.getLogger("pagecog.api.security")
+logger = logging.getLogger("opennem.api.security")
 
-token_scheme = security.HTTPBearer()
+# Initialize clients
+if not settings.unkey_root_key or not settings.clerk_secret_key:
+    raise ValueError("No API key or clerk secret key set")
 
-credentials_exception = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED,
-    detail="Could not validate credentials",
-    headers={"WWW-Authenticate": "Bearer"},
+clerk_client = Clerk(bearer_auth=settings.clerk_secret_key)
+
+# Bearer token scheme
+api_token_scheme = HTTPBearer()
+
+# Default internal user for development
+_OPENNEM_INTERNAL_USER = OpenNEMUser(
+    valid=True,
+    id="dev",
+    owner_id="dev",
+    roles=[OpenNEMRoles.admin, OpenNEMRoles.user, OpenNEMRoles.anonymous],
 )
 
 
-@cached(TTLCache(maxsize=1, ttl=3600))
-async def get_jwks() -> KeySet:
+async def get_current_user(
+    authorization: Annotated[HTTPAuthorizationCredentials, Depends(api_token_scheme)], with_clerk: bool = True
+) -> OpenNEMUser:
     """
-    Get cached or new JWKS from clerk.dev.
-    """
-    logger.info("Fetching JWKS from %s", settings.api_jwks_url)
-    response = await http.get(settings.api_jwks_url)
-    response.raise_for_status()
-    return JsonWebKey.import_key_set(response.json())
+    FastAPI dependency that validates the API key and returns the current user.
 
+    Args:
+        authorization: The bearer token credentials from the request
 
-def decode_token(
-    token: security.HTTPAuthorizationCredentials = Depends(token_scheme),
-    jwks: KeySet = Depends(get_jwks),
-) -> JWTClaims:
-    """
-    Validate & decode JWT.
+    Returns:
+        OpenNEMUser: The validated user object
+
+    Raises:
+        HTTPException: If authentication fails
     """
     try:
-        claims = JsonWebToken(["RS256"]).decode(
-            s=token.credentials,
-            key=jwks,
-            claims_options={
-                # Example of validating audience to match expected value
-                "aud": {"essential": True, "values": ["domaingenius"]}
-            },
-        )
+        key = authorization.credentials
 
-        claims.validate()
-    except errors.JoseError as e:
-        logger.exception("Unable to decode token")
-        raise HTTPException(status_code=403, detail="Bad auth token") from e
+        if not key or len(key) < 10:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid API key")
 
-    return claims
+        # Dev key bypass
+        if key == settings.api_dev_key:
+            return _OPENNEM_INTERNAL_USER
 
+        # Validate with Unkey
+        user = await unkey_validate(api_key=key)
 
-async def get_current_user(token: str = Depends(decode_token)) -> str:
-    try:
-        pass
+        if not user:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid API key")
+
+        if not with_clerk:
+            return user
+
+        # Enrich with Clerk user data
+        clerk_user = await clerk_client.users.get_async(user_id=user.owner_id)
+
+        if not clerk_user:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User not found")
+
+        user.full_name = f"{clerk_user.first_name} {clerk_user.last_name}"
+        user.email = clerk_user.email_addresses[0].email_address
+        user.plan = clerk_user.private_metadata.get("plan")
+
+        return user
+
     except Exception as e:
-        logger.error(e)
-        raise credentials_exception from e
-    user = token
-    if user is None:
-        raise credentials_exception
-    return user
+        logger.error(f"Authentication error: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Authentication failed") from e
 
 
-async def get_current_active_user(current_user=Depends(get_current_user)) -> str:
-    if current_user.disabled:
-        raise HTTPException(status_code=400, detail="Inactive user")
-    return current_user
+def check_roles(required_roles: list[OpenNEMRoles]):
+    """
+    Creates a FastAPI dependency that checks if the current user has any of the required roles.
+
+    Args:
+        required_roles: List of roles that are allowed to access the endpoint
+
+    Returns:
+        Dependency function that validates the user's roles
+    """
+
+    async def role_checker(current_user: Annotated[OpenNEMUser, Depends(get_current_user)]) -> OpenNEMUser:
+        if not any(role in current_user.roles for role in required_roles):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
+        return current_user
+
+    return role_checker
 
 
-# unkey validation
-
-# security bearer API key token
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-
-def api_key_auth(api_key: str = Depends(oauth2_scheme)) -> None:
-    user_api_key = unkey_validate(api_key=api_key)
-    if not user_api_key:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Forbidden")
+# Common auth dependencies
+authenticated_user = Annotated[OpenNEMUser, Depends(get_current_user)]
+admin_user = Annotated[OpenNEMUser, Depends(check_roles([OpenNEMRoles.admin]))]
+pro_user = Annotated[OpenNEMUser, Depends(check_roles([OpenNEMRoles.pro, OpenNEMRoles.admin]))]
