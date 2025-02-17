@@ -11,7 +11,6 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi_versionizer import api_version
 
-from opennem.api.keys import api_protected
 from opennem.api.queries import QueryType, get_timeseries_query
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.api.security import authenticated_user
@@ -34,7 +33,6 @@ _SUPPORTED_METRICS = [
 
 
 @api_version(4)
-@api_protected()
 @router.get(
     "/network/{network_code}",
     response_model=APIV4ResponseSchema,

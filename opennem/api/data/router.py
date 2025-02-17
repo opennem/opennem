@@ -36,7 +36,6 @@ _SUPPORTED_METRICS = [
 
 
 @api_version(4)
-# @api_protected()
 @router.get(
     "/network/{network_code}",
     response_model=APIV4ResponseSchema,
