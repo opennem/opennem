@@ -24,6 +24,7 @@ class QueryType(str, Enum):
 
     MARKET = "market"
     DATA = "data"
+    FACILITY = "facility"
 
 
 class QueryConfig:
@@ -113,6 +114,19 @@ QUERY_CONFIGS = {
         },
         agg_function="sum",
     ),
+    QueryType.FACILITY: QueryConfig(
+        query_type=QueryType.FACILITY,
+        base_table="unit_intervals",
+        daily_mv="unit_intervals_daily_mv",
+        monthly_mv="unit_intervals_monthly_mv",
+        metric_columns={
+            DataMetric.POWER: "generated",
+            DataMetric.ENERGY: "energy",
+            DataMetric.EMISSIONS: "emissions",
+            DataMetric.MARKET_VALUE: "market_value",
+        },
+        agg_function="sum",
+    ),
 }
 
 
@@ -125,6 +139,7 @@ def get_timeseries_query(
     date_end: datetime,
     primary_grouping: PrimaryGrouping = PrimaryGrouping.NETWORK,
     secondary_groupings: list[SecondaryGrouping] | None = None,
+    facility_code: str | None = None,
 ) -> tuple[str, dict, list[str]]:
     """
     Build a time series query for either market or data metrics.
@@ -138,6 +153,7 @@ def get_timeseries_query(
         date_end: End time for the query (network time)
         primary_grouping: Primary grouping to apply
         secondary_groupings: Optional sequence of secondary groupings to apply
+        facility_code: Optional facility code to filter by
 
     Returns:
         tuple[str, dict, list[str]]: ClickHouse SQL query, parameters, and list of column names
@@ -162,10 +178,15 @@ def get_timeseries_query(
     # Build metric selection part
     metric_selects = [f"{config.agg_function}({config.metric_columns[m]}) as {m.value.lower()}" for m in metrics]
 
-    # Build grouping columns
+    # Build grouping columns based on query type
     group_cols = ["network_id as network"]
     group_cols_names = ["network"]
-    if primary_grouping == PrimaryGrouping.NETWORK_REGION:
+
+    if query_type == QueryType.FACILITY:
+        group_cols.extend(["facility_code", "unit_code"])
+        group_cols_names.extend(["facility_code", "unit_code"])
+        params["facility_code"] = facility_code
+    elif primary_grouping == PrimaryGrouping.NETWORK_REGION:
         group_cols.append("network_region")
         group_cols_names.append("network_region")
 
@@ -182,17 +203,23 @@ def get_timeseries_query(
                 group_cols.append("fueltech_group_id")
                 group_cols_names.append("fueltech_group")
 
-    # Build the query
+    # Build the query with facility filter if provided
+    where_clauses = [
+        "network_id = %(network)s",
+        f"{time_col} >= %(date_start)s",
+        f"{time_col} < %(date_end)s",
+    ]
+
+    if facility_code:
+        where_clauses.append("facility_code = %(facility_code)s")
+
     query = f"""
         SELECT
             {time_fn} as interval,
             {", ".join(group_cols)},
             {", ".join(metric_selects)}
         FROM {table_name}
-        WHERE
-            network_id = %(network)s AND
-            {time_col} >= %(date_start)s AND
-            {time_col} < %(date_end)s
+        WHERE {" AND ".join(where_clauses)}
         GROUP BY
             interval,
             {", ".join([str(i) for i in range(2, len(group_cols) + 2)])}

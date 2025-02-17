@@ -107,97 +107,106 @@ def format_timeseries_response(
     primary_grouping: PrimaryGrouping,
     secondary_groupings: Sequence[SecondaryGrouping] | None,
     results: Sequence[dict[str, Any]],
+    facility_code: str | None = None,
 ) -> list[TimeSeries]:
     """
-    Format raw query results into TimeSeries objects, one per metric.
+    Format time series query results into the API response format.
 
     Args:
-        network: The network code
-        metrics: List of metrics queried
-        interval: The time interval used
-        primary_grouping: Primary grouping applied
-        secondary_groupings: Secondary groupings applied (optional)
-        results: Raw query results from ClickHouse as dictionaries
+        network: Network code
+        metrics: List of metrics that were queried
+        interval: Time interval used
+        primary_grouping: Primary grouping that was applied
+        secondary_groupings: Optional sequence of secondary groupings that were applied
+        results: Query results as sequence of dictionaries
+        facility_code: Optional facility code for facility-level queries
 
     Returns:
-        list[TimeSeries]: List of formatted responses, one per metric
+        list[TimeSeries]: List of time series objects, one per metric
     """
-    # Get min and max dates from results
-    all_timestamps = [row["interval"] for row in results]
-    global_date_start = min(all_timestamps)
-    global_date_end = max(all_timestamps)
-    dt_start = global_date_start.replace(microsecond=0)
-    dt_end = global_date_end.replace(microsecond=0)
-
-    # Combine groupings into a single list (for overall metadata)
-    overall_groupings = [primary_grouping.value]
-    if secondary_groupings:
-        overall_groupings.extend(g.value.lower() for g in secondary_groupings)
-
-    # Build grouping columns list based on primary and secondary grouping
-    group_cols: list[str] = ["network"]
-    if primary_grouping == PrimaryGrouping.NETWORK_REGION:
-        group_cols.append("network_region")
-
-    # Add secondary grouping columns if any
-    if secondary_groupings:
-        for grouping in secondary_groupings:
-            group_cols.append(grouping.value.lower())
-
-    # Group rows based on grouping columns
-    groups: dict[str, list[dict[str, Any]]] = {}
-    if group_cols:
-        for row in results:
-            key = tuple(str(row[col]) for col in group_cols)
-            groups.setdefault(key, []).append(row)
-    else:
-        groups["default"] = list(results)
-
-    # Process each metric separately
+    # Initialize response objects for each metric
     timeseries_list = []
+
     for metric in metrics:
-        timeseries_results = []
+        metric_name = metric.value.lower()
 
-        for group_key, rows in groups.items():
-            # Set columns and determine name prefix based on group key
-            columns = {}
-            name_prefix = ""
-            if group_key != "default":
-                columns = dict(zip(group_cols, group_key, strict=False))
-                name_prefix += "_".join(str(val).lower() for val in group_key)
+        # Group results by the grouping dimensions
+        grouped_results = {}
 
-            # Create time series data points for this metric
-            data_points: list[tuple[datetime, SignificantFigures8 | None]] = []
-            for row in rows:
-                timestamp = row["interval"]
-                raw_value = row[metric.value.lower()]
-                value = float(raw_value) if raw_value is not None else None
-                data_points.append((timestamp, value))
+        for row in results:
+            # Build label key based on groupings
+            label_parts = []
 
-            # Sort data points by timestamp (ascending)
-            data_points.sort(key=lambda x: x[0])
+            if facility_code:
+                # For facility queries, group by unit_code
+                label_key = str(row["unit_code"])
+                labels = {"unit_code": str(row["unit_code"])}
+            else:
+                # For network queries, use primary and secondary groupings
+                if primary_grouping == PrimaryGrouping.NETWORK_REGION:
+                    label_parts.append(row["network_region"])
 
-            # Create time series result for this group
-            series_name = f"{name_prefix}_{metric.value}".lower()
-            timeseries_results.append(
-                TimeSeriesResult(
-                    name=series_name,
-                    date_start=dt_start,
-                    date_end=dt_end,
-                    columns=columns,
-                    data=data_points,
-                )
-            )
+                if secondary_groupings:
+                    for grouping in secondary_groupings:
+                        if grouping == SecondaryGrouping.RENEWABLE:
+                            label_parts.append(str(row["renewable"]))
+                        elif grouping == SecondaryGrouping.FUELTECH:
+                            label_parts.append(row["fueltech"])
+                        elif grouping == SecondaryGrouping.FUELTECH_GROUP:
+                            label_parts.append(row["fueltech_group"])
+
+                label_key = "|".join(label_parts) if label_parts else "total"
+
+                # Build labels dictionary
+                labels = {}
+                if primary_grouping == PrimaryGrouping.NETWORK_REGION:
+                    labels["region"] = row["network_region"]
+                if secondary_groupings:
+                    for grouping in secondary_groupings:
+                        if grouping == SecondaryGrouping.RENEWABLE:
+                            labels["renewable"] = row["renewable"]
+                        elif grouping == SecondaryGrouping.FUELTECH:
+                            labels["fueltech"] = row["fueltech"]
+                        elif grouping == SecondaryGrouping.FUELTECH_GROUP:
+                            labels["fueltech_group"] = row["fueltech_group"]
+
+            # Initialize group if not exists
+            if label_key not in grouped_results:
+                grouped_results[label_key] = {
+                    "name": f"{metric_name}_{label_key}",
+                    "network": network,
+                    "interval": interval.value,
+                    "data": [],
+                    "labels": labels,
+                }
+                if facility_code:
+                    grouped_results[label_key]["facility_code"] = facility_code
+
+            # Add data point
+            grouped_results[label_key]["data"].append([row["interval"].timestamp() * 1000, float(row[metric_name])])
+
+        # Sort data points by timestamp
+        for group in grouped_results.values():
+            group["data"].sort(key=lambda x: x[0])
 
         # Create TimeSeries for this metric
         timeseries = TimeSeries(
             network_code=network,
             metric=metric,
             interval=interval,
-            start=dt_start,
-            end=dt_end,
-            groupings=overall_groupings,
-            results=timeseries_results,
+            start=min(row["interval"] for row in results),
+            end=max(row["interval"] for row in results),
+            groupings=[primary_grouping.value] + [g.value.lower() for g in secondary_groupings] if secondary_groupings else [],
+            results=[
+                TimeSeriesResult(
+                    name=group["name"],
+                    date_start=min(row["interval"] for row in results),
+                    date_end=max(row["interval"] for row in results),
+                    columns=group["labels"],
+                    data=group["data"],
+                )
+                for group in grouped_results.values()
+            ],
         )
         timeseries_list.append(timeseries)
 

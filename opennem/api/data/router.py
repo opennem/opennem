@@ -131,3 +131,91 @@ async def get_network_data(
 
     # Return all TimeSeries objects, one per metric
     return APIV4ResponseSchema(data=timeseries_list)
+
+
+@api_version(4)
+@router.get(
+    "/facility/{network_code}/{facility_code}",
+    response_model=APIV4ResponseSchema,
+    response_model_exclude_none=True,
+)
+async def get_facility_data(
+    network_code: str,
+    facility_code: str,
+    metrics: Annotated[list[Metric], Query(description="The metrics to get data for", example="energy")],
+    interval: Annotated[Interval, Query(description="The time interval to aggregate data by", example="1h")] = Interval.INTERVAL,
+    date_start: Annotated[datetime | None, Query(description="Start time for the query", example="2024-01-01T00:00:00")] = None,
+    date_end: Annotated[datetime | None, Query(description="End time for the query", example="2024-01-02T00:00:00")] = None,
+    client: Any = Depends(get_clickhouse_dependency),
+    user: authenticated_user = None,
+) -> APIV4ResponseSchema:
+    """
+    Get time series data for a specific facility.
+
+    This endpoint returns time series data for a facility, with data grouped by unit.
+    The data can be aggregated by different time intervals.
+
+    Args:
+        network_code: The network the facility belongs to
+        facility_code: The facility code to get data for
+        metrics: List of metrics to query (e.g. energy, power, emissions)
+        interval: The time interval to aggregate by
+        date_start: Start time for the query
+        date_end: End time for the query
+        client: ClickHouse client dependency
+
+    Returns:
+        APIV4ResponseSchema: Time series data response containing a list of TimeSeries objects,
+        one per requested metric, with data for each unit
+    """
+    # Get the network schema
+    network = get_api_network_from_code(network_code)
+
+    # validate metrics
+    validate_metrics(metrics, _SUPPORTED_METRICS)
+
+    # Get default dates if not provided
+    if date_end is None:
+        date_end = get_last_completed_interval_for_network(network=network)
+
+    if date_start is None:
+        date_start = get_default_start_date(interval, date_end)
+
+    # Validate the date range for the interval
+    validate_date_range(interval, date_start, date_end)
+
+    # Build and execute query using the unified query builder
+    query, params, column_names = get_timeseries_query(
+        query_type=QueryType.FACILITY,
+        network=network,
+        metrics=metrics,
+        interval=interval,
+        date_start=date_start,
+        date_end=date_end,
+        facility_code=facility_code,
+    )
+
+    # Execute query
+    try:
+        logger.debug(query)
+        results = client.execute(query, params)
+    except Exception as e:
+        logger.error(f"Error executing query: {e}")
+        raise HTTPException(status_code=500, detail="Error executing query") from e
+
+    # Convert results to list of dictionaries using column names
+    result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
+
+    # Transform results into response format - returns one TimeSeries per metric
+    timeseries_list = format_timeseries_response(
+        network=network.code,
+        metrics=metrics,
+        interval=interval,
+        primary_grouping=PrimaryGrouping.NETWORK,  # Not used for facility queries
+        secondary_groupings=None,  # Not used for facility queries
+        results=result_dicts,
+        facility_code=facility_code,
+    )
+
+    # Return all TimeSeries objects, one per metric
+    return APIV4ResponseSchema(data=timeseries_list)
