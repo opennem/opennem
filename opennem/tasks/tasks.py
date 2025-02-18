@@ -164,7 +164,13 @@ async def task_facility_first_seen_check(ctx) -> None:
 @logfire.instrument("task_update_facility_seen_range")
 async def task_update_facility_seen_range(ctx) -> None:
     """Updates the facility seen range"""
-    await update_facility_seen_range(interval_window_days=1)
+    await update_facility_seen_range(interval_window_days=7)
+
+
+@logfire.instrument("task_update_facility_first_seen")
+async def task_update_facility_first_seen(ctx) -> None:
+    """Updates the facility first seen"""
+    await update_facility_seen_range(include_first_seen=True, interval_window_days=7)
 
 
 # Output tasks

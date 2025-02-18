@@ -97,4 +97,4 @@ async def update_facility_seen_range(
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(update_facility_seen_range(interval_window_days=7))
+    asyncio.run(update_facility_seen_range(include_first_seen=True, interval_window_days=7))

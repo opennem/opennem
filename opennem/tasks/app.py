@@ -52,6 +52,7 @@ from opennem.tasks.tasks import (
     task_nem_rooftop_crawl,
     task_refresh_from_cms,
     task_run_aggregates_demand_network_days,
+    task_update_facility_first_seen,
     task_update_facility_seen_range,
     task_update_milestones,
     task_wem_day_crawl,
@@ -203,6 +204,14 @@ class WorkerSettings:
         cron(
             task_update_facility_seen_range,
             minute=set(range(1, 60, 5)),
+            second=59,
+            timeout=None,
+            unique=True,
+        ),
+        cron(
+            task_update_facility_first_seen,
+            hour=1,
+            minute=32,
             second=59,
             timeout=None,
             unique=True,

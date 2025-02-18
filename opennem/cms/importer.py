@@ -30,6 +30,7 @@ from opennem.cms.queries import get_cms_facilities
 from opennem.db import get_read_session, get_write_session
 from opennem.db.models.opennem import Facility, Unit
 from opennem.schema.facility import FacilitySchema
+from opennem.workers.facility_data_seen import update_facility_seen_range
 
 logger = logging.getLogger("sanity.importer")
 
@@ -152,7 +153,7 @@ def _check_facility_differences(facility: FacilitySchema, facility_db: Facility)
     return differences
 
 
-async def create_or_update_database_facility(facility: FacilitySchema, send_slack: bool = True, dry_run: bool = False) -> None:
+async def create_or_update_database_facility(facility: FacilitySchema, send_slack: bool = True, dry_run: bool = False) -> bool:
     """Create new database facilities from the CMS or update existing ones.
 
     This function handles both creation of new facilities and updates to existing ones.
@@ -174,7 +175,11 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
 
     Raises:
         Exception: Any database errors during the update process
+
+    Returns:
+        bool: True if the facility or unit was created.
     """
+    facility_or_unit_created = False
     async with get_write_session() as session:
         # Load facility and its units in a single query with eager loading
         facility_query = select(Facility).options(selectinload(Facility.units)).where(Facility.code == facility.code)
@@ -198,6 +203,7 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
             facility_new = True
             session.add(facility_db)
             facility_db.units = []
+            facility_or_unit_created = True
         else:
             facility_new = False
             # Check for differences before making any changes
@@ -272,6 +278,7 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 )
                 facility_db.units.append(unit_db)
                 record_updated = True
+                facility_or_unit_created = True
                 logger.info(f"Created unit {unit.code} for facility {facility.code}")
 
             if unit.fueltech_id and unit.fueltech_id.value != unit_db.fueltech_id:
@@ -312,6 +319,8 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
             except Exception as e:
                 logger.error(f"Error creating facility {facility_db.code} - {facility_db.name}: {e}")
                 raise
+
+    return facility_or_unit_created
 
 
 def check_cms_duplicate_ids(facilities: list[FacilitySchema]) -> tuple[list[str], list[str]]:
@@ -368,7 +377,12 @@ async def update_facility_from_cms(facility_code: str, send_slack: bool = True) 
         logger.info(f"Facility {facility_code} not found in CMS")
         return
 
-    await create_or_update_database_facility(sanity_facilities[0], send_slack=send_slack)
+    facility_or_unit_created = await create_or_update_database_facility(sanity_facilities[0], send_slack=send_slack)
+
+    if facility_or_unit_created:
+        logger.info(f"Created facility {facility_code}")
+    else:
+        logger.info(f"Updated facility {facility_code}")
 
 
 async def update_database_facilities_from_cms(send_slack: bool = True, dry_run: bool = False) -> None:
@@ -414,9 +428,17 @@ async def update_database_facilities_from_cms(send_slack: bool = True, dry_run: 
         for facility in missing_facilities_database:
             logger.info(f" - {facility}")
 
+    facility_or_unit_created = False
+
     # loop through each facility and add to database if not present or update if present
     for facility in sanity_facilities:
-        await create_or_update_database_facility(facility, send_slack=send_slack, dry_run=dry_run)
+        _create_or_update = await create_or_update_database_facility(facility, send_slack=send_slack, dry_run=dry_run)
+        if _create_or_update:
+            facility_or_unit_created = True
+
+    if facility_or_unit_created:
+        logger.info(f"Created {facility_or_unit_created} facilities")
+        await update_facility_seen_range(include_first_seen=True, facility_codes=list(missing_facilities))
 
 
 if __name__ == "__main__":
