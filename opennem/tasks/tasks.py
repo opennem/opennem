@@ -294,7 +294,7 @@ async def task_check_unsplit_batteries(ctx: dict) -> None:
         raise
 
 
-async def optimize_unit_intervals() -> None:
+async def optimize_clickhouse_tables() -> None:
     """
     Optimize the unit_intervals and market_summary tables to force merges and deduplication.
     This should be run periodically (e.g., daily) during low-traffic periods.
