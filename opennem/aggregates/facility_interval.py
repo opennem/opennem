@@ -6,8 +6,8 @@ import logfire
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from opennem.db import get_write_session
-from opennem.schema.network import NetworkAEMORooftop, NetworkNEM, NetworkSchema, NetworkWEM, NetworkWEMDE
+from opennem.db import get_notransaction_session, get_write_session
+from opennem.schema.network import NetworkAEMORooftop, NetworkNEM, NetworkSchema
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
 
 logger = logging.getLogger("opennem.aggregates.facility_interval")
@@ -18,6 +18,7 @@ async def update_facility_aggregates(
     start_time: datetime,
     end_time: datetime,
     network: NetworkSchema | None = None,
+    refresh: bool = False,
 ) -> None:
     """
     Updates facility aggregates for the given time range using partition-aware approach.
@@ -40,6 +41,9 @@ async def update_facility_aggregates(
 
     if network:
         network_filter = f"AND fs.network_id = '{network.code}'"
+
+    if refresh:
+        await _delete_facility_aggregates(start_time, end_time, network=network)
 
     try:
         # The optimized aggregation query with improved locking strategy
@@ -134,6 +138,9 @@ async def update_facility_aggregates(
         )
         await db_session.commit()
 
+        if refresh:
+            await _refresh_continuous_aggregates(start_time, end_time)
+
         logger.info(f"Updated facility aggregates from {start_time} to {end_time}")
 
     except Exception as e:
@@ -147,6 +154,7 @@ async def _process_aggregate_chunk(
     start_time: datetime,
     end_time: datetime,
     network: NetworkSchema | None = None,
+    refresh: bool = False,
 ) -> None:
     """
     Process a single chunk of facility aggregates with semaphore control and retry logic
@@ -159,7 +167,7 @@ async def _process_aggregate_chunk(
     """
     async with semaphore:
         async with get_write_session() as session:
-            await update_facility_aggregates(session, start_time, end_time, network=network)
+            await update_facility_aggregates(session, start_time, end_time, network=network, refresh=refresh)
 
 
 @logfire.instrument("update_facility_aggregate_last_hours")
@@ -189,12 +197,37 @@ async def run_update_facility_aggregate_last_interval(num_intervals: int = 6) ->
         await update_facility_aggregates(session, start_time, end_time)
 
 
+async def _delete_facility_aggregates(start_date: date, end_date: date, network: NetworkSchema | None = None) -> None:
+    """Delete facility aggregates for the given time range and optionally filtered by network.
+
+    Args:
+        start_date: Start date to delete from (inclusive)
+        end_date: End date to delete to (exclusive)
+        network: Optional network to filter by. If None, deletes across all networks
+    """
+    async with get_write_session() as session:
+        query = """
+            DELETE FROM at_facility_intervals
+            WHERE interval >= :start_date
+            AND interval < :end_date
+        """
+        params = {"start_date": start_date, "end_date": end_date}
+
+        if network:
+            query += " AND network_id = :network_id"
+            params["network_id"] = network.code
+
+        await session.execute(text(query), params)
+        await session.commit()
+
+
 async def update_facility_aggregates_chunked(
     start_date: date,
     end_date: date,
     chunk_days: int = 30,
     max_concurrent: int = 2,
     network: NetworkSchema | None = None,
+    refresh: bool = False,
 ) -> None:
     """
     Updates facility aggregates in chunks working backwards from end_date to start_date.
@@ -232,7 +265,10 @@ async def update_facility_aggregates_chunked(
     semaphore = asyncio.Semaphore(max_concurrent)
 
     # Create tasks for all chunks
-    tasks = [_process_aggregate_chunk(semaphore, chunk_start, chunk_end, network=network) for chunk_start, chunk_end in chunks]
+    tasks = [
+        _process_aggregate_chunk(semaphore, chunk_start, chunk_end, network=network, refresh=refresh)
+        for chunk_start, chunk_end in chunks
+    ]
 
     logger.info(f"Processing {len(chunks)} chunks with max {max_concurrent} concurrent operations")
 
@@ -322,6 +358,51 @@ async def run_facility_aggregate_all(chunk_days: int = 30, max_concurrent: int =
     )
 
 
+async def _refresh_continuous_aggregates(start_date: date, end_date: date) -> None:
+    """Refresh the continuous aggregates for facility and fueltech materialized views.
+
+    This function refreshes the continuous aggregates for mv_fueltech_daily and
+    mv_facility_unit_daily views for the specified date range.
+
+    Args:
+        start_date: Start date to refresh from (inclusive)
+        end_date: End date to refresh to (exclusive)
+
+    Note:
+        This should be called after making significant changes to the underlying data
+        or when needing to force a refresh of the materialized views.
+    """
+    start_date = str(start_date.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None).date())
+    end_date = str(end_date.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None).date() + timedelta(days=1))
+
+    async with get_notransaction_session() as session:
+        # Refresh mv_fueltech_daily
+        query_fueltech = text(f"""
+            CALL refresh_continuous_aggregate(
+                'mv_fueltech_daily',
+                '{start_date}',
+                '{end_date}'
+            );
+        """)
+
+        # Refresh mv_facility_unit_daily
+        query_facility = text(f"""
+            CALL refresh_continuous_aggregate(
+                'mv_facility_unit_daily',
+                '{start_date}',
+                '{end_date}'
+            );
+        """)
+
+        try:
+            await session.execute(query_fueltech)
+            await session.execute(query_facility)
+            logger.info(f"Refreshed continuous aggregates from {start_date} to {end_date}")
+        except Exception as e:
+            logger.error(f"Error refreshing continuous aggregates: {str(e)}")
+            raise
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     # Example: Update last 7 days of data in chunks
@@ -334,10 +415,11 @@ if __name__ == "__main__":
 
     asyncio.run(
         update_facility_aggregates_chunked(
-            start_date=NetworkWEMDE.data_first_seen,
+            start_date=datetime.fromisoformat("2024-10-01T00:00:00"),
             end_date=interval,
             max_concurrent=2,
             chunk_days=3,
-            network=NetworkWEM,
+            # network=NetworkWEM,
+            refresh=True,
         )
     )
