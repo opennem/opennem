@@ -219,6 +219,7 @@ async def favicon_ico() -> str:
     response_model=list[APINetworkSchema],
     response_model_exclude_none=True,
     response_model_exclude_unset=True,
+    include_in_schema=False,
     tags=["Core"],
     description="Get networks",
 )
@@ -253,6 +254,7 @@ async def get_networks() -> list[APINetworkSchema]:
     response_model=list[APINetworkRegion],
     response_model_exclude_none=True,
     response_model_exclude_unset=True,
+    include_in_schema=False,
     tags=["Core"],
     description="Get network regions",
 )
@@ -281,6 +283,7 @@ async def get_network_regions(
     response_model=list[FueltechSchema],
     response_model_exclude_none=True,
     response_model_exclude_unset=True,
+    include_in_schema=False,
     tags=["Core"],
     description="Get all fueltechs",
 )
@@ -314,6 +317,7 @@ async def fueltechs(
     response_model=list[TimeInterval],
     response_model_exclude_none=True,
     response_model_exclude_unset=True,
+    include_in_schema=False,
     tags=["Core"],
     description="Get all intervals",
 )
@@ -327,6 +331,7 @@ def intervals() -> list[TimeInterval]:
     response_model=list[TimePeriod],
     response_model_exclude_none=True,
     response_model_exclude_unset=True,
+    include_in_schema=False,
     tags=["Core"],
     description="Get all periods",
 )
@@ -340,6 +345,7 @@ def periods() -> list[TimePeriod]:
     response_model=list[UnitDefinition],
     response_model_exclude_none=True,
     response_model_exclude_unset=True,
+    include_in_schema=False,
     tags=["Core"],
     description="Get all units",
 )
