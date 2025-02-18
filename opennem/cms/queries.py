@@ -1,20 +1,38 @@
-"""
-Client query library to get facility and other data from the CMS.
+"""OpenNEM CMS Query Interface.
 
-The CMS is a Sanity.io instance.
+This module provides the interface between OpenNEM and the Sanity.io CMS, handling all
+queries and data retrieval from the CMS. It includes functionality for:
+- Retrieving facility and unit data
+- Converting CMS data into OpenNEM schema models
+- Caching frequently accessed data
+- Handling CMS API errors and retries
 
-For documentation on the CMS API see https://www.sanity.io/docs/query-cheat-sheet
+The module uses the Sanity.io GROQ query language for all CMS queries. For more information
+on GROQ, see https://www.sanity.io/docs/query-cheat-sheet
 
-The sanity python client is an unofficial client and may not be maintained up to date with the latest Sanity.io API.
+Note:
+    The module uses an unofficial Python client for Sanity.io. For the official client,
+    see https://github.com/OmniPro-Group/sanity-python
 
-For the official client see https://github.com/OmniPro-Group/sanity-python
+Technical Details:
+    - Caching is implemented with a timed LRU cache (disabled in development)
+    - Retries are implemented using the tenacity library
+    - All CMS data is validated against Pydantic models
+    - Rich text content (like descriptions) is rendered to HTML
 """
 
 import logging
+from collections.abc import Callable
+from datetime import datetime, timedelta
+from functools import lru_cache, wraps
+from time import timezone
+from typing import TypeVar
 
 from portabletext_html import PortableTextRenderer
 from pydantic import ValidationError
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
+from opennem import settings
 from opennem.cms.client import sanity_client
 from opennem.schema.facility import FacilityPhotoOutputSchema, FacilitySchema
 from opennem.schema.unit import UnitSchema
@@ -23,12 +41,72 @@ logger = logging.getLogger("opennem.cms.queries")
 
 
 class CMSQueryError(Exception):
-    """Error querying the CMS"""
+    """Error raised when querying the CMS fails.
+
+    This exception is used to wrap any errors from the Sanity.io API or
+    data validation errors when processing CMS responses.
+    """
 
     pass
 
 
+T = TypeVar("T")
+
+
+def timed_lru_cache(seconds: int, maxsize: int = 128) -> Callable:
+    """Create a cache that expires after the specified number of seconds.
+
+    This decorator provides a time-based LRU cache that is disabled in development
+    environments. The cache is automatically cleared when it expires.
+
+    Args:
+        seconds: Number of seconds before cache expires
+        maxsize: Maximum size of cache (default: 128)
+
+    Returns:
+        Callable: Decorator function that can be applied to other functions
+
+    Example:
+        @timed_lru_cache(seconds=300)
+        def my_function():
+            # This function's results will be cached for 5 minutes
+            pass
+    """
+
+    def decorator(func: Callable[..., T]) -> Callable[..., T]:
+        # Only use caching if not in development
+        if settings.is_dev:
+            return func
+
+        func = lru_cache(maxsize=maxsize)(func)
+        func.lifetime = timedelta(seconds=seconds)
+        func.expiration = datetime.now(timezone.utc) + func.lifetime
+
+        @wraps(func)
+        def wrapped_func(*args, **kwargs) -> T:
+            if datetime.now(timezone.utc) >= func.expiration:
+                func.cache_clear()
+                func.expiration = datetime.now(timezone.utc) + func.lifetime
+
+            return func(*args, **kwargs)
+
+        return wrapped_func
+
+    return decorator
+
+
 def get_cms_owners() -> list[dict]:
+    """Retrieve all owner records from the CMS.
+
+    This function queries the CMS for all owner records, which contain information
+    about facility owners including their legal names and contact details.
+
+    Returns:
+        list[dict]: List of owner records from the CMS
+
+    Raises:
+        CMSQueryError: If no owners are found or if there's an error querying the CMS
+    """
     query = """*[_type == "owner"  && !(_id in path("drafts.**"))] {
         _id,
         _createdAt,
@@ -48,10 +126,21 @@ def get_cms_owners() -> list[dict]:
 
 
 def get_cms_unit(unit_code: str) -> UnitSchema:
-    """
-    Get units from the CMS
-    """
+    """Retrieve a single unit's data from the CMS.
 
+    This function queries the CMS for a specific unit by its code and returns
+    the data as a validated UnitSchema object.
+
+    Args:
+        unit_code: The unique identifier code for the unit
+
+    Returns:
+        UnitSchema: Validated unit data model
+
+    Raises:
+        CMSQueryError: If the unit is not found or if there's an error querying the CMS
+        ValidationError: If the unit data doesn't match the expected schema
+    """
     query = f"""*[_type == "unit" && code == '{unit_code}' && !(_id in path("drafts.**"))] {{
         _id,
         _createdAt,
@@ -74,8 +163,14 @@ def get_cms_unit(unit_code: str) -> UnitSchema:
 
 
 def get_unit_factors() -> list[dict]:
-    """
-    Get unit factors from the CMS
+    """Retrieve emissions and other factor data for all units.
+
+    This function queries the CMS for all facilities and their units, focusing on
+    emissions factors and related metadata. This is used primarily for emissions
+    calculations and reporting.
+
+    Returns:
+        list[dict]: List of facility records with their unit factors
     """
     query = """*[_type == "facility" && !(_id in path("drafts.**"))] {
         _id,
@@ -98,12 +193,40 @@ def get_unit_factors() -> list[dict]:
     return res["result"]
 
 
+@timed_lru_cache(seconds=300)  # 5 minute cache
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=4, max=10),
+    retry=retry_if_exception_type((CMSQueryError, ValidationError)),
+    reraise=True,
+)
 def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]:
-    """
-    Get facilities from the CMS
+    """Retrieve facility data from the CMS with optional filtering.
 
-    :param facility_code: Filter by facility code
-    :return: List of facilities
+    This is the primary function for retrieving facility data from the CMS. It includes
+    comprehensive facility metadata, unit data, and related information. The function
+    includes caching and retry logic for reliability.
+
+    Features:
+    - 5-minute cache in non-development environments
+    - Retries up to 3 times with exponential backoff
+    - Converts rich text descriptions to HTML
+    - Validates all data against Pydantic models
+    - Processes and validates facility photos
+
+    Args:
+        facility_code: Optional facility code to filter results
+
+    Returns:
+        list[FacilitySchema]: List of validated facility models
+
+    Raises:
+        CMSQueryError: If there's an error querying the CMS
+        ValidationError: If the facility data doesn't match the expected schema
+
+    Note:
+        The function will retry on CMSQueryError and ValidationError, but will
+        re-raise the error if all retries fail.
     """
     filter_query = ""
 
@@ -176,10 +299,7 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]
             facility["updated_at"] = facility["_updatedAt"]
 
         if facility["code"] in result_models:
-            logger.warning(
-                f"Duplicate facility code {facility['code']} sanity. {facility['_id']}"
-                # f" existing {result_models[facility['code']].id}"
-            )
+            logger.warning(f"Duplicate facility code {facility['code']} sanity. {facility['_id']}")
             continue
 
         if facility.get("photos", None):
@@ -229,6 +349,19 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]
 
 
 def update_cms_record(facility: FacilitySchema) -> None:
+    """Update a facility record in the CMS.
+
+    This function sends updates back to the CMS. It's used primarily for
+    synchronizing data from the OpenNEM database back to the CMS when necessary.
+
+    Args:
+        facility: The facility data to update in the CMS
+
+    Note:
+        This is a less commonly used function as the CMS is typically
+        the source of truth, but it's available for special cases where
+        we need to update CMS data programmatically.
+    """
     transactions = [
         {
             "createOrUpdate": {
