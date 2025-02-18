@@ -80,39 +80,10 @@ Price data is stored in the balancing summary table with:
 
 ## Price Types
 
-### Market Prices
+### Market Price
 
-Stored in `balancing_summary`:
-- Spot prices
-- Dispatch prices (`price_dispatch`)
-- Energy prices
-- Capacity prices (WEM only)
+The market price is the price at which electricity is traded in the market.
 
-## Market Value Calculations
+### Market Value
 
-### Value Components
-
-Tracked in `at_facility_intervals`:
-- `market_value`: Trading interval value
-- `energy`: Energy quantity
-- Price-quantity calculations
-- Settlement amounts
-
-## Trading Data
-
-### Market Operations
-
-Trading data includes:
-- Generation dispatch
-- Demand forecasts
-- Network constraints
-- Market notices
-
-## Data Access
-
-### API Endpoints
-
-```
-GET /v4/stats/price/network/{network_code} - Get price history
-GET /v4/stats/price/network/{network_code}/{network_region_code} - Get regional prices
-```
+`market_value` is a volume-weighted price calculated for each generator in each interval and then summed up to the total market value.

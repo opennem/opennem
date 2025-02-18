@@ -95,19 +95,11 @@
             ]
         },
         {
-            "group": "Website",
-            "pages": [
-                "website/introduction",
-                "website/generation",
-                "website/facilities"
-            ]
-        },
-        {
             "group": "API Platform",
             "pages": [
                 "platform/introduction",
-                "platform/quickstart",
-                "platform/development"
+                "platform/python",
+                "platform/typescript"
             ]
         },
         {
@@ -115,14 +107,8 @@
             "pages": [
                 "backend/introduction",
                 "backend/gettingstarted",
-                "backend/cli",
-                "backend/crawlers",
-                "backend/database_schema"
+                "backend/crawlers"
             ]
-        },
-        {
-            "group": "API Documentation",
-            "pages": ["api-reference/introduction"]
         }
     ],
     "footerSocials": {
