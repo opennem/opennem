@@ -23,9 +23,8 @@ Technical Details:
 
 import logging
 from collections.abc import Callable
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from functools import lru_cache, wraps
-from time import timezone
 from typing import TypeVar
 
 from portabletext_html import PortableTextRenderer
@@ -33,6 +32,7 @@ from pydantic import ValidationError
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from opennem import settings
+from opennem.clients.slack import slack_message
 from opennem.cms.client import sanity_client
 from opennem.schema.facility import FacilityPhotoOutputSchema, FacilitySchema
 from opennem.schema.unit import UnitSchema
@@ -46,6 +46,12 @@ class CMSQueryError(Exception):
     This exception is used to wrap any errors from the Sanity.io API or
     data validation errors when processing CMS responses.
     """
+
+    pass
+
+
+class DuplicateCodeError(CMSQueryError):
+    """Error raised when duplicate facility or unit codes are found in CMS data."""
 
     pass
 
@@ -80,13 +86,13 @@ def timed_lru_cache(seconds: int, maxsize: int = 128) -> Callable:
 
         func = lru_cache(maxsize=maxsize)(func)
         func.lifetime = timedelta(seconds=seconds)
-        func.expiration = datetime.now(timezone.utc) + func.lifetime
+        func.expiration = datetime.now(UTC) + func.lifetime
 
         @wraps(func)
         def wrapped_func(*args, **kwargs) -> T:
-            if datetime.now(timezone.utc) >= func.expiration:
+            if datetime.now(UTC) >= func.expiration:
                 func.cache_clear()
-                func.expiration = datetime.now(timezone.utc) + func.lifetime
+                func.expiration = datetime.now(UTC) + func.lifetime
 
             return func(*args, **kwargs)
 
@@ -191,6 +197,53 @@ def get_unit_factors() -> list[dict]:
     res = sanity_client.query(query)
 
     return res["result"]
+
+
+def _validate_unique_codes(facilities: list[FacilitySchema]) -> None:
+    """Validate that all facility and unit codes are unique across the dataset.
+
+    This method checks for duplicate codes in both facilities and units returned
+    from the CMS. While Sanity CMS allows duplicates, this is not valid in our system
+    and must be caught early. It also validates that no facility or unit is missing
+    a code.
+
+    Args:
+        facilities: List of facility models to validate
+
+    Raises:
+        DuplicateCodeError: If any duplicate facility or unit codes are found
+        CMSQueryError: If any facility or unit is missing a code
+    """
+    facility_codes = {}
+    unit_codes = {}
+
+    for facility in facilities:
+        # Check facility has a code
+        if not facility.code:
+            raise CMSQueryError(f"Facility missing code (facility id: {facility.id})")
+
+        # Check facility codes for duplicates
+        if facility.code in facility_codes:
+            raise DuplicateCodeError(
+                f"Duplicate facility code found: {facility.code} (first: {facility_codes[facility.code]}, second: {facility.id})"
+            )
+        facility_codes[facility.code] = facility.code
+
+        # Check unit codes if facility has units
+        if not facility.units:
+            continue
+
+        for unit in facility.units:
+            # Check unit has a code
+            if not unit.code:
+                raise CMSQueryError(f"Unit missing code in facility: {facility.code} (facility id: {facility.id})")
+
+            # Check for duplicate unit codes
+            if unit.code in unit_codes:
+                raise DuplicateCodeError(
+                    f"Duplicate unit code found: {unit.code} (in facilities: {unit_codes[unit.code]}, {facility.code})"
+                )
+            unit_codes[unit.code] = facility.code
 
 
 @timed_lru_cache(seconds=300)  # 5 minute cache
@@ -345,7 +398,18 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]
             logger.debug(facility)
             raise e
 
-    return list(result_models.values())
+    facilities = list(result_models.values())
+
+    try:
+        _validate_unique_codes(facilities)
+    except (DuplicateCodeError, CMSQueryError) as e:
+        logger.error(f"CMS Error: {e}")
+        slack_message(
+            webhook_url=settings.slack_hook_new_facilities,
+            message=f"CMS Error: {e}",
+        )
+        raise e
+    return facilities
 
 
 def update_cms_record(facility: FacilitySchema) -> None:
