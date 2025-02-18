@@ -10,6 +10,7 @@ The live engine which runs per interval is located at opennem.recordreactor.engi
 import logging
 from dataclasses import dataclass
 from datetime import datetime
+from textwrap import dedent
 from typing import Any
 
 from clickhouse_driver.client import Client
@@ -65,7 +66,7 @@ class GroupingConfig:
 
 
 # Define all possible grouping configurations
-GROUPING_CONFIGS = [
+_GROUPING_CONFIGS = [
     GroupingConfig(name="network", group_by_fields=[]),
     GroupingConfig(name="region", group_by_fields=["network_region"]),
     GroupingConfig(name="fueltech", group_by_fields=["fueltech_group_id"]),
@@ -177,6 +178,7 @@ def analyze_milestone_records(
     grouping: GroupingConfig,
     start_date: datetime | None = None,
     end_date: datetime | None = None,
+    debug: bool = False,
 ) -> list[dict[str, Any]]:
     """
     Analyze historical records to find milestone records.
@@ -289,7 +291,7 @@ def analyze_milestone_records(
         {time_bucket_sql} as time_bucket{group_by_select},
         {interval_count} as interval_count,
         {agg_function}({metric_column}) as total_value
-      FROM {source_table}
+      FROM {source_table} FINAL
       WHERE
         network_id in ('{network.code.upper()}', {list_to_case([i.code for i in network.subnetworks])})
         {date_clause}
@@ -418,7 +420,8 @@ def analyze_milestone_records(
     try:
         logger.info(f"running query for {network.code} {milestone_type.value} {period.value} {grouping.name}")
 
-        # print(dedent(base_query))
+        if debug:
+            print(dedent(base_query))
 
         records = client.execute(base_query)
         # Convert to list of dicts for easier processing
@@ -536,6 +539,11 @@ _DEFAULT_NETWORKS = [
 async def run_milestone_analysis(
     start_date: datetime | None = None,
     end_date: datetime | None = None,
+    networks: list[NetworkSchema] | None = None,
+    metrics: list[MilestoneType] | None = None,
+    periods: list[MilestonePeriod] | None = None,
+    groupings: list[GroupingConfig] | None = None,
+    debug: bool = False,
 ) -> None:
     """
     Run milestone analysis across all grouping configurations.
@@ -543,16 +551,21 @@ async def run_milestone_analysis(
     Args:
         start_date: Optional start date to limit analysis
         end_date: Optional end date to limit analysis
+        networks: Optional list of networks to analyze
+        metrics: Optional list of metrics to analyze
+        periods: Optional list of periods to analyze
+        groupings: Optional list of grouping configurations to analyze
+        debug: Optional flag to enable debug mode
     """
     client = get_clickhouse_client()
 
     # Iterate through all periods and grouping configurations
-    for metric in _DEFAULT_METRICS:
-        for network in _DEFAULT_NETWORKS:
-            for period in _DEFAULT_PERIODS:
+    for metric in metrics or _DEFAULT_METRICS:
+        for network in networks or _DEFAULT_NETWORKS:
+            for period in periods or _DEFAULT_PERIODS:
                 milestone_records: list[MilestoneRecordSchema] = []
 
-                for grouping in GROUPING_CONFIGS:
+                for grouping in groupings or _GROUPING_CONFIGS:
                     # filter out the metrics that don't make sense for the period
 
                     if metric in [MilestoneType.power, MilestoneType.energy, MilestoneType.emissions]:
@@ -584,6 +597,7 @@ async def run_milestone_analysis(
                         grouping=grouping,
                         start_date=start_date,
                         end_date=end_date,
+                        debug=debug,
                     )
 
                     milestone_records.extend(_analyzed_record_to_milestone_schema(records, network, period, metric, grouping))
@@ -598,7 +612,7 @@ async def run_milestone_analysis(
     logger.info("Milestone analysis complete")
 
 
-async def run_milestone_analysis_backlog(refresh: bool = False):
+async def run_milestone_analysis_backlog(refresh: bool = False, debug: bool = False):
     """
     Runs in year chunks
     """
@@ -611,7 +625,7 @@ async def run_milestone_analysis_backlog(refresh: bool = False):
             await session.execute(text("delete from milestones"))
         logger.info("Milestones table deleted")
 
-    await run_milestone_analysis(start_date=start_date, end_date=end_date)
+    await run_milestone_analysis(start_date=start_date, end_date=end_date, debug=debug)
 
 
 async def run_update_milestone_analysis_to_now() -> None:
@@ -643,4 +657,16 @@ if __name__ == "__main__":
     # Run test for last year of data
     import asyncio
 
-    asyncio.run(run_milestone_analysis_backlog(refresh=True))
+    async def test():
+        # backfill_materialized_views(RENEWABLE_INTERVALS_DAILY_VIEW, refresh_views=True)
+        await run_milestone_analysis(
+            start_date=NetworkNEM.data_first_seen,
+            end_date=get_last_completed_interval_for_network(NetworkNEM),
+            # debug=True,
+            # networks=[NetworkNEM],
+            # metrics=[MilestoneType.energy],
+            # periods=[MilestonePeriod.day],
+            # groupings=[GroupingConfig(name="renewable", group_by_fields=["renewable"])],
+        )
+
+    asyncio.run(test())
