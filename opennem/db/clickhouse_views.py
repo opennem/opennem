@@ -49,8 +49,16 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             count() as count
         FROM (
             SELECT *
-            FROM unit_intervals
-            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+            FROM (
+                SELECT
+                    *,
+                    max(version) OVER (
+                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
+                    ) as max_version
+                FROM unit_intervals
+            )
+            WHERE version = max_version
+            ORDER BY interval, network_id, network_region, facility_code, unit_code
         )
         GROUP BY
             date,
@@ -80,9 +88,17 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             count() as count
         FROM (
             SELECT *
-            FROM unit_intervals
-            WHERE interval >= %(start)s AND interval < %(end)s
-            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+            FROM (
+                SELECT
+                    *,
+                    max(version) OVER (
+                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
+                    ) as max_version
+                FROM unit_intervals
+                WHERE interval >= %(start)s AND interval < %(end)s
+            )
+            WHERE version = max_version
+            ORDER BY interval, network_id, network_region, facility_code, unit_code
         )
         GROUP BY
             date,
@@ -119,8 +135,16 @@ UNIT_INTERVALS_MONTHLY_VIEW = MaterializedView(
             count() as count
         FROM (
             SELECT *
-            FROM unit_intervals
-            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+            FROM (
+                SELECT
+                    *,
+                    max(version) OVER (
+                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
+                    ) as max_version
+                FROM unit_intervals
+            )
+            WHERE version = max_version
+            ORDER BY interval, network_id, network_region, facility_code, unit_code
         )
         GROUP BY
             date,
@@ -150,9 +174,17 @@ UNIT_INTERVALS_MONTHLY_VIEW = MaterializedView(
             count() as count
         FROM (
             SELECT *
-            FROM unit_intervals
-            WHERE interval >= %(start)s AND interval < %(end)s
-            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+            FROM (
+                SELECT
+                    *,
+                    max(version) OVER (
+                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
+                    ) as max_version
+                FROM unit_intervals
+                WHERE interval >= %(start)s AND interval < %(end)s
+            )
+            WHERE version = max_version
+            ORDER BY interval, network_id, network_region, facility_code, unit_code
         )
         GROUP BY
             date,
@@ -185,8 +217,16 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
             count() as unit_count
         FROM (
             SELECT *
-            FROM unit_intervals
-            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+            FROM (
+                SELECT
+                    *,
+                    max(version) OVER (
+                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
+                    ) as max_version
+                FROM unit_intervals
+            )
+            WHERE version = max_version
+            ORDER BY interval, network_id, network_region, facility_code, unit_code
         )
         GROUP BY
             interval,
@@ -210,9 +250,17 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
             count() as unit_count
         FROM (
             SELECT *
-            FROM unit_intervals
-            WHERE interval >= %(start)s AND interval < %(end)s
-            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+            FROM (
+                SELECT
+                    *,
+                    max(version) OVER (
+                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
+                    ) as max_version
+                FROM unit_intervals
+                WHERE interval >= %(start)s AND interval < %(end)s
+            )
+            WHERE version = max_version
+            ORDER BY interval, network_id, network_region, facility_code, unit_code
         )
         GROUP BY
             interval,
@@ -244,8 +292,16 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             count(distinct interval) as interval_count
         FROM (
             SELECT *
-            FROM unit_intervals
-            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+            FROM (
+                SELECT
+                    *,
+                    max(version) OVER (
+                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
+                    ) as max_version
+                FROM unit_intervals
+            )
+            WHERE version = max_version
+            ORDER BY interval, network_id, network_region, facility_code, unit_code
         )
         GROUP BY
             date,
@@ -270,9 +326,17 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             count(distinct interval) as interval_count
         FROM (
             SELECT *
-            FROM unit_intervals
-            WHERE interval >= %(start)s AND interval < %(end)s
-            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+            FROM (
+                SELECT
+                    *,
+                    max(version) OVER (
+                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
+                    ) as max_version
+                FROM unit_intervals
+                WHERE interval >= %(start)s AND interval < %(end)s
+            )
+            WHERE version = max_version
+            ORDER BY interval, network_id, network_region, facility_code, unit_code
         )
         GROUP BY
             date,
@@ -302,8 +366,16 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
             count() as unit_count
         FROM (
             SELECT *
-            FROM unit_intervals
-            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+            FROM (
+                SELECT
+                    *,
+                    max(version) OVER (
+                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
+                    ) as max_version
+                FROM unit_intervals
+            )
+            WHERE version = max_version
+            ORDER BY interval, network_id, network_region, facility_code, unit_code
         )
         GROUP BY interval, network_id, network_region, renewable
     """,
@@ -321,9 +393,17 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
             count() as unit_count
         FROM (
             SELECT *
-            FROM unit_intervals
-            WHERE interval >= %(start)s AND interval < %(end)s
-            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+            FROM (
+                SELECT
+                    *,
+                    max(version) OVER (
+                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
+                    ) as max_version
+                FROM unit_intervals
+                WHERE interval >= %(start)s AND interval < %(end)s
+            )
+            WHERE version = max_version
+            ORDER BY interval, network_id, network_region, facility_code, unit_code
         )
         GROUP BY interval, network_id, network_region, renewable
     """,
@@ -349,8 +429,16 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             count(distinct interval) as interval_count
         FROM (
             SELECT *
-            FROM unit_intervals
-            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+            FROM (
+                SELECT
+                    *,
+                    max(version) OVER (
+                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
+                    ) as max_version
+                FROM unit_intervals
+            )
+            WHERE version = max_version
+            ORDER BY interval, network_id, network_region, facility_code, unit_code
         )
         GROUP BY date, network_id, network_region, renewable
     """,
@@ -369,9 +457,17 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             count(distinct interval) as interval_count
         FROM (
             SELECT *
-            FROM unit_intervals
-            WHERE interval >= %(start)s AND interval < %(end)s
-            ORDER BY interval, network_id, network_region, facility_code, unit_code, version DESC
+            FROM (
+                SELECT
+                    *,
+                    max(version) OVER (
+                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
+                    ) as max_version
+                FROM unit_intervals
+                WHERE interval >= %(start)s AND interval < %(end)s
+            )
+            WHERE version = max_version
+            ORDER BY interval, network_id, network_region, facility_code, unit_code
         )
         GROUP BY date, network_id, network_region, renewable
     """,
