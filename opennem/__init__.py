@@ -50,7 +50,7 @@ logger = logging.getLogger("opennem")
 
 # Module variables
 
-__version__ = "4.0.3.dev8"
+__version__ = "4.0.3.dev9"
 
 # console
 console = Console()
