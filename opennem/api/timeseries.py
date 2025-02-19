@@ -9,7 +9,7 @@ from collections.abc import Sequence
 from datetime import datetime
 from typing import Any
 
-from pydantic import computed_field, model_validator
+from pydantic import ConfigDict, computed_field, model_validator
 
 from opennem.api.utils import get_api_network_from_code
 from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
@@ -43,6 +43,8 @@ class TimeSeriesResult(BaseConfig):
     columns: dict[str, str | bool] = {}
     data: list[tuple[datetime, SignificantFigures8 | None]]
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     @model_validator(mode="before")
     def cast_columns_to_booleans(cls, values):
         """
@@ -57,6 +59,26 @@ class TimeSeriesResult(BaseConfig):
                     if lower_value in ("true", "false"):
                         columns[key] = lower_value == "true"
         return values
+
+    # @model_validator(mode="after")
+    def add_network_timezone(self) -> Any:
+        """Add network timezone to all datetime fields based on parent TimeSeries network."""
+        # Get parent context which should contain network_code
+        context = self.model_config.get("context", {})
+        network_code = context.get("network_code")
+
+        if network_code:
+            network = get_api_network_from_code(network_code)
+            tz_offset = network.get_fixed_offset()
+
+            # Apply timezone to all datetime values in data
+            if self.data:
+                self.data = [
+                    (timestamp.replace(tzinfo=tz_offset), value) if timestamp and not timestamp.tzinfo else (timestamp, value)
+                    for timestamp, value in self.data
+                ]
+
+        return self
 
 
 class TimeSeries(BaseConfig):
@@ -81,8 +103,8 @@ class TimeSeries(BaseConfig):
     metric: MetricType
     unit: str = ""  # Default empty string will be replaced in validation
     interval: Interval
-    start: datetime
-    end: datetime
+    date_start: datetime
+    date_end: datetime
     groupings: list[str] = []
     results: list[TimeSeriesResult]
 
@@ -97,6 +119,18 @@ class TimeSeries(BaseConfig):
         """Set the unit based on the metric if not explicitly provided."""
         if not self.unit:
             self.unit = get_metric_metadata(self.metric).unit
+        return self
+
+    @model_validator(mode="after")
+    def add_network_to_results(self) -> "TimeSeries":
+        """Add network_code to results context for timezone conversion."""
+        # Create context with network_code for results
+        context = {"network_code": self.network_code}
+
+        # Update each result's context with the network_code
+        for result in self.results:
+            result.model_config["context"] = context
+
         return self
 
 
@@ -124,6 +158,10 @@ def format_timeseries_response(
     Returns:
         list[TimeSeries]: List of time series objects, one per metric
     """
+    # Get network timezone
+    network_obj = get_api_network_from_code(network)
+    tz_offset = network_obj.get_fixed_offset()
+
     # Initialize response objects for each metric
     timeseries_list = []
 
@@ -134,6 +172,9 @@ def format_timeseries_response(
         grouped_results = {}
 
         for row in results:
+            # Apply timezone to interval
+            row["interval"] = row["interval"].replace(tzinfo=tz_offset)
+
             # Build label key based on groupings
             label_parts = []
 
@@ -182,26 +223,35 @@ def format_timeseries_response(
                 if facility_code:
                     grouped_results[label_key]["facility_code"] = facility_code
 
-            # Add data point
+            # Add data point with timezone-aware timestamp
             grouped_results[label_key]["data"].append([row["interval"].timestamp() * 1000, float(row[metric_name])])
 
         # Sort data points by timestamp
         for group in grouped_results.values():
+            group["data"] = [
+                # (timestamp.replace(tzinfo=tz_offset), value) if timestamp else (timestamp, value)
+                (datetime.fromtimestamp(timestamp / 1000, tz=tz_offset), value)
+                for timestamp, value in group["data"]
+            ]
             group["data"].sort(key=lambda x: x[0])
+
+        # Get timezone-aware start and end dates
+        date_start = min(row["interval"] for row in results)
+        date_end = max(row["interval"] for row in results)
 
         # Create TimeSeries for this metric
         timeseries = TimeSeries(
             network_code=network,
             metric=metric,
             interval=interval,
-            start=min(row["interval"] for row in results),
-            end=max(row["interval"] for row in results),
+            date_start=date_start,  # Already timezone-aware
+            date_end=date_end,  # Already timezone-aware
             groupings=[primary_grouping.value] + [g.value.lower() for g in secondary_groupings] if secondary_groupings else [],
             results=[
                 TimeSeriesResult(
                     name=group["name"],
-                    date_start=min(row["interval"] for row in results),
-                    date_end=max(row["interval"] for row in results),
+                    date_start=date_start,  # Already timezone-aware
+                    date_end=date_end,  # Already timezone-aware
                     columns=group["labels"],
                     data=group["data"],
                 )

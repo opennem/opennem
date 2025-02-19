@@ -12,7 +12,7 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi_versionizer import api_version
 
-from opennem.api.data.utils import get_default_start_date, validate_date_range
+from opennem.api.data.utils import validate_date_range
 from opennem.api.queries import QueryType, get_timeseries_query
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.api.security import authenticated_user
@@ -22,7 +22,6 @@ from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
 from opennem.core.metric import Metric
 from opennem.core.time_interval import Interval
 from opennem.db.clickhouse import get_clickhouse_dependency
-from opennem.utils.dates import get_last_completed_interval_for_network
 
 router = APIRouter()
 logger = logging.getLogger("opennem.api.data")
@@ -83,15 +82,8 @@ async def get_network_data(
     # validate metrics
     validate_metrics(metrics, _SUPPORTED_METRICS)
 
-    # Get default dates if not provided
-    if date_end is None:
-        date_end = get_last_completed_interval_for_network(network=network)
-
-    if date_start is None:
-        date_start = get_default_start_date(interval, date_end)
-
     # Validate the date range for the interval
-    validate_date_range(interval, date_start, date_end)
+    date_start, date_end = validate_date_range(network=network, interval=interval, date_start=date_start, date_end=date_end)
 
     # Convert single secondary grouping to sequence
     secondary_groupings = [secondary_grouping] if secondary_grouping else None
@@ -183,15 +175,8 @@ async def get_facility_data(
     # validate metrics
     validate_metrics(metrics, _SUPPORTED_METRICS)
 
-    # Get default dates if not provided
-    if date_end is None:
-        date_end = get_last_completed_interval_for_network(network=network)
-
-    if date_start is None:
-        date_start = get_default_start_date(interval, date_end)
-
     # Validate the date range for the interval
-    validate_date_range(interval, date_start, date_end)
+    date_start, date_end = validate_date_range(network=network, interval=interval, date_start=date_start, date_end=date_end)
 
     # Build and execute query using the unified query builder
     query, params, column_names = get_timeseries_query(
