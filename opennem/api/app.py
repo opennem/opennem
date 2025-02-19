@@ -25,6 +25,7 @@ from starlette.requests import Request
 from opennem import settings
 from opennem.api.data.router import router as data_router
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
+from opennem.api.facilities.router import router as facilities_router
 from opennem.api.feedback.router import router as feedback_router
 from opennem.api.market.router import router as market_router
 from opennem.api.milestones.router import milestones_router
@@ -174,6 +175,7 @@ async def log_api_exception(request: Request, exc: Exception):
 # sub-routers
 app.include_router(stats_router, tags=["Stats"], prefix="/stats", include_in_schema=False)
 app.include_router(station_router, tags=["Facilities"], prefix="/facility", include_in_schema=False)
+app.include_router(facilities_router, tags=["Facilities"], prefix="/facilities")
 app.include_router(feedback_router, tags=["Feedback"], prefix="/feedback", include_in_schema=False)
 app.include_router(milestones_router, tags=["Milestones"], prefix="/milestones", include_in_schema=False)
 app.include_router(webhooks_router, tags=["Webhooks"], prefix="/webhooks", include_in_schema=False)
