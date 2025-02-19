@@ -71,7 +71,13 @@ def validate_date_range(interval: Interval, date_start: datetime, date_end: date
         HTTPException: If the date range is too large for the interval
     """
     max_days = get_max_interval_days(interval)
-    date_range = date_end - date_start
+
+    try:
+        date_range = date_end - date_start
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail="Invalid dates passed") from e
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Invalid date range") from e
 
     if date_range.days > max_days:
         _raise_invalid_date_range(interval, max_days)
