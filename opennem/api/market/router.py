@@ -97,6 +97,15 @@ async def get_network_data(
     try:
         logger.debug(query)
         results = client.execute(query, params)
+
+        # Check if we got any results
+        if not results:
+            logger.info(f"No market data found for network {network_code} in time range {date_start} to {date_end}")
+            raise HTTPException(
+                status_code=416,
+                detail=f"No market data available for network {network_code} in the specified time range",
+            )
+
     except Exception as e:
         logger.error(f"Error executing query: {e}")
         raise HTTPException(status_code=500, detail="Error executing query") from e
