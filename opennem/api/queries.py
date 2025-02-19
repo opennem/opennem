@@ -105,7 +105,7 @@ QUERY_CONFIGS = {
         query_type=QueryType.DATA,
         base_table="unit_intervals",
         daily_mv="unit_intervals_daily_mv",
-        monthly_mv="unit_intervals_monthly_mv",
+        monthly_mv=None,
         metric_columns={
             DataMetric.POWER: "generated",
             DataMetric.ENERGY: "energy",
@@ -118,7 +118,7 @@ QUERY_CONFIGS = {
         query_type=QueryType.FACILITY,
         base_table="unit_intervals",
         daily_mv="unit_intervals_daily_mv",
-        monthly_mv="unit_intervals_monthly_mv",
+        monthly_mv=None,
         metric_columns={
             DataMetric.POWER: "generated",
             DataMetric.ENERGY: "energy",

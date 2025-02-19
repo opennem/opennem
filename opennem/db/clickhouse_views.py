@@ -111,92 +111,6 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
     """,
 )
 
-UNIT_INTERVALS_MONTHLY_VIEW = MaterializedView(
-    name="unit_intervals_monthly_mv",
-    timestamp_column="date",
-    schema="""
-        CREATE MATERIALIZED VIEW unit_intervals_monthly_mv
-        ENGINE = SummingMergeTree()
-        ORDER BY (date, network_id, network_region, facility_code, unit_code, fueltech_id, fueltech_group_id)
-        AS SELECT
-            toStartOfMonth(interval) as date,
-            network_id,
-            network_region,
-            facility_code,
-            unit_code,
-            fueltech_id,
-            fueltech_group_id,
-            any(renewable) as renewable,
-            any(status_id) as status_id,
-            sum(generated) as generated,
-            sum(energy) as energy,
-            sum(emissions) as emissions,
-            sum(market_value) as market_value,
-            count() as count
-        FROM (
-            SELECT *
-            FROM (
-                SELECT
-                    *,
-                    max(version) OVER (
-                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
-                    ) as max_version
-                FROM unit_intervals
-            )
-            WHERE version = max_version
-            ORDER BY interval, network_id, network_region, facility_code, unit_code
-        )
-        GROUP BY
-            date,
-            network_id,
-            network_region,
-            facility_code,
-            unit_code,
-            fueltech_id,
-            fueltech_group_id
-    """,
-    backfill_query="""
-        INSERT INTO unit_intervals_monthly_mv
-        SELECT
-            toStartOfMonth(interval) as date,
-            network_id,
-            network_region,
-            facility_code,
-            unit_code,
-            fueltech_id,
-            fueltech_group_id,
-            any(renewable) as renewable,
-            any(status_id) as status_id,
-            sum(generated) as generated,
-            sum(energy) as energy,
-            sum(emissions) as emissions,
-            sum(market_value) as market_value,
-            count() as count
-        FROM (
-            SELECT *
-            FROM (
-                SELECT
-                    *,
-                    max(version) OVER (
-                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
-                    ) as max_version
-                FROM unit_intervals
-                WHERE interval >= %(start)s AND interval < %(end)s
-            )
-            WHERE version = max_version
-            ORDER BY interval, network_id, network_region, facility_code, unit_code
-        )
-        GROUP BY
-            date,
-            network_id,
-            network_region,
-            facility_code,
-            unit_code,
-            fueltech_id,
-            fueltech_group_id
-    """,
-)
-
 FUELTECH_INTERVALS_VIEW = MaterializedView(
     name="fueltech_intervals_mv",
     timestamp_column="interval",
@@ -475,7 +389,6 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
 
 CLICKHOUSE_MATERIALIZED_VIEWS = {
     "unit_intervals_daily_mv": UNIT_INTERVALS_DAILY_VIEW,
-    "unit_intervals_monthly_mv": UNIT_INTERVALS_MONTHLY_VIEW,
     "fueltech_intervals_mv": FUELTECH_INTERVALS_VIEW,
     "fueltech_intervals_daily_mv": FUELTECH_INTERVALS_DAILY_VIEW,
     "renewable_intervals_mv": RENEWABLE_INTERVALS_VIEW,
