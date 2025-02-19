@@ -29,7 +29,7 @@ async def get_facilities(
     user: authenticated_user,
     status_id: list[UnitStatusType] | None = Query(None, description="Filter by unit status(es)"),
     fueltech_id: list[UnitFueltechType] | None = Query(None, description="Filter by unit fuel technology type(s)"),
-    network_id: str | None = Query(None, description="Filter by network code"),
+    network_id: list[str] | None = Query(None, description="Filter by network code(s)"),
     network_region: str | None = Query(None, description="Filter by network region"),
 ) -> APIV4ResponseSchema:
     """
@@ -43,7 +43,7 @@ async def get_facilities(
     Filters:
     - status_id: Filter by one or more unit statuses (operating, committed, retired)
     - fueltech_id: Filter by one or more unit fuel technology types
-    - network_id: Filter by network code
+    - network_id: Filter by one or more network codes
     - network_region: Filter by network region
 
     Returns:
@@ -61,7 +61,7 @@ async def get_facilities(
 
         # Add network filters if provided
         if network_id:
-            stmt = stmt.where(Facility.network_id == network_id)
+            stmt = stmt.where(Facility.network_id.in_(network_id))
         if network_region:
             stmt = stmt.where(Facility.network_region == network_region)
 
