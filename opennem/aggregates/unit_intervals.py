@@ -26,7 +26,6 @@ from opennem.db.clickhouse_views import (
     RENEWABLE_INTERVALS_DAILY_VIEW,
     RENEWABLE_INTERVALS_VIEW,
     UNIT_INTERVALS_DAILY_VIEW,
-    UNIT_INTERVALS_MONTHLY_VIEW,
     MaterializedView,
 )
 from opennem.schema.network import NetworkNEM
@@ -37,7 +36,6 @@ logger = logging.getLogger("opennem.aggregates.unit_intervals")
 # List of all materialized views to manage
 MATERIALIZED_VIEWS = [
     UNIT_INTERVALS_DAILY_VIEW,
-    UNIT_INTERVALS_MONTHLY_VIEW,
     FUELTECH_INTERVALS_VIEW,
     FUELTECH_INTERVALS_DAILY_VIEW,
     RENEWABLE_INTERVALS_VIEW,

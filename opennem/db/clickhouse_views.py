@@ -30,7 +30,7 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
     timestamp_column="date",
     schema="""
         CREATE MATERIALIZED VIEW unit_intervals_daily_mv
-        ENGINE = SummingMergeTree()
+        ENGINE = ReplacingMergeTree(version)
         ORDER BY (date, network_id, network_region, facility_code, unit_code, fueltech_id, fueltech_group_id)
         AS SELECT
             toDate(interval) as date,
@@ -46,7 +46,8 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             sum(energy) as energy,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
-            count() as count
+            count() as count,
+            max(version) as version
         FROM (
             SELECT *
             FROM (
@@ -85,7 +86,8 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             sum(energy) as energy,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
-            count() as count
+            count() as count,
+            max(version) as version
         FROM (
             SELECT *
             FROM (
@@ -116,7 +118,7 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
     timestamp_column="interval",
     schema="""
         CREATE MATERIALIZED VIEW fueltech_intervals_mv
-        ENGINE = SummingMergeTree()
+        ENGINE = ReplacingMergeTree(version)
         ORDER BY (interval, network_id, network_region, fueltech_id, fueltech_group_id)
         AS SELECT
             interval,
@@ -128,7 +130,8 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
             sum(energy) as energy,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
-            count() as unit_count
+            count() as unit_count,
+            max(version) as version
         FROM (
             SELECT *
             FROM (
@@ -161,7 +164,8 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
             sum(energy) as energy,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
-            count() as unit_count
+            count() as unit_count,
+            max(version) as version
         FROM (
             SELECT *
             FROM (
@@ -190,7 +194,7 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
     timestamp_column="date",
     schema="""
         CREATE MATERIALIZED VIEW fueltech_intervals_daily_mv
-        ENGINE = SummingMergeTree()
+        ENGINE = ReplacingMergeTree(version)
         ORDER BY (date, network_id, network_region, fueltech_id, fueltech_group_id)
         AS SELECT
             toDate(interval) as date,
@@ -203,7 +207,8 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
-            count(distinct interval) as interval_count
+            count(distinct interval) as interval_count,
+            max(version) as version
         FROM (
             SELECT *
             FROM (
@@ -237,7 +242,8 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
-            count(distinct interval) as interval_count
+            count(distinct interval) as interval_count,
+            max(version) as version
         FROM (
             SELECT *
             FROM (
@@ -266,7 +272,7 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
     timestamp_column="interval",
     schema="""
         CREATE MATERIALIZED VIEW renewable_intervals_mv
-        ENGINE = SummingMergeTree()
+        ENGINE = ReplacingMergeTree(version)
         ORDER BY (interval, network_id, network_region, renewable)
         AS SELECT
             interval,
@@ -277,7 +283,8 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
             sum(energy) as energy,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
-            count() as unit_count
+            count() as unit_count,
+            max(version) as version
         FROM (
             SELECT *
             FROM (
@@ -304,7 +311,8 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
             sum(energy) as energy,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
-            count() as unit_count
+            count() as unit_count,
+            max(version) as version
         FROM (
             SELECT *
             FROM (
@@ -328,7 +336,7 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
     timestamp_column="date",
     schema="""
         CREATE MATERIALIZED VIEW renewable_intervals_daily_mv
-        ENGINE = SummingMergeTree()
+        ENGINE = ReplacingMergeTree(version)
         ORDER BY (date, network_id, network_region, renewable)
         AS SELECT
             toDate(interval) as date,
@@ -340,7 +348,8 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
-            count(distinct interval) as interval_count
+            count(distinct interval) as interval_count,
+            max(version) as version
         FROM (
             SELECT *
             FROM (
@@ -368,7 +377,8 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
-            count(distinct interval) as interval_count
+            count(distinct interval) as interval_count,
+            max(version) as version
         FROM (
             SELECT *
             FROM (
