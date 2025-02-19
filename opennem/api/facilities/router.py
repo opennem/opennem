@@ -4,7 +4,7 @@ Facilities API Router
 Handles facility and unit data queries and responses.
 """
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
@@ -27,6 +27,7 @@ router = APIRouter()
 )
 async def get_facilities(
     user: authenticated_user,
+    facility_code: list[str] | None = Query(None, description="Filter by facility code(s)"),
     status_id: list[UnitStatusType] | None = Query(None, description="Filter by unit status(es)"),
     fueltech_id: list[UnitFueltechType] | None = Query(None, description="Filter by unit fuel technology type(s)"),
     network_id: list[str] | None = Query(None, description="Filter by network code(s)"),
@@ -41,6 +42,7 @@ async def get_facilities(
     - Units with fueltech_id of solar_rooftop, battery, imports or exports
 
     Filters:
+    - facility_code: Filter by one or more facility codes
     - status_id: Filter by one or more unit statuses (operating, committed, retired)
     - fueltech_id: Filter by one or more unit fuel technology types
     - network_id: Filter by one or more network codes
@@ -64,6 +66,8 @@ async def get_facilities(
             stmt = stmt.where(Facility.network_id.in_(network_id))
         if network_region:
             stmt = stmt.where(Facility.network_region == network_region)
+        if facility_code:
+            stmt = stmt.where(Facility.code.in_(facility_code))
 
         stmt = stmt.order_by(Facility.code)
         result = await session.execute(stmt)
@@ -100,6 +104,24 @@ async def get_facilities(
                     units=filtered_units,
                 )
                 filtered_facilities.append(facility_response)
+
+        # Return 416 if no facilities match the filters
+        if not filtered_facilities:
+            filter_desc = ", ".join(
+                filter_str
+                for filter_str in [
+                    f"facility_codes=[{','.join(facility_code)}]" if facility_code else None,
+                    f"network_ids=[{','.join(network_id)}]" if network_id else None,
+                    f"network_region={network_region}" if network_region else None,
+                    f"status_ids=[{','.join(str(s) for s in status_id)}]" if status_id else None,
+                    f"fueltech_ids=[{','.join(str(f) for f in fueltech_id)}]" if fueltech_id else None,
+                ]
+                if filter_str is not None
+            )
+            raise HTTPException(
+                status_code=416,
+                detail=f"No facilities found matching filters: {filter_desc}",
+            )
 
         # Sort facilities by name before returning
         filtered_facilities.sort(key=lambda x: x.name.lower())
