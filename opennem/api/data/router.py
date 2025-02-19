@@ -104,18 +104,17 @@ async def get_network_data(
     try:
         logger.debug(query)
         results = client.execute(query, params)
-
-        # Check if we got any results
-        if not results:
-            logger.info(f"No data found for network {network_code} in time range {date_start} to {date_end}")
-            raise HTTPException(
-                status_code=416,
-                detail=f"No data available for network {network_code} in the specified time range",
-            )
-
     except Exception as e:
         logger.error(f"Error executing query: {e}")
         raise HTTPException(status_code=500, detail="Error executing query") from e
+
+    # Check if we got any results
+    if not results:
+        logger.info(f"No data found for network {network_code} in time range {date_start} to {date_end}")
+        raise HTTPException(
+            status_code=416,
+            detail=f"No data available for network {network_code} in the specified time range",
+        )
 
     # Convert results to list of dictionaries using column names
     result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
@@ -136,15 +135,17 @@ async def get_network_data(
 
 @api_version(4)
 @router.get(
-    "/facility/{network_code}/{facility_code}",
+    "/facilities/{network_code}",
     response_model=APIV4ResponseSchema,
     response_model_exclude_none=True,
 )
 async def get_facility_data(
     network_code: str,
-    facility_code: str,
     metrics: Annotated[list[Metric], Query(description="The metrics to get data for", example="energy")],
     interval: Annotated[Interval, Query(description="The time interval to aggregate data by", example="1h")] = Interval.INTERVAL,
+    facility_code: Annotated[
+        list[str] | None, Query(description="The facility code to get data for", example="AEMO_DISCOS_01")
+    ] = None,
     date_start: Annotated[datetime | None, Query(description="Start time for the query", example="2024-01-01T00:00:00")] = None,
     date_end: Annotated[datetime | None, Query(description="End time for the query", example="2024-01-02T00:00:00")] = None,
     client: Any = Depends(get_clickhouse_dependency),
@@ -178,6 +179,9 @@ async def get_facility_data(
     # Validate the date range for the interval
     date_start, date_end = validate_date_range(network=network, interval=interval, date_start=date_start, date_end=date_end)
 
+    if facility_code and len(facility_code) > 30:
+        raise HTTPException(status_code=400, detail="Facility code must be less than 30 characters")
+
     # Build and execute query using the unified query builder
     query, params, column_names = get_timeseries_query(
         query_type=QueryType.FACILITY,
@@ -193,18 +197,17 @@ async def get_facility_data(
     try:
         logger.debug(query)
         results = client.execute(query, params)
-
-        # Check if we got any results
-        if not results:
-            logger.info(f"No data found for facility {facility_code} in time range {date_start} to {date_end}")
-            raise HTTPException(
-                status_code=416,
-                detail=f"No data available for facility {facility_code} in the specified time range",
-            )
-
     except Exception as e:
         logger.error(f"Error executing query: {e}")
         raise HTTPException(status_code=500, detail="Error executing query") from e
+
+    # Check if we got any results
+    if not results:
+        logger.info(f"No data found for facility {facility_code} in time range {date_start} to {date_end}")
+        raise HTTPException(
+            status_code=416,
+            detail=f"No data available for facility {facility_code} in the specified time range",
+        )
 
     # Convert results to list of dictionaries using column names
     result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]

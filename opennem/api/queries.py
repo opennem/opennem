@@ -139,7 +139,7 @@ def get_timeseries_query(
     date_end: datetime,
     primary_grouping: PrimaryGrouping = PrimaryGrouping.NETWORK,
     secondary_groupings: list[SecondaryGrouping] | None = None,
-    facility_code: str | None = None,
+    facility_code: list[str] | None = None,
 ) -> tuple[str, dict, list[str]]:
     """
     Build a time series query for either market or data metrics.
@@ -153,7 +153,7 @@ def get_timeseries_query(
         date_end: End time for the query (network time)
         primary_grouping: Primary grouping to apply
         secondary_groupings: Optional sequence of secondary groupings to apply
-        facility_code: Optional facility code to filter by
+        facility_code: Optional facility codes to filter by
 
     Returns:
         tuple[str, dict, list[str]]: ClickHouse SQL query, parameters, and list of column names
@@ -211,7 +211,7 @@ def get_timeseries_query(
     ]
 
     if facility_code:
-        where_clauses.append("facility_code = %(facility_code)s")
+        where_clauses.append("facility_code in %(facility_code)s")
 
     query = f"""
         SELECT
