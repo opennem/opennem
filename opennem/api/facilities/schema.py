@@ -5,9 +5,11 @@ Defines the schema for the facilities API endpoint responses.
 """
 
 from datetime import datetime
+from typing import Any
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 
+from opennem.core.networks import network_from_network_code
 from opennem.schema.field_types import RoundedFloat2, RoundedFloat4
 from opennem.schema.unit import UnitDispatchType, UnitFueltechType, UnitStatusType
 
@@ -26,6 +28,25 @@ class UnitResponse(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+    @model_validator(mode="after")
+    def add_network_timezone(self) -> Any:
+        """Add network timezone to datetime fields based on parent facility network."""
+        # Get parent context which should contain network_id
+        context = self.model_config.get("context", {})
+        network_id = context.get("network_id")
+
+        if network_id and (self.data_first_seen or self.data_last_seen):
+            network = network_from_network_code(network_id)
+            tz_offset = network.get_fixed_offset()
+
+            # Apply timezone to datetime fields if they exist
+            if self.data_first_seen:
+                self.data_first_seen = self.data_first_seen.replace(tzinfo=tz_offset)
+            if self.data_last_seen:
+                self.data_last_seen = self.data_last_seen.replace(tzinfo=tz_offset)
+
+        return self
+
 
 class FacilityResponse(BaseModel):
     """Facility response schema with selected fields and associated units"""
@@ -38,3 +59,15 @@ class FacilityResponse(BaseModel):
     units: list[UnitResponse]
 
     model_config = ConfigDict(from_attributes=True)
+
+    @model_validator(mode="after")
+    def add_network_to_units(self) -> Any:
+        """Add network_id to unit context for timezone conversion."""
+        # Create context with network_id for units
+        context = {"network_id": self.network_id}
+
+        # Update each unit's context with the network_id
+        for unit in self.units:
+            unit.model_config["context"] = context
+
+        return self
