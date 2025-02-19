@@ -8,6 +8,7 @@ from starlette import status
 from opennem.api import throttle
 from opennem.api.exceptions import OpennemBaseHttpException
 from opennem.api.schema import APIV4ResponseSchema
+from opennem.api.security import authenticated_user
 from opennem.cms.importer import get_cms_facilities
 from opennem.schema.unit import UnitFueltechType
 
@@ -36,7 +37,7 @@ class StationNoFacilities(OpennemBaseHttpException):
     description="Get a list of all facilities",
     response_model_exclude_none=True,
 )
-async def get_facilities() -> APIV4ResponseSchema:
+async def get_facilities(user: authenticated_user) -> APIV4ResponseSchema:
     facilities = get_cms_facilities()
 
     model_output = APIV4ResponseSchema(success=True, data=facilities, total_records=len(facilities))
@@ -56,6 +57,7 @@ async def get_facilities() -> APIV4ResponseSchema:
 async def get_facility(
     network_id: str,
     station_code: str,
+    user: authenticated_user,
 ) -> APIV4ResponseSchema:
     if network_id.upper() not in ["NEM", "WEM"]:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Network not found")
