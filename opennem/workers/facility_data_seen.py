@@ -42,6 +42,7 @@ def get_update_seen_query(
         from facility_scada fs
         where
             fs.generated > 0
+            and fs.is_forecast = false
             {facility_codes_query}
             {trading_interval_window}
         group by 1
