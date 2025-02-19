@@ -658,15 +658,6 @@ if __name__ == "__main__":
     import asyncio
 
     async def test():
-        # backfill_materialized_views(RENEWABLE_INTERVALS_DAILY_VIEW, refresh_views=True)
-        await run_milestone_analysis(
-            start_date=NetworkNEM.data_first_seen,
-            end_date=get_last_completed_interval_for_network(NetworkNEM),
-            # debug=True,
-            # networks=[NetworkNEM],
-            # metrics=[MilestoneType.energy],
-            # periods=[MilestonePeriod.day],
-            # groupings=[GroupingConfig(name="renewable", group_by_fields=["renewable"])],
-        )
+        await run_milestone_analysis_backlog(refresh=True)
 
     asyncio.run(test())
