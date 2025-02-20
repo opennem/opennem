@@ -308,3 +308,7 @@ async def optimize_clickhouse_tables() -> None:
     # Optimize market_summary
     client.execute("OPTIMIZE TABLE market_summary FINAL")
     logger.info("Optimized market_summary table")
+
+
+if __name__ == "__main__":
+    asyncio.run(task_nem_interval_check(ctx={"job_try": 0}))
