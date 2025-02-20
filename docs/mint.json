@@ -95,20 +95,8 @@
             ]
         },
         {
-            "group": "API Platform",
-            "pages": [
-                "platform/introduction",
-                "platform/python",
-                "platform/typescript"
-            ]
-        },
-        {
-            "group": "Backend",
-            "pages": [
-                "backend/introduction",
-                "backend/gettingstarted",
-                "backend/crawlers"
-            ]
+            "group": "Platform",
+            "pages": ["platform/introduction", "platform/typescript"]
         }
     ],
     "footerSocials": {

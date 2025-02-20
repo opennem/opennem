@@ -1,0 +1,501 @@
+---
+title: 'Typescript'
+description: 'Complete documentation for the OpenElectricity TypeScript client'
+icon: 'book'
+---
+
+# OpenElectricity TypeScript Client
+
+The OpenElectricity TypeScript client is the official library for accessing the OpenElectricity API, providing easy access to Australian electricity network data. This client supports both browser and Node.js environments, offering a type-safe interface to work with electricity data from the National Electricity Market (NEM) and Western Australian Electricity Market (WEM).
+
+## Features
+
+- 🔐 Secure API authentication
+- 🌐 Cross-platform support (Browser & Node.js)
+- 📊 Built-in data analysis tools
+- ⚡ Real-time electricity data access
+- 🕒 Timezone-aware date handling
+- 📈 Time series data manipulation
+- 🏭 Facility and unit information
+- 💹 Market data access
+
+## Getting Started
+
+### Installation
+
+Install the package using your preferred package manager:
+
+```bash
+# Using npm
+npm install @openelectricity/client
+
+# Using yarn
+yarn add @openelectricity/client
+
+# Using bun
+bun add @openelectricity/client
+```
+
+### Quick Start
+
+```typescript
+import { OpenElectricityClient } from '@openelectricity/client'
+
+// Initialize the client
+const client = new OpenElectricityClient({
+  apiKey: 'your-api-key', // Optional: recommended to use OPENELECTRICITY_API_KEY env var
+})
+
+// Get energy data for the NEM
+const { datatable } = await client.getNetworkData('NEM', ['energy'], {
+  interval: '1h',
+  dateStart: '2024-01-01T00:00:00',
+  dateEnd: '2024-01-02T00:00:00',
+  primaryGrouping: 'network_region',
+})
+
+// Analyze the data
+console.table(datatable.toConsole())
+```
+
+### Authentication
+
+The client requires an API key for authentication. You can provide it in two ways:
+
+1. Environment variable:
+```bash
+export OPENELECTRICITY_API_KEY=your-api-key
+```
+
+2. Client initialization:
+```typescript
+const client = new OpenElectricityClient({
+  apiKey: 'your-api-key'
+})
+```
+
+### Configuration
+
+Customize the client behavior with these environment variables:
+
+- `OPENELECTRICITY_API_KEY`: Your API authentication key
+- `OPENELECTRICITY_API_URL`: Override the default API endpoint (optional)
+
+## API Reference
+
+### Client Initialization
+
+```typescript
+import { OpenElectricityClient } from '@openelectricity/client'
+
+const client = new OpenElectricityClient({
+  apiKey?: string,    // Optional: API key (can use OPENELECTRICITY_API_KEY env var)
+  baseUrl?: string    // Optional: API endpoint (can use OPENELECTRICITY_API_URL env var)
+})
+```
+
+### Network Data
+
+#### getNetworkData
+
+Fetch network-level time series data for power, energy, emissions, and market value metrics.
+
+```typescript
+async getNetworkData(
+  networkCode: NetworkCode,           // "NEM" | "WEM" | "AU"
+  metrics: DataMetric[],             // Array of metrics to fetch
+  params?: INetworkTimeSeriesParams  // Optional parameters
+): Promise<ITimeSeriesResponse>
+```
+
+**Parameters:**
+- `networkCode`: The network to fetch data for
+- `metrics`: Array of metrics (e.g., ["power", "energy", "emissions"])
+- `params`: Optional parameters:
+  - `interval`: Time interval (e.g., "5m", "1h", "1d")
+  - `dateStart`: Start date (timezone-naive)
+  - `dateEnd`: End date (timezone-naive)
+  - `primaryGrouping`: Primary grouping field
+  - `secondaryGrouping`: Secondary grouping field
+
+**Example:**
+```typescript
+const { datatable } = await client.getNetworkData("NEM", ["energy"], {
+  interval: "1h",
+  dateStart: "2024-01-01T00:00:00",
+  dateEnd: "2024-01-02T00:00:00",
+  primaryGrouping: "network_region",
+  secondaryGrouping: "fueltech"
+})
+```
+
+### Facility Data
+
+#### getFacilityData
+
+Fetch facility-specific time series data.
+
+```typescript
+async getFacilityData(
+  networkCode: NetworkCode,                // "NEM" | "WEM" | "AU"
+  facilityCodes: string | string[],        // Single facility or array of facilities
+  metrics: DataMetric[],                   // Array of metrics to fetch
+  params?: IFacilityTimeSeriesParams      // Optional parameters
+): Promise<ITimeSeriesResponse>
+```
+
+**Parameters:**
+- `networkCode`: The network containing the facilities
+- `facilityCodes`: Single facility code or array of codes
+- `metrics`: Array of metrics to fetch
+- `params`: Optional parameters (similar to getNetworkData)
+
+**Example:**
+```typescript
+const { datatable } = await client.getFacilityData(
+  "NEM",
+  ["BAYSW1", "ERARING"],
+  ["power", "emissions"],
+  {
+    interval: "5m",
+    dateStart: "2024-01-01T00:00:00",
+    dateEnd: "2024-01-02T00:00:00"
+  }
+)
+```
+
+### Market Data
+
+#### getMarket
+
+Fetch market-related metrics like price and demand.
+
+```typescript
+async getMarket(
+  networkCode: NetworkCode,              // "NEM" | "WEM" | "AU"
+  metrics: MarketMetric[],              // Array of market metrics
+  params?: IMarketTimeSeriesParams      // Optional parameters
+): Promise<ITimeSeriesResponse>
+```
+
+**Parameters:**
+- `networkCode`: The market to fetch data for
+- `metrics`: Array of market metrics (e.g., ["price", "demand"])
+- `params`: Optional parameters (similar to getNetworkData)
+
+**Example:**
+```typescript
+const { datatable } = await client.getMarket("NEM", ["price", "demand"], {
+  interval: "30m",
+  dateStart: "2024-01-01T00:00:00",
+  dateEnd: "2024-01-02T00:00:00",
+  primaryGrouping: "network_region"
+})
+```
+
+### Facility Information
+
+#### getFacilities
+
+Get information about generation facilities and their units.
+
+```typescript
+async getFacilities(
+  params?: IFacilityParams  // Optional filter parameters
+): Promise<FacilityResponse>
+```
+
+**Parameters:**
+- `params`: Optional filters:
+  - `status_id`: Array of facility statuses
+  - `fueltech_id`: Array of fuel technologies
+  - `network_id`: Network code or array of codes
+  - `network_region`: Specific network region
+
+**Example:**
+```typescript
+const { table } = await client.getFacilities({
+  status_id: ["operating"],
+  fueltech_id: ["solar", "wind"],
+  network_id: "NEM"
+})
+```
+
+### User Information
+
+#### getCurrentUser
+
+Get information about the current API user.
+
+```typescript
+async getCurrentUser(): Promise<IAPIResponse<IUser>>
+```
+
+**Example:**
+```typescript
+const { data: user } = await client.getCurrentUser()
+```
+
+## Data Analysis
+
+The OpenElectricity client includes a powerful `DataTable` class that provides a pandas/polars-like interface for analyzing time series data.
+
+### DataTable Overview
+
+The `DataTable` class provides methods for:
+- Filtering and selecting data
+- Grouping and aggregating
+- Sorting and ordering
+- Statistical analysis
+- Data transformation
+
+### Core Methods
+
+#### Accessing Data
+
+```typescript
+// Get all rows
+const rows = datatable.getRows()
+
+// Get available grouping columns
+const groupings = datatable.getGroupings()
+
+// Get metrics and their units
+const metrics = datatable.getMetrics()
+
+// Get the latest timestamp
+const latestTime = datatable.getLatestTimestamp()
+```
+
+#### Filtering
+
+Filter rows based on a condition:
+
+```typescript
+// Filter for high power periods
+const highPower = datatable.filter(row => (row.power as number) > 1000)
+
+// Filter for specific region
+const nswData = datatable.filter(row => row.network_region === "NSW1")
+```
+
+#### Selecting Columns
+
+Select specific columns to work with:
+
+```typescript
+// Select only power and region columns
+const powerByRegion = datatable.select(["interval", "power", "network_region"])
+```
+
+#### Grouping and Aggregation
+
+Group data and calculate aggregates:
+
+```typescript
+// Calculate sum by region
+const totalByRegion = datatable.groupBy(["network_region"], "sum")
+
+// Calculate mean by region and fuel technology
+const avgByRegionAndFuel = datatable.groupBy(
+  ["network_region", "fueltech"],
+  "mean"
+)
+```
+
+Supported aggregation methods:
+- `"sum"`: Calculate the sum of values
+- `"mean"`: Calculate the arithmetic mean
+
+#### Sorting
+
+Sort data by one or more columns:
+
+```typescript
+// Sort by power, descending
+const highestFirst = datatable.sortBy(["power"], false)
+
+// Sort by region, then by power
+const sortedData = datatable.sortBy(["network_region", "power"])
+```
+
+#### Statistical Analysis
+
+Calculate summary statistics for numeric columns:
+
+```typescript
+const stats = datatable.describe()
+```
+
+The `describe()` method returns statistics including:
+- `count`: Number of non-null values
+- `mean`: Arithmetic mean
+- `std`: Standard deviation
+- `min`: Minimum value
+- `q25`: 25th percentile
+- `median`: 50th percentile
+- `q75`: 75th percentile
+- `max`: Maximum value
+
+### Performance Considerations
+
+The `DataTable` class includes several optimizations:
+
+1. **Caching**: Results of grouping and sorting operations are cached
+2. **Indexed Filtering**: Simple equality filters use column indexes
+3. **Single-Pass Operations**: Many operations are optimized to process data in a single pass
+4. **Memory Efficiency**: Data structures are reused where possible
+
+## Type Reference
+
+### Network Types
+
+#### NetworkCode
+
+Represents the supported electricity networks:
+
+```typescript
+type NetworkCode = "NEM" | "WEM" | "AU"
+```
+
+- `NEM`: National Electricity Market (Eastern and Southern Australia)
+- `WEM`: Western Australian Electricity Market
+- `AU`: Australia-wide (defaults to NEM timezone)
+
+#### DataInterval
+
+Supported time intervals for data aggregation:
+
+```typescript
+type DataInterval = "5m" | "1h" | "1d" | "7d" | "1M" | "3M" | "season" | "1y" | "fy"
+```
+
+### Metric Types
+
+#### DataMetric
+
+Metrics available for network and facility data:
+
+```typescript
+type DataMetric = "power" | "energy" | "emissions" | "market_value"
+```
+
+#### MarketMetric
+
+Metrics available for market data:
+
+```typescript
+type MarketMetric = "price" | "demand" | "demand_energy"
+```
+
+### Response Types
+
+#### ITimeSeriesResponse
+
+Standard response type for time series data:
+
+```typescript
+interface ITimeSeriesResponse {
+  response: IAPIResponse<INetworkTimeSeries[]>  // Raw API response
+  datatable?: DataTable                         // Processed data table
+}
+```
+
+#### FacilityResponse
+
+Response type for facility queries:
+
+```typescript
+interface FacilityResponse {
+  response: IAPIResponse<IFacility[]>           // Raw API response
+  table: RecordTable<IFacilityRecord>          // Processed facility records
+}
+```
+
+## Common Patterns and Examples
+
+### Basic Data Retrieval
+
+```typescript
+import { OpenElectricityClient } from '@openelectricity/client'
+
+// Initialize client
+const client = new OpenElectricityClient()
+
+// Get energy data for the NEM network
+const { response, datatable } = await client.getNetworkData("NEM", ["energy"], {
+  interval: "1h",
+  dateStart: "2024-01-01T00:00:00",
+  dateEnd: "2024-01-02T00:00:00",
+  primaryGrouping: "network_region",
+})
+```
+
+### Analyzing Generation Mix
+
+```typescript
+// Get power data with fuel technology grouping
+const { datatable } = await client.getNetworkData("NEM", ["power"], {
+  interval: "5m",
+  primaryGrouping: "network_region",
+  secondaryGrouping: "fueltech",
+})
+
+// Calculate renewable vs non-renewable generation
+const renewableFueltechs = new Set(["solar", "wind", "hydro", "pumps", "bioenergy"])
+const latestData = datatable.filter(row => row.interval.getTime() === datatable.getLatestTimestamp())
+
+let renewable = 0, total = 0
+latestData.getRows().forEach(row => {
+  const power = row.power as number
+  total += power
+  if (renewableFueltechs.has(row.fueltech as string)) {
+    renewable += power
+  }
+})
+
+console.log(`Renewable: ${(renewable / total * 100).toFixed(1)}%`)
+```
+
+### Calculating Emission Factors
+
+```typescript
+// Get emissions and energy data
+const { datatable } = await client.getNetworkData("NEM", ["emissions", "energy"], {
+  interval: "1d",
+  primaryGrouping: "network_region",
+})
+
+// Calculate regional emission factors
+const avgByRegion = datatable
+  .groupBy(["network_region"], "mean")
+  .getRows()
+  .map(row => ({
+    network_region: row.network_region,
+    avg_emission_factor: ((row.emissions as number) / (row.energy as number)).toFixed(3),
+  }))
+```
+
+## Error Handling
+
+The client throws specific error types:
+
+- `OpenElectricityError`: General API errors
+- `NoDataFound`: When no data matches the query (416 status)
+
+```typescript
+try {
+  const result = await client.getNetworkData("NEM", ["energy"])
+} catch (error) {
+  if (error instanceof OpenElectricityError) {
+    console.error("API Error:", error.message)
+  } else if (error instanceof NoDataFound) {
+    console.error("No matching data found")
+  }
+}
+```
+
+## Support
+
+- [GitHub Issues](https://github.com/opennem/openelectricity-client/issues)
+- [API Documentation](https://docs.openelectricity.org.au)
