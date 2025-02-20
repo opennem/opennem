@@ -366,7 +366,7 @@ def get_last_completed_interval_for_network(network: NetworkSchema = NetworkNEM,
     """Get the last completed network time for a network. Live wall clock"""
     now_network = datetime.now(network.get_fixed_offset())
 
-    if tz_aware:
+    if not tz_aware:
         now_network = now_network.replace(tzinfo=None)
 
     return now_network.replace(
