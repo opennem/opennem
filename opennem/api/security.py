@@ -55,7 +55,7 @@ async def get_current_user(
         key = authorization.credentials
 
         if not key or len(key) < 10:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid API key")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key")
 
         # Dev key bypass
         if key == settings.api_dev_key:
@@ -65,7 +65,7 @@ async def get_current_user(
         user = await unkey_validate(api_key=key)
 
         if not user:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid API key")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key")
 
         if not with_clerk:
             return user
@@ -74,7 +74,7 @@ async def get_current_user(
         clerk_user = await clerk_client.users.get_async(user_id=user.owner_id)
 
         if not clerk_user:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User not found")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
 
         user.full_name = f"{clerk_user.first_name} {clerk_user.last_name}"
         user.email = clerk_user.email_addresses[0].email_address
