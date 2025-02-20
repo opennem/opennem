@@ -253,4 +253,4 @@ if __name__ == "__main__":
     import asyncio
 
     # asyncio.run(run_catchup_check(max_gap_minutes=15))
-    asyncio.run(catchup_days(days=2))
+    asyncio.run(catchup_days(days=1))
