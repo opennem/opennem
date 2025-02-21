@@ -44,25 +44,29 @@
                     {
                         "group": "API Reference",
                         "pages": [
-                            "api/overview",
+                            "api-reference/overview",
                             {
                                 "group": "Generation Data",
                                 "pages": [
-                                    "api/data/get-network-data",
-                                    "api/data/get-facility-data"
+                                    "api-reference/data/get-network-data",
+                                    "api-reference/data/get-facility-data"
                                 ]
                             },
                             {
                                 "group": "Market Data",
-                                "pages": ["api/market/get-network-data"]
+                                "pages": [
+                                    "api-reference/market/get-network-data"
+                                ]
                             },
                             {
                                 "group": "Facilities",
-                                "pages": ["api/facilities/get-facilities"]
+                                "pages": [
+                                    "api-reference/facilities/get-facilities"
+                                ]
                             },
                             {
                                 "group": "User",
-                                "pages": ["api/user/get-user-me"]
+                                "pages": ["api-reference/user/get-user-me"]
                             }
                         ]
                     }
