@@ -1,0 +1,39 @@
+---
+title: 'Configuration'
+icon: 'gear'
+---
+
+The OpenElectricity SDKs are configured using environment variables. While you can apply settings directly in the code when initialising a client, this
+is not recommended for security and maintainability.
+
+## Environment Variables
+
+The following environment variables are supported:
+
+| Variable | Required | Description | Default |
+|----------|----------|-------------|---------|
+| `OPENELECTRICITY_API_KEY` | Yes | Your API authentication key | `None` |
+| `OPENELECTRICITY_API_URL` | No | The API endpoint | `https://api.openelectricity.org.au/v4` |
+
+## Setting Environment Variables
+
+The following code shows how to set the environment variables in your operating system:
+
+<CodeGroup>
+```bash macos
+export OPELECTRICITY_API_KEY=your-api-key
+```
+
+```bash windows
+set OPELECTRICITY_API_KEY=your-api-key
+```
+</CodeGroup>
+
+## Environment Variables in Apps
+
+Most applications in Python, Javascript and Typescript will support the use of environment variables. You can manage your environment variables
+in `.env` files in the root of your project. Python supports loading environment variables from `.env` files using the `python-dotenv` package.
+
+In Javascript and Typescript you can use the `dotenv` package to load environment variables from a `.env` file.
+
+For loading environment variables on your system that are only relevant to a folder, it is recommended to use the [direnv tool](https://direnv.net/).

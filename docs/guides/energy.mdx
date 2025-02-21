@@ -61,15 +61,3 @@ $$\text{Average Power} = \frac{P_i + P_{i-1}}{2} = \frac{60 + 50}{2} = 55 \, \te
 $$\text{Energy} = \text{Average Power} \times \Delta t = 55 \, \text{MW} \times \frac{1}{12} \, \text{hours} = 4.583 \, \text{MWh}$$
 
 We get a result that is 4.583 MWh, the energy in `MWh` for that 5-minute interval.
-
-### Implementation Details
-
-In OpenElectricity, energy is calculated for each network facility for each interval.
-
-The energy calculation process is implemented as a task in the [`opennem/workers/energy.py`](https://github.com/opennem/opennem/blob/master/opennem/workers/energy.py) file.
-
-1. **Retrieving Power Data**: The power generated for each facility is retrieved for the current and previous intervals.
-2. **Averaging Power**: The power values are averaged to calculate the energy for the interval.
-3. **Updating Records**: The calculated energy is then updated in the `facility_scada` table in the database.
-
-The energy calculation process runs on every interval after generation data is processed.

@@ -1,0 +1,239 @@
+---
+title: 'Utility Functions'
+description: 'Helper functions and utilities for working with the OpenElectricity client'
+icon: 'wrench'
+---
+
+# Utility Functions
+
+The OpenElectricity client provides several utility functions to help you work with dates, timezones, and other common operations. These utilities are designed to handle the complexities of working with different electricity networks and their specific timezone requirements.
+
+## Date and Time Utilities
+
+### Network Timezones
+
+The client handles data from different electricity networks in Australia, each with their own timezone:
+
+- NEM (National Electricity Market): AEST/UTC+10
+- WEM (Western Australia): AWST/UTC+8
+- AU (Australia): AEST/UTC+10 (default)
+
+### Timezone Functions
+
+#### getNetworkTimezone
+
+Get the timezone offset in hours for a specific network.
+
+```typescript
+function getNetworkTimezone(network: NetworkCode): number
+```
+
+**Parameters:**
+- `network`: Network code (`"NEM"` | `"WEM"` | `"AU"`)
+
+**Returns:**
+- Number representing timezone offset in hours (e.g., 10 for AEST/UTC+10)
+
+**Example:**
+```typescript
+import { getNetworkTimezone } from '@openelectricity/client'
+
+const nemOffset = getNetworkTimezone("NEM") // Returns 10 (AEST/UTC+10)
+const wemOffset = getNetworkTimezone("WEM") // Returns 8 (AWST/UTC+8)
+```
+
+#### getNetworkTimezoneOffset
+
+Get timezone offset in milliseconds for a network.
+
+```typescript
+function getNetworkTimezoneOffset(network: NetworkCode): number
+```
+
+**Parameters:**
+- `network`: Network code (`"NEM"` | `"WEM"` | `"AU"`)
+
+**Returns:**
+- Number representing timezone offset in milliseconds
+
+**Example:**
+```typescript
+import { getNetworkTimezoneOffset } from '@openelectricity/client'
+
+const nemOffsetMs = getNetworkTimezoneOffset("NEM") // Returns 36000000 (10 hours in ms)
+```
+
+### Date Handling Functions
+
+#### isAware
+
+Check if a date string contains timezone information.
+
+```typescript
+function isAware(dateStr: string | Date): boolean
+```
+
+**Parameters:**
+- `dateStr`: Date string or Date object to check
+
+**Returns:**
+- Boolean indicating if the date string contains timezone information
+
+**Example:**
+```typescript
+import { isAware } from '@openelectricity/client'
+
+isAware("2024-03-15T10:00:00Z")           // Returns true
+isAware("2024-03-15T10:00:00+10:00")      // Returns true
+isAware("2024-03-15T10:00:00")            // Returns false
+isAware(new Date())                        // Returns false
+```
+
+#### makeAware
+
+Make a date timezone aware by adding the network's timezone offset.
+
+```typescript
+function makeAware(date: string | Date, network: NetworkCode): string
+```
+
+**Parameters:**
+- `date`: Date string or Date object to make timezone aware
+- `network`: Network code to get timezone from
+
+**Returns:**
+- ISO string with timezone information
+
+**Example:**
+```typescript
+import { makeAware } from '@openelectricity/client'
+
+const awareDate = makeAware("2024-03-15T10:00:00", "NEM")
+// Returns "2024-03-15T10:00:00+10:00"
+```
+
+#### stripTimezone
+
+Remove timezone information from a date string.
+
+```typescript
+function stripTimezone(dateStr: string): string
+```
+
+**Parameters:**
+- `dateStr`: Date string to strip timezone from
+
+**Returns:**
+- Date string without timezone information
+
+**Example:**
+```typescript
+import { stripTimezone } from '@openelectricity/client'
+
+const naiveDate = stripTimezone("2024-03-15T10:00:00+10:00")
+// Returns "2024-03-15T10:00:00"
+```
+
+### Interval Functions
+
+#### getLastCompleteInterval
+
+Get the last complete 5-minute interval for a network.
+
+```typescript
+function getLastCompleteInterval(network: NetworkCode): string
+```
+
+**Parameters:**
+- `network`: Network code to get timezone from
+
+**Returns:**
+- ISO string of the last complete 5-minute interval in network time (without timezone information)
+
+**Example:**
+```typescript
+import { getLastCompleteInterval } from '@openelectricity/client'
+
+// If current time is 2024-03-15T10:07:30+10:00
+const lastInterval = getLastCompleteInterval("NEM")
+// Returns "2024-03-15T10:00:00"
+```
+
+## Best Practices
+
+### Working with Timezones
+
+1. **Network-Specific Times**: Always use the appropriate network timezone when working with dates:
+   ```typescript
+   const networkAwareDate = makeAware(localDate, "NEM")
+   ```
+
+2. **API Submissions**: The API expects timezone-naive dates in network time:
+   ```typescript
+   const apiReadyDate = stripTimezone(networkAwareDate)
+   ```
+
+3. **Interval Data**: Use `getLastCompleteInterval` for real-time data:
+   ```typescript
+   const lastInterval = getLastCompleteInterval("NEM")
+   ```
+
+### Date Validation
+
+1. **Check Timezone Information**:
+   ```typescript
+   if (isAware(dateStr)) {
+     // Handle timezone-aware date
+   } else {
+     // Handle naive date
+   }
+   ```
+
+2. **Network-Specific Processing**:
+   ```typescript
+   const offset = getNetworkTimezone(network)
+   const offsetMs = getNetworkTimezoneOffset(network)
+   ```
+
+## Common Patterns
+
+### Real-time Data Retrieval
+
+```typescript
+import { getLastCompleteInterval } from '@openelectricity/client'
+
+async function getLatestData() {
+  const lastInterval = getLastCompleteInterval("NEM")
+  const { datatable } = await client.getNetworkData("NEM", ["power"], {
+    dateStart: lastInterval,
+    interval: "5m"
+  })
+  return datatable
+}
+```
+
+### Date Conversion Pipeline
+
+```typescript
+import { makeAware, stripTimezone } from '@openelectricity/client'
+
+function prepareDateForAPI(date: Date, network: NetworkCode) {
+  // Add network timezone
+  const networkAware = makeAware(date, network)
+  // Strip for API submission
+  return stripTimezone(networkAware)
+}
+```
+
+### Timezone Validation
+
+```typescript
+import { isAware, makeAware } from '@openelectricity/client'
+
+function ensureNetworkAware(date: string | Date, network: NetworkCode) {
+  if (!isAware(date)) {
+    return makeAware(date, network)
+  }
+  return date.toString()
+}
+```

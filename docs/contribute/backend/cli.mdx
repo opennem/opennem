@@ -55,7 +55,7 @@ Commands for managing data crawlers.
 opennem crawl list
 
 # Run a specific crawler
-opennem crawl run <name>
+opennem crawl run \<name\>
 
 # Run options:
 #   --all        Run all available data for the crawler (default: False)
@@ -77,7 +77,7 @@ opennem crawl flush --days 7 --crawler "my-crawler"
 Inspect OpenNEM JSON data from a URL.
 
 <code>
-opennem inspect <url>
+opennem inspect \<url\>
 </code>
 
 ### Export Commands (export)
@@ -212,7 +212,7 @@ If you encounter issues:
 1. Enable debug mode:
    <code>
    export DEBUG=true
-   opennem <command>
+   opennem \<command\>
    </code>
 
 2. Check logs:
@@ -244,13 +244,3 @@ When adding new CLI commands:
 3. Include error handling
 4. Update this documentation
 5. Add tests for new functionality
-
-## Future Enhancements
-
-Planned improvements to the CLI include:
-
-1. Additional export commands
-2. Task management features
-3. Enhanced crawler controls
-4. Better progress reporting
-5. Configuration management commands

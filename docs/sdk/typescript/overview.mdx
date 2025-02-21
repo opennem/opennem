@@ -1,40 +1,50 @@
 ---
-title: 'Typescript'
-description: 'Complete documentation for the OpenElectricity TypeScript client'
+title: OpenElectricity TypeScript Client
 icon: 'book'
+sidebarTitle: 'Introduction'
 ---
 
-# OpenElectricity TypeScript Client
+<Warning>
+The OpenElectricity TypeScript client is currently in beta and still under active development.
+</Warning>
 
-The OpenElectricity TypeScript client is the official library for accessing the OpenElectricity API, providing easy access to Australian electricity network data. This client supports both browser and Node.js environments, offering a type-safe interface to work with electricity data from the National Electricity Market (NEM) and Western Australian Electricity Market (WEM).
+The OpenElectricity TypeScript client is the official library for accessing the OpenElectricity API, providing simplified access to Australian
+electricity network data. This client supports both browser and Node.js environments, offering a type-safe interface to work with
+electricity data from the National Electricity Market (NEM) and Western Australian Electricity Market (WEM).
 
 ## Features
 
-- 🔐 Secure API authentication
-- 🌐 Cross-platform support (Browser & Node.js)
-- 📊 Built-in data analysis tools
-- ⚡ Real-time electricity data access
-- 🕒 Timezone-aware date handling
-- 📈 Time series data manipulation
-- 🏭 Facility and unit information
-- 💹 Market data access
+- Cross-platform support (Browser & Node.js)
+- Built-in data analysis tools
+- Real-time electricity data access
+- Timezone-aware date handling
+- Time series data manipulation
+- Facility and unit information
+- Market data access
 
 ## Getting Started
 
 ### Installation
 
-Install the package using your preferred package manager:
+The Typescript SDK is [available on NPM](https://www.npmjs.com/package/@openelectricity/client).
 
-```bash
-# Using npm
+<CodeGroup>
+```bash npm
 npm install @openelectricity/client
+```
 
-# Using yarn
+```bash yarn
 yarn add @openelectricity/client
+```
 
-# Using bun
+```bash pnpm
+pnpm add @openelectricity/client
+```
+
+```bash bun
 bun add @openelectricity/client
 ```
+</CodeGroup>
 
 ### Quick Start
 
@@ -42,9 +52,7 @@ bun add @openelectricity/client
 import { OpenElectricityClient } from '@openelectricity/client'
 
 // Initialize the client
-const client = new OpenElectricityClient({
-  apiKey: 'your-api-key', // Optional: recommended to use OPENELECTRICITY_API_KEY env var
-})
+const client = new OpenElectricityClient()
 
 // Get energy data for the NEM
 const { datatable } = await client.getNetworkData('NEM', ['energy'], {
@@ -56,184 +64,6 @@ const { datatable } = await client.getNetworkData('NEM', ['energy'], {
 
 // Analyze the data
 console.table(datatable.toConsole())
-```
-
-### Authentication
-
-The client requires an API key for authentication. You can provide it in two ways:
-
-1. Environment variable:
-```bash
-export OPENELECTRICITY_API_KEY=your-api-key
-```
-
-2. Client initialization:
-```typescript
-const client = new OpenElectricityClient({
-  apiKey: 'your-api-key'
-})
-```
-
-### Configuration
-
-Customize the client behavior with these environment variables:
-
-- `OPENELECTRICITY_API_KEY`: Your API authentication key
-- `OPENELECTRICITY_API_URL`: Override the default API endpoint (optional)
-
-## API Reference
-
-### Client Initialization
-
-```typescript
-import { OpenElectricityClient } from '@openelectricity/client'
-
-const client = new OpenElectricityClient({
-  apiKey?: string,    // Optional: API key (can use OPENELECTRICITY_API_KEY env var)
-  baseUrl?: string    // Optional: API endpoint (can use OPENELECTRICITY_API_URL env var)
-})
-```
-
-### Network Data
-
-#### getNetworkData
-
-Fetch network-level time series data for power, energy, emissions, and market value metrics.
-
-```typescript
-async getNetworkData(
-  networkCode: NetworkCode,           // "NEM" | "WEM" | "AU"
-  metrics: DataMetric[],             // Array of metrics to fetch
-  params?: INetworkTimeSeriesParams  // Optional parameters
-): Promise<ITimeSeriesResponse>
-```
-
-**Parameters:**
-- `networkCode`: The network to fetch data for
-- `metrics`: Array of metrics (e.g., ["power", "energy", "emissions"])
-- `params`: Optional parameters:
-  - `interval`: Time interval (e.g., "5m", "1h", "1d")
-  - `dateStart`: Start date (timezone-naive)
-  - `dateEnd`: End date (timezone-naive)
-  - `primaryGrouping`: Primary grouping field
-  - `secondaryGrouping`: Secondary grouping field
-
-**Example:**
-```typescript
-const { datatable } = await client.getNetworkData("NEM", ["energy"], {
-  interval: "1h",
-  dateStart: "2024-01-01T00:00:00",
-  dateEnd: "2024-01-02T00:00:00",
-  primaryGrouping: "network_region",
-  secondaryGrouping: "fueltech"
-})
-```
-
-### Facility Data
-
-#### getFacilityData
-
-Fetch facility-specific time series data.
-
-```typescript
-async getFacilityData(
-  networkCode: NetworkCode,                // "NEM" | "WEM" | "AU"
-  facilityCodes: string | string[],        // Single facility or array of facilities
-  metrics: DataMetric[],                   // Array of metrics to fetch
-  params?: IFacilityTimeSeriesParams      // Optional parameters
-): Promise<ITimeSeriesResponse>
-```
-
-**Parameters:**
-- `networkCode`: The network containing the facilities
-- `facilityCodes`: Single facility code or array of codes
-- `metrics`: Array of metrics to fetch
-- `params`: Optional parameters (similar to getNetworkData)
-
-**Example:**
-```typescript
-const { datatable } = await client.getFacilityData(
-  "NEM",
-  ["BAYSW1", "ERARING"],
-  ["power", "emissions"],
-  {
-    interval: "5m",
-    dateStart: "2024-01-01T00:00:00",
-    dateEnd: "2024-01-02T00:00:00"
-  }
-)
-```
-
-### Market Data
-
-#### getMarket
-
-Fetch market-related metrics like price and demand.
-
-```typescript
-async getMarket(
-  networkCode: NetworkCode,              // "NEM" | "WEM" | "AU"
-  metrics: MarketMetric[],              // Array of market metrics
-  params?: IMarketTimeSeriesParams      // Optional parameters
-): Promise<ITimeSeriesResponse>
-```
-
-**Parameters:**
-- `networkCode`: The market to fetch data for
-- `metrics`: Array of market metrics (e.g., ["price", "demand"])
-- `params`: Optional parameters (similar to getNetworkData)
-
-**Example:**
-```typescript
-const { datatable } = await client.getMarket("NEM", ["price", "demand"], {
-  interval: "30m",
-  dateStart: "2024-01-01T00:00:00",
-  dateEnd: "2024-01-02T00:00:00",
-  primaryGrouping: "network_region"
-})
-```
-
-### Facility Information
-
-#### getFacilities
-
-Get information about generation facilities and their units.
-
-```typescript
-async getFacilities(
-  params?: IFacilityParams  // Optional filter parameters
-): Promise<FacilityResponse>
-```
-
-**Parameters:**
-- `params`: Optional filters:
-  - `status_id`: Array of facility statuses
-  - `fueltech_id`: Array of fuel technologies
-  - `network_id`: Network code or array of codes
-  - `network_region`: Specific network region
-
-**Example:**
-```typescript
-const { table } = await client.getFacilities({
-  status_id: ["operating"],
-  fueltech_id: ["solar", "wind"],
-  network_id: "NEM"
-})
-```
-
-### User Information
-
-#### getCurrentUser
-
-Get information about the current API user.
-
-```typescript
-async getCurrentUser(): Promise<IAPIResponse<IUser>>
-```
-
-**Example:**
-```typescript
-const { data: user } = await client.getCurrentUser()
 ```
 
 ## Data Analysis

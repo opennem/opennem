@@ -7,6 +7,7 @@ icon: 'code'
 # Development Guide
 
 This guide will help you set up OpenElectricity for local development. The project consists of two main components:
+
 - A FastAPI web API server
 - An Arq background worker for processing tasks
 
@@ -97,22 +98,22 @@ uv run worker
 1. Install PostgreSQL 17 locally
 
 2. Create a database:
-<code>
+```bash
 createdb opennem
-</code>
+```
 
 3. Run migrations:
-<code>
+```bash
 uv run alembic upgrade head
-</code>
+```
 
 ## Local Services
 
 We provide a Docker Compose configuration for running required services locally. Start the services with:
 
-<code>
+```bash
 docker-compose up -d
-</code>
+```
 
 This will start:
 - PostgreSQL 17 with TimescaleDB extension
@@ -121,9 +122,9 @@ This will start:
 ## Environment Setup
 
 1. Copy the example environment file:
-<code>
+```bash
 cp .env.example .env
-</code>
+```
 
 2. Edit the `.env` file with your local settings. The example file contains all required variables with sensible defaults for local development.
 

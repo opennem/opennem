@@ -1,0 +1,248 @@
+---
+title: 'Type Reference'
+description: 'TypeScript type definitions for the OpenElectricity client'
+icon: 'i-cursor'
+---
+
+# Type Reference
+
+The OpenElectricity client uses TypeScript to provide type safety and better developer experience. This page documents all the types used in the client.
+
+## Network Types
+
+### NetworkCode
+
+Represents the supported electricity networks:
+
+```typescript
+type NetworkCode = "NEM" | "WEM" | "AU"
+```
+
+- `NEM`: National Electricity Market (Eastern and Southern Australia)
+- `WEM`: Western Australian Electricity Market
+- `AU`: Australia-wide (defaults to NEM timezone)
+
+### DataInterval
+
+Supported time intervals for data aggregation:
+
+```typescript
+type DataInterval = "5m" | "1h" | "1d" | "7d" | "1M" | "3M" | "season" | "1y" | "fy"
+```
+
+- `5m`: 5-minute intervals
+- `1h`: Hourly intervals
+- `1d`: Daily intervals
+- `7d`: Weekly intervals
+- `1M`: Monthly intervals
+- `3M`: Quarterly intervals
+- `season`: Seasonal intervalsanal
+- `1y`: Yearly intervals
+- `fy`: Financial year intervals
+
+## Metric Types
+
+### DataMetric
+
+Metrics available for network and facility data:
+
+```typescript
+type DataMetric = "power" | "energy" | "emissions" | "market_value"
+```
+
+- `power`: Instantaneous power output (MW)
+- `energy`: Energy generated (MWh)
+- `emissions`: CO2 equivalent emissions (tCO2e)
+- `market_value`: Market value ($)
+
+### MarketMetric
+
+Metrics available for market data:
+
+```typescript
+type MarketMetric = "price" | "demand" | "demand_energy"
+```
+
+- `price`: Market price ($/MWh)
+- `demand`: Instantaneous demand (MW)
+- `demand_energy`: Energy demand (MWh)
+
+## Grouping Types
+
+### DataPrimaryGrouping
+
+Primary grouping options for data aggregation:
+
+```typescript
+type DataPrimaryGrouping = "network" | "network_region"
+```
+
+### DataSecondaryGrouping
+
+Secondary grouping options for data aggregation:
+
+```typescript
+type DataSecondaryGrouping =
+  | "fueltech"
+  | "fueltech_group"
+  | "renewable"
+  | "dispatch_type"
+```
+
+## Parameter Types
+
+### INetworkTimeSeriesParams
+
+Parameters for network data queries:
+
+```typescript
+interface INetworkTimeSeriesParams {
+  interval?: DataInterval
+  dateStart?: string
+  dateEnd?: string
+  primaryGrouping?: DataPrimaryGrouping
+  secondaryGrouping?: DataSecondaryGrouping
+}
+```
+
+### IFacilityTimeSeriesParams
+
+Parameters for facility data queries:
+
+```typescript
+interface IFacilityTimeSeriesParams {
+  interval?: DataInterval
+  dateStart?: string
+  dateEnd?: string
+}
+```
+
+### IMarketTimeSeriesParams
+
+Parameters for market data queries:
+
+```typescript
+interface IMarketTimeSeriesParams extends IFacilityTimeSeriesParams {
+  primaryGrouping?: DataPrimaryGrouping
+}
+```
+
+### IFacilityParams
+
+Parameters for facility queries:
+
+```typescript
+interface IFacilityParams {
+  status_id?: UnitStatusType[]
+  fueltech_id?: UnitFueltechType[]
+  network_id?: NetworkCode | NetworkCode[]
+  network_region?: string
+}
+```
+
+## Response Types
+
+### ITimeSeriesResponse
+
+Standard response type for time series data:
+
+```typescript
+interface ITimeSeriesResponse {
+  response: IAPIResponse<INetworkTimeSeries[]>
+  datatable?: DataTable
+}
+```
+
+### INetworkTimeSeries
+
+Network time series data structure:
+
+```typescript
+interface INetworkTimeSeries {
+  network_code: string
+  metric: Metric
+  unit: string
+  interval: DataInterval
+  start: string
+  end: string
+  groupings: DataPrimaryGrouping[] | DataSecondaryGrouping[]
+  results: ITimeSeriesResult[]
+  network_timezone_offset: string
+}
+```
+
+### IFacility
+
+Facility information structure:
+
+```typescript
+interface IFacility {
+  code: string
+  name: string
+  network_id: string
+  network_region: string
+  description: string | null
+  units: IUnit[]
+}
+```
+
+### IFacilityDataRow
+
+Structure for facility data rows:
+
+```typescript
+interface IFacilityDataRow {
+  time: string
+  value: number
+  facility_code: string
+  facility_name: string
+  facility_network: string
+  facility_region: string
+  unit_code: string
+  unit_fueltech: UnitFueltechType | null
+  unit_status: UnitStatusType | null
+  unit_capacity: number | null
+  unit_emissions_factor: number | null
+  unit_first_seen: string | null
+  unit_last_seen: string | null
+  unit_dispatch_type: UnitDispatchType
+}
+```
+
+## Data Analysis Types
+
+### IDataTableRow
+
+Structure for data table rows:
+
+```typescript
+interface IDataTableRow {
+  interval: Date
+  [key: string]: Date | string | number | boolean | null
+}
+```
+
+## Error Types
+
+### OpenElectricityError
+
+Custom error type for API errors:
+
+```typescript
+class OpenElectricityError extends Error {
+  constructor(
+    message: string,
+    public response?: IAPIErrorResponse
+  )
+}
+```
+
+### NoDataFound
+
+Error type for when no data matches the query (416 status):
+
+```typescript
+class NoDataFound extends Error {
+  constructor(message: string = "No data found")
+}
+```
