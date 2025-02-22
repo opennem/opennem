@@ -86,7 +86,7 @@ async def slack_message(
         return False
 
     if not webhook_url:
-        logger.error(f"No slack notification endpoint configured for environment {settings.env}")
+        logger.warning(f"No slack notification endpoint configured for environment {settings.env}")
         return False
 
     if isinstance(valid_url(webhook_url), ValidationError):  # type: ignore
