@@ -138,6 +138,15 @@ async def run_wemde_crawl(
     return cr
 
 
+async def run_wemde_crawl_from_url(urls: list[str]) -> None:
+    data: list[FacilityScadaSchema] = []
+
+    for url in urls:
+        data += await wemde_parse_facilityscada(url)
+
+    await persist_facility_scada_bulk(records=data, update_fields=["generated", "energy"])
+
+
 async def run_all_wem_crawlers(latest: bool = True, limit: int | None = None) -> None:
     for crawler in [
         AEMOWEMDEFacilityScada,
@@ -198,4 +207,4 @@ if __name__ == "__main__":
     # crawler_set_meta(AEMOWEMDEFacilityScadaHistory.name, CrawlStatTypes.server_latest, backdate_date)
     import asyncio
 
-    asyncio.run(run_all_wem_crawlers(latest=False, limit=20))
+    asyncio.run(run_wemde_crawl(AEMOWEMDEFacilityScadaHistory, latest=False))

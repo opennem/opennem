@@ -194,7 +194,7 @@ async def download_and_unzip(url: str) -> Path:
     return dest_dir
 
 
-async def download_and_parse_json_zip(url: str, indent: int | None = None) -> Any:
+async def download_and_parse_json_zip(url: str, indent: int | None = None) -> list[Any]:
     """
     Downloads a file from the given URL. If the file is a ZIP archive, it is unzipped.
     The function then attempts to parse the contained or downloaded file as JSON.
@@ -212,9 +212,13 @@ async def download_and_parse_json_zip(url: str, indent: int | None = None) -> An
     # Create a temporary directory
     temp_dir = Path(mkdtemp())
 
+    response_jsons = []
+
     try:
         # Download the file
+        logger.debug(f"Downloading file: {url}")
         response = await http.get(url)
+
         if not response.is_success:
             raise Exception(f"Failed to download file: Status code {response.status_code}")
 
@@ -225,26 +229,36 @@ async def download_and_parse_json_zip(url: str, indent: int | None = None) -> An
             # If the file is a ZIP, unzip it in the temporary directory
             with zipfile.ZipFile(io.BytesIO(response.content)) as zip_file:
                 zip_file.extractall(temp_dir)
-                file_name = zip_file.namelist()[0]
-                file_path = temp_dir / file_name
+                logger.info(f"Extracted {len(zip_file.namelist())} files: {zip_file.namelist()}")
+
+                for file_name in zip_file.namelist():
+                    file_path = temp_dir / file_name
+
+                    with open(file_path, "rb") as file:
+                        try:
+                            json_data = json.load(file)  # type: ignore
+                            response_jsons.append(json_data)
+                        except json.JSONDecodeError as e:
+                            raise Exception(f"Failed to parse JSON for file {url}") from e
         else:
             # If not a ZIP file, treat it as a JSON file
             file_path = temp_dir / "downloaded_file"
             with open(file_path, "wb") as file:
                 file.write(response.content)
 
-        # Read and parse the JSON file
-        with open(file_path) as file:
-            try:
-                json_data = json.load(file)  # type: ignore
-            except json.JSONDecodeError as e:
-                raise Exception(f"Failed to parse JSON for file {url}") from e
-
-        return json_data
+            # Read and parse the JSON file
+            with open(file_path) as file:
+                try:
+                    json_data = json.load(file)  # type: ignore
+                    response_jsons.append(json_data)
+                except json.JSONDecodeError as e:
+                    raise Exception(f"Failed to parse JSON for file {url}") from e
 
     finally:
         # Clean up by deleting the temporary directory
         shutil.rmtree(temp_dir)
+
+    return response_jsons
 
 
 if __name__ == "__main__":
