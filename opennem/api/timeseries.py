@@ -236,7 +236,7 @@ def format_timeseries_response(
                 # (timestamp.replace(tzinfo=tz_offset), value) if timestamp else (timestamp, value)
                 (
                     datetime.fromtimestamp(timestamp / 1000, tz=tz_offset)
-                    if isinstance(timestamp, int)
+                    if isinstance(timestamp, float)
                     else datetime.combine(timestamp, datetime.min.time(), tzinfo=tz_offset),
                     value,
                 )
