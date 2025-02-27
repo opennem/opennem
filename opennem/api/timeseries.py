@@ -173,7 +173,8 @@ def format_timeseries_response(
 
         for row in results:
             # Apply timezone to interval
-            row["interval"] = row["interval"].replace(tzinfo=tz_offset)
+            if isinstance(row["interval"], datetime):
+                row["interval"] = row["interval"].replace(tzinfo=tz_offset)
 
             # Build label key based on groupings
             label_parts = []
@@ -224,13 +225,21 @@ def format_timeseries_response(
                     grouped_results[label_key]["facility_code"] = facility_code
 
             # Add data point with timezone-aware timestamp
-            grouped_results[label_key]["data"].append([row["interval"].timestamp() * 1000, float(row[metric_name])])
+            if isinstance(row["interval"], datetime):
+                grouped_results[label_key]["data"].append([row["interval"].timestamp() * 1000, float(row[metric_name])])
+            else:
+                grouped_results[label_key]["data"].append([row["interval"], float(row[metric_name])])
 
         # Sort data points by timestamp
         for group in grouped_results.values():
             group["data"] = [
                 # (timestamp.replace(tzinfo=tz_offset), value) if timestamp else (timestamp, value)
-                (datetime.fromtimestamp(timestamp / 1000, tz=tz_offset), value)
+                (
+                    datetime.fromtimestamp(timestamp / 1000, tz=tz_offset)
+                    if isinstance(timestamp, int)
+                    else datetime.combine(timestamp, datetime.min.time(), tzinfo=tz_offset),
+                    value,
+                )
                 for timestamp, value in group["data"]
             ]
             group["data"].sort(key=lambda x: x[0])

@@ -70,8 +70,6 @@ class QueryConfig:
         """
         if interval in [Interval.INTERVAL, Interval.HOUR]:
             return self.base_table
-        elif interval in [Interval.MONTH, Interval.QUARTER, Interval.YEAR]:
-            return self.monthly_mv or self.base_table
         else:
             return self.daily_mv or self.base_table
 
