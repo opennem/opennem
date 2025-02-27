@@ -110,20 +110,21 @@ def _get_source_table_and_interval_name(
 ) -> tuple[str, str]:
     if milestone_type in [MilestoneType.power, MilestoneType.energy, MilestoneType.emissions, MilestoneType.market_value]:
         if "fueltech_group_id" in grouping.group_by_fields:
-            if period == MilestonePeriod.interval:
-                return "fueltech_intervals_mv", "interval"
-            else:
-                return "fueltech_intervals_daily_mv", "date"
+            return "fueltech_intervals_mv", "interval"
+            # if period == MilestonePeriod.interval:
+            #     return "fueltech_intervals_mv", "interval"
+            # else:
+            #     return "fueltech_intervals_daily_mv", "date"
         elif "renewable" in grouping.group_by_fields:
-            if period == MilestonePeriod.interval:
-                return "renewable_intervals_mv", "interval"
-            else:
-                return "renewable_intervals_daily_mv", "date"
+            return "renewable_intervals_mv", "interval"
+            # if period == MilestonePeriod.interval:
+            # else:
+            #     return "renewable_intervals_daily_mv", "date"
         else:
-            if period == MilestonePeriod.interval:
-                return "fueltech_intervals_mv", "interval"
-            else:
-                return "fueltech_intervals_daily_mv", "date"
+            return "fueltech_intervals_mv", "interval"
+            # if period == MilestonePeriod.interval:
+            # else:
+            #     return "fueltech_intervals_daily_mv", "date"
     elif milestone_type in [MilestoneType.price, MilestoneType.demand]:
         return "market_summary", "interval"
     else:
@@ -170,7 +171,7 @@ def _trim_end_date(time_col: str, end_date: datetime, period: MilestonePeriod) -
         return f"{time_col} < {end_date_dt}"
 
 
-def analyze_milestone_records(
+def _analyze_milestone_records(
     client: Client,
     network: NetworkSchema,
     period: MilestonePeriod,
@@ -240,8 +241,8 @@ def analyze_milestone_records(
     # interval count value
     interval_count = "max(interval_count)"
 
-    if period == MilestonePeriod.interval:
-        interval_count = "1"
+    # if period == MilestonePeriod.interval:
+    interval_count = "1"
 
     if milestone_type == MilestoneType.power:
         metric_column = "generated"
@@ -589,7 +590,7 @@ async def run_milestone_analysis(
                         ]:
                             continue
 
-                    records = analyze_milestone_records(
+                    records = _analyze_milestone_records(
                         client=client,
                         network=network,
                         milestone_type=metric,
@@ -656,6 +657,14 @@ async def run_update_milestone_analysis_to_now() -> None:
 if __name__ == "__main__":
     # Run test for last year of data
     import asyncio
+
+    async def _test_analyze_milestone_records():
+        await run_milestone_analysis(
+            metrics=[MilestoneType.energy],
+            periods=[MilestonePeriod.month],
+            groupings=[GroupingConfig(name="fueltech", group_by_fields=["fueltech_group_id"])],
+            debug=True,
+        )
 
     async def test():
         await run_milestone_analysis_backlog(refresh=True)
