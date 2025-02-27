@@ -23,7 +23,7 @@ router = APIRouter()
     response_model=APIV4ResponseSchema,
     response_model_exclude_none=True,
     tags=["Facilities"],
-    description="Get all approved facilities and their associated units",
+    description="Get all facilities and their associated units",
 )
 async def get_facilities(
     user: authenticated_user,
@@ -34,7 +34,7 @@ async def get_facilities(
     network_region: str | None = Query(None, description="Filter by network region"),
 ) -> APIV4ResponseSchema:
     """
-    Get all approved facilities and their associated approved units.
+    Get all facilities and their associated units.
 
     Excludes:
     - Unapproved facilities and units
