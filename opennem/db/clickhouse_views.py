@@ -298,6 +298,7 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
             WHERE version = max_version
             ORDER BY interval, network_id, network_region, facility_code, unit_code
         )
+        WHERE fueltech_id not in ('pumps')
         GROUP BY interval, network_id, network_region, renewable
     """,
     backfill_query="""
@@ -327,6 +328,7 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
             WHERE version = max_version
             ORDER BY interval, network_id, network_region, facility_code, unit_code
         )
+        WHERE fueltech_id not in ('pumps')
         GROUP BY interval, network_id, network_region, renewable
     """,
 )
@@ -363,6 +365,7 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             WHERE version = max_version
             ORDER BY interval, network_id, network_region, facility_code, unit_code
         )
+        WHERE fueltech_id not in ('pumps')
         GROUP BY date, network_id, network_region, renewable
     """,
     backfill_query="""
@@ -393,6 +396,7 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             WHERE version = max_version
             ORDER BY interval, network_id, network_region, facility_code, unit_code
         )
+        WHERE fueltech_id not in ('pumps')
         GROUP BY date, network_id, network_region, renewable
     """,
 )
