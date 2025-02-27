@@ -28,7 +28,7 @@ from opennem.db.clickhouse_views import (
     UNIT_INTERVALS_DAILY_VIEW,
     MaterializedView,
 )
-from opennem.schema.network import NetworkNEM
+from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM, NetworkWEMDE
 from opennem.utils.dates import get_last_completed_interval_for_network
 
 logger = logging.getLogger("opennem.aggregates.unit_intervals")
@@ -43,7 +43,9 @@ MATERIALIZED_VIEWS = [
 ]
 
 
-async def _get_unit_interval_data(session: AsyncSession, start_time: datetime, end_time: datetime) -> list[tuple]:
+async def _get_unit_interval_data(
+    session: AsyncSession, start_time: datetime, end_time: datetime, network: NetworkSchema | None = None
+) -> list[tuple]:
     """
     Get unit interval data from PostgreSQL for a given time range.
 
@@ -59,7 +61,12 @@ async def _get_unit_interval_data(session: AsyncSession, start_time: datetime, e
     start_time_naive = start_time.replace(tzinfo=None)
     end_time_naive = end_time.replace(tzinfo=None)
 
-    query = text("""
+    network_where_clause = ""
+
+    if network:
+        network_where_clause = f"AND fs.network_id = '{network.code}'"
+
+    query = text(f"""
     WITH filled_balancing_summary AS (
         SELECT
             time_bucket_gapfill('5 minutes', bs.interval) as interval,
@@ -119,6 +126,7 @@ async def _get_unit_interval_data(session: AsyncSession, start_time: datetime, e
         AND u.fueltech_id NOT IN ('imports', 'exports', 'interconnector', 'battery')
         AND fs.interval >= :start_time
         AND fs.interval < :end_time
+        {network_where_clause}
     GROUP BY 1,2,3,4,5,6,7,8,9
     ORDER BY 1,2,3,4,5
     """)
@@ -243,6 +251,7 @@ async def process_unit_intervals_backlog(
     start_date: datetime,
     end_date: datetime,
     chunk_size: timedelta = timedelta(days=7),
+    network: NetworkSchema | None = None,
 ) -> None:
     """
     Process historical unit interval data in chunks.
@@ -262,7 +271,7 @@ async def process_unit_intervals_backlog(
         chunk_end = min(current_start + chunk_size, end_date + timedelta(minutes=5))
 
         # Get and process data for this chunk
-        records = await _get_unit_interval_data(session, current_start, chunk_end)
+        records = await _get_unit_interval_data(session, current_start, chunk_end, network)
         if records:
             prepared_data = _prepare_unit_interval_data(records)
 
@@ -372,7 +381,7 @@ async def run_unit_intervals_aggregate_for_last_intervals(num_intervals: int) ->
     return len(prepared_data)
 
 
-async def run_unit_intervals_backlog(start_date: datetime | None = None) -> None:
+async def run_unit_intervals_backlog(start_date: datetime | None = None, network: NetworkSchema | None = None) -> None:
     """
     Run the unit intervals aggregation for the history of the market.
     """
@@ -392,6 +401,7 @@ async def run_unit_intervals_backlog(start_date: datetime | None = None) -> None
             start_date=start_date,
             end_date=end_date,
             chunk_size=timedelta(days=30),
+            network=network,
         )
 
     # Verify the data was inserted
@@ -526,7 +536,7 @@ if __name__ == "__main__":
     # Run the test
     async def main():
         # _refresh_clickhouse_schema()
-        # await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2021-04-20T08:30:00"))
+        await run_unit_intervals_backlog(start_date=NetworkWEMDE.data_first_seen.replace(tzinfo=None), network=NetworkWEM)
         # Uncomment to backfill views:
         backfill_materialized_views(refresh_views=True)
 
