@@ -90,6 +90,8 @@ origins = [
     "https://*.pages.dev",
     "https://*.oedev.org",
     "https://explore.openelectricity.org.au",
+    "http://localhost:3000",
+    "http://localhost:5173",
 ]
 
 if settings.is_dev:
