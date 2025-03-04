@@ -13,8 +13,7 @@ The Typescript SDK is available on [NPM](https://www.npmjs.com/package/openelect
 It supports accessing the API synchronously and asynchronously, and includes a built in data and record table tools for analysing data.
 
 
-
-### Installation
+## Installation
 
 The Typescript SDK is [available on NPM at openelectricity](https://www.npmjs.com/package/openelectricity).
 
@@ -39,7 +38,7 @@ bun add openelectricity
 ```
 </CodeGroup>
 
-### Quick Start
+## Quick Start
 
 ```typescript
 import { OpenElectricityClient } from 'openelectricity'
@@ -65,6 +64,41 @@ console.table(datatable.toConsole())
 The Python SDK is available on [PyPI](https://pypi.org/project/openelectricity/).
 
 It supports accessing the API synchronously and asynchronously, and exporting results to either pandas or polars DataFrames.
+
+## Installation
+
+The Python SDK is [available on PyPI at openelectricity](https://pypi.org/project/openelectricity/).
+
+Install the SDK using your preferred package manager:
+
+
+<CodeGroup>
+```bash pip
+pip install openelectricity
+```
+
+```bash uv
+uv add openelectricity
+```
+</CodeGroup>
+
+## Quick Start
+
+```python
+from openelectricity import OpenElectricityClient
+
+# Initialize the client
+client = OpenElectricityClient()
+
+# Get energy data for the NEM
+datatable = client.get_network_data('NEM', ['energy'], {
+  interval: '1h',
+  dateStart: '2024-01-01T00:00:00',
+  dateEnd: '2024-01-02T00:00:00',
+  primaryGrouping: 'network_region',
+})
+```
+
 
 <CardGroup cols={2}>
   <Card
