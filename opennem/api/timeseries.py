@@ -226,7 +226,9 @@ def format_timeseries_response(
 
             # Add data point with timezone-aware timestamp
             if isinstance(row["interval"], datetime):
-                grouped_results[label_key]["data"].append([row["interval"].timestamp() * 1000, float(row[metric_name])])
+                grouped_results[label_key]["data"].append(
+                    [row["interval"].timestamp() * 1000, float(row[metric_name]) if row[metric_name] is not None else None]
+                )
             else:
                 grouped_results[label_key]["data"].append([row["interval"], float(row[metric_name])])
 
