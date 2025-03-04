@@ -8,9 +8,57 @@ OpenElectricity provides SDKs to access the API in TypeScript / JavaScript or Py
 
 # Typescript SDK
 
-The Typescript SDK is available on [NPM](https://www.npmjs.com/package/@openelectricity/client).
+The Typescript SDK is available on [NPM](https://www.npmjs.com/package/openelectricity).
 
 It supports accessing the API synchronously and asynchronously, and includes a built in data and record table tools for analysing data.
+
+
+
+### Installation
+
+The Typescript SDK is [available on NPM at openelectricity](https://www.npmjs.com/package/openelectricity).
+
+Install the SDK using your preferred package manager:
+
+
+<CodeGroup>
+```bash npm
+npm install openelectricity
+```
+
+```bash yarn
+yarn add openelectricity
+```
+
+```bash pnpm
+pnpm add openelectricity
+```
+
+```bash bun
+bun add openelectricity
+```
+</CodeGroup>
+
+### Quick Start
+
+```typescript
+import { OpenElectricityClient } from 'openelectricity'
+
+// Initialize the client
+const client = new OpenElectricityClient()
+
+// Get energy data for the NEM
+const { datatable } = await client.getNetworkData('NEM', ['energy'], {
+  interval: '1h',
+  dateStart: '2024-01-01T00:00:00',
+  dateEnd: '2024-01-02T00:00:00',
+  primaryGrouping: 'network_region',
+})
+
+// Analyze the data
+console.table(datatable.toConsole())
+```
+
 
 # Python SDK
 

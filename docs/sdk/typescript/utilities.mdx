@@ -36,7 +36,7 @@ function getNetworkTimezone(network: NetworkCode): number
 
 **Example:**
 ```typescript
-import { getNetworkTimezone } from '@openelectricity/client'
+import { getNetworkTimezone } from 'openelectricity'
 
 const nemOffset = getNetworkTimezone("NEM") // Returns 10 (AEST/UTC+10)
 const wemOffset = getNetworkTimezone("WEM") // Returns 8 (AWST/UTC+8)
@@ -58,7 +58,7 @@ function getNetworkTimezoneOffset(network: NetworkCode): number
 
 **Example:**
 ```typescript
-import { getNetworkTimezoneOffset } from '@openelectricity/client'
+import { getNetworkTimezoneOffset } from 'openelectricity'
 
 const nemOffsetMs = getNetworkTimezoneOffset("NEM") // Returns 36000000 (10 hours in ms)
 ```
@@ -81,7 +81,7 @@ function isAware(dateStr: string | Date): boolean
 
 **Example:**
 ```typescript
-import { isAware } from '@openelectricity/client'
+import { isAware } from 'openelectricity'
 
 isAware("2024-03-15T10:00:00Z")           // Returns true
 isAware("2024-03-15T10:00:00+10:00")      // Returns true
@@ -106,7 +106,7 @@ function makeAware(date: string | Date, network: NetworkCode): string
 
 **Example:**
 ```typescript
-import { makeAware } from '@openelectricity/client'
+import { makeAware } from 'openelectricity'
 
 const awareDate = makeAware("2024-03-15T10:00:00", "NEM")
 // Returns "2024-03-15T10:00:00+10:00"
@@ -128,7 +128,7 @@ function stripTimezone(dateStr: string): string
 
 **Example:**
 ```typescript
-import { stripTimezone } from '@openelectricity/client'
+import { stripTimezone } from 'openelectricity'
 
 const naiveDate = stripTimezone("2024-03-15T10:00:00+10:00")
 // Returns "2024-03-15T10:00:00"
@@ -152,7 +152,7 @@ function getLastCompleteInterval(network: NetworkCode): string
 
 **Example:**
 ```typescript
-import { getLastCompleteInterval } from '@openelectricity/client'
+import { getLastCompleteInterval } from 'openelectricity'
 
 // If current time is 2024-03-15T10:07:30+10:00
 const lastInterval = getLastCompleteInterval("NEM")
@@ -215,7 +215,7 @@ async function getLatestData() {
 ### Date Conversion Pipeline
 
 ```typescript
-import { makeAware, stripTimezone } from '@openelectricity/client'
+import { makeAware, stripTimezone } from 'openelectricity'
 
 function prepareDateForAPI(date: Date, network: NetworkCode) {
   // Add network timezone
@@ -228,7 +228,7 @@ function prepareDateForAPI(date: Date, network: NetworkCode) {
 ### Timezone Validation
 
 ```typescript
-import { isAware, makeAware } from '@openelectricity/client'
+import { isAware, makeAware } from 'openelectricity'
 
 function ensureNetworkAware(date: string | Date, network: NetworkCode) {
   if (!isAware(date)) {
