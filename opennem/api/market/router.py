@@ -5,6 +5,7 @@ This module handles market-specific metrics like price and demand.
 """
 
 import logging
+import time
 from datetime import datetime
 from typing import Annotated, Any
 
@@ -44,6 +45,7 @@ async def get_network_data(
     interval: Annotated[Interval, Query(description="The time interval to aggregate data by", example="1h")] = Interval.INTERVAL,
     date_start: Annotated[datetime | None, Query(description="Start time for the query", example="2024-01-01T00:00:00")] = None,
     date_end: Annotated[datetime | None, Query(description="End time for the query", example="2024-01-02T00:00:00")] = None,
+    network_region: Annotated[str | None, Query(description="Network region to get data for", example="NSW1")] = None,
     primary_grouping: Annotated[
         PrimaryGrouping, Query(description="Primary grouping to apply", example="network_region")
     ] = PrimaryGrouping.NETWORK,
@@ -75,6 +77,9 @@ async def get_network_data(
     # Validate metrics
     validate_metrics(metrics, _SUPPORTED_METRICS)
 
+    if network_region:
+        primary_grouping = PrimaryGrouping.NETWORK_REGION
+
     # validate date range
     date_start, date_end = validate_date_range(network=network, interval=interval, date_start=date_start, date_end=date_end)
 
@@ -87,12 +92,16 @@ async def get_network_data(
         date_start=date_start,
         date_end=date_end,
         primary_grouping=primary_grouping,
+        network_region=network_region,
     )
 
     # Execute query
+    start_time = time.time()
     try:
-        logger.debug(query)
+        logger.debug(query, params)
         results = client.execute(query, params)
+        elapsed_ms = (time.time() - start_time) * 1000
+        logger.debug(f"Query execution time: {elapsed_ms:.2f} ms")
     except Exception as e:
         logger.error(f"Error executing query: {e}")
         raise HTTPException(status_code=500, detail="Error executing query") from e

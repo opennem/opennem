@@ -113,6 +113,10 @@ class NetworkSchema(BaseConfig):
         """Returns a full list of network and sub-networks for queries"""
         return [self] + self.subnetworks if self.subnetworks else [self]
 
+    def get_network_codes(self) -> list[str]:
+        """Returns a full list of network and sub-networks for queries"""
+        return [self.code] + [i.code for i in self.subnetworks] if self.subnetworks else [self.code]
+
 
 class NetworkRegion(BaseConfig):
     code: str

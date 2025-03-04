@@ -137,7 +137,11 @@ def get_timeseries_query(
     date_end: datetime,
     primary_grouping: PrimaryGrouping = PrimaryGrouping.NETWORK,
     secondary_groupings: list[SecondaryGrouping] | None = None,
+    # filters
     facility_code: list[str] | None = None,
+    network_region: str | None = None,
+    fueltech: str | None = None,
+    fueltech_group: str | None = None,
 ) -> tuple[str, dict, list[str]]:
     """
     Build a time series query for either market or data metrics.
@@ -152,6 +156,9 @@ def get_timeseries_query(
         primary_grouping: Primary grouping to apply
         secondary_groupings: Optional sequence of secondary groupings to apply
         facility_code: Optional facility codes to filter by
+        network_region: Optional network region to filter by
+        fueltech: Optional fueltech to filter by
+        fueltech_group: Optional fueltech group to filter by
 
     Returns:
         tuple[str, dict, list[str]]: ClickHouse SQL query, parameters, and list of column names
@@ -168,7 +175,7 @@ def get_timeseries_query(
         date_end = date_end.date()
 
     params = {
-        "network": network.code,
+        "network": network.get_network_codes(),
         "date_start": date_start,
         "date_end": date_end,
     }
@@ -203,13 +210,26 @@ def get_timeseries_query(
 
     # Build the query with facility filter if provided
     where_clauses = [
-        "network_id = %(network)s",
+        "network_id in %(network)s",
         f"{time_col} >= %(date_start)s",
         f"{time_col} < %(date_end)s",
     ]
 
     if facility_code:
         where_clauses.append("facility_code in %(facility_code)s")
+        params["facility_code"] = facility_code
+
+    if network_region:
+        where_clauses.append("network_region = %(network_region)s")
+        params["network_region"] = network_region
+
+    if fueltech:
+        where_clauses.append("fueltech_id = %(fueltech)s")
+        params["fueltech"] = fueltech
+
+    if fueltech_group:
+        where_clauses.append("fueltech_group_id = %(fueltech_group)s")
+        params["fueltech_group"] = fueltech_group
 
     query = f"""
         SELECT
