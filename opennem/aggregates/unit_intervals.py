@@ -28,7 +28,7 @@ from opennem.db.clickhouse_views import (
     UNIT_INTERVALS_DAILY_VIEW,
     MaterializedView,
 )
-from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM, NetworkWEMDE
+from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.dates import get_last_completed_interval_for_network
 
 logger = logging.getLogger("opennem.aggregates.unit_intervals")
@@ -447,18 +447,22 @@ def _backfill_materialized_view(client: any, view: MaterializedView, start_date:
     logger.info(f"Recreating materialized view {view.name}...")
     client.execute(view.schema)
 
-    # Process month by month
-    current_date = start_date.replace(day=1)
-    while current_date <= end_date:
-        next_month = (current_date.replace(day=1) + timedelta(days=32)).replace(day=1)
-        logger.info(f"Processing month {current_date.strftime('%Y-%m')} for {view.name}")
+    # if the view backfill query has start and end parameters, use them
+    if "%(start)s" in view.backfill_query and "%(end)s" in view.backfill_query:
+        # Process month by month
+        current_date = start_date.replace(day=1)
+        while current_date <= end_date:
+            next_month = (current_date.replace(day=1) + timedelta(days=32)).replace(day=1)
+            logger.info(f"Processing month {current_date.strftime('%Y-%m')} for {view.name}")
 
-        client.execute(
-            view.backfill_query,
-            {"start": current_date, "end": next_month},
-        )
+            client.execute(
+                view.backfill_query,
+                {"start": current_date, "end": next_month},
+            )
 
-        current_date = next_month
+            current_date = next_month
+    else:
+        client.execute(view.backfill_query)
 
     # Return count of records
     result = client.execute(f"SELECT count() FROM {view.name}")
@@ -536,7 +540,12 @@ if __name__ == "__main__":
     # Run the test
     async def main():
         # _refresh_clickhouse_schema()
-        await run_unit_intervals_backlog(start_date=NetworkWEMDE.data_first_seen.replace(tzinfo=None), network=NetworkWEM)
+        # end_interval = get_last_completed_interval_for_network(network=NetworkNEM)
+        # start_interval = end_interval - timedelta(days=5)
+
+        # await run_unit_intervals_backlog(start_date=start_interval)
+        await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2024-12-01T00:00:00"))
+
         # Uncomment to backfill views:
         backfill_materialized_views(refresh_views=True)
 
