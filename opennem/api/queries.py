@@ -184,7 +184,7 @@ def get_timeseries_query(
     metric_selects = [f"{config.agg_function}({config.metric_columns[m]}) as {m.value.lower()}" for m in metrics]
 
     # Build grouping columns based on query type
-    group_cols = ["network_id as network"]
+    group_cols = [f"'{network.code}' as network"]
     group_cols_names = ["network"]
 
     if query_type == QueryType.FACILITY:
