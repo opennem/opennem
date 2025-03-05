@@ -53,6 +53,7 @@ async def _get_unit_interval_data(
         session: Database session
         start_time: Start time for data range
         end_time: End date for data range
+        network: Optional network filter
 
     Returns:
         List of tuples containing unit interval data
@@ -86,48 +87,130 @@ async def _get_unit_interval_data(
             bs.interval >= :start_time
             AND bs.interval <= :end_time
         GROUP BY 1, 2, 3
-    )
-    SELECT
-        time_bucket('5 minutes', fs.interval) as interval,
-        fs.network_id,
-        f.network_region,
-        f.code as facility_code,
-        u.code as unit_code,
-        u.status_id,
-        u.fueltech_id,
-        ftg.code as fueltech_group_id,
-        ftg.renewable as renewable,
-        round(sum(fs.generated), 4) as generated,
-        round(sum(fs.energy), 4) as energy,
-        CASE
-            WHEN sum(fs.energy) > 0 THEN coalesce(round(sum(u.emissions_factor_co2 * fs.energy), 4), 0)
-            ELSE 0
-        END as emissions,
-        CASE
-            WHEN sum(fs.energy) > 0 THEN coalesce(round(sum(u.emissions_factor_co2 * fs.energy) / sum(fs.energy), 4), 0)
-            ELSE 0
-        END as emission_factor,
-        CASE
-            WHEN sum(fs.energy) > 0 THEN round(sum(fs.energy) * max(bs.price), 4)
-            ELSE 0
-        END as market_value
-    FROM
-        facility_scada fs
+    ),
+    filled_solar_data AS (
+        SELECT
+            time_bucket_gapfill('5 minutes', fs.interval) as interval,
+            fs.network_id,
+            f.network_region,
+            f.code as facility_code,
+            u.code as unit_code,
+            u.status_id,
+            u.fueltech_id,
+            'solar' as fueltech_group_id,
+            TRUE as renewable,
+            locf(round(sum(fs.generated), 4)) as generated,
+            locf(round(sum(fs.energy) / 6, 4)) as energy
+        FROM
+            facility_scada fs
+        JOIN units u ON fs.facility_code = u.code
+        JOIN facilities f ON u.station_id = f.id
+        WHERE
+            fs.is_forecast IS FALSE
+            AND u.fueltech_id in ('solar_rooftop', 'solar_utility')
+            AND fs.interval >= :start_time
+            AND fs.interval <= :end_time
+            {network_where_clause}
+        GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
+    ),
+    facility_data as (
+        SELECT
+            time_bucket('5 minutes', fs.interval) as interval,
+            fs.network_id,
+            f.network_region,
+            f.code as facility_code,
+            u.code as unit_code,
+            u.status_id,
+            u.fueltech_id,
+            ftg.code as fueltech_group_id,
+            ftg.renewable as renewable,
+            round(sum(fs.generated), 4) as generated,
+            round(sum(fs.energy), 4) as energy
+        FROM
+            facility_scada fs
         JOIN units u ON fs.facility_code = u.code
         JOIN facilities f ON u.station_id = f.id
         JOIN fueltech ft ON ft.code = u.fueltech_id
         JOIN fueltech_group ftg ON ftg.code = ft.fueltech_group_id
-        LEFT JOIN filled_balancing_summary bs ON
-            bs.interval = fs.interval
-            AND bs.network_region = f.network_region
+        WHERE
+            fs.is_forecast IS FALSE
+            AND u.fueltech_id not in ('solar_rooftop', 'solar_utility', 'imports', 'exports', 'interconnector', 'battery')
+            AND fs.interval >= :start_time
+            AND fs.interval <= :end_time
+            {network_where_clause}
+        GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
+    ),
+    combined_data AS (
+        -- Regular facility data
+        SELECT
+            fd.interval,
+            fd.network_id,
+            fd.network_region,
+            fd.facility_code,
+            fd.unit_code,
+            fd.status_id,
+            fd.fueltech_id,
+            fd.fueltech_group_id,
+            fd.renewable,
+            fd.generated,
+            fd.energy,
+            u.emissions_factor_co2
+        FROM
+            facility_data fd
+        JOIN units u ON fd.unit_code = u.code
+
+        UNION ALL
+
+        -- Solar data (rooftop and utility)
+        SELECT
+            sd.interval,
+            sd.network_id,
+            sd.network_region,
+            sd.facility_code,
+            sd.unit_code,
+            sd.status_id,
+            sd.fueltech_id,
+            sd.fueltech_group_id,
+            sd.renewable,
+            sd.generated,
+            sd.energy,
+            u.emissions_factor_co2
+        FROM
+            filled_solar_data sd
+        JOIN units u ON sd.unit_code = u.code
+    )
+    SELECT
+        cd.interval,
+        cd.network_id,
+        cd.network_region,
+        cd.facility_code,
+        cd.unit_code,
+        cd.status_id,
+        cd.fueltech_id,
+        cd.fueltech_group_id,
+        cd.renewable,
+        cd.generated,
+        cd.energy,
+        CASE
+            WHEN cd.energy > 0 THEN coalesce(round(cd.emissions_factor_co2 * cd.energy, 4), 0)
+            ELSE 0
+        END as emissions,
+        CASE
+            WHEN cd.energy > 0 THEN coalesce(round(cd.emissions_factor_co2, 4), 0)
+            ELSE 0
+        END as emission_factor,
+        CASE
+            WHEN cd.energy > 0 THEN round(cd.energy * bs.price, 4)
+            ELSE 0
+        END as market_value
+    FROM
+        combined_data cd
+    LEFT JOIN filled_balancing_summary bs ON
+        bs.interval = cd.interval
+        AND bs.network_region = cd.network_region
     WHERE
-        fs.is_forecast IS FALSE
-        AND u.fueltech_id IS NOT NULL
-        AND u.fueltech_id NOT IN ('imports', 'exports', 'interconnector', 'battery')
-        AND fs.interval >= :start_time
-        AND fs.interval < :end_time
-        {network_where_clause}
-    GROUP BY 1,2,3,4,5,6,7,8,9
+        cd.interval >= :start_time
+        AND cd.interval < :end_time
     ORDER BY 1,2,3,4,5
     """)
 
@@ -441,11 +524,6 @@ def _backfill_materialized_view(client: any, view: MaterializedView, start_date:
     Returns:
         int: Number of records processed
     """
-    logger.info(f"Dropping existing materialized view {view.name}...")
-    client.execute(f"DROP TABLE IF EXISTS {view.name}")
-
-    logger.info(f"Recreating materialized view {view.name}...")
-    client.execute(view.schema)
 
     # if the view backfill query has start and end parameters, use them
     if "%(start)s" in view.backfill_query and "%(end)s" in view.backfill_query:
@@ -544,7 +622,7 @@ if __name__ == "__main__":
         # start_interval = end_interval - timedelta(days=5)
 
         # await run_unit_intervals_backlog(start_date=start_interval)
-        await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2024-12-01T00:00:00"))
+        # await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2024-12-01T00:00:00"))
 
         # Uncomment to backfill views:
         backfill_materialized_views(refresh_views=True)

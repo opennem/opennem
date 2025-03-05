@@ -48,19 +48,7 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             sum(market_value) as market_value,
             count() as count,
             max(version) as version
-        FROM (
-            SELECT *
-            FROM (
-                SELECT
-                    *,
-                    max(version) OVER (
-                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
-                    ) as max_version
-                FROM unit_intervals
-            )
-            WHERE version = max_version
-            ORDER BY interval, network_id, network_region, facility_code, unit_code
-        )
+        FROM unit_intervals
         GROUP BY
             date,
             network_id,
@@ -88,20 +76,7 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             sum(market_value) as market_value,
             count() as count,
             max(version) as version
-        FROM (
-            SELECT *
-            FROM (
-                SELECT
-                    *,
-                    max(version) OVER (
-                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
-                    ) as max_version
-                FROM unit_intervals
-                WHERE interval >= %(start)s AND interval < %(end)s
-            )
-            WHERE version = max_version
-            ORDER BY interval, network_id, network_region, facility_code, unit_code
-        )
+        FROM unit_intervals FINAL
         GROUP BY
             date,
             network_id,
@@ -132,19 +107,7 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
             sum(market_value) as market_value,
             count() as unit_count,
             max(version) as version
-        FROM (
-            SELECT *
-            FROM (
-                SELECT
-                    *,
-                    max(version) OVER (
-                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
-                    ) as max_version
-                FROM unit_intervals
-            )
-            WHERE version = max_version
-            ORDER BY interval, network_id, network_region, facility_code, unit_code
-        )
+        FROM unit_intervals
         GROUP BY
             interval,
             network_id,
@@ -166,20 +129,8 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
             sum(market_value) as market_value,
             count() as unit_count,
             max(version) as version
-        FROM (
-            SELECT *
-            FROM (
-                SELECT
-                    *,
-                    max(version) OVER (
-                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
-                    ) as max_version
-                FROM unit_intervals
-                WHERE interval >= %(start)s AND interval < %(end)s
-            )
-            WHERE version = max_version
-            ORDER BY interval, network_id, network_region, facility_code, unit_code
-        )
+        FROM unit_intervals FINAL
+        WHERE interval >= %(start)s AND interval <= %(end)s
         GROUP BY
             interval,
             network_id,
@@ -209,19 +160,7 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             count() as unit_count,
             count(distinct interval) as interval_count,
             max(version) as version
-        FROM (
-            SELECT *
-            FROM (
-                SELECT
-                    *,
-                    max(version) OVER (
-                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
-                    ) as max_version
-                FROM unit_intervals
-            )
-            WHERE version = max_version
-            ORDER BY interval, network_id, network_region, facility_code, unit_code
-        )
+        FROM unit_intervals
         GROUP BY
             date,
             network_id,
@@ -244,20 +183,7 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             count() as unit_count,
             count(distinct interval) as interval_count,
             max(version) as version
-        FROM (
-            SELECT *
-            FROM (
-                SELECT
-                    *,
-                    max(version) OVER (
-                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
-                    ) as max_version
-                FROM unit_intervals
-                WHERE interval >= %(start)s AND interval < %(end)s
-            )
-            WHERE version = max_version
-            ORDER BY interval, network_id, network_region, facility_code, unit_code
-        )
+        FROM unit_intervals FINAL
         GROUP BY
             date,
             network_id,
@@ -285,19 +211,7 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
             sum(market_value) as market_value,
             count() as unit_count,
             max(version) as version
-        FROM (
-            SELECT *
-            FROM (
-                SELECT
-                    *,
-                    max(version) OVER (
-                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
-                    ) as max_version
-                FROM unit_intervals
-            )
-            WHERE version = max_version
-            ORDER BY interval, network_id, network_region, facility_code, unit_code
-        )
+        FROM unit_intervals
         WHERE fueltech_id not in ('pumps')
         GROUP BY interval, network_id, network_region, renewable
     """,
@@ -314,21 +228,8 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
             sum(market_value) as market_value,
             count() as unit_count,
             max(version) as version
-        FROM (
-            SELECT *
-            FROM (
-                SELECT
-                    *,
-                    max(version) OVER (
-                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
-                    ) as max_version
-                FROM unit_intervals
-                WHERE interval >= %(start)s AND interval < %(end)s
-            )
-            WHERE version = max_version
-            ORDER BY interval, network_id, network_region, facility_code, unit_code
-        )
-        WHERE fueltech_id not in ('pumps')
+        FROM unit_intervals FINAL
+        WHERE fueltech_id not in ('pumps') and interval >= %(start)s AND interval <= %(end)s
         GROUP BY interval, network_id, network_region, renewable
     """,
 )
@@ -352,19 +253,7 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             count() as unit_count,
             count(distinct interval) as interval_count,
             max(version) as version
-        FROM (
-            SELECT *
-            FROM (
-                SELECT
-                    *,
-                    max(version) OVER (
-                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
-                    ) as max_version
-                FROM unit_intervals
-            )
-            WHERE version = max_version
-            ORDER BY interval, network_id, network_region, facility_code, unit_code
-        )
+        FROM unit_intervals
         WHERE fueltech_id not in ('pumps')
         GROUP BY date, network_id, network_region, renewable
     """,
@@ -382,20 +271,7 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             count() as unit_count,
             count(distinct interval) as interval_count,
             max(version) as version
-        FROM (
-            SELECT *
-            FROM (
-                SELECT
-                    *,
-                    max(version) OVER (
-                        PARTITION BY interval, network_id, network_region, facility_code, unit_code
-                    ) as max_version
-                FROM unit_intervals
-                WHERE interval >= %(start)s AND interval < %(end)s
-            )
-            WHERE version = max_version
-            ORDER BY interval, network_id, network_region, facility_code, unit_code
-        )
+        FROM unit_intervals FINAL
         WHERE fueltech_id not in ('pumps')
         GROUP BY date, network_id, network_region, renewable
     """,
