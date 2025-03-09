@@ -85,10 +85,9 @@ logfire.instrument_fastapi(app)
 
 # @TODO put CORS available/permissions in settings
 origins = [
-    "https://*.opennem.org.au",
-    "https://*.openelectricity.org.au",
     "https://*.pages.dev",
     "https://*.oedev.org",
+    "https://openelectricity.org.au",
     "https://explore.openelectricity.org.au",
     "http://localhost:3000",
     "http://localhost:5173",
