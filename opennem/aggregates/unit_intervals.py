@@ -540,6 +540,7 @@ def _backfill_materialized_view(client: any, view: MaterializedView, start_date:
 
             current_date = next_month
     else:
+        logger.info(f"Processing {view.name}")
         client.execute(view.backfill_query)
 
     # Return count of records
@@ -602,6 +603,7 @@ def backfill_materialized_views(view: MaterializedView | str | None = None, refr
     for view in views_to_process:
         # delete and recreate the view if we are refreshing
         if refresh_views:
+            logger.info(f"Refreshing {view.name}")
             client.execute(f"DROP TABLE IF EXISTS {view.name}")
             client.execute(view.schema)
 
@@ -622,7 +624,7 @@ if __name__ == "__main__":
         # start_interval = end_interval - timedelta(days=5)
 
         # await run_unit_intervals_backlog(start_date=start_interval)
-        # await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2024-12-01T00:00:00"))
+        # await run_unit_intervals_backlog(start_date=NetworkAEMORooftopBackfill.data_first_seen.replace(tzinfo=None))
 
         # Uncomment to backfill views:
         backfill_materialized_views(refresh_views=True)
