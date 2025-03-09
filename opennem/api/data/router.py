@@ -87,7 +87,9 @@ async def get_network_data(
     validate_metrics(metrics, _SUPPORTED_METRICS)
 
     # Validate the date range for the interval
-    date_start, date_end = validate_date_range(network=network, interval=interval, date_start=date_start, date_end=date_end)
+    date_start, date_end = validate_date_range(
+        network=network, user=user, interval=interval, date_start=date_start, date_end=date_end
+    )
 
     # Convert single secondary grouping to sequence
     secondary_groupings = [secondary_grouping] if secondary_grouping else None

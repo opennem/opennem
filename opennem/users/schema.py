@@ -48,6 +48,13 @@ class OpenNEMUser(BaseModel):
     roles: list[OpenNEMRoles] = [OpenNEMRoles.anonymous]
     meta: OpennemAPIRequestMeta | None = None
 
+    @property
+    def is_admin(self) -> bool:
+        return OpenNEMRoles.admin in self.roles
+
+    def has_role(self, role: OpenNEMRoles) -> bool:
+        return role in self.roles
+
 
 class OpenNEMAPIInvite(BaseModel):
     name: str

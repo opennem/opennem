@@ -11,6 +11,7 @@ from fastapi import HTTPException
 
 from opennem.core.time_interval import Interval
 from opennem.schema.network import NetworkSchema
+from opennem.users.schema import OpenNEMUser
 from opennem.utils.dates import get_last_completed_interval_for_network
 
 
@@ -31,7 +32,7 @@ def _raise_invalid_date_range(interval: Interval, max_days: int) -> NoReturn:
     )
 
 
-def get_max_interval_days(interval: Interval) -> int:
+def get_max_interval_days(interval: Interval, user: OpenNEMUser | None = None) -> int:
     """
     Get the maximum allowed days for a given interval.
 
@@ -53,11 +54,23 @@ def get_max_interval_days(interval: Interval) -> int:
         Interval.YEAR: 3650,  # 1y intervals max 5 years
     }
 
+    if user and user.is_admin:
+        MAX_INTERVAL_DAYS = {
+            Interval.INTERVAL: 30,  # 5m intervals max 7 days
+            Interval.HOUR: 365,  # 1h intervals max 30 days
+            Interval.DAY: 3650,  # 1d intervals max 1 year
+            Interval.WEEK: 3650,  # 7d intervals max 1 year
+            Interval.MONTH: 10000,  # 1M intervals max 2 years
+            Interval.QUARTER: 10000,  # 3M intervals max 5 years
+            Interval.SEASON: 10000,  # Season intervals max 5 years
+            Interval.YEAR: 10000,  # 1y intervals max 5 years
+        }
+
     return MAX_INTERVAL_DAYS.get(interval, 7)  # Default to 7 days for unknown intervals
 
 
 def validate_date_range(
-    network: NetworkSchema, interval: Interval, date_start: datetime | None, date_end: datetime | None
+    network: NetworkSchema, interval: Interval, user: OpenNEMUser | None, date_start: datetime | None, date_end: datetime | None
 ) -> tuple[datetime, datetime]:
     """
     Validate that the date range is appropriate for the given interval.
@@ -88,7 +101,7 @@ def validate_date_range(
     if date_start is None:
         date_start = get_default_start_date(interval, date_end)
 
-    max_days = get_max_interval_days(interval)
+    max_days = get_max_interval_days(interval, user)
 
     try:
         date_range = date_end - date_start

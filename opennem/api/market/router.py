@@ -81,7 +81,9 @@ async def get_network_data(
         primary_grouping = PrimaryGrouping.NETWORK_REGION
 
     # validate date range
-    date_start, date_end = validate_date_range(network=network, interval=interval, date_start=date_start, date_end=date_end)
+    date_start, date_end = validate_date_range(
+        network=network, user=user, interval=interval, date_start=date_start, date_end=date_end
+    )
 
     # Build and execute query using the unified query builder
     query, params, column_names = get_timeseries_query(
