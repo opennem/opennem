@@ -77,6 +77,7 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             count() as count,
             max(version) as version
         FROM unit_intervals FINAL
+        WHERE interval >= %(start)s AND interval <= %(end)s
         GROUP BY
             date,
             network_id,
@@ -184,6 +185,7 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             count(distinct interval) as interval_count,
             max(version) as version
         FROM unit_intervals FINAL
+        WHERE interval >= %(start)s AND interval <= %(end)s
         GROUP BY
             date,
             network_id,
@@ -272,7 +274,7 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             count(distinct interval) as interval_count,
             max(version) as version
         FROM unit_intervals FINAL
-        WHERE fueltech_id not in ('pumps')
+        WHERE fueltech_id not in ('pumps') and interval >= %(start)s AND interval <= %(end)s
         GROUP BY date, network_id, network_region, renewable
     """,
 )
