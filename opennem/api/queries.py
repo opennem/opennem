@@ -82,6 +82,7 @@ class QueryConfig:
 
         if interval in [Interval.INTERVAL, Interval.HOUR]:
             return "interval"
+
         return "date"
 
 
@@ -170,7 +171,15 @@ def get_timeseries_query(
     time_col = config._get_time_column(interval)
     time_fn = get_interval_function(interval, time_col, database="clickhouse")
 
-    if time_col != "interval":
+    if interval in [
+        Interval.DAY,
+        Interval.WEEK,
+        Interval.MONTH,
+        Interval.QUARTER,
+        Interval.YEAR,
+        Interval.SEASON,
+        Interval.FINANCIAL_YEAR,
+    ]:
         date_start = date_start.date()
         date_end = date_end.date()
 
