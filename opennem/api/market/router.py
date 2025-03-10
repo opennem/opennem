@@ -85,6 +85,9 @@ async def get_network_data(
         network=network, user=user, interval=interval, date_start=date_start, date_end=date_end
     )
 
+    if date_start > date_end:
+        raise HTTPException(status_code=400, detail="Date start must be before date end")
+
     # Build and execute query using the unified query builder
     query, params, column_names = get_timeseries_query(
         query_type=QueryType.MARKET,
