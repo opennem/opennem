@@ -184,6 +184,7 @@ def get_timeseries_query(
     time_col = config._get_time_column(interval)
     time_fn = get_interval_function(interval, time_col, database="clickhouse")
 
+    # Convert date range to network time if interval is daily or longer
     if interval in [
         Interval.DAY,
         Interval.WEEK,
