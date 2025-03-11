@@ -18,7 +18,7 @@ logger = logging.getLogger("opennem.clients.unkey")
 unkey_client = unkey.Client(api_key=settings.unkey_root_key)
 
 # Cache for unkey validation results - 5 minute TTL
-_unkey_cache = TTLCache(maxsize=1000, ttl=60 * 5)
+_unkey_cache = TTLCache(maxsize=10000, ttl=60 * 5)
 
 
 def cache_unkey_result(func):
