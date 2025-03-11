@@ -34,7 +34,7 @@ from opennem.crawlers.nemweb import (
     AEMONNemwebDispatchScada,
 )
 from opennem.crawlers.wemde import run_all_wem_crawlers
-from opennem.db.clickhouse import get_clickhouse_client
+from opennem.db.clickhouse_schema import optimize_clickhouse_tables
 from opennem.exporter.archive import generate_archive_dirlisting, sync_archive_exports
 from opennem.exporter.facilities import export_facilities_static
 
@@ -294,20 +294,12 @@ async def task_check_unsplit_batteries(ctx: dict) -> None:
         raise
 
 
-async def optimize_clickhouse_tables() -> None:
+async def task_optimize_clickhouse_tables() -> None:
     """
     Optimize the unit_intervals and market_summary tables to force merges and deduplication.
     This should be run periodically (e.g., daily) during low-traffic periods.
     """
-    client = get_clickhouse_client()
-
-    # Optimize unit_intervals
-    client.execute("OPTIMIZE TABLE unit_intervals FINAL")
-    logger.info("Optimized unit_intervals table")
-
-    # Optimize market_summary
-    client.execute("OPTIMIZE TABLE market_summary FINAL")
-    logger.info("Optimized market_summary table")
+    await optimize_clickhouse_tables()
 
 
 if __name__ == "__main__":

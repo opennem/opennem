@@ -4,6 +4,12 @@ ClickHouse table schemas for OpenNEM.
 This module contains the table schemas for ClickHouse tables used in OpenNEM.
 """
 
+import logging
+
+from opennem.db.clickhouse import get_clickhouse_client
+
+logger = logging.getLogger("opennem.db.clickhouse_schema")
+
 # Market Summary table schema
 MARKET_SUMMARY_TABLE_SCHEMA = """CREATE TABLE IF NOT EXISTS market_summary (
     interval DateTime64(3),
@@ -45,3 +51,19 @@ PRIMARY KEY (interval, network_id, network_region, facility_code, unit_code)
 ORDER BY (interval, network_id, network_region, facility_code, unit_code)
 PARTITION BY toYYYYMM(interval)
 SETTINGS index_granularity = 8192, allow_experimental_replacing_merge_with_cleanup=1"""
+
+
+async def optimize_clickhouse_tables() -> None:
+    """
+    Optimize the unit_intervals and market_summary tables to force merges and deduplication.
+    This should be run periodically (e.g., daily) during low-traffic periods.
+    """
+    client = get_clickhouse_client()
+
+    # Optimize unit_intervals
+    client.execute("OPTIMIZE TABLE unit_intervals FINAL")
+    logger.info("Optimized unit_intervals table")
+
+    # Optimize market_summary
+    client.execute("OPTIMIZE TABLE market_summary FINAL")
+    logger.info("Optimized market_summary table")
