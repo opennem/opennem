@@ -5,15 +5,17 @@ This module provides a common interface for building time series queries
 for both market and data endpoints.
 """
 
+import logging
 from datetime import datetime
 from enum import Enum
-from typing import Any
 
 from opennem.api.data.schema import DataMetric
 from opennem.api.market.schema import MarketMetric
 from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
 from opennem.core.time_interval import Interval, get_interval_function
 from opennem.schema.network import NetworkSchema
+
+logger = logging.getLogger("opennem.api.queries")
 
 # Type alias for metrics that can be either market or data metrics
 type MetricType = DataMetric | MarketMetric
@@ -36,8 +38,8 @@ class QueryConfig:
         base_table: str,
         daily_mv: str | None,
         monthly_mv: str | None,
-        metric_columns: dict[Any, str],
-        agg_function: str = "avg",
+        metric_columns: dict[MetricType, str],
+        metric_agg_functions: dict[MetricType, str],
     ):
         """
         Initialize query configuration.
@@ -48,14 +50,14 @@ class QueryConfig:
             daily_mv: Name of daily materialized view (if available)
             monthly_mv: Name of monthly materialized view (if available)
             metric_columns: Mapping of metrics to their column names
-            agg_function: Aggregation function to use (default: avg)
+            metric_agg_functions: Mapping of metrics to their aggregation functions
         """
         self.query_type = query_type
         self.base_table = base_table
         self.daily_mv = daily_mv
         self.monthly_mv = monthly_mv
         self.metric_columns = metric_columns
-        self.agg_function = agg_function
+        self.metric_agg_functions = metric_agg_functions
 
     def _get_table_for_interval(self, interval: Interval) -> str:
         """
@@ -82,6 +84,7 @@ class QueryConfig:
 
         if interval in [Interval.INTERVAL, Interval.HOUR]:
             return "interval"
+
         return "date"
 
 
@@ -97,7 +100,11 @@ QUERY_CONFIGS = {
             MarketMetric.DEMAND: "demand",
             MarketMetric.DEMAND_ENERGY: "demand_energy",
         },
-        agg_function="avg",
+        metric_agg_functions={
+            MarketMetric.PRICE: "avg",
+            MarketMetric.DEMAND: "avg",
+            MarketMetric.DEMAND_ENERGY: "sum",
+        },
     ),
     QueryType.DATA: QueryConfig(
         query_type=QueryType.DATA,
@@ -110,7 +117,12 @@ QUERY_CONFIGS = {
             DataMetric.EMISSIONS: "emissions",
             DataMetric.MARKET_VALUE: "market_value",
         },
-        agg_function="sum",
+        metric_agg_functions={
+            DataMetric.POWER: "sum",
+            DataMetric.ENERGY: "sum",
+            DataMetric.EMISSIONS: "sum",
+            DataMetric.MARKET_VALUE: "sum",
+        },
     ),
     QueryType.FACILITY: QueryConfig(
         query_type=QueryType.FACILITY,
@@ -123,7 +135,12 @@ QUERY_CONFIGS = {
             DataMetric.EMISSIONS: "emissions",
             DataMetric.MARKET_VALUE: "market_value",
         },
-        agg_function="sum",
+        metric_agg_functions={
+            DataMetric.POWER: "sum",
+            DataMetric.ENERGY: "sum",
+            DataMetric.EMISSIONS: "sum",
+            DataMetric.MARKET_VALUE: "sum",
+        },
     ),
 }
 
@@ -170,7 +187,16 @@ def get_timeseries_query(
     time_col = config._get_time_column(interval)
     time_fn = get_interval_function(interval, time_col, database="clickhouse")
 
-    if time_col != "interval":
+    # Convert date range to network time if interval is daily or longer
+    if interval in [
+        Interval.DAY,
+        Interval.WEEK,
+        Interval.MONTH,
+        Interval.QUARTER,
+        Interval.YEAR,
+        Interval.SEASON,
+        Interval.FINANCIAL_YEAR,
+    ]:
         date_start = date_start.date()
         date_end = date_end.date()
 
@@ -180,8 +206,10 @@ def get_timeseries_query(
         "date_end": date_end,
     }
 
+    # logger.info(f"Querying {table_name} for {network.code} from {date_start} to {date_end}")
+
     # Build metric selection part
-    metric_selects = [f"{config.agg_function}({config.metric_columns[m]}) as {m.value.lower()}" for m in metrics]
+    metric_selects = [f"{config.metric_agg_functions[m]}({config.metric_columns[m]}) as {m.value.lower()}" for m in metrics]
 
     # Build grouping columns based on query type
     group_cols = [f"'{network.code}' as network"]

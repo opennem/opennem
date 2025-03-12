@@ -91,6 +91,9 @@ async def get_network_data(
         network=network, user=user, interval=interval, date_start=date_start, date_end=date_end
     )
 
+    if date_start > date_end:
+        raise HTTPException(status_code=400, detail="Date start must be before date end")
+
     # Convert single secondary grouping to sequence
     secondary_groupings = [secondary_grouping] if secondary_grouping else None
 

@@ -34,13 +34,13 @@ from opennem.crawlers.nemweb import (
     AEMONNemwebDispatchScada,
 )
 from opennem.crawlers.wemde import run_all_wem_crawlers
-from opennem.db.clickhouse import get_clickhouse_client
+from opennem.db.clickhouse_schema import optimize_clickhouse_tables
 from opennem.exporter.archive import generate_archive_dirlisting, sync_archive_exports
 from opennem.exporter.facilities import export_facilities_static
 
 # from opennem.exporter.historic import export_historic_intervals
 from opennem.pipelines.export import run_export_power_latest_for_network
-from opennem.recordreactor.backlog import _analyze_milestone_records
+from opennem.recordreactor.backlog import run_milestone_analysis_backlog
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_today_opennem
 from opennem.workers.catchup import catchup_last_intervals, run_catchup_check
@@ -266,6 +266,7 @@ async def task_catchup_days(ctx) -> None:
     await catchup_last_intervals(num_intervals=14)
 
 
+@logfire.instrument("task_update_milestones")
 async def task_update_milestones() -> None:
     """
     Task to update milestone records from the last recorded milestone to now.
@@ -276,7 +277,7 @@ async def task_update_milestones() -> None:
     if not settings.run_milestones:
         return
 
-    await _analyze_milestone_records()
+    await run_milestone_analysis_backlog(refresh=True)
 
 
 async def task_check_unsplit_batteries(ctx: dict) -> None:
@@ -294,20 +295,13 @@ async def task_check_unsplit_batteries(ctx: dict) -> None:
         raise
 
 
-async def optimize_clickhouse_tables() -> None:
+@logfire.instrument("task_optimize_clickhouse_tables")
+async def task_optimize_clickhouse_tables() -> None:
     """
     Optimize the unit_intervals and market_summary tables to force merges and deduplication.
     This should be run periodically (e.g., daily) during low-traffic periods.
     """
-    client = get_clickhouse_client()
-
-    # Optimize unit_intervals
-    client.execute("OPTIMIZE TABLE unit_intervals FINAL")
-    logger.info("Optimized unit_intervals table")
-
-    # Optimize market_summary
-    client.execute("OPTIMIZE TABLE market_summary FINAL")
-    logger.info("Optimized market_summary table")
+    await optimize_clickhouse_tables()
 
 
 if __name__ == "__main__":
