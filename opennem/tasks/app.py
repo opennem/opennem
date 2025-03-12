@@ -95,6 +95,7 @@ class WorkerSettings:
         cron(
             task_update_milestones,
             minute={5},  # Run at 5 minutes past every hour
+            hour=set(range(0, 24, 6)),  # run every 6 hours
             second=0,
             timeout=None,
             unique=True,
