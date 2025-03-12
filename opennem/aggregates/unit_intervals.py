@@ -19,7 +19,7 @@ from opennem.db.clickhouse import (
     get_clickhouse_client,
     table_exists,
 )
-from opennem.db.clickhouse_schema import UNIT_INTERVALS_TABLE_SCHEMA
+from opennem.db.clickhouse_schema import UNIT_INTERVALS_TABLE_SCHEMA, optimize_clickhouse_tables
 from opennem.db.clickhouse_views import (
     FUELTECH_INTERVALS_DAILY_VIEW,
     FUELTECH_INTERVALS_VIEW,
@@ -624,7 +624,9 @@ if __name__ == "__main__":
         # start_interval = end_interval - timedelta(days=5)
 
         # await run_unit_intervals_backlog(start_date=start_interval)
-        # await run_unit_intervals_backlog(start_date=NetworkAEMORooftopBackfill.data_first_seen.replace(tzinfo=None))
+        # await run_unit_intervals_backlog(start_date=NetworkWEM.data_first_seen.replace(tzinfo=None), network=NetworkWEM)
+
+        await optimize_clickhouse_tables()
 
         # Uncomment to backfill views:
         backfill_materialized_views(refresh_views=True)
