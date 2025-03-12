@@ -5,6 +5,7 @@ This module provides a common interface for building time series queries
 for both market and data endpoints.
 """
 
+import logging
 from datetime import datetime
 from enum import Enum
 
@@ -13,6 +14,8 @@ from opennem.api.market.schema import MarketMetric
 from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
 from opennem.core.time_interval import Interval, get_interval_function
 from opennem.schema.network import NetworkSchema
+
+logger = logging.getLogger("opennem.api.queries")
 
 # Type alias for metrics that can be either market or data metrics
 type MetricType = DataMetric | MarketMetric
@@ -202,6 +205,8 @@ def get_timeseries_query(
         "date_start": date_start,
         "date_end": date_end,
     }
+
+    # logger.info(f"Querying {table_name} for {network.code} from {date_start} to {date_end}")
 
     # Build metric selection part
     metric_selects = [f"{config.metric_agg_functions[m]}({config.metric_columns[m]}) as {m.value.lower()}" for m in metrics]
