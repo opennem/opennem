@@ -35,7 +35,6 @@ from opennem import settings
 from opennem.api.maintenance_app import run_maintenance_app
 from opennem.tasks.broker import REDIS_SETTINGS, get_redis_pool
 from opennem.tasks.tasks import (
-    optimize_clickhouse_tables,
     task_apvi_crawl,
     task_bom_capitals_crawl,
     task_catchup_check,
@@ -50,6 +49,7 @@ from opennem.tasks.tasks import (
     task_nem_interval_check,
     task_nem_per_day_check,
     task_nem_rooftop_crawl,
+    task_optimize_clickhouse_tables,
     task_refresh_from_cms,
     task_run_aggregates_demand_network_days,
     task_update_facility_first_seen,
@@ -101,7 +101,7 @@ class WorkerSettings:
         ),
         # Optimize unit_intervals table daily
         cron(
-            optimize_clickhouse_tables,
+            task_optimize_clickhouse_tables,
             minute=15,
             second=0,
             timeout=None,
