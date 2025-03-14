@@ -49,6 +49,8 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
     if milestone.metric in [MilestoneType.power, MilestoneType.energy] and milestone.period in [
         MilestonePeriod.interval,
         MilestonePeriod.day,
+        MilestonePeriod.quarter,
+        MilestonePeriod.year,
     ]:
         if (
             milestone.fueltech in ["solar", "wind", "renewables", "battery_discharging"]
