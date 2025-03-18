@@ -267,7 +267,7 @@ async def task_catchup_days(ctx) -> None:
 
 
 @logfire.instrument("task_update_milestones")
-async def task_update_milestones() -> None:
+async def task_update_milestones(ctx: dict) -> None:
     """
     Task to update milestone records from the last recorded milestone to now.
 
@@ -296,7 +296,7 @@ async def task_check_unsplit_batteries(ctx: dict) -> None:
 
 
 @logfire.instrument("task_optimize_clickhouse_tables")
-async def task_optimize_clickhouse_tables() -> None:
+async def task_optimize_clickhouse_tables(ctx: dict) -> None:
     """
     Optimize the unit_intervals and market_summary tables to force merges and deduplication.
     This should be run periodically (e.g., daily) during low-traffic periods.
