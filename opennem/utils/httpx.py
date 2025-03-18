@@ -92,11 +92,7 @@ class OpenNEMHTTPTransport(AsyncHTTPTransport):
                     raise
                 attempts += 1
                 retry_delay = self._retry_delay * (2 ** (attempts - 1))
-                logger.warning(
-                    f"Request failed for {request.url} "
-                    f"Status {response.status_code} "
-                    f"Attempt {attempts}/{self._retries}. Retrying in {retry_delay}s"
-                )
+                logger.warning(f"Request failed for {request.url} Attempt {attempts}/{self._retries}. Retrying in {retry_delay}s")
                 await asyncio.sleep(retry_delay)
 
         if last_exception:
