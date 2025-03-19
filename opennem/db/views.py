@@ -12,7 +12,7 @@ from enum import Enum
 
 from sqlalchemy import text
 
-from opennem.db import get_write_session
+from opennem.db import get_notransaction_session
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_last_completed_interval_for_network
 
@@ -54,7 +54,7 @@ async def refresh_continuous_aggregate(
     )
 
     try:
-        async with get_write_session() as session_ctx:
+        async with get_notransaction_session() as session_ctx:
             await session_ctx.execute(refresh_sql)
             await session_ctx.commit()
 

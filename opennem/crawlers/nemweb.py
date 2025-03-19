@@ -363,6 +363,15 @@ AEMONEMNextDayDispatch = CrawlerDefinition(
     processor=run_nemweb_aemo_crawl,
 )
 
+ALL_NEMWEB_CRAWLERS = [
+    AEMONNemwebDispatchScada,
+    AEMONemwebDispatchIS,
+    AEMONemwebTradingIS,
+    AEMONemwebRooftop,
+    AEMONemwebRooftopForecast,
+    AEMONEMDispatchActualGEN,
+    AEMONEMNextDayDispatch,
+]
 
 if __name__ == "__main__":
     from opennem.crawl import run_crawl
