@@ -108,6 +108,18 @@ async def process_energy_last_intervals(num_intervals: int = 6) -> None:
         await _calculate_energy_for_interval(session=session, start_time=start_time, end_time=end_time)
 
 
+async def process_energy_last_days(days: int = 1):
+    """
+    Process energy calculations for the last days.
+    """
+    async with get_write_session() as session:
+        end_time = get_last_completed_interval_for_network(network=NetworkNEM, tz_aware=False).replace(tzinfo=None)
+        start_time = end_time - timedelta(days=days)
+
+        logger.info(f"Processing energy calculations from {start_time} to {end_time}")
+        await _process_date_range(session=session, start_time=start_time, end_time=end_time)
+
+
 def _chunk_date_range(start_date: datetime, end_date: datetime, chunk_size: timedelta) -> list[tuple[datetime, datetime]]:
     chunks = []
     current_start = start_date

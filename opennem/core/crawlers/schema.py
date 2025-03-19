@@ -1,5 +1,7 @@
 """OpenNEM Crawler Definitions"""
 
+from __future__ import annotations
+
 from collections.abc import Callable
 from datetime import datetime
 from enum import Enum
@@ -38,6 +40,10 @@ class CrawlerDefinition(BaseConfig):
     # These are v3 fields
     urls: list[str] | None = []
     bucket_size: AEMODataBucketSize | None = None
+
+    contains_days: int | None = Field(default=None, description="The number of days the url contains")
+
+    archive_version: CrawlerDefinition | None = Field(default=None, description="The archive version of the crawler")
 
     active: bool = True
     limit: int | None = None

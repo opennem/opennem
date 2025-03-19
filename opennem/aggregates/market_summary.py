@@ -345,6 +345,17 @@ async def run_market_summary_aggregate_for_last_intervals(num_intervals: int) ->
     return len(prepared_data)
 
 
+async def run_market_summary_aggregate_for_last_days(days: int) -> int:
+    """
+    Run the market summary aggregation for the last days.
+    """
+    end_date = get_last_completed_interval_for_network(network=NetworkNEM)
+    start_date = end_date - timedelta(days=days)
+
+    async with get_write_session() as session:
+        await process_market_summary_backlog(session=session, start_date=start_date, end_date=end_date)
+
+
 async def run_market_summary_backlog() -> None:
     """
     Run the market summary aggregation for the history of the market.

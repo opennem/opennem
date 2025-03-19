@@ -36,7 +36,9 @@ from opennem.crawlers.nemweb import (
     AEMONemwebDispatchIS,
     AEMONemwebDispatchISArchive,
     AEMONemwebRooftop,
+    AEMONemwebRooftopArchive,
     AEMONemwebRooftopForecast,
+    AEMONemwebRooftopForecastArchive,
     AEMONemwebTradingIS,
     AEMONemwebTradingISArchive,
     AEMONNemwebDispatchScada,
@@ -77,6 +79,8 @@ async def load_crawlers(live_load: bool = False) -> CrawlerSet:
         AEMONNemwebDispatchScadaArchive,
         AEMONemwebTradingISArchive,
         AEMONemwebDispatchISArchive,
+        AEMONemwebRooftopArchive,
+        AEMONemwebRooftopForecastArchive,
         # APVI
         APVIRooftopTodayCrawler,
         APVIRooftopLatestCrawler,
