@@ -99,15 +99,15 @@ async def _get_unit_interval_data(
             u.fueltech_id,
             'solar' as fueltech_group_id,
             TRUE as renewable,
-            locf(round(sum(fs.generated), 4)) as generated,
-            locf(round(sum(fs.energy) / 6, 4)) as energy
+            locf(coalesce(round(sum(fs.generated), 4), 0)) as generated,
+            locf(coalesce(round(sum(fs.energy) / 6, 4), 0)) as energy
         FROM
             facility_scada fs
         JOIN units u ON fs.facility_code = u.code
         JOIN facilities f ON u.station_id = f.id
         WHERE
             fs.is_forecast IS FALSE
-            AND u.fueltech_id in ('solar_rooftop', 'solar_utility')
+            AND u.fueltech_id in ('solar_rooftop')
             AND fs.interval >= :start_time
             AND fs.interval <= :end_time
             {network_where_clause}
@@ -134,7 +134,7 @@ async def _get_unit_interval_data(
         JOIN fueltech_group ftg ON ftg.code = ft.fueltech_group_id
         WHERE
             fs.is_forecast IS FALSE
-            AND u.fueltech_id not in ('solar_rooftop', 'solar_utility', 'imports', 'exports', 'interconnector', 'battery')
+            AND u.fueltech_id not in ('solar_rooftop', 'imports', 'exports', 'interconnector', 'battery')
             AND fs.interval >= :start_time
             AND fs.interval <= :end_time
             {network_where_clause}
@@ -462,6 +462,17 @@ async def run_unit_intervals_aggregate_for_last_intervals(num_intervals: int) ->
     logger.info(f"Processed {len(prepared_data)} records from {start_date} to {end_date}")
 
     return len(prepared_data)
+
+
+async def run_unit_intervals_aggregate_for_last_days(days: int) -> int:
+    """
+    Run the unit intervals aggregation for the last days.
+    """
+    end_date = get_last_completed_interval_for_network(network=NetworkNEM)
+    start_date = end_date - timedelta(days=days)
+
+    async with get_write_session() as session:
+        await process_unit_intervals_backlog(session=session, start_date=start_date, end_date=end_date)
 
 
 async def run_unit_intervals_backlog(start_date: datetime | None = None, network: NetworkSchema | None = None) -> None:

@@ -8,7 +8,9 @@ from opennem.clients.wemde import wemde_parse_facilityscada, wemde_parse_trading
 from opennem.controllers.nem import ControllerReturn
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_meta, crawler_set_meta
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
+from opennem.core.parsers.aemo.filenames import AEMODataBucketSize
 from opennem.core.parsers.dirlisting import get_dirlisting
+from opennem.crawlers.apvi import APVIRooftopLatestCrawler
 from opennem.persistence.postgres_facility_scada import persist_facility_scada_bulk
 from opennem.persistence.schema import BalancingSummarySchema, FacilityScadaSchema
 from opennem.schema.date_range import CrawlDateRange
@@ -161,17 +163,9 @@ async def run_all_wem_crawlers(latest: bool = True, limit: int | None = None) ->
             continue
 
 
-AEMOWEMDEFacilityScada = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.live,
-    name="au.wemde.current.facility_scada",
-    url="https://data.wa.aemo.com.au/public/market-data/wemde/facilityScada/current/",
-    network=NetworkWEM,
-    processor=run_wemde_crawl,
-    parser=wemde_parse_facilityscada,
-)
-
 AEMOWEMDEFacilityScadaHistory = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.day,
+    contains_days=365,
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
     name="au.wemde.history.facility_scada",
@@ -181,17 +175,22 @@ AEMOWEMDEFacilityScadaHistory = CrawlerDefinition(
     parser=wemde_parse_facilityscada,
 )
 
-AEMOWEMDETradingReport = CrawlerDefinition(
+AEMOWEMDEFacilityScada = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.day,
+    contains_days=1,
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
-    name="au.wemde.current.trading_report",
-    url="https://data.wa.aemo.com.au/public/market-data/wemde/referenceTradingPrice/current/",
+    name="au.wemde.current.facility_scada",
+    url="https://data.wa.aemo.com.au/public/market-data/wemde/facilityScada/current/",
     network=NetworkWEM,
     processor=run_wemde_crawl,
-    parser=wemde_parse_trading_price,
+    parser=wemde_parse_facilityscada,
+    archive_version=AEMOWEMDEFacilityScadaHistory,
 )
 
 AEMOWEMDETradingReportHistory = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.day,
+    contains_days=365,
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
     name="au.wemde.history.trading_report",
@@ -200,6 +199,21 @@ AEMOWEMDETradingReportHistory = CrawlerDefinition(
     processor=run_wemde_crawl,
     parser=wemde_parse_trading_price,
 )
+
+AEMOWEMDETradingReport = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.day,
+    contains_days=1,
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.wemde.current.trading_report",
+    url="https://data.wa.aemo.com.au/public/market-data/wemde/referenceTradingPrice/current/",
+    network=NetworkWEM,
+    processor=run_wemde_crawl,
+    parser=wemde_parse_trading_price,
+    archive_version=AEMOWEMDETradingReportHistory,
+)
+
+ALL_WEM_CRAWLERS = [AEMOWEMDEFacilityScada, AEMOWEMDETradingReport, APVIRooftopLatestCrawler]
 
 
 if __name__ == "__main__":

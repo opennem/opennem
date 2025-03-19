@@ -170,66 +170,13 @@ async def run_nemweb_aemo_crawl(
     return controller_return
 
 
-# TRADING_PRICE
-# TRADING_INTERCONNECTORRES
-AEMONemwebTradingIS = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.live,
-    name="au.nemweb.current.trading_is",
-    url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
-    network=NetworkNEM,
-    processor=run_nemweb_aemo_crawl,
-)
-
-
-# DISPATCH_PRICE
-# DISPATCH_REGIONSUM
-# DISPATCH_INTERCONNECTORRES
-AEMONemwebDispatchIS = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.live,
-    name="au.nemweb.current.dispatch_is",
-    url="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
-    network=NetworkNEM,
-    processor=run_nemweb_aemo_crawl,
-)
-
-# DISPATCH_SCADA
-AEMONNemwebDispatchScada = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.live,
-    name="au.nemweb.current.dispatch_scada",
-    url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
-    network=NetworkNEM,
-    processor=run_nemweb_aemo_crawl,
-)
-
-
-AEMONemwebRooftop = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.live,
-    name="au.nemweb.current.rooftop",
-    url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/",
-    filename_filter=".*_MEASUREMENT_.*",
-    network=NetworkAEMORooftop,
-    processor=run_nemweb_aemo_crawl,
-)
-
-
-AEMONemwebRooftopForecast = CrawlerDefinition(
-    priority=CrawlerPriority.low,
-    schedule=CrawlerSchedule.four_times_a_day,
-    name="au.nemweb.current.rooftop_forecast",
-    url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/FORECAST/",
-    network=NetworkAEMORooftop,
-    processor=run_nemweb_aemo_crawl,
-)
-
 # archive crawlers
 # these are not scheduled
 # @TODO could integrate these with the above and split based on max/min date
 
 AEMONemwebTradingISArchive = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.week,
+    contains_days=365,
     priority=CrawlerPriority.high,
     active=False,
     name="au.nemweb.archive.trading_is",
@@ -241,6 +188,8 @@ AEMONemwebTradingISArchive = CrawlerDefinition(
 
 
 AEMONemwebDispatchISArchive = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.day,
+    contains_days=365,
     priority=CrawlerPriority.high,
     active=False,
     name="au.nemweb.archive.dispatch_is",
@@ -251,6 +200,8 @@ AEMONemwebDispatchISArchive = CrawlerDefinition(
 )
 
 AEMONNemwebDispatchScadaArchive = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.day,
+    contains_days=365,
     priority=CrawlerPriority.high,
     active=False,
     name="au.nemweb.archive.dispatch_scada",
@@ -260,6 +211,8 @@ AEMONNemwebDispatchScadaArchive = CrawlerDefinition(
 )
 
 AEMONemwebRooftopArchive = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.week,
+    contains_days=365,
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
     name="au.nemweb.archive.rooftop",
@@ -270,56 +223,157 @@ AEMONemwebRooftopArchive = CrawlerDefinition(
     processor=run_nemweb_aemo_crawl,
 )
 
-# next day crawlers
-
-# METER_DATA_GEN_DUID
-AEMONEMDispatchActualGEN = CrawlerDefinition(
-    priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.twice_a_day,
-    name="au.nemweb.dispatch_actual_gen",
-    url="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
-    latest=False,
-    network=NetworkNEM,
-    bucket_size=AEMODataBucketSize.day,
+AEMONemwebRooftopForecastArchive = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.week,
+    contains_days=365,
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.nemweb.archive.rooftop_forecast",
+    url="http://www.nemweb.com.au/Reports/ARCHIVE/ROOFTOP_PV/FORECAST/",
+    filename_filter=".*_MEASUREMENT_.*",
+    network=NetworkAEMORooftop,
+    backfill_days=365,
     processor=run_nemweb_aemo_crawl,
 )
 
 
+# Current Crawlers
+
+# TRADING_PRICE
+# TRADING_INTERCONNECTORRES
+AEMONemwebTradingIS = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.interval,
+    contains_days=14,
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    archive_version=AEMONemwebTradingISArchive,
+    name="au.nemweb.current.trading_is",
+    url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
+    network=NetworkNEM,
+    processor=run_nemweb_aemo_crawl,
+)
+
+
+# DISPATCH_PRICE
+# DISPATCH_REGIONSUM
+# DISPATCH_INTERCONNECTORRES
+AEMONemwebDispatchIS = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.interval,
+    contains_days=3,
+    archive_version=AEMONemwebDispatchISArchive,
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.nemweb.current.dispatch_is",
+    url="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
+    network=NetworkNEM,
+    processor=run_nemweb_aemo_crawl,
+)
+
+# DISPATCH_SCADA
+AEMONNemwebDispatchScada = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.interval,
+    contains_days=3,
+    archive_version=AEMONNemwebDispatchScadaArchive,
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.nemweb.current.dispatch_scada",
+    url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
+    network=NetworkNEM,
+    processor=run_nemweb_aemo_crawl,
+)
+
+
+AEMONemwebRooftop = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.half_hour,
+    contains_days=14,
+    archive_version=AEMONemwebRooftopArchive,
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.nemweb.current.rooftop",
+    url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/",
+    filename_filter=".*_MEASUREMENT_.*",
+    network=NetworkAEMORooftop,
+    processor=run_nemweb_aemo_crawl,
+)
+
+
+AEMONemwebRooftopForecast = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.half_hour,
+    contains_days=14,
+    archive_version=AEMONemwebRooftopForecastArchive,
+    priority=CrawlerPriority.low,
+    schedule=CrawlerSchedule.four_times_a_day,
+    name="au.nemweb.current.rooftop_forecast",
+    url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/FORECAST/",
+    network=NetworkAEMORooftop,
+    processor=run_nemweb_aemo_crawl,
+)
+
+# next day crawlers
+
+# METER_DATA_GEN_DUID
 AEMONEMDispatchActualGENArchvie = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.month,
+    contains_days=365,
     priority=CrawlerPriority.medium,
     schedule=CrawlerSchedule.daily,
     name="au.nemweb.archive.dispatch_actual_gen",
     url="http://www.nemweb.com.au/Reports/ARCHIVE/Next_Day_Actual_Gen/",
     latest=False,
     network=NetworkNEM,
-    bucket_size=AEMODataBucketSize.month,
+    processor=run_nemweb_aemo_crawl,
+)
+
+AEMONEMDispatchActualGEN = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.day,
+    contains_days=90,
+    archive_version=AEMONEMDispatchActualGENArchvie,
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.twice_a_day,
+    name="au.nemweb.dispatch_actual_gen",
+    url="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
+    latest=False,
+    network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
 )
 
 # DISPATCH_UNIT_SOLUTION
-AEMONEMNextDayDispatch = CrawlerDefinition(
-    priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.twice_a_day,
-    name="au.nemweb.dispatch",
-    url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
-    latest=False,
-    network=NetworkNEM,
-    bucket_size=AEMODataBucketSize.day,
-    processor=run_nemweb_aemo_crawl,
-)
-
 AEMONEMNextDayDispatchArchvie = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.month,
+    contains_days=365,
     priority=CrawlerPriority.medium,
     schedule=CrawlerSchedule.daily,
     name="au.nemweb.archive.dispatch",
     url="http://nemweb.com.au/Reports/ARCHIVE/Next_Day_Dispatch/",
     latest=False,
     network=NetworkNEM,
-    bucket_size=AEMODataBucketSize.day,
     processor=run_nemweb_aemo_crawl,
 )
+
+AEMONEMNextDayDispatch = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.day,
+    contains_days=365,
+    archive_version=AEMONEMNextDayDispatchArchvie,
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.twice_a_day,
+    name="au.nemweb.dispatch",
+    url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
+    latest=False,
+    network=NetworkNEM,
+    processor=run_nemweb_aemo_crawl,
+)
+
+ALL_NEMWEB_CRAWLERS = [
+    AEMONNemwebDispatchScada,
+    AEMONemwebDispatchIS,
+    AEMONemwebTradingIS,
+    AEMONemwebRooftop,
+    AEMONemwebRooftopForecast,
+    AEMONEMDispatchActualGEN,
+    AEMONEMNextDayDispatch,
+]
 
 if __name__ == "__main__":
     from opennem.crawl import run_crawl
 
-    asyncio.run(run_crawl(AEMONemwebTradingISArchive, latest=False, limit=1, reverse=True))
+    asyncio.run(run_crawl(AEMONemwebRooftop, latest=False, limit=12 * 24 * 5, reverse=True))

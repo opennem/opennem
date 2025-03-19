@@ -16,14 +16,22 @@ from sqlalchemy import text
 
 from opennem import settings
 from opennem.aggregates.facility_interval import run_update_facility_aggregate_last_interval, update_facility_aggregate_last_hours
-from opennem.aggregates.market_summary import run_market_summary_aggregate_for_last_intervals
+from opennem.aggregates.market_summary import (
+    run_market_summary_aggregate_for_last_days,
+)
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
-from opennem.aggregates.unit_intervals import run_unit_intervals_aggregate_for_last_intervals
+from opennem.aggregates.unit_intervals import (
+    run_unit_intervals_aggregate_for_last_days,
+)
+from opennem.api.export.tasks import export_power
 from opennem.clients.slack import slack_message
 from opennem.controllers.export import run_export_all, run_export_energy_for_year
+from opennem.core.crawlers.schema import CrawlerDefinition
+from opennem.core.parsers.aemo.filenames import AEMODataBucketSize
 from opennem.crawl import run_crawl
 from opennem.crawlers.apvi import APVIRooftopTodayCrawler
 from opennem.crawlers.nemweb import (
+    ALL_NEMWEB_CRAWLERS,
     AEMONEMDispatchActualGEN,
     AEMONEMNextDayDispatch,
     AEMONemwebDispatchIS,
@@ -32,11 +40,11 @@ from opennem.crawlers.nemweb import (
     AEMONemwebTradingIS,
     AEMONNemwebDispatchScada,
 )
-from opennem.crawlers.wemde import run_all_wem_crawlers
+from opennem.crawlers.wemde import ALL_WEM_CRAWLERS, run_all_wem_crawlers
 from opennem.db import get_read_session
-from opennem.pipelines.export import run_export_power_latest_for_network
-from opennem.schema.network import NetworkAU, NetworkNEM
-from opennem.workers.energy import process_energy_last_intervals
+from opennem.db.views import refresh_recent_aggregates
+from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.workers.energy import process_energy_last_days, process_energy_last_intervals
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.incident import create_incident, has_active_incident, resolve_incident
 
@@ -206,51 +214,79 @@ async def run_catchup_check(max_gap_minutes: int = 30) -> None:
             logger.error(f"Failed to send resolution Slack alert: {e}")
 
 
-async def catchup_days(days: int = 1):
+def _get_limit_for_crawler(crawler: CrawlerDefinition, days: int) -> int:
+    """Get the limit for a crawler"""
+    match crawler.bucket_size:
+        case AEMODataBucketSize.interval:
+            return days * 12 * 24
+        case AEMODataBucketSize.half_hour:
+            return days * 2 * 24
+        case AEMODataBucketSize.day:
+            return days
+        case AEMODataBucketSize.week:
+            return days * 7
+        case AEMODataBucketSize.fortnight:
+            return days * 14
+        case AEMODataBucketSize.month:
+            return days * 30
+        case AEMODataBucketSize.year:
+            return days * 365
+        case _:
+            return days * 12 * 24
+
+
+async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None, latest: bool = False):
     """Run a catchup for the last 24 hours"""
 
-    await catchup_last_intervals(num_intervals=days * 12 * 24)
+    crawlers = []
 
-
-async def catchup_last_intervals(num_intervals: int = 12):
-    """Run a catchup for the last 24 hours"""
-
-    crawlers = [
-        AEMONNemwebDispatchScada,
-        AEMONemwebDispatchIS,
-        AEMONemwebTradingIS,
-        AEMONemwebRooftop,
-        AEMONemwebRooftopForecast,
-    ]
+    if network == NetworkNEM:
+        crawlers.extend(ALL_NEMWEB_CRAWLERS)
+    elif network == NetworkWEM:
+        crawlers.extend(ALL_WEM_CRAWLERS)
+    else:
+        crawlers.extend(ALL_NEMWEB_CRAWLERS)
+        crawlers.extend(ALL_WEM_CRAWLERS)
 
     for crawler in crawlers:
-        await run_crawl(crawler, latest=False, limit=num_intervals)
+        await run_crawl(crawler, latest=latest, limit=_get_limit_for_crawler(crawler, days))
 
-    await process_energy_last_intervals(num_intervals=num_intervals)
+        # run the archive crawler if required and if it exists
+        if crawler.contains_days and days > crawler.contains_days:
+            if not crawler.archive_version:
+                logger.error(f"Crawler {crawler.name} has no archive version to fulfill request")
+                continue
 
-    await run_unit_intervals_aggregate_for_last_intervals(num_intervals=num_intervals)
-    await run_market_summary_aggregate_for_last_intervals(num_intervals=num_intervals)
+            await run_crawl(
+                crawler.archive_version,
+                latest=latest,
+                reverse=True,
+                limit=_get_limit_for_crawler(crawler.archive_version, days),
+            )
 
-    run_flows_for_last_days(days=3, network=NetworkNEM)
+    # run aggregates
+    await process_energy_last_days(days=days)
+    await run_unit_intervals_aggregate_for_last_days(days=days)
+    await run_market_summary_aggregate_for_last_days(days=days)
+    run_flows_for_last_days(days=days, network=NetworkNEM)
+    await update_facility_aggregate_last_hours(hours_back=days * 24)
 
-    await update_facility_aggregate_last_hours(hours_back=num_intervals / 12)
+    # refresh materialized views
+    await refresh_recent_aggregates(days_back=days + 1)
 
-    await asyncio.gather(
-        run_export_power_latest_for_network(network=NetworkNEM), run_export_power_latest_for_network(network=NetworkAU)
-    )
-
+    # run exports
     CURRENT_YEAR = datetime.now(ZoneInfo("Australia/Brisbane")).year
 
     await asyncio.gather(
+        export_power(),
         run_export_energy_for_year(year=CURRENT_YEAR),
-        # run_export_energy_for_year(year=CURRENT_YEAR - 1),
+        run_export_energy_for_year(year=CURRENT_YEAR - 1),
+        run_export_all(),
     )
-
-    await run_export_all()
 
 
 if __name__ == "__main__":
     import asyncio
 
     # asyncio.run(run_catchup_check(max_gap_minutes=15))
-    asyncio.run(catchup_days(days=1))
+    asyncio.run(catchup_last_days(days=4))

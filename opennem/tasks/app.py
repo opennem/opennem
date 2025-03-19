@@ -261,6 +261,7 @@ class WorkerSettings:
             task_catchup_days,
             minute=15,
             second=0,
+            hour=0,
             timeout=None,
             unique=True,
         ),
