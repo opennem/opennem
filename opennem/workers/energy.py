@@ -104,7 +104,8 @@ async def process_energy_last_intervals(num_intervals: int = 6) -> None:
 
     logger.info(f"Processing energy calculations from {start_time} to {end_time}")
 
-    await _calculate_energy_for_interval(start_time=start_time, end_time=end_time)
+    async with get_write_session() as session:
+        await _calculate_energy_for_interval(session=session, start_time=start_time, end_time=end_time)
 
 
 async def process_energy_last_days(days: int = 1):
