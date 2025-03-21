@@ -93,6 +93,10 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
         else:
             return 9  # @NOTE temporary
 
+    # renewable emissions doesn't make sense as a record
+    if milestone.fueltech == MilestoneFueltechGrouping.renewables and milestone.metric == MilestoneType.emissions:
+        return 0
+
     # END HACKS
 
     # Period significance
