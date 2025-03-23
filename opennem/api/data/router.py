@@ -202,7 +202,9 @@ async def get_facility_data(
     validate_metrics(metrics, _SUPPORTED_METRICS)
 
     # Validate the date range for the interval
-    date_start, date_end = validate_date_range(network=network, interval=interval, date_start=date_start, date_end=date_end)
+    date_start, date_end = validate_date_range(
+        network=network, user=user, interval=interval, date_start=date_start, date_end=date_end
+    )
 
     if facility_code and len(facility_code) > 30:
         raise HTTPException(status_code=400, detail="Facility code must be less than 30 characters")
