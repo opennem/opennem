@@ -629,14 +629,9 @@ def backfill_materialized_views(view: MaterializedView | str | None = None, refr
 
 if __name__ == "__main__":
     # Run the test
-    async def main():
-        # _refresh_clickhouse_schema()
-        # end_interval = get_last_completed_interval_for_network(network=NetworkNEM)
-        # start_interval = end_interval - timedelta(days=5)
-
-        # await run_unit_intervals_backlog(start_date=start_interval)
-        # await run_unit_intervals_backlog(start_date=NetworkWEM.data_first_seen.replace(tzinfo=None), network=NetworkWEM)
-
+    async def reset_unit_intervals():
+        _refresh_clickhouse_schema()
+        await run_unit_intervals_backlog(start_date=NetworkNEM.data_first_seen.replace(tzinfo=None))
         await optimize_clickhouse_tables()
 
         # Uncomment to backfill views:
@@ -644,4 +639,4 @@ if __name__ == "__main__":
 
     import asyncio
 
-    asyncio.run(main())
+    asyncio.run(reset_unit_intervals())
