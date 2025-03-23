@@ -160,17 +160,17 @@ api_request_counter = logfire.metric_counter("api_request_counter")
 api_exception_counter = logfire.metric_counter("api_exception_counter")
 
 
-@app.middleware("http")
-async def log_api_request(request: Request, call_next):
-    api_request_counter.add(1)
-    response = await call_next(request)
-    return response
+# @app.middleware("http")
+# async def log_api_request(request: Request, call_next):
+#     api_request_counter.add(1)
+#     response = await call_next(request)
+#     return response
 
 
-@app.exception_handler(Exception)
-async def log_api_exception(request: Request, exc: Exception):
-    api_exception_counter.add(1)
-    return await http_exception_handler(request, exc)
+# @app.exception_handler(Exception)
+# async def log_api_exception(request: Request, exc: Exception):
+#     api_exception_counter.add(1)
+#     return await http_exception_handler(request, exc)
 
 
 # sub-routers
