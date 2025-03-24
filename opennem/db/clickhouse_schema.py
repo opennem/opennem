@@ -58,7 +58,7 @@ async def optimize_clickhouse_tables() -> None:
     Optimize the unit_intervals and market_summary tables to force merges and deduplication.
     This should be run periodically (e.g., daily) during low-traffic periods.
     """
-    client = get_clickhouse_client()
+    client = get_clickhouse_client(timeout=600)
 
     # Optimize unit_intervals
     client.execute("OPTIMIZE TABLE unit_intervals FINAL")

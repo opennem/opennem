@@ -15,7 +15,7 @@ from opennem import settings
 logger = logging.getLogger("opennem.db.clickhouse")
 
 
-def get_clickhouse_client() -> Client:
+def get_clickhouse_client(timeout: int = 10) -> Client:
     """
     Get a ClickHouse client instance using settings from environment.
 
@@ -27,6 +27,7 @@ def get_clickhouse_client() -> Client:
         port=settings.clickhouse_url.port,
         user=settings.clickhouse_url.username,
         password=settings.clickhouse_url.password,
+        settings={"connect_timeout": timeout},
     )
 
 
