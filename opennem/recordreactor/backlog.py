@@ -293,6 +293,12 @@ def _analyze_milestone_records(
     # value limit. 0 is the default but for values that can go negative we exclude it
     value_limit_clause = "" if milestone_type in [MilestoneType.price] else "total_value > 0 and "
 
+    # date cutoffs for certain metrics
+    date_cutoffs = "and time_bucket >= toDateTime('2000-01-01')"
+
+    if milestone_type in [MilestoneType.price, MilestoneType.demand]:
+        date_cutoffs = "and time_bucket >= toDateTime('2009-07-01')"
+
     base_query = f"""
     WITH base_stats AS (
       SELECT
@@ -303,6 +309,7 @@ def _analyze_milestone_records(
       WHERE
         network_id in ('{network.code.upper()}', {list_to_case([i.code for i in network.subnetworks])})
         {date_clause}
+        {date_cutoffs}
       GROUP BY
         {time_bucket_sql}{group_by_select}
       ORDER BY 1 asc, 2
@@ -422,6 +429,7 @@ def _analyze_milestone_records(
       WHERE
         total_value = running_min
         AND (prev_min IS NULL OR total_value < prev_min AND interval_count >= {interval_threshold})
+        AND round(pct_change, 2) > 0.5
     )
     ORDER BY interval"""
 
@@ -501,6 +509,7 @@ def _analyzed_record_to_milestone_schema(
             network_region=network_region,
             fueltech=fueltech,
             value=value,
+            pct_change=round(record["pct_change"], 2) if record["pct_change"] else None,
             instance_id=record["instance_id"],
             previous_instance_id=previous_instance_id,
         )
@@ -511,6 +520,19 @@ def _analyzed_record_to_milestone_schema(
         if primary_keys in milestone_primary_keys:
             logger.info(milestone_schema)
             raise ValueError(f"Duplicate milestone record: {primary_keys}")
+
+        # skip solar and renewable records before 26 October 2015
+        if fueltech in [
+            MilestoneFueltechGrouping.solar,
+            MilestoneFueltechGrouping.renewables,
+        ] and milestone_schema.interval < datetime.fromisoformat("2015-10-26T00:00:00"):
+            continue
+
+        # skip wind before we had non-scheduled generation data
+        if fueltech in [MilestoneFueltechGrouping.wind] and milestone_schema.interval < datetime.fromisoformat(
+            "2009-07-01T00:00:00"
+        ):
+            continue
 
         milestone_primary_keys.append(primary_keys)
 

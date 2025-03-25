@@ -143,6 +143,7 @@ class MilestoneRecordSchema(BaseModel):
     network_region: str | None = None
     fueltech: MilestoneFueltechGrouping | None = None
     value: int | float | None = None
+    pct_change: float | None = None
     instance_id: uuid.UUID | None = None
     previous_instance_id: uuid.UUID | None = None
 
@@ -172,6 +173,7 @@ class MilestoneRecordOutputSchema(BaseModel):
     period: str
     significance: int
     value: int | float
+    pct_change: float | None = None
     value_unit: str
     network_id: str
     network_region: str | None = None

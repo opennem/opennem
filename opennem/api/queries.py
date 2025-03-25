@@ -206,6 +206,10 @@ def get_timeseries_query(
         "date_end": date_end,
     }
 
+    if "OPENNEM_ROOFTOP_BACKFILL" in params["network"]:
+        # remove the network from the list
+        params["network"].remove("OPENNEM_ROOFTOP_BACKFILL")
+
     # logger.info(f"Querying {table_name} for {network.code} from {date_start} to {date_end}")
 
     # Build metric selection part
