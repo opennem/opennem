@@ -293,6 +293,12 @@ def _analyze_milestone_records(
     # value limit. 0 is the default but for values that can go negative we exclude it
     value_limit_clause = "" if milestone_type in [MilestoneType.price] else "total_value > 0 and "
 
+    # date cutoffs for certain metrics
+    date_cutoffs = "and time_bucket >= toDateTime('2000-01-01')"
+
+    if milestone_type in [MilestoneType.price, MilestoneType.demand]:
+        date_cutoffs = "and time_bucket >= toDateTime('2009-07-01')"
+
     base_query = f"""
     WITH base_stats AS (
       SELECT
@@ -303,6 +309,7 @@ def _analyze_milestone_records(
       WHERE
         network_id in ('{network.code.upper()}', {list_to_case([i.code for i in network.subnetworks])})
         {date_clause}
+        {date_cutoffs}
       GROUP BY
         {time_bucket_sql}{group_by_select}
       ORDER BY 1 asc, 2
