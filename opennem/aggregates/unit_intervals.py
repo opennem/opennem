@@ -268,6 +268,16 @@ def _prepare_unit_interval_data(records: Sequence[tuple]) -> list[tuple]:
         .alias("network_region")
     )
 
+    # filter out solar and renewable records before 26 October 2015
+    # df = df.filter(
+    #     (pl.col("fueltech_group_id") != "solar") | (pl.col("interval") >= datetime.fromisoformat("2015-10-26T00:00:00"))
+    # )
+
+    # # filter out wind records before we had non-scheduled generation data on 2009-07-01
+    # df = df.filter(
+    #     (pl.col("fueltech_group_id") != "wind") | (pl.col("interval") >= datetime.fromisoformat("2009-07-01T00:00:00"))
+    # )
+
     # Ensure columns are in the exact order matching the table schema
     result_df = df.select(
         [
@@ -523,6 +533,23 @@ async def run_unit_intervals_backlog(start_date: datetime | None = None, network
         )
 
 
+async def _solar_and_wind_fixes() -> None:
+    """
+    Fix solar and wind records before 2015-10-26 and 2009-07-01 respectively.
+    """
+    client = get_clickhouse_client(timeout=100)
+
+    client.execute("""
+        delete from unit_intervals where fueltech_group_id = 'solar' and interval < '2015-10-26T00:00:00'
+    """)
+
+    client.execute(
+        """
+        DELETE FROM unit_intervals WHERE fueltech_group_id = 'wind' AND interval < '2009-07-01T00:00:00'
+        """
+    )
+
+
 def _backfill_materialized_view(client: any, view: MaterializedView, start_date: datetime, end_date: datetime) -> int:
     """
     Backfill a single materialized view for a given date range.
@@ -631,8 +658,10 @@ def backfill_materialized_views(view: MaterializedView | str | None = None, refr
 if __name__ == "__main__":
     # Run the test
     async def reset_unit_intervals():
-        _refresh_clickhouse_schema()
-        await run_unit_intervals_backlog(start_date=NetworkNEM.data_first_seen.replace(tzinfo=None))
+        # _refresh_clickhouse_schema()
+        # await run_unit_intervals_backlog(start_date=NetworkNEM.data_first_seen.replace(tzinfo=None))
+        await _solar_and_wind_fixes()
+
         await optimize_clickhouse_tables()
 
         # Uncomment to backfill views:

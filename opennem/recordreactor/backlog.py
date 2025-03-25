@@ -528,6 +528,12 @@ def _analyzed_record_to_milestone_schema(
         ] and milestone_schema.interval < datetime.fromisoformat("2015-10-26T00:00:00"):
             continue
 
+        # skip wind before we had non-scheduled generation data
+        if fueltech in [MilestoneFueltechGrouping.wind] and milestone_schema.interval < datetime.fromisoformat(
+            "2009-07-01T00:00:00"
+        ):
+            continue
+
         milestone_primary_keys.append(primary_keys)
 
         milestone_records.append(milestone_schema)
