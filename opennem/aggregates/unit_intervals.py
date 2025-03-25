@@ -540,7 +540,7 @@ async def _solar_and_wind_fixes() -> None:
     client = get_clickhouse_client(timeout=100)
 
     client.execute("""
-        delete from unit_intervals where fueltech_group_id = 'solar' and interval < '2015-10-26T00:00:00'
+        delete from unit_intervals where fueltech_group_id = 'solar' and interval < '2016-08-01T00:00:00'
     """)
 
     client.execute(
