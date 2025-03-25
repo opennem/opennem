@@ -429,7 +429,6 @@ def _analyze_milestone_records(
       WHERE
         total_value = running_min
         AND (prev_min IS NULL OR total_value < prev_min AND interval_count >= {interval_threshold})
-        AND round(pct_change, 2) > 0.5
     )
     ORDER BY interval"""
 
@@ -509,7 +508,9 @@ def _analyzed_record_to_milestone_schema(
             network_region=network_region,
             fueltech=fueltech,
             value=value,
-            pct_change=round(record["pct_change"], 2) if record["pct_change"] else None,
+            pct_change=round(record["pct_change"], 2)
+            if record["pct_change"] and (abs(record["pct_change"]) < 9999 and abs(record["pct_change"]) > 0.01)
+            else None,
             instance_id=record["instance_id"],
             previous_instance_id=previous_instance_id,
         )
@@ -647,7 +648,7 @@ async def run_milestone_analysis_backlog(refresh: bool = False, debug: bool = Fa
     Runs in year chunks
     """
     end_date = get_last_completed_interval_for_network(NetworkNEM)
-    start_date = datetime.fromisoformat("1999-01-01T00:00:00")
+    start_date = NetworkNEM.data_first_seen.replace(tzinfo=None)
     # start_date = end_date - timedelta(days=90)
 
     if refresh:
@@ -689,9 +690,10 @@ if __name__ == "__main__":
 
     async def _test_analyze_milestone_records():
         await run_milestone_analysis(
-            metrics=[MilestoneType.energy],
-            periods=[MilestonePeriod.month],
+            metrics=[MilestoneType.power],
+            periods=[MilestonePeriod.interval],
             groupings=[GroupingConfig(name="fueltech", group_by_fields=["fueltech_group_id"])],
+            networks=[NetworkNEM],
             debug=True,
         )
 
