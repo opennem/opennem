@@ -509,6 +509,7 @@ def _analyzed_record_to_milestone_schema(
             network_region=network_region,
             fueltech=fueltech,
             value=value,
+            pct_change=round(record["pct_change"], 2) if record["pct_change"] else None,
             instance_id=record["instance_id"],
             previous_instance_id=previous_instance_id,
         )

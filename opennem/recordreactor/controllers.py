@@ -40,6 +40,7 @@ def map_milestone_output_records_from_db(db_records: list[dict]) -> list[Milesto
             "network_id": db_record["network_id"],
             "significance": db_record["significance"],
             "value": float(db_record["value"]),
+            "pct_change": float(db_record["pct_change"]) if db_record["pct_change"] else None,
             "value_unit": db_record["value_unit"],
             "description": db_record["description"],
             "previous_instance_id": db_record["previous_instance_id"],
@@ -79,6 +80,7 @@ def map_milestone_schema_from_db(db_records: list[dict]) -> list[MilestoneRecord
             "unit": get_unit_by_value(db_record["value_unit"]),
             "network": network,
             "value": float(db_record["value"]),
+            "pct_change": float(db_record["pct_change"]) if db_record["pct_change"] else None,
         }
 
         if db_record["network_region"]:
@@ -103,6 +105,7 @@ def map_milestone_output_schema_to_record(milestone: MilestoneRecordOutputSchema
         "unit": get_milestone_unit(MilestoneType(milestone.metric)),
         "network": network_from_network_code(milestone.network_id),
         "value": milestone.value,
+        "pct_change": milestone.pct_change,
     }
 
     if milestone.network_region:
