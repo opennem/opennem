@@ -429,6 +429,7 @@ def _analyze_milestone_records(
       WHERE
         total_value = running_min
         AND (prev_min IS NULL OR total_value < prev_min AND interval_count >= {interval_threshold})
+        AND round(pct_change, 2) > 0.5
     )
     ORDER BY interval"""
 
@@ -518,6 +519,13 @@ def _analyzed_record_to_milestone_schema(
         if primary_keys in milestone_primary_keys:
             logger.info(milestone_schema)
             raise ValueError(f"Duplicate milestone record: {primary_keys}")
+
+        # skip solar and renewable records before 26 October 2015
+        if fueltech in [
+            MilestoneFueltechGrouping.solar,
+            MilestoneFueltechGrouping.renewables,
+        ] and milestone_schema.interval < datetime.fromisoformat("2015-10-26T00:00:00"):
+            continue
 
         milestone_primary_keys.append(primary_keys)
 
