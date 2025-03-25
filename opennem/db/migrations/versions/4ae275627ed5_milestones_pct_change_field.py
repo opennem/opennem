@@ -19,7 +19,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.add_column('milestones', sa.Column('pct_change', sa.Numeric(precision=5, scale=2), nullable=True))
+    op.add_column('milestones', sa.Column('pct_change', sa.Numeric(precision=12, scale=2), nullable=True))
 
 
 def downgrade() -> None:
