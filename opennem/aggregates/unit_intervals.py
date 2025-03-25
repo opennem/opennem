@@ -211,6 +211,7 @@ async def _get_unit_interval_data(
     WHERE
         cd.interval >= :start_time
         AND cd.interval < :end_time
+        and network_id not in ('OPENNEM_ROOFTOP_BACKFILL')
     ORDER BY 1,2,3,4,5
     """)
 
