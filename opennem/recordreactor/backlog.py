@@ -280,8 +280,15 @@ def _analyze_milestone_records(
 
     date_clause = f"AND {' AND '.join(date_conditions)}" if date_conditions else ""
 
+    # get the min value for the period
     interval_threshold = INTERVAL_THRESHOLDS.get_for_period(period)
     # interval_threshold = 1
+
+    # get the lowest max value for the period and metric type
+    maxes_min_value = 100
+
+    if milestone_type in [MilestoneType.energy, MilestoneType.emissions]:
+        maxes_min_value = 1000
 
     # value limit. 0 is the default but for values that can go negative we exclude it
     value_limit_clause = "" if milestone_type in [MilestoneType.price] else "total_value > 0 and "
@@ -313,7 +320,7 @@ def _analyze_milestone_records(
         ) as running_max,
         generateUUIDv7() as instance_id
       FROM base_stats
-      WHERE total_value > 0
+      WHERE round(total_value, 0) > {maxes_min_value}
     ),
 
     max_records AS (
