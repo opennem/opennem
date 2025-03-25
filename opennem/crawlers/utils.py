@@ -26,6 +26,8 @@ def get_time_interval_for_crawler(crawler: CrawlerDefinition) -> TimeInterval:
             if not crawler.network.interval_size:
                 raise NemwebCrawlerException("Require an interval size for network for this crawler")
             time_interval = get_interval_by_size(crawler.network.interval_size)
+        elif crawler.bucket_size == AEMODataBucketSize.half_hour:
+            time_interval = get_interval("30m")
         elif crawler.bucket_size == AEMODataBucketSize.day:
             time_interval = get_interval("1d")
         elif crawler.bucket_size == AEMODataBucketSize.week:
