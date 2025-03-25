@@ -208,7 +208,7 @@ def get_timeseries_query(
 
     if "OPENNEM_ROOFTOP_BACKFILL" in params["network"]:
         # remove the network from the list
-        params["network"].remove("AEMO_ROOFTOP_BACKFILL")
+        params["network"].remove("OPENNEM_ROOFTOP_BACKFILL")
 
     # logger.info(f"Querying {table_name} for {network.code} from {date_start} to {date_end}")
 
