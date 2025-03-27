@@ -103,6 +103,7 @@ class WorkerSettings:
         # Optimize unit_intervals table daily
         cron(
             task_optimize_clickhouse_tables,
+            hour={0, 6, 12, 18},
             minute=15,
             second=0,
             timeout=None,
