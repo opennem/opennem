@@ -19,7 +19,7 @@ from opennem.db.clickhouse import (
     get_clickhouse_client,
     table_exists,
 )
-from opennem.db.clickhouse_schema import UNIT_INTERVALS_TABLE_SCHEMA, optimize_clickhouse_tables
+from opennem.db.clickhouse_schema import UNIT_INTERVALS_TABLE_SCHEMA
 from opennem.db.clickhouse_views import (
     FUELTECH_INTERVALS_DAILY_VIEW,
     FUELTECH_INTERVALS_VIEW,
@@ -65,7 +65,7 @@ async def _get_unit_interval_data(
     network_where_clause = ""
 
     if network:
-        network_where_clause = f"AND fs.network_id = '{network.code}'"
+        network_where_clause = f"AND fs.network_id IN ('{"','".join(network.get_network_codes())}')"
 
     query = text(f"""
     WITH filled_balancing_summary AS (
@@ -100,18 +100,19 @@ async def _get_unit_interval_data(
             'solar' as fueltech_group_id,
             TRUE as renewable,
             locf(coalesce(round(sum(fs.generated), 4), 0)) as generated,
-            locf(coalesce(round(sum(fs.energy) / 6, 4), 0)) as energy
+            locf(coalesce(round(sum(fs.energy) / (12 / (60 / n.interval_size)), 4), 0)) as energy
         FROM
             facility_scada fs
         JOIN units u ON fs.facility_code = u.code
         JOIN facilities f ON u.station_id = f.id
+        JOIN network n on fs.network_id = n.code
         WHERE
             fs.is_forecast IS FALSE
             AND u.fueltech_id in ('solar_rooftop')
             AND fs.interval >= :start_time
             AND fs.interval <= :end_time
             {network_where_clause}
-        GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
+        GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, n.interval_size
     ),
     facility_data as (
         SELECT
@@ -360,6 +361,8 @@ async def process_unit_intervals_backlog(
     client = get_clickhouse_client()
     _ensure_clickhouse_schema()
 
+    logger.info(f"Processing unit intervals from {current_start} to {end_date} for network {network.code}")
+
     while current_start <= end_date:
         # For the last chunk, ensure we include the full end date
         chunk_end = min(current_start + chunk_size, end_date + timedelta(minutes=5))
@@ -385,6 +388,8 @@ async def process_unit_intervals_backlog(
             )
 
             logger.info(f"Processed {len(prepared_data)} records from {current_start} to {chunk_end}")
+        else:
+            logger.warning(f"No records found for {current_start} to {chunk_end}")
 
         current_start = chunk_end
 
@@ -492,6 +497,9 @@ async def run_unit_intervals_backlog(start_date: datetime | None = None, network
     """
     # Calculate date range
     end_date = get_last_completed_interval_for_network(network=NetworkNEM)
+
+    if not start_date and network:
+        start_date = network.data_first_seen.replace(tzinfo=None)
 
     if not start_date:
         start_date = NetworkNEM.data_first_seen.replace(tzinfo=None)
@@ -660,12 +668,15 @@ if __name__ == "__main__":
     async def reset_unit_intervals():
         # _refresh_clickhouse_schema()
         # await run_unit_intervals_backlog(start_date=NetworkNEM.data_first_seen.replace(tzinfo=None))
-        await _solar_and_wind_fixes()
+        from opennem.schema.network import NetworkWEM
 
-        await optimize_clickhouse_tables()
+        await run_unit_intervals_backlog(network=NetworkWEM)
+        # await _solar_and_wind_fixes()
+
+        # await optimize_clickhouse_tables()
 
         # Uncomment to backfill views:
-        backfill_materialized_views(refresh_views=True)
+        # backfill_materialized_views(refresh_views=True)
 
     import asyncio
 
