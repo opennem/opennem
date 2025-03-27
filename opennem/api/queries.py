@@ -109,7 +109,7 @@ QUERY_CONFIGS = {
     QueryType.DATA: QueryConfig(
         query_type=QueryType.DATA,
         base_table="unit_intervals",
-        daily_mv="unit_intervals_daily_mv",
+        daily_mv=None,
         monthly_mv=None,
         metric_columns={
             DataMetric.POWER: "generated",
@@ -127,7 +127,7 @@ QUERY_CONFIGS = {
     QueryType.FACILITY: QueryConfig(
         query_type=QueryType.FACILITY,
         base_table="unit_intervals",
-        daily_mv="unit_intervals_daily_mv",
+        daily_mv=None,
         monthly_mv=None,
         metric_columns={
             DataMetric.POWER: "generated",
