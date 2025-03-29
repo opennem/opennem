@@ -12,6 +12,7 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import ORJSONResponse
+from fastapi_cache.decorator import cache
 from fastapi_versionizer import api_version
 
 from opennem.api.data.utils import validate_date_range
@@ -42,6 +43,7 @@ _SUPPORTED_METRICS = [
     response_model=APIV4ResponseSchema,
     response_model_exclude_none=True,
 )
+@cache(expire=60 * 5)
 async def get_network_data(
     network_code: str,
     metrics: Annotated[list[Metric], Query(description="The metrics to get data for", example="energy")],
@@ -165,6 +167,7 @@ async def get_network_data(
     response_model=APIV4ResponseSchema,
     response_model_exclude_none=True,
 )
+@cache(expire=60 * 5)
 async def get_facility_data(
     network_code: str,
     metrics: Annotated[list[Metric], Query(description="The metrics to get data for", example="energy")],
