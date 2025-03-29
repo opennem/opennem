@@ -74,6 +74,7 @@ dependencies = [
     "clickhouse-driver>=0.2.7",
     "clickhouse-sqlalchemy>=0.3.0",
     "opentelemetry-sdk<1.30.0",
+    "orjson>=3.10.16",
 ]
 
 [tool.uv]

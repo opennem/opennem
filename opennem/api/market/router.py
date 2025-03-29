@@ -10,6 +10,7 @@ from datetime import datetime
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import ORJSONResponse
 from fastapi_versionizer import api_version
 
 from opennem.api.data.utils import validate_date_range
@@ -133,4 +134,4 @@ async def get_network_data(
     )
 
     # Return all TimeSeries objects, one per metric
-    return APIV4ResponseSchema(data=timeseries_list)
+    return ORJSONResponse(APIV4ResponseSchema(data=timeseries_list).model_dump())
