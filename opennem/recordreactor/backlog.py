@@ -522,11 +522,16 @@ def _analyzed_record_to_milestone_schema(
             logger.info(milestone_schema)
             raise ValueError(f"Duplicate milestone record: {primary_keys}")
 
-        # skip solar and renewable records before 26 October 2015
+        # skip solar records before 26 October 2015 because of backfill
         if fueltech in [
             MilestoneFueltechGrouping.solar,
-            MilestoneFueltechGrouping.renewables,
         ] and milestone_schema.interval < datetime.fromisoformat("2015-10-26T00:00:00"):
+            continue
+
+        # skip renewables records before 2014 because of backfill
+        if fueltech in [MilestoneFueltechGrouping.renewables] and milestone_schema.interval < datetime.fromisoformat(
+            "2010-01-01T00:00:00"
+        ):
             continue
 
         # skip wind before we had non-scheduled generation data
