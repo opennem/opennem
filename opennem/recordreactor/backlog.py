@@ -530,7 +530,7 @@ def _analyzed_record_to_milestone_schema(
 
         # skip renewables records before 2014 because of backfill
         if fueltech in [MilestoneFueltechGrouping.renewables] and milestone_schema.interval < datetime.fromisoformat(
-            "2006-01-01T00:00:00"
+            "2000-01-01T00:00:00"
         ):
             continue
 
