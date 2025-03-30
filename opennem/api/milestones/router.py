@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, Query
+from fastapi_cache.decorator import cache
 from fastapi_versionizer.versionizer import api_version
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.exceptions import HTTPException
@@ -39,6 +40,7 @@ milestones_router = APIRouter(tags=["Milestones"], include_in_schema=True)
     response_model_exclude_none=True,
     description="Get milestones",
 )
+@cache(expire=60 * 60)
 async def get_milestones(
     limit: int = 100,
     page: int = 1,
@@ -179,6 +181,7 @@ async def get_milestones(
 
 @api_version(4)
 @api_protected()
+@cache(expire=60 * 60)
 @milestones_router.get(
     "/history/{record_id}",
     response_model=APIV4ResponseSchema,
@@ -226,6 +229,7 @@ async def get_milestone_by_record_id(
 
 @api_version(4)
 @api_protected()
+@cache(expire=60 * 60)
 @milestones_router.get(
     "/instance/{instance_id}",
     response_model=APIV4ResponseSchema,
@@ -274,6 +278,7 @@ async def get_milestone(
 
 @api_version(4)
 @api_protected()
+@cache(expire=60 * 60)
 @milestones_router.get(
     "/record_id",
     response_model=APIV4ResponseSchema,
