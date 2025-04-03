@@ -122,6 +122,12 @@ class OpennemSettings(BaseSettings):
     cloudflare_account_id: str | None = None
     cloudflare_api_key: str | None = None
 
+    # twitter
+    twitter_access_token: str | None = None
+    twitter_access_token_secret: str | None = None
+    twitter_api_key: str | None = None
+    twitter_api_key_secret: str | None = None
+
     # feature flags
     run_milestones: bool = True  # do we enable the milestones
     run_crawlers: bool = True  # do we enable the crawlers
