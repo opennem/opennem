@@ -16,6 +16,8 @@ from typing import Any
 from clickhouse_driver.client import Client
 from sqlalchemy import func, select, text
 
+from opennem import settings
+from opennem.clients.slack import slack_message
 from opennem.db import get_read_session, get_write_session
 from opennem.db.clickhouse import get_clickhouse_client
 from opennem.db.models.opennem import Milestones
@@ -580,7 +582,7 @@ async def run_milestone_analysis(
     periods: list[MilestonePeriod] | None = None,
     groupings: list[GroupingConfig] | None = None,
     debug: bool = False,
-) -> None:
+) -> list[MilestoneRecordSchema]:
     """
     Run milestone analysis across all grouping configurations.
 
@@ -646,9 +648,12 @@ async def run_milestone_analysis(
                     await check_and_persist_milestones_chunked(milestone_records)
 
     logger.info("Milestone analysis complete")
+    return milestone_records
 
 
-async def run_milestone_analysis_backlog(refresh: bool = False, debug: bool = False):
+async def run_milestone_analysis_backlog(
+    refresh: bool = False, debug: bool = False, alert_slack: bool = False, alert_twitter: bool = False
+):
     """
     Runs in year chunks
     """
@@ -661,7 +666,20 @@ async def run_milestone_analysis_backlog(refresh: bool = False, debug: bool = Fa
             await session.execute(text("delete from milestones"))
         logger.info("Milestones table deleted")
 
-    await run_milestone_analysis(start_date=start_date, end_date=end_date, debug=debug)
+    milestone_records = await run_milestone_analysis(start_date=start_date, end_date=end_date, debug=debug)
+
+    # filter milestones for alerts to significance 8 or above
+    milestone_records = list(filter(lambda x: x.significance >= 8, milestone_records))
+
+    if alert_slack and milestone_records:
+        await slack_message(
+            webhook_url=settings.slack_hook_records,
+            message=f"Milestone analysis complete for {start_date} to {end_date}",
+        )
+
+    if alert_twitter and milestone_records:
+        pass
+        # await post_tweet(f"Milestone analysis complete for {start_date} to {end_date}")
 
 
 async def run_update_milestone_analysis_to_now() -> None:

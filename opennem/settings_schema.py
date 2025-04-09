@@ -78,6 +78,7 @@ class OpennemSettings(BaseSettings):
     slack_hook_feedback: str | None = None
     slack_hook_platform_alerts: str | None = None
     slack_hook_aemo_market_notices: str | None = None
+    slack_hook_records: str | None = None
     slack_admin_alert: list[str] | None = ["nik"]
 
     # R2 settings
