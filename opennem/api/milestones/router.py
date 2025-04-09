@@ -40,7 +40,7 @@ milestones_router = APIRouter(tags=["Milestones"], include_in_schema=True)
     response_model_exclude_none=True,
     description="Get milestones",
 )
-@cache(expire=60 * 60)
+# @cache(expire=60 * 60)
 async def get_milestones(
     limit: int = 100,
     page: int = 1,
@@ -181,7 +181,7 @@ async def get_milestones(
 
 @api_version(4)
 @api_protected()
-@cache(expire=60 * 60)
+# @cache(expire=60 * 60)
 @milestones_router.get(
     "/history/{record_id}",
     response_model=APIV4ResponseSchema,
@@ -278,7 +278,7 @@ async def get_milestone(
 
 @api_version(4)
 @api_protected()
-@cache(expire=60 * 60)
+# @cache(expire=60 * 60)
 @milestones_router.get(
     "/record_id",
     response_model=APIV4ResponseSchema,
