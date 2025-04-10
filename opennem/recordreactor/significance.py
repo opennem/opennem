@@ -53,7 +53,7 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
         MilestonePeriod.year,
     ]:
         if (
-            milestone.fueltech in ["solar", "wind", "renewables", "battery_discharging"]
+            milestone.fueltech in ["solar", "wind", "renewables", "battery_discharging", "battery_charging"]
             and milestone.aggregate == MilestoneAggregate.high
         ):
             if milestone.network_region is None:
