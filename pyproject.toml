@@ -76,6 +76,7 @@ dependencies = [
     "opentelemetry-sdk<1.30.0",
     "orjson>=3.10.16",
     "tweepy[async]>=4.15.0",
+    "atproto>=0.0.59",
 ]
 
 [tool.uv]
