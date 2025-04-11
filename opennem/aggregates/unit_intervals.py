@@ -361,7 +361,7 @@ async def process_unit_intervals_backlog(
     client = get_clickhouse_client()
     _ensure_clickhouse_schema()
 
-    logger.info(f"Processing unit intervals from {current_start} to {end_date} for network {network.code}")
+    logger.info(f"Processing unit intervals from {current_start} to {end_date} for network {network.code if network else 'all'}")
 
     while current_start <= end_date:
         # For the last chunk, ensure we include the full end date
