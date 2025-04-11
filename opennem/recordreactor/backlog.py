@@ -27,6 +27,7 @@ from opennem.recordreactor.schema import (
     MilestoneAggregate,
     MilestoneFueltechGrouping,
     MilestonePeriod,
+    MilestoneRecordOutputSchema,
     MilestoneRecordSchema,
     MilestoneType,
 )
@@ -582,7 +583,7 @@ async def run_milestone_analysis(
     periods: list[MilestonePeriod] | None = None,
     groupings: list[GroupingConfig] | None = None,
     debug: bool = False,
-) -> list[MilestoneRecordSchema]:
+) -> list[MilestoneRecordOutputSchema]:
     """
     Run milestone analysis across all grouping configurations.
 
@@ -596,6 +597,7 @@ async def run_milestone_analysis(
         debug: Optional flag to enable debug mode
     """
     client = get_clickhouse_client()
+    milestone_schema_records: list[MilestoneRecordOutputSchema] = []
 
     # Iterate through all periods and grouping configurations
     for metric in metrics or _DEFAULT_METRICS:
@@ -645,10 +647,10 @@ async def run_milestone_analysis(
                         f"Found {len(milestone_records)} milestone records for {network.code} {metric.value} {period.value}"
                     )
 
-                    await check_and_persist_milestones_chunked(milestone_records)
+                    milestone_schema_records.extend(await check_and_persist_milestones_chunked(milestone_records))
 
     logger.info("Milestone analysis complete")
-    return milestone_records
+    return milestone_schema_records
 
 
 async def run_milestone_analysis_backlog(
@@ -669,7 +671,7 @@ async def run_milestone_analysis_backlog(
     milestone_records = await run_milestone_analysis(start_date=start_date, end_date=end_date, debug=debug)
 
     # filter milestones for alerts to significance 8 or above
-    milestone_records = list(filter(lambda x: x.significance >= 8, milestone_records))
+    milestone_records = list(filter(lambda x: x.significance >= 9, milestone_records))
 
     if alert_slack and milestone_records:
         await slack_message(
