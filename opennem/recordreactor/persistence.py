@@ -28,7 +28,7 @@ def _chunks(lst: list, n: int):
         yield lst[i : i + n]
 
 
-async def check_and_persist_milestones_chunked(milestones: list[MilestoneRecordSchema]) -> int:
+async def check_and_persist_milestones_chunked(milestones: list[MilestoneRecordSchema]) -> list[MilestoneRecordOutputSchema]:
     """
     Persist milestones using bulk insert
 
@@ -42,13 +42,14 @@ async def check_and_persist_milestones_chunked(milestones: list[MilestoneRecordS
         int - the number of records inserted
     """
     if not milestones:
-        return 0
+        return []
 
     # ensure milestones are sorted from earliest to latest
     milestones = sorted(milestones, key=lambda x: x.interval)
 
     # Pre-process records into a list of dictionaries for bulk insert
     milestone_records = []
+    milestone_schema_records: list[MilestoneRecordOutputSchema] = []
 
     # get the current milestone state
     milestone_state = await get_current_milestone_state()
@@ -104,9 +105,10 @@ async def check_and_persist_milestones_chunked(milestones: list[MilestoneRecordS
             "fueltech_id": record.fueltech.value if record.fueltech else None,
         }
         milestone_records.append(milestone_dict)
+        milestone_schema_records.append(MilestoneRecordOutputSchema(**milestone_dict))
 
     if not milestone_records:
-        return 0
+        return []
 
     total_inserted = 0
     async with get_write_session() as session:
@@ -149,7 +151,7 @@ async def check_and_persist_milestones_chunked(milestones: list[MilestoneRecordS
 
         await session.commit()
         logger.info(f"Successfully inserted {total_inserted} records")
-        return total_inserted
+        return milestone_schema_records
 
 
 async def check_and_persist_milestones(

@@ -129,6 +129,10 @@ class OpennemSettings(BaseSettings):
     twitter_api_key: str | None = None
     twitter_api_key_secret: str | None = None
 
+    # bluesky
+    bluesky_handle: str | None = None
+    bluesky_password: str | None = None
+
     # feature flags
     run_milestones: bool = True  # do we enable the milestones
     run_crawlers: bool = True  # do we enable the crawlers

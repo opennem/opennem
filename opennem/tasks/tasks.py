@@ -66,16 +66,16 @@ async def task_nem_interval_check(ctx) -> None:
             logfire.warning("No new data from crawlers")
             raise Retry(defer=ctx["job_try"] * 15)
 
+    # update energy
+    await process_energy_last_intervals(num_intervals=12 * 3)
+
     # update facility aggregates
-    await run_update_facility_aggregate_last_interval(num_intervals=3)
+    await run_update_facility_aggregate_last_interval(num_intervals=12 * 3)
 
     # update aggregates
     # update market summary
     await run_market_summary_aggregate_to_now()
     await run_unit_intervals_aggregate_to_now()
-
-    # update energy
-    await process_energy_last_intervals(num_intervals=3)
 
     # run flows
     run_flows_for_last_days(days=1, network=NetworkNEM)
