@@ -59,12 +59,8 @@ async def task_nem_interval_check(ctx) -> None:
     """This task runs per interval and checks for new data"""
     with logfire.span("task_nem_interval_check"):
         _ = await run_crawl(AEMONemwebDispatchIS, latest=True)
-        dispatch_scada = await run_crawl(AEMONNemwebDispatchScada, latest=True)
+        _ = await run_crawl(AEMONNemwebDispatchScada, latest=True)
         _ = await run_crawl(AEMONemwebTradingIS, latest=True)
-
-        if not dispatch_scada.inserted_records:
-            logfire.warning("No new data from crawlers")
-            raise Retry(defer=ctx["job_try"] * 15)
 
     # update energy
     await process_energy_last_intervals(num_intervals=12 * 3)
