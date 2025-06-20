@@ -234,6 +234,8 @@ class Facility(Base):
     wikidata_id: Mapped[str | None] = mapped_column(Text, nullable=True)
     approved: Mapped[bool] = mapped_column(Boolean, default=False)
 
+    cms_id: Mapped[str | None] = mapped_column(Text, nullable=True)
+
     units: Mapped[list["Unit"]] = relationship("Unit", innerjoin=True, lazy="selectin")
 
     __table_args__ = (UniqueConstraint("code", name="excl_station_network_duid"),)
@@ -280,8 +282,7 @@ class Unit(Base):
     capacity_registered: Mapped[float | None] = mapped_column(Numeric, nullable=True)
     registered: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     deregistered: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-    expected_closure_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-    expected_closure_year: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
     unit_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
     unit_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
     unit_alias: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -294,6 +295,14 @@ class Unit(Base):
     data_first_seen: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
     data_last_seen: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
     approved: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    commencement_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    closure_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    expected_operation_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    expected_closure_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    expected_closure_year: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
+    cms_id: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     facility = relationship("Facility", innerjoin=True, back_populates="units", lazy="selectin")
 

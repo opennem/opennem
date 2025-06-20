@@ -6,7 +6,7 @@ Schema for facility units
 import enum
 from datetime import date
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from opennem.schema.field_types import DUIDType, RoundedFloat2, RoundedFloat4
 
@@ -66,5 +66,11 @@ class UnitSchema(BaseModel):
     storage_capacity: RoundedFloat2 | None = None
     emissions_factor_co2: RoundedFloat4 | None = None
     expected_closure_date: date | None = None
+    expected_operation_date: date | None = None
     commencement_date: date | None = None
     closure_date: date | None = None
+
+    cms_id: str | None = Field(None, alias="_id")
+
+    class Config:
+        extra = "allow"
