@@ -249,6 +249,9 @@ async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None,
         crawlers.extend(ALL_WEM_CRAWLERS)
 
     for crawler in crawlers:
+        if "archive" in crawler.name.lower() and days < 3:
+            continue
+
         await run_crawl(crawler, latest=latest, limit=_get_limit_for_crawler(crawler, days))
 
         # run the archive crawler if required and if it exists
