@@ -37,6 +37,7 @@ from opennem.crawlers.wemde import run_all_wem_crawlers
 from opennem.db.clickhouse_schema import optimize_clickhouse_tables
 from opennem.exporter.archive import generate_archive_dirlisting, sync_archive_exports
 from opennem.exporter.facilities import export_facilities_static
+from opennem.exporter.storage_bucket import export_capacity_history_json
 
 # from opennem.exporter.historic import export_historic_intervals
 from opennem.pipelines.export import run_export_power_latest_for_network
@@ -223,6 +224,16 @@ async def task_export_daily_monthly(ctx) -> None:
     """Runs the daily and monthly exports"""
     await export_all_daily()
     await export_all_monthly()
+
+
+@logfire.instrument("task_export_capacity_history")
+async def task_export_capacity_history(ctx) -> None:
+    """Export capacity history data to JSON and upload to Cloudflare.
+
+    Runs nightly to update the capacity history based on unit commencement
+    and closure dates.
+    """
+    await export_capacity_history_json()
 
 
 # cms tasks from webhooks

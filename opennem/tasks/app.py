@@ -41,6 +41,7 @@ from opennem.tasks.tasks import (
     task_catchup_days,
     task_check_unsplit_batteries,
     task_clean_tmp_dir,
+    task_export_capacity_history,
     task_export_daily_monthly,
     task_export_energy,
     task_export_facility_geojson,
@@ -156,6 +157,15 @@ class WorkerSettings:
             task_export_daily_monthly,
             hour=4,
             minute=17,
+            second=0,
+            timeout=None,
+            unique=True,
+        ),
+        # export capacity history
+        cron(
+            task_export_capacity_history,
+            hour=3,
+            minute=30,
             second=0,
             timeout=None,
             unique=True,
