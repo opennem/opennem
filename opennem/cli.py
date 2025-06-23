@@ -98,6 +98,60 @@ def import_bom_stations_command() -> None:
         raise typer.Exit(1) from e
 
 
+@import_app.command("rooftop-capacity-history")
+@async_to_sync
+async def import_rooftop_capacity_history_command() -> None:
+    """Import historical rooftop capacity data from APVI into unit_history table."""
+    try:
+        from opennem.workers.rooftop_capacity_history import import_rooftop_capacity_history
+
+        await import_rooftop_capacity_history()
+        console.print("[green]Rooftop capacity history imported successfully[/green]")
+    except Exception as e:
+        logger.error(f"Failed to import rooftop capacity history: {e}")
+        raise typer.Exit(1) from e
+
+
+@db_app.command("check-rooftop-units")
+@async_to_sync
+async def check_rooftop_units_command() -> None:
+    """Check which rooftop units exist in the database."""
+    try:
+        from opennem.workers.rooftop_capacity_history import check_rooftop_units
+
+        await check_rooftop_units()
+    except Exception as e:
+        logger.error(f"Failed to check rooftop units: {e}")
+        raise typer.Exit(1) from e
+
+
+@db_app.command("view-capacity-history")
+@async_to_sync
+async def view_capacity_history_command() -> None:
+    """View summary of imported capacity history data."""
+    try:
+        from opennem.workers.rooftop_capacity_history import view_capacity_history_summary
+
+        await view_capacity_history_summary()
+    except Exception as e:
+        logger.error(f"Failed to view capacity history: {e}")
+        raise typer.Exit(1) from e
+
+
+@db_app.command("clean-capacity-history")
+@async_to_sync
+async def clean_capacity_history_command() -> None:
+    """Clean up incorrect high capacity values from unit_history table."""
+    try:
+        from opennem.workers.rooftop_capacity_history import clean_incorrect_capacity_values
+
+        await clean_incorrect_capacity_values()
+        console.print("[green]Capacity history cleaned successfully[/green]")
+    except Exception as e:
+        logger.error(f"Failed to clean capacity history: {e}")
+        raise typer.Exit(1) from e
+
+
 # Inspect command
 @app.command("inspect")
 @async_to_sync
