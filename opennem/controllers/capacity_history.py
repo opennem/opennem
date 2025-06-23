@@ -14,7 +14,7 @@ import polars as pl
 
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.exporter.storage_bucket import cloudflare_uploader
-from opennem.queries.capacity_history import get_capacity_history
+from opennem.queries.capacity_history import get_capacity_history, get_rooftop_capacity_history
 from opennem.schema.network import NetworkNEM
 
 logger = logging.getLogger(__name__)
@@ -142,12 +142,23 @@ async def export_capacity_history_json() -> str:
 
         logger.info(f"Generating capacity history from {start_date} to {end_date}")
 
-        # Get the data
-        df = await get_capacity_history(start_date, end_date)
+        # Get the data from both queries
+        df_units = await get_capacity_history(start_date, end_date)
+        df_rooftop = await get_rooftop_capacity_history(start_date, end_date)
 
-        if df.is_empty():
+        # Combine the dataframes
+        if df_units.is_empty() and df_rooftop.is_empty():
             logger.warning("No capacity history data found")
             return ""
+        elif df_units.is_empty():
+            df = df_rooftop
+        elif df_rooftop.is_empty():
+            df = df_units
+        else:
+            # Concatenate both dataframes
+            df = pl.concat([df_units, df_rooftop], how="vertical")
+
+        logger.info(f"Combined capacity history: {len(df)} total records ({len(df_units)} units, {len(df_rooftop)} rooftop)")
 
         # Pad missing values with zeros
         padded_df = pad_missing_values(df)
@@ -179,3 +190,9 @@ async def export_capacity_history_json() -> str:
     except Exception as e:
         logger.error(f"Error exporting capacity history: {e}")
         raise
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    asyncio.run(export_capacity_history_json())
