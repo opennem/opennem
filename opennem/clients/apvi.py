@@ -245,15 +245,16 @@ async def get_apvi_rooftop_data(day: date | None = None) -> APVIForecastSet | No
 
 
 async def get_apvi_rooftop_capacity() -> pl.DataFrame:
-    """Get the APVI rooftop capacity for a postcode"""
+    """Get the APVI rooftop capacity for all postcodes in each state"""
 
     all_data = pl.DataFrame()
 
     for postcode_prefix, region in POSTCODE_STATE_PREFIXES.items():
         state_df = pl.DataFrame()
-        postcode_state = f"{postcode_prefix}000"
+        # Use XXX pattern to get all postcodes for the state
+        postcode_pattern = f"{postcode_prefix}XXX"
 
-        apvi_capacity_url = APVI_CAPACITY_URL.format(postcode=postcode_state)
+        apvi_capacity_url = APVI_CAPACITY_URL.format(postcode=postcode_pattern)
 
         logger.info(f"Getting APVI capacity for {postcode_prefix} {region} {apvi_capacity_url}")
         response = await _apvi_request_session.request("GET", apvi_capacity_url)
@@ -265,11 +266,12 @@ async def get_apvi_rooftop_capacity() -> pl.DataFrame:
 
         response_json = response.json()
 
-        if postcode_state not in response_json:
-            logger.error(f"Invalid APVI Return: {postcode_state} not found in {response_json}")
+        # With XXX pattern, the key should be the pattern itself
+        if postcode_pattern not in response_json:
+            logger.error(f"Invalid APVI Return: {postcode_pattern} not found in {response_json}")
             continue
 
-        state_df = pl.DataFrame(response_json[postcode_state])
+        state_df = pl.DataFrame(response_json[postcode_pattern])
 
         state_df = state_df.with_columns(pl.col("month").str.strptime(pl.Date, "%Y-%m"))
 
@@ -292,7 +294,8 @@ async def get_apvi_rooftop_capacity() -> pl.DataFrame:
             # "5000_30000",
             # "30000",
         ]
-        state_df = state_df.with_columns(pl.sum_horizontal(capacity_columns).alias("capacity_registered"))
+        # Sum capacity columns and convert from kW to MW
+        state_df = state_df.with_columns((pl.sum_horizontal(capacity_columns) / 1000).alias("capacity_registered"))
 
         # drop the individual capacity columns to simplify output
         state_df = state_df.drop(capacity_columns)
