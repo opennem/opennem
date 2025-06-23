@@ -7,6 +7,7 @@ from json.decoder import JSONDecodeError
 from typing import Any
 from urllib.parse import urlencode
 
+import polars as pl
 from pydantic import ValidationError, field_validator
 
 from opennem import settings
@@ -23,6 +24,8 @@ logger = logging.getLogger(__name__)
 # APVI_DATA_URI = "https://pv-map.apvi.org.au/data"
 
 APVI_DATA_URI = "https://pv-map.apvi.org.au/api/v2/2-digit/{date}.json"
+
+APVI_CAPACITY_URL = "https://pv-map.apvi.org.au/data/postcode/monthly/capacity/{postcode}"
 
 APVI_NETWORK_CODE = "APVI"
 
@@ -120,6 +123,7 @@ class APVIForecastInterval(BaseConfig):
 
 class APVIStateRooftopCapacity(BaseConfig):
     state: str
+    month: date | None = None
     capacity_registered: float
     facility_code: str | None = None
     unit_number: int | None = None
@@ -240,13 +244,59 @@ async def get_apvi_rooftop_data(day: date | None = None) -> APVIForecastSet | No
     return apvi_forecast_set
 
 
+async def get_apvi_rooftop_capacity() -> pl.DataFrame:
+    """Get the APVI rooftop capacity for a postcode"""
+
+    all_data = pl.DataFrame()
+
+    for postcode_prefix, region in POSTCODE_STATE_PREFIXES.items():
+        state_df = pl.DataFrame()
+        postcode_state = f"{postcode_prefix}000"
+
+        apvi_capacity_url = APVI_CAPACITY_URL.format(postcode=postcode_state)
+
+        logger.info(f"Getting APVI capacity for {postcode_prefix} {region} {apvi_capacity_url}")
+        response = await _apvi_request_session.request("GET", apvi_capacity_url)
+
+        if response.is_error:
+            logger.error(f"Invalid APVI Return: {response.status_code}")
+            logger.debug(response.text)
+            continue
+
+        response_json = response.json()
+
+        if postcode_state not in response_json:
+            logger.error(f"Invalid APVI Return: {postcode_state} not found in {response_json}")
+            continue
+
+        state_df = pl.DataFrame(response_json[postcode_state])
+
+        state_df = state_df.with_columns(pl.col("month").str.strptime(pl.Date, "%Y-%m"))
+
+        # add field facility_code to dataframe
+        state_df = state_df.with_columns(
+            pl.lit(f"ROOFTOP_APVI_{region.upper()}").alias("facility_code"), pl.lit(region.upper()).alias("state")
+        )
+
+        # sum the capacity columns
+        capacity_columns = ["2hf", "2hf_4hf", "4hf_6hf", "6hf_9hf", "9hf_14", "14_25", "25_50", "50_100", "100_5000"]
+        state_df = state_df.with_columns(pl.sum_horizontal(capacity_columns).alias("capacity_registered"))
+
+        all_data = all_data.vstack(state_df)
+
+    # Sort by facility_code then month ascending
+    all_data = all_data.sort(["facility_code", "month"])
+
+    return all_data
+
+
 if __name__ == "__main__":
     import asyncio
 
-    cr = asyncio.run(get_apvi_rooftop_data())
+    df = asyncio.run(get_apvi_rooftop_capacity())
 
-    if not cr:
+    if df.is_empty():
         raise Exception("Invalid APVI Data")
 
-    with open("apvi.json", "w") as fh:
-        fh.write(cr.model_dump_json(indent=4))
+    # print the dataframe
+    print(df)
