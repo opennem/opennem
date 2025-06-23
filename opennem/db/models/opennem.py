@@ -305,6 +305,7 @@ class Unit(Base):
     cms_id: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     facility = relationship("Facility", innerjoin=True, back_populates="units", lazy="selectin")
+    history = relationship("UnitHistory", back_populates="unit", order_by="UnitHistory.changed_at.desc()", lazy="selectin")
 
     __table_args__ = (
         Index("idx_facility_station_id", "station_id", postgresql_using="btree"),
@@ -325,6 +326,41 @@ class Unit(Base):
 
     def __repr__(self) -> str:
         return f"{self.__class__} {self.code} <{self.fueltech_id}>"
+
+
+class UnitHistory(Base, BaseModel):
+    """
+    Tracks historical changes to unit fields.
+
+    This table stores the history of changes to specific unit fields over time.
+    NULL values in tracked fields indicate no change to that field in this history entry.
+    """
+
+    __tablename__ = "unit_history"
+
+    id = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
+    unit_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("units.id", name="fk_unit_history_unit_id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    changed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), index=True)
+    changed_by: Mapped[str | None] = mapped_column(Text, nullable=True)
+    change_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    # Tracked fields - NULL means no change to this field
+    capacity_registered: Mapped[float | None] = mapped_column(Numeric, nullable=True)
+    emissions_factor_co2: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    emission_factor_source: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    # Relationship
+    unit = relationship("Unit", back_populates="history")
+
+    __table_args__ = (Index("idx_unit_history_unit_id_changed_at", "unit_id", "changed_at"),)
+
+    def __str__(self) -> str:
+        return f"<UnitHistory: unit_id={self.unit_id} changed_at={self.changed_at}>"
+
+    def __repr__(self) -> str:
+        return f"{self.__class__} unit_id={self.unit_id} changed_at={self.changed_at}"
 
 
 class FacilityScada(Base):
