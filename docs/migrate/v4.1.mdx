@@ -1,0 +1,147 @@
+---
+title: OpenNEM v4.1 Migration Guide
+description: Database migrations and data imports for OpenNEM v4.1
+---
+
+# OpenNEM v4.1 Migration Guide
+
+This guide covers the database migrations and data imports required when deploying OpenNEM v4.1 to production.
+
+## Database Migrations
+
+### 1. Unit History Table ([#431](https://github.com/opennem/opennem/issues/431))
+
+The `unit_history` table has been added to track changes to unit fields over time. This enables temporal analysis of capacity changes and other unit attributes.
+
+**Migration file:** `07e436912603_add_unit_history_table.py`
+
+Run the migration:
+```bash
+alembic upgrade head
+```
+
+This creates:
+- Table: `unit_history`
+- Columns:
+  - `id`: Primary key
+  - `unit_id`: Foreign key to units table
+  - `changed_at`: Timestamp of the change
+  - `capacity_registered`: The capacity value at that time
+  - `changed_by`: Who made the change (e.g., "APVI Import")
+  - `change_reason`: Reason for the change
+  - `created_at`: When this history record was created
+  - `updated_at`: When this history record was last updated
+- Indexes on `unit_id`, `changed_at`, and composite `(unit_id, changed_at)`
+
+## Data Imports
+
+### 1. APVI Rooftop Capacity History ([#432](https://github.com/opennem/opennem/issues/432))
+
+Import historical rooftop solar capacity data from APVI for all Australian states.
+
+**Prerequisites:**
+- Ensure all rooftop units exist in the database (ROOFTOP_APVI_NSW, ROOFTOP_APVI_VIC, etc.)
+- Check units exist:
+  ```bash
+  opennem db check-rooftop-units
+  ```
+
+**Import Command:**
+```bash
+opennem import rooftop-capacity-history
+```
+
+This will:
+- Fetch historical capacity data from APVI API for all postcodes in each state (using XXX wildcard pattern)
+- Convert values from kW to MW
+- Calculate cumulative capacity over time (as APVI provides monthly new installations)
+- Insert ~1,311 historical records spanning 2007-2025 into the `unit_history` table
+
+**Expected Results:**
+- NSW: ~8,152 MW (highest)
+- QLD: ~7,202 MW
+- VIC: ~5,354 MW
+- WA: ~3,011 MW
+- SA: ~2,840 MW
+- TAS: ~361 MW
+- NT: ~0.4 MW
+- **Total**: ~26.9 GW
+
+**Verification:**
+```bash
+opennem db view-capacity-history
+```
+
+### 2. Unit Intervals Aggregation
+
+The unit intervals aggregation has been updated to use ClickHouse for better performance.
+
+**ClickHouse Setup:**
+1. Ensure ClickHouse tables are created:
+   - `unit_intervals` table
+   - Materialized views for different time aggregations
+
+2. Run initial aggregation:
+   ```bash
+   opennem catchup --days 30
+   ```
+
+This will populate the `unit_intervals` table in ClickHouse with historical data.
+
+## Troubleshooting
+
+### Incorrect Capacity Values
+
+If you see unreasonably high capacity values (e.g., >10,000 MW for a single state), run the cleanup:
+
+```bash
+opennem db clean-capacity-history
+```
+
+This will:
+1. Delete all existing rooftop capacity history records
+2. Re-import with correct values
+
+### Missing Rooftop Units
+
+If rooftop units are missing from the database, they need to be created first. Check with your database administrator or refer to the units seeding documentation.
+
+## Rollback Procedures
+
+### Unit History Table
+```bash
+alembic downgrade -1
+```
+
+### Capacity History Data
+To remove imported capacity history:
+```sql
+DELETE FROM unit_history
+WHERE unit_id IN (
+    SELECT id FROM units
+    WHERE code LIKE 'ROOFTOP_APVI_%'
+);
+```
+
+## Post-Migration Verification
+
+1. Verify unit history table exists:
+   ```sql
+   SELECT COUNT(*) FROM unit_history;
+   ```
+
+2. Verify rooftop capacity data:
+   ```bash
+   opennem db view-capacity-history
+   ```
+
+3. Check API endpoints are returning updated data:
+   - `/v4/data/facility/{facility_code}`
+   - `/v4/data/network/{network_code}/rooftop`
+
+## Notes
+
+- The APVI API returns capacity in kW, which is converted to MW in our system
+- Capacity values are cumulative (total installed capacity up to that date)
+- Historical data goes back to 2007 for most states
+- NT has limited data (only one record from 2023)
