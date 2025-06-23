@@ -279,13 +279,33 @@ async def get_apvi_rooftop_capacity() -> pl.DataFrame:
         )
 
         # sum the capacity columns
-        capacity_columns = ["2hf", "2hf_4hf", "4hf_6hf", "6hf_9hf", "9hf_14", "14_25", "25_50", "50_100", "100_5000"]
+        capacity_columns = [
+            "2hf",
+            "2hf_4hf",
+            "4hf_6hf",
+            "6hf_9hf",
+            "9hf_14",
+            "14_25",
+            "25_50",
+            "50_100",
+            "100_5000",
+            # "5000_30000",
+            # "30000",
+        ]
         state_df = state_df.with_columns(pl.sum_horizontal(capacity_columns).alias("capacity_registered"))
+
+        # drop the individual capacity columns to simplify output
+        state_df = state_df.drop(capacity_columns)
+        # also drop the large capacity columns we're not summing
+        state_df = state_df.drop(["5000_30000", "30000"])
 
         all_data = all_data.vstack(state_df)
 
     # Sort by facility_code then month ascending
     all_data = all_data.sort(["facility_code", "month"])
+
+    # Calculate cumulative capacity for each facility_code
+    all_data = all_data.with_columns(pl.col("capacity_registered").cum_sum().over("facility_code").alias("capacity_registered"))
 
     return all_data
 
@@ -299,4 +319,4 @@ if __name__ == "__main__":
         raise Exception("Invalid APVI Data")
 
     # print the dataframe
-    print(df)
+    print(df.head(50))
