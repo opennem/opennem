@@ -119,6 +119,7 @@ async def get_rooftop_capacity_history(
 
     Retrieves capacity history for APVI rooftop units and maps them to NEM/WEM networks.
     ROOFTOP_APVI_WA is mapped to WEM, all others to NEM with their respective regions.
+    Uses TimescaleDB's time_bucket_gapfill and locf to ensure all months have values.
 
     Args:
         start_date: Start date for the capacity history query
@@ -131,7 +132,12 @@ async def get_rooftop_capacity_history(
     query = text("""
         WITH monthly_rooftop AS (
             SELECT
-                date_trunc('month', uh.changed_at) AS month_start,
+                time_bucket_gapfill(
+                    '1 month',
+                    uh.changed_at,
+                    CAST(:start_date AS timestamp),
+                    CAST(:end_date AS timestamp) + interval '1 month'
+                ) AS month_start,
                 u.code AS unit_code,
                 -- Map APVI network to NEM/WEM
                 CASE
@@ -149,19 +155,22 @@ async def get_rooftop_capacity_history(
                     ELSE NULL
                 END AS network_region,
                 'solar_rooftop' AS fueltech_id,
-                -- Get the latest capacity for each month
-                MAX(uh.capacity_registered) AS total_capacity
+                -- Use locf to carry forward the last known capacity for missing months
+                locf(MAX(uh.capacity_registered)) AS total_capacity
             FROM unit_history uh
-            INNER JOIN units u ON uh.unit_id = u.id
-            WHERE
-                u.code LIKE 'ROOFTOP_APVI_%'
-                AND u.code != 'ROOFTOP_APVI_NT'  -- Exclude NT
-                AND uh.capacity_registered IS NOT NULL
-                AND uh.changed_at >= date_trunc('month', CAST(:start_date AS timestamp))
-                AND uh.changed_at <= date_trunc('month', CAST(:end_date AS timestamp)) + interval '1 month' - interval '1 second'
+            RIGHT JOIN (
+                -- Get all relevant unit codes
+                SELECT DISTINCT id, code
+                FROM units
+                WHERE code LIKE 'ROOFTOP_APVI_%'
+                AND code != 'ROOFTOP_APVI_NT'
+            ) u ON uh.unit_id = u.id
+                AND uh.changed_at >= CAST(:start_date AS timestamp)
+                AND uh.changed_at < CAST(:end_date AS timestamp) + interval '1 month'
             GROUP BY
-                date_trunc('month', uh.changed_at),
+                1,
                 u.code
+            ORDER BY u.code, month_start
         )
         SELECT
             month_start,
@@ -171,6 +180,7 @@ async def get_rooftop_capacity_history(
             SUM(total_capacity) AS total_capacity
         FROM monthly_rooftop
         WHERE network_region IS NOT NULL
+            AND total_capacity IS NOT NULL
         GROUP BY
             month_start,
             network_id,
