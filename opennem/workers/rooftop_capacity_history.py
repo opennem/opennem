@@ -135,7 +135,7 @@ async def import_rooftop_capacity_history() -> None:
                 {
                     "unit_id": unit_mapping[row["facility_code"]],
                     "changed_at": datetime.combine(row["month"], datetime.min.time()),
-                    "capacity_registered": row["capacity_registered"],
+                    "capacity_registered": round(row["capacity_registered"], 4),  # Round to 4 decimal places
                     "changed_by": "apvi_import",
                     "change_reason": "Historical capacity data import from APVI",
                 }

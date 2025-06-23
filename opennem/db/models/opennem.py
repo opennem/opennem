@@ -279,7 +279,7 @@ class Unit(Base):
         Integer, ForeignKey("facilities.id", name="fk_unit_facility_id"), nullable=True
     )
     dispatch_type: Mapped[str] = mapped_column(Text, nullable=False, default="GENERATOR")
-    capacity_registered: Mapped[float | None] = mapped_column(Numeric, nullable=True)
+    capacity_registered: Mapped[float | None] = mapped_column(Numeric(precision=16, scale=4), nullable=True)
     registered: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     deregistered: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
@@ -347,8 +347,8 @@ class UnitHistory(Base, BaseModel):
     change_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Tracked fields - NULL means no change to this field
-    capacity_registered: Mapped[float | None] = mapped_column(Numeric, nullable=True)
-    emissions_factor_co2: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    capacity_registered: Mapped[float | None] = mapped_column(Numeric(precision=16, scale=4), nullable=True)
+    emissions_factor_co2: Mapped[float | None] = mapped_column(Numeric(precision=16, scale=4), nullable=True)
     emission_factor_source: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Relationship
