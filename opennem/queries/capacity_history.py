@@ -135,8 +135,8 @@ async def get_rooftop_capacity_history(
                 time_bucket_gapfill(
                     '1 month',
                     uh.changed_at,
-                    CAST(:start_date AS timestamp),
-                    CAST(:end_date AS timestamp) + interval '1 month'
+                    date_trunc('month', CAST(:start_date AS timestamp)),
+                    date_trunc('month', CAST(:end_date AS timestamp)) + interval '1 month'
                 ) AS month_start,
                 u.code AS unit_code,
                 -- Map APVI network to NEM/WEM
@@ -155,22 +155,44 @@ async def get_rooftop_capacity_history(
                     ELSE NULL
                 END AS network_region,
                 'solar_rooftop' AS fueltech_id,
-                -- Use locf to carry forward the last known capacity for missing months
-                locf(MAX(uh.capacity_registered)) AS total_capacity
-            FROM unit_history uh
-            RIGHT JOIN (
+                -- Use locf with treat_null_as_missing to properly fill gaps
+                locf(
+                    MAX(uh.capacity_registered),
+                    treat_null_as_missing => true
+                ) AS total_capacity
+            FROM (
                 -- Get all relevant unit codes
                 SELECT DISTINCT id, code
                 FROM units
                 WHERE code LIKE 'ROOFTOP_APVI_%'
                 AND code != 'ROOFTOP_APVI_NT'
-            ) u ON uh.unit_id = u.id
-                AND uh.changed_at >= CAST(:start_date AS timestamp)
-                AND uh.changed_at < CAST(:end_date AS timestamp) + interval '1 month'
+            ) u
+            LEFT JOIN unit_history uh ON uh.unit_id = u.id
+                AND uh.changed_at >= date_trunc('month', CAST(:start_date AS timestamp))
+                AND uh.changed_at <= date_trunc('month', CAST(:end_date AS timestamp)) + interval '1 month' - interval '1 second'
             GROUP BY
-                1,
+                time_bucket_gapfill(
+                    '1 month',
+                    uh.changed_at,
+                    date_trunc('month', CAST(:start_date AS timestamp)),
+                    date_trunc('month', CAST(:end_date AS timestamp)) + interval '1 month'
+                ),
                 u.code
             ORDER BY u.code, month_start
+        ),
+        filled_data AS (
+            SELECT
+                month_start,
+                unit_code,
+                network_id,
+                network_region,
+                fueltech_id,
+                -- Fill nulls with 0 for months before any data exists
+                COALESCE(total_capacity, 0) AS total_capacity
+            FROM monthly_rooftop
+            WHERE network_region IS NOT NULL
+                AND month_start >= date_trunc('month', CAST(:start_date AS timestamp))
+                AND month_start <= date_trunc('month', CAST(:end_date AS timestamp))
         )
         SELECT
             month_start,
@@ -178,9 +200,7 @@ async def get_rooftop_capacity_history(
             network_region,
             fueltech_id,
             SUM(total_capacity) AS total_capacity
-        FROM monthly_rooftop
-        WHERE network_region IS NOT NULL
-            AND total_capacity IS NOT NULL
+        FROM filled_data
         GROUP BY
             month_start,
             network_id,
