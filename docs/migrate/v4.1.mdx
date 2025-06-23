@@ -15,7 +15,19 @@ The `unit_history` table has been added to track changes to unit fields over tim
 
 **Migration file:** `07e436912603_add_unit_history_table.py`
 
-Run the migration:
+### 2. Update Numeric Precision
+
+Updated numeric precision for `capacity_registered` and `emissions_factor_co2` columns to use DECIMAL(16,4) instead of unlimited precision. This ensures cleaner data with only 4 decimal places.
+
+**Migration file:** `a48ebf979bce_update_numeric_precision_for_capacity_.py`
+
+This migration updates:
+- `units.capacity_registered`: Now DECIMAL(16,4)
+- `units.emissions_factor_co2`: Now DECIMAL(16,4)
+- `unit_history.capacity_registered`: Now DECIMAL(16,4)
+- `unit_history.emissions_factor_co2`: Now DECIMAL(16,4)
+
+Run the migrations:
 ```bash
 alembic upgrade head
 ```
