@@ -64,6 +64,7 @@ def format_capacity_history_response(df: pl.DataFrame) -> dict[str, Any]:
     """
     Format capacity history data into API v4 response schema format.
     Creates separate time series for each network/region/fueltech combination.
+    Series that contain all zeros are excluded from the output.
 
     Args:
         df: Polars DataFrame with capacity history data
@@ -103,6 +104,11 @@ def format_capacity_history_response(df: pl.DataFrame) -> dict[str, Any]:
 
         # Create data points as just a list of capacity values
         data_points = [float(capacity) if capacity is not None else 0.0 for capacity in capacities]
+
+        # Skip series that are all zeros
+        if all(point == 0.0 for point in data_points):
+            logger.debug(f"Skipping all-zero series: {network_id}.{network_region}.{fueltech_id}")
+            continue
 
         # Create time series object
         time_series = {
