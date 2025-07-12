@@ -18,6 +18,7 @@ from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.aggregates.unit_intervals import run_unit_intervals_aggregate_to_now
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy
 from opennem.cms.importer import update_database_facilities_from_cms
+from opennem.controllers.capacity_history import export_capacity_history_json
 from opennem.controllers.export import run_export_energy_all, run_export_energy_for_year
 from opennem.core.battery import check_unsplit_batteries
 from opennem.crawl import run_crawl
@@ -37,7 +38,6 @@ from opennem.crawlers.wemde import run_all_wem_crawlers
 from opennem.db.clickhouse_schema import optimize_clickhouse_tables
 from opennem.exporter.archive import generate_archive_dirlisting, sync_archive_exports
 from opennem.exporter.facilities import export_facilities_static
-from opennem.exporter.storage_bucket import export_capacity_history_json
 
 # from opennem.exporter.historic import export_historic_intervals
 from opennem.pipelines.export import run_export_power_latest_for_network
