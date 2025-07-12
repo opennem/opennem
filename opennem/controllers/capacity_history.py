@@ -7,7 +7,7 @@ the export to cloud storage.
 """
 
 import logging
-from datetime import date, timedelta
+from datetime import date
 from typing import Any
 
 import polars as pl
@@ -143,7 +143,8 @@ async def export_capacity_history_json() -> str:
     """
     try:
         # Get capacity history for the full date range
-        end_date = date.today().replace(day=1) - timedelta(days=1)
+        end_date = date.today()
+        # .replace(day=1) - timedelta(days=1)
         start_date = NetworkNEM.data_first_seen.date()
 
         logger.info(f"Generating capacity history from {start_date} to {end_date}")
