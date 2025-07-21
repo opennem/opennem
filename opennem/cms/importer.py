@@ -177,6 +177,7 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
             unit_db = None
             if unit.cms_id:
                 # Look for unit by cms_id across all facilities
+                logger.info(f"Looking for unit {unit.code} by cms_id {unit.cms_id}")
                 unit_query = select(Unit).where(Unit.cms_id == unit.cms_id)
                 unit_db = (await session.execute(unit_query)).scalar_one_or_none()
 
@@ -185,22 +186,27 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                     unit_db.station_id = facility_db.id
                     record_updated = True
                     logger.info(f"Moved unit {unit.code} to facility {facility.code} ({facility_db.id})")
+                elif unit_db:
+                    logger.info(f"Found unit {unit.code} by cms_id, already in correct facility")
 
             # If not found by cms_id, try by code (backward compatibility)
             if not unit_db:
-                # First check in current facility's units
-                existing_units = {u.code: u for u in facility_db.units}
-                unit_db = existing_units.get(unit.code)
+                logger.info(f"Unit {unit.code} not found by cms_id, looking by code")
+                # Check across all facilities for this unit code
+                unit_query = select(Unit).where(Unit.code == unit.code)
+                unit_db = (await session.execute(unit_query)).scalar_one_or_none()
 
-                if not unit_db:
-                    # Check across all facilities
-                    unit_query = select(Unit).where(Unit.code == unit.code)
-                    unit_db = (await session.execute(unit_query)).scalar_one_or_none()
-
-                    if unit_db and unit_db.station_id != facility_db.id:
+                if unit_db:
+                    logger.info(f"Found unit {unit.code} by code in facility {unit_db.station_id}")
+                    # Unit exists in database, move it to current facility if needed
+                    if unit_db.station_id != facility_db.id:
                         unit_db.station_id = facility_db.id
                         record_updated = True
                         logger.info(f"Moved unit {unit.code} to facility {facility.code} ({facility_db.id})")
+                    else:
+                        logger.info(f"Unit {unit.code} already in correct facility {facility.code}")
+                else:
+                    logger.info(f"Unit {unit.code} not found in database, will create new")
 
             # If still not found, create new unit
             if not unit_db:
@@ -219,13 +225,37 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                     deregistered=unit.closure_date,
                     cms_id=unit.cms_id,
                 )
-                facility_db.units.append(unit_db)
+                # Set the station_id for new units
+                unit_db.station_id = facility_db.id
+                session.add(unit_db)
                 record_updated = True
                 facility_or_unit_created = True
                 logger.info(f"Created unit {unit.code} for facility {facility.code}")
 
             # Always update all unit metadata from CMS
-            if unit.code:
+            if unit.code and unit.code != unit_db.code:
+                # Check if updating the code would cause a conflict
+                existing_unit_with_target_code = (
+                    await session.execute(select(Unit).where(Unit.code == unit.code))
+                ).scalar_one_or_none()
+
+                if existing_unit_with_target_code and existing_unit_with_target_code.id != unit_db.id:
+                    # There's a conflict - another unit already has this code
+                    # If the conflicting unit has no cms_id, remove it
+                    if not existing_unit_with_target_code.cms_id:
+                        logger.info(
+                            f"Removing duplicate unit {existing_unit_with_target_code.code} "
+                            "(id: {existing_unit_with_target_code.id}) that has no cms_id"
+                        )
+                        await session.delete(existing_unit_with_target_code)
+                        await session.flush()  # Ensure delete is processed before updating code
+                    else:
+                        logger.warning(
+                            f"Cannot update unit code from {unit_db.code} to {unit.code} - "
+                            "conflict with existing unit (id: {existing_unit_with_target_code.id})"
+                        )
+                        continue  # Skip this unit update
+
                 unit_db.code = unit.code
                 record_updated = True
 
@@ -265,6 +295,14 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
             if unit.closure_date is not None:
                 unit_db.closure_date = unit.closure_date
                 unit_db.deregistered = unit.closure_date
+                record_updated = True
+
+            if unit_db.closure_date and not unit.closure_date:
+                unit_db.closure_date = None
+                record_updated = True
+
+            if unit_db.commencement_date and not unit.commencement_date:
+                unit_db.commencement_date = None
                 record_updated = True
 
             if unit.cms_id:
