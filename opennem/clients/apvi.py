@@ -34,7 +34,7 @@ APVI_DATE_QUERY_FORMAT = "%Y-%m-%d"
 APVI_EARLIEST_DATE = "2013-05-07"
 
 # @TODO remove this eventually
-STATE_POSTCODE_PREFIXES = {
+STATE_POSTCODE_PREFIXES: dict[str, str] = {
     "NSW": "2",
     "VIC": "3",
     "QLD": "4",
@@ -44,7 +44,8 @@ STATE_POSTCODE_PREFIXES = {
     "NT": "0",
 }
 
-POSTCODE_STATE_PREFIXES = {
+POSTCODE_STATE_PREFIXES: dict[str, str] = {
+    "1": "NSW",
     "2": "NSW",
     "3": "VIC",
     "4": "QLD",
@@ -187,7 +188,11 @@ async def get_apvi_rooftop_data(day: date | None = None) -> APVIForecastSet | No
     grouped_records = {}
 
     for postcode_prefix, record in postcode_gen.items():
-        state = POSTCODE_STATE_PREFIXES.get(postcode_prefix[:1])
+        state: str | None = POSTCODE_STATE_PREFIXES.get(postcode_prefix[:1])
+
+        if not state:
+            logger.warn(f"State {state} not found in POSTCODE_STATE_PREFIXES: {postcode_prefix[:1]}")
+            continue
 
         if state not in grouped_records:
             grouped_records[state] = {}
@@ -316,7 +321,7 @@ async def get_apvi_rooftop_capacity() -> pl.DataFrame:
 if __name__ == "__main__":
     import asyncio
 
-    df = asyncio.run(get_apvi_rooftop_capacity())
+    df = asyncio.run(get_apvi_rooftop_data())
 
     if df.is_empty():
         raise Exception("Invalid APVI Data")
