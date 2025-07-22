@@ -10,7 +10,7 @@ from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_meta, crawler
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
 from opennem.core.parsers.aemo.filenames import AEMODataBucketSize
 from opennem.core.parsers.dirlisting import get_dirlisting
-from opennem.crawlers.apvi import APVIRooftopLatestCrawler
+from opennem.crawlers.apvi import APVIRooftopMonthCrawler
 from opennem.persistence.postgres_facility_scada import persist_facility_scada_bulk
 from opennem.persistence.schema import BalancingSummarySchema, FacilityScadaSchema
 from opennem.schema.date_range import CrawlDateRange
@@ -213,7 +213,7 @@ AEMOWEMDETradingReport = CrawlerDefinition(
     archive_version=AEMOWEMDETradingReportHistory,
 )
 
-ALL_WEM_CRAWLERS = [AEMOWEMDEFacilityScada, AEMOWEMDETradingReport, APVIRooftopLatestCrawler]
+ALL_WEM_CRAWLERS = [AEMOWEMDEFacilityScada, AEMOWEMDETradingReport, APVIRooftopMonthCrawler]
 
 
 if __name__ == "__main__":
