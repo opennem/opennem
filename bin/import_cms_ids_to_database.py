@@ -25,9 +25,96 @@ async def get_all_database_facilities() -> list[Facility]:
     """Get all facilities with their units from the database."""
     async with get_read_session() as session:
         query = select(Facility).options(selectinload(Facility.units))
+        # .where(Unit.fueltech_id.in_('solar_rooftop', 'imp'))
         result = await session.execute(query)
         facilities = result.scalars().unique().all()
     return facilities
+
+
+async def check_cms_facilities_in_database() -> None:
+    """Check which CMS facilities exist in the database and warn about missing ones.
+
+    This method:
+    1. Gets all facilities from CMS
+    2. Attempts to find them in database by cms_id first
+    3. If not found by cms_id, attempts to find by code
+    4. Warns about facilities not found by cms_id
+    5. Warns about facilities not found by code either
+    """
+    logger.info("Checking CMS facilities against database...")
+
+    # Get facilities from CMS
+    cms_facilities = get_cms_facilities()
+    logger.info(f"Found {len(cms_facilities)} facilities in CMS")
+
+    # Get all facilities from database
+    db_facilities = await get_all_database_facilities()
+    logger.info(f"Found {len(db_facilities)} facilities in database")
+
+    # Create lookup dictionaries for database facilities
+    db_facilities_by_cms_id = {f.cms_id: f for f in db_facilities if f.cms_id}
+    db_facilities_by_code = {f.code: f for f in db_facilities}
+
+    # Track statistics
+    stats = {
+        "found_by_cms_id": 0,
+        "found_by_code_only": 0,
+        "not_found_at_all": 0,
+        "missing_cms_id": [],
+        "missing_completely": [],
+    }
+
+    # Check each CMS facility
+    for cms_facility in cms_facilities:
+        # logger.info(f"\nChecking facility: {cms_facility.code} - {cms_facility.name}")
+        # logger.info(f"  CMS ID: {cms_facility.cms_id}")
+
+        # First try to find by cms_id
+        db_facility_by_cms_id = db_facilities_by_cms_id.get(cms_facility.cms_id)
+
+        if db_facility_by_cms_id:
+            logger.info(
+                f"{cms_facility.code} - {cms_facility.name}:  ✅ Found in database by cms_id: {db_facility_by_cms_id.cms_id}"
+            )
+            stats["found_by_cms_id"] += 1
+        else:
+            logger.warning(f"{cms_facility.code} - {cms_facility.name}:  ⚠️  CMS ID {cms_facility.cms_id} not found in database")  # noqa: E501
+            stats["missing_cms_id"].append(cms_facility.code)
+
+            # Try to find by code
+            db_facility_by_code = db_facilities_by_code.get(cms_facility.code)
+
+            if db_facility_by_code:
+                logger.warning(f"  ⚠️  But found matching facility by code: {db_facility_by_code.code}")
+                logger.warning(f"      Database facility cms_id: {db_facility_by_code.cms_id}")
+                stats["found_by_code_only"] += 1
+            else:
+                logger.error("  ❌ No matching facility found by code either")
+                stats["not_found_at_all"] += 1
+                stats["missing_completely"].append(cms_facility.code)
+
+    # Print summary
+    logger.info("\n" + "=" * 60)
+    logger.info("CMS FACILITIES CHECK SUMMARY")
+    logger.info("=" * 60)
+    logger.info(f"Total CMS facilities: {len(cms_facilities)}")
+    logger.info(f"Found by cms_id: {stats['found_by_cms_id']}")
+    logger.info(f"Found by code only (missing cms_id): {stats['found_by_code_only']}")
+    logger.info(f"Not found at all: {stats['not_found_at_all']}")
+
+    if stats["missing_cms_id"]:
+        logger.warning(f"\nFacilities missing cms_id in database: {len(stats['missing_cms_id'])}")
+        for code in sorted(stats["missing_cms_id"])[:20]:  # Show first 20
+            logger.warning(f"  - {code}")
+        if len(stats["missing_cms_id"]) > 20:
+            logger.warning(f"  ... and {len(stats['missing_cms_id']) - 20} more")
+
+    if stats["missing_completely"]:
+        logger.error(f"\nFacilities completely missing from database: {len(stats['missing_completely'])}")
+        for code in sorted(stats["missing_completely"])[:20]:  # Show first 20
+            logger.error(f"  - {code}")
+        if len(stats["missing_completely"]) > 20:
+            logger.error(f"  ... and {len(stats['missing_completely']) - 20} more")
 
 
 async def sync_cms_ids(facility_code: str | None = None, dry_run: bool = False) -> None:
@@ -223,14 +310,18 @@ async def main():
     parser = argparse.ArgumentParser(description="Import CMS IDs into database")
     parser.add_argument("--facility-code", help="Process only a specific facility code (for testing)")
     parser.add_argument("--dry-run", action="store_true", help="Only show what would be changed")
+    parser.add_argument("--check-cms", action="store_true", help="Check which CMS facilities exist in database")
 
     args = parser.parse_args()
 
-    # Test with specific facility code if provided
-    if args.facility_code:
-        logger.info(f"Testing with facility code: {args.facility_code}")
+    if args.check_cms:
+        await check_cms_facilities_in_database()
+    else:
+        # Test with specific facility code if provided
+        if args.facility_code:
+            logger.info(f"Testing with facility code: {args.facility_code}")
 
-    await sync_cms_ids(facility_code=args.facility_code, dry_run=args.dry_run)
+        await sync_cms_ids(facility_code=args.facility_code, dry_run=args.dry_run)
 
 
 if __name__ == "__main__":
