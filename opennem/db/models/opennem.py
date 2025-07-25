@@ -234,7 +234,7 @@ class Facility(Base):
     wikidata_id: Mapped[str | None] = mapped_column(Text, nullable=True)
     approved: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    cms_id: Mapped[str | None] = mapped_column(Text, nullable=True)
+    cms_id: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
 
     units: Mapped[list["Unit"]] = relationship("Unit", innerjoin=True, lazy="selectin")
 
@@ -302,7 +302,7 @@ class Unit(Base):
     expected_closure_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
     expected_closure_year: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
-    cms_id: Mapped[str | None] = mapped_column(Text, nullable=True)
+    cms_id: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
 
     facility = relationship("Facility", innerjoin=True, back_populates="units", lazy="selectin")
     history = relationship("UnitHistory", back_populates="unit", order_by="UnitHistory.changed_at.desc()", lazy="selectin")
