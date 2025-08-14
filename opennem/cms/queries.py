@@ -156,7 +156,11 @@ def get_cms_unit(unit_code: str) -> UnitSchema:
         "fueltech_id": fuel_technology->code,
         "status_id": status,
         capacity_registered,
-        emissions_factor_co2
+        emissions_factor_co2,
+        commencement_date,
+        expected_operation_date,
+        closure_date,
+        expected_closure_date
     }}"""
 
     res = sanity_client.query(query)
@@ -187,6 +191,7 @@ def get_unit_factors() -> list[dict]:
         "network_id": upper(network->code),
         "network_region": upper(region->code),
         units[]-> {
+            _id,
             code,
             "fueltech_id": fuel_technology->code,
             "emissions_factor_co2": emissions_factor_co2,
@@ -246,7 +251,7 @@ def _validate_unique_codes(facilities: list[FacilitySchema]) -> None:
             unit_codes[unit.code] = facility.code
 
 
-@timed_lru_cache(seconds=300)  # 5 minute cache
+@timed_lru_cache(seconds=300 if not settings.is_dev else 0)  # 5 minute cache
 @retry(
     stop=stop_after_attempt(3),
     wait=wait_exponential(multiplier=1, min=4, max=10),
@@ -312,6 +317,7 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]
         wikipedia,
         location,
         units[]-> {{
+            _id,
             code,
             dispatch_type,
             "status_id": status,

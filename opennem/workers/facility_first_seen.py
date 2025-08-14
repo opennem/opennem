@@ -67,7 +67,7 @@ def ignored_duids(fac_records: list[FacilitySeen]) -> list[FacilitySeen]:
             return None
 
         # ignore demand response DUIDs
-        if fac.network_id == "NEM" and fac.code.startswith("DRXN"):
+        if fac.network_id == "NEM" and fac.code.startswith("DRX"):
             return None
 
         return fac

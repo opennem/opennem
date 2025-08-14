@@ -133,6 +133,13 @@ async def wemde_parse_trading_price(url: str) -> list[BalancingSummarySchema]:
 
     logger.debug(f"Got {len(json_records)} records")
 
+    if len(json_records) == 0:
+        raise Exception("No records in JSON")
+
+    if len(json_records) != 48:
+        logger.error(f"Expected 48 records, got {len(json_records)} for {url}")
+        return []
+
     models = []
 
     # map fields

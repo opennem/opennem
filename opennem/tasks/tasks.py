@@ -18,6 +18,7 @@ from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.aggregates.unit_intervals import run_unit_intervals_aggregate_to_now
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy
 from opennem.cms.importer import update_database_facilities_from_cms
+from opennem.controllers.capacity_history import export_capacity_history_json
 from opennem.controllers.export import run_export_energy_all, run_export_energy_for_year
 from opennem.core.battery import check_unsplit_batteries
 from opennem.crawl import run_crawl
@@ -223,6 +224,16 @@ async def task_export_daily_monthly(ctx) -> None:
     """Runs the daily and monthly exports"""
     await export_all_daily()
     await export_all_monthly()
+
+
+@logfire.instrument("task_export_capacity_history")
+async def task_export_capacity_history(ctx) -> None:
+    """Export capacity history data to JSON and upload to Cloudflare.
+
+    Runs nightly to update the capacity history based on unit commencement
+    and closure dates.
+    """
+    await export_capacity_history_json()
 
 
 # cms tasks from webhooks

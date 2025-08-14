@@ -95,7 +95,7 @@ async def run_apvi_crawl(day: date | None = None) -> ControllerReturn:
     return cr
 
 
-APVIRooftopTodayCrawler = CrawlerDefinition(
+APVIRooftopTodayCrawler: CrawlerDefinition = CrawlerDefinition(
     priority=CrawlerPriority.medium,
     schedule=CrawlerSchedule.frequent,
     contains_days=1,
@@ -106,7 +106,7 @@ APVIRooftopTodayCrawler = CrawlerDefinition(
     processor=crawl_apvi_forecasts,
 )
 
-APVIRooftopLatestCrawler = CrawlerDefinition(
+APVIRooftopLatestCrawler: CrawlerDefinition = CrawlerDefinition(
     priority=CrawlerPriority.medium,
     schedule=CrawlerSchedule.four_times_a_day,
     contains_days=7,

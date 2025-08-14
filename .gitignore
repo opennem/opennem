@@ -131,3 +131,6 @@ test.db
 .secrets.baseline
 .tmp/
 .cursorrules
+.cursor/
+CLAUDE.md
+plans/

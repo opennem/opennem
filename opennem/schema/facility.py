@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from opennem.schema.field_types import RoundedFloat6
 from opennem.schema.unit import UnitSchema
@@ -51,3 +51,4 @@ class FacilitySchema(BaseModel):
 
     # Sanity fields
     updated_at: datetime | None = None
+    cms_id: str | None = Field(None, alias="_id")

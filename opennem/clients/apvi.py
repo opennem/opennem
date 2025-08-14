@@ -7,6 +7,7 @@ from json.decoder import JSONDecodeError
 from typing import Any
 from urllib.parse import urlencode
 
+import polars as pl
 from pydantic import ValidationError, field_validator
 
 from opennem import settings
@@ -24,6 +25,8 @@ logger = logging.getLogger(__name__)
 
 APVI_DATA_URI = "https://pv-map.apvi.org.au/api/v2/2-digit/{date}.json"
 
+APVI_CAPACITY_URL = "https://pv-map.apvi.org.au/data/postcode/monthly/capacity/{postcode}"
+
 APVI_NETWORK_CODE = "APVI"
 
 APVI_DATE_QUERY_FORMAT = "%Y-%m-%d"
@@ -31,7 +34,7 @@ APVI_DATE_QUERY_FORMAT = "%Y-%m-%d"
 APVI_EARLIEST_DATE = "2013-05-07"
 
 # @TODO remove this eventually
-STATE_POSTCODE_PREFIXES = {
+STATE_POSTCODE_PREFIXES: dict[str, str] = {
     "NSW": "2",
     "VIC": "3",
     "QLD": "4",
@@ -41,7 +44,8 @@ STATE_POSTCODE_PREFIXES = {
     "NT": "0",
 }
 
-POSTCODE_STATE_PREFIXES = {
+POSTCODE_STATE_PREFIXES: dict[str, str] = {
+    "1": "NSW",
     "2": "NSW",
     "3": "VIC",
     "4": "QLD",
@@ -120,6 +124,7 @@ class APVIForecastInterval(BaseConfig):
 
 class APVIStateRooftopCapacity(BaseConfig):
     state: str
+    month: date | None = None
     capacity_registered: float
     facility_code: str | None = None
     unit_number: int | None = None
@@ -183,7 +188,11 @@ async def get_apvi_rooftop_data(day: date | None = None) -> APVIForecastSet | No
     grouped_records = {}
 
     for postcode_prefix, record in postcode_gen.items():
-        state = POSTCODE_STATE_PREFIXES.get(postcode_prefix[:1])
+        state: str | None = POSTCODE_STATE_PREFIXES.get(postcode_prefix[:1])
+
+        if not state:
+            logger.warn(f"State {state} not found in POSTCODE_STATE_PREFIXES: {postcode_prefix[:1]}")
+            continue
 
         if state not in grouped_records:
             grouped_records[state] = {}
@@ -240,13 +249,82 @@ async def get_apvi_rooftop_data(day: date | None = None) -> APVIForecastSet | No
     return apvi_forecast_set
 
 
+async def get_apvi_rooftop_capacity() -> pl.DataFrame:
+    """Get the APVI rooftop capacity for all postcodes in each state"""
+
+    all_data = pl.DataFrame()
+
+    for postcode_prefix, region in POSTCODE_STATE_PREFIXES.items():
+        state_df = pl.DataFrame()
+        # Use XXX pattern to get all postcodes for the state
+        postcode_pattern = f"{postcode_prefix}XXX"
+
+        apvi_capacity_url = APVI_CAPACITY_URL.format(postcode=postcode_pattern)
+
+        logger.info(f"Getting APVI capacity for {postcode_prefix} {region} {apvi_capacity_url}")
+        response = await _apvi_request_session.request("GET", apvi_capacity_url)
+
+        if response.is_error:
+            logger.error(f"Invalid APVI Return: {response.status_code}")
+            logger.debug(response.text)
+            continue
+
+        response_json = response.json()
+
+        # With XXX pattern, the key should be the pattern itself
+        if postcode_pattern not in response_json:
+            logger.error(f"Invalid APVI Return: {postcode_pattern} not found in {response_json}")
+            continue
+
+        state_df = pl.DataFrame(response_json[postcode_pattern])
+
+        state_df = state_df.with_columns(pl.col("month").str.strptime(pl.Date, "%Y-%m"))
+
+        # add field facility_code to dataframe
+        state_df = state_df.with_columns(
+            pl.lit(f"ROOFTOP_APVI_{region.upper()}").alias("facility_code"), pl.lit(region.upper()).alias("state")
+        )
+
+        # sum the capacity columns
+        capacity_columns = [
+            "2hf",
+            "2hf_4hf",
+            "4hf_6hf",
+            "6hf_9hf",
+            "9hf_14",
+            "14_25",
+            "25_50",
+            "50_100",
+            "100_5000",
+            # "5000_30000",
+            # "30000",
+        ]
+        # Sum capacity columns and convert from kW to MW
+        state_df = state_df.with_columns((pl.sum_horizontal(capacity_columns) / 1000).alias("capacity_registered"))
+
+        # drop the individual capacity columns to simplify output
+        state_df = state_df.drop(capacity_columns)
+        # also drop the large capacity columns we're not summing
+        state_df = state_df.drop(["5000_30000", "30000"])
+
+        all_data = all_data.vstack(state_df)
+
+    # Sort by facility_code then month ascending
+    all_data = all_data.sort(["facility_code", "month"])
+
+    # Calculate cumulative capacity for each facility_code
+    all_data = all_data.with_columns(pl.col("capacity_registered").cum_sum().over("facility_code").alias("capacity_registered"))
+
+    return all_data
+
+
 if __name__ == "__main__":
     import asyncio
 
-    cr = asyncio.run(get_apvi_rooftop_data())
+    df = asyncio.run(get_apvi_rooftop_data())
 
-    if not cr:
+    if df.is_empty():
         raise Exception("Invalid APVI Data")
 
-    with open("apvi.json", "w") as fh:
-        fh.write(cr.model_dump_json(indent=4))
+    # print the dataframe
+    print(df.head(50))

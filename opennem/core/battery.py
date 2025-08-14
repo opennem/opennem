@@ -45,7 +45,24 @@ async def get_battery_unit_map() -> dict[str, BatteryUnitMap]:
 
 def _generate_manual_battery_unit_map() -> dict[str, BatteryUnitMap]:
     """This is a manual map of bidirectional units to their charge/discharge units"""
-    return {"COLLIE_ESR1": BatteryUnitMap(unit="COLLIE_ESR1", charge_unit="COLLIE_ESRL1", discharge_unit="COLLIE_ESRG1")}
+    return {
+        "COLLIE_ESR1": BatteryUnitMap(unit="COLLIE_ESR1", charge_unit="COLLIE_ESRL1", discharge_unit="COLLIE_ESRG1"),
+        "LVES1": BatteryUnitMap(unit="LVES1", charge_unit="LVESL1", discharge_unit="LVESG1"),  # latrobe valley
+        "ULPBESS1": BatteryUnitMap(unit="ULPBESS1", charge_unit="ULPBESSL1", discharge_unit="ULPBESSG1"),  # ulinda park
+        "COLLIE_BESS2": BatteryUnitMap(
+            unit="COLLIE_BESS2", charge_unit="COLLIE_BESSL2", discharge_unit="COLLIE_BESSG2"
+        ),  # collie
+        "SNB01": BatteryUnitMap(unit="SNB01", charge_unit="SNBL01", discharge_unit="SNBG01"),  # supernode
+        "TARBESS1": BatteryUnitMap(unit="TARBESS1", charge_unit="TARBESSL1", discharge_unit="TARBESSG1"),  # tarong
+        "TEMPB1": BatteryUnitMap(unit="TEMPB1", charge_unit="TEMPBL1", discharge_unit="TEMPBG1"),  # templers
+        # station code based?
+        "0COLLIE_ESR2": BatteryUnitMap(unit="COLLIE_BESS2", charge_unit="COLLIE_BESSL2", discharge_unit="COLLIE_BESSG2"),
+        "0LVBESS": BatteryUnitMap(unit="LVES1", charge_unit="LVESL1", discharge_unit="LVESG1"),  # latrobe valley
+        "ULBESS": BatteryUnitMap(unit="ULPBESS1", charge_unit="ULPBESSL1", discharge_unit="ULPBESSG1"),  # ulinda park
+        "0SUPERNODE": BatteryUnitMap(unit="SNB01", charge_unit="SNBL01", discharge_unit="SNBG01"),  # supernode
+        "0TARONGBESS": BatteryUnitMap(unit="TARBESS1", charge_unit="TARBESSL1", discharge_unit="TARBESSG1"),  # tarong
+        "0TEMPLERBESS": BatteryUnitMap(unit="TEMPB1", charge_unit="TEMPBL1", discharge_unit="TEMPBG1"),  # templers
+    }
 
 
 async def _generate_battery_unit_map() -> dict[str, BatteryUnitMap]:
@@ -55,9 +72,12 @@ async def _generate_battery_unit_map() -> dict[str, BatteryUnitMap]:
     unit_map: dict[str, BatteryUnitMap] = _generate_manual_battery_unit_map()
 
     async with get_read_session() as session:
-        facility_query = select(Facility).join(Unit).where(Unit.dispatch_type == UnitDispatchType.BIDIRECTIONAL.value)
-
-        facility_query = facility_query.order_by(Facility.code, Unit.code)
+        facility_query = (
+            select(Facility)
+            .join(Unit)
+            .where(Unit.dispatch_type == UnitDispatchType.BIDIRECTIONAL.value)
+            .order_by(Facility.code, Unit.code)
+        )
 
         facilities = (await session.execute(facility_query)).scalars().all()
 
@@ -73,7 +93,7 @@ async def _generate_battery_unit_map() -> dict[str, BatteryUnitMap]:
                 logger.warning(f"No bidirectional unit found for {facility.code} {facility.name}")
                 continue
 
-            if unit_map.get(str(bidirectional_unit.code)):
+            if str(bidirectional_unit.code) in unit_map:
                 logger.info(f"Skipping {facility.code} {facility.name} as it has a manual or existing map")
                 continue
 
@@ -97,6 +117,20 @@ async def _generate_battery_unit_map() -> dict[str, BatteryUnitMap]:
                 logger.warning(f"Multiple discharge units found for {facility.code} {facility.name}")
                 continue
 
+            # Validate fueltechs
+            if charge_unit[0].fueltech_id != "battery_charging":
+                logger.error(
+                    f"Charge unit {charge_unit[0].code} for {facility.code} has incorrect fueltech: {charge_unit[0].fueltech_id}"
+                )
+                continue
+
+            if discharge_unit[0].fueltech_id != "battery_discharging":
+                logger.error(
+                    f"Discharge unit {discharge_unit[0].code} for {facility.code} "
+                    f"has incorrect fueltech: {discharge_unit[0].fueltech_id}"
+                )
+                continue
+
             charge_unit_schema = UnitSchema(**charge_unit[0].__dict__)
             discharge_unit_schema = UnitSchema(**discharge_unit[0].__dict__)
 
@@ -117,7 +151,7 @@ async def process_battery_history(facility_code: str | None = None, clear_old_re
     """
     unit_map = await get_battery_unit_map()
 
-    if not unit_map.get(facility_code):
+    if facility_code and facility_code not in unit_map:
         logger.warning(f"No unit map found for {facility_code}")
         return
 
@@ -240,45 +274,50 @@ async def process_battery_history(facility_code: str | None = None, clear_old_re
     )
 
     async with get_write_session() as session:
-        for unit in unit_map.values():  # type: ignore  # noqa: B020
-            # clear out old records
-            if clear_old_records:
-                result = await session.execute(
-                    text(
-                        "delete from facility_scada where facility_code in (:discharge_facility_code, :charge_facility_code) "
-                        "and interval >= (select min(interval) from facility_scada where "
-                        "facility_code=:bidirectional_facility_code);"
-                    ),
-                    {
-                        "discharge_facility_code": unit.discharge_unit,
-                        "charge_facility_code": unit.charge_unit,
-                        "bidirectional_facility_code": unit.unit,
-                    },
-                )
+        try:
+            for unit in unit_map.values():  # type: ignore  # noqa: B020
+                # clear out old records
+                if clear_old_records:
+                    result = await session.execute(
+                        text(
+                            "delete from facility_scada where facility_code in (:discharge_facility_code, :charge_facility_code) "
+                            "and interval >= (select min(interval) from facility_scada where "
+                            "facility_code=:bidirectional_facility_code);"
+                        ),
+                        {
+                            "discharge_facility_code": unit.discharge_unit,
+                            "charge_facility_code": unit.charge_unit,
+                            "bidirectional_facility_code": unit.unit,
+                        },
+                    )
 
-                logger.info(
-                    f"Deleted {unit.discharge_unit} and {unit.charge_unit} records newer than {unit.unit}: {result.rowcount}"  # type: ignore
-                )
+                    logger.info(
+                        f"Deleted {unit.discharge_unit} and {unit.charge_unit} records newer than {unit.unit}: {result.rowcount}"  # type: ignore
+                    )
 
-            # Handle charging records
-            params = {"new_facility_code": unit.charge_unit, "old_facility_code": unit.unit}
-            await session.execute(query_load_template, params)
-            await session.execute(query_load_delete, params)
-            await session.execute(query_load_aggregate_template, params)
-            await session.execute(query_load_aggregate_delete, params)
+                # Handle charging records
+                params = {"new_facility_code": unit.charge_unit, "old_facility_code": unit.unit}
+                await session.execute(query_load_template, params)
+                await session.execute(query_load_delete, params)
+                await session.execute(query_load_aggregate_template, params)
+                await session.execute(query_load_aggregate_delete, params)
 
-            logger.info(f"Updated {unit.unit} charge to {unit.charge_unit}")
+                logger.info(f"Updated {unit.unit} charge to {unit.charge_unit}")
 
-            # Handle discharging records
-            params = {"new_facility_code": unit.discharge_unit, "old_facility_code": unit.unit}
-            await session.execute(query_generator, params)
-            await session.execute(query_generator_delete, params)
-            await session.execute(query_aggregate_generator, params)
-            await session.execute(query_aggregate_generator_delete, params)
+                # Handle discharging records
+                params = {"new_facility_code": unit.discharge_unit, "old_facility_code": unit.unit}
+                await session.execute(query_generator, params)
+                await session.execute(query_generator_delete, params)
+                await session.execute(query_aggregate_generator, params)
+                await session.execute(query_aggregate_generator_delete, params)
 
-            logger.info(f"Updated {unit.unit} discharge to {unit.discharge_unit}")
+                logger.info(f"Updated {unit.unit} discharge to {unit.discharge_unit}")
 
-        await session.commit()
+            await session.commit()
+        except Exception as e:
+            logger.error(f"Error processing battery history: {e}")
+            await session.rollback()
+            raise
 
 
 async def check_unsplit_batteries() -> list[str]:
@@ -296,7 +335,7 @@ async def check_unsplit_batteries() -> list[str]:
             SELECT DISTINCT fs.facility_code
             FROM facility_scada fs
             INNER JOIN units u ON fs.facility_code = u.code
-            WHERE u.fueltech_id = 'battery'
+            WHERE u.dispatch_type = 'BIDIRECTIONAL'
             AND fs.interval >= NOW() - INTERVAL '100 days'
             ORDER BY fs.facility_code
             """
@@ -318,12 +357,12 @@ async def check_unsplit_batteries() -> list[str]:
         return unsplit_units
 
 
-async def run_update_unplit_batteries():
-    unplit_battery_units = await check_unsplit_batteries()
+async def run_update_unsplit_batteries():
+    unsplit_battery_units = await check_unsplit_batteries()
 
-    logger.info(f"Found {len(unplit_battery_units)} unsplit battery units")
+    logger.info(f"Found {len(unsplit_battery_units)} unsplit battery units")
 
-    for facility_code in unplit_battery_units:
+    for facility_code in unsplit_battery_units:
         logger.info(f"Processing {facility_code}")
         await process_battery_history(facility_code=facility_code)
 
@@ -331,7 +370,12 @@ async def run_update_unplit_batteries():
 if __name__ == "__main__":
     import asyncio
 
-    unit_map = asyncio.run(run_update_unplit_batteries())
+    # unit_map = asyncio.run(run_update_unsplit_batteries())
+
+    async def test():
+        await process_battery_history(facility_code="LVES1")
+
+    asyncio.run(run_update_unsplit_batteries())
 
     # for unit in unit_map.values():
     # print(f"{unit.unit} -> {unit.charge_unit} | {unit.discharge_unit}")
