@@ -208,6 +208,7 @@ class WorkerSettings:
             hour=9,
             minute=1,
             second=59,
+            weekday={0, 1, 2, 3, 4},  # Monday through Friday only
             timeout=None,
             unique=True,
         ),
@@ -282,6 +283,7 @@ class WorkerSettings:
             hour=10,
             minute=0,
             second=0,
+            weekday={0, 1, 2, 3, 4},  # Monday through Friday only
             timeout=None,
             unique=True,
         ),
