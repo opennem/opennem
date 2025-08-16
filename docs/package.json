@@ -1,0 +1,17 @@
+{
+  "name": "opennem-docs",
+  "version": "1.0.0",
+  "description": "OpenElectricity Documentation",
+  "scripts": {
+    "dev": "mintlify dev",
+    "build": "mintlify build",
+    "preview": "mintlify preview",
+    "update": "mintlify update"
+  },
+  "devDependencies": {
+    "mintlify": "latest"
+  },
+  "engines": {
+    "node": ">=19.0.0"
+  }
+}

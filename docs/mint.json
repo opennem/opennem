@@ -1,0 +1,158 @@
+{
+	"$schema": "https://mintlify.com/docs.json",
+	"theme": "quill",
+	"name": "OpenElectricity Documentation",
+	"colors": {
+		"primary": "#8b3119",
+		"light": "#9b3f23",
+		"dark": "#7b2315"
+	},
+	"favicon": "/images/favicon/favicon.svg",
+	"tabs": [
+		{
+			"name": "Documentation",
+			"url": "introduction"
+		},
+		{
+			"name": "API Reference",
+			"url": "api-reference"
+		},
+		{
+			"name": "SDKs",
+			"url": "sdk"
+		},
+		{
+			"name": "Contribute",
+			"url": "contribute"
+		}
+	],
+	"navigation": [
+		{
+			"group": "Get Started",
+			"pages": ["introduction", "community"]
+		},
+		{
+			"group": "Guides",
+			"pages": [
+				"guides/networks",
+				"guides/power",
+				"guides/energy",
+				"guides/price",
+				"guides/emissions",
+				"guides/fueltechs",
+				"guides/facilities",
+				"guides/batteries",
+				"guides/weather",
+				"guides/interconnectors"
+			]
+		},
+		{
+			"group": "Platform",
+			"pages": ["platform/introduction"]
+		},
+		{
+			"group": "API Reference",
+			"pages": [
+				"api-reference/overview",
+				{
+					"group": "Generation Data",
+					"pages": [
+						"api-reference/data/get-network-data",
+						"api-reference/data/get-facility-data"
+					]
+				},
+				{
+					"group": "Market Data",
+					"pages": ["api-reference/market/get-network-data"]
+				},
+				{
+					"group": "Facilities",
+					"pages": ["api-reference/facilities/get-facilities"]
+				},
+				{
+					"group": "User",
+					"pages": ["api-reference/user/get-user-me"]
+				}
+			]
+		},
+		{
+			"group": "SDKs",
+			"pages": [
+				"sdk/overview",
+				"sdk/configuration",
+				{
+					"group": "Typescript",
+					"pages": [
+						"sdk/typescript/overview",
+						"sdk/typescript/reference",
+						"sdk/typescript/types",
+						"sdk/typescript/utilities"
+					]
+				},
+				{
+					"group": "Python",
+					"pages": ["sdk/python/overview"]
+				}
+			]
+		},
+		{
+			"group": "Contribute",
+			"pages": [
+				"contribute/overview",
+				{
+					"group": "Backend",
+					"pages": ["contribute/backend/overview", "contribute/backend/cli"]
+				}
+			]
+		}
+	],
+	"anchors": [
+		{
+			"name": "GitHub",
+			"url": "https://github.com/opennem",
+			"icon": "github"
+		},
+		{
+			"name": "Website",
+			"url": "https://explore.openelectricity.org.au/",
+			"icon": "link"
+		}
+	],
+	"logo": {
+		"light": "/images/oe_logo_full_black.png",
+		"dark": "/images/oe_logo_full_white.png"
+	},
+	"openapi": "https://api.openelectricity.org.au/v4/openapi.json",
+	"topbarLinks": [
+		{
+			"name": "Tracker",
+			"url": "https://explore.openelectricity.org.au"
+		},
+		{
+			"name": "GitHub",
+			"url": "https://github.com/opennem/opennem"
+		},
+		{
+			"name": "Blog",
+			"url": "https://openelectricity.org.au/analysis"
+		}
+	],
+	"topbarCtaButton": {
+		"name": "Platform",
+		"url": "https://platform.openelectricity.org.au"
+	},
+	"footerSocials": {
+		"x": "https://x.com/opennem",
+		"github": "https://github.com/opennem/opennem"
+	},
+	"fonts": {
+		"heading": {
+			"family": "DM Sans, sans-serif",
+			"weight": 400
+		},
+		"body": {
+			"family": "DM Sans, sans-serif",
+			"weight": 400
+		}
+	}
+}
