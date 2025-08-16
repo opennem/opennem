@@ -1,0 +1,89 @@
+---
+title: "Changelog"
+description: "Product updates and release notes for OpenElectricity"
+icon: 'calendar'
+---
+
+Stay up to date with the latest features, improvements, and bug fixes in OpenElectricity.
+
+<Update label="v4.1.0" description="August 15, 2025" tags={["API", "Features", "Data"]}>
+
+## Major Features
+
+- **Capacity History Tracking** - New comprehensive capacity history output that includes rooftop solar and applies unit history tracking ([#415](https://github.com/opennem/opennem/issues/415))
+- **CMS Integration** - Import CMS IDs to database for facilities and units for better tracking
+- **APVI Capacity History** - Controller to import APVI capacity history as unit histories ([#432](https://github.com/opennem/opennem/issues/432))
+- **Unit Histories** - Enhanced unit histories with time axes for fields ([#431](https://github.com/opennem/opennem/issues/431))
+
+## Improvements
+
+- Battery split static map improvements and bug fixes ([#420](https://github.com/opennem/opennem/issues/420))
+- Rooftop capacity storage enhancements ([#430](https://github.com/opennem/opennem/issues/430))
+- Decimal precision improvements in unit_history table ([#431](https://github.com/opennem/opennem/issues/431))
+- Gap-fill improvements for rooftop capacity history ([#415](https://github.com/opennem/opennem/issues/415))
+
+## Bug Fixes
+
+- Fixed WEM crawlers to include APVI month by default
+- Resolved postcode prefix mapping (1 is NSW in APVI client)
+- Fixed capacity chart task imports ([#415](https://github.com/opennem/opennem/issues/415))
+- Corrected WEMDE trading price crawler length sanity checks
+- Resolved issues with DRX facilities in first seen checks
+- Fixed padding in query for rooftop capacities in capacity chart ([#415](https://github.com/opennem/opennem/issues/415))
+
+## Documentation
+
+- Updated migration documentation for v4.1
+- Enhanced API documentation
+
+</Update>
+
+<Update label="v4.0.0" description="April 24, 2025" tags={["Platform", "SDK", "API", "Major Release"]}>
+
+## 🎉 Platform Beta Launch
+
+We're excited to announce the beta launch of the **OpenElectricity Platform**!
+
+- Access at [platform.openelectricity.org.au](https://platform.openelectricity.org.au)
+- Sign up for early access and explore enhanced data analytics capabilities
+- Advanced visualizations and custom data exports
+
+## SDK Releases
+
+### Python Client
+- Official OpenElectricity Python client library now available
+- Install via pip: `pip install openelectricity`
+- Full documentation and examples included
+
+### TypeScript Client
+- Official OpenElectricity TypeScript/JavaScript client library released
+- Install via npm: `npm install @opennem/client`
+- Type-safe API access with comprehensive type definitions
+
+## API Enhancements
+
+- **Performance Improvements** - ORjson serialization on data and market endpoints for improved performance
+- **Milestones API** - New milestones endpoints with optimized caching
+- **Record Reactor** - Enhanced record reactor with Slack and Twitter alerts for significant events
+- **Solar Gap Filling** - Improved solar 5-minute gap fill handling for APVI interval sizes
+
+## Social Integration
+
+- **Bluesky Client** - Added Bluesky social media integration
+- **Twitter Client** - Enhanced Twitter client for automated updates
+- **Record Alerts** - Automatic social media alerts for significant generation records
+
+## Infrastructure
+
+- API v3 deprecation notice ([#424](https://github.com/opennem/opennem/issues/424))
+- Sanity CMS syncing to database rewrite ([#422](https://github.com/opennem/opennem/issues/422))
+- Enhanced facility and unit integrity monitoring ([#429](https://github.com/opennem/opennem/issues/429))
+
+## Bug Fixes
+
+- Fixed NEM interval check re-ordering and increased interval window
+- Corrected battery charge/discharge significance scoring
+- Resolved issues with regional demand calculations ([#412](https://github.com/opennem/opennem/issues/412))
+- Fixed static historic records returning strings as data ([#403](https://github.com/opennem/opennem/issues/403))
+
+</Update>
