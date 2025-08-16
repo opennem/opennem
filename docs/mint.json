@@ -10,10 +10,6 @@
 	"favicon": "/images/favicon/favicon.svg",
 	"tabs": [
 		{
-			"name": "Documentation",
-			"url": "introduction"
-		},
-		{
 			"name": "API Reference",
 			"url": "api-reference"
 		},
@@ -29,7 +25,7 @@
 	"navigation": [
 		{
 			"group": "Get Started",
-			"pages": ["introduction", "changelog", "community"]
+			"pages": ["introduction", "community"]
 		},
 		{
 			"group": "Guides",
