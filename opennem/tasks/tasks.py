@@ -270,7 +270,7 @@ async def task_catchup_check(ctx) -> None:
 @logfire.instrument("task_catchup_days")
 async def task_catchup_days(ctx) -> None:
     """Run a catchup for the last 24 hours"""
-    await catchup_last_days(days=2)
+    await catchup_last_days(days=1)
 
 
 @logfire.instrument("task_update_milestones")
