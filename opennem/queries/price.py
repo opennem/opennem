@@ -41,16 +41,16 @@ def get_network_region_price_query(
     """
     # if only a single interval with date_min set date_max
     if not date_max:
-        date_max = date_min
+        date_max: datetime = date_min
 
     # regions clause
-    network_regions_query = ""
+    network_regions_query: str = ""
 
     if network_region_code:
         network_regions_query = f"and bs.network_region = '{network_region_code.upper()}'"
 
     # forecast clause
-    forecast_clause = ""
+    forecast_clause: str = ""
 
     if forecast:
         forecast_clause = "and bs.forecast = true"

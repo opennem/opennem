@@ -68,7 +68,15 @@ async def _get_market_summary_data(
             LAG(CAST(demand_total AS double precision)) OVER (
                 PARTITION BY network_id, network_region
                 ORDER BY interval
-            ) as prev_demand_total
+            ) as prev_demand_total,
+            ROUND((ss_solar_uigf -  ss_solar_clearedmw)::numeric, 4)
+                as curtailment_solar_total,
+            ROUND((ss_wind_uigf -  ss_wind_clearedmw)::numeric, 4)
+                as curtailment_wind_total,
+            ss_solar_uigf as curtailment_solar_uigf,
+            ss_solar_clearedmw as curtailment_solar_clearedmw,
+            CAST(ss_wind_uigf AS double precision) as curtailment_wind_uigf,
+            CAST(ss_wind_clearedmw AS double precision) as curtailment_wind_clearedmw
         FROM balancing_summary bs
         WHERE interval BETWEEN :start_time_window AND :end_time
         AND is_forecast = false
@@ -82,7 +90,13 @@ async def _get_market_summary_data(
         demand,
         demand_total,
         prev_demand,
-        prev_demand_total
+        prev_demand_total,
+        curtailment_solar_total,
+        curtailment_wind_total,
+        curtailment_solar_uigf,
+        curtailment_solar_clearedmw,
+        curtailment_wind_uigf,
+        curtailment_wind_clearedmw
     FROM ranked_data
     WHERE interval BETWEEN :start_time AND :end_time
     AND prev_demand IS NOT NULL
@@ -128,8 +142,17 @@ def _prepare_market_summary_data(
             "demand_total": pl.Float64,
             "prev_demand": pl.Float64,
             "prev_demand_total": pl.Float64,
+            "curtailment_solar_total": pl.Float64,
+            "curtailment_wind_total": pl.Float64,
+            "curtailment_solar_uigf": pl.Float64,
+            "curtailment_solar_clearedmw": pl.Float64,
+            "curtailment_wind_uigf": pl.Float64,
+            "curtailment_wind_clearedmw": pl.Float64,
         },
     )
+
+    # round all float64 columns to 4 decimal places
+    df = df.with_columns([pl.col(col).round(4) for col in df.columns if isinstance(col, pl.Float64)])
 
     network_intervals = {
         "NEM": 5,
@@ -194,6 +217,12 @@ def _prepare_market_summary_data(
             "demand_total_energy",
             "demand_market_value",
             "demand_total_market_value",
+            "curtailment_solar_total",
+            "curtailment_wind_total",
+            "curtailment_solar_uigf",
+            "curtailment_wind_uigf",
+            "curtailment_solar_clearedmw",
+            "curtailment_wind_clearedmw",
             "version",
         ]
     )
@@ -260,7 +289,10 @@ async def process_market_summary_backlog(
                 (
                     interval, network_id, network_region, price, demand, demand_total,
                     demand_energy, demand_total_energy, demand_market_value,
-                    demand_total_market_value, version
+                    demand_total_market_value, curtailment_solar_total,
+                    curtailment_wind_total, curtailment_solar_uigf,
+                    curtailment_solar_clearedmw, curtailment_wind_uigf,
+                    curtailment_wind_clearedmw, version
                 )
                 VALUES
                 """,
@@ -333,7 +365,10 @@ async def run_market_summary_aggregate_for_last_intervals(num_intervals: int) ->
         (
             interval, network_id, network_region, price, demand, demand_total,
             demand_energy, demand_total_energy, demand_market_value,
-            demand_total_market_value, version
+            demand_total_market_value, curtailment_solar_total,
+            curtailment_wind_total, curtailment_solar_uigf,
+            curtailment_solar_clearedmw, curtailment_wind_uigf,
+            curtailment_wind_clearedmw, version
         )
         VALUES
         """,

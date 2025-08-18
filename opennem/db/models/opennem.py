@@ -434,6 +434,10 @@ class BalancingSummary(Base):
     price_dispatch: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
     net_interchange_trading: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
     is_forecast = Column(Boolean, default=False, nullable=False, primary_key=True)
+    ss_solar_uigf: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    ss_solar_clearedmw: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    ss_wind_uigf: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    ss_wind_clearedmw: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
 
     __table_args__ = (
         Index(

@@ -283,6 +283,10 @@ async def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn
                 "net_interchange": record["netinterchange"],
                 "demand": record["totaldemand"],
                 "demand_total": record["demand_and_nonschedgen"],
+                "ss_solar_uigf": record["ss_solar_uigf"],
+                "ss_solar_clearedmw": record["ss_solar_clearedmw"],
+                "ss_wind_uigf": record["ss_wind_uigf"],
+                "ss_wind_clearedmw": record["ss_wind_clearedmw"],
             }
         )
 
@@ -297,6 +301,10 @@ async def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn
                     "net_interchange": stmt.excluded.net_interchange,
                     "demand_total": stmt.excluded.demand_total,
                     "demand": stmt.excluded.demand,
+                    "ss_solar_uigf": stmt.excluded.ss_solar_uigf,
+                    "ss_solar_clearedmw": stmt.excluded.ss_solar_clearedmw,
+                    "ss_wind_uigf": stmt.excluded.ss_wind_uigf,
+                    "ss_wind_clearedmw": stmt.excluded.ss_wind_clearedmw,
                 },
             )
 
