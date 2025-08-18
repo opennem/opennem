@@ -24,10 +24,10 @@ MARKET_SUMMARY_TABLE_SCHEMA = """CREATE TABLE IF NOT EXISTS market_summary (
     demand_total_market_value Nullable(Float64),
     curtailment_solar_total Nullable(Float64),
     curtailment_wind_total Nullable(Float64),
-    curtailment_solar_uigf Nullable(Float64),
-    curtailment_wind_uigf Nullable(Float64),
-    curtailment_solar_clearedmw Nullable(Float64),
-    curtailment_wind_clearedmw Nullable(Float64),
+    curtailment_total Nullable(Float64),
+    curtailment_energy_solar_total Nullable(Float64),
+    curtailment_energy_wind_total Nullable(Float64),
+    curtailment_energy_total Nullable(Float64),
     version UInt64
 ) ENGINE = ReplacingMergeTree(version)
 PRIMARY KEY (interval, network_id, network_region)
