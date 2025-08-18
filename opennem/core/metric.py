@@ -36,8 +36,12 @@ class Metric(str, Enum):
     MARKET_VALUE = "market_value"
     DEMAND = "demand"
     DEMAND_ENERGY = "demand_energy"
+    CURTAILMENT = "curtailment"
+    CURTAILMENT_ENERGY = "curtailment_energy"
     CURTAILMENT_SOLAR = "curtailment_solar"
+    CURTAILMENT_SOLAR_ENERGY = "curtailment_solar_energy"
     CURTAILMENT_WIND = "curtailment_wind"
+    CURTAILMENT_WIND_ENERGY = "curtailment_wind_energy"
     EMISSIONS = "emissions"
     RENEWABLE_PROPORTION = "renewable_proportion"
 
@@ -123,6 +127,20 @@ METRIC_METADATA = {
         default_agg="avg",
         precision=1,
     ),
+    Metric.CURTAILMENT: MetricMetadata(
+        unit="MW",
+        description="Energy curtailment",
+        column_name="curtailment",
+        default_agg="avg",
+        precision=3,
+    ),
+    Metric.CURTAILMENT_ENERGY: MetricMetadata(
+        unit="MWh",
+        description="Energy curtailment",
+        column_name="curtailment_energy",
+        default_agg="sum",
+        precision=3,
+    ),
     Metric.CURTAILMENT_SOLAR: MetricMetadata(
         unit="MW",
         description="Solar energy curtailment",
@@ -130,11 +148,25 @@ METRIC_METADATA = {
         default_agg="avg",
         precision=3,
     ),
+    Metric.CURTAILMENT_SOLAR_ENERGY: MetricMetadata(
+        unit="MWh",
+        description="Solar energy curtailment",
+        column_name="curtailment_solar_energy",
+        default_agg="sum",
+        precision=3,
+    ),
     Metric.CURTAILMENT_WIND: MetricMetadata(
         unit="MW",
         description="Wind energy curtailment",
         column_name="curtailment_wind",
         default_agg="avg",
+        precision=3,
+    ),
+    Metric.CURTAILMENT_WIND_ENERGY: MetricMetadata(
+        unit="MWh",
+        description="Wind energy curtailment",
+        column_name="curtailment_wind_energy",
+        default_agg="sum",
         precision=3,
     ),
 }

@@ -464,8 +464,23 @@ async def power_week(
     result.append_set(stats_demand)
 
     # curtailment
-    stats_curtailment_solar_results = [
+    stats_curtailment_results = [
         DataQueryResult(interval=i[0], result=i[6], group_by=i[1] if len(i) > 1 else None)
+        for i in result_price_and_demand_and_curtailment
+    ]
+
+    stats_curtailment = stats_factory(
+        stats=stats_curtailment_results,
+        units=get_unit("curtailment"),
+        network=time_series.network,
+        interval=time_series.interval,
+        region=network_region_code,
+    )
+
+    result.append_set(stats_curtailment)
+
+    stats_curtailment_solar_results = [
+        DataQueryResult(interval=i[0], result=i[7], group_by=i[1] if len(i) > 1 else None)
         for i in result_price_and_demand_and_curtailment
     ]
 
@@ -480,7 +495,7 @@ async def power_week(
     result.append_set(stats_curtailment_solar)
 
     stats_curtailment_wind_results = [
-        DataQueryResult(interval=i[0], result=i[7], group_by=i[1] if len(i) > 1 else None)
+        DataQueryResult(interval=i[0], result=i[8], group_by=i[1] if len(i) > 1 else None)
         for i in result_price_and_demand_and_curtailment
     ]
 
