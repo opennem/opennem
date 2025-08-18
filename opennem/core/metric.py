@@ -23,6 +23,8 @@ class Metric(str, Enum):
         ENERGY: Energy generated/consumed over time (MWh)
         PRICE: Price per unit of energy ($/MWh)
         DEMAND: Demand for energy (MW)
+        CURTAILMENT_SOLAR: Curtailment of solar energy (MW)
+        CURTAILMENT_WIND: Curtailment of wind energy (MW)
         MARKET_VALUE: Total market value ($)
         EMISSIONS: CO2 equivalent emissions (tonnes)
         RENEWABLE_PROPORTION: Percentage of renewable energy (%)
@@ -34,6 +36,8 @@ class Metric(str, Enum):
     MARKET_VALUE = "market_value"
     DEMAND = "demand"
     DEMAND_ENERGY = "demand_energy"
+    CURTAILMENT_SOLAR = "curtailment_solar"
+    CURTAILMENT_WIND = "curtailment_wind"
     EMISSIONS = "emissions"
     RENEWABLE_PROPORTION = "renewable_proportion"
 
@@ -118,6 +122,20 @@ METRIC_METADATA = {
         column_name="renewable",
         default_agg="avg",
         precision=1,
+    ),
+    Metric.CURTAILMENT_SOLAR: MetricMetadata(
+        unit="MW",
+        description="Solar energy curtailment",
+        column_name="curtailment_solar",
+        default_agg="avg",
+        precision=3,
+    ),
+    Metric.CURTAILMENT_WIND: MetricMetadata(
+        unit="MW",
+        description="Wind energy curtailment",
+        column_name="curtailment_wind",
+        default_agg="avg",
+        precision=3,
     ),
 }
 

@@ -99,11 +99,15 @@ QUERY_CONFIGS = {
             MarketMetric.PRICE: "price",
             MarketMetric.DEMAND: "demand",
             MarketMetric.DEMAND_ENERGY: "demand_energy",
+            MarketMetric.CURTAILMENT_SOLAR: "curtailment_solar_total",
+            MarketMetric.CURTAILMENT_WIND: "curtailment_wind_total",
         },
         metric_agg_functions={
             MarketMetric.PRICE: "avg",
             MarketMetric.DEMAND: "avg",
             MarketMetric.DEMAND_ENERGY: "sum",
+            MarketMetric.CURTAILMENT_SOLAR: "sum",
+            MarketMetric.CURTAILMENT_WIND: "sum",
         },
     ),
     QueryType.DATA: QueryConfig(

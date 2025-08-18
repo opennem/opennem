@@ -32,6 +32,8 @@ _SUPPORTED_METRICS = [
     Metric.PRICE,
     Metric.DEMAND,
     Metric.DEMAND_ENERGY,
+    Metric.CURTAILMENT_SOLAR,
+    Metric.CURTAILMENT_WIND,
 ]
 
 
@@ -136,4 +138,4 @@ async def get_network_data(
     )
 
     # Return all TimeSeries objects, one per metric
-    return ORJSONResponse(APIV4ResponseSchema(data=timeseries_list).model_dump())
+    return ORJSONResponse(APIV4ResponseSchema(data=timeseries_list).model_dump())  # type: ignore

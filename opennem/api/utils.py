@@ -71,7 +71,28 @@ def get_default_period_for_interval(interval: Interval) -> timedelta:
 
 
 def validate_metrics(metrics: list[Metric], supported_metrics: list[Metric]) -> None:
-    """Validate a list of metrics against a list of supported metrics"""
-    for metric in metrics:
-        if metric not in supported_metrics:
-            raise HTTPException(status_code=400, detail=f"Metric {metric} not supported")
+    """
+    Validate a list of metrics against a list of supported metrics.
+
+    Args:
+        metrics: List of metrics to validate
+        supported_metrics: List of supported metrics for this endpoint
+
+    Raises:
+        HTTPException: If any metric is not supported, with a helpful error message
+    """
+    unsupported_metrics = [m for m in metrics if m not in supported_metrics]
+
+    if unsupported_metrics:
+        supported_names = [m.value for m in supported_metrics]
+        unsupported_names = [m.value for m in unsupported_metrics]
+
+        error_detail = {
+            "error": f"Unsupported metrics: {', '.join(unsupported_names)}",
+            "supported_metrics": supported_names,
+            "requested_metrics": [m.value for m in metrics],
+            "invalid_metrics": unsupported_names,
+            "hint": f"This endpoint supports: {', '.join(supported_names)}",
+        }
+
+        raise HTTPException(status_code=400, detail=error_detail)
