@@ -201,8 +201,8 @@ def get_timeseries_query(
         Interval.SEASON,
         Interval.FINANCIAL_YEAR,
     ]:
-        date_start = date_start.date()
-        date_end = date_end.date()
+        date_start = date_start.date()  # type: ignore
+        date_end = date_end.date()  # type: ignore
 
     params = {
         "network": network.get_network_codes(),
