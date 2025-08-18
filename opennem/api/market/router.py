@@ -26,7 +26,7 @@ from opennem.core.time_interval import Interval
 from opennem.db.clickhouse import get_clickhouse_dependency
 
 router = APIRouter()
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("opennem.api.market")
 
 _SUPPORTED_METRICS = [
     Metric.PRICE,
