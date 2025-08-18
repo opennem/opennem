@@ -73,8 +73,8 @@ async def _get_market_summary_data(
                 as curtailment_solar_total,
             ROUND((ss_wind_uigf -  ss_wind_clearedmw)::numeric, 4)
                 as curtailment_wind_total,
-            ss_solar_uigf as curtailment_solar_uigf,
-            ss_solar_clearedmw as curtailment_solar_clearedmw,
+            CAST(ss_solar_uigf AS double precision) as curtailment_solar_uigf,
+            CAST(ss_solar_clearedmw AS double precision) as curtailment_solar_clearedmw,
             CAST(ss_wind_uigf AS double precision) as curtailment_wind_uigf,
             CAST(ss_wind_clearedmw AS double precision) as curtailment_wind_clearedmw
         FROM balancing_summary bs
@@ -154,6 +154,18 @@ def _prepare_market_summary_data(
     # round all float64 columns to 4 decimal places
     df = df.with_columns([pl.col(col).round(4) for col in df.columns if isinstance(col, pl.Float64)])
 
+    # fill curtailment records with 0 if they are null
+    df = df.with_columns(
+        [
+            pl.col("curtailment_solar_total").fill_null(0),
+            pl.col("curtailment_wind_total").fill_null(0),
+            pl.col("curtailment_solar_uigf").fill_null(0),
+            pl.col("curtailment_solar_clearedmw").fill_null(0),
+            pl.col("curtailment_wind_uigf").fill_null(0),
+            pl.col("curtailment_wind_clearedmw").fill_null(0),
+        ]
+    )
+
     network_intervals = {
         "NEM": 5,
         "WEM": 30,
@@ -220,8 +232,8 @@ def _prepare_market_summary_data(
             "curtailment_solar_total",
             "curtailment_wind_total",
             "curtailment_solar_uigf",
-            "curtailment_wind_uigf",
             "curtailment_solar_clearedmw",
+            "curtailment_wind_uigf",
             "curtailment_wind_clearedmw",
             "version",
         ]
