@@ -95,7 +95,7 @@ Fetches the endpoint at (/v4/market)[/api/data/get-network-data]
 
 ## getMarket
 
-Fetch market-related metrics like price and demand.
+Fetch market-related metrics like price, demand, and curtailment.
 
 ```typescript
 async getMarket(
@@ -107,10 +107,13 @@ async getMarket(
 
 **Parameters:**
 - `networkCode`: The market to fetch data for
-- `metrics`: Array of market metrics (e.g., ["price", "demand"])
+- `metrics`: Array of market metrics including:
+  - Price and demand: `"price"`, `"demand"`, `"demand_energy"`
+  - Curtailment power (MW): `"curtailment"`, `"curtailment_solar"`, `"curtailment_wind"`
+  - Curtailment energy (MWh): `"curtailment_energy"`, `"curtailment_solar_energy"`, `"curtailment_wind_energy"`
 - `params`: Optional parameters (similar to getNetworkData)
 
-**Example:**
+**Example - Price and Demand:**
 ```typescript
 const { datatable } = await client.getMarket("NEM", ["price", "demand"], {
   interval: "30m",
@@ -118,6 +121,36 @@ const { datatable } = await client.getMarket("NEM", ["price", "demand"], {
   dateEnd: "2024-01-02T00:00:00",
   primaryGrouping: "network_region"
 })
+```
+
+**Example - Curtailment Power (5-minute intervals):**
+```typescript
+// Fetch real-time curtailment power data (MW)
+const { datatable } = await client.getMarket(
+  "NEM", 
+  ["curtailment_solar", "curtailment_wind", "curtailment"],
+  {
+    interval: "5m",
+    dateStart: "2024-01-01T00:00:00",
+    // Omit dateEnd to get latest available data
+    primaryGrouping: "network_region"
+  }
+)
+```
+
+**Example - Curtailment Energy (Daily totals):**
+```typescript
+// Fetch daily curtailment energy totals (MWh)
+const { datatable } = await client.getMarket(
+  "NEM",
+  ["curtailment_solar_energy", "curtailment_wind_energy", "curtailment_energy"],
+  {
+    interval: "1d",
+    dateStart: "2024-01-01",
+    dateEnd: "2024-01-31",
+    primaryGrouping: "network_region"
+  }
+)
 ```
 
 # Facility Information
