@@ -334,7 +334,10 @@ async def run_market_summary_aggregate_to_now() -> int:
         (
             interval, network_id, network_region, price, demand, demand_total,
             demand_energy, demand_total_energy, demand_market_value,
-            demand_total_market_value, version
+            demand_total_market_value, curtailment_solar_total,
+            curtailment_wind_total, curtailment_solar_uigf,
+            curtailment_solar_clearedmw, curtailment_wind_uigf,
+            curtailment_wind_clearedmw, version
         )
         VALUES
         """,
