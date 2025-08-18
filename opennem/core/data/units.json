@@ -35,6 +35,18 @@
         "unit": "MWh"
     },
     {
+        "name": "curtailment_solar",
+        "name_alias": "curtailment.solar",
+        "unit_type": "power",
+        "unit": "MW"
+    },
+    {
+        "name": "curtailment_wind",
+        "name_alias": "curtailment.wind",
+        "unit_type": "power",
+        "unit": "MW"
+    },
+    {
         "name": "energy_gig",
         "name_alias": "energy_giga",
         "unit_type": "energy",

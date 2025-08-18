@@ -429,10 +429,11 @@ async def power_week(
 
     ch_client = get_clickhouse_client()
 
-    result_price_and_demand = ch_client.execute(query)
+    result_price_and_demand_and_curtailment = ch_client.execute(query)
 
     stats_price_results = [
-        DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None) for i in result_price_and_demand
+        DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None)
+        for i in result_price_and_demand_and_curtailment
     ]
 
     stats_price = stats_factory(
@@ -448,7 +449,8 @@ async def power_week(
 
     #  demand
     stats_demand_results = [
-        DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in result_price_and_demand
+        DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None)
+        for i in result_price_and_demand_and_curtailment
     ]
 
     stats_demand = stats_factory(
@@ -460,6 +462,37 @@ async def power_week(
     )
 
     result.append_set(stats_demand)
+
+    # curtailment
+    stats_curtailment_solar_results = [
+        DataQueryResult(interval=i[0], result=i[6], group_by=i[1] if len(i) > 1 else None)
+        for i in result_price_and_demand_and_curtailment
+    ]
+
+    stats_curtailment_solar = stats_factory(
+        stats=stats_curtailment_solar_results,
+        units=get_unit("curtailment_solar"),
+        network=time_series.network,
+        interval=time_series.interval,
+        region=network_region_code,
+    )
+
+    result.append_set(stats_curtailment_solar)
+
+    stats_curtailment_wind_results = [
+        DataQueryResult(interval=i[0], result=i[7], group_by=i[1] if len(i) > 1 else None)
+        for i in result_price_and_demand_and_curtailment
+    ]
+
+    stats_curtailment_wind = stats_factory(
+        stats=stats_curtailment_wind_results,
+        units=get_unit("curtailment_wind"),
+        network=time_series.network,
+        interval=time_series.interval,
+        region=network_region_code,
+    )
+
+    result.append_set(stats_curtailment_wind)
 
     return result
 

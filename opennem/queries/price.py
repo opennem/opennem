@@ -29,7 +29,11 @@ def get_network_region_price_query(
             time_bucket_gapfill('{trunc}', bs.interval) as interval,
             bs.network_id,
             bs.network_region,
-            avg(bs.price) as price
+            avg(bs.price) as price,
+            avg(bs.demand) as demand,
+            avg(bs.demand_total) as demand_total,
+            max(bs.ss_solar_uigf - bs.ss_solar_clearedmw) as curtailment_solar_total,
+            max(bs.ss_wind_uigf - bs.ss_wind_clearedmw) as curtailment_wind_total,
         from mv_balancing_summary bs
         where
             bs.interval >= '{date_min}'
@@ -132,7 +136,9 @@ def get_network_price_demand_query_analytics(
             network_region,
             sum(price) AS price,
             sum(demand) AS demand,
-            sum(demand_total) AS demand_total
+            sum(demand_total) AS demand_total,
+            sum(curtailment_solar_total) AS curtailment_solar_total,
+            sum(curtailment_wind_total) AS curtailment_wind_total
         FROM market_summary
         WHERE network_id = '{network.code}'
             AND interval >= parseDateTimeBestEffort('{date_min}')
