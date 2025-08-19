@@ -1,0 +1,132 @@
+---
+title: Curtailment
+description: Understanding renewable energy curtailment in the NEM
+icon: "ban"
+---
+
+<Note>Curtailment data is currently only supported on the NEM network</Note>
+
+## What is Curtailment?
+
+Curtailment occurs when renewable energy generators (wind and solar) are instructed to reduce their output below what they could potentially generate given the available wind and solar resources. This typically happens when there is more renewable generation available than the grid can accommodate at that moment.
+
+Think of it like having a water tap that could flow at full pressure, but you're only opening it halfway because your bucket would overflow otherwise. The renewable resources (wind and sunshine) are available, but the electricity isn't needed or can't be transported through the grid at that time.
+
+## Why Does Curtailment Happen?
+
+Curtailment occurs for several reasons:
+
+### 1. **Oversupply of Generation**
+When renewable generation exceeds demand and other generators can't reduce output further, renewable sources must curtail. This often happens during:
+- Sunny weekend afternoons when solar generation is high but demand is low
+- Windy nights when wind generation peaks but overnight demand is minimal
+
+### 2. **Network Constraints**
+Transmission lines have capacity limits. Even if there's demand elsewhere in the grid, renewable generators may need to curtail if the transmission lines are at capacity. This is particularly common in:
+- Remote renewable energy zones with limited transmission capacity
+- Areas with rapid renewable development that has outpaced transmission infrastructure
+
+### 3. **System Security**
+The grid operator (AEMO) may curtail generation to maintain system stability, including:
+- Managing system strength and inertia requirements
+- Maintaining frequency within safe limits
+- Ensuring adequate reserves for unexpected events
+
+## How OpenElectricity Reports Curtailment
+
+OpenElectricity calculates curtailment by comparing what renewable generators could have produced (unconstrained generation) with what they actually produced (actual generation). This data comes from AEMO's dispatch data, which provides target values and unconstrained intermittent generation forecasts (UIGF) for wind and solar.
+
+### Available Metrics
+
+OpenElectricity provides curtailment data through several metrics:
+
+#### Power Metrics (MW)
+- **`curtailment`** - Total curtailed power across all renewable sources
+- **`curtailment_solar`** - Solar generation curtailed
+- **`curtailment_wind`** - Wind generation curtailed
+
+These show the instantaneous power that could have been generated but wasn't, measured in megawatts (MW). Use these for:
+- Real-time monitoring
+- Understanding current grid conditions
+- 5-minute and hourly interval analysis
+
+#### Energy Metrics (MWh)
+- **`curtailment_energy`** - Total curtailed energy over a time period
+- **`curtailment_solar_energy`** - Solar energy curtailed
+- **`curtailment_wind_energy`** - Wind energy curtailed
+
+These show the cumulative energy that was curtailed over time, measured in megawatt-hours (MWh). Use these for:
+- Daily, weekly, or monthly summaries
+- Understanding total renewable energy lost
+- Economic impact analysis
+
+### Regional Breakdown
+
+Curtailment data is available for each NEM region:
+- **NSW1** - New South Wales
+- **QLD1** - Queensland
+- **VIC1** - Victoria
+- **SA1** - South Australia
+- **TAS1** - Tasmania
+
+Each region has different curtailment patterns based on:
+- Renewable generation capacity
+- Transmission infrastructure
+- Local demand patterns
+- Interconnector constraints
+
+## Understanding Curtailment Patterns
+
+### Daily Patterns
+Solar curtailment typically peaks during midday hours when solar generation is highest, particularly on mild, sunny days when air conditioning demand is low. Wind curtailment can occur at any time but is often higher during overnight periods when demand is lowest.
+
+### Seasonal Patterns
+- **Spring**: Often sees the highest curtailment due to mild weather (low demand) combined with good renewable conditions
+- **Summer**: High solar generation but also high cooling demand can lead to midday curtailment
+- **Winter**: Lower solar generation but wind curtailment may increase during storms
+- **Autumn**: Similar to spring with moderate curtailment levels
+
+### Price Correlation
+Curtailment typically correlates with low or negative electricity prices. When renewable generation is curtailed, it often indicates an oversupply situation that drives prices down. Understanding this relationship helps explain:
+- Why negative prices occur
+- The economic impact on renewable generators
+- Investment signals for storage and transmission
+
+## Impact and Implications
+
+### Economic Impact
+Curtailed energy represents lost revenue for renewable generators and lost clean energy for the grid. As renewable penetration increases, curtailment is expected to grow unless addressed through:
+- **Energy storage**: Batteries can store excess renewable generation
+- **Transmission expansion**: Better connections between renewable zones and demand centers
+- **Demand response**: Shifting demand to periods of high renewable generation
+- **Hydrogen production**: Using excess renewables for green hydrogen
+
+### Environmental Impact
+Every MWh of curtailed renewable energy is clean energy that could have displaced fossil fuel generation. Reducing curtailment is key to maximizing emissions reductions from renewable investments.
+
+### Market Signals
+High curtailment levels signal:
+- Opportunities for energy storage investment
+- Need for transmission infrastructure upgrades
+- Potential for new flexible demand (like hydrogen electrolyzers)
+- Locations where new renewable investment may face challenges
+
+## Data Sources
+
+OpenElectricity calculates curtailment using AEMO's official dispatch data:
+- **DISPATCHREGIONSUM** table provides regional target and unconstrained generation values
+- **Semi-scheduled generator data** includes wind and solar farm constraints
+- Updates every 5 minutes with NEM dispatch intervals
+
+The calculation methodology:
+1. **Unconstrained Generation (UIGF)**: What could have been generated based on available resources
+2. **Actual Generation**: What was actually generated (cleared MW)
+3. **Curtailment**: The difference between potential and actual generation
+
+This approach provides a comprehensive view of renewable curtailment across the NEM, helping stakeholders understand and respond to the challenges and opportunities of renewable integration.
+
+## Further Reading
+
+- [AEMO's Quarterly Energy Dynamics reports](https://aemo.com.au/energy-systems/major-publications/quarterly-energy-dynamics-qed) include detailed curtailment analysis
+- [Renewable Integration Study](https://aemo.com.au/energy-systems/major-publications/renewable-integration-study-ris) examines future curtailment scenarios
+- [Semi-Scheduled Generation](https://aemo.com.au/energy-systems/electricity/national-electricity-market-nem/participate-in-the-market/registration) explains how renewable generators participate in the NEM

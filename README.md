@@ -13,10 +13,13 @@ Currently supported networks:
 - Australian NEM: https://www.nemweb.com.au/
 - West Australia Energy Market: http://data.wa.aemo.com.au/
 
+Developers can register for an API key at [platform.openelectricity.org.au](https://platform.openelectricity.org.au/). There are official `openelectricity` clients available in both Typescript and Python.
+
 ## Documentation
 
  - [Documentation Website](https://docs.openelectricity.org.au/)
- - [API Interface and documentation](https://api.openelectricity.org.au/v4/docs)
+ - [API Reference](https://docs.openelectricity.org.au/api-reference/overview)
+ - [SDKs](https://docs.openelectricity.org.au/sdk/overview)
 
 ## Contact
 
