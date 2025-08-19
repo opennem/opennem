@@ -1,0 +1,408 @@
+---
+title: 'Chart Styling'
+description: 'Create charts with OpenElectricity branding and colors'
+icon: 'palette'
+---
+
+The OpenElectricity Python SDK includes a comprehensive styling module that helps you create professional charts matching the OpenElectricity brand guidelines.
+
+## Installation
+
+The styling module requires additional visualization dependencies:
+
+<CodeGroup>
+
+```bash pip
+pip install openelectricity[charts]
+```
+
+```bash uv
+uv add openelectricity[charts]
+```
+
+</CodeGroup>
+
+Or install the dependencies separately:
+
+```bash
+pip install matplotlib seaborn pillow
+```
+
+## Quick Start
+
+<CodeGroup>
+
+```python Basic Setup
+from openelectricity import styles
+import matplotlib.pyplot as plt
+
+# Apply OpenElectricity styling globally
+styles.set_openelectricity_style()
+
+# Create a styled figure
+fig, ax = styles.create_styled_figure(figsize=(12, 6))
+
+# Your plotting code here
+ax.plot(data)
+
+# Format with OpenElectricity branding
+styles.format_chart(
+    ax,
+    title="My Energy Chart",
+    ylabel="Generation (MW)",
+    add_logo=True  # Adds watermark
+)
+
+plt.show()
+```
+
+```python With Data
+from openelectricity import OEClient, styles
+from openelectricity.types import DataMetric
+import pandas as pd
+
+# Fetch data
+with OEClient() as client:
+    response = client.get_network_data(
+        network_code="NEM",
+        metrics=[DataMetric.POWER],
+        interval="1h",
+        primary_grouping="fueltech"
+    )
+
+# Create styled chart
+fig, ax = styles.create_styled_figure()
+
+# Plot with fuel technology colors
+for fueltech in fueltechs:
+    color = styles.get_fueltech_color(fueltech)
+    ax.plot(data[fueltech], color=color, label=fueltech)
+
+styles.format_chart(ax, title="Generation by Technology")
+plt.show()
+```
+
+</CodeGroup>
+
+## Fuel Technology Colors
+
+The module includes the official color palette for all Australian energy fuel technologies.
+
+### Color Functions
+
+<CodeGroup>
+
+```python Single Color
+# Get color for a specific fuel technology
+color = styles.get_fueltech_color("solar_rooftop")
+# Returns: "#FFD700" (gold)
+```
+
+```python Multiple Colors
+# Get colors for multiple fuel technologies
+fueltechs = ["solar", "wind", "coal", "gas"]
+colors = styles.get_fueltech_palette(fueltechs)
+# Returns: ["#FFA500", "#4A8E3C", "#2C2C2C", "#D2691E"]
+```
+
+</CodeGroup>
+
+### Available Colors
+
+<Tabs>
+  <Tab title="Renewables">
+    | Technology | Color | Hex Code |
+    |------------|-------|----------|
+    | Solar Rooftop | 🟡 Gold | `#FFD700` |
+    | Solar Utility | 🟠 Orange | `#FFA500` |
+    | Wind | 🟢 Forest Green | `#4A8E3C` |
+    | Hydro | 🔵 Light Blue | `#4A90E2` |
+  </Tab>
+  
+  <Tab title="Storage">
+    | Technology | Color | Hex Code |
+    |------------|-------|----------|
+    | Battery Discharging | 🟣 Indigo | `#6366F1` |
+    | Battery Charging | 🟪 Purple | `#8B5CF6` |
+    | Pumps | 🔷 Cyan | `#06B6D4` |
+  </Tab>
+  
+  <Tab title="Fossil Fuels">
+    | Technology | Color | Hex Code |
+    |------------|-------|----------|
+    | Coal Black | ⚫ Very Dark Gray | `#2C2C2C` |
+    | Coal Brown | 🟤 Dark Brown | `#654321` |
+    | Gas CCGT | 🟫 Chocolate | `#D2691E` |
+    | Gas OCGT | 🟨 Burlesque | `#DEB887` |
+    | Gas Steam | 🟧 Sandy Brown | `#F4A460` |
+  </Tab>
+  
+  <Tab title="Other">
+    | Technology | Color | Hex Code |
+    |------------|-------|----------|
+    | Distillate | 🔴 Crimson | `#DC143C` |
+    | Bioenergy | 🟫 Tan | `#8B7355` |
+    | Imports/Exports | ⚪ Gray | `#9CA3AF` |
+  </Tab>
+</Tabs>
+
+## Logo Watermark
+
+Add the official OpenElectricity logo as a watermark to your charts.
+
+```python
+# Add watermark with defaults (15% size, 30% opacity)
+styles.add_watermark(ax)
+
+# Customize watermark
+styles.add_watermark(
+    ax,
+    position=(0.98, 0.02),  # Bottom-right (x, y in 0-1 range)
+    size=0.20,              # 20% of figure width
+    alpha=0.3               # 30% transparency
+)
+```
+
+<Note>
+The logo is automatically downloaded and cached from the official OpenElectricity platform on first use.
+</Note>
+
+## Chart Formatting
+
+The `format_chart()` function applies consistent OpenElectricity branding:
+
+```python
+styles.format_chart(
+    ax,
+    title="NEM Generation by Technology",
+    xlabel="Date",
+    ylabel="Power (MW)",
+    add_logo=True,           # Add watermark
+    logo_position=(0.98, 0.02),
+    logo_size=0.15,          # 15% of figure width
+    logo_alpha=0.3           # 30% transparency
+)
+```
+
+### Features Applied
+
+- **Typography**: DM Sans font family with appropriate sizes
+- **Colors**: Clean white background with subtle gray gridlines
+- **Grid**: Light gray (30% alpha) horizontal and vertical lines
+- **Spines**: Only left and bottom axes visible (cleaner look)
+- **Logo**: Optional watermark in bottom-right corner
+
+## Complete Examples
+
+### Stacked Area Chart
+
+Recreate the OpenElectricity website's generation chart:
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+from datetime import datetime, timedelta
+from openelectricity import OEClient, styles
+from openelectricity.types import DataMetric
+
+# Apply styling
+styles.set_openelectricity_style()
+
+# Fetch data
+with OEClient() as client:
+    response = client.get_network_data(
+        network_code="NEM",
+        metrics=[DataMetric.POWER],
+        interval="30m",
+        date_start=datetime.now() - timedelta(days=3),
+        primary_grouping="fueltech"
+    )
+
+# Process to DataFrame
+data = []
+for timeseries in response.data:
+    for result in timeseries.results:
+        fueltech = result.name.replace("power.", "")
+        for dp in result.data:
+            if dp.value and dp.value >= 0:
+                data.append({
+                    "timestamp": dp.timestamp,
+                    "fueltech": fueltech,
+                    "power": dp.value
+                })
+
+df = pd.DataFrame(data)
+pivot_df = df.pivot_table(
+    index="timestamp",
+    columns="fueltech",
+    values="power",
+    fill_value=0
+)
+
+# Create chart
+fig, ax = styles.create_styled_figure(figsize=(14, 8))
+
+# Order fuel technologies (fossil fuels bottom, renewables top)
+fuel_order = [
+    "coal_black", "coal_brown",  # Coal at bottom
+    "gas_steam", "gas_ccgt", "gas_ocgt",  # Gas
+    "hydro", "battery_charging",  # Storage
+    "battery_discharging", "wind",  # Renewables
+    "solar_utility", "solar_rooftop"  # Solar on top
+]
+
+# Filter to available columns
+ordered_cols = [col for col in fuel_order if col in pivot_df.columns]
+colors = styles.get_fueltech_palette(ordered_cols)
+
+# Create stacked area chart
+ax.stackplot(
+    pivot_df.index,
+    *[pivot_df[col].values for col in ordered_cols],
+    labels=[col.replace("_", " ").title() for col in ordered_cols],
+    colors=colors,
+    alpha=0.9
+)
+
+# Format chart
+styles.format_chart(
+    ax,
+    title=f"NEM Generation - {pivot_df.iloc[-1].sum():,.0f} MW",
+    ylabel="Generation (MW)",
+    add_logo=True,
+    logo_size=0.20
+)
+
+# Add legend
+ax.legend(loc='upper left', frameon=False, ncol=5)
+
+plt.tight_layout()
+plt.show()
+```
+
+### Daily Emissions Chart
+
+```python
+from openelectricity import OEClient, styles
+from openelectricity.types import DataMetric
+import matplotlib.pyplot as plt
+from datetime import datetime, timedelta
+
+# Setup styling
+styles.set_openelectricity_style()
+
+with OEClient() as client:
+    # Get emissions data
+    response = client.get_network_data(
+        network_code="NEM",
+        metrics=[DataMetric.EMISSIONS],
+        interval="1d",
+        date_start=datetime.now() - timedelta(days=30),
+        primary_grouping="network_region"
+    )
+
+# Create styled figure
+fig, ax = styles.create_styled_figure(figsize=(12, 6))
+
+# Plot each region with brand colors
+regions = ["NSW1", "QLD1", "VIC1", "SA1", "TAS1"]
+colors = plt.cm.Set2(range(len(regions)))
+
+for i, region in enumerate(regions):
+    # Filter data for region
+    region_data = [...]  # Process response
+    ax.plot(dates, values, label=region, color=colors[i], linewidth=2)
+
+# Format with branding
+styles.format_chart(
+    ax,
+    title="Daily Emissions by Region",
+    xlabel="Date",
+    ylabel="Emissions (tCO₂)",
+    add_logo=True
+)
+
+ax.legend(loc='upper right')
+plt.show()
+```
+
+## Style Configuration
+
+The module applies these consistent style settings:
+
+| Element | Configuration |
+|---------|--------------|
+| **Font Family** | DM Sans, fallback to system sans-serif |
+| **Background** | Clean white (#FFFFFF) |
+| **Text Color** | Dark gray (#1A1A1A) |
+| **Grid** | Light gray (#E0E0E0) at 30% opacity |
+| **Grid Style** | Solid lines, 0.5pt width |
+| **Spines** | Only bottom and left visible |
+| **Title Size** | 14pt bold |
+| **Label Size** | 11pt regular |
+| **Tick Size** | 10pt regular |
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Color Usage">
+    - Always use the provided fuel technology colors for energy data
+    - Use `get_fueltech_color()` for consistent coloring
+    - Group similar technologies with color families
+  </Accordion>
+  
+  <Accordion title="Watermark Placement">
+    - Position in bottom-right corner for minimal interference
+    - Use 15-20% size for optimal visibility
+    - Set 30% transparency to avoid obscuring data
+  </Accordion>
+  
+  <Accordion title="Chart Layout">
+    - Stack fossil fuels at bottom, renewables on top
+    - Use thousands separators for large numbers
+    - Include clear time labels on x-axis
+    - Add units to axis labels (MW, MWh, tCO₂)
+  </Accordion>
+  
+  <Accordion title="Performance">
+    - Logo is downloaded once and cached
+    - Apply global styling once at start
+    - Use vectorized operations for large datasets
+  </Accordion>
+</AccordionGroup>
+
+## API Reference
+
+### Core Functions
+
+| Function | Description |
+|----------|------------|
+| `set_openelectricity_style()` | Apply global matplotlib/seaborn styling |
+| `create_styled_figure(figsize, dpi)` | Create pre-styled figure and axes |
+| `format_chart(ax, **kwargs)` | Apply OpenElectricity formatting to axes |
+| `add_watermark(ax, **kwargs)` | Add logo watermark to axes |
+
+### Color Functions
+
+| Function | Description |
+|----------|------------|
+| `get_fueltech_color(fueltech)` | Get hex color for a fuel technology |
+| `get_fueltech_palette(fueltechs)` | Get list of colors for multiple technologies |
+| `get_color_map()` | Get complete fuel technology color dictionary |
+| `get_brand_colors()` | Get OpenElectricity brand color palette |
+
+## Troubleshooting
+
+<Warning>
+If the logo fails to download, ensure you have internet connectivity. The module will continue without the watermark if the logo is unavailable.
+</Warning>
+
+<Info>
+For high-DPI displays, increase the `dpi` parameter in `create_styled_figure()` to 150 or 200 for sharper output.
+</Info>
+
+## Related Resources
+
+- [Python SDK Overview](/sdk/python/overview)
+- [Python SDK Reference](/sdk/python/reference)
+- [Example Scripts](https://github.com/opennem/openelectricity-python/tree/main/examples)

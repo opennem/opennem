@@ -88,7 +88,7 @@
 				},
 				{
 					"group": "Python",
-					"pages": ["sdk/python/overview", "sdk/python/reference"]
+					"pages": ["sdk/python/overview", "sdk/python/reference", "sdk/python/styling"]
 				}
 			]
 		},
