@@ -20,6 +20,7 @@ from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.units import get_unit
 from opennem.db import db_connect, get_database_engine
 from opennem.db.clickhouse import get_clickhouse_client
+from opennem.queries.curtailment import get_network_curtailment_energy_query_analytics
 from opennem.queries.flows import get_network_flows_emissions_market_value_query
 from opennem.queries.power import (
     get_fueltech_generation_query,
@@ -464,20 +465,23 @@ async def power_week(
     result.append_set(stats_demand)
 
     # curtailment
-    stats_curtailment_results = [
-        DataQueryResult(interval=i[0], result=i[6], group_by=i[1] if len(i) > 1 else None)
-        for i in result_price_and_demand_and_curtailment
-    ]
 
-    stats_curtailment = stats_factory(
-        stats=stats_curtailment_results,
-        units=get_unit("curtailment"),
-        network=time_series.network,
-        interval=time_series.interval,
-        region=network_region_code,
-    )
+    # curtailment total
 
-    result.append_set(stats_curtailment)
+    # stats_curtailment_results = [
+    #     DataQueryResult(interval=i[0], result=i[6], group_by=i[1] if len(i) > 1 else None)
+    #     for i in result_price_and_demand_and_curtailment
+    # ]
+
+    # stats_curtailment = stats_factory(
+    #     stats=stats_curtailment_results,
+    #     units=get_unit("curtailment"),
+    #     network=time_series.network,
+    #     interval=time_series.interval,
+    #     region=network_region_code,
+    # )
+
+    # result.append_set(stats_curtailment)
 
     stats_curtailment_solar_results = [
         DataQueryResult(interval=i[0], result=i[7], group_by=i[1] if len(i) > 1 else None)
@@ -664,6 +668,63 @@ async def demand_network_region_daily(
         region=network_region_code,
     ):
         stats.append_set(stats_market_value)
+
+    return stats
+
+
+async def curtailment_network_region_daily(
+    time_series: OpennemExportSeries,
+    network_region_code: str | None = None,
+    networks: list[NetworkSchema] | None = None,
+) -> OpennemDataSet | None:  # sourcery skip: raise-specific-error
+    """Gets demand market_value and energy for a network -> network_region"""
+    ch_client = get_clickhouse_client()
+
+    query = get_network_curtailment_energy_query_analytics(
+        network=time_series.network,
+        interval=time_series.interval,
+        date_min=time_series.get_range().start,
+        date_max=time_series.get_range().end,
+        network_region_code=network_region_code,
+    )
+
+    result_curtailment = ch_client.execute(query)
+
+    result_curtailment_solar = [
+        DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 1 else None) for i in result_curtailment
+    ]
+
+    result_curtailment_wind = [
+        DataQueryResult(interval=i[0], group_by=i[2], result=i[5] if len(i) > 1 else None) for i in result_curtailment
+    ]
+
+    if not result_curtailment_solar:
+        logger.error(f"No results from query: {query}")
+        return None
+
+    stats = OpennemDataSet()
+
+    # curtailment based values for VWP
+    if stats_curtailment_solar := stats_factory(
+        stats=result_curtailment_solar,
+        units=get_unit("curtailment_solar_energy"),
+        network=time_series.network,
+        fueltech_group=False,
+        interval=time_series.interval,
+        region=network_region_code,
+    ):
+        stats.append_set(stats_curtailment_solar)
+
+    if stats_curtailment_wind := stats_factory(
+        stats=result_curtailment_wind,
+        units=get_unit("curtailment_wind_energy"),
+        network=time_series.network,
+        fueltech_group=False,
+        interval=time_series.interval,
+        code=time_series.network.code.lower(),
+        region=network_region_code,
+    ):
+        stats.append_set(stats_curtailment_wind)
 
     return stats
 

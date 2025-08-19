@@ -17,6 +17,7 @@ from sqlalchemy import select
 
 from opennem.api.export.controllers import (
     NoResults,
+    curtailment_network_region_daily,
     demand_network_region_daily,
     energy_interconnector_flows_and_emissions_v2,
     gov_stats_cpi,
@@ -212,6 +213,12 @@ async def export_energy(
                 time_series=time_series, network_region_code=energy_stat.network_region, networks=energy_stat.networks
             )
             stat_set.append_set(demand_energy_and_value)
+
+            if energy_stat.network == NetworkNEM:
+                curtailment_energy = await curtailment_network_region_daily(
+                    time_series=time_series, network_region_code=energy_stat.network_region, networks=energy_stat.networks
+                )
+                stat_set.append_set(curtailment_energy)
 
             # network flows
             if energy_stat.network.has_interconnectors and energy_stat.network_region:
