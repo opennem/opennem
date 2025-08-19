@@ -225,30 +225,52 @@ def format_timeseries_response(
                     grouped_results[label_key]["facility_code"] = facility_code
 
             # Add data point with timezone-aware timestamp
-            if isinstance(row["interval"], datetime):
-                grouped_results[label_key]["data"].append(
-                    [row["interval"].timestamp() * 1000, float(row[metric_name]) if row[metric_name] is not None else None]
-                )
-            else:
-                grouped_results[label_key]["data"].append([row["interval"], float(row[metric_name])])
+            # Handle None values gracefully - skip them or use None
+            metric_value = None
+            if row[metric_name] is not None:
+                metric_value = float(row[metric_name])
 
-        # Sort data points by timestamp
+            if isinstance(row["interval"], datetime):
+                grouped_results[label_key]["data"].append([row["interval"].timestamp() * 1000, metric_value])
+            else:
+                grouped_results[label_key]["data"].append([row["interval"], metric_value])
+
+        # Sort data points by timestamp and filter out None values if needed
         for group in grouped_results.values():
-            group["data"] = [
-                # (timestamp.replace(tzinfo=tz_offset), value) if timestamp else (timestamp, value)
-                (
-                    datetime.fromtimestamp(timestamp / 1000, tz=tz_offset)
-                    if isinstance(timestamp, float)
-                    else datetime.combine(timestamp, datetime.min.time(), tzinfo=tz_offset),
-                    value,
-                )
-                for timestamp, value in group["data"]
-            ]
+            # Convert timestamps and filter out data points where value is None
+            converted_data = []
+            for timestamp, value in group["data"]:
+                # Skip entries with None values - they represent no data for that period
+                if value is not None:
+                    converted_timestamp = (
+                        datetime.fromtimestamp(timestamp / 1000, tz=tz_offset)
+                        if isinstance(timestamp, float)
+                        else datetime.combine(timestamp, datetime.min.time(), tzinfo=tz_offset)
+                    )
+                    converted_data.append((converted_timestamp, value))
+
+            group["data"] = converted_data
             group["data"].sort(key=lambda x: x[0])
 
-        # Get timezone-aware start and end dates
-        date_start = min(row["interval"] for row in results)
-        date_end = max(row["interval"] for row in results)
+        # Filter out groups that have no data at all
+        grouped_results = {k: v for k, v in grouped_results.items() if v["data"]}
+
+        # Skip this metric entirely if no data exists
+        if not grouped_results:
+            continue
+
+        # Get timezone-aware start and end dates from actual data (not from query)
+        all_timestamps = []
+        for group in grouped_results.values():
+            all_timestamps.extend([timestamp for timestamp, _ in group["data"]])
+
+        if all_timestamps:
+            date_start = min(all_timestamps)
+            date_end = max(all_timestamps)
+        else:
+            # Fall back to original dates if no valid data
+            date_start = min(row["interval"] for row in results)
+            date_end = max(row["interval"] for row in results)
 
         # Create TimeSeries for this metric
         timeseries = TimeSeries(
