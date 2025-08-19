@@ -169,8 +169,8 @@ def get_timeseries_query(
     # filters
     facility_code: list[str] | None = None,
     network_region: str | None = None,
-    fueltech: str | None = None,
-    fueltech_group: str | None = None,
+    fueltech: list[str] | None = None,
+    fueltech_group: list[str] | None = None,
 ) -> tuple[str, dict, list[str]]:
     """
     Build a time series query for either market or data metrics.
@@ -186,8 +186,8 @@ def get_timeseries_query(
         secondary_groupings: Optional sequence of secondary groupings to apply
         facility_code: Optional facility codes to filter by
         network_region: Optional network region to filter by
-        fueltech: Optional fueltech to filter by
-        fueltech_group: Optional fueltech group to filter by
+        fueltech: Optional fueltechs to filter by
+        fueltech_group: Optional fueltech groups to filter by
 
     Returns:
         tuple[str, dict, list[str]]: ClickHouse SQL query, parameters, and list of column names
@@ -268,11 +268,11 @@ def get_timeseries_query(
         params["network_region"] = network_region
 
     if fueltech:
-        where_clauses.append("fueltech_id = %(fueltech)s")
+        where_clauses.append("fueltech_id in %(fueltech)s")
         params["fueltech"] = fueltech
 
     if fueltech_group:
-        where_clauses.append("fueltech_group_id = %(fueltech_group)s")
+        where_clauses.append("fueltech_group_id in %(fueltech_group)s")
         params["fueltech_group"] = fueltech_group
 
     query = f"""

@@ -51,8 +51,8 @@ async def get_network_data(
     date_start: Annotated[datetime | None, Query(description="Start time for the query", example="2024-01-01T00:00:00")] = None,
     date_end: Annotated[datetime | None, Query(description="End time for the query", example="2024-01-02T00:00:00")] = None,
     network_region: Annotated[str | None, Query(description="Network region to get data for", example="NSW1")] = None,
-    fueltech: Annotated[str | None, Query(description="Fueltech to get data for", example="coal_black")] = None,
-    fueltech_group: Annotated[str | None, Query(description="Fueltech group to get data for", example="coal")] = None,
+    fueltech: Annotated[list[str] | None, Query(description="Fueltechs to get data for", example="coal_black")] = None,
+    fueltech_group: Annotated[list[str] | None, Query(description="Fueltech groups to get data for", example="coal")] = None,
     primary_grouping: Annotated[
         PrimaryGrouping, Query(description="Primary grouping to apply", example="network_region")
     ] = PrimaryGrouping.NETWORK,
