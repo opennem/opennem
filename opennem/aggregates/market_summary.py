@@ -539,7 +539,7 @@ async def run_market_summary_backlog() -> None:
             min(interval) as first_interval,
             max(interval) as last_interval
         FROM market_summary
-        WHERE interval BETWEEN {start:DateTime64} AND {end:DateTime64}
+        WHERE interval BETWEEN %(start)s AND %(end)s
         GROUP BY network_id, network_region
         """,
         {"start": start_date, "end": end_date},
