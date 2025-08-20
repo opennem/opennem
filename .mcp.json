@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "postgres": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "postgres-mcp",
+        "--access-mode=unrestricted"
+      ],
+    }
+  }
+}
