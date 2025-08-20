@@ -74,6 +74,9 @@ async def webhook_sanity_update(webhook_secret: str, request: Request) -> str:
     if request.headers["Content-Type"] != "application/json":
         raise HTTPException(status_code=400, detail="Invalid request Content-Type is not application/json")
 
+    if "sanity-project-id" not in request.headers:
+        raise HTTPException(status_code=400, detail="Invalid request sanity-project-id header missing")
+
     if request.headers["sanity-project-id"] != settings.sanity_project_id:
         raise HTTPException(status_code=400, detail="Invalid request sanity-project-id does not match")
 
