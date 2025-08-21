@@ -45,7 +45,7 @@ def get_network_region_price_query(
     """
     # if only a single interval with date_min set date_max
     if not date_max:
-        date_max: datetime = date_min
+        date_max = date_min
 
     # regions clause
     network_regions_query: str = ""
@@ -130,26 +130,57 @@ def get_network_price_demand_query_analytics(
     date_max = date_max.replace(tzinfo=None)
 
     query = f"""
-        SELECT
-            {time_bucket}(interval) AS interval,
-            network_id,
-            network_region,
-            sum(price) AS price,
-            sum(demand) AS demand,
-            sum(demand_total) AS demand_total,
-            sum(curtailment_total) AS curtailment_total,
-            sum(curtailment_solar_total) AS curtailment_solar_total,
-            sum(curtailment_wind_total) AS curtailment_wind_total
-        FROM market_summary
-        WHERE network_id = '{network.code}'
-            AND interval >= parseDateTimeBestEffort('{date_min}')
-            AND interval <= parseDateTimeBestEffort('{date_max}')
+        WITH time_series AS (
+            SELECT
+                arrayJoin(
+                    arrayMap(
+                        x -> parseDateTimeBestEffort('{date_min}') + toIntervalSecond(x * {interval.interval * 60}),
+                        range(0, toUInt32(dateDiff('second', parseDateTimeBestEffort('{date_min}'),
+                            parseDateTimeBestEffort('{date_max}')) / {interval.interval * 60}) + 1)
+                    )
+                ) AS interval
+        ),
+        regions AS (
+            SELECT DISTINCT network_region
+            FROM market_summary FINAL
+            WHERE network_id = '{network.code}'
             {network_regions_query}
-        GROUP BY
-            interval,
-            network_id,
-            network_region
-        ORDER BY interval desc, network_id, network_region
+        ),
+        data_aggregated AS (
+            SELECT
+                {time_bucket}(interval) AS interval,
+                network_id,
+                network_region,
+                sum(price) AS price,
+                sum(demand) AS demand,
+                sum(demand_total) AS demand_total,
+                sum(curtailment_total) AS curtailment_total,
+                sum(curtailment_solar_total) AS curtailment_solar_total,
+                sum(curtailment_wind_total) AS curtailment_wind_total
+            FROM market_summary FINAL
+            WHERE network_id = '{network.code}'
+                AND interval >= parseDateTimeBestEffort('{date_min}')
+                AND interval <= parseDateTimeBestEffort('{date_max}')
+                {network_regions_query}
+            GROUP BY
+                interval,
+                network_id,
+                network_region
+        )
+        SELECT
+            ts.interval,
+            '{network.code}' AS network_id,
+            r.network_region,
+            da.price,
+            da.demand,
+            da.demand_total,
+            da.curtailment_total,
+            da.curtailment_solar_total,
+            da.curtailment_wind_total
+        FROM time_series ts
+        CROSS JOIN regions r
+        LEFT JOIN data_aggregated da ON ts.interval = da.interval AND r.network_region = da.network_region
+        ORDER BY ts.interval DESC, r.network_region
     """
 
     return query

@@ -493,7 +493,7 @@ async def power_week(
         units=get_unit("curtailment_solar"),
         network=time_series.network,
         fueltech_group=False,
-        fueltech_code="curtailment",
+        fueltech_code="curtailment_solar",
         interval=time_series.interval,
         region=network_region_code,
     )
@@ -510,7 +510,7 @@ async def power_week(
         units=get_unit("curtailment_wind"),
         network=time_series.network,
         fueltech_group=False,
-        fueltech_code="curtailment",
+        fueltech_code="curtailment_wind",
         interval=time_series.interval,
         region=network_region_code,
     )
@@ -714,7 +714,7 @@ async def curtailment_network_region_daily(
         units=get_unit("curtailment_solar_energy"),
         network=time_series.network,
         fueltech_group=False,
-        fueltech_code="curtailment",
+        fueltech_code="curtailment_solar",
         interval=time_series.interval,
         region=network_region_code,
     ):
@@ -725,7 +725,7 @@ async def curtailment_network_region_daily(
         units=get_unit("curtailment_wind_energy"),
         network=time_series.network,
         fueltech_group=False,
-        fueltech_code="curtailment",
+        fueltech_code="curtailment_wind",
         interval=time_series.interval,
         code=time_series.network.code.lower(),
         region=network_region_code,

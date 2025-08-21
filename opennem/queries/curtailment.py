@@ -72,7 +72,7 @@ def get_network_curtailment_energy_query_analytics(
             sum(curtailment_energy_total) AS curtailment_energy_total,
             sum(curtailment_energy_solar_total) AS curtailment_energy_solar_total,
             sum(curtailment_energy_wind_total) AS curtailment_energy_wind_total
-        FROM market_summary
+        FROM market_summary FINAL
         WHERE
             network_id = 'NEM'
             AND interval >= parseDateTimeBestEffort('{date_min}')
