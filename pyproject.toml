@@ -106,6 +106,8 @@ dev-dependencies = [
     "psycopg2-binary>=2.9.10",
     "hatch>=1.14.0",
     "duckdb>=1.1.3",
+    "python-levenshtein>=0.27.1",
+    "fuzzywuzzy>=0.18.0",
 ]
 
 [project.scripts]
