@@ -4,6 +4,8 @@ Facilities API Router
 Handles facility and unit data queries and responses.
 """
 
+import logging
+
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
@@ -16,6 +18,7 @@ from opennem.db.models.opennem import Facility
 from opennem.schema.unit import UnitFueltechType, UnitStatusType
 
 router = APIRouter()
+logger = logging.getLogger("opennem.api.facilities")
 
 
 @router.get(

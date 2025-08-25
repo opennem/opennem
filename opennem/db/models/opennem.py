@@ -235,6 +235,7 @@ class Facility(Base):
     approved: Mapped[bool] = mapped_column(Boolean, default=False)
 
     cms_id: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
+    npi_id: Mapped[str | None] = mapped_column(String(50), nullable=True, unique=True)  # NPI facility ID
 
     units: Mapped[list["Unit"]] = relationship("Unit", innerjoin=True, lazy="selectin")
 
