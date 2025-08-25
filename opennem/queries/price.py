@@ -90,16 +90,17 @@ def get_network_price_demand_query_analytics(
     network_region_code: str | None = None,
 ) -> str:
     """
-    Get price and demand from ClickHouse market_summary table.
+    Get price, demand and curtailment energy from ClickHouse market_summary table.
 
     Args:
         network: Network schema
         date_min: Start date
         date_max: End date (optional)
         interval: Time interval for aggregation (optional)
+        network_region_code: Specific network region (optional)
 
     Returns:
-        str: ClickHouse SQL query
+        str: ClickHouse SQL query with energy values in MWh
     """
     # If only a single interval with date_min set date_max
     if not date_max:
@@ -108,14 +109,6 @@ def get_network_price_demand_query_analytics(
     # If no interval provided get the default from the network
     if not interval:
         interval = network.get_interval()
-
-    # Validate number of intervals
-    num_intervals = num_intervals_between_datetimes(interval.get_timedelta(), date_min, date_max)
-
-    if num_intervals > 9216:  # max 7 days of 5 minute intervals
-        raise TooManyIntervals(
-            f"Too many intervals: {num_intervals}. Try reducing date range or interval size: {date_min} to {date_max}"
-        )
 
     time_bucket = get_clickhouse_interval(interval)
 
@@ -130,57 +123,26 @@ def get_network_price_demand_query_analytics(
     date_max = date_max.replace(tzinfo=None)
 
     query = f"""
-        WITH time_series AS (
-            SELECT
-                arrayJoin(
-                    arrayMap(
-                        x -> parseDateTimeBestEffort('{date_min}') + toIntervalSecond(x * {interval.interval * 60}),
-                        range(0, toUInt32(dateDiff('second', parseDateTimeBestEffort('{date_min}'),
-                            parseDateTimeBestEffort('{date_max}')) / {interval.interval * 60}) + 1)
-                    )
-                ) AS interval
-        ),
-        regions AS (
-            SELECT DISTINCT network_region
-            FROM market_summary FINAL
-            WHERE network_id = '{network.code}'
-            {network_regions_query}
-        ),
-        data_aggregated AS (
-            SELECT
-                {time_bucket}(interval) AS interval,
-                network_id,
-                network_region,
-                avg(price) AS price,
-                avg(demand) AS demand,
-                avg(demand_total) AS demand_total,
-                sum(curtailment_energy_total) AS curtailment_total,
-                sum(curtailment_energy_solar_total) AS curtailment_solar_total,
-                sum(curtailment_energy_wind_total) AS curtailment_wind_total
-            FROM market_summary FINAL
-            WHERE network_id = '{network.code}'
-                AND interval >= parseDateTimeBestEffort('{date_min}')
-                AND interval <= parseDateTimeBestEffort('{date_max}')
-                {network_regions_query}
-            GROUP BY
-                interval,
-                network_id,
-                network_region
-        )
         SELECT
-            ts.interval,
-            '{network.code}' AS network_id,
-            r.network_region,
-            da.price,
-            da.demand,
-            da.demand_total,
-            da.curtailment_total,
-            da.curtailment_solar_total,
-            da.curtailment_wind_total
-        FROM time_series ts
-        CROSS JOIN regions r
-        LEFT JOIN data_aggregated da ON ts.interval = da.interval AND r.network_region = da.network_region
-        ORDER BY ts.interval DESC, r.network_region
+            {time_bucket}(interval) AS interval,
+            network_id,
+            network_region,
+            avg(price) AS price,
+            avg(demand) AS demand,
+            avg(demand_total) AS demand_total,
+            sum(curtailment_total) AS curtailment_total,
+            sum(curtailment_solar_total) AS curtailment_solar_total,
+            sum(curtailment_wind_total) AS curtailment_wind_total
+        FROM market_summary
+        WHERE network_id = '{network.code}'
+            AND interval >= parseDateTimeBestEffort('{date_min}')
+            AND interval <= parseDateTimeBestEffort('{date_max}')
+            {network_regions_query}
+        GROUP BY
+            interval,
+            network_id,
+            network_region
+        ORDER BY interval DESC, network_id, network_region
     """
 
     return query
