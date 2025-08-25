@@ -1,0 +1,254 @@
+---
+title: Pollution Data
+icon: "smog"
+---
+
+# Understanding Pollution Data
+
+OpenElectricity now provides comprehensive pollution data from the National Pollutant Inventory (NPI) for Australian electricity generation facilities. This guide explains the pollution data available, how it's sourced, and what it means for understanding the environmental impact of electricity generation beyond just CO₂ emissions.
+
+## What is NPI Pollution Data?
+
+The National Pollutant Inventory (NPI) is Australia's national database of pollutant emissions. It tracks emissions of 93 substances to air, water, and land from industrial facilities, including power stations. Unlike greenhouse gas emissions (CO₂) which contribute to climate change, NPI tracks pollutants that affect local air quality and human health.
+
+### Key Pollutants from Power Generation
+
+Power stations, particularly coal-fired facilities, emit various pollutants:
+
+- **Sulfur Dioxide (SO₂)**: Causes acid rain and respiratory issues
+- **Nitrogen Oxides (NOₓ)**: Contributes to smog and respiratory problems
+- **Particulate Matter (PM10, PM2.5)**: Fine particles that affect air quality and health
+- **Carbon Monoxide (CO)**: Toxic gas that reduces oxygen delivery
+- **Heavy Metals**: Mercury, lead, arsenic from coal combustion
+- **Volatile Organic Compounds (VOCs)**: Contribute to ground-level ozone
+
+## How Pollution Differs from Emissions
+
+It's important to understand the distinction:
+
+### CO₂ Emissions (Climate Impact)
+- **Source**: Calculated from generation data and emissions factors
+- **Impact**: Global climate change
+- **Measurement**: Tonnes of CO₂ per MWh generated
+- **Data frequency**: Real-time (5-minute intervals)
+- **Reporting**: National Greenhouse and Energy Reporting (NGER)
+
+### NPI Pollution (Local Impact)
+- **Source**: Reported annually by facilities to NPI
+- **Impact**: Local air quality and human health
+- **Measurement**: Kilograms or tonnes per year
+- **Data frequency**: Annual reporting
+- **Reporting**: National Pollutant Inventory
+
+## Data Collection and Methodology
+
+### How NPI Data is Collected
+
+Facilities report their pollution data annually to the NPI using various methods:
+
+1. **Direct Measurement**: Continuous emissions monitoring systems
+2. **Engineering Calculations**: Based on fuel consumption and emission factors
+3. **Mass Balance**: Tracking inputs and outputs
+4. **Emission Factors**: Standard factors for fuel types and processes
+
+### Data Quality Indicators
+
+Each pollution measurement includes a data quality indicator:
+- **Measured**: Direct measurement from monitoring equipment
+- **Calculated**: Engineering calculations based on operations
+- **Estimated**: Estimation using emission factors
+- **Mass Balance**: Calculated from material flows
+
+### Reporting Thresholds
+
+Not all facilities report all pollutants. Reporting is required when:
+- The facility uses more than the threshold amount of a substance
+- Emissions exceed reporting thresholds
+- The facility burns more than specified amounts of fuel
+
+## Understanding the Data
+
+### Annual Reporting Cycles
+
+NPI data is reported annually, with facilities submitting data for the previous financial year (July to June). This means:
+- Data is historical, not real-time
+- Represents total annual emissions
+- Published several months after the reporting period
+
+### Pollution Trends
+
+Pollution levels from power stations are influenced by:
+
+1. **Generation Output**: More generation typically means more pollution
+2. **Fuel Quality**: Coal quality affects pollutant emissions
+3. **Pollution Controls**: Scrubbers and filters reduce emissions
+4. **Maintenance**: Well-maintained plants pollute less
+5. **Age of Plant**: Older plants often have higher pollution rates
+
+### Regional Variations
+
+Pollution impacts vary by region due to:
+- **Fuel Types**: Brown coal (Victoria) vs black coal (NSW/QLD)
+- **Plant Technology**: Newer plants have better pollution controls
+- **Environmental Regulations**: State-specific requirements
+- **Population Density**: Impact on nearby communities
+
+## Interpreting Pollution Data
+
+### Scale and Context
+
+When viewing pollution data, consider:
+
+- **Magnitude**: Major coal plants emit thousands of tonnes of SO₂ annually
+- **Comparison**: Gas plants typically have much lower pollution than coal
+- **Trends**: Pollution often decreases as plants install control equipment
+- **Closure Impact**: Retiring coal plants significantly reduces regional pollution
+
+### Health and Environmental Impacts
+
+Different pollutants have different impacts:
+
+**Air Quality Pollutants:**
+- NOₓ and VOCs form ground-level ozone (smog)
+- SO₂ causes acid rain and respiratory issues
+- Particulate matter affects breathing and cardiovascular health
+
+**Heavy Metals:**
+- Mercury bioaccumulates in food chains
+- Lead affects neurological development
+- Arsenic is carcinogenic
+
+**Regional Pollutants:**
+- Affect local communities more than distant areas
+- Concentrate in valleys and during inversions
+- Impact varies with weather patterns
+
+## Available Data
+
+### Facility Coverage
+
+NPI pollution data is available for facilities that:
+- Meet reporting thresholds for pollutant emissions
+- Are registered with the NPI program
+- Have submitted annual reports
+
+This typically includes:
+- All major coal-fired power stations
+- Large gas-fired power stations
+- Some industrial cogeneration facilities
+
+### Pollutant Categories
+
+OpenElectricity organizes pollutants into categories:
+
+**Air Pollutants:**
+- Sulfur dioxide (SO₂)
+- Nitrogen oxides (NOₓ)
+- Carbon monoxide (CO)
+- Particulate matter (PM10, PM2.5)
+- Volatile organic compounds (VOCs)
+- Ammonia (NH₃)
+- Hydrochloric acid (HCl)
+
+**Heavy Metals:**
+- Mercury (Hg) and compounds
+- Lead (Pb) and compounds
+- Arsenic (As) and compounds
+- Cadmium (Cd) and compounds
+- Chromium (Cr) compounds
+- Nickel (Ni) and compounds
+
+**Organic Compounds:**
+- Polycyclic aromatic hydrocarbons (PAHs)
+- Dioxins and furans
+- Benzene
+- Formaldehyde
+
+## Using Pollution Data
+
+### Understanding Facility Impact
+
+Pollution data helps understand the full environmental impact of electricity generation:
+- Compare facilities beyond just CO₂ emissions
+- Identify high-polluting facilities
+- Track improvements from upgrades or closures
+- Assess local vs global environmental trade-offs
+
+### Policy and Planning
+
+The data supports:
+- Community awareness of local air quality impacts
+- Planning decisions for new generation
+- Health impact assessments
+- Environmental justice considerations
+
+### Research Applications
+
+Researchers can use the data to:
+- Study relationships between generation and pollution
+- Model air quality impacts
+- Assess health costs of electricity generation
+- Compare technologies and fuels
+
+## Accessing the Data
+
+### On the Website
+
+Pollution data is displayed on facility pages for plants with NPI reporting, showing:
+- Annual pollution by substance
+- Historical trends
+- Comparison with similar facilities
+- Data quality indicators
+
+### Via the API
+
+Access pollution data programmatically:
+```typescript
+// Get pollution data for a facility
+const pollution = await client.getFacilityPollution({
+  facility_code: ["YALLOURN"],
+  pollutant_category: ["air_pollutant"],
+  dateStart: "2020-01-01",
+  dateEnd: "2024-12-31"
+})
+```
+
+## Important Considerations
+
+### Data Limitations
+
+- **Annual Resolution**: Data is yearly, not real-time
+- **Reporting Thresholds**: Smaller facilities may not report
+- **Historical Data**: Available from 1998 onwards
+- **Estimation Methods**: Not all data is directly measured
+
+### Comparing Facilities
+
+When comparing pollution between facilities:
+- Consider generation output (pollution per MWh)
+- Account for fuel types and quality
+- Note pollution control equipment
+- Consider plant age and technology
+
+### Renewable Energy
+
+Most renewable facilities don't appear in NPI data because:
+- Solar and wind have no operational air emissions
+- Hydro has no combustion emissions
+- Battery storage has no direct emissions
+- They don't meet reporting thresholds
+
+## Future Developments
+
+OpenElectricity continues to enhance pollution data:
+- Integration with generation data for intensity metrics
+- Pollution per unit of electricity generated
+- Regional air quality aggregations
+- Enhanced visualizations and comparisons
+
+## Related Resources
+
+- [Emissions Guide](/guides/emissions) - Understanding CO₂ emissions data
+- [Facilities Guide](/guides/facilities) - Facility structure and data
+- [National Pollutant Inventory](http://www.npi.gov.au/) - Official NPI website
+- [API Reference](/api-reference/pollution/get-facility-pollution) - Pollution API documentation

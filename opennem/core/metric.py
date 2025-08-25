@@ -44,6 +44,7 @@ class Metric(str, Enum):
     CURTAILMENT_WIND_ENERGY = "curtailment_wind_energy"
     EMISSIONS = "emissions"
     RENEWABLE_PROPORTION = "renewable_proportion"
+    POLLUTION = "pollution"
 
 
 @dataclass

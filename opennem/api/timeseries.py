@@ -40,7 +40,7 @@ class TimeSeriesResult(BaseConfig):
     name: str
     date_start: datetime
     date_end: datetime
-    columns: dict[str, str | bool] = {}
+    columns: dict[str, str | bool | int | list[float] | list[int]] = {}
     data: list[tuple[datetime, SignificantFigures8 | None]]
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
