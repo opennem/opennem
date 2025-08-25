@@ -2,7 +2,7 @@
 Market Summary aggregation module.
 
 This module handles the aggregation of market summary data from PostgreSQL to ClickHouse.
-It calculates energy values from demand readings and stores them in ClickHouse for efficient querying.
+It calculates energy values from power readings and stores them in MWh in ClickHouse for efficient querying.
 """
 
 import logging
@@ -202,7 +202,7 @@ def _prepare_market_summary_data(
         records: Raw records from PostgreSQL
 
     Returns:
-        List of tuples ready for ClickHouse insertion
+        List of tuples ready for ClickHouse insertion with energy values in MWh
     """
     if not records:
         return []
@@ -251,7 +251,7 @@ def _prepare_market_summary_data(
     intervals_map = {network: 60 / interval for network, interval in network_intervals.items()}
     default_intervals = 60 / 5  # Default to 5-minute intervals
 
-    # Calculate energy values using vectorized operations
+    # Calculate energy values using vectorized operations (converting to MWh)
     df = df.with_columns(
         [
             (
@@ -265,7 +265,8 @@ def _prepare_market_summary_data(
                         )
                     )
                     .otherwise(default_intervals)
-                ).round(2)
+                    / 1000  # Convert from kWh to MWh
+                ).round(4)
             ).alias("demand_energy"),
             (
                 (
@@ -278,7 +279,8 @@ def _prepare_market_summary_data(
                         )
                     )
                     .otherwise(default_intervals)
-                ).round(2)
+                    / 1000  # Convert from kWh to MWh
+                ).round(4)
             ).alias("demand_total_energy"),
             (
                 (
@@ -291,7 +293,8 @@ def _prepare_market_summary_data(
                         )
                     )
                     .otherwise(default_intervals)
-                ).round(2)
+                    / 1000  # Convert from kWh to MWh
+                ).round(4)
             ).alias("curtailment_energy_solar_total"),
             (
                 (
@@ -304,7 +307,8 @@ def _prepare_market_summary_data(
                         )
                     )
                     .otherwise(default_intervals)
-                ).round(2)
+                    / 1000  # Convert from kWh to MWh
+                ).round(4)
             ).alias("curtailment_energy_wind_total"),
         ]
     )
@@ -313,7 +317,7 @@ def _prepare_market_summary_data(
     df = df.with_columns(
         [
             (pl.col("curtailment_energy_solar_total") + pl.col("curtailment_energy_wind_total"))
-            .round(2)
+            .round(4)
             .alias("curtailment_energy_total"),
         ]
     )
@@ -321,8 +325,8 @@ def _prepare_market_summary_data(
     # Calculate market values and add version
     df = df.with_columns(
         [
-            (pl.col("demand_energy") * pl.col("price")).round(2).alias("demand_market_value"),
-            (pl.col("demand_total_energy") * pl.col("price")).round(2).alias("demand_total_market_value"),
+            (pl.col("demand_energy") * pl.col("price")).round(4).alias("demand_market_value"),
+            (pl.col("demand_total_energy") * pl.col("price")).round(4).alias("demand_total_market_value"),
             pl.lit(int(datetime.now().timestamp())).alias("version"),  # Add version column
         ]
     )

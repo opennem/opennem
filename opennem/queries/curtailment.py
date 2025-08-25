@@ -29,11 +29,12 @@ def get_network_curtailment_energy_query_analytics(
         network_region_code: Specific network region (optional)
 
     Returns:
-        str: ClickHouse SQL query
+        str: ClickHouse SQL query returning curtailment energy in MWh
 
     Note:
         Only NEM supports curtailment data. WEM has no curtailment data.
         For AU network, only NEM data is queried since WEM has no curtailment.
+        Energy values are converted from kWh to MWh in the query.
     """
     if network != NetworkNEM:
         raise ValueError(f"Curtailment data is only supported on the NEM network. Got {network.code}")
