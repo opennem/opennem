@@ -151,12 +151,12 @@ def get_network_price_demand_query_analytics(
                 {time_bucket}(interval) AS interval,
                 network_id,
                 network_region,
-                sum(price) AS price,
-                sum(demand) AS demand,
-                sum(demand_total) AS demand_total,
-                sum(curtailment_total) AS curtailment_total,
-                sum(curtailment_solar_total) AS curtailment_solar_total,
-                sum(curtailment_wind_total) AS curtailment_wind_total
+                avg(price) AS price,
+                avg(demand) AS demand,
+                avg(demand_total) AS demand_total,
+                sum(curtailment_energy_total) / 1000 AS curtailment_total,
+                sum(curtailment_energy_solar_total) / 1000 AS curtailment_solar_total,
+                sum(curtailment_energy_wind_total) / 1000 AS curtailment_wind_total
             FROM market_summary FINAL
             WHERE network_id = '{network.code}'
                 AND interval >= parseDateTimeBestEffort('{date_min}')

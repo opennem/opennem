@@ -72,37 +72,58 @@ async def _get_market_summary_data(
     end_time_naive = end_time.replace(tzinfo=None)
 
     query = text("""
-    WITH ranked_data AS (
+    WITH regions AS (
+        -- Get all unique network regions for the period
+        SELECT DISTINCT network_id, network_region
+        FROM balancing_summary
+        WHERE interval BETWEEN :start_time_window AND :end_time
+        AND is_forecast = false
+    ),
+    gapfilled_data AS (
+        -- Generate complete time series with gap filling for each region
+        SELECT
+            time_bucket_gapfill('5 minutes', interval, :start_time_window, :end_time) as interval,
+            network_id,
+            network_region,
+            avg(CAST(price AS double precision)) as price,
+            avg(CAST(demand AS double precision)) as demand,
+            avg(CAST(demand_total AS double precision)) as demand_total,
+            avg(ROUND((ss_solar_uigf - ss_solar_clearedmw)::numeric, 4)) as curtailment_solar_total,
+            avg(ROUND((ss_wind_uigf - ss_wind_clearedmw)::numeric, 4)) as curtailment_wind_total
+        FROM balancing_summary
+        WHERE interval BETWEEN :start_time_window AND :end_time
+            AND is_forecast = false
+            AND network_id IN (SELECT network_id FROM regions)
+            AND network_region IN (SELECT network_region FROM regions)
+        GROUP BY 1, 2, 3
+    ),
+    ranked_data AS (
         SELECT
             interval,
             network_id,
             network_region,
-            CAST(price AS double precision) as price,
-            CAST(demand AS double precision) as demand,
-            CAST(demand_total AS double precision) as demand_total,
-            LAG(CAST(demand AS double precision)) OVER (
+            price,
+            demand,
+            demand_total,
+            LAG(demand) OVER (
                 PARTITION BY network_id, network_region
                 ORDER BY interval
             ) as prev_demand,
-            LAG(CAST(demand_total AS double precision)) OVER (
+            LAG(demand_total) OVER (
                 PARTITION BY network_id, network_region
                 ORDER BY interval
             ) as prev_demand_total,
-            ROUND((ss_solar_uigf -  ss_solar_clearedmw)::numeric, 4)
-                as curtailment_solar_total,
-            ROUND((ss_wind_uigf -  ss_wind_clearedmw)::numeric, 4)
-                as curtailment_wind_total,
-            LAG(ROUND((ss_solar_uigf -  ss_solar_clearedmw)::numeric, 4)) OVER (
+            curtailment_solar_total,
+            curtailment_wind_total,
+            LAG(curtailment_solar_total) OVER (
                 PARTITION BY network_id, network_region
                 ORDER BY interval
             ) as prev_curtailment_solar_total,
-            LAG(ROUND((ss_wind_uigf -  ss_wind_clearedmw)::numeric, 4)) OVER (
+            LAG(curtailment_wind_total) OVER (
                 PARTITION BY network_id, network_region
                 ORDER BY interval
             ) as prev_curtailment_wind_total
-        FROM balancing_summary bs
-        WHERE interval BETWEEN :start_time_window AND :end_time
-        AND is_forecast = false
+        FROM gapfilled_data
         ORDER BY interval
     )
     SELECT
@@ -121,9 +142,7 @@ async def _get_market_summary_data(
         COALESCE(curtailment_solar_total, 0) + COALESCE(curtailment_wind_total, 0) as curtailment_total
     FROM ranked_data
     WHERE interval BETWEEN :start_time AND :end_time
-    AND prev_demand IS NOT NULL
-    AND prev_demand_total IS NOT NULL
-    ORDER BY interval
+    ORDER BY interval, network_id, network_region
     """)
 
     result = await session.execute(
