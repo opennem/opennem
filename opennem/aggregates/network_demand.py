@@ -34,17 +34,38 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
             sum(fs.demand_energy) / 1000 as demand_energy,
             sum(fs.demand_market_value) as demand_market_value
         from (
+            WITH price_data AS (
+                -- First get only the non-NULL price points from balancing_summary
+                SELECT
+                    interval,
+                    network_id,
+                    network_region,
+                    price,
+                    demand
+                FROM mv_balancing_summary
+                WHERE
+                    interval between '{date_min}' and '{date_max}'
+                    and network_id in ('{network_code}')
+                    and price IS NOT NULL
+            ),
+            gap_filled AS (
+                -- Gap-fill and aggregate price/demand
+                SELECT
+                    time_bucket_gapfill('5 minutes', interval, '{date_min}'::timestamp, '{date_max}'::timestamp) as interval,
+                    network_id,
+                    network_region,
+                    avg(price) as avg_price,
+                    sum(demand) as total_demand
+                FROM price_data
+                GROUP BY 1, 2, 3
+            )
             select
-                time_bucket_gapfill('5 minutes', bs.interval) as interval,
-                bs.network_id,
-                bs.network_region,
-                locf(sum(bs.demand) / 12)  as demand_energy,
-                locf(max(bs.price) * sum(bs.demand) / 12) as demand_market_value
-            from mv_balancing_summary bs
-            where
-                bs.interval between '{date_min}' and '{date_max}'
-                and network_id in ('{network_code}')
-            group by 1, 2, 3
+                interval,
+                network_id,
+                network_region,
+                coalesce(total_demand / 12, 0) as demand_energy,
+                coalesce(locf(avg_price) * total_demand / 12, 0) as demand_market_value
+            from gap_filled
         ) as fs
         group by
             1, 2, 3

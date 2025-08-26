@@ -19,7 +19,7 @@ from opennem.db.clickhouse import (
     get_clickhouse_client,
     table_exists,
 )
-from opennem.db.clickhouse_schema import UNIT_INTERVALS_TABLE_SCHEMA
+from opennem.db.clickhouse_schema import UNIT_INTERVALS_TABLE_SCHEMA, optimize_clickhouse_tables
 from opennem.db.clickhouse_views import (
     FUELTECH_INTERVALS_DAILY_VIEW,
     FUELTECH_INTERVALS_VIEW,
@@ -68,24 +68,31 @@ async def _get_unit_interval_data(
         network_where_clause = f"AND fs.network_id IN ('{"','".join(network.get_network_codes())}')"
 
     query = text(f"""
-    WITH filled_balancing_summary AS (
+    WITH price_data AS (
+        -- First get only the non-NULL price points
         SELECT
-            time_bucket_gapfill('5 minutes', bs.interval) as interval,
-            bs.network_id,
-            bs.network_region,
-            locf(
-                avg(bs.demand)
-            ) AS demand,
-            locf(
-                avg(bs.demand_total)
-            ) as demand_total,
-            locf(
-                avg(bs.price)
-            ) AS price
-        FROM balancing_summary bs
+            interval,
+            network_id,
+            network_region,
+            demand,
+            demand_total,
+            price
+        FROM balancing_summary
         WHERE
-            bs.interval >= :start_time
-            AND bs.interval <= :end_time
+            interval >= :start_time
+            AND interval <= :end_time
+            AND price IS NOT NULL
+    ),
+    filled_balancing_summary AS (
+        -- Now gap-fill and carry forward the 30-minute prices to 5-minute intervals
+        SELECT
+            time_bucket_gapfill('5 minutes', pd.interval, :start_time, :end_time) as interval,
+            pd.network_id,
+            pd.network_region,
+            locf(avg(pd.demand)) AS demand,
+            locf(avg(pd.demand_total)) as demand_total,
+            locf(avg(pd.price)) AS price
+        FROM price_data pd
         GROUP BY 1, 2, 3
     ),
     filled_solar_data AS (
@@ -668,15 +675,14 @@ if __name__ == "__main__":
     async def reset_unit_intervals():
         # _refresh_clickhouse_schema()
         # await run_unit_intervals_backlog(start_date=NetworkNEM.data_first_seen.replace(tzinfo=None))
-        from opennem.schema.network import NetworkWEM
 
-        await run_unit_intervals_backlog(network=NetworkWEM)
-        # await _solar_and_wind_fixes()
+        await run_unit_intervals_backlog()
+        await _solar_and_wind_fixes()
 
-        # await optimize_clickhouse_tables()
+        await optimize_clickhouse_tables()
 
         # Uncomment to backfill views:
-        # backfill_materialized_views(refresh_views=True)
+        backfill_materialized_views(refresh_views=True)
 
     import asyncio
 

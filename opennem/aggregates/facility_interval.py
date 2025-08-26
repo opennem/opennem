@@ -366,7 +366,7 @@ async def run_facility_aggregate_all(chunk_days: int = 30, max_concurrent: int =
     )
 
 
-async def _refresh_continuous_aggregates(start_date: date, end_date: date) -> None:
+async def _refresh_continuous_aggregates(start_date: datetime, end_date: datetime) -> None:
     """Refresh the continuous aggregates for facility and fueltech materialized views.
 
     This function refreshes the continuous aggregates for mv_fueltech_daily and
@@ -380,16 +380,16 @@ async def _refresh_continuous_aggregates(start_date: date, end_date: date) -> No
         This should be called after making significant changes to the underlying data
         or when needing to force a refresh of the materialized views.
     """
-    start_date = str(start_date.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None).date())
-    end_date = str(end_date.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None).date() + timedelta(days=1))
+    start_date_string = str(start_date.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None).date())
+    end_date_string = str(end_date.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None).date() + timedelta(days=1))
 
     async with get_notransaction_session() as session:
         # Refresh mv_fueltech_daily
         query_fueltech = text(f"""
             CALL refresh_continuous_aggregate(
                 'mv_fueltech_daily',
-                '{start_date}',
-                '{end_date}'
+                '{start_date_string}',
+                '{end_date_string}'
             );
         """)
 
@@ -397,8 +397,8 @@ async def _refresh_continuous_aggregates(start_date: date, end_date: date) -> No
         query_facility = text(f"""
             CALL refresh_continuous_aggregate(
                 'mv_facility_unit_daily',
-                '{start_date}',
-                '{end_date}'
+                '{start_date_string}',
+                '{end_date_string}'
             );
         """)
 
@@ -419,15 +419,22 @@ if __name__ == "__main__":
     nem_start = NetworkNEM.data_first_seen.replace(tzinfo=None)  # type: ignore
     rooftop_start = NetworkAEMORooftop.data_first_seen.replace(tzinfo=None)  # type: ignore
 
-    up_to_interval = datetime.fromisoformat("2003-06-16T00:00:00")
+    up_to_interval = datetime.fromisoformat("2000-01-01T00:00:00")
 
     asyncio.run(
         update_facility_aggregates_chunked(
-            start_date=datetime.fromisoformat("2024-10-01T00:00:00"),
-            end_date=interval,
+            end_date=datetime.fromisoformat("2020-01-01T00:00:00"),
+            start_date=NetworkNEM.data_first_seen,
             max_concurrent=2,
             chunk_days=3,
             # network=NetworkWEM,
             refresh=True,
+        )
+    )
+
+    asyncio.run(
+        _refresh_continuous_aggregates(
+            start_date=NetworkNEM.data_first_seen,
+            end_date=datetime.fromisoformat("2020-01-01T00:00:00"),
         )
     )
