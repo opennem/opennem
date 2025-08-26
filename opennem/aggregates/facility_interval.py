@@ -48,21 +48,29 @@ async def update_facility_aggregates(
     try:
         # The optimized aggregation query with improved locking strategy
         query = text(f"""
-            WITH filled_balancing_summary AS (
+            WITH price_data AS (
+                -- First get only the non-NULL price points
                 SELECT
-                    time_bucket_gapfill('5 minutes', bs.interval) as interval,
-                    bs.network_id,
-                    bs.network_region,
-                    locf(
-                        avg(bs.demand)
-                    ) AS demand,
-                    locf(
-                        avg(bs.price)
-                    ) AS price
-                FROM mv_balancing_summary bs
+                    interval,
+                    network_id,
+                    network_region,
+                    demand,
+                    price
+                FROM mv_balancing_summary
                 WHERE
-                    bs.interval >= :start_time
-                    AND bs.interval <= :end_time
+                    interval >= :start_time
+                    AND interval <= :end_time
+                    AND price IS NOT NULL
+            ),
+            filled_balancing_summary AS (
+                -- Now gap-fill and carry forward
+                SELECT
+                    time_bucket_gapfill('5 minutes', pd.interval, :start_time, :end_time) as interval,
+                    pd.network_id,
+                    pd.network_region,
+                    locf(avg(pd.demand)) AS demand,
+                    locf(avg(pd.price)) AS price
+                FROM price_data pd
                 GROUP BY 1, 2, 3
             )
             INSERT INTO at_facility_intervals (
