@@ -235,6 +235,107 @@ async def get_fueltech_generated_energy_emissions(
     return results
 
 
+def get_energy_network_fueltech_query_clickhouse(
+    time_series: OpennemExportSeries,
+    network: NetworkSchema,
+    network_region: str | None = None,
+    networks_query: list[NetworkSchema] | None = None,
+) -> str:
+    """
+    Get Energy for a network or network + region from ClickHouse.
+    Uses the fueltech_intervals_daily_mv materialized view for daily aggregations
+    or raw unit_intervals for other time periods.
+
+    :param network: The network to query
+    :param time_series: The time series to query
+    :param network_region: The network region to query
+    :param networks_query: The networks to query
+    """
+
+    if not networks_query:
+        networks_query = [time_series.network] + (time_series.network.subnetworks or [])
+
+    # Get the time range
+    time_series_range = time_series.get_range()
+
+    # Determine which table/view to use based on interval
+    interval_sql = time_series_range.interval.interval_sql
+
+    # For daily or monthly intervals, use the daily materialized view for performance
+    if interval_sql in ["1 day", "1 month", "1 year"]:
+        table_name = "fueltech_intervals_daily_mv"
+        date_column = "date"
+        # For monthly/yearly, we need to aggregate the daily data
+        if interval_sql == "1 month":
+            interval_expr = "toStartOfMonth(date)"
+        elif interval_sql == "1 year":
+            interval_expr = "toStartOfYear(date)"
+        else:
+            interval_expr = "date"
+    else:
+        # For smaller intervals, use the raw fueltech_intervals_mv
+        table_name = "fueltech_intervals_mv"
+        date_column = "interval"
+        # Map PostgreSQL time_bucket to ClickHouse date functions
+        if interval_sql == "5 minutes":
+            interval_expr = "toStartOfFiveMinute(interval)"
+        elif interval_sql == "30 minutes":
+            interval_expr = "toStartOfHalfHour(interval)"
+        elif interval_sql == "1 hour":
+            interval_expr = "toStartOfHour(interval)"
+        else:
+            interval_expr = "interval"
+
+    # Build network filter
+    networks_list = "', '".join([n.code for n in networks_query])
+    network_query = f"network_id IN ('{networks_list}')"
+
+    # Special case for WEM to include APVI data
+    if network in [NetworkWEM, NetworkAU]:
+        network_query += " OR (network_id='APVI' AND network_region='WEM')"
+        # Remove APVI from the main list if it's there
+        if NetworkAPVI in networks_query:
+            networks_query.pop(networks_query.index(NetworkAPVI))
+
+    # Build region filter
+    network_region_query = ""
+    if network_region:
+        network_region_query = f" AND network_region='{network_region}'"
+
+    # Format dates for ClickHouse - strip timezone info and ensure it's in the right format
+    # ClickHouse expects 'YYYY-MM-DD HH:MM:SS' format without timezone
+    start_str = (
+        time_series_range.start.strftime("%Y-%m-%d %H:%M:%S")
+        if hasattr(time_series_range.start, "strftime")
+        else str(time_series_range.start).split("+")[0].split(".")[0]
+    )
+    end_str = (
+        time_series_range.end.strftime("%Y-%m-%d %H:%M:%S")
+        if hasattr(time_series_range.end, "strftime")
+        else str(time_series_range.end).split("+")[0].split(".")[0]
+    )
+
+    # Build the query
+    __query = f"""
+    SELECT
+        {interval_expr} as interval,
+        fueltech_id as fueltech_code,
+        round(sum(energy) / 1000, 4) as fueltech_energy_gwh,
+        round(sum(market_value), 2) as fueltech_market_value_dollars,
+        round(sum(emissions), 4) as fueltech_emissions
+    FROM {table_name} FINAL
+    WHERE
+        {date_column} >= toDateTime('{start_str}')
+        AND {date_column} <= toDateTime('{end_str}')
+        AND ({network_query})
+        {network_region_query}
+    GROUP BY interval, fueltech_code
+    ORDER BY interval DESC, fueltech_code
+    """
+
+    return __query
+
+
 if __name__ == "__main__":
 
     async def main() -> None:
