@@ -74,6 +74,8 @@ CMD ["uvicorn", "--reload", "opennem.api.app:app"]
 # `production` image used for runtime
 FROM python-base as production
 ENV FASTAPI_ENV=production
+# Copy uv binary to production
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 COPY . /app/
 
