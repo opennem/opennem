@@ -36,6 +36,16 @@ The grid operator (AEMO) may curtail generation to maintain system stability, in
 
 OpenElectricity calculates curtailment by comparing what renewable generators could have produced (unconstrained generation) with what they actually produced (actual generation). This data comes from AEMO's dispatch data, which provides target values and unconstrained intermittent generation forecasts (UIGF) for wind and solar.
 
+### OpenElectricity Website
+
+Curtailment is displayed in the network generation views on the [tracker of the OpenElectricity website](https://explore.openelectricity.org.au/energy/nem/?range=7d&interval=30m&view=discrete-time&group=Detailed).
+
+<Frame>
+    <img src="/images/curtailment_frontend.png" alt="Curtailment displayed in the network generation views on the tracker of the OpenElectricity website" />
+</Frame>
+
+Each of wind and solar curtailment can be seen in the chart for both power and energy views, and are accounted for in the table on the right.
+
 ### Available Metrics
 
 OpenElectricity provides curtailment data through several metrics:

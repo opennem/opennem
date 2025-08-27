@@ -35,6 +35,7 @@
 				"guides/energy",
 				"guides/price",
 				"guides/curtailment",
+				"guides/capacity",
 				"guides/emissions",
 				"guides/fueltechs",
 				"guides/facilities",
