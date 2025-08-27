@@ -8,7 +8,6 @@ ruff-check = uv run ruff check $(projectname)
 mypy = uv run mypy $(projectname)
 pytest = uv run pytest tests -v
 pyright = uv run pyright -v .venv $(projectname)
-hatch = uv run hatch
 BUMP ?= dev
 
 .PHONY: test
@@ -57,16 +56,16 @@ version:
 		fi \
 	fi; \
 
-	$(hatch) version $(BUMP)
-	@NEW_VERSION=$$(sed -n 's/__version__ = "\([^"]*\)".*/\1/p' opennem/__init__.py); \
+	uv version --bump $(BUMP)
+	@NEW_VERSION=$$(uv version --short); \
 	echo "New version: $$NEW_VERSION"; \
-	git add opennem/__init__.py; \
+	git add pyproject.toml; \
 	git commit -m "Bump version to $$NEW_VERSION"
 
 .PHONY: tag
 tag:
 	$(eval CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD))
-	$(eval NEW_VERSION := $(shell uvx hatch version))
+	$(eval NEW_VERSION := $(shell uv version --short))
 	@if [ "$(CURRENT_BRANCH)" = "master" ]; then \
 		git tag "$(NEW_VERSION)"; \
 		echo "Pushing $(NEW_VERSION)"; \

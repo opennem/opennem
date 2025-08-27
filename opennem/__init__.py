@@ -48,10 +48,6 @@ from opennem.utils.settings import load_env_file
 
 logger = logging.getLogger("opennem")
 
-# Module variables
-
-__version__ = "4.2.0.dev16"
-
 # console
 console = Console()
 
@@ -65,6 +61,9 @@ ENV = os.getenv("ENV", default="local")
 
 
 console.print(f" * Loading OpenNEM ENV: [b magenta]{ENV}[/b magenta]")
+# Import version after other setup to avoid circular imports
+from opennem.utils.version import __version__  # noqa: E402
+
 console.print(
     f" * OpenNEM Version: [b magenta]{__version__}[/]. Python version: [b magenta]{PYTHON_VERSION}[/]."
     f" System: [b magenta]{SYSTEM_STRING}[/]"
