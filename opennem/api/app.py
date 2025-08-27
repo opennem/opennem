@@ -17,6 +17,7 @@ from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.backends.redis import RedisBackend
 from fastapi_versionizer import api_version
 from fastapi_versionizer.versionizer import Versionizer
+from pydantic import ValidationError
 from redis import asyncio as aioredis
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,12 +30,14 @@ from opennem.api.facilities.router import router as facilities_router
 from opennem.api.feedback.router import router as feedback_router
 from opennem.api.market.router import router as market_router
 from opennem.api.milestones.router import milestones_router
+from opennem.api.pollution.router import router as pollution_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
 from opennem.api.security import authenticated_user
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
 from opennem.api.webhooks.router import router as webhooks_router
 from opennem.clients.unkey import unkey_client
+from opennem.core.metric import METRIC_METADATA
 from opennem.core.time import INTERVALS, PERIODS
 from opennem.core.units import UNITS
 from opennem.db import get_read_session
@@ -167,16 +170,80 @@ api_exception_counter = logfire.metric_counter("api_exception_counter")
 #     return response
 
 
-# @app.exception_handler(Exception)
-# async def log_api_exception(request: Request, exc: Exception):
-#     api_exception_counter.add(1)
-#     return await http_exception_handler(request, exc)
+@app.exception_handler(ValidationError)
+async def validation_exception_handler(request: Request, exc: ValidationError) -> OpennemExceptionResponse:
+    """Handle Pydantic validation errors with detailed messages."""
+    logger.warning(f"Validation error on {request.url.path}: {exc}")
+
+    # Extract the first validation error for a cleaner message
+    error_details = []
+    for error in exc.errors():
+        field_path = " -> ".join(str(loc) for loc in error["loc"])
+        error_details.append(f"{field_path}: {error['msg']}")
+
+    error_message = "Validation error: " + "; ".join(error_details) if error_details else "Invalid request data"
+
+    return OpennemExceptionResponse(
+        content=OpennemErrorSchema(
+            error=error_message,
+            success=False,
+        ).model_dump(),
+        status_code=422,
+    )
+
+
+@app.exception_handler(ValueError)
+async def value_error_handler(request: Request, exc: ValueError) -> OpennemExceptionResponse:
+    """Handle ValueError with informative messages."""
+    logger.warning(f"Value error on {request.url.path}: {exc}")
+
+    # Check if this is a metric-related error
+    error_msg = str(exc)
+    if "Unknown metric" in error_msg:
+        # Extract the metric name and provide helpful message
+        metric_name = error_msg.split(": ")[-1] if ": " in error_msg else "unknown"
+        return OpennemExceptionResponse(
+            content=OpennemErrorSchema(
+                error=f"Invalid metric: '{metric_name}'. Use /v4/metrics endpoint to see available metrics.",
+                success=False,
+            ).model_dump(),
+            status_code=400,
+        )
+
+    return OpennemExceptionResponse(
+        content=OpennemErrorSchema(
+            error=str(exc),
+            success=False,
+        ).model_dump(),
+        status_code=400,
+    )
+
+
+@app.exception_handler(Exception)
+async def log_api_exception(request: Request, exc: Exception):
+    logger.error(f"Unhandled exception on {request.url.path}: {exc}", exc_info=True)
+    # api_exception_counter.add(1)
+
+    # Don't expose internal error details in production
+    if settings.is_dev:
+        error_msg = f"Internal server error: {str(exc)}"
+    else:
+        error_msg = "An internal server error occurred. Please try again later."
+
+    return OpennemExceptionResponse(
+        content=OpennemErrorSchema(
+            error=error_msg,
+            success=False,
+        ).model_dump(),
+        status_code=500,
+    )
 
 
 # sub-routers
 app.include_router(stats_router, tags=["Stats"], prefix="/stats", include_in_schema=False)
 app.include_router(station_router, tags=["Facilities"], prefix="/facility", include_in_schema=False)
 app.include_router(facilities_router, tags=["Facilities"], prefix="/facilities")
+app.include_router(pollution_router, tags=["Pollution"], prefix="/pollution")
 app.include_router(feedback_router, tags=["Feedback"], prefix="/feedback", include_in_schema=False)
 app.include_router(milestones_router, tags=["Milestones"], prefix="/milestones", include_in_schema=False)
 app.include_router(webhooks_router, tags=["Webhooks"], prefix="/webhooks", include_in_schema=False)
@@ -354,6 +421,43 @@ def periods() -> list[TimePeriod]:
 )
 def units() -> list[UnitDefinition]:
     return UNITS
+
+
+@api_version(4)
+@app.get(
+    "/metrics",
+    response_model=dict,
+    response_model_exclude_none=True,
+    response_model_exclude_unset=True,
+    tags=["Core"],
+    description="Get all available metrics and their metadata",
+)
+def get_metrics() -> dict:
+    """
+    Get all available metrics with their metadata.
+
+    Returns a dictionary of metrics with their units, descriptions, and other metadata.
+    This endpoint helps clients discover what metrics are available in the API.
+    """
+    metrics_info = {}
+
+    for metric, metadata in METRIC_METADATA.items():
+        metrics_info[metric.value] = {
+            "name": metric.value,
+            "unit": metadata.unit,
+            "description": metadata.description,
+            "default_aggregation": metadata.default_agg,
+            "precision": metadata.precision,
+        }
+
+    return {
+        "metrics": metrics_info,
+        "total": len(metrics_info),
+        "endpoints": {
+            "market": ["price", "demand", "demand_energy", "curtailment_solar", "curtailment_wind"],
+            "data": ["power", "energy", "emissions", "market_value", "renewable_proportion"],
+        },
+    }
 
 
 @app.get("/health", include_in_schema=False)

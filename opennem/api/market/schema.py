@@ -18,6 +18,12 @@ class MarketMetric(str, Enum):
     PRICE = "price"
     DEMAND = "demand"
     DEMAND_ENERGY = "demand_energy"
+    CURTAILMENT = "curtailment"
+    CURTAILMENT_ENERGY = "curtailment_energy"
+    CURTAILMENT_SOLAR = "curtailment_solar"
+    CURTAILMENT_SOLAR_ENERGY = "curtailment_solar_energy"
+    CURTAILMENT_WIND = "curtailment_wind"
+    CURTAILMENT_WIND_ENERGY = "curtailment_wind_energy"
 
     @property
     def unit(self) -> str:
@@ -26,6 +32,12 @@ class MarketMetric(str, Enum):
             "price": "AUD/MWh",
             "demand": "MW",
             "demand_energy": "MWh",
+            "curtailment": "MW",
+            "curtailment_energy": "MWh",
+            "curtailment_solar": "MW",
+            "curtailment_solar_energy": "MWh",
+            "curtailment_wind": "MW",
+            "curtailment_wind_energy": "MWh",
         }
         return units[self.value]
 
@@ -50,7 +62,7 @@ class MarketTimeSeries(BaseModel):
     results: list[MarketTimeSeriesResult] = Field(description="Time series results")
 
     @property
-    def network_timezone_offset(self) -> int:
+    def network_timezone_offset(self) -> str:
         """
         Get the timezone offset for the network.
         """

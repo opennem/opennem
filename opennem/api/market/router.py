@@ -26,12 +26,18 @@ from opennem.core.time_interval import Interval
 from opennem.db.clickhouse import get_clickhouse_dependency
 
 router = APIRouter()
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("opennem.api.market")
 
 _SUPPORTED_METRICS = [
     Metric.PRICE,
     Metric.DEMAND,
     Metric.DEMAND_ENERGY,
+    Metric.CURTAILMENT,
+    Metric.CURTAILMENT_ENERGY,
+    Metric.CURTAILMENT_SOLAR,
+    Metric.CURTAILMENT_SOLAR_ENERGY,
+    Metric.CURTAILMENT_WIND,
+    Metric.CURTAILMENT_WIND_ENERGY,
 ]
 
 
@@ -136,4 +142,4 @@ async def get_network_data(
     )
 
     # Return all TimeSeries objects, one per metric
-    return ORJSONResponse(APIV4ResponseSchema(data=timeseries_list).model_dump())
+    return ORJSONResponse(APIV4ResponseSchema(data=timeseries_list).model_dump())  # type: ignore

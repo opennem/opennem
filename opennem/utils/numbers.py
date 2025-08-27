@@ -3,7 +3,7 @@ import logging
 import random
 import re
 from datetime import datetime
-from math import floor, log, pow  # noqa: no-name-module
+from math import floor, log, pow
 from re import Match
 from typing import Any
 

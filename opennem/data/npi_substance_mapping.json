@@ -1,0 +1,53 @@
+{
+  "substance_mappings": {
+    "Zinc and compounds": "Zinc & compounds",
+    "Formaldehyde (methyl aldehyde)": "Formaldehyde",
+    "Ammonia (total)": "Ammonia",
+    "Toluene (methylbenzene)": "Total Volatile Organic Compounds",
+    "Xylenes (individual or mixed isomers)": "Total Volatile Organic Compounds",
+    "Ethylbenzene": "Total Volatile Organic Compounds",
+    "Cumene (1-methylethylbenzene)": "Total Volatile Organic Compounds",
+    "Cyclohexane": "Total Volatile Organic Compounds",
+    "n-Hexane": "Total Volatile Organic Compounds",
+    "Styrene (ethenylbenzene)": "Total Volatile Organic Compounds",
+    "Phenol": "Total Volatile Organic Compounds",
+    "Methanol": "Total Volatile Organic Compounds",
+    "Acetaldehyde": "Total Volatile Organic Compounds",
+    "Acrolein": "Total Volatile Organic Compounds",
+    "Biphenyl (1,1-biphenyl)": "Total Volatile Organic Compounds"
+  },
+  "unmapped_substances": {
+    "note": "These substances from historical XML files don't have equivalents in the current database",
+    "substances": [
+      "Sulfuric acid",
+      "Manganese & compounds",
+      "Total Phosphorus",
+      "Beryllium & compounds",
+      "Selenium & compounds",
+      "Magnesium oxide fume",
+      "Boron & compounds",
+      "Cobalt & compounds",
+      "Antimony & compounds",
+      "Total Nitrogen",
+      "1,3-Butadiene (vinyl ethylene)",
+      "Chloroform (trichloromethane)",
+      "Chlorine & compounds",
+      "1,2-Dichloroethane",
+      "Vinyl Chloride Monomer",
+      "Chloroethane (ethyl chloride)",
+      "Cyanide (inorganic) compounds",
+      "Nickel carbonyl",
+      "Nickel subsulfide",
+      "Trichloroethylene",
+      "Tetrachloroethylene",
+      "Dichloromethane",
+      "Acetonitrile",
+      "Hydrogen sulfide"
+    ]
+  },
+  "notes": {
+    "VOC_aggregation": "Many specific organic compounds are mapped to 'Total Volatile Organic Compounds' as they contribute to the overall VOC emissions",
+    "missing_greenhouse": "Note that CO2, CH4, and N2O are tracked separately and not present in older NPI data",
+    "heavy_metals": "Some heavy metals like Manganese, Beryllium, Selenium, Boron, Cobalt, and Antimony are not currently tracked in the database"
+  }
+}

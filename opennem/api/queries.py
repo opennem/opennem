@@ -99,11 +99,23 @@ QUERY_CONFIGS = {
             MarketMetric.PRICE: "price",
             MarketMetric.DEMAND: "demand",
             MarketMetric.DEMAND_ENERGY: "demand_energy",
+            MarketMetric.CURTAILMENT: "curtailment_total",
+            MarketMetric.CURTAILMENT_ENERGY: "curtailment_energy_total",
+            MarketMetric.CURTAILMENT_SOLAR: "curtailment_solar_total",
+            MarketMetric.CURTAILMENT_WIND: "curtailment_wind_total",
+            MarketMetric.CURTAILMENT_SOLAR_ENERGY: "curtailment_energy_solar_total",
+            MarketMetric.CURTAILMENT_WIND_ENERGY: "curtailment_energy_wind_total",
         },
         metric_agg_functions={
             MarketMetric.PRICE: "avg",
             MarketMetric.DEMAND: "avg",
             MarketMetric.DEMAND_ENERGY: "sum",
+            MarketMetric.CURTAILMENT: "sum",
+            MarketMetric.CURTAILMENT_ENERGY: "sum",
+            MarketMetric.CURTAILMENT_SOLAR: "sum",
+            MarketMetric.CURTAILMENT_WIND: "sum",
+            MarketMetric.CURTAILMENT_SOLAR_ENERGY: "sum",
+            MarketMetric.CURTAILMENT_WIND_ENERGY: "sum",
         },
     ),
     QueryType.DATA: QueryConfig(
@@ -157,8 +169,8 @@ def get_timeseries_query(
     # filters
     facility_code: list[str] | None = None,
     network_region: str | None = None,
-    fueltech: str | None = None,
-    fueltech_group: str | None = None,
+    fueltech: list[str] | None = None,
+    fueltech_group: list[str] | None = None,
 ) -> tuple[str, dict, list[str]]:
     """
     Build a time series query for either market or data metrics.
@@ -174,8 +186,8 @@ def get_timeseries_query(
         secondary_groupings: Optional sequence of secondary groupings to apply
         facility_code: Optional facility codes to filter by
         network_region: Optional network region to filter by
-        fueltech: Optional fueltech to filter by
-        fueltech_group: Optional fueltech group to filter by
+        fueltech: Optional fueltechs to filter by
+        fueltech_group: Optional fueltech groups to filter by
 
     Returns:
         tuple[str, dict, list[str]]: ClickHouse SQL query, parameters, and list of column names
@@ -197,8 +209,8 @@ def get_timeseries_query(
         Interval.SEASON,
         Interval.FINANCIAL_YEAR,
     ]:
-        date_start = date_start.date()
-        date_end = date_end.date()
+        date_start = date_start.date()  # type: ignore
+        date_end = date_end.date()  # type: ignore
 
     params = {
         "network": network.get_network_codes(),
@@ -256,11 +268,11 @@ def get_timeseries_query(
         params["network_region"] = network_region
 
     if fueltech:
-        where_clauses.append("fueltech_id = %(fueltech)s")
+        where_clauses.append("fueltech_id in %(fueltech)s")
         params["fueltech"] = fueltech
 
     if fueltech_group:
-        where_clauses.append("fueltech_group_id = %(fueltech_group)s")
+        where_clauses.append("fueltech_group_id in %(fueltech_group)s")
         params["fueltech_group"] = fueltech_group
 
     query = f"""

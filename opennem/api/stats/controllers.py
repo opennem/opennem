@@ -41,6 +41,7 @@ def stats_factory(
     region: str | None = None,
     include_group_code: bool = False,
     fueltech_group: bool | None = False,
+    fueltech_code: str | None = None,
     group_field: str | None = None,
     data_id: str | None = None,
     localize: bool | None = True,
@@ -180,6 +181,10 @@ def stats_factory(
             data.id = ".".join(i for i in data_comps if i)
             # @TODO make this an alias
             data.type = units.unit_type
+
+        # override fueltech code
+        if fueltech_code:
+            data.fuel_tech = fueltech_code
 
         if group_field:
             group_fields = []

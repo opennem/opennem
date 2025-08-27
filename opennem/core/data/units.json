@@ -35,6 +35,42 @@
         "unit": "MWh"
     },
     {
+        "name": "curtailment",
+        "name_alias": "curtailment",
+        "unit_type": "power",
+        "unit": "MW"
+    },
+    {
+        "name": "curtailment_energy",
+        "name_alias": "curtailment.energy",
+        "unit_type": "energy",
+        "unit": "MWh"
+    },
+    {
+        "name": "curtailment_solar",
+        "name_alias": "curtailment.solar",
+        "unit_type": "power",
+        "unit": "MW"
+    },
+    {
+        "name": "curtailment_solar_energy",
+        "name_alias": "curtailment.solar.energy",
+        "unit_type": "energy",
+        "unit": "MWh"
+    },
+    {
+        "name": "curtailment_wind",
+        "name_alias": "curtailment.wind",
+        "unit_type": "power",
+        "unit": "MW"
+    },
+    {
+        "name": "curtailment_wind_energy",
+        "name_alias": "curtailment.wind.energy",
+        "unit_type": "energy",
+        "unit": "MWh"
+    },
+    {
         "name": "energy_gig",
         "name_alias": "energy_giga",
         "unit_type": "energy",
