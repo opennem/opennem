@@ -8,7 +8,7 @@ ruff-check = uv run ruff check $(projectname)
 mypy = uv run mypy $(projectname)
 pytest = uv run pytest tests -v
 pyright = uv run pyright -v .venv $(projectname)
-hatch = uvx hatch
+hatch = uv run hatch
 BUMP ?= dev
 
 .PHONY: test
