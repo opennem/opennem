@@ -36,13 +36,13 @@ build:
 
 .PHONY: version
 version:
-	@if ! echo "release major minor patch fix alpha beta rc rev post dev" | grep -w "$(BUMP)" > /dev/null; then \
-		echo "Error: BUMP must be one of: release, major, minor, patch, fix, alpha, beta, rc, rev, post, dev"; \
+	@if ! echo "major minor patch stable alpha beta rc post dev" | grep -w "$(BUMP)" > /dev/null; then \
+		echo "Error: BUMP must be one of: major, minor, patch, stable, alpha, beta, rc, post, dev"; \
 		exit 1; \
 	fi
 	# if the branch is master then bump needs to be either major minor patch or release
 	if [ "$$current_branch" = "master" ]; then \
-		if [ "$$BUMP" != "major" ] && [ "$$BUMP" != "minor" ] && [ "$$BUMP" != "patch" ] && [ "$$BUMP" != "release" ] && [ "$$BUMP" != "rc" ]; then \
+		if [ "$$BUMP" != "major" ] && [ "$$BUMP" != "minor" ] && [ "$$BUMP" != "patch" ] && [ "$$BUMP" != "stable" ] && [ "$$BUMP" != "rc" ]; then \
 			echo "Error: Cannot bump on master branch unless it is major, minor, patch or release"; \
 			exit 1; \
 		fi \
