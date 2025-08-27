@@ -113,70 +113,6 @@ def build_insert_query(
     return f"__tmp_{table.__table__.name}_{tmp_table_name}", query.split(";")
 
 
-def _generate_bulkinsert_csv_from_records(
-    table: ORMTableType,
-    records: list[dict],
-    column_names: list[str] | None = None,
-) -> StringIO:
-    """
-    Take a list of dict records and a table schema and generate a csv
-    buffer to be used in bulk_insert
-
-    """
-    if len(records) < 1:
-        raise Exception("No records")
-
-    csv_buffer = StringIO()
-
-    table_column_names = [c.name for c in table.__table__.columns.values()]  # type: ignore
-
-    # sanity check the records we received to make sure
-    # they match the table schema
-    if isinstance(records, list):
-        first_record = records[0]
-
-        record_field_names = list(first_record.keys())
-
-        for field_name in record_field_names:
-            if field_name not in table_column_names:
-                raise Exception(
-                    "Column name from records not found in table: {}. Have {}".format(field_name, ", ".join(table_column_names))
-                )
-
-        for column_name in table_column_names:
-            if column_name not in record_field_names:
-                raise Exception(f"Missing value for column {column_name}")
-
-        column_names = record_field_names
-        # column_names = table_column_names
-
-    # if missing_columns:
-    #     for missing_col in missing_columns:
-    #         records = pad_column_null(records, missing_col)
-
-    if not column_names:
-        column_names = table_column_names
-
-    csvwriter = csv.DictWriter(csv_buffer, fieldnames=column_names)
-    csvwriter.writeheader()
-
-    # @TODO put the columns in the correct order ..
-    # @NOTE do we need to ?!
-    for record in records:
-        if not record:
-            continue
-
-        try:
-            csvwriter.writerow(record)
-        except Exception:
-            logger.error(f"Error writing row in bulk insert: {record}")
-
-    # rewind it back to the start
-    csv_buffer.seek(0)
-
-    return csv_buffer
-
-
 async def get_pool() -> Pool:
     global pool
     if pool is None:
@@ -184,8 +120,8 @@ async def get_pool() -> Pool:
     return pool
 
 
-async def bulkinsert_mms_items(
-    table: ORMTableType,
+async def bulkinsert_mms_items[ORMTableType: Table](
+    table: type[ORMTableType],
     records: list[dict],
     update_fields: list[str | Column[Any]] | None = None,
 ) -> int:
