@@ -6,6 +6,12 @@ the database with any missing values.
 
 Usage:
     uv run -m opennem.core.parsers.import_cpi_csv
+
+Download the CSV from the RBA website:
+
+https://www.rba.gov.au/statistics/tables/
+
+Data out quarterly and atm needs to be imported manually.
 """
 
 import asyncio
