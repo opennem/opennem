@@ -59,7 +59,7 @@ version:
 	uv version --bump $(BUMP)
 	@NEW_VERSION=$$(uv version --short); \
 	echo "New version: $$NEW_VERSION"; \
-	git add pyproject.toml; \
+	git add pyproject.toml uv.lock; \
 	git commit -m "Bump version to $$NEW_VERSION"
 
 .PHONY: tag
