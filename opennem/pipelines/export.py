@@ -39,7 +39,7 @@ async def run_export_power_latest_for_network(network: NetworkSchema, network_re
     await asyncio.gather(*tasks)
 
 
-async def run_export_all(network_region_code: str | None = None) -> None:
+async def run_export_all(network_region_code: str | None = None, network: NetworkSchema | None = None) -> None:
     # run exports for all
     export_map = get_export_map()
     energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.monthly)
@@ -47,8 +47,14 @@ async def run_export_all(network_region_code: str | None = None) -> None:
     if network_region_code:
         energy_exports = energy_exports.get_by_network_region(network_region_code)
 
+    if network:
+        energy_exports = energy_exports.get_by_network_id(network.code)
+
     tasks = []
     for resource in energy_exports.resources:
+        if network and resource.network_region:
+            continue
+
         tasks.append(export_energy(stats=[resource]))
 
     await asyncio.gather(*tasks)
