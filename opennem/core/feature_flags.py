@@ -9,6 +9,7 @@ FEATURE_FLAG_LIST = [
     "show_emission_factors_in_power_outputs",
     "run_milestones",
     "use_analytics_outputs",
+    "demand_from_market_summary",
 ]
 
 

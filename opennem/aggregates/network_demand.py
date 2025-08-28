@@ -165,4 +165,4 @@ async def run_demand_aggregates_for_latest_interval(network: NetworkSchema) -> N
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(run_aggregates_demand_network_days(days=32))
+    asyncio.run(run_aggregates_demand_network(networks=[NetworkNEM, NetworkWEM]))

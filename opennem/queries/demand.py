@@ -61,3 +61,96 @@ def network_demand_query(
     )
 
     return text(query)
+
+
+def network_demand_clickhouse_query(
+    time_series: OpennemExportSeries,
+    network_region: str | None = None,
+    networks_query: list[NetworkSchema] | None = None,
+) -> TextClause:
+    """Query demand data from ClickHouse market_summary table.
+
+    This replaces the PostgreSQL at_network_demand query by using
+    the market_summary table in ClickHouse which contains
+    demand_energy and demand_market_value columns.
+    """
+    if not networks_query:
+        networks_query = [time_series.network]
+
+    if time_series.network not in networks_query:
+        networks_query.append(time_series.network)
+
+    __query = """
+        SELECT
+            toStartOfInterval(interval, INTERVAL {interval_size} {interval_unit}) AS interval,
+            network_id,
+            {network_region_select}
+            round(sum(demand_total_energy), 4) as demand_energy,
+            round(sum(demand_total_market_value) * 1000, 4) as demand_market_value
+        FROM market_summary FINAL
+        WHERE
+            interval >= toDateTime64('{date_min}', 3)
+            AND interval <= toDateTime64('{date_max}', 3)
+            AND network_id IN ({network_ids})
+            {network_region_filter}
+        GROUP BY
+            interval,
+            network_id
+            {network_region_group}
+        ORDER BY interval DESC
+    """
+
+    # Parse interval for ClickHouse
+    interval_sql = time_series.interval.interval_sql
+    if "1 day" in interval_sql:
+        interval_size = 1
+        interval_unit = "day"
+    elif "1 month" in interval_sql:
+        interval_size = 1
+        interval_unit = "month"
+    elif "1 week" in interval_sql:
+        interval_size = 1
+        interval_unit = "week"
+    elif "1 year" in interval_sql:
+        interval_size = 1
+        interval_unit = "year"
+    else:
+        # Default to day
+        interval_size = 1
+        interval_unit = "day"
+
+    network_region_select = ""
+    network_region_filter = ""
+    network_region_group = ""
+
+    if network_region:
+        network_region_select = "network_region,"
+        network_region_filter = f"AND network_region = '{network_region}'"
+        network_region_group = ", network_region"
+
+    # Get the time range - ClickHouse needs timezone-naive datetime strings
+    time_series_range = time_series.get_range()
+
+    # Remove timezone info for ClickHouse compatibility
+    if hasattr(time_series_range.end, "replace"):
+        date_max = time_series_range.end.replace(tzinfo=None)
+        date_min = time_series_range.start.replace(tzinfo=None)
+    else:
+        # If they're already strings, strip timezone suffix
+        date_max = str(time_series_range.end).split("+")[0].split("Z")[0]
+        date_min = str(time_series_range.start).split("+")[0].split("Z")[0]
+
+    network_ids = networks_to_in(networks_query)
+
+    query = __query.format(
+        interval_size=interval_size,
+        interval_unit=interval_unit,
+        date_max=date_max,
+        date_min=date_min,
+        network_ids=network_ids,
+        network_region_select=network_region_select,
+        network_region_filter=network_region_filter,
+        network_region_group=network_region_group,
+    )
+
+    return text(query)

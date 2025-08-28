@@ -140,6 +140,9 @@ class OpennemSettings(BaseSettings):
     show_emissions_in_power_outputs: bool = True  # show emissions in power outputs
     show_emission_factors_in_power_outputs: bool = True  # show emissions in power outputs
     use_analytics_outputs: bool = False  # use ClickHouse analytics for energy outputs instead of PostgreSQL
+    demand_from_market_summary: bool = (
+        False  # use ClickHouse market_summary for demand data instead of PostgreSQL at_network_demand
+    )
 
     # clerk API key
     clerk_secret_key: str | None = None

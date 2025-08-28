@@ -632,18 +632,46 @@ async def demand_network_region_daily(
     networks: list[NetworkSchema] | None = None,
 ) -> OpennemDataSet | None:  # sourcery skip: raise-specific-error
     """Gets demand market_value and energy for a network -> network_region"""
-    engine = get_database_engine()
 
-    query = demand_network_region_query(time_series=time_series, network_region=network_region_code, networks=networks)
+    # Check if we should use ClickHouse for demand data
+    if settings.demand_from_market_summary:
+        # Use ClickHouse market_summary table
+        from opennem.queries.demand import network_demand_clickhouse_query
 
-    async with engine.begin() as conn:
-        logger.debug(query)
-        result = await conn.execute(query)
-        row = result.fetchall()
+        ch_client = get_clickhouse_client()
+        query = network_demand_clickhouse_query(
+            time_series=time_series, network_region=network_region_code, networks_query=networks
+        )
 
-    results_energy = [DataQueryResult(interval=i[0], group_by=i[2], result=i[3] if len(i) > 1 else None) for i in row]
+        logger.debug(f"Using ClickHouse for demand query: {query}")
+        row = ch_client.execute(str(query))
 
-    results_market_value = [DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 1 else None) for i in row]
+        # ClickHouse returns different column structure depending on whether network_region is included
+        if network_region_code:
+            # With region: (interval, network_id, network_region, demand_energy, demand_market_value)
+            results_energy = [DataQueryResult(interval=i[0], group_by=i[2], result=i[3] if len(i) > 3 else None) for i in row]
+            results_market_value = [
+                DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 4 else None) for i in row
+            ]
+        else:
+            # Without region: (interval, network_id, demand_energy, demand_market_value)
+            # Use network_id as group_by for consistency
+            results_energy = [DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 2 else None) for i in row]
+            results_market_value = [
+                DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 3 else None) for i in row
+            ]
+    else:
+        # Use PostgreSQL at_network_demand table (existing behavior)
+        engine = get_database_engine()
+        query = demand_network_region_query(time_series=time_series, network_region=network_region_code, networks=networks)
+
+        async with engine.begin() as conn:
+            logger.debug(query)
+            result = await conn.execute(query)
+            row = result.fetchall()
+
+        results_energy = [DataQueryResult(interval=i[0], group_by=i[2], result=i[3] if len(i) > 1 else None) for i in row]
+        results_market_value = [DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 1 else None) for i in row]
 
     if not results_energy:
         logger.error(f"No results from query: {query}")
