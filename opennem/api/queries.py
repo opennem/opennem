@@ -231,7 +231,7 @@ def get_timeseries_query(
         if m not in config.metric_columns:
             available_metrics = ", ".join(str(k.value) for k in config.metric_columns.keys())
             raise ValueError(
-                f"Metric '{m.value}' not supported for {query_type.value} query. " f"Available metrics: {available_metrics}"
+                f"Metric '{m.value}' not supported for {query_type.value} query. Available metrics: {available_metrics}"
             )
         if m not in config.metric_agg_functions:
             raise ValueError(f"No aggregation function defined for metric '{m.value}'")
