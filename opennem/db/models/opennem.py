@@ -122,7 +122,7 @@ class Stats(Base, BaseModel):
     stat_date = Column(TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False)
     country = Column(Text, nullable=False, primary_key=True)
     stat_type = Column(Text, nullable=False, primary_key=True)
-    value = Column(Numeric, nullable=True)
+    value = Column(Numeric(precision=10, scale=4), nullable=True)
 
 
 class Network(Base, BaseModel):
