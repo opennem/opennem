@@ -73,6 +73,8 @@ def network_demand_clickhouse_query(
     This replaces the PostgreSQL at_network_demand query by using
     the market_summary table in ClickHouse which contains
     demand_energy and demand_market_value columns.
+
+    Uses materialized views for daily and monthly aggregations for better performance.
     """
     if not networks_query:
         networks_query = [time_series.network]
@@ -80,34 +82,19 @@ def network_demand_clickhouse_query(
     if time_series.network not in networks_query:
         networks_query.append(time_series.network)
 
-    __query = """
-        SELECT
-            toStartOfInterval(interval, INTERVAL {interval_size} {interval_unit}) AS interval,
-            network_id,
-            {network_region_select}
-            round(sum(demand_total_energy), 4) as demand_energy,
-            round(sum(demand_total_market_value) * 1000, 4) as demand_market_value
-        FROM market_summary FINAL
-        WHERE
-            interval >= toDateTime64('{date_min}', 3)
-            AND interval <= toDateTime64('{date_max}', 3)
-            AND network_id IN ({network_ids})
-            {network_region_filter}
-        GROUP BY
-            interval,
-            network_id
-            {network_region_group}
-        ORDER BY interval DESC
-    """
-
     # Parse interval for ClickHouse
     interval_sql = time_series.interval.interval_sql
+    use_daily_mv = False
+    use_monthly_mv = False
+
     if "1 day" in interval_sql:
         interval_size = 1
         interval_unit = "day"
+        use_daily_mv = True
     elif "1 month" in interval_sql:
         interval_size = 1
         interval_unit = "month"
+        use_monthly_mv = True
     elif "1 week" in interval_sql:
         interval_size = 1
         interval_unit = "week"
@@ -118,6 +105,62 @@ def network_demand_clickhouse_query(
         # Default to day
         interval_size = 1
         interval_unit = "day"
+        use_daily_mv = True
+
+    # Use materialized views for daily and monthly queries
+    if use_daily_mv:
+        __query = """
+            SELECT
+                date AS interval,
+                network_id,
+                {network_region_select}
+                round(demand_total_energy_daily, 4) as demand_energy,
+                round(demand_total_market_value_daily * 1000, 4) as demand_market_value
+            FROM market_summary_daily_mv
+            WHERE
+                date >= toDate('{date_min}')
+                AND date <= toDate('{date_max}')
+                AND network_id IN ({network_ids})
+                {network_region_filter}
+            ORDER BY date DESC
+        """
+    elif use_monthly_mv:
+        __query = """
+            SELECT
+                month AS interval,
+                network_id,
+                {network_region_select}
+                round(demand_total_energy_monthly, 4) as demand_energy,
+                round(demand_total_market_value_monthly * 1000, 4) as demand_market_value
+            FROM market_summary_monthly_mv
+            WHERE
+                month >= toStartOfMonth(toDate('{date_min}'))
+                AND month <= toStartOfMonth(toDate('{date_max}'))
+                AND network_id IN ({network_ids})
+                {network_region_filter}
+            ORDER BY month DESC
+        """
+    else:
+        # Use base table for other intervals
+        __query = """
+            SELECT
+                toStartOfInterval(interval, INTERVAL {interval_size} {interval_unit}) AS interval,
+                network_id,
+                {network_region_select}
+                round(sum(demand_total_energy), 4) as demand_energy,
+                round(sum(demand_total_market_value) * 1000, 4) as demand_market_value
+            FROM market_summary FINAL
+            WHERE
+                interval >= toDateTime64('{date_min}', 3)
+                AND interval <= toDateTime64('{date_max}', 3)
+                AND network_id IN ({network_ids})
+                {network_region_filter}
+            GROUP BY
+                interval,
+                network_id
+                {network_region_group}
+            ORDER BY interval DESC
+        """
 
     network_region_select = ""
     network_region_filter = ""
@@ -142,15 +185,27 @@ def network_demand_clickhouse_query(
 
     network_ids = networks_to_in(networks_query)
 
-    query = __query.format(
-        interval_size=interval_size,
-        interval_unit=interval_unit,
-        date_max=date_max,
-        date_min=date_min,
-        network_ids=network_ids,
-        network_region_select=network_region_select,
-        network_region_filter=network_region_filter,
-        network_region_group=network_region_group,
-    )
+    # Build the query based on whether we're using materialized views or not
+    if use_daily_mv or use_monthly_mv:
+        # Materialized views don't need interval_size and interval_unit
+        query = __query.format(
+            date_max=date_max,
+            date_min=date_min,
+            network_ids=network_ids,
+            network_region_select=network_region_select,
+            network_region_filter=network_region_filter,
+        )
+    else:
+        # Base table query needs the full set of parameters
+        query = __query.format(
+            interval_size=interval_size,
+            interval_unit=interval_unit,
+            date_max=date_max,
+            date_min=date_min,
+            network_ids=network_ids,
+            network_region_select=network_region_select,
+            network_region_filter=network_region_filter,
+            network_region_group=network_region_group,
+        )
 
     return text(query)

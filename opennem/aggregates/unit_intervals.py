@@ -19,6 +19,10 @@ from opennem.db.clickhouse import (
     get_clickhouse_client,
     table_exists,
 )
+from opennem.db.clickhouse_materialized_views import (
+    backfill_materialized_views,
+    ensure_materialized_views_exist,
+)
 from opennem.db.clickhouse_schema import UNIT_INTERVALS_TABLE_SCHEMA, optimize_clickhouse_tables
 from opennem.db.clickhouse_views import (
     FUELTECH_INTERVALS_DAILY_VIEW,
@@ -26,7 +30,6 @@ from opennem.db.clickhouse_views import (
     RENEWABLE_INTERVALS_DAILY_VIEW,
     RENEWABLE_INTERVALS_VIEW,
     UNIT_INTERVALS_DAILY_VIEW,
-    MaterializedView,
 )
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.dates import get_last_completed_interval_for_network
@@ -320,10 +323,8 @@ def _ensure_clickhouse_schema() -> None:
         create_table_if_not_exists(client, "unit_intervals", UNIT_INTERVALS_TABLE_SCHEMA)
         logger.info("Created unit_intervals")
 
-    for view in MATERIALIZED_VIEWS:
-        if not table_exists(client, view.name):
-            client.execute(view.schema)
-            logger.info(f"Created {view.name}")
+    # Use the generic function to ensure materialized views exist
+    ensure_materialized_views_exist(MATERIALIZED_VIEWS)
 
 
 def _refresh_clickhouse_schema() -> None:
@@ -565,109 +566,24 @@ async def _solar_and_wind_fixes() -> None:
     )
 
 
-def _backfill_materialized_view(client: any, view: MaterializedView, start_date: datetime, end_date: datetime) -> int:
+# Note: The backfill functions have been moved to the generic module
+# opennem.db.clickhouse_materialized_views
+# This function is kept for backward compatibility but delegates to the generic version
+
+
+def backfill_unit_intervals_views(refresh_views: bool = False) -> None:
     """
-    Backfill a single materialized view for a given date range.
+    Backfill materialized views for unit_intervals data.
+    This function delegates to the generic backfill_materialized_views function.
 
     Args:
-        client: ClickHouse client
-        view: MaterializedView definition
-        start_date: Start date for backfill
-        end_date: End date for backfill
-
-    Returns:
-        int: Number of records processed
+        refresh_views: If True, drops and recreates views before backfilling.
     """
+    # Use the generic function with unit_intervals specific views
+    results = backfill_materialized_views(views=MATERIALIZED_VIEWS, refresh_views=refresh_views)
 
-    # if the view backfill query has start and end parameters, use them
-    if "%(start)s" in view.backfill_query and "%(end)s" in view.backfill_query:
-        # Process month by month
-        current_date = start_date.replace(day=1)
-        while current_date <= end_date:
-            next_month = (current_date.replace(day=1) + timedelta(days=32)).replace(day=1)
-            logger.info(f"Processing month {current_date.strftime('%Y-%m')} for {view.name}")
-
-            client.execute(
-                view.backfill_query,
-                {"start": current_date, "end": next_month},
-            )
-
-            current_date = next_month
-    else:
-        logger.info(f"Processing {view.name}")
-        client.execute(view.backfill_query)
-
-    # Return count of records
-    result = client.execute(f"SELECT count() FROM {view.name}")
-    return result[0][0]
-
-
-def _get_view_by_name(view_name: str) -> MaterializedView:
-    """
-    Get a materialized view definition by its name.
-
-    Args:
-        view_name: Name of the view to find
-
-    Returns:
-        MaterializedView if found, None otherwise
-    """
-    for view in MATERIALIZED_VIEWS:
-        if view.name == view_name:
-            return view
-    raise ValueError(f"View {view_name} not found")
-
-
-def backfill_materialized_views(view: MaterializedView | str | None = None, refresh_views: bool = False) -> None:
-    """
-    Backfill materialized views from the base unit_intervals table.
-    This should be run after bulk loading data into unit_intervals if the views are empty.
-
-    Args:
-        view: Optional view to backfill. Can be either a MaterializedView instance or a view name.
-              If None, all views will be backfilled.
-
-    Raises:
-        ValueError: If a view name is provided but not found
-    """
-    client = get_clickhouse_client()
-
-    # Get date range from base table
-    result = client.execute("""
-        SELECT
-            min(interval) as min_date,
-            max(interval) as max_date
-        FROM unit_intervals
-    """)
-    start_date, end_date = result[0]
-
-    # Determine which views to process
-    views_to_process = []
-    if view is None:
-        views_to_process = MATERIALIZED_VIEWS
-    elif isinstance(view, MaterializedView):
-        views_to_process = [view]
-    elif isinstance(view, str):
-        found_view = _get_view_by_name(view)
-        if found_view is None:
-            raise ValueError(f"View {view} not found")
-        views_to_process = [found_view]
-
-    # Process each view
-    for view in views_to_process:
-        # delete and recreate the view if we are refreshing
-        if refresh_views:
-            logger.info(f"Refreshing {view.name}")
-            client.execute(f"DROP TABLE IF EXISTS {view.name}")
-            client.execute(view.schema)
-
-        record_count = _backfill_materialized_view(
-            client=client,
-            view=view,
-            start_date=start_date,
-            end_date=end_date,
-        )
-        logger.info(f"Backfill complete for {view.name}. Records: {record_count}")
+    for view_name, count in results.items():
+        logger.info(f"Backfilled {view_name}: {count} records")
 
 
 if __name__ == "__main__":
@@ -682,7 +598,7 @@ if __name__ == "__main__":
         await optimize_clickhouse_tables()
 
         # Uncomment to backfill views:
-        backfill_materialized_views(refresh_views=True)
+        backfill_unit_intervals_views(refresh_views=True)
 
     import asyncio
 
