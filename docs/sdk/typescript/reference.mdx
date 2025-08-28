@@ -109,8 +109,8 @@ async getMarket(
 - `networkCode`: The market to fetch data for
 - `metrics`: Array of market metrics including:
   - Price and demand: `"price"`, `"demand"`, `"demand_energy"`
-  - Curtailment power (MW): `"curtailment"`, `"curtailment_solar"`, `"curtailment_wind"`
-  - Curtailment energy (MWh): `"curtailment_energy"`, `"curtailment_solar_energy"`, `"curtailment_wind_energy"`
+  - Curtailment power (MW): `"curtailment"`, `"curtailment_solar_utility"`, `"curtailment_wind"`
+  - Curtailment energy (MWh): `"curtailment_energy"`, `"curtailment_solar_utility_energy"`, `"curtailment_wind_energy"`
 - `params`: Optional parameters (similar to getNetworkData)
 
 **Example - Price and Demand:**
@@ -128,7 +128,7 @@ const { datatable } = await client.getMarket("NEM", ["price", "demand"], {
 // Fetch real-time curtailment power data (MW)
 const { datatable } = await client.getMarket(
   "NEM", 
-  ["curtailment_solar", "curtailment_wind", "curtailment"],
+  ["curtailment_solar_utility", "curtailment_wind", "curtailment"],
   {
     interval: "5m",
     dateStart: "2024-01-01T00:00:00",
@@ -143,7 +143,7 @@ const { datatable } = await client.getMarket(
 // Fetch daily curtailment energy totals (MWh)
 const { datatable } = await client.getMarket(
   "NEM",
-  ["curtailment_solar_energy", "curtailment_wind_energy", "curtailment_energy"],
+  ["curtailment_solar_utility_energy", "curtailment_wind_energy", "curtailment_energy"],
   {
     interval: "1d",
     dateStart: "2024-01-01",

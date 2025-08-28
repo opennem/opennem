@@ -454,7 +454,17 @@ def get_metrics() -> dict:
         "metrics": metrics_info,
         "total": len(metrics_info),
         "endpoints": {
-            "market": ["price", "demand", "demand_energy", "curtailment_solar", "curtailment_wind"],
+            "market": [
+                "price",
+                "demand",
+                "demand_energy",
+                "curtailment",
+                "curtailment_energy",
+                "curtailment_solar_utility",
+                "curtailment_solar_utility_energy",
+                "curtailment_wind",
+                "curtailment_wind_energy",
+            ],
             "data": ["power", "energy", "emissions", "market_value", "renewable_proportion"],
         },
     }

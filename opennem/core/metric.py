@@ -38,8 +38,8 @@ class Metric(str, Enum):
     DEMAND_ENERGY = "demand_energy"
     CURTAILMENT = "curtailment"
     CURTAILMENT_ENERGY = "curtailment_energy"
-    CURTAILMENT_SOLAR = "curtailment_solar"
-    CURTAILMENT_SOLAR_ENERGY = "curtailment_solar_energy"
+    CURTAILMENT_SOLAR_UTILITY = "curtailment_solar_utility"
+    CURTAILMENT_SOLAR_UTILITY_ENERGY = "curtailment_solar_utility_energy"
     CURTAILMENT_WIND = "curtailment_wind"
     CURTAILMENT_WIND_ENERGY = "curtailment_wind_energy"
     EMISSIONS = "emissions"
@@ -142,17 +142,17 @@ METRIC_METADATA = {
         default_agg="sum",
         precision=3,
     ),
-    Metric.CURTAILMENT_SOLAR: MetricMetadata(
+    Metric.CURTAILMENT_SOLAR_UTILITY: MetricMetadata(
         unit="MW",
-        description="Solar energy curtailment",
-        column_name="curtailment_solar",
+        description="Utility solar energy curtailment",
+        column_name="curtailment_solar_utility",
         default_agg="avg",
         precision=3,
     ),
-    Metric.CURTAILMENT_SOLAR_ENERGY: MetricMetadata(
+    Metric.CURTAILMENT_SOLAR_UTILITY_ENERGY: MetricMetadata(
         unit="MWh",
-        description="Solar energy curtailment",
-        column_name="curtailment_solar_energy",
+        description="Utility solar energy curtailment",
+        column_name="curtailment_solar_utility_energy",
         default_agg="sum",
         precision=3,
     ),

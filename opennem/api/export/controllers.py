@@ -490,10 +490,10 @@ async def power_week(
 
     stats_curtailment_solar = stats_factory(
         stats=stats_curtailment_solar_results,
-        units=get_unit("curtailment_solar"),
+        units=get_unit("curtailment_solar_utility"),
         network=time_series.network,
         fueltech_group=False,
-        fueltech_code="curtailment_solar",
+        fueltech_code="curtailment_solar_utility",
         interval=time_series.interval,
         region=network_region_code,
     )
@@ -739,10 +739,10 @@ async def curtailment_network_region_daily(
     # curtailment based values for VWP
     if stats_curtailment_solar := stats_factory(
         stats=result_curtailment_solar,
-        units=get_unit("curtailment_solar_energy"),
+        units=get_unit("curtailment_solar_utility_energy"),
         network=time_series.network,
         fueltech_group=False,
-        fueltech_code="curtailment_solar",
+        fueltech_code="curtailment_solar_utility",
         interval=time_series.interval,
         region=network_region_code,
     ):

@@ -12,13 +12,14 @@ from enum import Enum
 from opennem.api.data.schema import DataMetric
 from opennem.api.market.schema import MarketMetric
 from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
+from opennem.core.metric import Metric
 from opennem.core.time_interval import Interval, get_interval_function
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.api.queries")
 
 # Type alias for metrics that can be either market or data metrics
-type MetricType = DataMetric | MarketMetric
+type MetricType = DataMetric | MarketMetric | Metric
 
 
 class QueryType(str, Enum):
@@ -96,26 +97,26 @@ QUERY_CONFIGS = {
         daily_mv=None,  # Will be added when market summary MVs are created
         monthly_mv=None,  # Will be added when market summary MVs are created
         metric_columns={
-            MarketMetric.PRICE: "price",
-            MarketMetric.DEMAND: "demand",
-            MarketMetric.DEMAND_ENERGY: "demand_energy",
-            MarketMetric.CURTAILMENT: "curtailment_total",
-            MarketMetric.CURTAILMENT_ENERGY: "curtailment_energy_total",
-            MarketMetric.CURTAILMENT_SOLAR: "curtailment_solar_total",
-            MarketMetric.CURTAILMENT_WIND: "curtailment_wind_total",
-            MarketMetric.CURTAILMENT_SOLAR_ENERGY: "curtailment_energy_solar_total",
-            MarketMetric.CURTAILMENT_WIND_ENERGY: "curtailment_energy_wind_total",
+            Metric.PRICE: "price",
+            Metric.DEMAND: "demand",
+            Metric.DEMAND_ENERGY: "demand_energy",
+            Metric.CURTAILMENT: "curtailment_total",
+            Metric.CURTAILMENT_ENERGY: "curtailment_energy_total",
+            Metric.CURTAILMENT_SOLAR_UTILITY: "curtailment_solar_total",
+            Metric.CURTAILMENT_WIND: "curtailment_wind_total",
+            Metric.CURTAILMENT_SOLAR_UTILITY_ENERGY: "curtailment_energy_solar_total",
+            Metric.CURTAILMENT_WIND_ENERGY: "curtailment_energy_wind_total",
         },
         metric_agg_functions={
-            MarketMetric.PRICE: "avg",
-            MarketMetric.DEMAND: "avg",
-            MarketMetric.DEMAND_ENERGY: "sum",
-            MarketMetric.CURTAILMENT: "sum",
-            MarketMetric.CURTAILMENT_ENERGY: "sum",
-            MarketMetric.CURTAILMENT_SOLAR: "sum",
-            MarketMetric.CURTAILMENT_WIND: "sum",
-            MarketMetric.CURTAILMENT_SOLAR_ENERGY: "sum",
-            MarketMetric.CURTAILMENT_WIND_ENERGY: "sum",
+            Metric.PRICE: "avg",
+            Metric.DEMAND: "avg",
+            Metric.DEMAND_ENERGY: "sum",
+            Metric.CURTAILMENT: "sum",
+            Metric.CURTAILMENT_ENERGY: "sum",
+            Metric.CURTAILMENT_SOLAR_UTILITY: "sum",
+            Metric.CURTAILMENT_WIND: "sum",
+            Metric.CURTAILMENT_SOLAR_UTILITY_ENERGY: "sum",
+            Metric.CURTAILMENT_WIND_ENERGY: "sum",
         },
     ),
     QueryType.DATA: QueryConfig(
@@ -224,8 +225,17 @@ def get_timeseries_query(
 
     # logger.info(f"Querying {table_name} for {network.code} from {date_start} to {date_end}")
 
-    # Build metric selection part
-    metric_selects = [f"{config.metric_agg_functions[m]}({config.metric_columns[m]}) as {m.value.lower()}" for m in metrics]
+    # Build metric selection part with better error handling
+    metric_selects = []
+    for m in metrics:
+        if m not in config.metric_columns:
+            available_metrics = ", ".join(str(k.value) for k in config.metric_columns.keys())
+            raise ValueError(
+                f"Metric '{m.value}' not supported for {query_type.value} query. " f"Available metrics: {available_metrics}"
+            )
+        if m not in config.metric_agg_functions:
+            raise ValueError(f"No aggregation function defined for metric '{m.value}'")
+        metric_selects.append(f"{config.metric_agg_functions[m]}({config.metric_columns[m]}) as {m.value.lower()}")
 
     # Build grouping columns based on query type
     group_cols = [f"'{network.code}' as network"]

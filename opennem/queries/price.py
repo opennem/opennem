@@ -32,7 +32,7 @@ def get_network_region_price_query(
             avg(bs.price) as price,
             avg(bs.demand) as demand,
             avg(bs.demand_total) as demand_total,
-            max(bs.ss_solar_uigf - bs.ss_solar_clearedmw) as curtailment_solar_total,
+            max(bs.ss_solar_uigf - bs.ss_solar_clearedmw) as curtailment_solar_utility_total,
             max(bs.ss_wind_uigf - bs.ss_wind_clearedmw) as curtailment_wind_total,
         from mv_balancing_summary bs
         where
@@ -131,7 +131,7 @@ def get_network_price_demand_query_analytics(
             avg(demand) AS demand,
             avg(demand_total) AS demand_total,
             sum(curtailment_total) AS curtailment_total,
-            sum(curtailment_solar_total) AS curtailment_solar_total,
+            sum(curtailment_solar_total) AS curtailment_solar_utility_total,
             sum(curtailment_wind_total) AS curtailment_wind_total
         FROM market_summary
         WHERE network_id = '{network.code}'

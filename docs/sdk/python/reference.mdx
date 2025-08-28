@@ -110,12 +110,12 @@ def get_market(
 
 **Curtailment Power (MW):**
 - `MarketMetric.CURTAILMENT` - Total curtailment across all renewables
-- `MarketMetric.CURTAILMENT_SOLAR` - Solar generation curtailed
+- `MarketMetric.CURTAILMENT_SOLAR_UTILITY` - Utility solar generation curtailed
 - `MarketMetric.CURTAILMENT_WIND` - Wind generation curtailed
 
 **Curtailment Energy (MWh):**
 - `MarketMetric.CURTAILMENT_ENERGY` - Total curtailed energy
-- `MarketMetric.CURTAILMENT_SOLAR_ENERGY` - Solar energy curtailed
+- `MarketMetric.CURTAILMENT_SOLAR_UTILITY_ENERGY` - Utility solar energy curtailed
 - `MarketMetric.CURTAILMENT_WIND_ENERGY` - Wind energy curtailed
 
 ### Examples
@@ -130,7 +130,7 @@ import pandas as pd
 response = client.get_market(
     network_code="NEM",
     metrics=[
-        MarketMetric.CURTAILMENT_SOLAR,
+        MarketMetric.CURTAILMENT_SOLAR_UTILITY,
         MarketMetric.CURTAILMENT_WIND,
         MarketMetric.CURTAILMENT
     ],
@@ -163,7 +163,7 @@ df = pd.DataFrame(data)
 response = client.get_market(
     network_code="NEM",
     metrics=[
-        MarketMetric.CURTAILMENT_SOLAR_ENERGY,
+        MarketMetric.CURTAILMENT_SOLAR_UTILITY_ENERGY,
         MarketMetric.CURTAILMENT_WIND_ENERGY,
         MarketMetric.CURTAILMENT_ENERGY
     ],

@@ -47,14 +47,14 @@
         "unit": "MWh"
     },
     {
-        "name": "curtailment_solar",
-        "name_alias": "curtailment.solar",
+        "name": "curtailment_solar_utility",
+        "name_alias": "curtailment.solar.utility",
         "unit_type": "power",
         "unit": "MW"
     },
     {
-        "name": "curtailment_solar_energy",
-        "name_alias": "curtailment.solar.energy",
+        "name": "curtailment_solar_utility_energy",
+        "name_alias": "curtailment.solar.utility.energy",
         "unit_type": "energy",
         "unit": "MWh"
     },
