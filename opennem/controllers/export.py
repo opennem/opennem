@@ -58,7 +58,7 @@ async def run_export_power_for_network(network: NetworkSchema) -> None:
     await export_power(power_exports.resources)
 
 
-async def run_export_energy_all(network_region_code: str | None = None) -> None:
+async def run_export_energy_all(network_region_code: str | None = None, network: NetworkSchema | None = None) -> None:
     """
     Run energy exports for all regions or a specific network region if provided.
 
@@ -72,6 +72,9 @@ async def run_export_energy_all(network_region_code: str | None = None) -> None:
 
     if network_region_code:
         energ_exports = energ_exports.get_by_network_region(network_region_code)
+
+    if network:
+        energ_exports = energ_exports.get_by_network_id(network.code)
 
     await export_energy(energ_exports.resources)
 
