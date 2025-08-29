@@ -428,6 +428,8 @@ async def power_week(
         network_region_code=network_region_code,
     )
 
+    logger.debug(query)
+
     ch_client = get_clickhouse_client()
 
     result_price_and_demand_and_curtailment = ch_client.execute(query)

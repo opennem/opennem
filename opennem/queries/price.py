@@ -114,9 +114,11 @@ def get_network_price_demand_query_analytics(
 
     # network regions query
     network_regions_query = ""
+    network_region_grouping = "'NEM' as network_region,"
 
     if network_region_code:
         network_regions_query = f"and network_region = '{network_region_code.upper()}'"
+        network_region_grouping = "network_region,"
 
     # strip timezone from date_min and date_max
     date_min = date_min.replace(tzinfo=None)
@@ -126,10 +128,10 @@ def get_network_price_demand_query_analytics(
         SELECT
             {time_bucket}(interval) AS interval,
             network_id,
-            network_region,
+            {network_region_grouping}
             avg(price) AS price,
-            avg(demand) AS demand,
-            avg(demand_total) AS demand_total,
+            sum(demand) AS demand,
+            sum(demand_total) AS demand_total,
             sum(curtailment_total) AS curtailment_total,
             sum(curtailment_solar_total) AS curtailment_solar_utility_total,
             sum(curtailment_wind_total) AS curtailment_wind_total
@@ -139,10 +141,8 @@ def get_network_price_demand_query_analytics(
             AND interval <= parseDateTimeBestEffort('{date_max}')
             {network_regions_query}
         GROUP BY
-            interval,
-            network_id,
-            network_region
-        ORDER BY interval DESC, network_id, network_region
+            1, 2, 3
+        ORDER BY 1 DESC, 2, 3
     """
 
     return query
