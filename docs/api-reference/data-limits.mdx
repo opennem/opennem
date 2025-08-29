@@ -1,0 +1,256 @@
+---
+title: 'Data Limits'
+description: 'Documentation for the OpenElectricity REST API - Data Range Limits'
+icon: 'circle-stop'
+---
+
+<Notice>
+These limits are currently under review and may be increased in the future.
+</Notice>
+
+The Open Electricity API enforces maximum date range limits for data queries to ensure optimal performance and prevent excessive database load and payload sizes. These limits vary based on the data interval requested.
+
+## Current Limits
+
+### Standard Users
+
+| Interval | Maximum Range | Description |
+|----------|--------------|-------------|
+| 5-minute (`interval`) | 7 days | High-resolution 5-minute interval data |
+| Hourly (`hour`) | 30 days | Hourly aggregated data |
+| Daily (`day`) | 365 days | Daily aggregated data |
+| Weekly (`week`) | 365 days | Weekly aggregated data |
+| Monthly (`month`) | 730 days (~2 years) | Monthly aggregated data |
+| Quarterly (`quarter`) | 1825 days (~5 years) | Quarterly aggregated data |
+| Seasonal (`season`) | 1825 days (~5 years) | Seasonal aggregated data |
+| Yearly (`year`) | 3650 days (~10 years) | Yearly aggregated data |
+
+## Error Response
+
+When a date range exceeds the maximum allowed for an interval, the API returns a 400 error:
+
+```json
+{
+  "detail": "Date range too large for hour interval. Maximum range is 30 days."
+}
+```
+
+## Working with Range Limits
+
+To retrieve data beyond the maximum range, iterate through the data in chunks that respect the limits.
+
+### Example: Fetching 60 Days of Hourly Data
+
+Since the hourly interval limit is 30 days, you'll need to make two requests.
+
+### Simple Example: Getting Power Data
+
+<CodeGroup dropdown>
+
+```typescript example.ts
+import { OpenElectricityClient } from 'openelectricity';
+
+const client = new OpenElectricityClient({
+  apiKey: process.env.OPENELECTRICITY_API_KEY
+});
+
+// Get power generation data for NEM network
+const response = await client.getNetworkData(
+  'NEM',
+  ['power'],
+  {
+    interval: 'hour',
+    dateStart: '2024-01-01',
+    dateEnd: '2024-01-30'
+  }
+);
+
+console.log(`Retrieved ${response.datatable.rows.length} data points`);
+```
+
+```python example.py
+from openelectricity import OEClient
+from openelectricity.types import NetworkCode, DataMetric, DataInterval
+from datetime import datetime
+
+client = OEClient()  # Uses OPENELECTRICITY_API_KEY env var
+
+# Get power generation data for NEM network
+response = client.get_network_data(
+    network_code=NetworkCode.NEM,
+    metrics=[DataMetric.POWER],
+    interval=DataInterval.HOUR,
+    date_start=datetime(2024, 1, 1),
+    date_end=datetime(2024, 1, 30)
+)
+
+print(f"Retrieved {len(response.data)} data points")
+```
+
+</CodeGroup>
+
+### Handling Range Limits: Fetching 60 Days of Hourly Data
+
+Since the hourly interval limit is 30 days, you'll need to make multiple requests to fetch 60 days of data.
+
+<CodeGroup dropdown>
+
+```typescript chunked-fetch.ts
+import { OpenElectricityClient } from 'openelectricity';
+import { DataInterval } from 'openelectricity/types';
+
+const client = new OpenElectricityClient({
+  apiKey: process.env.OPENELECTRICITY_API_KEY
+});
+
+async function fetchDataInChunks(
+  startDate: Date,
+  endDate: Date,
+  interval: DataInterval,
+  maxDays: number
+) {
+  const allData = [];
+  let currentStart = new Date(startDate);
+
+  while (currentStart < endDate) {
+    const currentEnd = new Date(currentStart);
+    currentEnd.setDate(currentEnd.getDate() + maxDays - 1);
+
+    // Ensure we don't exceed the requested end date
+    const chunkEnd = currentEnd > endDate ? endDate : currentEnd;
+
+    try {
+      const response = await client.getNetworkData(
+        'NEM',
+        ['power'],
+        {
+          interval: interval,
+          dateStart: currentStart.toISOString().split('T')[0],
+          dateEnd: chunkEnd.toISOString().split('T')[0]
+        }
+      );
+
+      allData.push(...response.datatable.rows);
+    } catch (error) {
+      if (error.statusCode === 400) {
+        console.error('Date range too large:', error.details);
+        break;
+      }
+      throw error;
+    }
+
+    // Move to next chunk
+    currentStart = new Date(chunkEnd);
+    currentStart.setDate(currentStart.getDate() + 1);
+  }
+
+  return allData;
+}
+
+// Usage: Fetch 60 days of hourly data
+const startDate = new Date('2024-01-01');
+const endDate = new Date('2024-03-01');
+const data = await fetchDataInChunks(startDate, endDate, 'hour', 30);
+console.log(`Retrieved ${data.length} total data points`);
+```
+
+```python chunked_fetch.py
+from openelectricity import OEClient
+from openelectricity.types import NetworkCode, DataMetric, DataInterval
+from datetime import datetime, timedelta
+
+client = OEClient()
+
+def fetch_data_in_chunks(
+    start_date: datetime,
+    end_date: datetime,
+    interval: DataInterval,
+    max_days: int
+):
+    """
+    Fetch data in chunks respecting API range limits.
+
+    Args:
+        start_date: Start date for data retrieval
+        end_date: End date for data retrieval
+        interval: Data interval enum value
+        max_days: Maximum allowed days for the interval
+
+    Returns:
+        Combined list of all time series data
+    """
+    all_data = []
+    current_start = start_date
+
+    while current_start < end_date:
+        # Calculate chunk end date
+        current_end = min(
+            current_start + timedelta(days=max_days - 1),
+            end_date
+        )
+
+        try:
+            # Make API request using the client
+            response = client.get_network_data(
+                network_code=NetworkCode.NEM,
+                metrics=[DataMetric.POWER],
+                interval=interval,
+                date_start=current_start,
+                date_end=current_end
+            )
+
+            # Extend with the data from this chunk
+            all_data.extend(response.data)
+
+        except Exception as e:
+            if "Date range too large" in str(e):
+                print(f"Date range error: {e}")
+                break
+            raise
+
+        # Move to next chunk (add 1 day to avoid overlap)
+        current_start = current_end + timedelta(days=1)
+
+    return all_data
+
+# Usage: Fetch 60 days of hourly data
+from datetime import datetime
+
+start_date = datetime(2024, 1, 1)
+end_date = datetime(2024, 3, 1)
+
+data = fetch_data_in_chunks(
+    start_date,
+    end_date,
+    DataInterval.HOUR,
+    30
+)
+print(f"Retrieved {len(data)} total data points")
+```
+
+</CodeGroup>
+
+## Best Practices
+
+1. **Choose the Right Interval**: Use larger intervals (daily, weekly) for longer time periods to reduce the number of requests needed.
+
+2. **Cache Results**: Store retrieved data locally to avoid repeated API calls for the same date ranges.
+
+3. **Handle Rate Limits**: Implement appropriate delays between requests if making many consecutive calls.
+
+4. **Error Handling**: Always implement proper error handling for cases where date ranges exceed limits.
+
+5. **Date Format**: Ensure dates are provided in the correct format (YYYY-MM-DD) and are timezone-naive in the network's local time.
+
+## Default Behavior
+
+If no date range is specified:
+- `date_end` defaults to the last completed interval for the network
+- `date_start` defaults to half the maximum allowed range before `date_end`
+
+For example, for hourly data with a 30-day maximum:
+- Default range would be the last 15 days of available data
+
+## Future Improvements
+
+These limits are designed to balance API performance with data accessibility. As our infrastructure scales, we plan to review and potentially increase these limits. Check back periodically for updates to these restrictions.
