@@ -109,7 +109,7 @@ QUERY_CONFIGS = {
         },
         metric_agg_functions={
             Metric.PRICE: "avg",
-            Metric.DEMAND: "avg",
+            Metric.DEMAND: "sum",
             Metric.DEMAND_ENERGY: "sum",
             Metric.CURTAILMENT: "sum",
             Metric.CURTAILMENT_ENERGY: "sum",
