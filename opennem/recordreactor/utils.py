@@ -74,13 +74,15 @@ def check_milestone_is_new(milestone: MilestoneRecordSchema, milestone_previous:
     # @NOTE we round to 0 for all metrics except proportion
     round_to = 2 if milestone.metric in [MilestoneType.proportion] else 0
 
+    # Only create new records if the rounded values would render differently
     rounded_current = round(milestone.value, round_to)
     rounded_previous = round(milestone_previous.value, round_to)
-
-    # Only create new records if the rounded values are different AND the comparison operator passes
+    
+    # If the rounded values are the same, don't create a new record
     if rounded_current == rounded_previous:
         return False
-
+    
+    # If the rounded values are different, check if it's a new high/low record
     return _op(rounded_current, rounded_previous)
 
 
