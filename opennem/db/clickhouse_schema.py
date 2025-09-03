@@ -48,6 +48,7 @@ UNIT_INTERVALS_TABLE_SCHEMA = """CREATE TABLE IF NOT EXISTS unit_intervals (
     renewable Boolean,
     generated Nullable(Float64),
     energy Nullable(Float64),
+    energy_storage Nullable(Float64),
     emissions Nullable(Float64),
     emission_factor Nullable(Float64),
     market_value Nullable(Float64),

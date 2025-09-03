@@ -37,7 +37,7 @@ from opennem.utils.dates import get_last_completed_interval_for_network
 logger = logging.getLogger("opennem.aggregates.unit_intervals")
 
 # List of all materialized views to manage
-MATERIALIZED_VIEWS = [
+_UNIT_INTERVALS_MATERIALIZED_VIEWS = [
     UNIT_INTERVALS_DAILY_VIEW,
     FUELTECH_INTERVALS_VIEW,
     FUELTECH_INTERVALS_DAILY_VIEW,
@@ -136,7 +136,8 @@ async def _get_unit_interval_data(
             ftg.code as fueltech_group_id,
             ftg.renewable as renewable,
             round(sum(fs.generated), 4) as generated,
-            round(sum(fs.energy), 4) as energy
+            round(sum(fs.energy), 4) as energy,
+            round(sum(fs.energy_storage), 4) as energy_storage
         FROM
             facility_scada fs
         JOIN units u ON fs.facility_code = u.code
@@ -165,6 +166,7 @@ async def _get_unit_interval_data(
             fd.renewable,
             fd.generated,
             fd.energy,
+            fd.energy_storage,
             u.emissions_factor_co2
         FROM
             facility_data fd
@@ -185,6 +187,7 @@ async def _get_unit_interval_data(
             sd.renewable,
             sd.generated,
             sd.energy,
+            NULL as energy_storage,
             u.emissions_factor_co2
         FROM
             filled_solar_data sd
@@ -202,6 +205,7 @@ async def _get_unit_interval_data(
         cd.renewable,
         cd.generated,
         cd.energy,
+        cd.energy_storage,
         CASE
             WHEN cd.energy > 0 THEN coalesce(round(cd.emissions_factor_co2 * cd.energy, 4), 0)
             ELSE 0
@@ -258,6 +262,7 @@ def _prepare_unit_interval_data(records: Sequence[tuple]) -> list[tuple]:
             "renewable": pl.Boolean,
             "generated": pl.Float64,
             "energy": pl.Float64,
+            "energy_storage": pl.Float64,
             "emissions": pl.Float64,
             "emission_factor": pl.Float64,
             "market_value": pl.Float64,
@@ -265,7 +270,7 @@ def _prepare_unit_interval_data(records: Sequence[tuple]) -> list[tuple]:
     )
 
     # Round numeric values to 4 decimal places
-    numeric_cols = ["generated", "energy", "emissions", "emission_factor", "market_value"]
+    numeric_cols = ["generated", "energy", "energy_storage", "emissions", "emission_factor", "market_value"]
     df = df.with_columns([pl.col(col).round(4) for col in numeric_cols])
 
     # Add version column based on current timestamp
@@ -303,6 +308,7 @@ def _prepare_unit_interval_data(records: Sequence[tuple]) -> list[tuple]:
             "renewable",
             "generated",
             "energy",
+            "energy_storage",
             "emissions",
             "emission_factor",
             "market_value",
@@ -324,7 +330,7 @@ def _ensure_clickhouse_schema() -> None:
         logger.info("Created unit_intervals")
 
     # Use the generic function to ensure materialized views exist
-    ensure_materialized_views_exist(MATERIALIZED_VIEWS)
+    ensure_materialized_views_exist(_UNIT_INTERVALS_MATERIALIZED_VIEWS)
 
 
 def _refresh_clickhouse_schema() -> None:
@@ -339,7 +345,7 @@ def _refresh_clickhouse_schema() -> None:
     client = get_clickhouse_client()
 
     # Drop views first (in reverse order of creation to handle dependencies)
-    for view in reversed(MATERIALIZED_VIEWS):
+    for view in reversed(_UNIT_INTERVALS_MATERIALIZED_VIEWS):
         client.execute(f"DROP TABLE IF EXISTS {view.name}")
         logger.info(f"Dropped {view.name}")
 
@@ -387,7 +393,7 @@ async def process_unit_intervals_backlog(
                 (
                     interval, network_id, network_region, facility_code, unit_code,
                     status_id, fueltech_id, fueltech_group_id, renewable,
-                    generated, energy, emissions, emission_factor, market_value,
+                    generated, energy, energy_storage, emissions, emission_factor, market_value,
                     version
                 )
                 VALUES
@@ -437,7 +443,7 @@ async def run_unit_intervals_aggregate_to_now() -> int:
         (
             interval, network_id, network_region, facility_code, unit_code,
             status_id, fueltech_id, fueltech_group_id, renewable,
-            generated, energy, emissions, emission_factor, market_value,
+            generated, energy, energy_storage, emissions, emission_factor, market_value,
             version
         )
         VALUES
@@ -475,7 +481,7 @@ async def run_unit_intervals_aggregate_for_last_intervals(num_intervals: int) ->
         (
             interval, network_id, network_region, facility_code, unit_code,
             status_id, fueltech_id, fueltech_group_id, renewable,
-            generated, energy, emissions, emission_factor, market_value,
+            generated, energy, energy_storage, emissions, emission_factor, market_value,
             version
         )
         VALUES
@@ -580,7 +586,7 @@ def backfill_unit_intervals_views(refresh_views: bool = False) -> None:
         refresh_views: If True, drops and recreates views before backfilling.
     """
     # Use the generic function with unit_intervals specific views
-    results = backfill_materialized_views(views=MATERIALIZED_VIEWS, refresh_views=refresh_views)
+    results = backfill_materialized_views(views=_UNIT_INTERVALS_MATERIALIZED_VIEWS, refresh_views=refresh_views)
 
     for view_name, count in results.items():
         logger.info(f"Backfilled {view_name}: {count} records")
@@ -589,10 +595,10 @@ def backfill_unit_intervals_views(refresh_views: bool = False) -> None:
 if __name__ == "__main__":
     # Run the test
     async def reset_unit_intervals():
-        # _refresh_clickhouse_schema()
+        _refresh_clickhouse_schema()
         # await run_unit_intervals_backlog(start_date=NetworkNEM.data_first_seen.replace(tzinfo=None))
 
-        await run_unit_intervals_backlog()
+        await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2023-01-01T00:00:00"))
         await _solar_and_wind_fixes()
 
         await optimize_clickhouse_tables()
