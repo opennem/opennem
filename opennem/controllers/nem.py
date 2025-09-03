@@ -34,6 +34,7 @@ FACILITY_SCADA_COLUMN_NAMES = [
     "is_forecast",
     "energy_quality_flag",
     "energy",
+    "energy_storage",
 ]
 
 # Helpers
@@ -46,6 +47,7 @@ async def generate_facility_scada(
     facility_code_field: str = "duid",
     power_field: str = "scadavalue",
     energy_field: str | None = None,
+    energy_storage_field: str | None = None,
     is_forecast: bool = False,
 ) -> list[dict[Hashable, Any]]:
     """Optimized facility scada generator"""
@@ -62,6 +64,11 @@ async def generate_facility_scada(
         column_renames[energy_field] = "energy"
     else:
         df["energy"] = None
+
+    if energy_storage_field:
+        column_renames[energy_storage_field] = "energy_storage"
+    else:
+        df["energy_storage"] = None
 
     df = df.rename(columns=column_renames)
 
@@ -428,10 +435,11 @@ async def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
         interval_field="settlementdate",
         facility_code_field="duid",
         power_field="initialmw",
+        energy_storage_field="energy_storage",
     )
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy"])
+    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy", "energy_storage"])
     cr.server_latest = max([i["interval"] for i in records if i["interval"]])
 
     return cr
