@@ -19,8 +19,11 @@ Note:
 #!/usr/bin/env python3
 import json
 import logging
+from datetime import datetime
 from pathlib import Path
 
+from geoalchemy2.shape import from_shape
+from shapely.geometry import Point
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
@@ -121,6 +124,10 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 description=facility.description,
                 wikipedia_link=facility.wikipedia,
                 website_url=facility.website,
+                osm_way_id=facility.osm_way_id if hasattr(facility, "osm_way_id") else None,
+                location=from_shape(Point(facility.location.lng, facility.location.lat), srid=4326)
+                if hasattr(facility, "location") and facility.location and facility.location.lat and facility.location.lng
+                else None,
                 approved=True,
                 cms_id=facility.cms_id,
             )
@@ -170,6 +177,16 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
             facility_db.cms_id = facility.cms_id
             record_updated = True
 
+        # Update new fields
+        if hasattr(facility, "osm_way_id") and facility.osm_way_id is not None:
+            facility_db.osm_way_id = facility.osm_way_id.strip() if facility.osm_way_id else None
+            record_updated = True
+
+        if hasattr(facility, "location") and facility.location:
+            if facility.location.lat and facility.location.lng:
+                facility_db.location = from_shape(Point(facility.location.lng, facility.location.lat), srid=4326)
+                record_updated = True
+
         # Process units in a single transaction
         for unit in facility.units:
             # Ensure unit has a cms_id
@@ -189,19 +206,96 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
 
             # If not found by cms_id, create new unit
             if not unit_db:
+                # Prepare date conversions
+                expected_op_date = (
+                    datetime.combine(unit.expected_operation_date, datetime.min.time()) if unit.expected_operation_date else None
+                )
+                expected_cl_date = (
+                    datetime.combine(unit.expected_closure_date, datetime.min.time()) if unit.expected_closure_date else None
+                )
+                commencement_dt = (
+                    datetime.combine(unit.commencement_date, datetime.min.time()) if unit.commencement_date else None
+                )
+                closure_dt = datetime.combine(unit.closure_date, datetime.min.time()) if unit.closure_date else None
+                construction_start_dt = (
+                    datetime.combine(unit.construction_start_date, datetime.min.time())
+                    if hasattr(unit, "construction_start_date") and unit.construction_start_date
+                    else None
+                )
+                project_approval_dt = (
+                    datetime.combine(unit.project_approval_date, datetime.min.time())
+                    if hasattr(unit, "project_approval_date") and unit.project_approval_date
+                    else None
+                )
+                project_lodgement_dt = (
+                    datetime.combine(unit.project_approval_lodgement_date, datetime.min.time())
+                    if hasattr(unit, "project_approval_lodgement_date") and unit.project_approval_lodgement_date
+                    else None
+                )
+
                 unit_db = Unit(
                     code=unit.code,
                     fueltech_id=unit.fueltech_id.value if unit.fueltech_id else None,
                     status_id=unit.status_id.value if unit.status_id else None,
                     dispatch_type=unit.dispatch_type.value if unit.dispatch_type else None,
                     capacity_registered=round(unit.capacity_registered, 2) if unit.capacity_registered else None,
+                    capacity_maximum=(
+                        round(unit.capacity_maximum, 4) if hasattr(unit, "capacity_maximum") and unit.capacity_maximum else None
+                    ),
+                    capacity_storage=(
+                        round(unit.storage_capacity, 4)  # CMS field is storage_capacity
+                        if hasattr(unit, "storage_capacity") and unit.storage_capacity
+                        else None
+                    ),
                     emissions_factor_co2=round(unit.emissions_factor_co2, 4) if unit.emissions_factor_co2 else None,
-                    expected_operation_date=unit.expected_operation_date,
-                    expected_closure_date=unit.expected_closure_date,
-                    commencement_date=unit.commencement_date,
-                    closure_date=unit.closure_date,
-                    registered=unit.commencement_date,
-                    deregistered=unit.closure_date,
+                    emission_factor_source=(unit.emission_factor_source if hasattr(unit, "emission_factor_source") else None),
+                    expected_operation_date=expected_op_date,
+                    expected_operation_date_specificity=(
+                        unit.expected_operation_date_specificity if hasattr(unit, "expected_operation_date_specificity") else None
+                    ),
+                    expected_operation_date_source=(
+                        unit.expected_operation_date_source if hasattr(unit, "expected_operation_date_source") else None
+                    ),
+                    expected_closure_date=expected_cl_date,
+                    expected_closure_date_specificity=(
+                        unit.expected_closure_date_specificity if hasattr(unit, "expected_closure_date_specificity") else None
+                    ),
+                    expected_closure_date_source=(
+                        unit.expected_closure_date_source if hasattr(unit, "expected_closure_date_source") else None
+                    ),
+                    commencement_date=commencement_dt,
+                    commencement_date_specificity=(
+                        unit.commencement_date_specificity if hasattr(unit, "commencement_date_specificity") else None
+                    ),
+                    closure_date=closure_dt,
+                    closure_date_specificity=(
+                        unit.closure_date_specificity if hasattr(unit, "closure_date_specificity") else None
+                    ),
+                    construction_start_date=construction_start_dt,
+                    construction_start_date_specificity=(
+                        unit.construction_start_date_specificity if hasattr(unit, "construction_start_date_specificity") else None
+                    ),
+                    construction_start_date_source=(
+                        unit.construction_start_date_source if hasattr(unit, "construction_start_date_source") else None
+                    ),
+                    construction_cost=(
+                        round(unit.construction_cost, 2)
+                        if hasattr(unit, "construction_cost") and unit.construction_cost
+                        else None
+                    ),
+                    construction_cost_source=(
+                        unit.construction_cost_source if hasattr(unit, "construction_cost_source") else None
+                    ),
+                    project_approval_date=project_approval_dt,
+                    project_approval_date_specificity=(
+                        unit.project_approval_date_specificity if hasattr(unit, "project_approval_date_specificity") else None
+                    ),
+                    project_approval_date_source=(
+                        unit.project_approval_date_source if hasattr(unit, "project_approval_date_source") else None
+                    ),
+                    project_approval_lodgement_date=project_lodgement_dt,
+                    registered=commencement_dt,
+                    deregistered=closure_dt,
                     cms_id=unit.cms_id,
                 )
                 # Set the station_id for new units
@@ -238,22 +332,99 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 unit_db.emissions_factor_co2 = round(unit.emissions_factor_co2, 4) if unit.emissions_factor_co2 else None
                 record_updated = True
 
+            if unit.capacity_maximum is not None and hasattr(unit, "capacity_maximum"):
+                unit_db.capacity_maximum = round(unit.capacity_maximum, 4) if unit.capacity_maximum else None
+                record_updated = True
+
+            # CMS field is storage_capacity, database field is capacity_storage
+            if hasattr(unit, "storage_capacity") and unit.storage_capacity is not None:
+                unit_db.capacity_storage = round(unit.storage_capacity, 4) if unit.storage_capacity else None
+                record_updated = True
+
+            if hasattr(unit, "emission_factor_source") and unit.emission_factor_source is not None:
+                unit_db.emission_factor_source = unit.emission_factor_source
+                record_updated = True
+
             if unit.expected_operation_date is not None:
-                unit_db.expected_operation_date = unit.expected_operation_date
+                unit_db.expected_operation_date = datetime.combine(unit.expected_operation_date, datetime.min.time())
+                record_updated = True
+
+            if hasattr(unit, "expected_operation_date_specificity") and unit.expected_operation_date_specificity is not None:
+                unit_db.expected_operation_date_specificity = unit.expected_operation_date_specificity
+                record_updated = True
+
+            if hasattr(unit, "expected_operation_date_source") and unit.expected_operation_date_source is not None:
+                unit_db.expected_operation_date_source = unit.expected_operation_date_source
                 record_updated = True
 
             if unit.expected_closure_date is not None:
-                unit_db.expected_closure_date = unit.expected_closure_date
+                unit_db.expected_closure_date = datetime.combine(unit.expected_closure_date, datetime.min.time())
+                record_updated = True
+
+            if hasattr(unit, "expected_closure_date_specificity") and unit.expected_closure_date_specificity is not None:
+                unit_db.expected_closure_date_specificity = unit.expected_closure_date_specificity
+                record_updated = True
+
+            if hasattr(unit, "expected_closure_date_source") and unit.expected_closure_date_source is not None:
+                unit_db.expected_closure_date_source = unit.expected_closure_date_source
                 record_updated = True
 
             if unit.commencement_date is not None:
-                unit_db.commencement_date = unit.commencement_date
-                unit_db.registered = unit.commencement_date
+                unit_db.commencement_date = datetime.combine(unit.commencement_date, datetime.min.time())
+                unit_db.registered = datetime.combine(unit.commencement_date, datetime.min.time())
+                record_updated = True
+
+            if hasattr(unit, "commencement_date_specificity") and unit.commencement_date_specificity is not None:
+                unit_db.commencement_date_specificity = unit.commencement_date_specificity
                 record_updated = True
 
             if unit.closure_date is not None:
-                unit_db.closure_date = unit.closure_date
-                unit_db.deregistered = unit.closure_date
+                unit_db.closure_date = datetime.combine(unit.closure_date, datetime.min.time())
+                unit_db.deregistered = datetime.combine(unit.closure_date, datetime.min.time())
+                record_updated = True
+
+            if hasattr(unit, "closure_date_specificity") and unit.closure_date_specificity is not None:
+                unit_db.closure_date_specificity = unit.closure_date_specificity
+                record_updated = True
+
+            # Construction fields
+            if hasattr(unit, "construction_start_date") and unit.construction_start_date is not None:
+                unit_db.construction_start_date = datetime.combine(unit.construction_start_date, datetime.min.time())
+                record_updated = True
+
+            if hasattr(unit, "construction_start_date_specificity") and unit.construction_start_date_specificity is not None:
+                unit_db.construction_start_date_specificity = unit.construction_start_date_specificity
+                record_updated = True
+
+            if hasattr(unit, "construction_start_date_source") and unit.construction_start_date_source is not None:
+                unit_db.construction_start_date_source = unit.construction_start_date_source
+                record_updated = True
+
+            if hasattr(unit, "construction_cost") and unit.construction_cost is not None:
+                unit_db.construction_cost = round(unit.construction_cost, 2) if unit.construction_cost else None
+                record_updated = True
+
+            if hasattr(unit, "construction_cost_source") and unit.construction_cost_source is not None:
+                unit_db.construction_cost_source = unit.construction_cost_source
+                record_updated = True
+
+            # Project approval fields
+            if hasattr(unit, "project_approval_date") and unit.project_approval_date is not None:
+                unit_db.project_approval_date = datetime.combine(unit.project_approval_date, datetime.min.time())
+                record_updated = True
+
+            if hasattr(unit, "project_approval_date_specificity") and unit.project_approval_date_specificity is not None:
+                unit_db.project_approval_date_specificity = unit.project_approval_date_specificity
+                record_updated = True
+
+            if hasattr(unit, "project_approval_date_source") and unit.project_approval_date_source is not None:
+                unit_db.project_approval_date_source = unit.project_approval_date_source
+                record_updated = True
+
+            if hasattr(unit, "project_approval_lodgement_date") and unit.project_approval_lodgement_date is not None:
+                unit_db.project_approval_lodgement_date = datetime.combine(
+                    unit.project_approval_lodgement_date, datetime.min.time()
+                )
                 record_updated = True
 
             if unit_db.closure_date and not unit.closure_date:

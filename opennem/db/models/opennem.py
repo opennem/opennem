@@ -236,6 +236,8 @@ class Facility(Base):
 
     cms_id: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
     npi_id: Mapped[str | None] = mapped_column(String(50), nullable=True, unique=True)  # NPI facility ID
+    osm_way_id: Mapped[str | None] = mapped_column(Text, nullable=True)  # OpenStreetMap Way ID
+    location = Column(Geometry("POINT", srid=4326), nullable=True)  # PostGIS location point
 
     units: Mapped[list["Unit"]] = relationship("Unit", innerjoin=True, lazy="selectin")
 
@@ -281,6 +283,12 @@ class Unit(Base):
     )
     dispatch_type: Mapped[str] = mapped_column(Text, nullable=False, default="GENERATOR")
     capacity_registered: Mapped[float | None] = mapped_column(Numeric(precision=16, scale=4), nullable=True)
+    capacity_maximum: Mapped[float | None] = mapped_column(
+        Numeric(precision=12, scale=4), nullable=True
+    )  # Maximum capacity in MW
+    capacity_storage: Mapped[float | None] = mapped_column(
+        Numeric(precision=12, scale=4), nullable=True
+    )  # Storage capacity in MWh
     registered: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     deregistered: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
@@ -294,10 +302,29 @@ class Unit(Base):
     approved: Mapped[bool] = mapped_column(Boolean, default=False)
 
     commencement_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    commencement_date_specificity: Mapped[str | None] = mapped_column(Text, nullable=True)  # day, month, year
     closure_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    closure_date_specificity: Mapped[str | None] = mapped_column(Text, nullable=True)  # day, month, year
     expected_operation_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    expected_operation_date_specificity: Mapped[str | None] = mapped_column(Text, nullable=True)  # day, month, quarter, year
+    expected_operation_date_source: Mapped[str | None] = mapped_column(Text, nullable=True)
     expected_closure_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    expected_closure_date_specificity: Mapped[str | None] = mapped_column(Text, nullable=True)  # day, month, quarter, year
+    expected_closure_date_source: Mapped[str | None] = mapped_column(Text, nullable=True)
     expected_closure_year: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
+    # Construction fields
+    construction_start_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    construction_start_date_specificity: Mapped[str | None] = mapped_column(Text, nullable=True)  # day, month, year
+    construction_start_date_source: Mapped[str | None] = mapped_column(Text, nullable=True)
+    construction_cost: Mapped[float | None] = mapped_column(Numeric(precision=12, scale=2), nullable=True)  # $ AUD Millions
+    construction_cost_source: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    # Project approval fields
+    project_approval_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    project_approval_date_specificity: Mapped[str | None] = mapped_column(Text, nullable=True)  # day, month, year
+    project_approval_date_source: Mapped[str | None] = mapped_column(Text, nullable=True)
+    project_approval_lodgement_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
 
     cms_id: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
 
