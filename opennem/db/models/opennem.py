@@ -284,10 +284,6 @@ class Unit(Base):
     registered: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     deregistered: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
-    unit_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    unit_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    unit_alias: Mapped[str | None] = mapped_column(Text, nullable=True)
-    unit_capacity: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
     emissions_factor_co2: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
     emission_factor_source: Mapped[str | None] = mapped_column(Text, nullable=True)
     interconnector: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
