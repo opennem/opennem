@@ -166,7 +166,7 @@ async def _get_unit_interval_data(
         JOIN fueltech_group ftg ON ftg.code = ft.fueltech_group_id
         WHERE
             fs.is_forecast IS FALSE
-            AND u.fueltech_id not in ('solar_rooftop', 'imports', 'exports', 'interconnector', 'battery')
+            AND u.fueltech_id not in ('solar_rooftop', 'imports', 'exports', 'interconnector')
             AND fs.interval >= :start_time
             AND fs.interval <= :end_time
             {network_where_clause}
@@ -361,7 +361,7 @@ async def _stream_unit_interval_data(
         JOIN fueltech_group ftg ON ftg.code = ft.fueltech_group_id
         WHERE
             fs.is_forecast IS FALSE
-            AND u.fueltech_id not in ('solar_rooftop', 'imports', 'exports', 'interconnector', 'battery')
+            AND u.fueltech_id not in ('solar_rooftop', 'imports', 'exports', 'interconnector')
             AND fs.interval >= :start_time
             AND fs.interval <= :end_time
             {network_where_clause}
@@ -920,7 +920,7 @@ if __name__ == "__main__":
         _refresh_clickhouse_schema()
         # await run_unit_intervals_backlog(start_date=NetworkNEM.data_first_seen.replace(tzinfo=None))
 
-        await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2023-01-01T00:00:00"))
+        await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2025-06-01T00:00:00"))
         await _solar_and_wind_fixes()
 
         await optimize_clickhouse_tables()
@@ -928,6 +928,8 @@ if __name__ == "__main__":
         # Uncomment to backfill views:
         backfill_unit_intervals_views(refresh_views=True)
 
-    # asyncio.run(reset_unit_intervals())
+    import asyncio
 
-    backfill_unit_intervals_views(refresh_views=True)
+    asyncio.run(reset_unit_intervals())
+
+    # backfill_unit_intervals_views(refresh_views=True)

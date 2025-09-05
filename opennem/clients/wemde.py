@@ -72,17 +72,13 @@ async def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
     # Get battery unit mappings
     battery_unit_map = await get_battery_unit_map()
 
-    # Create a function to map facility codes based on generated value
-    def _map_battery_code(facility_code: str, generated: float) -> tuple[str, float]:
-        if facility_code in battery_unit_map:
-            battery_map = battery_unit_map[facility_code]
-            if generated < 0:
-                return battery_map.charge_unit, abs(generated)
-            else:
-                return battery_map.discharge_unit, generated
-        return facility_code, generated
+    def _is_battery_unit(facility_code: str) -> bool:
+        return facility_code in battery_unit_map
 
-    # map fields
+    # First pass: create all original records
+    original_records = []
+    battery_records = []
+
     for entry in json_records:
         interval = datetime.fromisoformat(entry.get("dispatchInterval"))
 
@@ -92,20 +88,50 @@ async def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
         facility_code = entry.get("code")
         quantity = entry.get("quantity", 0)
 
-        # map battery facility code if needed
-        facility_code, quantity = _map_battery_code(facility_code, quantity)
+        record_data = {
+            "network_id": "WEM",
+            "interval": interval,
+            "facility_code": facility_code,
+            "generated": quantity * 12,  # convert to MW
+            "energy": quantity,
+            "energy_quality_flag": 2,
+        }
 
+        original_records.append(record_data)
+
+        # Keep track of battery records for copying
+        if _is_battery_unit(facility_code):
+            battery_records.append(record_data)
+
+    # Second pass: create battery split records
+    all_records = original_records.copy()
+
+    for battery_record in battery_records:
+        facility_code = battery_record["facility_code"]
+        generated = battery_record["generated"]
+
+        if facility_code in battery_unit_map:
+            battery_map = battery_unit_map[facility_code]
+
+            # Create charge record for negative generation
+            if generated < 0:
+                charge_record = battery_record.copy()
+                charge_record["facility_code"] = battery_map.charge_unit
+                charge_record["generated"] = abs(generated)  # Make positive
+                charge_record["energy"] = abs(battery_record["energy"])  # Make positive
+                all_records.append(charge_record)
+
+            # Create discharge record for positive generation
+            if generated >= 0:
+                discharge_record = battery_record.copy()
+                discharge_record["facility_code"] = battery_map.discharge_unit
+                # Keep generated and energy values as-is (positive)
+                all_records.append(discharge_record)
+
+    # Third pass: convert all records to models
+    for record_data in all_records:
         try:
-            m = FacilityScadaSchema(
-                **{
-                    "network_id": "WEM",
-                    "interval": interval,
-                    "facility_code": facility_code,
-                    "generated": quantity * 12,  # convert to MW
-                    "energy": quantity,
-                    "energy_quality_flag": 2,
-                }
-            )
+            m = FacilityScadaSchema(**record_data)
             models.append(m)
 
         except ValidationError as e:
