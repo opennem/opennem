@@ -10,12 +10,12 @@ from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from opennem.api.facilities.schema import FacilityResponse
+from opennem.api.facilities.schema import FacilityResponse, UnitResponse
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.api.security import authenticated_user
 from opennem.db import get_read_session
 from opennem.db.models.opennem import Facility
-from opennem.schema.unit import UnitFueltechType, UnitStatusType
+from opennem.schema.unit import UnitDispatchType, UnitFueltechType, UnitStatusType
 
 router = APIRouter()
 logger = logging.getLogger("opennem.api.facilities")
@@ -98,13 +98,48 @@ async def get_facilities(
 
             # Only include facility if it has valid units after filtering
             if filtered_units:
+                # Extract location coordinates if available
+                location_dict = None
+                if facility.location is not None:
+                    try:
+                        # Import here to avoid circular dependency
+                        from geoalchemy2.shape import to_shape
+
+                        # Convert PostGIS geometry to shapely shape
+                        shape = to_shape(facility.location)
+                        # Use coords to get x,y from Point geometry
+                        coords = list(shape.coords)[0]
+                        location_dict = {"lat": coords[1], "lng": coords[0]}
+                    except Exception as e:
+                        # Log but don't fail if geometry conversion fails
+                        logger.debug(f"Failed to parse location for {facility.code}: {e}")
+
+                # Create unit response objects from filtered units
+                unit_responses = [
+                    UnitResponse(
+                        code=unit.code,
+                        fueltech_id=UnitFueltechType(unit.fueltech_id) if unit.fueltech_id else None,
+                        status_id=UnitStatusType(unit.status_id) if unit.status_id else None,
+                        capacity_registered=unit.capacity_registered,
+                        capacity_maximum=unit.capacity_maximum,
+                        capacity_storage=unit.capacity_storage,
+                        emissions_factor_co2=unit.emissions_factor_co2,
+                        data_first_seen=unit.data_first_seen,
+                        data_last_seen=unit.data_last_seen,
+                        dispatch_type=UnitDispatchType(unit.dispatch_type),
+                    )
+                    for unit in filtered_units
+                ]
+
                 facility_response = FacilityResponse(
                     code=facility.code,
                     name=facility.name,
                     network_id=facility.network_id,
                     network_region=facility.network_region,
                     description=facility.description,
-                    units=filtered_units,
+                    npi_id=facility.npi_id,
+                    location=location_dict,
+                    units=unit_responses,
                 )
                 filtered_facilities.append(facility_response)
 
