@@ -42,7 +42,7 @@ async def get_facilities(
     Excludes:
     - Unapproved facilities and units
     - Units that are interconnectors
-    - Units with fueltech_id of solar_rooftop, battery, imports or exports
+    - Units with fueltech_id of solar_rooftop, imports or exports
 
     Filters:
     - facility_code: Filter by one or more facility codes
@@ -90,7 +90,7 @@ async def get_facilities(
                 if (
                     unit.approved
                     and not unit.interconnector
-                    and unit.fueltech_id not in ["solar_rooftop", "battery", "imports", "exports"]
+                    and unit.fueltech_id not in ["solar_rooftop", "imports", "exports"]
                     and (status_values is None or unit.status_id in status_values)
                     and (fueltech_values is None or unit.fueltech_id in fueltech_values)
                 )
