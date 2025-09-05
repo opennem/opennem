@@ -34,6 +34,7 @@ _SUPPORTED_METRICS = [
     Metric.POWER,
     Metric.EMISSIONS,
     Metric.MARKET_VALUE,
+    Metric.STORAGE_BATTERY,
 ]
 
 
@@ -226,8 +227,10 @@ async def get_facility_data(
 
     # Execute query
     try:
-        logger.debug(query)
+        logger.debug(f"Executing query: {query}")
+        logger.debug(f"Query params: {params}")
         results = client.execute(query, params)
+        logger.debug(f"Query returned {len(results)} rows")
     except Exception as e:
         logger.error(f"Error executing query: {e}")
         raise HTTPException(status_code=500, detail="Error executing query") from e
@@ -244,6 +247,7 @@ async def get_facility_data(
     result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
 
     # Transform results into response format - returns one TimeSeries per metric
+    logger.debug(f"Formatting {len(result_dicts)} results for metrics: {metrics}")
     timeseries_list = format_timeseries_response(
         network=network.code,
         metrics=metrics,
@@ -253,6 +257,17 @@ async def get_facility_data(
         results=result_dicts,
         facility_code=facility_code,
     )
+    logger.debug(f"Formatted into {len(timeseries_list)} time series")
+
+    # Debug the response structure
+    response_data = APIV4ResponseSchema(data=timeseries_list).model_dump()
+    logger.debug(f"Response has {len(response_data.get('data', []))} timeseries objects")
+    if response_data.get("data"):
+        first_ts = response_data["data"][0]
+        logger.debug(f"First timeseries: metric={first_ts.get('metric')}, results_count={len(first_ts.get('results', []))}")
+        if first_ts.get("results"):
+            first_result = first_ts["results"][0]
+            logger.debug(f"First result has {len(first_result.get('data', []))} data points")
 
     # Return all TimeSeries objects, one per metric
-    return ORJSONResponse(APIV4ResponseSchema(data=timeseries_list).model_dump())
+    return ORJSONResponse(response_data)

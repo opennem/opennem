@@ -129,12 +129,14 @@ QUERY_CONFIGS = {
             DataMetric.ENERGY: "energy",
             DataMetric.EMISSIONS: "emissions",
             DataMetric.MARKET_VALUE: "market_value",
+            DataMetric.STORAGE_BATTERY: "energy_storage",
         },
         metric_agg_functions={
             DataMetric.POWER: "sum",
             DataMetric.ENERGY: "sum",
             DataMetric.EMISSIONS: "sum",
             DataMetric.MARKET_VALUE: "sum",
+            DataMetric.STORAGE_BATTERY: "avg",
         },
     ),
     QueryType.FACILITY: QueryConfig(
@@ -147,12 +149,14 @@ QUERY_CONFIGS = {
             DataMetric.ENERGY: "energy",
             DataMetric.EMISSIONS: "emissions",
             DataMetric.MARKET_VALUE: "market_value",
+            DataMetric.STORAGE_BATTERY: "energy_storage",
         },
         metric_agg_functions={
             DataMetric.POWER: "sum",
             DataMetric.ENERGY: "sum",
             DataMetric.EMISSIONS: "sum",
             DataMetric.MARKET_VALUE: "sum",
+            DataMetric.STORAGE_BATTERY: "avg",
         },
     ),
 }

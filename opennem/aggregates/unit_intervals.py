@@ -928,6 +928,6 @@ if __name__ == "__main__":
         # Uncomment to backfill views:
         backfill_unit_intervals_views(refresh_views=True)
 
-    import asyncio
+    # asyncio.run(reset_unit_intervals())
 
-    asyncio.run(reset_unit_intervals())
+    backfill_unit_intervals_views(refresh_views=True)

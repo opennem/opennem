@@ -45,6 +45,7 @@ class Metric(str, Enum):
     EMISSIONS = "emissions"
     RENEWABLE_PROPORTION = "renewable_proportion"
     POLLUTION = "pollution"
+    STORAGE_BATTERY = "storage_battery"
 
 
 @dataclass
@@ -168,6 +169,13 @@ METRIC_METADATA = {
         description="Wind energy curtailment",
         column_name="curtailment_wind_energy",
         default_agg="sum",
+        precision=3,
+    ),
+    Metric.STORAGE_BATTERY: MetricMetadata(
+        unit="MWh",
+        description="Battery storage level",
+        column_name="energy_storage",
+        default_agg="avg",
         precision=3,
     ),
 }
