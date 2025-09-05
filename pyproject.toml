@@ -14,7 +14,7 @@ authors = [
     {name = "Nik Cubrilovic", email = "git@nikcub.me"},
 ]
 requires-python = "<4.0,>=3.10"
-version = "4.3.0.dev6"
+version = "4.3.0.dev7"
 
 dependencies = [
     "requests<3.0.0,>=2.23.0",
