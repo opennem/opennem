@@ -293,6 +293,9 @@ def _analyze_milestone_records(
     if milestone_type in [MilestoneType.energy, MilestoneType.emissions]:
         maxes_min_value = 1000
 
+    # rounding
+    round_values_to = 2 if milestone_type in [MilestoneType.proportion] else 0
+
     # value limit. 0 is the default but for values that can go negative we exclude it
     value_limit_clause = "" if milestone_type in [MilestoneType.price] else "total_value > 0 and "
 
@@ -321,7 +324,7 @@ def _analyze_milestone_records(
     running_maxes AS (
       SELECT
         time_bucket{group_by_select},
-        total_value,
+        round(total_value, {round_values_to}) as total_value,
         interval_count,
         max(total_value) OVER (
           PARTITION BY {partition_clause}
@@ -486,6 +489,9 @@ def _analyzed_record_to_milestone_schema(
         fueltech = None
 
         if "fueltech_group_id" in record:
+            # skip bidirectional battery records
+            if record["fueltech_group_id"] not in MilestoneFueltechGrouping.__members__:
+                continue
             fueltech = MilestoneFueltechGrouping(record["fueltech_group_id"])
         elif "renewable" in record:
             fueltech = MilestoneFueltechGrouping("renewables" if record["renewable"] else "fossils")
@@ -714,10 +720,15 @@ if __name__ == "__main__":
     import asyncio
 
     async def _test_analyze_milestone_records():
+        async with get_write_session() as session:
+            await session.execute(text("delete from milestones"))
+        logger.info("Milestones table deleted")
+
         await run_milestone_analysis(
+            start_date=datetime.fromisoformat("2025-01-01T00:00:00"),
             metrics=[MilestoneType.power],
             periods=[MilestonePeriod.interval],
-            groupings=[GroupingConfig(name="fueltech", group_by_fields=["fueltech_group_id"])],
+            groupings=[GroupingConfig(name="fueltech", group_by_fields=["network_region", "fueltech_group_id"])],
             networks=[NetworkNEM],
             debug=True,
         )
