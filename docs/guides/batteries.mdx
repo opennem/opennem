@@ -152,6 +152,20 @@ Resulting table after splitting:
 | `10:00 AM`  | `10`         | `0`          |
 | `10:05 AM`  | `0`          | `15`         |
 
-### Implementation
+# Battery State of charge
 
-The bidirectional splitting logic is implemented in `opennem.core.battery` [Source](https://github.com/opennem/opennem/blob/master/opennem/core/battery.py)
+Open Electricity stores the current state of charge for a battery as the total MWh of energy stored in the battery. This is stored against the bidirectional battery unit for each facility, but is also available in the series for both the charging and discharging units.
+
+Combined with the `capacity_storage` field from facility data, this can be used to calculate the state of charge as a percentage of the total storage capacity.
+
+## Web Interface
+
+<Note>Battery state of charge will be available on the Open Electricity facility pages in the near future</Note>
+
+## API Access
+
+Battery state of charge is available through the API for bidirectional units.
+
+<Frame>
+   <img src="/images/battery_state_of_charge.png" alt="Battery state of charge" />
+</Frame>

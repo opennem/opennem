@@ -6,6 +6,51 @@ icon: 'calendar'
 
 Stay up to date with the latest features, improvements, and bug fixes in OpenElectricity.
 
+<Update label="v4.3.0" description="September 8, 2025" tags={["API", "Features", "Data", "Pollution", "Battery"]}>
+
+## Major Features
+
+- **Pollution Data (NPI)** - Comprehensive pollution and emissions tracking from the National Pollutant Inventory now available across the platform ([#436](https://github.com/opennem/opennem/issues/436))
+  - Track greenhouse gases, air pollutants, and heavy metals from power generation facilities
+  - Details in documentation at the [Pollution Guide](https://docs.openelectricity.org.au/guides/pollution)
+  - Access via API endpoints for programmatic integration
+  - Example implementations:
+    - [Python client example](https://github.com/opennem/openelectricity-python/blob/main/examples/pollution.py)
+    - [TypeScript client example](https://github.com/opennem/openelectricity-typescript/blob/main/examples/pollution.ts)
+
+- **Battery State of Charge** - Real-time battery storage level tracking showing current energy stored in battery facilities ([#434](https://github.com/opennem/opennem/issues/434))
+  - Monitor state of charge (SoC) at unit, facility, region and network levels
+  - View battery storage docs in the [Battery Storage Guide](https://docs.openelectricity.org.au/guides/battery-storage)
+  - New API endpoints for battery-specific data
+  - Example implementations:
+    - [Python client example](https://github.com/opennem/openelectricity-python/blob/main/examples/battery_storage.py)
+    - [TypeScript client example](https://github.com/opennem/openelectricity-typescript/blob/main/examples/battery-storage.ts)
+
+- **Facility API Improvements** - Enhanced facility endpoint with additional fields ([#453](https://github.com/opennem/opennem/issues/453))
+  - Added NPI ID field for pollution data mapping
+  - Added location data for facilities
+
+
+
+
+
+## Improvements and Bug Fixes
+
+- **CPI Data Update** - Consumer Price Index data import and tracking ([#450](https://github.com/opennem/opennem/issues/450))
+- **Curtailment Tracking** - Renamed `curtailment_solar` to `curtailment_solar_utility` for clarity ([#433](https://github.com/opennem/opennem/issues/433))
+- **Battery Management** - Improved battery unit handling and aggregation ([#434](https://github.com/opennem/opennem/issues/434))
+- **Record Tracking** - Fixed duplicate records with identical rounded values ([#451](https://github.com/opennem/opennem/issues/451))
+- **Demand Energy** - Demand energy now sourced from analytics table ([#390](https://github.com/opennem/opennem/issues/390))
+- **Unit Metadata** - Cleaned out obsolete unit metadata for better data integrity
+
+## Documentation
+
+- New comprehensive guides for pollution data and battery storage
+- Updated API documentation with new endpoints
+- Added code examples for accessing new features in Python and TypeScript clients
+
+</Update>
+
 <Update label="v4.2.0" description="August 27, 2025" tags={["API", "Features", "Data", "Curtailment"]}>
 
 ## Major Features
