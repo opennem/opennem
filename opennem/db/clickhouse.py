@@ -27,6 +27,7 @@ def get_clickhouse_client(timeout: int = 10) -> Client:
         port=settings.clickhouse_url.port,
         user=settings.clickhouse_url.username,
         password=settings.clickhouse_url.password,
+        database=settings.clickhouse_url.path.lstrip("/") if settings.clickhouse_url.path else "",
         settings={"connect_timeout": timeout},
     )
 

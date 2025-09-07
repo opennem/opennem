@@ -918,9 +918,9 @@ if __name__ == "__main__":
     # Run the test
     async def reset_unit_intervals():
         _refresh_clickhouse_schema()
-        # await run_unit_intervals_backlog(start_date=NetworkNEM.data_first_seen.replace(tzinfo=None))
+        await run_unit_intervals_backlog(start_date=NetworkNEM.data_first_seen.replace(tzinfo=None))
 
-        await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2025-06-01T00:00:00"))
+        # await run_unit_intervals_backlog(start_date=datetime.fromisoformat("2025-06-01T00:00:00"))
         await _solar_and_wind_fixes()
 
         await optimize_clickhouse_tables()

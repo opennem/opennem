@@ -376,4 +376,4 @@ ALL_NEMWEB_CRAWLERS = [
 if __name__ == "__main__":
     from opennem.crawl import run_crawl
 
-    asyncio.run(run_crawl(AEMONEMNextDayDispatch, latest=False, limit=None, reverse=True))
+    asyncio.run(run_crawl(AEMONEMNextDayDispatchArchvie, latest=False, limit=None, reverse=True))

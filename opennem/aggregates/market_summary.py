@@ -19,17 +19,28 @@ from opennem.db.clickhouse import (
     get_clickhouse_client,
     table_exists,
 )
+from opennem.db.clickhouse_materialized_views import (
+    backfill_materialized_views,
+    ensure_materialized_views_exist,
+)
 from opennem.db.clickhouse_schema import (
     MARKET_SUMMARY_TABLE_SCHEMA,
+    optimize_clickhouse_tables,
 )
-
-# from opennem.db.clickhouse_views import (
-# MARKET_SUMMARY_DAILY_MV_TABLE_SCHEMA,
-# )
+from opennem.db.clickhouse_views import (
+    MARKET_SUMMARY_DAILY_VIEW,
+    MARKET_SUMMARY_MONTHLY_VIEW,
+)
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_last_completed_interval_for_network
 
 logger = logging.getLogger("opennem.aggregates.market_summary")
+
+# List of all materialized views to manage
+_MARKET_SUMMARY_MATERIALIZED_VIEWS = [
+    MARKET_SUMMARY_DAILY_VIEW,
+    MARKET_SUMMARY_MONTHLY_VIEW,
+]
 
 
 async def _get_market_summary_data(
@@ -361,25 +372,37 @@ def _prepare_market_summary_data(
 def _ensure_clickhouse_schema() -> None:
     """
     Ensure ClickHouse schema exists by creating tables and views if needed.
-
     """
     client = get_clickhouse_client()
 
     if not table_exists(client, "market_summary"):
         create_table_if_not_exists(client, "market_summary", MARKET_SUMMARY_TABLE_SCHEMA)
+        logger.info("Created market_summary table")
+
+    # Use the generic function to ensure materialized views exist
+    ensure_materialized_views_exist(_MARKET_SUMMARY_MATERIALIZED_VIEWS)
 
 
 def _refresh_clickhouse_schema() -> None:
     """
     Refresh ClickHouse schema by dropping and recreating tables and views.
-
     """
+    print("This will drop and recreate all market_summary tables and views. Are you sure you want to continue? (y/n)")
+    if input().lower() != "y":
+        logger.info("User cancelled")
+        return
+
     client = get_clickhouse_client()
+
+    # Drop views first (in reverse order of creation to handle dependencies)
+    for view in reversed(_MARKET_SUMMARY_MATERIALIZED_VIEWS):
+        client.execute(f"DROP TABLE IF EXISTS {view.name}")
+        logger.info(f"Dropped {view.name}")
+
     client.execute("DROP TABLE IF EXISTS market_summary")
+    logger.info("Dropped market_summary table")
 
     _ensure_clickhouse_schema()
-
-    logger.info("ClickHouse schema refreshed")
 
 
 async def process_market_summary_backlog(
@@ -579,11 +602,85 @@ async def run_market_summary_backlog() -> None:
             )
 
 
-if __name__ == "__main__":
-    # Run the test
-    async def main():
+def backfill_market_summary_views(refresh_views: bool = False) -> None:
+    """
+    Backfill materialized views for market_summary data.
+    This function delegates to the generic backfill_materialized_views function.
+
+    Args:
+        refresh_views: If True, drops and recreates views before backfilling.
+    """
+    # Use the generic function with market_summary specific views
+    results = backfill_materialized_views(views=_MARKET_SUMMARY_MATERIALIZED_VIEWS, refresh_views=refresh_views)
+
+    for view_name, count in results.items():
+        logger.info(f"Backfilled {view_name}: {count} records")
+
+
+async def reset_market_summary(start_date: datetime | None = None, skip_schema_refresh: bool = False) -> None:
+    """
+    Reset and rebuild the entire market summary aggregation including all views.
+    This is the main entry point for refreshing all market summary data.
+
+    Args:
+        start_date: Optional start date for the backlog. If None, uses NetworkNEM.data_first_seen
+        skip_schema_refresh: If True, skips the schema refresh step (useful for incremental updates)
+    """
+    logger.info("Starting complete market summary reset and rebuild")
+
+    # Step 1: Refresh the schema (drops and recreates tables/views) - unless skipped
+    if not skip_schema_refresh:
         _refresh_clickhouse_schema()
-        await run_market_summary_backlog()
+    else:
+        # Just ensure schema exists
+        _ensure_clickhouse_schema()
+
+    # Step 2: Determine date range
+    end_date = get_last_completed_interval_for_network(network=NetworkNEM)
+    if not start_date:
+        if NetworkNEM.data_first_seen is None:
+            logger.error("NetworkNEM.data_first_seen is None, cannot proceed")
+            return
+        start_date = NetworkNEM.data_first_seen.replace(tzinfo=None)
+    else:
+        start_date = start_date.replace(tzinfo=None)
+
+    # Step 3: Run the backlog to populate the main table
+    logger.info(f"Running market summary backlog from {start_date} to {end_date}...")
+    async with get_write_session() as session:
+        await process_market_summary_backlog(
+            session=session,
+            start_date=start_date,
+            end_date=end_date,
+            chunk_size=timedelta(days=30),
+        )
+
+    # Step 4: Optimize the tables
+    logger.info("Optimizing ClickHouse tables...")
+    await optimize_clickhouse_tables()
+
+    # Step 5: Backfill the materialized views (only if schema was refreshed)
+    if not skip_schema_refresh:
+        logger.info("Backfilling materialized views...")
+        backfill_market_summary_views(refresh_views=True)
+
+    logger.info("Market summary reset and rebuild complete!")
+
+
+if __name__ == "__main__":
+    # Run the complete reset
+    async def main():
+        # Option 1: Full reset from the beginning
+        await reset_market_summary()
+
+        # Option 2: Reset from a specific date (e.g., last month for testing)
+        # await reset_market_summary(start_date=datetime.fromisoformat("2025-06-01T00:00:00"))
+
+        # Option 3: Incremental update without schema refresh
+        # await reset_market_summary(
+        #     start_date=datetime.fromisoformat("2025-08-01T00:00:00"),
+        #     skip_schema_refresh=True
+        # )
 
     import asyncio
 
