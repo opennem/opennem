@@ -1,0 +1,752 @@
+[
+  {
+    "facility_code": "AGLHAL",
+    "facility_name": "Hallett",
+    "npi_id": "SA0359"
+  },
+  {
+    "facility_code": "AGLSITA",
+    "facility_name": "Kemps Creek",
+    "npi_id": "1479"
+  },
+  {
+    "facility_code": "AGLSOM",
+    "facility_name": "Somerton",
+    "npi_id": "00021386"
+  },
+  {
+    "facility_code": "ALCOA_WGP",
+    "facility_name": "Wagerup",
+    "npi_id": "WA1051"
+  },
+  {
+    "facility_code": "ALINTA_PNJ",
+    "facility_name": "Pinjarra",
+    "npi_id": "WA0944"
+  },
+  {
+    "facility_code": "ANGASTON",
+    "facility_name": "Angaston",
+    "npi_id": "SA0433"
+  },
+  {
+    "facility_code": "APPIN",
+    "facility_name": "Appin",
+    "npi_id": "23"
+  },
+  {
+    "facility_code": "ATLAS",
+    "facility_name": "Mirrabooka",
+    "npi_id": "WA1106"
+  },
+  {
+    "facility_code": "AWABAREF",
+    "facility_name": "Awaba",
+    "npi_id": "1165"
+  },
+  {
+    "facility_code": "B2PS",
+    "facility_name": "Braemar 2",
+    "npi_id": "Q019NEW001"
+  },
+  {
+    "facility_code": "BARCALDN",
+    "facility_name": "Barcaldine",
+    "npi_id": "Q019CQP001"
+  },
+  {
+    "facility_code": "BAYSW",
+    "facility_name": "Bayswater",
+    "npi_id": "37"
+  },
+  {
+    "facility_code": "BBASEHOS",
+    "facility_name": "Ballarat Hospital",
+    "npi_id": "00029165"
+  },
+  {
+    "facility_code": "BBDISEL1",
+    "facility_name": "Bell Bay",
+    "npi_id": "TAS 191"
+  },
+  {
+    "facility_code": "BBP31",
+    "facility_name": "Bell Bay Three",
+    "npi_id": "TAS 519"
+  },
+  {
+    "facility_code": "BERWICK",
+    "facility_name": "Berwick",
+    "npi_id": "00004216"
+  },
+  {
+    "facility_code": "BLUEWATERS",
+    "facility_name": "Bluewaters",
+    "npi_id": "WA1141"
+  },
+  {
+    "facility_code": "BOLIVPS",
+    "facility_name": "Bolivar",
+    "npi_id": "SA0769"
+  },
+  {
+    "facility_code": "BPLANDF",
+    "facility_name": "Browns Plains",
+    "npi_id": "Q019END002"
+  },
+  {
+    "facility_code": "BRAEMARA",
+    "facility_name": "Braemar",
+    "npi_id": "Q019BPP001"
+  },
+  {
+    "facility_code": "BROADMDW",
+    "facility_name": "Broadmeadows",
+    "npi_id": "00004044"
+  },
+  {
+    "facility_code": "BROOKLYN",
+    "facility_name": "Brooklyn",
+    "npi_id": "00019899"
+  },
+  {
+    "facility_code": "BWTR1",
+    "facility_name": "Broadwater",
+    "npi_id": "1426"
+  },
+  {
+    "facility_code": "CALLIDEC1",
+    "facility_name": "Callide C",
+    "npi_id": "Q019CPM001"
+  },
+  {
+    "facility_code": "CALL_A",
+    "facility_name": "Callide A",
+    "npi_id": "Q019CSE001"
+  },
+  {
+    "facility_code": "CLAYTON",
+    "facility_name": "Clayton",
+    "npi_id": "00004075"
+  },
+  {
+    "facility_code": "COCKBURN",
+    "facility_name": "Cockburn",
+    "npi_id": "WA0582"
+  },
+  {
+    "facility_code": "COLLIE",
+    "facility_name": "Collie",
+    "npi_id": "WA0057"
+  },
+  {
+    "facility_code": "COLNSV",
+    "facility_name": "Collinsville",
+    "npi_id": "Q019CPS001"
+  },
+  {
+    "facility_code": "COLONGRA",
+    "facility_name": "Colongra",
+    "npi_id": "1245"
+  },
+  {
+    "facility_code": "CONDONG1",
+    "facility_name": "Condong",
+    "npi_id": "1425"
+  },
+  {
+    "facility_code": "CORIO",
+    "facility_name": "Corio",
+    "npi_id": "00011626"
+  },
+  {
+    "facility_code": "CPSA",
+    "facility_name": "Condamine A",
+    "npi_id": "Q012QGC006"
+  },
+  {
+    "facility_code": "DAANDINE",
+    "facility_name": "Daandine",
+    "npi_id": "Q019DIA001"
+  },
+  {
+    "facility_code": "DDPS1",
+    "facility_name": "Darling Downs",
+    "npi_id": "Q019ORE004"
+  },
+  {
+    "facility_code": "DEIBDL",
+    "facility_name": "Bairnsdale",
+    "npi_id": "00019270"
+  },
+  {
+    "facility_code": "DRYCGT",
+    "facility_name": "Dry Creek",
+    "npi_id": "SA0061"
+  },
+  {
+    "facility_code": "EASTCRK",
+    "facility_name": "Eastern Creek",
+    "npi_id": "776"
+  },
+  {
+    "facility_code": "EASTCRK2",
+    "facility_name": "Eastern Creek 2",
+    "npi_id": "1166"
+  },
+  {
+    "facility_code": "EDLRGNRD",
+    "facility_name": "Roghan Road",
+    "npi_id": "Q019END004"
+  },
+  {
+    "facility_code": "ENERGYB",
+    "facility_name": "Energy Brix",
+    "npi_id": "00004346"
+  },
+  {
+    "facility_code": "ERARING",
+    "facility_name": "Eraring",
+    "npi_id": "226"
+  },
+  {
+    "facility_code": "GEORGTWN",
+    "facility_name": "George Town",
+    "npi_id": "TAS 521"
+  },
+  {
+    "facility_code": "GERMCRK",
+    "facility_name": "German Creek",
+    "npi_id": "Q019END005"
+  },
+  {
+    "facility_code": "GLENNCRK",
+    "facility_name": "Glennies Creek",
+    "npi_id": "1394"
+  },
+  {
+    "facility_code": "GOSNELLS",
+    "facility_name": "Gosnells",
+    "npi_id": "WA1215"
+  },
+  {
+    "facility_code": "GRANGEAV",
+    "facility_name": "Grange Avenue",
+    "npi_id": "1103"
+  },
+  {
+    "facility_code": "GROSV1",
+    "facility_name": "Grosvenor 1",
+    "npi_id": "Q019ENG001"
+  },
+  {
+    "facility_code": "GSTONE",
+    "facility_name": "Gladstone",
+    "npi_id": "Q019NRG001"
+  },
+  {
+    "facility_code": "HALAMRD",
+    "facility_name": "Hallam Road",
+    "npi_id": "00029167"
+  },
+  {
+    "facility_code": "HAZEL",
+    "facility_name": "Hazelwood",
+    "npi_id": "00004337"
+  },
+  {
+    "facility_code": "HENDERSON_RENEWABLE",
+    "facility_name": "Henderson",
+    "npi_id": "WA1728"
+  },
+  {
+    "facility_code": "HEZ",
+    "facility_name": "Hunter Economic Zone",
+    "npi_id": "1190"
+  },
+  {
+    "facility_code": "HIGHBRY",
+    "facility_name": "Highbury",
+    "npi_id": "SA0363"
+  },
+  {
+    "facility_code": "JACKSGUL",
+    "facility_name": "Jacks Gully",
+    "npi_id": "506"
+  },
+  {
+    "facility_code": "JEERA",
+    "facility_name": "Jeeralang A",
+    "npi_id": "00004732"
+  },
+  {
+    "facility_code": "KALAMUNDA_SG",
+    "facility_name": "Kalamunda",
+    "npi_id": "WA0701"
+  },
+  {
+    "facility_code": "KEMERTON",
+    "facility_name": "Kemerton",
+    "npi_id": "WA1284"
+  },
+  {
+    "facility_code": "KINCUMB",
+    "facility_name": "Kincumber",
+    "npi_id": "1256"
+  },
+  {
+    "facility_code": "KOGANCK",
+    "facility_name": "Kogan Creek",
+    "npi_id": "Q019SIE001"
+  },
+  {
+    "facility_code": "KRCCOGEN",
+    "facility_name": "KRC Cogen",
+    "npi_id": "Q019ERG006"
+  },
+  {
+    "facility_code": "KWINANA",
+    "facility_name": "Kwinana",
+    "npi_id": "WA0108"
+  },
+  {
+    "facility_code": "LADBROKE",
+    "facility_name": "Ladbroke Grove",
+    "npi_id": "SA0313"
+  },
+  {
+    "facility_code": "LIDDELL",
+    "facility_name": "Liddell",
+    "npi_id": "151"
+  },
+  {
+    "facility_code": "LI_WY_CA",
+    "facility_name": "Catagunya / Liapootah / Wayatinah",
+    "npi_id": "TAS 520"
+  },
+  {
+    "facility_code": "LNGS",
+    "facility_name": "Laverton North",
+    "npi_id": "00028015"
+  },
+  {
+    "facility_code": "LONSDALE",
+    "facility_name": "Lonsdale",
+    "npi_id": "SA0435"
+  },
+  {
+    "facility_code": "LOYYANGA",
+    "facility_name": "Loy Yang A",
+    "npi_id": "00004339"
+  },
+  {
+    "facility_code": "LOYYB",
+    "facility_name": "Loy Yang B",
+    "npi_id": "00017661"
+  },
+  {
+    "facility_code": "LUCAS2S2",
+    "facility_name": "Lucas Heights 2",
+    "npi_id": "27"
+  },
+  {
+    "facility_code": "LUCASHGT",
+    "facility_name": "Lucas Heights",
+    "npi_id": "26 and 27"
+  },
+  {
+    "facility_code": "MACKAY",
+    "facility_name": "Mackay",
+    "npi_id": "Q019SCL002"
+  },
+  {
+    "facility_code": "MBAHNTH",
+    "facility_name": "Moranbah North",
+    "npi_id": "Q019END006"
+  },
+  {
+    "facility_code": "MEADOWBK",
+    "facility_name": "Meadowbank",
+    "npi_id": "TAS 522"
+  },
+  {
+    "facility_code": "MILLMERN",
+    "facility_name": "Millmerran",
+    "npi_id": "Q019MIL001"
+  },
+  {
+    "facility_code": "MINTARO",
+    "facility_name": "Mintaro",
+    "npi_id": "SA0341"
+  },
+  {
+    "facility_code": "MM",
+    "facility_name": "Munmorah",
+    "npi_id": "107"
+  },
+  {
+    "facility_code": "MORANBAH",
+    "facility_name": "Moranbah",
+    "npi_id": "Q019ERG035"
+  },
+  {
+    "facility_code": "MORNW",
+    "facility_name": "Mornington Disposal",
+    "npi_id": "00028987"
+  },
+  {
+    "facility_code": "MORTLK",
+    "facility_name": "Mortlake",
+    "npi_id": "00029425"
+  },
+  {
+    "facility_code": "MP",
+    "facility_name": "Mt Piper",
+    "npi_id": "104"
+  },
+  {
+    "facility_code": "MSTUART",
+    "facility_name": "Mt Stuart",
+    "npi_id": "Q019MTS001"
+  },
+  {
+    "facility_code": "MUJA_AB",
+    "facility_name": "Muja AB",
+    "npi_id": "WA0135"
+  },
+  {
+    "facility_code": "MUNGARRA",
+    "facility_name": "Mungarra",
+    "npi_id": "WA0136"
+  },
+  {
+    "facility_code": "NAMKKN_MERR",
+    "facility_name": "Merredin",
+    "npi_id": "WA1344"
+  },
+  {
+    "facility_code": "NEWGEN_KWINANA",
+    "facility_name": "Newgen Kwinana",
+    "npi_id": "WA1205"
+  },
+  {
+    "facility_code": "NEWGEN_NEERABUP",
+    "facility_name": "Neerabup",
+    "npi_id": "WA1204"
+  },
+  {
+    "facility_code": "NEWPORT",
+    "facility_name": "Newport",
+    "npi_id": "00004322"
+  },
+  {
+    "facility_code": "NORTHP",
+    "facility_name": "Northern",
+    "npi_id": "SA0015"
+  },
+  {
+    "facility_code": "NPPPPS",
+    "facility_name": "Pelican Point",
+    "npi_id": "SA0047"
+  },
+  {
+    "facility_code": "OAKEY",
+    "facility_name": "Oakey",
+    "npi_id": "Q019OPH001"
+  },
+  {
+    "facility_code": "OCPS",
+    "facility_name": "Oaky Creek",
+    "npi_id": "Q019EDL001"
+  },
+  {
+    "facility_code": "PEDLER",
+    "facility_name": "Pedler Creek",
+    "npi_id": "SA0365"
+  },
+  {
+    "facility_code": "PERTHENERGY_KWINANA",
+    "facility_name": "Kwinana Swift",
+    "npi_id": "WA1270"
+  },
+  {
+    "facility_code": "PINJAR",
+    "facility_name": "Pinjar",
+    "npi_id": "WA0149"
+  },
+  {
+    "facility_code": "PLAYF",
+    "facility_name": "Playford B",
+    "npi_id": "SA0017"
+  },
+  {
+    "facility_code": "PORTLATT",
+    "facility_name": "Port Latta",
+    "npi_id": "TAS 523"
+  },
+  {
+    "facility_code": "PORTLCN",
+    "facility_name": "Port Lincoln",
+    "npi_id": "SA0342"
+  },
+  {
+    "facility_code": "PRK_AG",
+    "facility_name": "Parkeston",
+    "npi_id": "WA0146"
+  },
+  {
+    "facility_code": "QUARANTN",
+    "facility_name": "Quarantine",
+    "npi_id": "SA0314"
+  },
+  {
+    "facility_code": "QUERIVER",
+    "facility_name": "Que River",
+    "npi_id": "TAS 525"
+  },
+  {
+    "facility_code": "REDBANK1",
+    "facility_name": "Redbank",
+    "npi_id": "474"
+  },
+  {
+    "facility_code": "RED_HILL",
+    "facility_name": "Red Hill",
+    "npi_id": "WA0702"
+  },
+  {
+    "facility_code": "REMOUNT",
+    "facility_name": "Remount",
+    "npi_id": "TAS 461"
+  },
+  {
+    "facility_code": "ROCHEDAL",
+    "facility_name": "Rochedale",
+    "npi_id": "Q019LMS001"
+  },
+  {
+    "facility_code": "ROCKINGHAM",
+    "facility_name": "Rockingham",
+    "npi_id": "WA1216"
+  },
+  {
+    "facility_code": "ROMA",
+    "facility_name": "Roma",
+    "npi_id": "Q019ORE001"
+  },
+  {
+    "facility_code": "SHEP1",
+    "facility_name": "Shepparton",
+    "npi_id": "00029436"
+  },
+  {
+    "facility_code": "SITHE",
+    "facility_name": "Smithfield",
+    "npi_id": "905"
+  },
+  {
+    "facility_code": "SNUG",
+    "facility_name": "Snuggery",
+    "npi_id": "SA0343"
+  },
+  {
+    "facility_code": "SOUTH_CARDUP",
+    "facility_name": "South Cardup",
+    "npi_id": "WA1526"
+  },
+  {
+    "facility_code": "STANVAC",
+    "facility_name": "Port Stanvac",
+    "npi_id": "SA0614"
+  },
+  {
+    "facility_code": "STANWELL",
+    "facility_name": "Stanwell",
+    "npi_id": "Q019SCL001"
+  },
+  {
+    "facility_code": "STAPYLTON",
+    "facility_name": "Stapylton",
+    "npi_id": "Q019LMS006"
+  },
+  {
+    "facility_code": "STHRNCRS",
+    "facility_name": "Kambalda",
+    "npi_id": "WA0323"
+  },
+  {
+    "facility_code": "SUNCOAST",
+    "facility_name": "Suncoast Gold Macadamias",
+    "npi_id": "Q019ERG036"
+  },
+  {
+    "facility_code": "SVALE",
+    "facility_name": "Springvale",
+    "npi_id": "00004078"
+  },
+  {
+    "facility_code": "SWAN_B",
+    "facility_name": "Swanbank B",
+    "npi_id": "Q019CSE002"
+  },
+  {
+    "facility_code": "SWAN_E",
+    "facility_name": "Swanbank E",
+    "npi_id": "Q019CSE004"
+  },
+  {
+    "facility_code": "TAHMOOR",
+    "facility_name": "Tahmoor",
+    "npi_id": "1392"
+  },
+  {
+    "facility_code": "TALLAWAR",
+    "facility_name": "Tallawarra",
+    "npi_id": "1261"
+  },
+  {
+    "facility_code": "TAMALA_PARK",
+    "facility_name": "Tamala Park",
+    "npi_id": "WA0703"
+  },
+  {
+    "facility_code": "TARONG",
+    "facility_name": "Tarong",
+    "npi_id": "Q019TAR001"
+  },
+  {
+    "facility_code": "TARONGN",
+    "facility_name": "Tarong North",
+    "npi_id": "Q019TAR002"
+  },
+  {
+    "facility_code": "TATURA",
+    "facility_name": "Tatura",
+    "npi_id": "00029437"
+  },
+  {
+    "facility_code": "TEATREE",
+    "facility_name": "Tea Tree Gully",
+    "npi_id": "SA0366"
+  },
+  {
+    "facility_code": "TERALBA",
+    "facility_name": "Teralba",
+    "npi_id": "1393"
+  },
+  {
+    "facility_code": "TESLA_GERALDTON",
+    "facility_name": "Geraldton",
+    "npi_id": "WA1335"
+  },
+  {
+    "facility_code": "TESLA_KEMERTON",
+    "facility_name": "Kemerton",
+    "npi_id": "WA1336"
+  },
+  {
+    "facility_code": "TESLA_NORTHAM",
+    "facility_name": "Northam",
+    "npi_id": "WA1334"
+  },
+  {
+    "facility_code": "TESLA_PICTON",
+    "facility_name": "Picton",
+    "npi_id": "WA1337"
+  },
+  {
+    "facility_code": "TGNSS",
+    "facility_name": "Traralgon Network Support",
+    "npi_id": "00030651"
+  },
+  {
+    "facility_code": "TIWEST_COG1",
+    "facility_name": "Kwinana Cogen",
+    "npi_id": "WA0400"
+  },
+  {
+    "facility_code": "TORRIS",
+    "facility_name": "Torrens Island",
+    "npi_id": "SA0019"
+  },
+  {
+    "facility_code": "TOWER",
+    "facility_name": "Tower",
+    "npi_id": "775"
+  },
+  {
+    "facility_code": "TVCCPS",
+    "facility_name": "Tamar Valley",
+    "npi_id": "TAS 448"
+  },
+  {
+    "facility_code": "URANQ",
+    "facility_name": "Uranquinty",
+    "npi_id": "1193"
+  },
+  {
+    "facility_code": "VP",
+    "facility_name": "Vales Point B",
+    "npi_id": "106"
+  },
+  {
+    "facility_code": "VPGS",
+    "facility_name": "Valley Power Peaking",
+    "npi_id": "00019800"
+  },
+  {
+    "facility_code": "WEST_KALGOORLIE",
+    "facility_name": "West Kalgoorlie",
+    "npi_id": "WA0322"
+  },
+  {
+    "facility_code": "WHIT1",
+    "facility_name": "Whitwood Road",
+    "npi_id": "Q019LMS002"
+  },
+  {
+    "facility_code": "WILGAPKB",
+    "facility_name": "Wilga Park B",
+    "npi_id": "1310"
+  },
+  {
+    "facility_code": "WINGF1",
+    "facility_name": "Wingfield",
+    "npi_id": "SA0362"
+  },
+  {
+    "facility_code": "WINGF2",
+    "facility_name": "Wingfield 2",
+    "npi_id": "SA0364"
+  },
+  {
+    "facility_code": "WOLLERT",
+    "facility_name": "Wollert",
+    "npi_id": "00029168"
+  },
+  {
+    "facility_code": "WOYWOY",
+    "facility_name": "Woy Woy",
+    "npi_id": "1258"
+  },
+  {
+    "facility_code": "WW",
+    "facility_name": "Wallerawang",
+    "npi_id": "105"
+  },
+  {
+    "facility_code": "WYNDW",
+    "facility_name": "Wyndham",
+    "npi_id": "00028986"
+  },
+  {
+    "facility_code": "YABULU",
+    "facility_name": "Townsville",
+    "npi_id": "Q019ORE003"
+  },
+  {
+    "facility_code": "YALLOURN",
+    "facility_name": "Yallourn W",
+    "npi_id": "00004321"
+  }
+]
