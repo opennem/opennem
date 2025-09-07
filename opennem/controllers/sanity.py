@@ -8,7 +8,7 @@ from portabletext_html import PortableTextRenderer
 
 from opennem import settings
 from opennem.clients.slack import slack_message
-from opennem.cms.importer import create_or_update_database_facility
+from opennem.cms.importer import update_database_facilities_from_cms
 from opennem.exporter.facilities import export_facilities_static
 from opennem.schema.facility import FacilitySchema
 from opennem.schema.unit import UnitSchema
@@ -21,16 +21,19 @@ async def parse_sanity_webhook_request(request: dict) -> None:
     if "_type" not in request:
         raise Exception("Invalid request: no _type field present. Fields are {" + ", ".join(request.keys()) + "}")
 
-    record_type: str = request["_type"].lower()
+    # record_type: str = request["_type"].lower()
 
-    if record_type in ["facility"]:
-        facility = sanity_parse_facility(request)
-        await create_or_update_database_facility(facility)
-    elif record_type == "unit":
-        unit = sanity_parse_unit(request)
-        await persist_unit_record(unit)
-    else:
-        logger.warning(f"Unhandled record type: {record_type}")
+    # if record_type in ["facility"]:
+    #     facility = sanity_parse_facility(request)
+    #     await create_or_update_database_facility(facility)
+    # elif record_type == "unit":
+    #     unit = sanity_parse_unit(request)
+    #     await persist_unit_record(unit)
+    # else:
+    #     logger.warning(f"Unhandled record type: {record_type}")
+
+    # skip and just sync @TODO only do for the facility or the unit
+    await update_database_facilities_from_cms(send_slack=True)
 
     await export_facilities_static()
 
