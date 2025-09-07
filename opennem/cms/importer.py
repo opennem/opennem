@@ -16,7 +16,6 @@ Note:
     The module uses the Sanity.io CMS as the data source
 """
 
-#!/usr/bin/env python3
 import json
 import logging
 from datetime import datetime
@@ -125,6 +124,7 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 wikipedia_link=facility.wikipedia,
                 website_url=facility.website,
                 osm_way_id=facility.osm_way_id if hasattr(facility, "osm_way_id") else None,
+                npi_id=facility.npi_id if hasattr(facility, "npi_id") else None,
                 location=from_shape(Point(facility.location.lng, facility.location.lat), srid=4326)
                 if hasattr(facility, "location") and facility.location and facility.location.lat and facility.location.lng
                 else None,
@@ -180,6 +180,10 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
         # Update new fields
         if hasattr(facility, "osm_way_id") and facility.osm_way_id is not None:
             facility_db.osm_way_id = facility.osm_way_id.strip() if facility.osm_way_id else None
+            record_updated = True
+
+        if hasattr(facility, "npi_id") and facility.npi_id is not None:
+            facility_db.npi_id = facility.npi_id.strip() if facility.npi_id else None
             record_updated = True
 
         if hasattr(facility, "location") and facility.location:

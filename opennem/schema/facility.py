@@ -45,6 +45,7 @@ class FacilitySchema(BaseModel):
     description: str | None = None
     wikipedia: str | None = None
     osm_way_id: str | None = None  # OpenStreetMap Way ID
+    npi_id: str | None = None  # NPI facility ID
     photos: list[FacilityPhotoOutputSchema] | None = None
     owners: list[FacilityOwnerSchema] | None = None
     location: FacilityLocationSchema | None = None
