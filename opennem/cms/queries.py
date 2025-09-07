@@ -301,6 +301,7 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]
         description,
         "network_id": upper(network->code),
         "network_region": upper(region->code),
+        "npi_id": npiId,
         photos[] {{
             "url": asset->url,
             "url_source": url,

@@ -227,8 +227,16 @@ def format_timeseries_response(
             # Add data point with timezone-aware timestamp
             # Handle None values gracefully - skip them or use None
             metric_value = None
-            if row[metric_name] is not None:
+            if metric_name in row and row[metric_name] is not None:
                 metric_value = float(row[metric_name])
+            else:
+                # Debug missing metric
+                if metric_name not in row:
+                    import logging
+
+                    logger = logging.getLogger("opennem.api.timeseries")
+                    logger.warning(f"Metric '{metric_name}' not found in row. Available keys: {list(row.keys())}")
+                    logger.debug(f"Full row data: {row}")
 
             if isinstance(row["interval"], datetime):
                 grouped_results[label_key]["data"].append([row["interval"].timestamp() * 1000, metric_value])
@@ -237,26 +245,31 @@ def format_timeseries_response(
 
         # Sort data points by timestamp and filter out None values if needed
         for group in grouped_results.values():
-            # Convert timestamps and filter out data points where value is None
+            # Convert timestamps - keep all data points including None values
             converted_data = []
             for timestamp, value in group["data"]:
-                # Skip entries with None values - they represent no data for that period
-                if value is not None:
-                    converted_timestamp = (
-                        datetime.fromtimestamp(timestamp / 1000, tz=tz_offset)
-                        if isinstance(timestamp, float)
-                        else datetime.combine(timestamp, datetime.min.time(), tzinfo=tz_offset)
-                    )
-                    converted_data.append((converted_timestamp, value))
+                # For storage_battery metric, None values are valid (no change in storage)
+                # For other metrics, we may want to skip None values
+                converted_timestamp = (
+                    datetime.fromtimestamp(timestamp / 1000, tz=tz_offset)
+                    if isinstance(timestamp, float)
+                    else datetime.combine(timestamp, datetime.min.time(), tzinfo=tz_offset)
+                )
+                converted_data.append((converted_timestamp, value))
 
             group["data"] = converted_data
             group["data"].sort(key=lambda x: x[0])
 
         # Filter out groups that have no data at all
+        # But keep groups with data even if all values are None (valid for some metrics)
         grouped_results = {k: v for k, v in grouped_results.items() if v["data"]}
 
         # Skip this metric entirely if no data exists
         if not grouped_results:
+            import logging
+
+            logger = logging.getLogger("opennem.api.timeseries")
+            logger.warning(f"No grouped results for metric {metric_name}")
             continue
 
         # Get timezone-aware start and end dates from actual data (not from query)
@@ -292,5 +305,15 @@ def format_timeseries_response(
             ],
         )
         timeseries_list.append(timeseries)
+
+        # Debug the actual timeseries object
+        import logging
+
+        logger = logging.getLogger("opennem.api.timeseries")
+        logger.debug(f"TimeSeries for {metric_name}: {len(timeseries.results)} results")
+        if timeseries.results:
+            logger.debug(f"First result: name={timeseries.results[0].name}, data_points={len(timeseries.results[0].data)}")
+            if timeseries.results[0].data:
+                logger.debug(f"Sample data point: {timeseries.results[0].data[0]}")
 
     return timeseries_list

@@ -21,6 +21,8 @@ class UnitResponse(BaseModel):
     fueltech_id: UnitFueltechType | None
     status_id: UnitStatusType | None
     capacity_registered: RoundedFloat2 | None
+    capacity_maximum: RoundedFloat4 | None
+    capacity_storage: RoundedFloat4 | None
     emissions_factor_co2: RoundedFloat4 | None
     data_first_seen: datetime | None
     data_last_seen: datetime | None
@@ -56,6 +58,8 @@ class FacilityResponse(BaseModel):
     network_id: str
     network_region: str
     description: str | None
+    npi_id: str | None
+    location: dict | None  # Will contain lat/lng from PostGIS geometry
     units: list[UnitResponse]
 
     model_config = ConfigDict(from_attributes=True)

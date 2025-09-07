@@ -98,6 +98,125 @@ def import_bom_stations_command() -> None:
         raise typer.Exit(1) from e
 
 
+@import_app.command("cms-sync")
+@async_to_sync
+async def cms_sync_command(
+    dry_run: bool = typer.Option(False, "--dry-run", help="Run in dry-run mode without making changes"),
+    facility_code: str = typer.Option(None, "--facility", "-f", help="Sync only a specific facility by code"),
+    send_slack: bool = typer.Option(False, "--slack", help="Send Slack notifications for changes"),
+) -> None:
+    """
+    Sync facilities and units from CMS (Sanity) to database.
+
+    This command fetches all facilities and units from the CMS and updates
+    the database, using cms_id as the primary identifier.
+
+    Examples:
+        # Sync all facilities
+        opennem import cms-sync
+
+        # Dry run to see what would change
+        opennem import cms-sync --dry-run
+
+        # Sync a specific facility
+        opennem import cms-sync --facility ERARING
+
+        # Sync with Slack notifications
+        opennem import cms-sync --slack
+    """
+    try:
+        from opennem.cms.importer import update_database_facilities_from_cms
+
+        if dry_run:
+            console.print("[yellow]Running in dry-run mode - no changes will be made[/yellow]")
+
+        if facility_code:
+            console.print(f"[blue]Syncing facility: {facility_code}[/blue]")
+        else:
+            console.print("[blue]Syncing all facilities from CMS...[/blue]")
+
+        await update_database_facilities_from_cms(send_slack=send_slack, dry_run=dry_run, facility_code=facility_code)
+
+        if dry_run:
+            console.print("[yellow]Dry run completed - no changes were made[/yellow]")
+        else:
+            console.print("[green]CMS sync completed successfully[/green]")
+
+    except Exception as e:
+        logger.error(f"Failed to sync from CMS: {e}")
+        if settings.debug:
+            traceback.print_exc()
+        raise typer.Exit(1) from e
+
+
+@import_app.command("cms-orphans")
+@async_to_sync
+async def cms_orphans_command() -> None:
+    """
+    Check for orphan facilities and units without cms_id.
+
+    This command identifies:
+    - Facilities and units without cms_id (legacy records)
+    - Records with cms_id that no longer exist in CMS
+    - Code conflicts between database and CMS
+    """
+    try:
+        # Import the functions directly rather than importing from bin
+        from sqlalchemy import select
+
+        from opennem.db import get_read_session
+        from opennem.db.models.opennem import Facility, Unit
+
+        # Run the orphan check
+        console.print("[bold blue]Checking for orphan facilities...[/bold blue]")
+
+        # Get facilities from database - only NEM and WEM networks
+        async with get_read_session() as session:
+            result = await session.execute(
+                select(Facility).where(Facility.network_id.in_(["NEM", "WEM", "WEMDE"]), Facility.cms_id.is_(None))
+            )
+            facilities_without_cms = result.scalars().all()
+
+        if facilities_without_cms:
+            console.print(f"[yellow]Found {len(facilities_without_cms)} facilities without cms_id[/yellow]")
+            for f in facilities_without_cms[:10]:  # Show first 10
+                console.print(f"  - {f.code}: {f.name}")
+            if len(facilities_without_cms) > 10:
+                console.print(f"  ... and {len(facilities_without_cms) - 10} more")
+        else:
+            console.print("[green]✓ No orphan facilities found![/green]")
+
+        # Check units
+        console.print("\n[bold blue]Checking for orphan units...[/bold blue]")
+
+        async with get_read_session() as session:
+            result = await session.execute(
+                select(Unit)
+                .where(Unit.cms_id.is_(None))
+                .join(Facility, Unit.station_id == Facility.id)
+                .where(
+                    Facility.network_id.in_(["NEM", "WEM", "WEMDE"]),
+                    ~Unit.fueltech_id.in_(["solar_rooftop", "imports", "exports", "interconnector"]),
+                )
+            )
+            units_without_cms = result.scalars().all()
+
+        if units_without_cms:
+            console.print(f"[yellow]Found {len(units_without_cms)} units without cms_id[/yellow]")
+            for u in units_without_cms[:10]:  # Show first 10
+                console.print(f"  - {u.code}: {u.fueltech_id}")
+            if len(units_without_cms) > 10:
+                console.print(f"  ... and {len(units_without_cms) - 10} more")
+        else:
+            console.print("[green]✓ No orphan units found![/green]")
+
+    except Exception as e:
+        logger.error(f"Failed to check orphans: {e}")
+        if settings.debug:
+            traceback.print_exc()
+        raise typer.Exit(1) from e
+
+
 @import_app.command("rooftop-capacity-history")
 @async_to_sync
 async def import_rooftop_capacity_history_command() -> None:

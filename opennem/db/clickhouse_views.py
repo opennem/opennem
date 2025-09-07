@@ -27,7 +27,7 @@ class MaterializedView:
 
 UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
     name="unit_intervals_daily_mv",
-    timestamp_column="date",
+    timestamp_column="interval",
     schema="""
         CREATE MATERIALIZED VIEW unit_intervals_daily_mv
         ENGINE = ReplacingMergeTree(version)
@@ -44,6 +44,7 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             any(status_id) as status_id,
             sum(generated) as generated,
             sum(energy) as energy,
+            avg(energy_storage) as energy_storage,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as count,
@@ -72,6 +73,7 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             any(status_id) as status_id,
             sum(generated) as generated,
             sum(energy) as energy,
+            avg(energy_storage) as energy_storage,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as count,
@@ -104,6 +106,7 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
             fueltech_group_id,
             sum(generated) as generated,
             sum(energy) as energy,
+            avg(energy_storage) as energy_storage,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
@@ -126,6 +129,7 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
             fueltech_group_id,
             sum(generated) as generated,
             sum(energy) as energy,
+            avg(energy_storage) as energy_storage,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
@@ -143,7 +147,7 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
 
 FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
     name="fueltech_intervals_daily_mv",
-    timestamp_column="date",
+    timestamp_column="interval",
     schema="""
         CREATE MATERIALIZED VIEW fueltech_intervals_daily_mv
         ENGINE = ReplacingMergeTree(version)
@@ -156,6 +160,7 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             fueltech_group_id,
             sum(generated) as generated,
             sum(energy) as energy,
+            avg(energy_storage) as energy_storage,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
@@ -179,6 +184,7 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             fueltech_group_id,
             sum(generated) as generated,
             sum(energy) as energy,
+            avg(energy_storage) as energy_storage,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
@@ -209,6 +215,7 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
             renewable,
             sum(generated) as generated,
             sum(energy) as energy,
+            avg(energy_storage) as energy_storage,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
@@ -226,6 +233,7 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
             renewable,
             sum(generated) as generated,
             sum(energy) as energy,
+            avg(energy_storage) as energy_storage,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
@@ -238,7 +246,7 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
 
 RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
     name="renewable_intervals_daily_mv",
-    timestamp_column="date",
+    timestamp_column="interval",
     schema="""
         CREATE MATERIALIZED VIEW renewable_intervals_daily_mv
         ENGINE = ReplacingMergeTree(version)
@@ -250,6 +258,7 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             renewable,
             sum(generated) as generated,
             sum(energy) as energy,
+            avg(energy_storage) as energy_storage,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
@@ -268,6 +277,7 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             renewable,
             sum(generated) as generated,
             sum(energy) as energy,
+            avg(energy_storage) as energy_storage,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
@@ -282,7 +292,7 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
 # Market Summary Materialized Views
 MARKET_SUMMARY_DAILY_VIEW = MaterializedView(
     name="market_summary_daily_mv",
-    timestamp_column="date",
+    timestamp_column="interval",
     schema="""
         CREATE MATERIALIZED VIEW market_summary_daily_mv
         ENGINE = ReplacingMergeTree(version)
@@ -344,7 +354,7 @@ MARKET_SUMMARY_DAILY_VIEW = MaterializedView(
 
 MARKET_SUMMARY_MONTHLY_VIEW = MaterializedView(
     name="market_summary_monthly_mv",
-    timestamp_column="month",
+    timestamp_column="interval",
     schema="""
         CREATE MATERIALIZED VIEW market_summary_monthly_mv
         ENGINE = ReplacingMergeTree(version)

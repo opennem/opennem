@@ -97,20 +97,33 @@ def backfill_materialized_view(
 
     # Get date range if not provided
     if start_date is None or end_date is None:
-        result = client.execute(f"""
-            SELECT
-                min({view.timestamp_column}) as min_date,
-                max({view.timestamp_column}) as max_date
-            FROM {source_table}
-        """)
+        try:
+            result = client.execute(f"""
+                SELECT
+                    min({view.timestamp_column}) as min_date,
+                    max({view.timestamp_column}) as max_date
+                FROM {source_table}
+            """)
 
-        if result and result[0][0] is not None:
-            if start_date is None:
-                start_date = result[0][0]
-            if end_date is None:
-                end_date = result[0][1]
-        else:
-            logger.warning(f"No data found in source table {source_table}")
+            if result and result[0][0] is not None:
+                if start_date is None:
+                    start_date = result[0][0]
+                if end_date is None:
+                    end_date = result[0][1]
+            else:
+                logger.warning(f"No data found in source table {source_table}")
+                return 0
+        except Exception as e:
+            logger.error(f"Failed to get date range for {view.name} from {source_table}: {e}")
+            logger.error(f"Attempted to use timestamp column '{view.timestamp_column}' which may not exist in {source_table}")
+            # Try to provide helpful debugging information
+            try:
+                # Get the actual columns from the source table
+                result = client.execute(f"DESCRIBE TABLE {source_table}")
+                columns = [row[0] for row in result]
+                logger.info(f"Available columns in {source_table}: {columns}")
+            except Exception:
+                pass
             return 0
 
     total_records = 0
@@ -124,16 +137,25 @@ def backfill_materialized_view(
 
             logger.info(f"Backfilling {view.name} from {current_date} to {chunk_end}")
 
-            client.execute(
-                view.backfill_query,
-                {"start": current_date, "end": chunk_end},
-            )
+            try:
+                client.execute(
+                    view.backfill_query,
+                    {"start": current_date, "end": chunk_end},
+                )
+            except Exception as e:
+                logger.error(f"Failed to backfill {view.name} for period {current_date} to {chunk_end}: {e}")
+                # Continue with next chunk instead of failing completely
+                logger.warning("Skipping chunk and continuing with next period")
 
             current_date = chunk_end + timedelta(seconds=1)
     else:
         # Execute backfill query without parameters
         logger.info(f"Backfilling {view.name} (full table)")
-        client.execute(view.backfill_query)
+        try:
+            client.execute(view.backfill_query)
+        except Exception as e:
+            logger.error(f"Failed to backfill {view.name} (full table): {e}")
+            return 0
 
     # Return count of records in the view
     result = client.execute(f"SELECT count() FROM {view.name}")
@@ -185,8 +207,13 @@ def backfill_materialized_views(
     # Backfill each view
     results = {}
     for view in views_to_process:
-        record_count = backfill_materialized_view(view=view, start_date=start_date, end_date=end_date)
-        results[view.name] = record_count
+        try:
+            record_count = backfill_materialized_view(view=view, start_date=start_date, end_date=end_date)
+            results[view.name] = record_count
+        except Exception as e:
+            logger.error(f"Failed to backfill view {view.name}: {e}")
+            results[view.name] = 0
+            # Continue processing other views instead of failing completely
 
     return results
 

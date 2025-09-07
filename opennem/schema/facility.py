@@ -21,7 +21,7 @@ class FacilityPhotoOutputSchema(BaseModel):
 class FacilityLocationSchema(BaseModel):
     """Facility location schema"""
 
-    _type: str
+    type: str = Field(default="Point", alias="_type")
     lat: RoundedFloat6 | None = None
     lng: RoundedFloat6 | None = None
 
@@ -44,6 +44,8 @@ class FacilitySchema(BaseModel):
     website: str | None = None
     description: str | None = None
     wikipedia: str | None = None
+    osm_way_id: str | None = None  # OpenStreetMap Way ID
+    npi_id: str | None = None  # NPI facility ID
     photos: list[FacilityPhotoOutputSchema] | None = None
     owners: list[FacilityOwnerSchema] | None = None
     location: FacilityLocationSchema | None = None

@@ -34,6 +34,7 @@ FACILITY_SCADA_COLUMN_NAMES = [
     "is_forecast",
     "energy_quality_flag",
     "energy",
+    "energy_storage",
 ]
 
 # Helpers
@@ -46,6 +47,7 @@ async def generate_facility_scada(
     facility_code_field: str = "duid",
     power_field: str = "scadavalue",
     energy_field: str | None = None,
+    energy_storage_field: str | None = None,
     is_forecast: bool = False,
 ) -> list[dict[Hashable, Any]]:
     """Optimized facility scada generator"""
@@ -62,6 +64,11 @@ async def generate_facility_scada(
         column_renames[energy_field] = "energy"
     else:
         df["energy"] = None
+
+    if energy_storage_field:
+        column_renames[energy_storage_field] = "energy_storage"
+    else:
+        df["energy_storage"] = None
 
     df = df.rename(columns=column_renames)
 
@@ -81,7 +88,23 @@ async def generate_facility_scada(
     # Get battery unit mappings
     battery_unit_map = await get_battery_unit_map()
 
-    # Create a function to map facility codes based on generated value
+    def is_battery_unit(row) -> bool:
+        facility_code = row["facility_code"]
+        return facility_code in battery_unit_map
+
+    # Create copies of battery records for splitting
+    battery_mask = df.apply(is_battery_unit, axis=1)
+    battery_copies = df.loc[battery_mask].copy()
+    battery_copies["battery_copy"] = True
+
+    # Add battery_copy field to original data (False for all)
+    df["battery_copy"] = False
+
+    # Combine original data with battery copies
+    if len(battery_copies) > 0:
+        df = pd.concat([df, battery_copies], ignore_index=True)
+
+    # Define the original mapping functions
     def map_battery_code(row):
         facility_code = row["facility_code"]
         generated = row["generated"]
@@ -104,9 +127,13 @@ async def generate_facility_scada(
 
         return generated
 
-    # Apply the mapping function
-    df["facility_code"] = df.apply(map_battery_code, axis=1)
-    df["generated"] = df.apply(map_battery_generation, axis=1)
+    # Apply the mapping functions only to the battery copies
+    battery_copy_mask = df["battery_copy"]
+    df.loc[battery_copy_mask, "facility_code"] = df.loc[battery_copy_mask].apply(map_battery_code, axis=1)
+    df.loc[battery_copy_mask, "generated"] = df.loc[battery_copy_mask].apply(map_battery_generation, axis=1)
+
+    # Drop the battery_copy field
+    df = df.drop(columns=["battery_copy"])
 
     # fill in energies
     df["energy"] = df.generated / (60 / network.interval_size)
@@ -115,10 +142,12 @@ async def generate_facility_scada(
     df.set_index(["interval", "network_id", "facility_code", "is_forecast"], inplace=True)
 
     # @NOTE optimized way to drop duplicates
-    df = df[~df.index.duplicated(keep="last")]
+    df_deduped: pd.DataFrame = df[~df.index.duplicated(keep="last")]  # type: ignore
 
     # reorder columns
-    clean_records = df.reset_index(inplace=False)[FACILITY_SCADA_COLUMN_NAMES].to_dict("records")
+    df_reset = df_deduped.reset_index(inplace=False)  # type: ignore
+    df_final = df_reset[FACILITY_SCADA_COLUMN_NAMES]  # type: ignore
+    clean_records = df_final.to_dict("records")  # type: ignore
 
     return clean_records
 
@@ -428,10 +457,11 @@ async def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
         interval_field="settlementdate",
         facility_code_field="duid",
         power_field="initialmw",
+        energy_storage_field="energy_storage",
     )
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy"])
+    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy", "energy_storage"])
     cr.server_latest = max([i["interval"] for i in records if i["interval"]])
 
     return cr

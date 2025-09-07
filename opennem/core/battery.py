@@ -148,8 +148,10 @@ async def _generate_battery_unit_map() -> dict[str, BatteryUnitMap]:
 
 
 async def process_battery_history(facility_code: str | None = None, clear_old_records: bool = False):
-    """This processes the history of facility_scada and updates the battery units so that
-    bidirectional units are split into two separate units
+    """This processes the history of facility_scada and creates split battery records.
+
+    NEW BEHAVIOR: Original bidirectional records are preserved. This function only creates
+    the missing charge/discharge records alongside the existing bidirectional records.
     """
     unit_map = await get_battery_unit_map()
 
@@ -178,14 +180,6 @@ async def process_battery_history(facility_code: str | None = None, clear_old_re
         """
     )
 
-    query_load_delete = text(
-        """
-        DELETE FROM facility_scada
-        WHERE facility_code = :old_facility_code
-        AND generated < 0
-        """
-    )
-
     query_load_aggregate_template = text(
         """
         WITH source AS (
@@ -210,14 +204,6 @@ async def process_battery_history(facility_code: str | None = None, clear_old_re
         """
     )
 
-    query_load_aggregate_delete = text(
-        """
-        DELETE FROM at_facility_intervals
-        WHERE unit_code = :old_facility_code
-        AND generated < 0
-        """
-    )
-
     query_generator = text(
         """
         WITH source AS (
@@ -232,14 +218,6 @@ async def process_battery_history(facility_code: str | None = None, clear_old_re
         SET generated = EXCLUDED.generated,
             energy = EXCLUDED.energy,
             energy_quality_flag = EXCLUDED.energy_quality_flag
-        """
-    )
-
-    query_generator_delete = text(
-        """
-        DELETE FROM facility_scada
-        WHERE facility_code = :old_facility_code
-        AND generated >= 0
         """
     )
 
@@ -267,14 +245,6 @@ async def process_battery_history(facility_code: str | None = None, clear_old_re
         """
     )
 
-    query_aggregate_generator_delete = text(
-        """
-        DELETE FROM at_facility_intervals
-        WHERE unit_code = :old_facility_code
-        AND generated >= 0
-        """
-    )
-
     async with get_write_session() as session:
         try:
             for unit in unit_map.values():  # type: ignore  # noqa: B020
@@ -297,23 +267,19 @@ async def process_battery_history(facility_code: str | None = None, clear_old_re
                         f"Deleted {unit.discharge_unit} and {unit.charge_unit} records newer than {unit.unit}: {result.rowcount}"  # type: ignore
                     )
 
-                # Handle charging records
+                # Handle charging records (create charge records for negative generation)
                 params = {"new_facility_code": unit.charge_unit, "old_facility_code": unit.unit}
                 await session.execute(query_load_template, params)
-                await session.execute(query_load_delete, params)
                 await session.execute(query_load_aggregate_template, params)
-                await session.execute(query_load_aggregate_delete, params)
 
-                logger.info(f"Updated {unit.unit} charge to {unit.charge_unit}")
+                logger.info(f"Created {unit.charge_unit} records for {unit.unit} charging intervals")
 
-                # Handle discharging records
+                # Handle discharging records (create discharge records for positive generation)
                 params = {"new_facility_code": unit.discharge_unit, "old_facility_code": unit.unit}
                 await session.execute(query_generator, params)
-                await session.execute(query_generator_delete, params)
                 await session.execute(query_aggregate_generator, params)
-                await session.execute(query_aggregate_generator_delete, params)
 
-                logger.info(f"Updated {unit.unit} discharge to {unit.discharge_unit}")
+                logger.info(f"Created {unit.discharge_unit} records for {unit.unit} discharging intervals")
 
             await session.commit()
         except Exception as e:
@@ -323,40 +289,87 @@ async def process_battery_history(facility_code: str | None = None, clear_old_re
 
 
 async def check_unsplit_batteries() -> list[str]:
-    """Check for any battery units in facility_scada that haven't been split into charge/discharge units.
+    """Check for any battery units that have intervals missing their corresponding charge/discharge records.
 
-    This method finds battery units that have records in facility_scada within the last 30 days
-    but haven't been split into separate charge/discharge units yet.
+    New logic: Since we now preserve original bidirectional records, we need to check that each
+    bidirectional battery interval has its corresponding split records:
+    - For negative generation intervals: corresponding charge unit record should exist
+    - For positive/zero generation intervals: corresponding discharge unit record should exist
 
     Returns:
-        list[str]: List of unsplit battery unit codes
+        list[str]: List of battery unit codes that need splitting
     """
+    battery_unit_map = await get_battery_unit_map()
+    unsplit_units = []
+
     async with get_read_session() as session:
-        query = text(
-            """
-            SELECT DISTINCT fs.facility_code
-            FROM facility_scada fs
-            INNER JOIN units u ON fs.facility_code = u.code
-            WHERE u.dispatch_type = 'BIDIRECTIONAL'
-            AND fs.interval >= NOW() - INTERVAL '100 days'
-            ORDER BY fs.facility_code
-            """
-        )
-
-        result = await session.execute(query)
-        unsplit_units = [row[0] for row in result]
-
-        if unsplit_units:
-            msg = (
-                f"[{settings.env.upper()}] Found {len(unsplit_units)} unsplit "
-                f"battery units in facility_scada: {', '.join(unsplit_units)}"
+        for bidirectional_unit, battery_map in battery_unit_map.items():
+            # Get all intervals for this bidirectional unit from the last 100 days
+            bidirectional_query = text(
+                """
+                SELECT interval, generated
+                FROM facility_scada
+                WHERE facility_code = :bidirectional_unit
+                AND interval >= NOW() - INTERVAL '100 days'
+                ORDER BY interval
+                """
             )
 
-            await slack_message(webhook_url=settings.slack_hook_new_facilities, tag_users=settings.slack_admin_alert, message=msg)
+            bidirectional_result = await session.execute(bidirectional_query, {"bidirectional_unit": bidirectional_unit})
+            bidirectional_records = await bidirectional_result.fetchall()
 
-            logger.info(msg)
+            if not bidirectional_records:
+                continue  # No recent data for this unit
 
-        return unsplit_units
+            missing_split_records = False
+
+            for interval, generated in bidirectional_records:
+                # Determine which split record should exist based on generation value
+                if generated < 0:
+                    # Should have charge record with positive generation
+                    expected_unit = battery_map.charge_unit
+                    expected_generated_condition = "> 0"
+                else:
+                    # Should have discharge record (generated >= 0)
+                    expected_unit = battery_map.discharge_unit
+                    expected_generated_condition = ">= 0"
+
+                # Check if the expected split record exists
+                split_check_query = text(
+                    f"""
+                    SELECT 1
+                    FROM facility_scada
+                    WHERE facility_code = :expected_unit
+                    AND interval = :interval
+                    AND generated {expected_generated_condition}
+                    LIMIT 1
+                    """
+                )
+
+                split_result = await session.execute(split_check_query, {"expected_unit": expected_unit, "interval": interval})
+
+                if not await split_result.fetchone():
+                    logger.debug(
+                        f"Missing split record for {bidirectional_unit} at {interval}: "
+                        f"expected {expected_unit} with generation {expected_generated_condition}"
+                    )
+                    missing_split_records = True
+                    break  # Found at least one missing record, no need to check more
+
+            if missing_split_records:
+                unsplit_units.append(bidirectional_unit)
+
+    if unsplit_units:
+        msg = (
+            f"[{settings.env.upper()}] Found {len(unsplit_units)} battery units with missing "
+            f"split records: {', '.join(unsplit_units)}"
+        )
+
+        await slack_message(webhook_url=settings.slack_hook_new_facilities, tag_users=settings.slack_admin_alert, message=msg)
+
+        logger.info(msg)
+
+    return unsplit_units
 
 
 async def run_update_unsplit_batteries():

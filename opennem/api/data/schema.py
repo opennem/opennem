@@ -29,6 +29,7 @@ class DataMetric(str, Enum):
     ENERGY = "energy"
     EMISSIONS = "emissions"
     MARKET_VALUE = "market_value"
+    STORAGE_BATTERY = "storage_battery"
 
 
 class TimeSeriesResult(BaseConfig):

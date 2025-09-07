@@ -78,9 +78,7 @@ def check_milestone_is_new(milestone: MilestoneRecordSchema, milestone_previous:
     rounded_previous = round(milestone_previous.value, round_to)
 
     # Only create new records if the rounded values are different AND the comparison operator passes
-    if rounded_current == rounded_previous:
-        return False
-
+    # The operator should compare the rounded values, not the original values
     return _op(rounded_current, rounded_previous)
 
 

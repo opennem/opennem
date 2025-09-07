@@ -160,7 +160,7 @@ async def bulkinsert_mms_items[ORMTableType: Table](
                             record_values.append(value if isinstance(value, datetime) else datetime.fromisoformat(str(value)))
                         elif column_types[col] == "numeric":
                             # Ensure numeric values are passed as float or Decimal
-                            record_values.append(float(value) if value is not None else None)
+                            record_values.append(float(value) if value is not None and value != "" else None)
                         elif column_types[col] == "boolean":
                             # Convert string to boolean
                             value = str(value).lower()

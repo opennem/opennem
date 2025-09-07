@@ -24,6 +24,12 @@
         "renewable": true
     },
     {
+        "code": "battery",
+        "label": "Battery",
+        "color": "#00A2FA",
+        "renewable": false
+    },
+    {
         "code": "battery_charging",
         "label": "Battery (Charging)",
         "color": "#B2DAEF",

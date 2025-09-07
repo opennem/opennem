@@ -146,6 +146,7 @@
     {
         "code": "battery",
         "label": "Battery",
-        "renewable": false
+        "renewable": false,
+        "fueltech_group_id": "battery"
     }
 ]

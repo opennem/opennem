@@ -7,14 +7,13 @@ classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Environment :: Console",
   "Programming Language :: Python :: 3.12",
-  "Topic :: Scientific/Engineering"
 ]
 authors = [
     {name = "Dylan McConnell", email = "dylan.mcconnell@unimelb.edu.au"},
     {name = "Nik Cubrilovic", email = "git@nikcub.me"},
 ]
 requires-python = "<4.0,>=3.10"
-version = "4.2.4"
+version = "4.3.0.dev10"
 
 dependencies = [
     "requests<3.0.0,>=2.23.0",
