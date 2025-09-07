@@ -486,6 +486,9 @@ def _analyzed_record_to_milestone_schema(
         fueltech = None
 
         if "fueltech_group_id" in record:
+            # skip bidirectional battery records
+            if record["fueltech_group_id"] not in MilestoneFueltechGrouping.__members__:
+                continue
             fueltech = MilestoneFueltechGrouping(record["fueltech_group_id"])
         elif "renewable" in record:
             fueltech = MilestoneFueltechGrouping("renewables" if record["renewable"] else "fossils")
