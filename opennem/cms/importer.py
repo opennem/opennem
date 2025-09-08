@@ -188,7 +188,7 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
 
         if hasattr(facility, "location") and facility.location:
             if facility.location.lat and facility.location.lng:
-                facility_db.location = from_shape(Point(facility.location.lng, facility.location.lat), srid=4326)
+                facility_db.location = from_shape(Point(facility.location.lng, facility.location.lat), srid=4326)  # type: ignore
                 record_updated = True
 
         # Process units in a single transaction
