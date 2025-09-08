@@ -224,7 +224,7 @@ class Facility(Base):
     __tablename__ = "facilities"
 
     id = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
-    code = Column(Text, index=True, nullable=False, unique=True)
+    code: Mapped[str] = mapped_column(Text, index=True, nullable=False, unique=True)
     name: Mapped[str] = mapped_column(Text)
     network_id: Mapped[str] = mapped_column(Text, nullable=False)
     network_region: Mapped[str] = mapped_column(Text, nullable=False)
