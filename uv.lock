@@ -2746,7 +2746,7 @@ wheels = [
 
 [[package]]
 name = "opennem"
-version = "4.3.0rc4"
+version = "4.3.0rc5"
 source = { editable = "." }
 dependencies = [
     { name = "aioboto3" },
