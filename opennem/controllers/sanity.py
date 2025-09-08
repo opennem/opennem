@@ -33,7 +33,7 @@ async def parse_sanity_webhook_request(request: dict) -> None:
     #     logger.warning(f"Unhandled record type: {record_type}")
 
     # skip and just sync @TODO only do for the facility or the unit
-    await update_database_facilities_from_cms(send_slack=True)
+    await update_database_facilities_from_cms(send_slack=False)
 
     await export_facilities_static()
 
