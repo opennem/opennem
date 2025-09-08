@@ -34,14 +34,28 @@ Maximum capacity is used by AEMO for bid validation in market systems and may di
 The differences between registered and maximum capacity vary by generation technology:
 
 **Solar Farms** often have registered capacity greater than maximum capacity due to:
+
 - Intentional oversizing of solar panel installations
 - Grid connection limitations that constrain output
 - Economic optimisation considering varying solar conditions
 
 **Fossil Fuel Plants** sometimes have maximum capacity greater than registered capacity because:
+
 - They can temporarily operate above normal ratings
 - Higher outputs may come with reduced efficiency
 - Operators typically avoid this except during high-price events
+
+It is worth noting these values can differ considerably and may have implications for analysis. Consider how solar farm capacity has varied with time.
+
+![solar ratio by time scatter.png](/docs/images/solarratiobytimescatter.png)
+
+On the y-axis we have the ratio of registered to maxium capacity, and it is evident many facilities have a much larger registered capacity. Consequently, it is important to keep in mind which capacity metric is used for a given purpose as they may yield meaningfully different results. This ratio for fossil fuels is often less dramatic, though the decision may still be important. Take the generation at a Bayswater unit (BW03).
+
+![bayswater reg generation.png](/docs/images/bayswaterreggeneration.png)
+
+BW03 had a registered capacity of 660MW during 2024, however for 2154 hours, or over 24% of the time, it averaged generation above this value, whilst other coal facilities will have a substantially different profile. For instance Eraring's ER01 did not exceed its registered capacity for any hourly period in 2024, despite having a maximum capacity 30MW greater than its registered capacity.
+
+![eraring reg generation.png](/docs/images/eraringreggeneration.png)
 
 For a detailed technical discussion of these capacity measures, see WattClarity's analysis: [Analytical Challenge – choosing what measure to use, for 'Installed Capacity'](https://wattclarity.com.au/articles/2022/09/analyticalchallenge-installedcapacity/)
 
