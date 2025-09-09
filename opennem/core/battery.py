@@ -78,25 +78,31 @@ async def _generate_battery_unit_map() -> dict[str, BatteryUnitMap]:
             select(Facility)
             .join(Unit)
             .where(Unit.dispatch_type == UnitDispatchType.BIDIRECTIONAL.value)
+            .where(Unit.fueltech_id == "battery")
             .order_by(Facility.code, Unit.code)
         )
 
         facilities = (await session.execute(facility_query)).scalars().all()
 
-        logger.debug(f"Found {len(facilities)} bidirectional units")
+        logger.debug(f"Found {len(facilities)} bidirectional battery facilities")
 
         for facility in facilities:
             # find the bidirectional unit
             bidirectional_unit = next(
-                (unit for unit in facility.units if unit.dispatch_type == UnitDispatchType.BIDIRECTIONAL.value), None
+                (
+                    unit
+                    for unit in facility.units
+                    if unit.dispatch_type == UnitDispatchType.BIDIRECTIONAL.value and unit.fueltech_id == "battery"
+                ),
+                None,
             )
 
             if not bidirectional_unit:
-                logger.warning(f"No bidirectional unit found for {facility.code} {facility.name}")
+                logger.warning(f"No bidirectional battery unit found for {facility.code} {facility.name}")
                 continue
 
             if str(bidirectional_unit.code) in unit_map:
-                logger.info(f"Skipping {facility.code} {facility.name} as it has a manual or existing map")
+                logger.debug(f"Skipping {facility.code} {facility.name} as it has a manual or existing map")
                 continue
 
             # find the charge and discharge units
@@ -104,11 +110,24 @@ async def _generate_battery_unit_map() -> dict[str, BatteryUnitMap]:
             discharge_unit = list(filter(lambda x: x.fueltech_id == "battery_discharging", facility.units))
 
             if not charge_unit:
-                logger.warning(f"No charge unit found for {facility.code} {facility.name}")
+                logger.info(f"No charge unit found for {facility.code} {facility.name} - needs creation")
+                # Add to map anyway for detection purposes, with generated unit codes
+                unit_map[str(bidirectional_unit.code)] = BatteryUnitMap(
+                    unit=str(bidirectional_unit.code),
+                    charge_unit=f"{bidirectional_unit.code}L",  # L for Load
+                    discharge_unit=f"{bidirectional_unit.code}G",  # G for Generation
+                )
                 continue
 
             if not discharge_unit:
-                logger.warning(f"No discharge unit found for {facility.code} {facility.name}")
+                logger.info(f"No discharge unit found for {facility.code} {facility.name} - needs creation")
+                # Still add to map if we have charge unit
+                if charge_unit:
+                    unit_map[str(bidirectional_unit.code)] = BatteryUnitMap(
+                        unit=str(bidirectional_unit.code),
+                        charge_unit=charge_unit[0].code,
+                        discharge_unit=f"{bidirectional_unit.code}G",  # G for Generation
+                    )
                 continue
 
             if len(charge_unit) > 1:
@@ -302,61 +321,70 @@ async def check_unsplit_batteries() -> list[str]:
     battery_unit_map = await get_battery_unit_map()
     unsplit_units = []
 
+    logger.info(f"Checking {len(battery_unit_map)} battery units for unsplit intervals")
+
     async with get_read_session() as session:
-        for bidirectional_unit, battery_map in battery_unit_map.items():
-            # Get all intervals for this bidirectional unit from the last 100 days
-            bidirectional_query = text(
-                """
-                SELECT interval, generated
+        # Build a query to check all batteries at once
+        bidirectional_units = list(battery_unit_map.keys())
+
+        # Query to find bidirectional units that have recent data but missing split records
+        check_query = text("""
+            WITH recent_batteries AS (
+                SELECT DISTINCT facility_code
                 FROM facility_scada
-                WHERE facility_code = :bidirectional_unit
-                AND interval >= NOW() - INTERVAL '100 days'
-                ORDER BY interval
-                """
+                WHERE facility_code = ANY(:units)
+                AND interval >= NOW() - INTERVAL '7 days'
+            ),
+            battery_intervals AS (
+                SELECT
+                    fs.facility_code AS bidirectional_unit,
+                    fs.interval,
+                    fs.generated,
+                    CASE
+                        WHEN fs.generated < 0 THEN 'charge'
+                        ELSE 'discharge'
+                    END AS split_type
+                FROM facility_scada fs
+                INNER JOIN recent_batteries rb ON fs.facility_code = rb.facility_code
+                WHERE fs.interval >= NOW() - INTERVAL '1 day'
+                LIMIT 1000
+            )
+            SELECT DISTINCT bi.bidirectional_unit
+            FROM battery_intervals bi
+            WHERE bi.bidirectional_unit = ANY(:units)
+            GROUP BY bi.bidirectional_unit
+            HAVING COUNT(*) > 0
+        """)
+
+        result = await session.execute(check_query, {"units": bidirectional_units})
+        batteries_with_data = {row[0] for row in result.fetchall()}
+
+        logger.info(f"Found {len(batteries_with_data)} batteries with recent data")
+
+        # Now check each battery with data for missing split records
+        for bidirectional_unit in batteries_with_data:
+            battery_map = battery_unit_map[bidirectional_unit]
+
+            # Quick check: see if the split units have ANY recent data
+            split_check = text("""
+                SELECT
+                    (SELECT COUNT(*) FROM facility_scada
+                     WHERE facility_code = :charge_unit
+                     AND interval >= NOW() - INTERVAL '1 day'
+                     LIMIT 1) as charge_count,
+                    (SELECT COUNT(*) FROM facility_scada
+                     WHERE facility_code = :discharge_unit
+                     AND interval >= NOW() - INTERVAL '1 day'
+                     LIMIT 1) as discharge_count
+            """)
+
+            result = await session.execute(
+                split_check, {"charge_unit": battery_map.charge_unit, "discharge_unit": battery_map.discharge_unit}
             )
 
-            bidirectional_result = await session.execute(bidirectional_query, {"bidirectional_unit": bidirectional_unit})
-            bidirectional_records = await bidirectional_result.fetchall()
-
-            if not bidirectional_records:
-                continue  # No recent data for this unit
-
-            missing_split_records = False
-
-            for interval, generated in bidirectional_records:
-                # Determine which split record should exist based on generation value
-                if generated < 0:
-                    # Should have charge record with positive generation
-                    expected_unit = battery_map.charge_unit
-                    expected_generated_condition = "> 0"
-                else:
-                    # Should have discharge record (generated >= 0)
-                    expected_unit = battery_map.discharge_unit
-                    expected_generated_condition = ">= 0"
-
-                # Check if the expected split record exists
-                split_check_query = text(
-                    f"""
-                    SELECT 1
-                    FROM facility_scada
-                    WHERE facility_code = :expected_unit
-                    AND interval = :interval
-                    AND generated {expected_generated_condition}
-                    LIMIT 1
-                    """
-                )
-
-                split_result = await session.execute(split_check_query, {"expected_unit": expected_unit, "interval": interval})
-
-                if not await split_result.fetchone():
-                    logger.debug(
-                        f"Missing split record for {bidirectional_unit} at {interval}: "
-                        f"expected {expected_unit} with generation {expected_generated_condition}"
-                    )
-                    missing_split_records = True
-                    break  # Found at least one missing record, no need to check more
-
-            if missing_split_records:
+            row = result.fetchone()
+            if row and (row[0] == 0 or row[1] == 0):
+                logger.info(f"Battery {bidirectional_unit} missing split records (charge: {row[0]}, discharge: {row[1]})")
                 unsplit_units.append(bidirectional_unit)
 
     if unsplit_units:
