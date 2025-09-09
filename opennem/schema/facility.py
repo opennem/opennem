@@ -54,3 +54,5 @@ class FacilitySchema(BaseModel):
     # Sanity fields
     updated_at: datetime | None = None
     cms_id: str | None = Field(None, alias="_id")
+    cms_created_at: datetime | None = Field(None, alias="_createdAt")
+    cms_updated_at: datetime | None = Field(None, alias="_updatedAt")

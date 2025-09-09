@@ -4,7 +4,7 @@ Schema for facility units
 """
 
 import enum
-from datetime import date
+from datetime import date, datetime
 
 from pydantic import BaseModel, Field
 
@@ -91,6 +91,8 @@ class UnitSchema(BaseModel):
     project_approval_lodgement_date: date | None = None
 
     cms_id: str | None = Field(None, alias="_id")
+    cms_created_at: datetime | None = Field(None, alias="_createdAt")
+    cms_updated_at: datetime | None = Field(None, alias="_updatedAt")
 
     class Config:
         extra = "allow"

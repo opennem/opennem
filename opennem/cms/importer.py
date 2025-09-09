@@ -130,6 +130,8 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 else None,
                 approved=True,
                 cms_id=facility.cms_id,
+                cms_created_at=facility.cms_created_at,
+                cms_updated_at=facility.cms_updated_at,
             )
             facility_new = True
             session.add(facility_db)
@@ -144,6 +146,14 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
 
         # Always update all facility metadata from CMS
         record_updated = False
+
+        if facility.cms_created_at:
+            facility_db.cms_created_at = facility.cms_created_at
+            record_updated = True
+
+        if facility.cms_updated_at:
+            facility_db.cms_updated_at = facility.cms_updated_at
+            record_updated = True
 
         if facility.code and facility.code != facility_db.code:
             facility_db.code = facility.code
@@ -304,16 +314,28 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 )
                 # Set the station_id for new units
                 unit_db.station_id = facility_db.id
+
+                unit_db.cms_created_at = unit.cms_created_at
+                unit_db.cms_updated_at = unit.cms_updated_at
+
                 session.add(unit_db)
                 record_updated = True
                 facility_or_unit_created = True
                 logger.info(f"Created unit {unit.code} for facility {facility.code}")
 
+            if unit.cms_created_at:
+                unit_db.cms_created_at = unit.cms_created_at
+                record_updated = True
+
+            if unit.cms_updated_at:
+                unit_db.cms_updated_at = unit.cms_updated_at
+                record_updated = True
+
             # Always update all unit metadata from CMS
             if unit.code and unit.code != unit_db.code:
                 # Since we're syncing by cms_id, we can safely update the code
                 # Any code conflicts should be handled by the orphan checker
-                unit_db.code = unit.code
+                unit_db.code = unit.code  # type: ignore
                 record_updated = True
 
             if unit.fueltech_id:

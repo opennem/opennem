@@ -234,12 +234,15 @@ class Facility(Base):
     wikidata_id: Mapped[str | None] = mapped_column(Text, nullable=True)
     approved: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    cms_id: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
     npi_id: Mapped[str | None] = mapped_column(String(50), nullable=True, unique=True)  # NPI facility ID
     osm_way_id: Mapped[str | None] = mapped_column(Text, nullable=True)  # OpenStreetMap Way ID
     location = Column(Geometry("POINT", srid=4326), nullable=True)  # PostGIS location point
 
     units: Mapped[list["Unit"]] = relationship("Unit", innerjoin=True, lazy="selectin")
+
+    cms_id: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
+    cms_created_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    cms_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     __table_args__ = (UniqueConstraint("code", name="excl_station_network_duid"),)
 
@@ -327,6 +330,8 @@ class Unit(Base):
     project_approval_lodgement_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
 
     cms_id: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
+    cms_created_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    cms_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     facility = relationship("Facility", innerjoin=True, back_populates="units", lazy="selectin")
     history = relationship("UnitHistory", back_populates="unit", order_by="UnitHistory.changed_at.desc()", lazy="selectin")

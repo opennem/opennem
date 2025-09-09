@@ -127,6 +127,8 @@ async def get_facilities(
                         data_first_seen=unit.data_first_seen,
                         data_last_seen=unit.data_last_seen,
                         dispatch_type=UnitDispatchType(unit.dispatch_type),
+                        created_at=unit.cms_created_at,
+                        updated_at=unit.cms_updated_at,
                     )
                     for unit in filtered_units
                 ]
@@ -140,6 +142,8 @@ async def get_facilities(
                     npi_id=facility.npi_id,
                     location=location_dict,
                     units=unit_responses,
+                    created_at=facility.cms_created_at,
+                    updated_at=facility.cms_updated_at,
                 )
                 filtered_facilities.append(facility_response)
 

@@ -28,6 +28,9 @@ class UnitResponse(BaseModel):
     data_last_seen: datetime | None
     dispatch_type: UnitDispatchType
 
+    created_at: datetime | None
+    updated_at: datetime | None
+
     model_config = ConfigDict(from_attributes=True)
 
     @model_validator(mode="after")
@@ -61,6 +64,9 @@ class FacilityResponse(BaseModel):
     npi_id: str | None
     location: dict | None  # Will contain lat/lng from PostGIS geometry
     units: list[UnitResponse]
+
+    updated_at: datetime | None
+    created_at: datetime | None
 
     model_config = ConfigDict(from_attributes=True)
 
