@@ -54,9 +54,7 @@ async def parse_sanity_webhook_request(request: dict) -> None:
 
     record_type: str = request["_type"].lower()
 
-    from pprint import pprint
-
-    pprint(request)
+    logger.debug(request)
 
     if record_type in ["facility"]:
         facility_code = await get_facility_by_facility_cms_id(request["_id"])

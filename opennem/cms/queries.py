@@ -32,7 +32,6 @@ from pydantic import ValidationError
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from opennem import settings
-from opennem.clients.slack import slack_message
 from opennem.cms.client import sanity_client
 from opennem.schema.facility import FacilityPhotoOutputSchema, FacilitySchema
 from opennem.schema.unit import UnitSchema
@@ -301,7 +300,8 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]
         description,
         "network_id": upper(network->code),
         "network_region": upper(region->code),
-        "npi_id": npiId,
+        "npiId": npi_id,
+        osm_way_id,
         photos[] {{
             "url": asset->url,
             "url_source": url,
@@ -319,6 +319,8 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]
         location,
         units[]-> {{
             _id,
+            _updatedAt,
+            _createdAt,
             code,
             dispatch_type,
             "status_id": status,
@@ -411,10 +413,7 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]
         _validate_unique_codes(facilities)
     except (DuplicateCodeError, CMSQueryError) as e:
         logger.error(f"CMS Error: {e}")
-        slack_message(
-            webhook_url=settings.slack_hook_new_facilities,
-            message=f"CMS Error: {e}",
-        )
+
         raise e
     return facilities
 
@@ -450,6 +449,6 @@ def update_cms_record(facility: FacilitySchema) -> None:
 
 
 if __name__ == "__main__":
-    owners = get_cms_owners()
-    logger.info(f"Found {len(owners)} owners")
+    owners = get_cms_facilities(facility_code="OAKEY1SF")
+    logger.info(f"Found {len(owners)} facilities")
     print(owners)
