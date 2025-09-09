@@ -188,11 +188,11 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
             record_updated = True
 
         # Update new fields
-        if hasattr(facility, "osm_way_id") and facility.osm_way_id is not None:
+        if hasattr(facility, "osm_way_id"):
             facility_db.osm_way_id = facility.osm_way_id.strip() if facility.osm_way_id else None
             record_updated = True
 
-        if hasattr(facility, "npi_id") and facility.npi_id is not None:
+        if hasattr(facility, "npi_id"):
             facility_db.npi_id = facility.npi_id.strip() if facility.npi_id else None
             record_updated = True
 
@@ -550,7 +550,7 @@ async def update_facility_from_cms(facility_code: str, send_slack: bool = True) 
 
 
 async def update_database_facilities_from_cms(
-    send_slack: bool = True, dry_run: bool = False, facility_code: str | None = None
+    send_slack: bool = True, dry_run: bool = False, facility_code: str | None = None, cms_id: str | None = None
 ) -> None:
     """Update all database facilities from the CMS.
 
@@ -569,7 +569,7 @@ async def update_database_facilities_from_cms(
         facility_code: Optional specific facility code to update
     """
     # Get facilities from CMS
-    sanity_facilities = get_cms_facilities(facility_code=facility_code)
+    sanity_facilities = get_cms_facilities(facility_code=facility_code, cms_id=cms_id)
     logger.info(f"Processing {len(sanity_facilities)} facilities from CMS")
 
     # Track statistics and created facility codes

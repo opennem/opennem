@@ -257,7 +257,7 @@ def _validate_unique_codes(facilities: list[FacilitySchema]) -> None:
     retry=retry_if_exception_type((CMSQueryError, ValidationError)),
     reraise=True,
 )
-def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]:
+def get_cms_facilities(facility_code: str | None = None, cms_id: str | None = None) -> list[FacilitySchema]:
     """Retrieve facility data from the CMS with optional filtering.
 
     This is the primary function for retrieving facility data from the CMS. It includes
@@ -289,6 +289,9 @@ def get_cms_facilities(facility_code: str | None = None) -> list[FacilitySchema]
 
     if facility_code:
         filter_query += f" && code == '{facility_code}'"
+
+    if cms_id:
+        filter_query += f" && _id == '{cms_id}'"
 
     query = f"""*[_type == "facility"{filter_query} && !(_id in path("drafts.**"))] {{
         _id,
@@ -449,6 +452,6 @@ def update_cms_record(facility: FacilitySchema) -> None:
 
 
 if __name__ == "__main__":
-    owners = get_cms_facilities(facility_code="OAKEY1SF")
+    owners = get_cms_facilities(cms_id="1cc4f949-0889-4f7a-a828-aa74850c2d9f")
     logger.info(f"Found {len(owners)} facilities")
     print(owners)
