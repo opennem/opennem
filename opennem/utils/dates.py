@@ -15,6 +15,10 @@ from opennem.core.normalizers import normalize_whitespace
 from opennem.schema.network import NetworkNEM
 from opennem.utils.timezone import is_aware, make_aware
 
+# Sydney timezone for display
+SYDNEY_TZ = ZoneInfo("Australia/Sydney")
+BRISBANE_TZ = ZoneInfo("Australia/Brisbane")
+
 logger = logging.getLogger(__name__)
 
 # Date formats
@@ -266,6 +270,14 @@ def week_series_datetimes(
 def get_week_start_from_week_num(year: int, week_no: int) -> datetime:
     """Get the week start from a week number"""
     return datetime.strptime(f"{year}-W{int(week_no)}-1", "%Y-W%W-%w")
+
+
+def format_sydney_time(dt: datetime | None) -> str:
+    """Format datetime in Sydney timezone in human readable format"""
+    if not dt:
+        return "Unknown"
+    sydney_time = dt.astimezone(SYDNEY_TZ)
+    return sydney_time.strftime("%d %b %I:%M%p").replace(" 0", " ").replace("AM", "am").replace("PM", "pm")
 
 
 def get_week_range_from_datetime(subject: datetime) -> tuple[datetime, datetime]:

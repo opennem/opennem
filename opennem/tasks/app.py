@@ -53,6 +53,7 @@ from opennem.tasks.tasks import (
     task_optimize_clickhouse_tables,
     task_refresh_from_cms,
     task_run_aggregates_demand_network_days,
+    task_send_cms_updates_slack_report,
     task_update_facility_first_seen,
     task_update_facility_seen_range,
     task_update_milestones,
@@ -248,6 +249,15 @@ class WorkerSettings:
         cron(
             task_refresh_from_cms,
             minute=1,
+            second=0,
+            timeout=None,
+            unique=True,
+        ),
+        # CMS Updates Slack Report
+        cron(
+            task_send_cms_updates_slack_report,
+            hour=9,
+            minute=30,
             second=0,
             timeout=None,
             unique=True,

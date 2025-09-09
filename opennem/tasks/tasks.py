@@ -18,6 +18,7 @@ from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.aggregates.unit_intervals import run_unit_intervals_aggregate_to_now
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy
 from opennem.cms.importer import update_database_facilities_from_cms
+from opennem.cms.updates import send_cms_updates_slack_report
 from opennem.controllers.capacity_history import export_capacity_history_json
 from opennem.controllers.export import run_export_energy_all, run_export_energy_for_year
 from opennem.core.battery import check_unsplit_batteries
@@ -259,6 +260,12 @@ async def task_clean_tmp_dir(ctx) -> None:
 @logfire.instrument("task_run_market_notice_update")
 async def task_run_market_notice_update(ctx):
     await run_market_notice_update()
+
+
+@logfire.instrument("task_send_cms_updates_slack_report")
+async def task_send_cms_updates_slack_report(ctx):
+    """Send the CMS updates slack report"""
+    await send_cms_updates_slack_report()
 
 
 @logfire.instrument("task_catchup_check")
