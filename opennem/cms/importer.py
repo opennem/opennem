@@ -550,7 +550,7 @@ async def update_facility_from_cms(facility_code: str, send_slack: bool = True) 
 
 
 async def update_database_facilities_from_cms(
-    send_slack: bool = True, dry_run: bool = False, facility_code: str | None = None, cms_id: str | None = None
+    send_slack: bool = False, dry_run: bool = False, facility_code: str | None = None, cms_id: str | None = None
 ) -> None:
     """Update all database facilities from the CMS.
 

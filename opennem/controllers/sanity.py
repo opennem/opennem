@@ -48,10 +48,10 @@ async def parse_sanity_webhook_request(request: dict) -> None:
     logger.debug(request)
 
     if record_type in ["facility"]:
-        await update_database_facilities_from_cms(cms_id=cms_id, send_slack=True)
+        await update_database_facilities_from_cms(cms_id=cms_id, send_slack=False)
     elif record_type == "unit":
         facility_cms_id = await get_facility_cms_id_by_unit_cms_id(cms_id)
-        await update_database_facilities_from_cms(cms_id=facility_cms_id, send_slack=True)
+        await update_database_facilities_from_cms(cms_id=facility_cms_id, send_slack=False)
     else:
         logger.warning(f"Unhandled record type: {record_type}")
 
