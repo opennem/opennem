@@ -62,7 +62,7 @@ def load_interconnector_intervals(
             u.interconnector_region_from,
             u.interconnector_region_to,
             coalesce(sum(fs.generated), 0) as generated,
-            coalesce(sum(fs.energy), sum(fs.generated) / 12, 0) as energy
+            coalesce(sum(fs.generated) / 12, sum(fs.energy), 0) as energy
         from facility_scada fs
         left join units u
             on fs.facility_code = u.code
@@ -505,4 +505,8 @@ if __name__ == "__main__":
     #     interval_end=latest_interval - timedelta(days=15),
     # )
 
-    run_flows_for_last_days(days=1, network=NetworkNEM)
+    run_flows_by_day_for_range(
+        period_start=datetime.fromisoformat("2025-01-01T00:00:00+10:00"),
+        period_end=datetime.fromisoformat("2025-09-10T00:00:00+10:00"),
+        network=NetworkNEM,
+    )
