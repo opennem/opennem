@@ -1,4 +1,3 @@
-version: "3.3"
 services:
   redis:
     image: redis:7-alpine
@@ -38,6 +37,14 @@ services:
     volumes:
       - clickhouse_data:/var/lib/clickhouse/
       - clickhouse_logs:/var/log/clickhouse-server/
+
+  memgraph:
+    image: memgraph/memgraph:latest
+    hostname: memgraph
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - ${HOST:-127.0.0.1}:${MEMGRAPH_LOCAL_PORT:-7687}:7687
 
 volumes:
   db_data:

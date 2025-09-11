@@ -76,6 +76,7 @@ dependencies = [
     "orjson>=3.10.16",
     "tweepy[async]>=4.15.0",
     "atproto>=0.0.59",
+    "pymgclient>=1.5.1",
 ]
 
 [tool.uv]
