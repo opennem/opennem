@@ -70,20 +70,40 @@ These show the cumulative energy that was curtailed over time, measured in megaw
 - Understanding total renewable energy lost
 - Economic impact analysis
 
-### Regional Breakdown
+## Understanding AEMO's Timestamp Convention
 
-Curtailment data is available for each NEM region:
-- **NSW1** - New South Wales
-- **QLD1** - Queensland
-- **VIC1** - Victoria
-- **SA1** - South Australia
-- **TAS1** - Tasmania
+AEMO uses an "interval-ending" timestamp convention where timestamps represent the end of each 5-minute dispatch interval.
+For example, a timestamp of 14:35 represents the period from 14:30 to 14:35.
 
-Each region has different curtailment patterns based on:
-- Renewable generation capacity
-- Transmission infrastructure
-- Local demand patterns
-- Interconnector constraints
+AEMO's dispatch data contains two fundamentally different types of measurements that occur at different points in time:
+
+1. SCADA Actual Generation (`INITIALMW`): These are snapshot measurements taken at the beginning of each dispatch interval. For the interval timestamped 14:35, the SCADA reading was actually taken at 14:30.
+2. Dispatch Targets (`CLEAREDMW)`: These are forward-looking targets set at the beginning of an interval for generators to achieve by the end of that interval. For the interval timestamped 14:35, these targets
+were set at 14:30 to be achieved by 14:35.
+
+The difference is most evident when dealing with aligning curtailment with actual generation.
+
+### Open Electricity Solution to Timestamp Alignment
+
+Curtailment is calculated as the difference between what generators could produce (UIGF - Unconstrained Intermittent Generation Forecast)
+and what they were dispatched to produce (`CLEAREDMW`). Both `UIGF` and `CLEAREDMW` are **targets for the end of the interval**.
+
+To properly align curtailment with actual generation:
+- Actual generation for interval 14:35 (measured at 14:30)
+- Must be compared with curtailment targets from interval 14:30 (which were targets set at 14:25 for achievement by 14:30)
+
+This requires shifting the curtailment data forward by one interval (5 minutes) so that:
+- The curtailment target that was set for time point T
+- Aligns with the actual generation measured at time point T
+
+### Implementation
+
+Open Electricity addresses this by storing curtailment fields with a timestamp shifted forward by 5 minutes from their source dispatch data.
+interval. This ensures that when you view data for any given timestamp, you're seeing:
+- The actual generation that occurred at that moment
+- The curtailment that was targeting that same moment
+
+This alignment is critical for accurate analysis of renewable energy curtailment patterns and their relationship to actual generation output.
 
 ## Understanding Curtailment Patterns
 
