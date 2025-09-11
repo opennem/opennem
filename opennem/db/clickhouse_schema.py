@@ -60,17 +60,16 @@ PARTITION BY toYYYYMM(interval)
 SETTINGS index_granularity = 8192, allow_experimental_replacing_merge_with_cleanup=1"""
 
 
-async def optimize_clickhouse_tables() -> None:
+async def optimize_clickhouse_tables(table_names: list[str] | None = None) -> None:
     """
     Optimize the unit_intervals and market_summary tables to force merges and deduplication.
     This should be run periodically (e.g., daily) during low-traffic periods.
     """
     client = get_clickhouse_client(timeout=1000)
 
-    # Optimize unit_intervals
-    client.execute("OPTIMIZE TABLE unit_intervals FINAL")
-    logger.info("Optimized unit_intervals table")
+    if table_names is None:
+        table_names = ["unit_intervals", "market_summary"]
 
-    # Optimize market_summary
-    client.execute("OPTIMIZE TABLE market_summary FINAL")
-    logger.info("Optimized market_summary table")
+    for _table_name in table_names:
+        client.execute(f"OPTIMIZE TABLE {_table_name} FINAL")
+        logger.info(f"Optimized {_table_name} table")
