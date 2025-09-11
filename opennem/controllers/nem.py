@@ -5,6 +5,7 @@ Parses MMS tables into OpenNEM derived database
 
 import logging
 from collections.abc import Hashable
+from datetime import timedelta
 from typing import Any
 
 import pandas as pd
@@ -294,6 +295,12 @@ async def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn
 
         interval = parse_date(record.get("settlementdate"))
 
+        if not interval:
+            continue
+
+        # get the next interval
+        interval_next = interval + timedelta(minutes=5)
+
         primary_key = {interval, record["regionid"]}
 
         if primary_key in primary_keys:
@@ -312,6 +319,16 @@ async def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn
                 "net_interchange": record["netinterchange"],
                 "demand": record["totaldemand"],
                 "demand_total": record["demand_and_nonschedgen"],
+            }
+        )
+
+        # curtailment data needs to be shifted forward 5 minutes. See issue 455
+        # https://github.com/opennem/opennem/issues/455
+        records_to_store.append(
+            {
+                "network_id": "NEM",
+                "network_region": record["regionid"],
+                "interval": interval_next,
                 "ss_solar_uigf": record["ss_solar_uigf"],
                 "ss_solar_clearedmw": record["ss_solar_clearedmw"],
                 "ss_wind_uigf": record["ss_wind_uigf"],
@@ -319,7 +336,7 @@ async def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn
             }
         )
 
-        cr.processed_records += 1
+        cr.processed_records += 2
 
     async with get_write_session() as session:
         try:
