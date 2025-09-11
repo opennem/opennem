@@ -535,6 +535,8 @@ async def run_market_summary_aggregate_for_last_intervals(num_intervals: int) ->
 
     logger.info(f"Processed {len(prepared_data)} records from {start_date} to {end_date}")
 
+    await optimize_clickhouse_tables(table_names=["market_summary"])
+
     return len(prepared_data)
 
 
@@ -547,6 +549,8 @@ async def run_market_summary_aggregate_for_last_days(days: int) -> int:
 
     async with get_write_session() as session:
         await process_market_summary_backlog(session=session, start_date=start_date, end_date=end_date)
+
+    await optimize_clickhouse_tables(table_names=["market_summary"])
 
     return 0  # Return 0 to indicate successful completion
 
@@ -657,7 +661,7 @@ async def reset_market_summary(start_date: datetime | None = None, skip_schema_r
 
     # Step 4: Optimize the tables
     logger.info("Optimizing ClickHouse tables...")
-    await optimize_clickhouse_tables()
+    await optimize_clickhouse_tables(table_names=["market_summary"])
 
     # Step 5: Backfill the materialized views (only if schema was refreshed)
     if not skip_schema_refresh:
@@ -684,4 +688,4 @@ if __name__ == "__main__":
 
     import asyncio
 
-    asyncio.run(main())
+    asyncio.run(run_market_summary_aggregate_for_last_intervals(num_intervals=12 * 24))
