@@ -287,6 +287,7 @@ async def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
 async def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
     cr = ControllerReturn(total_records=len(table.records))
     records_to_store = []
+    curtailment_records_to_store = []
     primary_keys = []
 
     for record in table.records:
@@ -324,7 +325,7 @@ async def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn
 
         # curtailment data needs to be shifted forward 5 minutes. See issue 455
         # https://github.com/opennem/opennem/issues/455
-        records_to_store.append(
+        curtailment_records_to_store.append(
             {
                 "network_id": "NEM",
                 "network_region": record["regionid"],
@@ -347,6 +348,15 @@ async def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn
                     "net_interchange": stmt.excluded.net_interchange,
                     "demand_total": stmt.excluded.demand_total,
                     "demand": stmt.excluded.demand,
+                },
+            )
+
+            await session.execute(stmt)
+
+            stmt = insert(BalancingSummary).values(curtailment_records_to_store)
+            stmt = stmt.on_conflict_do_update(
+                index_elements=["interval", "network_id", "network_region", "is_forecast"],
+                set_={
                     "ss_solar_uigf": stmt.excluded.ss_solar_uigf,
                     "ss_solar_clearedmw": stmt.excluded.ss_solar_clearedmw,
                     "ss_wind_uigf": stmt.excluded.ss_wind_uigf,
@@ -566,7 +576,6 @@ async def store_aemo_tableset(tableset: AEMOTableSet) -> ControllerReturn:
 
     for table in tableset.tables:
         if table.full_name not in _TABLE_PROCESSOR_MAP:
-            logger.debug("No processor for table %s", table.full_name)
             continue
 
         process_meth = _TABLE_PROCESSOR_MAP[table.full_name]
