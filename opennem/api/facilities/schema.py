@@ -28,6 +28,21 @@ class UnitResponse(BaseModel):
     data_last_seen: datetime | None
     dispatch_type: UnitDispatchType
 
+    # unit date fields
+    commencement_date: datetime | None
+    commencement_date_serialized: str | None
+    closure_date: datetime | None
+    closure_date_serialized: str | None
+    expected_operation_date: datetime | None
+    expected_operation_date_serialized: str | None
+    expected_closure_date: datetime | None
+    expected_closure_date_serialized: str | None
+    construction_start_date: datetime | None
+    construction_start_date_serialized: str | None
+    project_approval_date: datetime | None
+    project_approval_date_serialized: str | None
+    project_lodgement_date: datetime | None
+
     created_at: datetime | None
     updated_at: datetime | None
 

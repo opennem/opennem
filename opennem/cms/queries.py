@@ -334,9 +334,17 @@ def get_cms_facilities(facility_code: str | None = None, cms_id: str | None = No
             capacity_maximum,
             storage_capacity,
             emissions_factor_co2,
-            expected_closure_date,
+            closure_date,
+            closure_date_specificity,
             commencement_date,
-            closure_date
+            commencement_date_specificity,
+            expected_closure_date,
+            expected_closure_date_specificity,
+            expected_operation_date,
+            expected_operation_date_specificity,
+            expected_operation_date_source,
+            expected_closure_date_source,
+            expected_closure_date_source,
         }}
     }}"""
 

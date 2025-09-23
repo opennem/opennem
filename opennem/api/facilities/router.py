@@ -11,6 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from opennem.api.facilities.schema import FacilityResponse, UnitResponse
+from opennem.api.facilities.utils import serialize_datetime_specificity
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.api.security import authenticated_user
 from opennem.db import get_read_session
@@ -23,7 +24,6 @@ logger = logging.getLogger("opennem.api.facilities")
 
 @router.get(
     "/",
-    response_model=APIV4ResponseSchema,
     response_model_exclude_none=True,
     tags=["Facilities"],
     description="Get all facilities and their associated units",
@@ -127,6 +127,29 @@ async def get_facilities(
                         data_first_seen=unit.data_first_seen,
                         data_last_seen=unit.data_last_seen,
                         dispatch_type=UnitDispatchType(unit.dispatch_type),
+                        commencement_date=unit.commencement_date,
+                        closure_date=unit.closure_date,
+                        expected_operation_date=unit.expected_operation_date,
+                        expected_closure_date=unit.expected_closure_date,
+                        construction_start_date=unit.construction_start_date,
+                        project_approval_date=unit.project_approval_date,
+                        project_lodgement_date=unit.project_approval_lodgement_date,
+                        commencement_date_serialized=serialize_datetime_specificity(
+                            unit.commencement_date, unit.commencement_date_specificity
+                        ),
+                        closure_date_serialized=serialize_datetime_specificity(unit.closure_date, unit.closure_date_specificity),
+                        expected_operation_date_serialized=serialize_datetime_specificity(
+                            unit.expected_operation_date, unit.expected_operation_date_specificity
+                        ),
+                        expected_closure_date_serialized=serialize_datetime_specificity(
+                            unit.expected_closure_date, unit.expected_closure_date_specificity
+                        ),
+                        construction_start_date_serialized=serialize_datetime_specificity(
+                            unit.construction_start_date, unit.construction_start_date_specificity
+                        ),
+                        project_approval_date_serialized=serialize_datetime_specificity(
+                            unit.project_approval_date, unit.project_approval_date_specificity
+                        ),
                         created_at=unit.cms_created_at,
                         updated_at=unit.cms_updated_at,
                     )
