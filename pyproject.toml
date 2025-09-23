@@ -78,9 +78,8 @@ dependencies = [
     "atproto>=0.0.59",
 ]
 
-[tool.uv]
-package = true
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "python-dotenv<2.0.0,>=1.0.0",
     "rope<2.0.0,>=1.0.0",
     "pytest<9.0.0,>=8.0.0",
@@ -107,7 +106,11 @@ dev-dependencies = [
     "python-levenshtein>=0.27.1",
     "fuzzywuzzy>=0.18.0",
     "openai>=1.61.0",
+    "ty>=0.0.1a21",
 ]
+
+[tool.uv]
+package = true
 
 [project.scripts]
 openelectricity = "opennem.cli:main"
@@ -139,7 +142,7 @@ select = [
   "B",   # flake8-bugbear
   "UP",  # pyupgrade
   "T",   # mypy
-#  "FAST", # fastapi
+  "FAST", # fastapi
 #  "PERF", # perflint
 #  "FURB", # refurb
 ]
@@ -159,7 +162,6 @@ docstring-code-line-length = 100
 [tool.pyright]
 include = ["opennem/**/*.py"]
 exclude = ["opennem/db/migrations/env.py"]
-python_version = "3.12"
 reportMissingImports = "error"
 reportMissingTypeStubs = false
 
