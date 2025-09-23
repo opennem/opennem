@@ -142,7 +142,7 @@ select = [
   "B",   # flake8-bugbear
   "UP",  # pyupgrade
   "T",   # mypy
-  "FAST", # fastapi
+#  "FAST", # fastapi
 #  "PERF", # perflint
 #  "FURB", # refurb
 ]
