@@ -10,6 +10,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
+from opennem.api.schema import APIV4ResponseSchema
 from opennem.core.networks import network_from_network_code
 from opennem.schema.field_types import RoundedFloat2, RoundedFloat4
 from opennem.schema.unit import UnitDispatchType, UnitFueltechType, UnitStatusType
@@ -28,41 +29,41 @@ class UnitResponseSchema(BaseModel):
     """Unit response schema with selected fields"""
 
     code: str
-    fueltech_id: UnitFueltechType | None
-    status_id: UnitStatusType | None
-    capacity_registered: RoundedFloat2 | None
-    capacity_maximum: RoundedFloat4 | None
-    capacity_storage: RoundedFloat4 | None
-    emissions_factor_co2: RoundedFloat4 | None
-    data_first_seen: datetime | None
-    data_last_seen: datetime | None
-    dispatch_type: UnitDispatchType
+    fueltech_id: UnitFueltechType
+    status_id: UnitStatusType
+    capacity_registered: RoundedFloat2 | None = None
+    capacity_maximum: RoundedFloat4 | None = None
+    capacity_storage: RoundedFloat4 | None = None
+    emissions_factor_co2: RoundedFloat4 | None = None
+    data_first_seen: datetime | None = None
+    data_last_seen: datetime | None = None
+    dispatch_type: UnitDispatchType | None = None
 
     # unit date fields
-    commencement_date: datetime | None
-    commencement_date_specificity: UnitDateSpecificity | None
-    commencement_date_display: str | None
-    closure_date: datetime | None
-    closure_date_display: str | None
-    closure_date_specificity: UnitDateSpecificity | None
-    expected_operation_date: datetime | None
-    expected_operation_date_specificity: UnitDateSpecificity | None
-    expected_operation_date_display: str | None
-    expected_closure_date: datetime | None
-    expected_closure_date_display: str | None
-    expected_closure_date_specificity: UnitDateSpecificity | None
-    construction_start_date: datetime | None
-    construction_start_date_specificity: UnitDateSpecificity | None
-    construction_start_date_display: str | None
-    project_approval_date: datetime | None
-    project_approval_date_specificity: UnitDateSpecificity | None
-    project_approval_date_display: str | None
-    project_lodgement_date: datetime | None
+    commencement_date: datetime | None = None
+    commencement_date_specificity: UnitDateSpecificity | None = None
+    commencement_date_display: str | None = None
+    closure_date: datetime | None = None
+    closure_date_display: str | None = None
+    closure_date_specificity: UnitDateSpecificity | None = None
+    expected_operation_date: datetime | None = None
+    expected_operation_date_specificity: UnitDateSpecificity | None = None
+    expected_operation_date_display: str | None = None
+    expected_closure_date: datetime | None = None
+    expected_closure_date_display: str | None = None
+    expected_closure_date_specificity: UnitDateSpecificity | None = None
+    construction_start_date: datetime | None = None
+    construction_start_date_specificity: UnitDateSpecificity | None = None
+    construction_start_date_display: str | None = None
+    project_approval_date: datetime | None = None
+    project_approval_date_specificity: UnitDateSpecificity | None = None
+    project_approval_date_display: str | None = None
+    project_lodgement_date: datetime | None = None
 
-    created_at: datetime | None
-    updated_at: datetime | None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, defer_build=True)
 
     @model_validator(mode="after")
     def add_network_timezone(self) -> Any:
@@ -80,6 +81,20 @@ class UnitResponseSchema(BaseModel):
                 self.data_first_seen = self.data_first_seen.replace(tzinfo=tz_offset)
             if self.data_last_seen:
                 self.data_last_seen = self.data_last_seen.replace(tzinfo=tz_offset)
+            if self.closure_date:
+                self.closure_date = self.closure_date.replace(tzinfo=tz_offset)
+            if self.expected_closure_date:
+                self.expected_closure_date = self.expected_closure_date.replace(tzinfo=tz_offset)
+            if self.construction_start_date:
+                self.construction_start_date = self.construction_start_date.replace(tzinfo=tz_offset)
+            if self.project_approval_date:
+                self.project_approval_date = self.project_approval_date.replace(tzinfo=tz_offset)
+            if self.project_lodgement_date:
+                self.project_lodgement_date = self.project_lodgement_date.replace(tzinfo=tz_offset)
+            if self.commencement_date:
+                self.commencement_date = self.commencement_date.replace(tzinfo=tz_offset)
+            if self.expected_operation_date:
+                self.expected_operation_date = self.expected_operation_date.replace(tzinfo=tz_offset)
 
         return self
 
@@ -91,15 +106,18 @@ class FacilityResponseSchema(BaseModel):
     name: str
     network_id: str
     network_region: str
-    description: str | None
-    npi_id: str | None
-    location: dict | None  # Will contain lat/lng from PostGIS geometry
+    description: str | None = None
+    npi_id: str | None = None
+    location: dict | None = None  # Will contain lat/lng from PostGIS geometry
     units: list[UnitResponseSchema]
 
-    updated_at: datetime | None
-    created_at: datetime | None
+    updated_at: datetime | None = None
+    created_at: datetime | None = None
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        # Exclude None values during serialization
+    )
 
     @model_validator(mode="after")
     def add_network_to_units(self) -> Any:
@@ -112,3 +130,7 @@ class FacilityResponseSchema(BaseModel):
             unit.model_config["context"] = context
 
         return self
+
+
+class APIV4FacilityResponseSchema(APIV4ResponseSchema):
+    data: list[FacilityResponseSchema] = []

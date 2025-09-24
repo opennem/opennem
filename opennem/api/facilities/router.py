@@ -12,9 +12,8 @@ from fastapi_versionizer import api_version
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from opennem.api.facilities.schema import FacilityResponseSchema, UnitResponseSchema
-from opennem.api.facilities.utils import serialize_datetime_specificity, unit_specificity_from_string
-from opennem.api.schema import APIV4ResponseSchema
+from opennem.api.facilities.schema import APIV4FacilityResponseSchema, FacilityResponseSchema, UnitResponseSchema
+from opennem.api.facilities.utils import unit_specificity_from_string
 from opennem.api.security import authenticated_user
 from opennem.db import get_read_session
 from opennem.db.models.opennem import Facility, FuelTech, Unit
@@ -28,6 +27,7 @@ logger = logging.getLogger("opennem.api.facilities")
 @router.get(
     "/",
     response_model_exclude_none=True,
+    response_model_exclude_unset=True,
     tags=["Facilities"],
     description="Get all facilities and their associated units",
 )
@@ -42,7 +42,7 @@ async def get_facilities(
     ),
     network_id: list[str] | None = Query(None, description="Filter by network code(s)"),
     network_region: str | None = Query(None, description="Filter by network region"),
-) -> APIV4ResponseSchema:
+) -> APIV4FacilityResponseSchema:
     """
     Get all facilities and their associated units.
 
@@ -145,56 +145,73 @@ async def get_facilities(
                         logger.debug(f"Failed to parse location for {facility.code}: {e}")
 
                 # Create unit response objects from filtered units
-                unit_responses = [
-                    UnitResponseSchema(
+                unit_responses = []
+
+                for unit in filtered_units:
+                    unit_response_schema = UnitResponseSchema(
                         code=str(unit.code),
-                        fueltech_id=UnitFueltechType(unit.fueltech_id) if unit.fueltech_id else None,
-                        status_id=UnitStatusType(unit.status_id) if unit.status_id else None,
-                        capacity_registered=unit.capacity_registered,
-                        capacity_maximum=unit.capacity_maximum,
-                        capacity_storage=unit.capacity_storage,
-                        emissions_factor_co2=unit.emissions_factor_co2,
-                        data_first_seen=unit.data_first_seen,
-                        data_last_seen=unit.data_last_seen,
-                        dispatch_type=UnitDispatchType(unit.dispatch_type),
-                        commencement_date=unit.commencement_date,
-                        closure_date=unit.closure_date,
-                        expected_operation_date=unit.expected_operation_date,
-                        expected_closure_date=unit.expected_closure_date,
-                        construction_start_date=unit.construction_start_date,
-                        project_approval_date=unit.project_approval_date,
-                        project_lodgement_date=unit.project_approval_lodgement_date,
-                        commencement_date_specificity=unit_specificity_from_string(unit.commencement_date_specificity),
-                        commencement_date_display=serialize_datetime_specificity(
-                            unit.commencement_date, unit.commencement_date_specificity
-                        ),
-                        closure_date_specificity=unit_specificity_from_string(unit.closure_date_specificity),
-                        closure_date_display=serialize_datetime_specificity(unit.closure_date, unit.closure_date_specificity),
-                        expected_operation_date_specificity=unit_specificity_from_string(
-                            unit.expected_operation_date_specificity
-                        ),
-                        expected_operation_date_display=serialize_datetime_specificity(
-                            unit.expected_operation_date, unit.expected_operation_date_specificity
-                        ),
-                        expected_closure_date_specificity=unit_specificity_from_string(unit.expected_closure_date_specificity),
-                        expected_closure_date_display=serialize_datetime_specificity(
-                            unit.expected_closure_date, unit.expected_closure_date_specificity
-                        ),
-                        construction_start_date_specificity=unit_specificity_from_string(
-                            unit.construction_start_date_specificity
-                        ),
-                        construction_start_date_display=serialize_datetime_specificity(
-                            unit.construction_start_date, unit.construction_start_date_specificity
-                        ),
-                        project_approval_date_specificity=unit_specificity_from_string(unit.project_approval_date_specificity),
-                        project_approval_date_display=serialize_datetime_specificity(
-                            unit.project_approval_date, unit.project_approval_date_specificity
-                        ),
-                        created_at=unit.cms_created_at,
-                        updated_at=unit.cms_updated_at,
+                        fueltech_id=UnitFueltechType(unit.fueltech_id),
+                        status_id=UnitStatusType(unit.status_id),
                     )
-                    for unit in filtered_units
-                ]
+
+                    if unit.capacity_registered:
+                        unit_response_schema.capacity_registered = unit.capacity_registered
+                    if unit.capacity_maximum:
+                        unit_response_schema.capacity_maximum = unit.capacity_maximum
+                    if unit.capacity_storage:
+                        unit_response_schema.capacity_storage = unit.capacity_storage
+                    if unit.emissions_factor_co2:
+                        unit_response_schema.emissions_factor_co2 = unit.emissions_factor_co2
+                    if unit.data_first_seen:
+                        unit_response_schema.data_first_seen = unit.data_first_seen
+                    if unit.data_last_seen:
+                        unit_response_schema.data_last_seen = unit.data_last_seen
+                    if unit.dispatch_type:
+                        unit_response_schema.dispatch_type = UnitDispatchType(unit.dispatch_type)
+                    if unit.commencement_date:
+                        unit_response_schema.commencement_date = unit.commencement_date
+                    if unit.closure_date:
+                        unit_response_schema.closure_date = unit.closure_date
+                    if unit.expected_operation_date:
+                        unit_response_schema.expected_operation_date = unit.expected_operation_date
+                    if unit.expected_closure_date:
+                        unit_response_schema.expected_closure_date = unit.expected_closure_date
+                    if unit.construction_start_date:
+                        unit_response_schema.construction_start_date = unit.construction_start_date
+                    if unit.project_approval_date:
+                        unit_response_schema.project_approval_date = unit.project_approval_date
+                    if unit.project_approval_lodgement_date:
+                        unit_response_schema.project_lodgement_date = unit.project_approval_lodgement_date
+                    if unit.commencement_date_specificity:
+                        unit_response_schema.commencement_date_specificity = unit_specificity_from_string(
+                            unit.commencement_date_specificity
+                        )
+                    if unit.closure_date_specificity:
+                        unit_response_schema.closure_date_specificity = unit_specificity_from_string(
+                            unit.closure_date_specificity
+                        )
+                    if unit.expected_operation_date_specificity:
+                        unit_response_schema.expected_operation_date_specificity = unit_specificity_from_string(
+                            unit.expected_operation_date_specificity
+                        )
+                    if unit.expected_closure_date_specificity:
+                        unit_response_schema.expected_closure_date_specificity = unit_specificity_from_string(
+                            unit.expected_closure_date_specificity
+                        )
+                    if unit.construction_start_date_specificity:
+                        unit_response_schema.construction_start_date_specificity = unit_specificity_from_string(
+                            unit.construction_start_date_specificity
+                        )
+                    if unit.project_approval_date_specificity:
+                        unit_response_schema.project_approval_date_specificity = unit_specificity_from_string(
+                            unit.project_approval_date_specificity
+                        )
+                    if unit.cms_created_at:
+                        unit_response_schema.created_at = unit.cms_created_at
+                    if unit.cms_updated_at:
+                        unit_response_schema.updated_at = unit.cms_updated_at
+
+                    unit_responses.append(unit_response_schema)
 
                 facility_response = FacilityResponseSchema(
                     code=facility.code,
@@ -232,4 +249,4 @@ async def get_facilities(
         # Sort facilities by name before returning
         filtered_facilities.sort(key=lambda x: x.name.lower())
 
-        return APIV4ResponseSchema(success=True, data=filtered_facilities, total_records=len(filtered_facilities))
+        return APIV4FacilityResponseSchema(success=True, data=filtered_facilities, total_records=len(filtered_facilities))
