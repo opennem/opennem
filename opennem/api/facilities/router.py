@@ -17,8 +17,8 @@ from opennem.api.facilities.utils import serialize_datetime_specificity, unit_sp
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.api.security import authenticated_user
 from opennem.db import get_read_session
-from opennem.db.models.opennem import Facility
-from opennem.schema.unit import UnitDispatchType, UnitFueltechType, UnitStatusType
+from opennem.db.models.opennem import Facility, FuelTech, Unit
+from opennem.schema.unit import UnitDispatchType, UnitFueltechGroupType, UnitFueltechType, UnitStatusType
 
 router = APIRouter()
 logger = logging.getLogger("opennem.api.facilities")
@@ -37,6 +37,9 @@ async def get_facilities(
     facility_code: list[str] | None = Query(None, description="Filter by facility code(s)"),
     status_id: list[UnitStatusType] | None = Query(None, description="Filter by unit status(es)"),
     fueltech_id: list[UnitFueltechType] | None = Query(None, description="Filter by unit fuel technology type(s)"),
+    fueltech_group_id: list[UnitFueltechGroupType] | None = Query(
+        None, description="Filter by unit fuel technology group type(s)"
+    ),
     network_id: list[str] | None = Query(None, description="Filter by network code(s)"),
     network_region: str | None = Query(None, description="Filter by network region"),
 ) -> APIV4ResponseSchema:
@@ -68,6 +71,16 @@ async def get_facilities(
             )
         )
 
+        # If fueltech_group_id is provided, we need to join through Unit and FuelTech tables
+        if fueltech_group_id:
+            fueltech_group_values = [f.value for f in fueltech_group_id]
+            stmt = (
+                stmt.join(Unit, Unit.station_id == Facility.id)
+                .join(FuelTech, Unit.fueltech_id == FuelTech.code)
+                .where(FuelTech.fueltech_group_id.in_(fueltech_group_values))
+                .distinct()
+            )
+
         # Add network filters if provided
         if network_id:
             stmt = stmt.where(Facility.network_id.in_(network_id))
@@ -83,6 +96,15 @@ async def get_facilities(
         # Convert enum lists to value lists for comparison
         status_values = [s.value for s in status_id] if status_id else None
         fueltech_values = [f.value for f in fueltech_id] if fueltech_id else None
+        fueltech_group_values = [f.value for f in fueltech_group_id] if fueltech_group_id else None
+
+        # Get fueltech to group mapping if we need to filter by group in memory
+        fueltech_groups = {}
+        if fueltech_group_values:
+            ft_result = await session.execute(select(FuelTech))
+            for ft in ft_result.scalars().all():
+                if str(ft.fueltech_group_id):
+                    fueltech_groups[ft.code] = ft.fueltech_group_id
 
         # Filter facilities and units based on criteria
         filtered_facilities = []
@@ -97,6 +119,10 @@ async def get_facilities(
                     and unit.fueltech_id not in ["solar_rooftop", "imports", "exports"]
                     and (status_values is None or unit.status_id in status_values)
                     and (fueltech_values is None or unit.fueltech_id in fueltech_values)
+                    and (
+                        fueltech_group_values is None
+                        or (unit.fueltech_id and fueltech_groups.get(unit.fueltech_id) in fueltech_group_values)
+                    )
                 )
             ]
 
@@ -110,7 +136,7 @@ async def get_facilities(
                         from geoalchemy2.shape import to_shape
 
                         # Convert PostGIS geometry to shapely shape
-                        shape = to_shape(facility.location)
+                        shape = to_shape(facility.location)  # type: ignore
                         # Use coords to get x,y from Point geometry
                         coords = list(shape.coords)[0]
                         location_dict = {"lat": coords[1], "lng": coords[0]}
@@ -194,6 +220,7 @@ async def get_facilities(
                     f"network_region={network_region}" if network_region else None,
                     f"status_ids=[{','.join(str(s) for s in status_id)}]" if status_id else None,
                     f"fueltech_ids=[{','.join(str(f) for f in fueltech_id)}]" if fueltech_id else None,
+                    f"fueltech_group_ids=[{','.join(str(g) for g in fueltech_group_id)}]" if fueltech_group_id else None,
                 ]
                 if filter_str is not None
             )

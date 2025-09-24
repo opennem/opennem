@@ -54,6 +54,21 @@ class UnitFueltechType(enum.Enum):
     aggregator_dr = "aggregator_dr"
 
 
+class UnitFueltechGroupType(enum.Enum):
+    solar = "solar"
+    wind = "wind"
+    hydro = "hydro"
+    biomass = "biomass"
+    coal = "coal"
+    gas = "gas"
+    battery = "battery"
+    battery_charging = "battery_charging"
+    battery_discharging = "battery_discharging"
+    distillate = "distillate"
+    bioenergy = "bioenergy"
+    pumps = "pumps"
+
+
 class UnitSchema(BaseModel):
     """Facility output schema"""
 
