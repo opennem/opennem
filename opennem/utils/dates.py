@@ -388,6 +388,11 @@ def get_last_completed_interval_for_network(network: NetworkSchema = NetworkNEM,
     )
 
 
+def make_datetime_aware_for_network(dt: datetime, network: NetworkSchema) -> datetime:
+    """Makes a datetime aware for a network"""
+    return dt.replace(tzinfo=network.get_fixed_offset())
+
+
 def get_today_nem() -> datetime:
     """Gets today in NEM time"""
     now = datetime.now()

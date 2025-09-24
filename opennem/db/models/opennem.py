@@ -292,8 +292,8 @@ class Unit(Base):
     capacity_storage: Mapped[float | None] = mapped_column(
         Numeric(precision=12, scale=4), nullable=True
     )  # Storage capacity in MWh
-    registered: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-    deregistered: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    registered: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    deregistered: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     emissions_factor_co2: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
     emission_factor_source: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -304,30 +304,30 @@ class Unit(Base):
     data_last_seen: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
     approved: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    commencement_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    commencement_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     commencement_date_specificity: Mapped[str | None] = mapped_column(Text, nullable=True)  # day, month, year
-    closure_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    closure_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     closure_date_specificity: Mapped[str | None] = mapped_column(Text, nullable=True)  # day, month, year
-    expected_operation_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    expected_operation_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     expected_operation_date_specificity: Mapped[str | None] = mapped_column(Text, nullable=True)  # day, month, quarter, year
     expected_operation_date_source: Mapped[str | None] = mapped_column(Text, nullable=True)
-    expected_closure_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    expected_closure_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     expected_closure_date_specificity: Mapped[str | None] = mapped_column(Text, nullable=True)  # day, month, quarter, year
     expected_closure_date_source: Mapped[str | None] = mapped_column(Text, nullable=True)
     expected_closure_year: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     # Construction fields
-    construction_start_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    construction_start_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     construction_start_date_specificity: Mapped[str | None] = mapped_column(Text, nullable=True)  # day, month, year
     construction_start_date_source: Mapped[str | None] = mapped_column(Text, nullable=True)
     construction_cost: Mapped[float | None] = mapped_column(Numeric(precision=12, scale=2), nullable=True)  # $ AUD Millions
     construction_cost_source: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Project approval fields
-    project_approval_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    project_approval_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     project_approval_date_specificity: Mapped[str | None] = mapped_column(Text, nullable=True)  # day, month, year
     project_approval_date_source: Mapped[str | None] = mapped_column(Text, nullable=True)
-    project_approval_lodgement_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    project_approval_lodgement_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     cms_id: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
     cms_created_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
