@@ -8,7 +8,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, model_serializer, model_validator
 
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.core.networks import network_from_network_code
@@ -134,3 +134,22 @@ class FacilityResponseSchema(BaseModel):
 
 class APIV4FacilityResponseSchema(APIV4ResponseSchema):
     data: list[FacilityResponseSchema] = []
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, serializer, info):
+        """Custom serializer to exclude None values from the response."""
+        # Get the default serialized data
+        data = serializer(self)
+
+        # If we're in JSON mode (which FastAPI uses), exclude None values
+        if info.mode == "json":
+            return self._remove_none(data)
+        return data
+
+    def _remove_none(self, data):
+        """Recursively remove None values from a dictionary or list."""
+        if isinstance(data, dict):
+            return {k: self._remove_none(v) for k, v in data.items() if v is not None}
+        elif isinstance(data, list):
+            return [self._remove_none(item) for item in data]
+        return data
