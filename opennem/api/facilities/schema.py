@@ -5,6 +5,7 @@ Defines the schema for the facilities API endpoint responses.
 """
 
 from datetime import datetime
+from enum import Enum
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, model_validator
@@ -12,6 +13,15 @@ from pydantic import BaseModel, ConfigDict, model_validator
 from opennem.core.networks import network_from_network_code
 from opennem.schema.field_types import RoundedFloat2, RoundedFloat4
 from opennem.schema.unit import UnitDispatchType, UnitFueltechType, UnitStatusType
+
+
+class UnitDateSpecificity(Enum):
+    """Date specificity enum"""
+
+    YEAR = "year"
+    MONTH = "month"
+    QUARTER = "quarter"
+    DAY = "day"
 
 
 class UnitResponseSchema(BaseModel):
@@ -30,16 +40,22 @@ class UnitResponseSchema(BaseModel):
 
     # unit date fields
     commencement_date: datetime | None
+    commencement_date_specificity: UnitDateSpecificity | None
     commencement_date_display: str | None
     closure_date: datetime | None
     closure_date_display: str | None
+    closure_date_specificity: UnitDateSpecificity | None
     expected_operation_date: datetime | None
+    expected_operation_date_specificity: UnitDateSpecificity | None
     expected_operation_date_display: str | None
     expected_closure_date: datetime | None
     expected_closure_date_display: str | None
+    expected_closure_date_specificity: UnitDateSpecificity | None
     construction_start_date: datetime | None
+    construction_start_date_specificity: UnitDateSpecificity | None
     construction_start_date_display: str | None
     project_approval_date: datetime | None
+    project_approval_date_specificity: UnitDateSpecificity | None
     project_approval_date_display: str | None
     project_lodgement_date: datetime | None
 

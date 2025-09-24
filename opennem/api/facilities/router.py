@@ -11,7 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from opennem.api.facilities.schema import FacilityResponseSchema, UnitResponseSchema
-from opennem.api.facilities.utils import serialize_datetime_specificity
+from opennem.api.facilities.utils import UnitDateSpecificity, serialize_datetime_specificity, unit_specificity_from_string
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.api.security import authenticated_user
 from opennem.db import get_read_session
@@ -134,19 +134,35 @@ async def get_facilities(
                         construction_start_date=unit.construction_start_date,
                         project_approval_date=unit.project_approval_date,
                         project_lodgement_date=unit.project_approval_lodgement_date,
+                        commencement_date_specificity=UnitDateSpecificity(unit.commencement_date_specificity)
+                        if unit.commencement_date_specificity
+                        else None,
                         commencement_date_display=serialize_datetime_specificity(
                             unit.commencement_date, unit.commencement_date_specificity
                         ),
+                        closure_date_specificity=unit_specificity_from_string(unit.closure_date_specificity),
                         closure_date_display=serialize_datetime_specificity(unit.closure_date, unit.closure_date_specificity),
+                        expected_operation_date_specificity=unit_specificity_from_string(unit.expected_operation_date_specificity)
+                        if unit.expected_operation_date_specificity
+                        else None,
                         expected_operation_date_display=serialize_datetime_specificity(
                             unit.expected_operation_date, unit.expected_operation_date_specificity
                         ),
+                        expected_closure_date_specificity=unit_specificity_from_string(unit.expected_closure_date_specificity)
+                        if unit.expected_closure_date_specificity
+                        else None,
                         expected_closure_date_display=serialize_datetime_specificity(
                             unit.expected_closure_date, unit.expected_closure_date_specificity
                         ),
+                        construction_start_date_specificity=unit_specificity_from_string(unit.construction_start_date_specificity)
+                        if unit.construction_start_date_specificity
+                        else None,
                         construction_start_date_display=serialize_datetime_specificity(
                             unit.construction_start_date, unit.construction_start_date_specificity
                         ),
+                        project_approval_date_specificity=unit_specificity_from_string(unit.project_approval_date_specificity)
+                        if unit.project_approval_date_specificity
+                        else None,
                         project_approval_date_display=serialize_datetime_specificity(
                             unit.project_approval_date, unit.project_approval_date_specificity
                         ),

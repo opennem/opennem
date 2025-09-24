@@ -5,18 +5,21 @@ Utilities for facility outputs
 
 import logging
 from datetime import datetime
-from enum import Enum
+
+from opennem.api.facilities.schema import UnitDateSpecificity
 
 logger = logging.getLogger("opennem.api.facilities.utils")
 
 
-class DateSpecificity(Enum):
-    """Date specificity enum"""
+def unit_specificity_from_string(specificity: str | None) -> UnitDateSpecificity | None:
+    """Takes a string and returns a UnitDateSpecificity."""
+    if not specificity:
+        return None
 
-    YEAR = "year"
-    MONTH = "month"
-    QUARTER = "quarter"
-    DAY = "day"
+    if specificity not in UnitDateSpecificity:
+        return None
+
+    return UnitDateSpecificity(specificity)
 
 
 def serialize_datetime_specificity(dt: datetime | None, specificity: str | None) -> str | None:
@@ -33,7 +36,7 @@ def serialize_datetime_specificity(dt: datetime | None, specificity: str | None)
         return dt.strftime("%Y-%m-%d")
 
     # if the specificity is invalid, log a warning and return the full date
-    if specificity not in DateSpecificity:
+    if specificity not in UnitDateSpecificity:
         logger.warning(f"Invalid specificity: {specificity}")
 
     match specificity:
