@@ -7,6 +7,8 @@ Handles facility and unit data queries and responses.
 import logging
 
 from fastapi import APIRouter, HTTPException, Query
+from fastapi_cache.decorator import cache
+from fastapi_versionizer import api_version
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
@@ -22,12 +24,14 @@ router = APIRouter()
 logger = logging.getLogger("opennem.api.facilities")
 
 
+@api_version(major=4)
 @router.get(
     "/",
     response_model_exclude_none=True,
     tags=["Facilities"],
     description="Get all facilities and their associated units",
 )
+@cache(expire=60 * 15)  # 15 minute cache on facility endpoints
 async def get_facilities(
     user: authenticated_user,
     facility_code: list[str] | None = Query(None, description="Filter by facility code(s)"),
