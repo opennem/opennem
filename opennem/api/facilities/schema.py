@@ -14,7 +14,7 @@ from opennem.schema.field_types import RoundedFloat2, RoundedFloat4
 from opennem.schema.unit import UnitDispatchType, UnitFueltechType, UnitStatusType
 
 
-class UnitResponse(BaseModel):
+class UnitResponseSchema(BaseModel):
     """Unit response schema with selected fields"""
 
     code: str
@@ -30,17 +30,17 @@ class UnitResponse(BaseModel):
 
     # unit date fields
     commencement_date: datetime | None
-    commencement_date_serialized: str | None
+    commencement_date_display: str | None
     closure_date: datetime | None
-    closure_date_serialized: str | None
+    closure_date_display: str | None
     expected_operation_date: datetime | None
-    expected_operation_date_serialized: str | None
+    expected_operation_date_display: str | None
     expected_closure_date: datetime | None
-    expected_closure_date_serialized: str | None
+    expected_closure_date_display: str | None
     construction_start_date: datetime | None
-    construction_start_date_serialized: str | None
+    construction_start_date_display: str | None
     project_approval_date: datetime | None
-    project_approval_date_serialized: str | None
+    project_approval_date_display: str | None
     project_lodgement_date: datetime | None
 
     created_at: datetime | None
@@ -68,7 +68,7 @@ class UnitResponse(BaseModel):
         return self
 
 
-class FacilityResponse(BaseModel):
+class FacilityResponseSchema(BaseModel):
     """Facility response schema with selected fields and associated units"""
 
     code: str
@@ -78,7 +78,7 @@ class FacilityResponse(BaseModel):
     description: str | None
     npi_id: str | None
     location: dict | None  # Will contain lat/lng from PostGIS geometry
-    units: list[UnitResponse]
+    units: list[UnitResponseSchema]
 
     updated_at: datetime | None
     created_at: datetime | None

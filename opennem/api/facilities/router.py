@@ -10,7 +10,7 @@ from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from opennem.api.facilities.schema import FacilityResponse, UnitResponse
+from opennem.api.facilities.schema import FacilityResponseSchema, UnitResponseSchema
 from opennem.api.facilities.utils import serialize_datetime_specificity
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.api.security import authenticated_user
@@ -116,8 +116,8 @@ async def get_facilities(
 
                 # Create unit response objects from filtered units
                 unit_responses = [
-                    UnitResponse(
-                        code=unit.code,
+                    UnitResponseSchema(
+                        code=str(unit.code),
                         fueltech_id=UnitFueltechType(unit.fueltech_id) if unit.fueltech_id else None,
                         status_id=UnitStatusType(unit.status_id) if unit.status_id else None,
                         capacity_registered=unit.capacity_registered,
@@ -134,20 +134,20 @@ async def get_facilities(
                         construction_start_date=unit.construction_start_date,
                         project_approval_date=unit.project_approval_date,
                         project_lodgement_date=unit.project_approval_lodgement_date,
-                        commencement_date_serialized=serialize_datetime_specificity(
+                        commencement_date_display=serialize_datetime_specificity(
                             unit.commencement_date, unit.commencement_date_specificity
                         ),
-                        closure_date_serialized=serialize_datetime_specificity(unit.closure_date, unit.closure_date_specificity),
-                        expected_operation_date_serialized=serialize_datetime_specificity(
+                        closure_date_display=serialize_datetime_specificity(unit.closure_date, unit.closure_date_specificity),
+                        expected_operation_date_display=serialize_datetime_specificity(
                             unit.expected_operation_date, unit.expected_operation_date_specificity
                         ),
-                        expected_closure_date_serialized=serialize_datetime_specificity(
+                        expected_closure_date_display=serialize_datetime_specificity(
                             unit.expected_closure_date, unit.expected_closure_date_specificity
                         ),
-                        construction_start_date_serialized=serialize_datetime_specificity(
+                        construction_start_date_display=serialize_datetime_specificity(
                             unit.construction_start_date, unit.construction_start_date_specificity
                         ),
-                        project_approval_date_serialized=serialize_datetime_specificity(
+                        project_approval_date_display=serialize_datetime_specificity(
                             unit.project_approval_date, unit.project_approval_date_specificity
                         ),
                         created_at=unit.cms_created_at,
@@ -156,7 +156,7 @@ async def get_facilities(
                     for unit in filtered_units
                 ]
 
-                facility_response = FacilityResponse(
+                facility_response = FacilityResponseSchema(
                     code=facility.code,
                     name=facility.name,
                     network_id=facility.network_id,

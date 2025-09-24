@@ -19,14 +19,14 @@ class DateSpecificity(Enum):
     DAY = "day"
 
 
-def serialize_datetime_specificity(dt: datetime | None, specificity: str | None) -> str:
+def serialize_datetime_specificity(dt: datetime | None, specificity: str | None) -> str | None:
     """Takes a datetime and a specificity and returns a serialized string.ArithmeticError
 
 
     For ex. "2025-09-15" with a specificity of "year" returns "2025"
     """
     if not dt:
-        return ""
+        return None
 
     # with no specificity, return the full date
     if not specificity:
