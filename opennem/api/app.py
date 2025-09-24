@@ -13,7 +13,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.param_functions import Query
 from fastapi.responses import FileResponse
 from fastapi_cache import FastAPICache
-from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.backends.redis import RedisBackend
 from fastapi_versionizer import api_version
 from fastapi_versionizer.versionizer import Versionizer
@@ -64,10 +63,7 @@ async def lifespan(app: FastAPI):
 
     logfire.info(f"OpenElectricity API starting up on {settings.env}: v{get_version()} on host {get_hostname()}", service="api")
 
-    if settings.is_dev:
-        logger.info("Cache disabled")
-        FastAPICache.init(backend=InMemoryBackend())
-    else:
+    if not settings.is_dev:
         redis = await aioredis.from_url(str(settings.redis_url), encoding="utf8", decode_responses=True)
         FastAPICache.init(RedisBackend(redis), prefix="api-cache")
         logger.info("Enabled API cache")
