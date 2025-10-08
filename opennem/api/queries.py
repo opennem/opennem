@@ -102,12 +102,15 @@ QUERY_CONFIGS = {
             Metric.DEMAND_ENERGY: "demand_energy",
             Metric.DEMAND_GROSS: "demand_gross",
             Metric.DEMAND_GROSS_ENERGY: "demand_gross_energy",
+            Metric.GENERATION_RENEWABLE: "generation_renewable",
+            Metric.GENERATION_RENEWABLE_ENERGY: "generation_renewable_energy",
             Metric.CURTAILMENT: "curtailment_total",
             Metric.CURTAILMENT_ENERGY: "curtailment_energy_total",
             Metric.CURTAILMENT_SOLAR_UTILITY: "curtailment_solar_total",
             Metric.CURTAILMENT_WIND: "curtailment_wind_total",
             Metric.CURTAILMENT_SOLAR_UTILITY_ENERGY: "curtailment_energy_solar_total",
             Metric.CURTAILMENT_WIND_ENERGY: "curtailment_energy_wind_total",
+            Metric.RENEWABLE_PROPORTION: "round(if(sum(demand_gross) > 0, (sum(generation_renewable) / sum(demand_gross)) * 100, 0), 2)",  # noqa: E501
         },
         metric_agg_functions={
             Metric.PRICE: "avg",
@@ -115,12 +118,15 @@ QUERY_CONFIGS = {
             Metric.DEMAND_ENERGY: "sum",
             Metric.DEMAND_GROSS: "sum",
             Metric.DEMAND_GROSS_ENERGY: "sum",
+            Metric.GENERATION_RENEWABLE: "sum",
+            Metric.GENERATION_RENEWABLE_ENERGY: "sum",
             Metric.CURTAILMENT: "sum",
             Metric.CURTAILMENT_ENERGY: "sum",
             Metric.CURTAILMENT_SOLAR_UTILITY: "sum",
             Metric.CURTAILMENT_WIND: "sum",
             Metric.CURTAILMENT_SOLAR_UTILITY_ENERGY: "sum",
             Metric.CURTAILMENT_WIND_ENERGY: "sum",
+            Metric.RENEWABLE_PROPORTION: "",
         },
     ),
     QueryType.DATA: QueryConfig(
@@ -243,7 +249,11 @@ def get_timeseries_query(
             )
         if m not in config.metric_agg_functions:
             raise ValueError(f"No aggregation function defined for metric '{m.value}'")
-        metric_selects.append(f"{config.metric_agg_functions[m]}({config.metric_columns[m]}) as {m.value.lower()}")
+        metric_selects.append(
+            f"{config.metric_agg_functions[m]}({config.metric_columns[m]}) as {m.value.lower()}"
+            if config.metric_agg_functions[m]
+            else f"{config.metric_columns[m]} as {m.value.lower()}"
+        )
 
     # Build grouping columns based on query type
     group_cols = [f"'{network.code}' as network"]

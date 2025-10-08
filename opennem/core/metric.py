@@ -38,6 +38,8 @@ class Metric(str, Enum):
     DEMAND_ENERGY = "demand_energy"
     DEMAND_GROSS = "demand_gross"
     DEMAND_GROSS_ENERGY = "demand_gross_energy"
+    GENERATION_RENEWABLE = "generation_renewable"
+    GENERATION_RENEWABLE_ENERGY = "generation_renewable_energy"
     CURTAILMENT = "curtailment"
     CURTAILMENT_ENERGY = "curtailment_energy"
     CURTAILMENT_SOLAR_UTILITY = "curtailment_solar_utility"
@@ -131,6 +133,20 @@ METRIC_METADATA = {
         default_agg="sum",
         precision=3,
     ),
+    Metric.GENERATION_RENEWABLE: MetricMetadata(
+        unit="MW",
+        description="Total renewable generation including rooftop solar",
+        column_name="generation_renewable",
+        default_agg="sum",
+        precision=3,
+    ),
+    Metric.GENERATION_RENEWABLE_ENERGY: MetricMetadata(
+        unit="MWh",
+        description="Total renewable energy including rooftop solar",
+        column_name="generation_renewable_energy",
+        default_agg="sum",
+        precision=3,
+    ),
     Metric.EMISSIONS: MetricMetadata(
         unit="t",
         description="CO2 equivalent emissions",
@@ -143,7 +159,7 @@ METRIC_METADATA = {
         description="Percentage of renewable energy",
         column_name="renewable",
         default_agg="avg",
-        precision=1,
+        precision=2,
     ),
     Metric.CURTAILMENT: MetricMetadata(
         unit="MW",

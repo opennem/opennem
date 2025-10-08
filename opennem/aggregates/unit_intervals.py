@@ -930,6 +930,6 @@ if __name__ == "__main__":
 
     import asyncio
 
-    asyncio.run(reset_unit_intervals())
+    asyncio.run(run_unit_intervals_backlog(start_date=datetime.fromisoformat("2025-09-25T00:00:00")))
 
     # backfill_unit_intervals_views(refresh_views=True)

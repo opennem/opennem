@@ -35,10 +35,6 @@ _SUPPORTED_METRICS = [
     Metric.EMISSIONS,
     Metric.MARKET_VALUE,
     Metric.STORAGE_BATTERY,
-    Metric.DEMAND,
-    Metric.DEMAND_ENERGY,
-    Metric.DEMAND_GROSS,
-    Metric.DEMAND_GROSS_ENERGY,
 ]
 
 
@@ -66,7 +62,7 @@ async def get_network_data(
     ] = None,
     client: Any = Depends(get_clickhouse_dependency),
     user: authenticated_user = None,
-) -> APIV4ResponseSchema:
+) -> ORJSONResponse:
     """
     Get time series data for a network.
 
