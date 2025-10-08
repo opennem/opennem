@@ -4,7 +4,7 @@ from pathlib import Path
 from zipfile import ZipFile
 
 from opennem.utils.archive import _handle_zip, chain_streams
-from opennem.utils.httpx import http
+from opennem.utils.httpx import httpx_factory
 from opennem.utils.mime import mime_from_content, mime_from_url
 
 logger = logging.getLogger("opennem.downloader")
@@ -14,6 +14,8 @@ async def url_downloader(url: str) -> bytes:
     """Downloads a URL and returns content, handling embedded zips and other MIME's"""
 
     logger.debug(f"Downloading: {url}")
+
+    http = httpx_factory(proxy=True)
 
     response = await http.get(url)
 
