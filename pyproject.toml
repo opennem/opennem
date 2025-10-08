@@ -76,6 +76,7 @@ dependencies = [
     "orjson>=3.10.16",
     "tweepy[async]>=4.15.0",
     "atproto>=0.0.59",
+    "rnet==3.0.0rc8",
 ]
 
 [dependency-groups]

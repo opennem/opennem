@@ -15,7 +15,7 @@ from tempfile import mkdtemp
 from typing import IO, Any
 from zipfile import ZipFile
 
-from opennem.utils.httpx import http
+from opennem.utils.httpx import httpx_factory
 from opennem.utils.url import get_filename_from_url
 
 logger = logging.getLogger("opennem.archive.utils")
@@ -156,6 +156,8 @@ async def download_and_unzip(url: str) -> Path:
 
     filename = get_filename_from_url(url)
 
+    http = httpx_factory(proxy=True)
+
     response = await http.get(url)
 
     if not response.is_success:
@@ -213,6 +215,8 @@ async def download_and_parse_json_zip(url: str, indent: int | None = None) -> li
     temp_dir = Path(mkdtemp())
 
     response_jsons = []
+
+    http = httpx_factory(proxy=True)
 
     try:
         # Download the file
