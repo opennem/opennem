@@ -16,7 +16,9 @@ from sqlalchemy import text
 
 from opennem import settings
 from opennem.aggregates.facility_interval import run_update_facility_aggregate_last_interval, update_facility_aggregate_last_hours
+from opennem.aggregates.market_summary import run_market_summary_aggregate_for_last_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
+from opennem.aggregates.unit_intervals import run_unit_intervals_aggregate_for_last_days
 from opennem.api.export.tasks import export_power
 from opennem.clients.slack import slack_message
 from opennem.controllers.export import run_export_all, run_export_energy_for_year
@@ -38,7 +40,7 @@ from opennem.crawlers.wemde import ALL_WEM_CRAWLERS, run_all_wem_crawlers
 from opennem.db import get_read_session
 from opennem.db.views import refresh_recent_aggregates
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
-from opennem.workers.energy import process_energy_last_intervals
+from opennem.workers.energy import process_energy_last_days, process_energy_last_intervals
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.incident import create_incident, has_active_incident, resolve_incident
 
@@ -246,7 +248,7 @@ async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None,
         if "archive" in crawler.name.lower() and days < 3:
             continue
 
-        # await run_crawl(crawler, latest=latest, limit=_get_limit_for_crawler(crawler, days))
+        await run_crawl(crawler, latest=latest, limit=_get_limit_for_crawler(crawler, days))
 
         # run the archive crawler if required and if it exists
         if crawler.contains_days and days > crawler.contains_days:
@@ -254,17 +256,17 @@ async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None,
                 logger.error(f"Crawler {crawler.name} has no archive version to fulfill request")
                 continue
 
-            # await run_crawl(
-            #     crawler.archive_version,
-            #     latest=latest,
-            #     reverse=True,
-            #     limit=_get_limit_for_crawler(crawler.archive_version, days),
-            # )
+            await run_crawl(
+                crawler.archive_version,
+                latest=latest,
+                reverse=True,
+                limit=_get_limit_for_crawler(crawler.archive_version, days),
+            )
 
     # run aggregates
-    # await process_energy_last_days(days=days)
-    # await run_unit_intervals_aggregate_for_last_days(days=days)
-    # await run_market_summary_aggregate_for_last_days(days=days)
+    await process_energy_last_days(days=days)
+    await run_unit_intervals_aggregate_for_last_days(days=days)
+    await run_market_summary_aggregate_for_last_days(days=days)
     run_flows_for_last_days(days=days, network=NetworkNEM)
     await update_facility_aggregate_last_hours(hours_back=days * 24)
 
@@ -286,4 +288,4 @@ if __name__ == "__main__":
     import asyncio
 
     # asyncio.run(run_catchup_check(max_gap_minutes=15))
-    asyncio.run(catchup_last_days(days=7))
+    asyncio.run(catchup_last_days(days=15))
