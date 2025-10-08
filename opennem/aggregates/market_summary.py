@@ -60,6 +60,8 @@ async def _get_market_summary_data(
         float | None,
         float | None,
         float | None,
+        float | None,
+        float | None,
     ]
 ]:
     """
@@ -73,8 +75,8 @@ async def _get_market_summary_data(
     Returns:
         List of tuples containing
         (interval, network_id, network_region, price, demand, demand_total,
-         prev_demand, prev_demand_total, curtailment_solar_total,
-         curtailment_wind_total, prev_curtailment_solar_total,
+         prev_demand, prev_demand_total, rooftop_solar, prev_rooftop_solar,
+         curtailment_solar_total, curtailment_wind_total, prev_curtailment_solar_total,
          prev_curtailment_wind_total, curtailment_total)
         Note: Only returns complete interval pairs where both current and previous intervals are available
     """
@@ -89,6 +91,23 @@ async def _get_market_summary_data(
         FROM balancing_summary
         WHERE interval BETWEEN :start_time_window AND :end_time
         AND is_forecast = false
+    ),
+    rooftop_data AS (
+        -- Get rooftop solar generation aggregated by region with gap filling
+        SELECT
+            time_bucket_gapfill('5 minutes', fs.interval, :start_time_window, :end_time) as interval,
+            f.network_id,
+            f.network_region,
+            interpolate(avg(fs.generated)) as rooftop_solar
+        FROM facility_scada fs
+        JOIN units u ON fs.facility_code = u.code
+        JOIN facilities f ON u.station_id = f.id
+        WHERE fs.interval BETWEEN :start_time_window AND :end_time
+            AND u.fueltech_id = 'solar_rooftop'
+            AND fs.is_forecast = false
+            AND f.network_id IN (SELECT network_id FROM regions)
+            AND f.network_region IN (SELECT network_region FROM regions)
+        GROUP BY 1, 2, 3
     ),
     gapfilled_data AS (
         -- Generate complete time series with gap filling for each region
@@ -108,6 +127,23 @@ async def _get_market_summary_data(
             AND network_region IN (SELECT network_region FROM regions)
         GROUP BY 1, 2, 3
     ),
+    combined_data AS (
+        SELECT
+            COALESCE(gd.interval, rd.interval) as interval,
+            COALESCE(gd.network_id, rd.network_id) as network_id,
+            COALESCE(gd.network_region, rd.network_region) as network_region,
+            gd.price,
+            gd.demand,
+            gd.demand_total,
+            COALESCE(rd.rooftop_solar, 0) as rooftop_solar,
+            gd.curtailment_solar_total,
+            gd.curtailment_wind_total
+        FROM gapfilled_data gd
+        FULL OUTER JOIN rooftop_data rd
+            ON gd.interval = rd.interval
+            AND gd.network_id = rd.network_id
+            AND gd.network_region = rd.network_region
+    ),
     ranked_data AS (
         SELECT
             interval,
@@ -124,6 +160,11 @@ async def _get_market_summary_data(
                 PARTITION BY network_id, network_region
                 ORDER BY interval
             ) as prev_demand_total,
+            rooftop_solar,
+            LAG(rooftop_solar) OVER (
+                PARTITION BY network_id, network_region
+                ORDER BY interval
+            ) as prev_rooftop_solar,
             curtailment_solar_total,
             curtailment_wind_total,
             LAG(curtailment_solar_total) OVER (
@@ -134,7 +175,7 @@ async def _get_market_summary_data(
                 PARTITION BY network_id, network_region
                 ORDER BY interval
             ) as prev_curtailment_wind_total
-        FROM gapfilled_data
+        FROM combined_data
         ORDER BY interval
     )
     SELECT
@@ -146,6 +187,8 @@ async def _get_market_summary_data(
         demand_total,
         prev_demand,
         prev_demand_total,
+        rooftop_solar,
+        prev_rooftop_solar,
         curtailment_solar_total,
         curtailment_wind_total,
         prev_curtailment_solar_total,
@@ -184,6 +227,8 @@ def _prepare_market_summary_data(
             float | None,
             float | None,
             float | None,
+            float | None,
+            float | None,
         ]
     ],
 ) -> list[
@@ -191,6 +236,9 @@ def _prepare_market_summary_data(
         datetime,
         str,
         str,
+        float | None,
+        float | None,
+        float | None,
         float | None,
         float | None,
         float | None,
@@ -230,6 +278,8 @@ def _prepare_market_summary_data(
             "demand_total": pl.Float64,
             "prev_demand": pl.Float64,
             "prev_demand_total": pl.Float64,
+            "rooftop_solar": pl.Float64,
+            "prev_rooftop_solar": pl.Float64,
             "curtailment_solar_total": pl.Float64,
             "curtailment_wind_total": pl.Float64,
             "prev_curtailment_solar_total": pl.Float64,
@@ -242,14 +292,24 @@ def _prepare_market_summary_data(
     # round all float64 columns to 4 decimal places
     df = df.with_columns([pl.col(col).round(4) for col in df.columns if isinstance(col, pl.Float64)])
 
-    # fill curtailment records with 0 if they are null
+    # fill curtailment and rooftop records with 0 if they are null
     df = df.with_columns(
         [
+            pl.col("rooftop_solar").fill_null(0),
+            pl.col("prev_rooftop_solar").fill_null(0),
             pl.col("curtailment_solar_total").fill_null(0),
             pl.col("curtailment_wind_total").fill_null(0),
             pl.col("prev_curtailment_solar_total").fill_null(0),
             pl.col("prev_curtailment_wind_total").fill_null(0),
             pl.col("curtailment_total").fill_null(0),
+        ]
+    )
+
+    # Calculate demand_gross (demand_total + rooftop_solar)
+    df = df.with_columns(
+        [
+            (pl.col("demand_total") + pl.col("rooftop_solar")).round(4).alias("demand_gross"),
+            (pl.col("prev_demand_total") + pl.col("prev_rooftop_solar")).round(4).alias("prev_demand_gross"),
         ]
     )
 
@@ -295,6 +355,20 @@ def _prepare_market_summary_data(
             ).alias("demand_total_energy"),
             (
                 (
+                    (pl.col("demand_gross") + pl.col("prev_demand_gross"))
+                    / 2
+                    / pl.when(pl.col("network_id").is_in(list(intervals_map.keys())))
+                    .then(
+                        pl.col("network_id").map_elements(
+                            lambda x: intervals_map.get(x, default_intervals), return_dtype=pl.Float64
+                        )
+                    )
+                    .otherwise(default_intervals)
+                    / 1000  # Convert from kWh to MWh
+                ).round(4)
+            ).alias("demand_gross_energy"),
+            (
+                (
                     (pl.col("curtailment_solar_total") + pl.col("prev_curtailment_solar_total"))
                     / 2
                     / pl.when(pl.col("network_id").is_in(list(intervals_map.keys())))
@@ -338,6 +412,7 @@ def _prepare_market_summary_data(
         [
             (pl.col("demand_energy") * pl.col("price")).round(4).alias("demand_market_value"),
             (pl.col("demand_total_energy") * pl.col("price")).round(4).alias("demand_total_market_value"),
+            (pl.col("demand_gross_energy") * pl.col("price")).round(4).alias("demand_gross_market_value"),
             pl.lit(int(datetime.now().timestamp())).alias("version"),  # Add version column
         ]
     )
@@ -351,10 +426,13 @@ def _prepare_market_summary_data(
             "price",
             "demand",
             "demand_total",
+            "demand_gross",
             "demand_energy",
             "demand_total_energy",
+            "demand_gross_energy",
             "demand_market_value",
             "demand_total_market_value",
+            "demand_gross_market_value",
             "curtailment_solar_total",
             "curtailment_wind_total",
             "curtailment_total",
@@ -438,9 +516,9 @@ async def process_market_summary_backlog(
                 INSERT INTO market_summary
                 (
                     interval, network_id, network_region, price, demand, demand_total,
-                    demand_energy, demand_total_energy, demand_market_value,
-                    demand_total_market_value, curtailment_solar_total,
-                    curtailment_wind_total, curtailment_total,
+                    demand_gross, demand_energy, demand_total_energy, demand_gross_energy,
+                    demand_market_value, demand_total_market_value, demand_gross_market_value,
+                    curtailment_solar_total, curtailment_wind_total, curtailment_total,
                     curtailment_energy_solar_total, curtailment_energy_wind_total,
                     curtailment_energy_total, version
                 )
@@ -488,9 +566,9 @@ async def run_market_summary_aggregate_to_now() -> int:
         INSERT INTO market_summary
         (
             interval, network_id, network_region, price, demand, demand_total,
-            demand_energy, demand_total_energy, demand_market_value,
-            demand_total_market_value, curtailment_solar_total,
-            curtailment_wind_total, curtailment_total,
+            demand_gross, demand_energy, demand_total_energy, demand_gross_energy,
+            demand_market_value, demand_total_market_value, demand_gross_market_value,
+            curtailment_solar_total, curtailment_wind_total, curtailment_total,
             curtailment_energy_solar_total, curtailment_energy_wind_total,
             curtailment_energy_total, version
         )
@@ -522,9 +600,9 @@ async def run_market_summary_aggregate_for_last_intervals(num_intervals: int) ->
         INSERT INTO market_summary
         (
             interval, network_id, network_region, price, demand, demand_total,
-            demand_energy, demand_total_energy, demand_market_value,
-            demand_total_market_value, curtailment_solar_total,
-            curtailment_wind_total, curtailment_total,
+            demand_gross, demand_energy, demand_total_energy, demand_gross_energy,
+            demand_market_value, demand_total_market_value, demand_gross_market_value,
+            curtailment_solar_total, curtailment_wind_total, curtailment_total,
             curtailment_energy_solar_total, curtailment_energy_wind_total,
             curtailment_energy_total, version
         )
@@ -675,10 +753,10 @@ if __name__ == "__main__":
     # Run the complete reset
     async def main():
         # Option 1: Full reset from the beginning
-        await reset_market_summary()
+        # await reset_market_summary()
 
         # Option 2: Reset from a specific date (e.g., last month for testing)
-        # await reset_market_summary(start_date=datetime.fromisoformat("2025-06-01T00:00:00"))
+        await reset_market_summary(start_date=datetime.fromisoformat("2024-01-01T00:00:00"))
 
         # Option 3: Incremental update without schema refresh
         # await reset_market_summary(
@@ -688,4 +766,4 @@ if __name__ == "__main__":
 
     import asyncio
 
-    asyncio.run(run_market_summary_aggregate_for_last_intervals(num_intervals=12 * 24))
+    asyncio.run(main())

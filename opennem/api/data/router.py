@@ -35,6 +35,10 @@ _SUPPORTED_METRICS = [
     Metric.EMISSIONS,
     Metric.MARKET_VALUE,
     Metric.STORAGE_BATTERY,
+    Metric.DEMAND,
+    Metric.DEMAND_ENERGY,
+    Metric.DEMAND_GROSS,
+    Metric.DEMAND_GROSS_ENERGY,
 ]
 
 

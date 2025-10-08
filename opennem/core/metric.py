@@ -36,6 +36,8 @@ class Metric(str, Enum):
     MARKET_VALUE = "market_value"
     DEMAND = "demand"
     DEMAND_ENERGY = "demand_energy"
+    DEMAND_GROSS = "demand_gross"
+    DEMAND_GROSS_ENERGY = "demand_gross_energy"
     CURTAILMENT = "curtailment"
     CURTAILMENT_ENERGY = "curtailment_energy"
     CURTAILMENT_SOLAR_UTILITY = "curtailment_solar_utility"
@@ -112,6 +114,20 @@ METRIC_METADATA = {
         unit="MWh",
         description="Demand generation energy",
         column_name="demand_energy",
+        default_agg="sum",
+        precision=3,
+    ),
+    Metric.DEMAND_GROSS: MetricMetadata(
+        unit="MW",
+        description="Total demand including rooftop solar",
+        column_name="demand_gross",
+        default_agg="sum",
+        precision=3,
+    ),
+    Metric.DEMAND_GROSS_ENERGY: MetricMetadata(
+        unit="MWh",
+        description="Total demand energy including rooftop solar",
+        column_name="demand_gross_energy",
         default_agg="sum",
         precision=3,
     ),
