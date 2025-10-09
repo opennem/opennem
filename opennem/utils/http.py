@@ -14,7 +14,6 @@ _DEFAULT_BROWSER_HEADERS = {
     "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",  # noqa: E501
     "Cache-Control": "no-cache",
-    "Connection": "keep-alive",
 }
 
 
@@ -36,12 +35,12 @@ def get_rnet_proxy() -> rnet.Proxy:
 
     return rnet.Proxy.all(
         url=settings.http_proxy_url,
-        custom_http_headers=_DEFAULT_BROWSER_HEADERS,
+        # custom_http_headers=_DEFAULT_BROWSER_HEADERS,
     )
 
 
 async def proxy_test():
-    resp = await get_rnet_client().get(url="https://lumtest.com/myip.json", proxy=get_rnet_proxy())
+    resp = await get_rnet_client(mimic_browser=False).get(url="https://lumtest.com/myip.json", proxy=get_rnet_proxy())
 
     print(await resp.json())
 
