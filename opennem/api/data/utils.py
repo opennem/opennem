@@ -44,26 +44,26 @@ def get_max_interval_days(interval: Interval, user: OpenNEMUser | None = None) -
     """
     # Define maximum days for each interval
     MAX_INTERVAL_DAYS = {
-        Interval.INTERVAL: 7,  # 5m intervals max 7 days
-        Interval.HOUR: 30,  # 1h intervals max 30 days
-        Interval.DAY: 365,  # 1d intervals max 1 year
-        Interval.WEEK: 365,  # 7d intervals max 1 year
-        Interval.MONTH: 730,  # 1M intervals max 2 years
-        Interval.QUARTER: 1825,  # 3M intervals max 5 years
-        Interval.SEASON: 1825,  # Season intervals max 5 years
-        Interval.YEAR: 3650,  # 1y intervals max 5 years
+        Interval.INTERVAL: 8,  # 5m intervals max 7 days
+        Interval.HOUR: 32,  # 1h intervals max 30 days
+        Interval.DAY: 366,  # 1d intervals max 1 year
+        Interval.WEEK: 366,  # 7d intervals max 1 year
+        Interval.MONTH: 732,  # 1M intervals max 2 years
+        Interval.QUARTER: 1830,  # 3M intervals max 5 years
+        Interval.SEASON: 1830,  # Season intervals max 5 years
+        Interval.YEAR: 3700,  # 1y intervals max 5 years
     }
 
     if user and user.is_admin:
         MAX_INTERVAL_DAYS = {
-            Interval.INTERVAL: 30,  # 5m intervals max 7 days
-            Interval.HOUR: 365,  # 1h intervals max 30 days
-            Interval.DAY: 3650,  # 1d intervals max 1 year
-            Interval.WEEK: 3650,  # 7d intervals max 1 year
-            Interval.MONTH: 10000,  # 1M intervals max 2 years
-            Interval.QUARTER: 10000,  # 3M intervals max 5 years
-            Interval.SEASON: 10000,  # Season intervals max 5 years
-            Interval.YEAR: 10000,  # 1y intervals max 5 years
+            Interval.INTERVAL: 30,
+            Interval.HOUR: 365,
+            Interval.DAY: 3650,
+            Interval.WEEK: 3650,
+            Interval.MONTH: 10000,
+            Interval.QUARTER: 10000,
+            Interval.SEASON: 10000,
+            Interval.YEAR: 10000,
         }
 
     return MAX_INTERVAL_DAYS.get(interval, 7)  # Default to 7 days for unknown intervals
