@@ -295,6 +295,10 @@ class Unit(Base):
     registered: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     deregistered: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
+    # max generation fields - this is the max observed generation of the unit and when
+    max_generation: Mapped[float | None] = mapped_column(Numeric(precision=12, scale=4), nullable=True)
+    max_generation_interval: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+
     emissions_factor_co2: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
     emission_factor_source: Mapped[str | None] = mapped_column(Text, nullable=True)
     interconnector: Mapped[bool] = mapped_column(Boolean, default=False, index=True)

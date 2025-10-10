@@ -56,6 +56,7 @@ from opennem.tasks.tasks import (
     task_send_cms_updates_slack_report,
     task_update_facility_first_seen,
     task_update_facility_seen_range,
+    task_update_max_generation_for_units,
     task_update_milestones,
     task_wem_day_crawl,
 )
@@ -269,6 +270,13 @@ class WorkerSettings:
             second=30,
             timeout=None,
             unique=True,
+        ),
+        # Update max generation for units
+        cron(
+            task_update_max_generation_for_units,
+            hour=0,
+            minute=0,
+            second=0,
         ),
         # clean tmp dir
         cron(

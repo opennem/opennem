@@ -60,6 +60,10 @@ class UnitResponseSchema(BaseModel):
     project_approval_date_display: str | None = None
     project_lodgement_date: datetime | None = None
 
+    # max generation fields
+    max_generation: RoundedFloat4 | None = None
+    max_generation_interval: datetime | None = None
+
     created_at: datetime | None = None
     updated_at: datetime | None = None
 

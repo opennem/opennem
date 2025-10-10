@@ -211,6 +211,12 @@ async def get_facilities(
                     if unit.cms_updated_at:
                         unit_response_schema.updated_at = unit.cms_updated_at
 
+                    # max generation fields
+                    if unit.max_generation:
+                        unit_response_schema.max_generation = unit.max_generation
+                    if unit.max_generation_interval:
+                        unit_response_schema.max_generation_interval = unit.max_generation_interval
+
                     unit_responses.append(unit_response_schema)
 
                 facility_response = FacilityResponseSchema(
