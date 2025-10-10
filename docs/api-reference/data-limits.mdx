@@ -16,14 +16,14 @@ The Open Electricity API enforces maximum date range limits for data queries to 
 
 | Interval | Maximum Range | Description |
 |----------|--------------|-------------|
-| 5-minute (`interval`) | 7 days | High-resolution 5-minute interval data |
-| Hourly (`hour`) | 30 days | Hourly aggregated data |
-| Daily (`day`) | 365 days | Daily aggregated data |
-| Weekly (`week`) | 365 days | Weekly aggregated data |
-| Monthly (`month`) | 730 days (~2 years) | Monthly aggregated data |
-| Quarterly (`quarter`) | 1825 days (~5 years) | Quarterly aggregated data |
-| Seasonal (`season`) | 1825 days (~5 years) | Seasonal aggregated data |
-| Yearly (`year`) | 3650 days (~10 years) | Yearly aggregated data |
+| 5-minute (`interval`) | 8 days | High-resolution 5-minute interval data |
+| Hourly (`hour`) | 32 days | Hourly aggregated data |
+| Daily (`day`) | 366 days | Daily aggregated data |
+| Weekly (`week`) | 366 days | Weekly aggregated data |
+| Monthly (`month`) | 732 days (~2 years) | Monthly aggregated data |
+| Quarterly (`quarter`) | 1830 days (~5 years) | Quarterly aggregated data |
+| Seasonal (`season`) | 1830 days (~5 years) | Seasonal aggregated data |
+| Yearly (`year`) | 3700 days (~10 years) | Yearly aggregated data |
 
 ## Error Response
 
@@ -31,7 +31,7 @@ When a date range exceeds the maximum allowed for an interval, the API returns a
 
 ```json
 {
-  "detail": "Date range too large for hour interval. Maximum range is 30 days."
+  "detail": "Date range too large for hour interval. Maximum range is 32 days."
 }
 ```
 
