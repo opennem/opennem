@@ -2432,7 +2432,7 @@ wheels = [
 
 [[package]]
 name = "opennem"
-version = "4.4.0.dev2"
+version = "4.4.0.dev3"
 source = { editable = "." }
 dependencies = [
     { name = "aioboto3" },
@@ -4017,6 +4017,8 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/35/02/0908590e8bbddec5c8da4b737b1b16239ccff74f0d82f5d8611727e8646c/rnet-3.0.0rc8-cp311-abi3-win32.whl", hash = "sha256:8feff38c3865f007ec4b1d24886f97c30399f52585fa48beae1eba76bc94998a", size = 3378592, upload-time = "2025-10-03T15:04:48.305Z" },
     { url = "https://files.pythonhosted.org/packages/07/03/6da99b5e971ec5d9d38d138a483918b665cb8673543e0d8ef0243c9562c8/rnet-3.0.0rc8-cp311-abi3-win_amd64.whl", hash = "sha256:11cfcee004e01b53e1959820989fb28a42c760114ceae9ed6c5372ea6a542bfb", size = 3685020, upload-time = "2025-10-03T15:04:46.658Z" },
     { url = "https://files.pythonhosted.org/packages/a6/24/7a38c957d918c78cc905a650a2577f860bde89e07ba30c210b63293ff2bb/rnet-3.0.0rc8-cp311-abi3-win_arm64.whl", hash = "sha256:62f6dfbeca3e2a652805a66458e52a494b492809719b1c20a4fa10e5037791e8", size = 3351452, upload-time = "2025-10-03T15:04:45.105Z" },
+    { url = "https://files.pythonhosted.org/packages/db/e4/055306aa299a422bdeacfec9d6ac8c4c770122a15b7788ac1ad8a4e33d21/rnet-3.0.0rc8-cp314-abi3-android_21_arm64_v8a.whl", hash = "sha256:9c0cdc0a25119e2833a38626997d0b7161a0d2270ac8b28f20464aed30fce2a8", size = 3687850, upload-time = "2025-10-09T05:51:49.656Z" },
+    { url = "https://files.pythonhosted.org/packages/19/6b/77424949e66c06e68904d725c975c0d44d387aad33263f5be7efb8277529/rnet-3.0.0rc8-cp314-abi3-android_21_x86_64.whl", hash = "sha256:5ea403ef655e262ee21adf927469abe4766feff87df1c36d75f12d36318d70f2", size = 3842675, upload-time = "2025-10-09T05:53:36.83Z" },
 ]
 
 [[package]]
