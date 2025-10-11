@@ -82,7 +82,7 @@ async def _backfill_max_generation_for_units() -> int:
         return update_count
 
 
-async def update_max_generation_for_units(days_since: int = 7) -> int:
+async def update_max_generation_for_units(days_since: int | None = 7) -> int:
     """
     Update max generation for each unit checking only recent data (last N days).
     Only updates if the new max generation is greater than the existing stored value.
@@ -96,12 +96,18 @@ async def update_max_generation_for_units(days_since: int = 7) -> int:
         int: Number of unit records updated
     """
     current_interval = get_last_completed_interval_for_network(network=network.NetworkNEM, tz_aware=False)
-    start_interval = current_interval - timedelta(days=days_since)
+
+    if days_since:
+        start_interval = current_interval - timedelta(days=days_since)
+        start_interval_query = "AND interval >= :start_interval"
+    else:
+        start_interval = None
+        start_interval_query = ""
 
     logger.info(f"Checking max generation from {start_interval} to {current_interval}")
 
     # Query recent max generation for each unit
-    recent_max_query = text("""
+    recent_max_query = text(f"""
         WITH max_gen AS (
             SELECT
                 facility_code,
@@ -113,7 +119,7 @@ async def update_max_generation_for_units(days_since: int = 7) -> int:
                 generated IS NOT NULL
                 AND is_forecast = false
                 AND generated > 0
-                AND interval >= :start_interval
+                {start_interval_query}
         )
         SELECT
             facility_code,
@@ -186,17 +192,12 @@ async def update_max_generation_for_units(days_since: int = 7) -> int:
 if __name__ == "__main__":
     import asyncio
 
-    # Test with data since Jan 1, 2025
     async def test_update():
-        from datetime import datetime
+        # current_interval = get_last_completed_interval_for_network(network=network.NetworkNEM, tz_aware=False)
+        # start_date = datetime(2025, 1, 1)
+        # days_since = (current_interval - start_date).days
 
-        current_interval = get_last_completed_interval_for_network(network=network.NetworkNEM, tz_aware=False)
-        start_date = datetime(2025, 1, 1)
-        days_since = (current_interval - start_date).days
-
-        logger.info(f"Testing update with lookback since {start_date} ({days_since} days)")
-
-        count = await update_max_generation_for_units(days_since=days_since)
+        count = await update_max_generation_for_units(days_since=None)
         logger.info(f"Updated {count} records")
 
     asyncio.run(test_update())
