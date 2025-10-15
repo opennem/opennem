@@ -272,6 +272,10 @@ def _analyze_milestone_records(
             agg_function = "SUM"
     elif milestone_type == MilestoneType.proportion:
         interval_count = "1"
+
+        if period != MilestonePeriod.interval:
+            interval_count = 10000000000  # @note hack until we do bounds on renew propoertion
+
         metric_column = "round(if(sum(demand_gross) > 0, (sum(generation_renewable) / sum(demand_gross)) * 100, 0), 2)"
         agg_function = ""
 
@@ -296,6 +300,10 @@ def _analyze_milestone_records(
 
     if milestone_type in [MilestoneType.energy, MilestoneType.emissions]:
         maxes_min_value = 1000
+
+    # for renewable proportion we need the min max to be 0
+    if milestone_type in [MilestoneType.proportion]:
+        maxes_min_value = 0
 
     # rounding
     round_values_to = 2 if milestone_type in [MilestoneType.proportion] else 0
@@ -732,9 +740,13 @@ if __name__ == "__main__":
         logger.info("Milestones table deleted")
 
         await run_milestone_analysis(
-            start_date=datetime.fromisoformat("2025-01-01T00:00:00"),
+            start_date=datetime.fromisoformat("2020-01-01T00:00:00"),
             metrics=[MilestoneType.proportion],
-            periods=[MilestonePeriod.interval, MilestonePeriod.day],
+            periods=[
+                # MilestonePeriod.interval,
+                MilestonePeriod.day
+            ],
+            # groupings=[GroupingConfig(name="network", group_by_fields=[])],
             # groupings=[GroupingConfig(name="fueltech", group_by_fields=["network_region", "fueltech_group_id"])],
             networks=[NetworkNEM],
             debug=True,
