@@ -77,21 +77,22 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
             else:
                 return 9  # @NOTE temporary
 
-    if (
-        milestone.metric == MilestoneType.proportion
-        and milestone.period
-        in [
-            MilestonePeriod.interval,
-            MilestonePeriod.day,
-            MilestonePeriod.week,
-            MilestonePeriod.week_rolling,
-        ]
-        and milestone.aggregate == MilestoneAggregate.high
-    ):
-        if milestone.network_region is None:
-            return 10
+    if milestone.metric == MilestoneType.proportion and milestone.period in [
+        MilestonePeriod.interval,
+        MilestonePeriod.day,
+        MilestonePeriod.week,
+        MilestonePeriod.week_rolling,
+    ]:
+        if milestone.aggregate == MilestoneAggregate.high:
+            if milestone.network_region is None:
+                return 10
+            else:
+                return 9  # @NOTE temporary
         else:
-            return 9  # @NOTE temporary
+            if milestone.network_region is None:
+                return 5
+            else:
+                return 4  # @NOTE temporary
 
     # renewable emissions doesn't make sense as a record
     if milestone.fueltech == MilestoneFueltechGrouping.renewables and milestone.metric == MilestoneType.emissions:
