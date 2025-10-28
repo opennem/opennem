@@ -635,11 +635,11 @@ async def run_market_summary_aggregate_to_now() -> int:
         INSERT INTO market_summary
         (
             interval, network_id, network_region, price, demand, demand_total,
-            demand_gross, demand_energy, demand_total_energy, demand_gross_energy,
-            demand_market_value, demand_total_market_value, demand_gross_market_value,
-            curtailment_solar_total, curtailment_wind_total, curtailment_total,
-            curtailment_energy_solar_total, curtailment_energy_wind_total,
-            curtailment_energy_total, version
+            demand_gross, generation_renewable, demand_energy, demand_total_energy,
+            demand_gross_energy, generation_renewable_energy, demand_market_value,
+            demand_total_market_value, demand_gross_market_value, curtailment_solar_total,
+            curtailment_wind_total, curtailment_total, curtailment_energy_solar_total,
+            curtailment_energy_wind_total, curtailment_energy_total, version
         )
         VALUES
         """,
@@ -669,11 +669,11 @@ async def run_market_summary_aggregate_for_last_intervals(num_intervals: int) ->
         INSERT INTO market_summary
         (
             interval, network_id, network_region, price, demand, demand_total,
-            demand_gross, demand_energy, demand_total_energy, demand_gross_energy,
-            demand_market_value, demand_total_market_value, demand_gross_market_value,
-            curtailment_solar_total, curtailment_wind_total, curtailment_total,
-            curtailment_energy_solar_total, curtailment_energy_wind_total,
-            curtailment_energy_total, version
+            demand_gross, generation_renewable, demand_energy, demand_total_energy,
+            demand_gross_energy, generation_renewable_energy, demand_market_value,
+            demand_total_market_value, demand_gross_market_value, curtailment_solar_total,
+            curtailment_wind_total, curtailment_total, curtailment_energy_solar_total,
+            curtailment_energy_wind_total, curtailment_energy_total, version
         )
         VALUES
         """,
