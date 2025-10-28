@@ -28,7 +28,7 @@ async def export_facilities_static() -> None:
     """
 
     # get all facilities
-    facilities = get_cms_facilities()
+    facilities = await get_cms_facilities()
 
     # remove 'battery' units
     facilities_clean = []

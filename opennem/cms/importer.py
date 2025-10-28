@@ -568,7 +568,7 @@ async def update_facility_from_cms(facility_code: str, send_slack: bool = True) 
         If the facility is not found in the CMS, a log message is generated
         but no error is raised.
     """
-    sanity_facilities = get_cms_facilities(facility_code=facility_code)
+    sanity_facilities = await get_cms_facilities(facility_code=facility_code)
 
     if not sanity_facilities:
         logger.info(f"Facility {facility_code} not found in CMS")
@@ -602,7 +602,7 @@ async def update_database_facilities_from_cms(
         facility_code: Optional specific facility code to update
     """
     # Get facilities from CMS
-    sanity_facilities = get_cms_facilities(facility_code=facility_code, cms_id=cms_id)
+    sanity_facilities = await get_cms_facilities(facility_code=facility_code, cms_id=cms_id)
     logger.info(f"Processing {len(sanity_facilities)} facilities from CMS")
 
     # Track statistics and created facility codes
@@ -639,7 +639,7 @@ async def check_orphaned_facilities() -> list[str]:
     Returns:
         List of facility codes that exist in database but not in CMS
     """
-    sanity_facilities = get_cms_facilities()
+    sanity_facilities = await get_cms_facilities()
     database_facilities = await get_database_facilities()
 
     # Get all CMS facility codes

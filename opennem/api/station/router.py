@@ -38,7 +38,7 @@ class StationNoFacilities(OpennemBaseHttpException):
     response_model_exclude_none=True,
 )
 async def get_facilities(user: authenticated_user) -> APIV4ResponseSchema:
-    facilities = get_cms_facilities()
+    facilities = await get_cms_facilities()
 
     model_output = APIV4ResponseSchema(success=True, data=facilities, total_records=len(facilities))
 
@@ -62,7 +62,7 @@ async def get_facility(
     if network_id.upper() not in ["NEM", "WEM"]:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Network not found")
 
-    facilities = get_cms_facilities(facility_code=station_code)
+    facilities = await get_cms_facilities(facility_code=station_code)
 
     # remove 'battery' units
     facilities_clean = []

@@ -29,6 +29,7 @@ from typing import TypeVar
 
 from portabletext_html import PortableTextRenderer
 from pydantic import ValidationError
+from sanity import SanityAsyncClient
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from opennem import settings
@@ -257,7 +258,7 @@ def _validate_unique_codes(facilities: list[FacilitySchema]) -> None:
     retry=retry_if_exception_type((CMSQueryError, ValidationError)),
     reraise=True,
 )
-def get_cms_facilities(facility_code: str | None = None, cms_id: str | None = None) -> list[FacilitySchema]:
+async def get_cms_facilities(facility_code: str | None = None, cms_id: str | None = None) -> list[FacilitySchema]:
     """Retrieve facility data from the CMS with optional filtering.
 
     This is the primary function for retrieving facility data from the CMS. It includes
@@ -348,7 +349,8 @@ def get_cms_facilities(facility_code: str | None = None, cms_id: str | None = No
         }}
     }}"""
 
-    res = sanity_client.query(query)
+    async with SanityAsyncClient(project_id=settings.sanity_project_id, token=settings.sanity_api_key) as client:
+        res = await client.query(query)
 
     if not res or not isinstance(res, dict) or "result" not in res or not res["result"]:
         logger.error("No facilities found")
