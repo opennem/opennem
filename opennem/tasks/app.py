@@ -315,9 +315,20 @@ class WorkerSettings:
 
 def main() -> None:
     """Run the main worker"""
+    import asyncio
+
     from opennem import settings
 
     if settings.run_worker:
+        # Python 3.14 compatibility: ensure event loop exists before arq tries to get it
+        # arq calls asyncio.get_event_loop() in Worker.__init__ which no longer
+        # automatically creates a loop
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
         worker = create_worker(settings_cls=WorkerSettings)  # type: ignore
         worker.run()
     else:
