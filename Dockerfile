@@ -1,4 +1,4 @@
-FROM python:3.14-bullseye as python-base
+FROM python:3.14-slim as python-base
 
 # python
 ENV PROJECT_NAME="opennem" \
