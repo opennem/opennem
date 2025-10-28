@@ -1,6 +1,7 @@
 """Core loaders that handle files"""
 
 import csv
+import importlib.util
 import json
 import logging
 import os
@@ -9,7 +10,7 @@ import zipfile
 from dataclasses import dataclass
 from io import BytesIO
 from pathlib import Path
-from pkgutil import get_data, get_loader
+from pkgutil import get_data
 from typing import Any
 
 logger = logging.getLogger("opennem.core.loader")
@@ -65,7 +66,11 @@ def load_data(
     file_path = Path(file_name)
 
     if return_path:
-        module_path = Path(get_loader("opennem").path).parent
+        spec = importlib.util.find_spec("opennem")
+        if spec and spec.origin:
+            module_path = Path(spec.origin).parent
+        else:
+            module_path = Path(__file__).parent.parent
         return module_path / data_path / file_name
 
     data_content = get_data("opennem", os.path.join(data_path, file_name))
@@ -93,18 +98,16 @@ def get_data_path() -> Path:
     Get project data path
     """
     pkg_path = None
-    p = None
 
     try:
-        p = get_loader("opennem")
+        spec = importlib.util.find_spec("opennem")
+        if spec and spec.origin:
+            pkg_path = Path(spec.origin).parent
     except Exception:
         logger.error("Error could not get data path for opennem package")
 
-    if p:
-        pkg_path = Path(p.get_filename()).parent
-
     # Fall back to getting data path using directories
-    else:
+    if not pkg_path:
         pkg_path = Path(__file__).parent.parent.parent
 
     data_path = pkg_path / PROJECT_DATA_PATH
