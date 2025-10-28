@@ -21,7 +21,14 @@ FROM python-base as builder
 RUN apt-get update \
   && apt-get install --no-install-recommends -y \
     build-essential \
+    gcc \
+    g++ \
+    make \
+    curl \
+    git \
     ca-certificates \
+    pkg-config \
+    libssl-dev \
   && rm -rf /var/lib/apt/lists/*
 
 # Install uv
