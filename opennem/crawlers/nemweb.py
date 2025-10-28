@@ -376,4 +376,8 @@ ALL_NEMWEB_CRAWLERS = [
 if __name__ == "__main__":
     from opennem.crawl import run_crawl
 
-    asyncio.run(run_crawl(AEMONEMNextDayDispatchArchvie, latest=False, limit=None, reverse=True))
+    async def catchup_crawls():
+        crawlers = [AEMONemwebTradingIS, AEMONemwebDispatchIS]
+        await asyncio.gather(*[run_crawl(crawler, latest=False, limit=None, reverse=True) for crawler in crawlers])
+
+    asyncio.run(catchup_crawls())
