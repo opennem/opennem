@@ -56,7 +56,7 @@ ADD LICENSE LICENSE
 ADD bin/run_server.py bin/run_server.py
 
 # install runtime deps - using UV
-RUN uv sync --frozen
+RUN uv sync --frozen --no-dev
 
 # `development` image is used during development / testing
 FROM python-base as development
