@@ -1,4 +1,4 @@
-FROM python:3.14-slim as python-base
+FROM python:3.12-slim as python-base
 
 ENV PROJECT_NAME="opennem" \
   PYTHONUNBUFFERED=1 \
