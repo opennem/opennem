@@ -15,7 +15,7 @@ repos:
             exclude: LICENSE
 
     - repo: https://github.com/charliermarsh/ruff-pre-commit
-      rev: v0.13.0
+      rev: v0.14.3
       hooks:
         - id: ruff
           args: [ --fix ]
