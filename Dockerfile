@@ -29,7 +29,10 @@ RUN apt-get update \
     ca-certificates \
     pkg-config \
     libssl-dev \
-  && rm -rf /var/lib/apt/lists/*
+    python3-dev \
+  && rm -rf /var/lib/apt/lists/* \
+  && ln -sf /usr/bin/gcc /usr/bin/cc \
+  && gcc --version && cc --version
 
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
@@ -46,8 +49,10 @@ COPY LICENSE ./
 COPY bin/run_server.py bin/
 
 # Install dependencies with cache mount for faster rebuilds
+# Set environment to prefer binary wheels
+ENV UV_PRERELEASE=allow
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev
+    CC=/usr/bin/gcc uv sync --frozen --no-dev
 
 ################################
 # PRODUCTION
