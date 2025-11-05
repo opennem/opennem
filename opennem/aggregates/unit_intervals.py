@@ -582,10 +582,10 @@ def _refresh_clickhouse_schema() -> None:
 
     # Drop views first (in reverse order of creation to handle dependencies)
     for view in reversed(_UNIT_INTERVALS_MATERIALIZED_VIEWS):
-        client.execute(f"DROP TABLE IF EXISTS {view.name}")
+        client.command(f"DROP TABLE IF EXISTS {view.name}")
         logger.info(f"Dropped {view.name}")
 
-    client.execute("DROP TABLE IF EXISTS unit_intervals")
+    client.command("DROP TABLE IF EXISTS unit_intervals")
     logger.info("Dropped unit_intervals")
 
     _ensure_clickhouse_schema()
@@ -623,18 +623,27 @@ async def process_unit_intervals_backlog(
             prepared_data = _prepare_unit_interval_data(records)
 
             # Batch insert into ClickHouse
-            client.execute(
-                """
-                INSERT INTO unit_intervals
-                (
-                    interval, network_id, network_region, facility_code, unit_code,
-                    status_id, fueltech_id, fueltech_group_id, renewable,
-                    generated, energy, energy_storage, emissions, emission_factor, market_value,
-                    version
-                )
-                VALUES
-                """,
+            client.insert(
+                "unit_intervals",
                 prepared_data,
+                column_names=[
+                    "interval",
+                    "network_id",
+                    "network_region",
+                    "facility_code",
+                    "unit_code",
+                    "status_id",
+                    "fueltech_id",
+                    "fueltech_group_id",
+                    "renewable",
+                    "generated",
+                    "energy",
+                    "energy_storage",
+                    "emissions",
+                    "emission_factor",
+                    "market_value",
+                    "version",
+                ],
             )
 
             logger.info(f"Processed {len(prepared_data)} records from {current_start} to {chunk_end}")
@@ -692,18 +701,27 @@ async def process_unit_intervals_backlog_streaming(
                     prepared_data = _prepare_unit_interval_data(batch)
 
                     # Batch insert into ClickHouse
-                    client.execute(
-                        """
-                        INSERT INTO unit_intervals
-                        (
-                            interval, network_id, network_region, facility_code, unit_code,
-                            status_id, fueltech_id, fueltech_group_id, renewable,
-                            generated, energy, energy_storage, emissions, emission_factor, market_value,
-                            version
-                        )
-                        VALUES
-                        """,
+                    client.insert(
+                        "unit_intervals",
                         prepared_data,
+                        column_names=[
+                            "interval",
+                            "network_id",
+                            "network_region",
+                            "facility_code",
+                            "unit_code",
+                            "status_id",
+                            "fueltech_id",
+                            "fueltech_group_id",
+                            "renewable",
+                            "generated",
+                            "energy",
+                            "energy_storage",
+                            "emissions",
+                            "emission_factor",
+                            "market_value",
+                            "version",
+                        ],
                     )
 
                     chunk_processed += len(prepared_data)
@@ -738,11 +756,11 @@ async def run_unit_intervals_aggregate_to_now() -> int:
     client = get_clickhouse_client()
 
     # get the max interval from unit_intervals using FINAL modifier
-    result = client.execute("SELECT MAX(interval) FROM unit_intervals FINAL")
-    max_interval = result[0][0]
+    result = client.query("SELECT MAX(interval) FROM unit_intervals FINAL")
+    max_interval = result.result_rows[0][0]
 
-    date_from = max_interval + timedelta(minutes=5)
-    date_to = get_last_completed_interval_for_network(network=NetworkNEM)
+    date_from = max_interval.replace(tzinfo=None) + timedelta(minutes=5)
+    date_to = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
 
     if date_from > date_to:
         logger.info("No new data to process")
@@ -757,18 +775,27 @@ async def run_unit_intervals_aggregate_to_now() -> int:
         records = await _get_unit_interval_data(session, date_from, date_to)
         prepared_data = _prepare_unit_interval_data(records)
 
-    client.execute(
-        """
-        INSERT INTO unit_intervals
-        (
-            interval, network_id, network_region, facility_code, unit_code,
-            status_id, fueltech_id, fueltech_group_id, renewable,
-            generated, energy, energy_storage, emissions, emission_factor, market_value,
-            version
-        )
-        VALUES
-        """,
+    client.insert(
+        "unit_intervals",
         prepared_data,
+        column_names=[
+            "interval",
+            "network_id",
+            "network_region",
+            "facility_code",
+            "unit_code",
+            "status_id",
+            "fueltech_id",
+            "fueltech_group_id",
+            "renewable",
+            "generated",
+            "energy",
+            "energy_storage",
+            "emissions",
+            "emission_factor",
+            "market_value",
+            "version",
+        ],
     )
 
     logger.info(f"Processed {len(prepared_data)} records from {date_from} to {date_to}")
@@ -795,18 +822,27 @@ async def run_unit_intervals_aggregate_for_last_intervals(num_intervals: int) ->
 
     client = get_clickhouse_client()
 
-    client.execute(
-        """
-        INSERT INTO unit_intervals
-        (
-            interval, network_id, network_region, facility_code, unit_code,
-            status_id, fueltech_id, fueltech_group_id, renewable,
-            generated, energy, energy_storage, emissions, emission_factor, market_value,
-            version
-        )
-        VALUES
-        """,
+    client.insert(
+        "unit_intervals",
         prepared_data,
+        column_names=[
+            "interval",
+            "network_id",
+            "network_region",
+            "facility_code",
+            "unit_code",
+            "status_id",
+            "fueltech_id",
+            "fueltech_group_id",
+            "renewable",
+            "generated",
+            "energy",
+            "energy_storage",
+            "emissions",
+            "emission_factor",
+            "market_value",
+            "version",
+        ],
     )
 
     logger.info(f"Processed {len(prepared_data)} records from {start_date} to {end_date}")
@@ -854,7 +890,7 @@ async def run_unit_intervals_backlog(start_date: datetime | None = None, network
         logger.info(f"Backlog processing complete: {total_processed} total records processed")
 
     # Verify the data was inserted
-    result = client.execute(
+    result = client.query(
         """
         SELECT
             network_id,
@@ -863,15 +899,15 @@ async def run_unit_intervals_backlog(start_date: datetime | None = None, network
             min(interval) as first_interval,
             max(interval) as last_interval
         FROM unit_intervals
-        WHERE interval BETWEEN %(start)s AND %(end)s
+        WHERE interval BETWEEN {start:DateTime} AND {end:DateTime}
         GROUP BY network_id, network_region
         """,
-        {"start": start_date, "end": end_date},
+        parameters={"start": start_date, "end": end_date},
     )
 
     # Log the results
     logger.info("Processing complete. Summary of inserted data:")
-    for network_id, region, count, first, last in result:
+    for network_id, region, count, first, last in result.result_rows:
         logger.info(
             f"Network: {network_id}, Region: {region}, Records: {count}, Period: {first.isoformat()} to {last.isoformat()}"
         )
@@ -883,11 +919,11 @@ async def _solar_and_wind_fixes() -> None:
     """
     client = get_clickhouse_client(timeout=100)
 
-    client.execute("""
+    client.command("""
         delete from unit_intervals where fueltech_group_id = 'solar' and interval < '2016-08-01T00:00:00'
     """)
 
-    client.execute(
+    client.command(
         """
         DELETE FROM unit_intervals WHERE fueltech_group_id = 'wind' AND interval < '2009-07-01T00:00:00'
         """

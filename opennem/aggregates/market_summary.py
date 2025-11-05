@@ -543,10 +543,10 @@ def _refresh_clickhouse_schema() -> None:
 
     # Drop views first (in reverse order of creation to handle dependencies)
     for view in reversed(_MARKET_SUMMARY_MATERIALIZED_VIEWS):
-        client.execute(f"DROP TABLE IF EXISTS {view.name}")
+        client.command(f"DROP TABLE IF EXISTS {view.name}")
         logger.info(f"Dropped {view.name}")
 
-    client.execute("DROP TABLE IF EXISTS market_summary")
+    client.command("DROP TABLE IF EXISTS market_summary")
     logger.info("Dropped market_summary table")
 
     _ensure_clickhouse_schema()
@@ -580,20 +580,33 @@ async def process_market_summary_backlog(
             prepared_data = _prepare_market_summary_data(records)
 
             # Batch insert into ClickHouse
-            client.execute(
-                """
-                INSERT INTO market_summary
-                (
-                    interval, network_id, network_region, price, demand, demand_total,
-                    demand_gross, generation_renewable, demand_energy, demand_total_energy,
-                    demand_gross_energy, generation_renewable_energy, demand_market_value,
-                    demand_total_market_value, demand_gross_market_value, curtailment_solar_total,
-                    curtailment_wind_total, curtailment_total, curtailment_energy_solar_total,
-                    curtailment_energy_wind_total, curtailment_energy_total, version
-                )
-                VALUES
-                """,
+            client.insert(
+                "market_summary",
                 prepared_data,
+                column_names=[
+                    "interval",
+                    "network_id",
+                    "network_region",
+                    "price",
+                    "demand",
+                    "demand_total",
+                    "demand_gross",
+                    "generation_renewable",
+                    "demand_energy",
+                    "demand_total_energy",
+                    "demand_gross_energy",
+                    "generation_renewable_energy",
+                    "demand_market_value",
+                    "demand_total_market_value",
+                    "demand_gross_market_value",
+                    "curtailment_solar_total",
+                    "curtailment_wind_total",
+                    "curtailment_total",
+                    "curtailment_energy_solar_total",
+                    "curtailment_energy_wind_total",
+                    "curtailment_energy_total",
+                    "version",
+                ],
             )
 
             logger.info(f"Processed {len(prepared_data)} records from {current_start} to {chunk_end}")
@@ -606,16 +619,17 @@ async def run_market_summary_aggregate_to_now() -> int:
     client = get_clickhouse_client()
 
     # get the max interval from market_summary using FINAL modifier
-    result = client.execute("SELECT MAX(interval) FROM market_summary FINAL")
-    result_rows = list(result)  # type: ignore
+    result = client.query("SELECT MAX(interval) FROM market_summary FINAL")
 
-    if not result_rows or not result_rows[0] or result_rows[0][0] is None:
+    if result.row_count == 0 or result.result_rows[0][0] is None:
         logger.info("No market summary max interval found")
         return 0
 
-    max_interval = result_rows[0][0]  # type: ignore
-    date_from = max_interval + timedelta(minutes=5)  # type: ignore
-    date_to = get_last_completed_interval_for_network(network=NetworkNEM)
+    max_interval = result.result_rows[0][0]
+    date_from = max_interval.replace(tzinfo=None) + timedelta(minutes=5)
+    date_to = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
+
+    logger.info(f"Processing market summary from {date_from} to {date_to}")
 
     if date_from > date_to:
         logger.info("No new data to process")
@@ -630,20 +644,33 @@ async def run_market_summary_aggregate_to_now() -> int:
         records = await _get_market_summary_data(session, date_from, date_to)
         prepared_data = _prepare_market_summary_data(records)
 
-    client.execute(
-        """
-        INSERT INTO market_summary
-        (
-            interval, network_id, network_region, price, demand, demand_total,
-            demand_gross, generation_renewable, demand_energy, demand_total_energy,
-            demand_gross_energy, generation_renewable_energy, demand_market_value,
-            demand_total_market_value, demand_gross_market_value, curtailment_solar_total,
-            curtailment_wind_total, curtailment_total, curtailment_energy_solar_total,
-            curtailment_energy_wind_total, curtailment_energy_total, version
-        )
-        VALUES
-        """,
+    client.insert(
+        "market_summary",
         prepared_data,
+        column_names=[
+            "interval",
+            "network_id",
+            "network_region",
+            "price",
+            "demand",
+            "demand_total",
+            "demand_gross",
+            "generation_renewable",
+            "demand_energy",
+            "demand_total_energy",
+            "demand_gross_energy",
+            "generation_renewable_energy",
+            "demand_market_value",
+            "demand_total_market_value",
+            "demand_gross_market_value",
+            "curtailment_solar_total",
+            "curtailment_wind_total",
+            "curtailment_total",
+            "curtailment_energy_solar_total",
+            "curtailment_energy_wind_total",
+            "curtailment_energy_total",
+            "version",
+        ],
     )
 
     logger.info(f"Processed {len(prepared_data)} records from {date_from} to {date_to}")
@@ -664,20 +691,33 @@ async def run_market_summary_aggregate_for_last_intervals(num_intervals: int) ->
 
     client = get_clickhouse_client()
 
-    client.execute(
-        """
-        INSERT INTO market_summary
-        (
-            interval, network_id, network_region, price, demand, demand_total,
-            demand_gross, generation_renewable, demand_energy, demand_total_energy,
-            demand_gross_energy, generation_renewable_energy, demand_market_value,
-            demand_total_market_value, demand_gross_market_value, curtailment_solar_total,
-            curtailment_wind_total, curtailment_total, curtailment_energy_solar_total,
-            curtailment_energy_wind_total, curtailment_energy_total, version
-        )
-        VALUES
-        """,
+    client.insert(
+        "market_summary",
         prepared_data,
+        column_names=[
+            "interval",
+            "network_id",
+            "network_region",
+            "price",
+            "demand",
+            "demand_total",
+            "demand_gross",
+            "generation_renewable",
+            "demand_energy",
+            "demand_total_energy",
+            "demand_gross_energy",
+            "generation_renewable_energy",
+            "demand_market_value",
+            "demand_total_market_value",
+            "demand_gross_market_value",
+            "curtailment_solar_total",
+            "curtailment_wind_total",
+            "curtailment_total",
+            "curtailment_energy_solar_total",
+            "curtailment_energy_wind_total",
+            "curtailment_energy_total",
+            "version",
+        ],
     )
 
     logger.info(f"Processed {len(prepared_data)} records from {start_date} to {end_date}")
@@ -727,7 +767,7 @@ async def run_market_summary_backlog() -> None:
         )
 
     # Verify the data was inserted
-    result = client.execute(
+    result = client.query(
         """
         SELECT
             network_id,
@@ -736,16 +776,16 @@ async def run_market_summary_backlog() -> None:
             min(interval) as first_interval,
             max(interval) as last_interval
         FROM market_summary
-        WHERE interval BETWEEN %(start)s AND %(end)s
+        WHERE interval BETWEEN {start:DateTime} AND {end:DateTime}
         GROUP BY network_id, network_region
         """,
-        {"start": start_date, "end": end_date},
+        parameters={"start": start_date, "end": end_date},
     )
 
     # Log the results
     logger.info("Processing complete. Summary of inserted data:")
-    result_rows = list(result)  # type: ignore
-    for row in result_rows:  # type: ignore
+    result_rows = result.result_rows
+    for row in result_rows:
         if len(row) >= 5:  # type: ignore
             network_id, region, count, first, last = row[:5]  # type: ignore
             logger.info(

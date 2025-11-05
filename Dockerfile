@@ -59,14 +59,10 @@ ENV FASTAPI_ENV=production
 # Copy uv binary for runtime (needed for "uv run" commands)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Install runtime dependencies and build tools (needed for Python 3.14 packages)
+# Install only runtime dependencies
 RUN apt-get update \
   && apt-get install --no-install-recommends -y \
     ca-certificates \
-    build-essential \
-    gcc \
-    g++ \
-    python3-dev \
   && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user for security

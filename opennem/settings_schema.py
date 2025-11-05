@@ -33,9 +33,9 @@ class OpennemSettings(BaseSettings):
     db_url: str = Field("postgresql://user:pass@127.0.0.1:15444/opennem", validation_alias=AliasChoices("DATABASE_HOST_URL"))
 
     clickhouse_url: AnyUrl = Field(
-        "clickhouse://localhost:9000/opennem",
+        "clickhouse://localhost:8123/opennem",
         validation_alias=AliasChoices("CLICKHOUSE_URL"),
-        description="ClickHouse connection URL in format clickhouse:// schema url",
+        description="ClickHouse connection URL in format clickhouse:// schema url (uses HTTP port 8123)",
     )
 
     redis_url: RedisDsn = Field(
