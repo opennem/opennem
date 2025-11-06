@@ -1,4 +1,4 @@
-FROM python:3.12-slim as python-base
+FROM python:3.12-bullseye as python-base
 
 ENV PROJECT_NAME="opennem" \
   PYTHONUNBUFFERED=1 \
@@ -14,25 +14,23 @@ ENV PROJECT_NAME="opennem" \
 ENV PATH="$VENV_PATH/bin:$PATH"
 
 ################################
-# BUILDER
+# BUILDER-BASE
 ################################
-FROM python-base as builder
+FROM python-base as builder-base
 
 RUN apt-get update \
   && apt-get install --no-install-recommends -y \
     build-essential \
-    gcc \
-    g++ \
-    make \
     curl \
     git \
     ca-certificates \
     pkg-config \
     libssl-dev \
-    python3-dev \
-  && rm -rf /var/lib/apt/lists/* \
-  && ln -sf /usr/bin/gcc /usr/bin/cc \
-  && gcc --version && cc --version
+  && rm -rf /var/lib/apt/lists/*
+
+# Install Rust toolchain (needed for curl-cffi and other packages)
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
 
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
@@ -48,11 +46,8 @@ COPY opennem/__init__.py ${PROJECT_NAME}/__init__.py
 COPY LICENSE ./
 COPY bin/run_server.py bin/
 
-# Install dependencies with cache mount for faster rebuilds
-# Set environment to prefer binary wheels
-ENV UV_PRERELEASE=allow
-RUN --mount=type=cache,target=/root/.cache/uv \
-    CC=/usr/bin/gcc uv sync --frozen --no-dev
+# Install runtime deps
+RUN uv sync --frozen
 
 ################################
 # PRODUCTION
@@ -61,26 +56,14 @@ FROM python-base as production
 
 ENV FASTAPI_ENV=production
 
-# Copy uv binary for runtime (needed for "uv run" commands)
+# Copy uv binary for runtime
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Install only runtime dependencies
-RUN apt-get update \
-  && apt-get install --no-install-recommends -y \
-    ca-certificates \
-  && rm -rf /var/lib/apt/lists/*
-
-# Create non-root user for security
-RUN groupadd -r appuser && useradd -r -g appuser appuser
-
 # Copy venv from builder
-COPY --from=builder $PYSETUP_PATH $PYSETUP_PATH
+COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 
 # Copy application code
 WORKDIR /app
-COPY --chown=appuser:appuser . .
-
-# Switch to non-root user
-USER appuser
+COPY . .
 
 EXPOSE 8000
