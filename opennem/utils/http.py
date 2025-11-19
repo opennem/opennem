@@ -86,7 +86,8 @@ class HttpResponse:
         return json.loads(self._text)
 
     def raise_for_status(self) -> None:
-        self._resp.raise_for_status()
+        if self.status_code >= 400:
+            raise Exception(f"HTTP Error {self.status_code}: {self.text}")
 
 
 class HttpClient:
