@@ -133,3 +133,5 @@ test.db
 .cursorrules
 .cursor/
 plans/
+appspec.yml
+deploy-dev.sh

@@ -12,7 +12,7 @@ authors = [
     {name = "Dylan McConnell", email = "dylan.mcconnell@unimelb.edu.au"},
     {name = "Nik Cubrilovic", email = "git@nikcub.me"},
 ]
-requires-python = "<4.0,>=3.10"
+requires-python = "<3.13,>=3.11"
 version = "4.3.0"
 
 dependencies = [
@@ -76,6 +76,7 @@ dependencies = [
     "orjson>=3.10.16",
     "tweepy[async]>=4.15.0",
     "atproto>=0.0.59",
+    "rnet==3.0.0rc12",
 ]
 
 [tool.uv]
