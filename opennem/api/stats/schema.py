@@ -6,12 +6,10 @@ import operator
 from collections import Counter
 from datetime import date, datetime, timedelta
 from decimal import Decimal
-from pathlib import Path
 from typing import Annotated, Any
 from zoneinfo import ZoneInfo
 
 import pydantic
-import requests
 from datedelta import datedelta
 from pydantic import PlainSerializer, ValidationError, field_validator
 
@@ -339,33 +337,3 @@ class ScadaDateRange(BaseConfig):
 
     def get_end_sql(self, as_date: bool = False) -> str:
         return f"'{self.get_end() if not as_date else self.get_end().date()}'"
-
-
-def load_opennem_dataset_from_file(file_path: str | Path) -> OpennemDataSet:
-    """
-    Reads the stored tableset fixture path and returns an OpennemDataSet
-    """
-    if not file_path.is_file():
-        raise Exception(f"File does not exist: {file_path}")
-
-    try:
-        file_path = Path(file_path)
-        json_data = file_path.read_text()
-        return OpennemDataSet.model_validate_json(json_data)
-    # return pydantic.parse_file_as(path=str(file_path), type_=OpennemDataSet)
-    except Exception as e:
-        raise Exception(f"Error loading file: {file_path} - {e}") from None
-
-
-def load_opennem_dataset_from_url(url: str) -> OpennemDataSet:
-    """
-    Reads an OpenNEM URL and returns an OpennemDataSet
-    """
-    response = requests.get(url)
-
-    if not response.ok:
-        raise Exception(f"Could not download from {url}: {response.status_code}")
-
-    data_set = pydantic.parse_obj_as(obj=response.json(), type_=OpennemDataSet)
-
-    return data_set

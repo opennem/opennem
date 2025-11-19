@@ -18,7 +18,6 @@ requires-python = "<4.0,>=3.11"
 version = "4.4.0.dev8"
 
 dependencies = [
-    "requests<3.0.0,>=2.23.0",
     "sentry-sdk[asyncpg,fastapi,httpx,sqlalchemy]",
     "pydantic[email]<3.0.0,>=2.6.4",
     "alembic<2.0.0,>=1.6.2",
