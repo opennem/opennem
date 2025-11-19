@@ -65,6 +65,22 @@ class HttpResponse:
             return 200
 
     @property
+    def is_success(self) -> bool:
+        return self.status_code >= 200 and self.status_code < 300
+
+    @property
+    def is_error(self) -> bool:
+        return self.status_code >= 400 and self.status_code < 500
+
+    @property
+    def is_client_error(self) -> bool:
+        return self.status_code >= 400 and self.status_code < 500
+
+    @property
+    def is_server_error(self) -> bool:
+        return self.status_code >= 500 and self.status_code < 600
+
+    @property
     def text(self) -> str:
         return self._text
 
