@@ -115,14 +115,14 @@ class TimeSeries(BaseConfig):
         return get_api_network_from_code(self.network_code).get_offset_string()
 
     @model_validator(mode="after")
-    def set_unit_from_metric(self) -> "TimeSeries":
+    def set_unit_from_metric(self) -> TimeSeries:
         """Set the unit based on the metric if not explicitly provided."""
         if not self.unit:
             self.unit = get_metric_metadata(self.metric).unit
         return self
 
     @model_validator(mode="after")
-    def add_network_to_results(self) -> "TimeSeries":
+    def add_network_to_results(self) -> TimeSeries:
         """Add network_code to results context for timezone conversion."""
         # Create context with network_code for results
         context = {"network_code": self.network_code}

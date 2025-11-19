@@ -106,7 +106,7 @@ class NetworkTimeSeries(BaseConfig):
         return get_api_network_from_code(self.network_code).get_offset_string()
 
     @model_validator(mode="after")
-    def set_unit_from_metric(self) -> "NetworkTimeSeries":
+    def set_unit_from_metric(self) -> NetworkTimeSeries:
         """Set the unit based on the primary metric if not explicitly provided."""
         if not self.unit:
             self.unit = get_metric_metadata(self.metric).unit

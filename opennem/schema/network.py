@@ -54,7 +54,7 @@ class NetworkSchema(BaseConfig):
 
     # additional networks that make up this network
     # ex. ROOFTOP, APVI etc.
-    subnetworks: list["NetworkSchema"] | None = None
+    subnetworks: list[NetworkSchema] | None = None
     parent_network: str | None = None
 
     # fueltechs provided by this network
@@ -109,7 +109,7 @@ class NetworkSchema(BaseConfig):
     def intervals_per_hour(self) -> float:
         return 60 / self.interval_size
 
-    def get_networks_query(self) -> list["NetworkSchema"]:
+    def get_networks_query(self) -> list[NetworkSchema]:
         """Returns a full list of network and sub-networks for queries"""
         return [self] + self.subnetworks if self.subnetworks else [self]
 

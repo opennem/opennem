@@ -26,7 +26,7 @@ class PollutantCategory(str, Enum):
     ORGANIC = "organic"
 
     @classmethod
-    def default(cls) -> "PollutantCategory":
+    def default(cls) -> PollutantCategory:
         """Default category for API responses"""
         return cls.AIR_POLLUTANT
 

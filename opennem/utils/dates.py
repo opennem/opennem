@@ -138,7 +138,7 @@ def date_series(
     length: int = 30,
     interval: timedelta | relativedelta = timedelta(days=1),
     reverse: bool = False,
-) -> Generator[date, None, None]:
+) -> Generator[date]:
     """
     Generate a datetime series
 
@@ -193,7 +193,7 @@ def month_series(
     end: datetime | date,
     length: int | None = None,
     reverse: bool = False,
-) -> Generator[datetime, None, None]:
+) -> Generator[datetime]:
     """
     Generate a series of months
     """
@@ -210,7 +210,7 @@ def month_series(
         yield datetime(y, m + 1, 1)
 
 
-def day_series(date_start: datetime, date_end: datetime) -> Generator[datetime, None, None]:
+def day_series(date_start: datetime, date_end: datetime) -> Generator[datetime]:
     """Generate a series of (midnight) days for a date range"""
     for n in range(int((date_end - date_start).days) + 1):
         yield date_start + timedelta(n)
@@ -220,7 +220,7 @@ def week_series(
     start: datetime | date,
     end: datetime | date,
     length: int | None = None,
-) -> Generator[tuple[int, int], None, None]:
+) -> Generator[tuple[int, int]]:
     """
     Generate week series M -> S
     """
@@ -246,7 +246,7 @@ def week_series_datetimes(
     start: datetime,
     end: datetime,
     length: int | None = None,
-) -> Generator[tuple[datetime, datetime], None, None]:
+) -> Generator[tuple[datetime, datetime]]:
     """
     Generate week series M -> S
     """
