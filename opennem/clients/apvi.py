@@ -16,7 +16,7 @@ from opennem.importer.rooftop import ROOFTOP_CODE
 from opennem.schema.core import BaseConfig
 from opennem.schema.field_types import RoundedFloat4
 from opennem.utils.dates import get_today_opennem, parse_date
-from opennem.utils.httpx import httpx_factory
+from opennem.utils.http import http_factory
 from opennem.utils.version import get_version
 
 logger = logging.getLogger(__name__)
@@ -144,7 +144,7 @@ class APVIForecastSet(BaseConfig):
     capacities: list[APVIStateRooftopCapacity] | None = None
 
 
-_apvi_request_session = httpx_factory()
+_apvi_request_session = http_factory(proxy=False)
 
 _apvi_request_session.headers.update({"User-Agent": f"OpenNEM/{get_version()}"})
 
@@ -323,8 +323,5 @@ if __name__ == "__main__":
 
     df = asyncio.run(get_apvi_rooftop_data())
 
-    if df.is_empty():
-        raise Exception("Invalid APVI Data")
-
     # print the dataframe
-    print(df.head(50))
+    print(df.intervals)

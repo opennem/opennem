@@ -8,14 +8,14 @@ from validators import ValidationError
 from validators.url import url as valid_url
 
 from opennem import settings
-from opennem.utils.httpx import httpx_factory
+from opennem.utils.http import http_factory
 from opennem.utils.random_agent import get_random_agent
 
 logger = logging.getLogger(__name__)
 
 REQ_HEADERS = {"User-Agent": get_random_agent(), "Content-type": "application/json"}
 
-_http_client = httpx_factory()
+_http_client = http_factory(proxy=False, mimic_browser=False)
 
 
 @dataclasses.dataclass

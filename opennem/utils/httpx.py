@@ -7,8 +7,6 @@ from typing import Any
 import chardet
 import httpx
 import logfire
-
-# from curl_cffi.requests import AsyncSession  # noqa: F401
 from httpx import AsyncClient, AsyncHTTPTransport, Request, Response
 from httpx._transports.default import AsyncHTTPTransport as DefaultAsyncTransport
 
