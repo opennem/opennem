@@ -180,7 +180,7 @@ AEMONemwebTradingISArchive = CrawlerDefinition(
     priority=CrawlerPriority.high,
     active=False,
     name="au.nemweb.archive.trading_is",
-    url="http://nemweb.com.au/Reports/ARCHIVE/TradingIS_Reports/",
+    url="https://nemweb.com.au/Reports/ARCHIVE/TradingIS_Reports/",
     network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
     bulk_insert=True,
@@ -193,7 +193,7 @@ AEMONemwebDispatchISArchive = CrawlerDefinition(
     priority=CrawlerPriority.high,
     active=False,
     name="au.nemweb.archive.dispatch_is",
-    url="http://nemweb.com.au/Reports/ARCHIVE/DispatchIS_Reports/",
+    url="https://nemweb.com.au/Reports/ARCHIVE/DispatchIS_Reports/",
     network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
     bulk_insert=True,
@@ -205,7 +205,7 @@ AEMONNemwebDispatchScadaArchive = CrawlerDefinition(
     priority=CrawlerPriority.high,
     active=False,
     name="au.nemweb.archive.dispatch_scada",
-    url="http://www.nemweb.com.au/Reports/ARCHIVE/Dispatch_SCADA/",
+    url="https://www.nemweb.com.au/Reports/ARCHIVE/Dispatch_SCADA/",
     network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
 )
@@ -216,7 +216,7 @@ AEMONemwebRooftopArchive = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
     name="au.nemweb.archive.rooftop",
-    url="http://www.nemweb.com.au/Reports/ARCHIVE/ROOFTOP_PV/ACTUAL/",
+    url="https://www.nemweb.com.au/Reports/ARCHIVE/ROOFTOP_PV/ACTUAL/",
     filename_filter=".*_MEASUREMENT_.*",
     network=NetworkAEMORooftop,
     backfill_days=14,
@@ -229,7 +229,7 @@ AEMONemwebRooftopForecastArchive = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
     name="au.nemweb.archive.rooftop_forecast",
-    url="http://www.nemweb.com.au/Reports/ARCHIVE/ROOFTOP_PV/FORECAST/",
+    url="https://www.nemweb.com.au/Reports/ARCHIVE/ROOFTOP_PV/FORECAST/",
     filename_filter=".*_MEASUREMENT_.*",
     network=NetworkAEMORooftop,
     backfill_days=365,
@@ -248,7 +248,7 @@ AEMONemwebTradingIS = CrawlerDefinition(
     schedule=CrawlerSchedule.live,
     archive_version=AEMONemwebTradingISArchive,
     name="au.nemweb.current.trading_is",
-    url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
+    url="https://nemweb.com.au/Reports/Current/TradingIS_Reports/",
     network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
 )
@@ -264,7 +264,7 @@ AEMONemwebDispatchIS = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
     name="au.nemweb.current.dispatch_is",
-    url="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
+    url="https://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
     network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
 )
@@ -277,7 +277,7 @@ AEMONNemwebDispatchScada = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
     name="au.nemweb.current.dispatch_scada",
-    url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
+    url="https://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
     network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
 )
@@ -290,7 +290,7 @@ AEMONemwebRooftop = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
     name="au.nemweb.current.rooftop",
-    url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/",
+    url="https://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/",
     filename_filter=".*_MEASUREMENT_.*",
     network=NetworkAEMORooftop,
     processor=run_nemweb_aemo_crawl,
@@ -304,7 +304,7 @@ AEMONemwebRooftopForecast = CrawlerDefinition(
     priority=CrawlerPriority.low,
     schedule=CrawlerSchedule.four_times_a_day,
     name="au.nemweb.current.rooftop_forecast",
-    url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/FORECAST/",
+    url="https://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/FORECAST/",
     network=NetworkAEMORooftop,
     processor=run_nemweb_aemo_crawl,
 )
@@ -318,7 +318,7 @@ AEMONEMDispatchActualGENArchvie = CrawlerDefinition(
     priority=CrawlerPriority.medium,
     schedule=CrawlerSchedule.daily,
     name="au.nemweb.archive.dispatch_actual_gen",
-    url="http://www.nemweb.com.au/Reports/ARCHIVE/Next_Day_Actual_Gen/",
+    url="https://www.nemweb.com.au/Reports/ARCHIVE/Next_Day_Actual_Gen/",
     latest=False,
     network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
@@ -331,7 +331,7 @@ AEMONEMDispatchActualGEN = CrawlerDefinition(
     priority=CrawlerPriority.medium,
     schedule=CrawlerSchedule.twice_a_day,
     name="au.nemweb.dispatch_actual_gen",
-    url="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
+    url="https://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
     latest=False,
     network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
@@ -344,7 +344,7 @@ AEMONEMNextDayDispatchArchvie = CrawlerDefinition(
     priority=CrawlerPriority.medium,
     schedule=CrawlerSchedule.daily,
     name="au.nemweb.archive.dispatch",
-    url="http://nemweb.com.au/Reports/ARCHIVE/Next_Day_Dispatch/",
+    url="https://nemweb.com.au/Reports/ARCHIVE/Next_Day_Dispatch/",
     latest=False,
     network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
@@ -357,7 +357,7 @@ AEMONEMNextDayDispatch = CrawlerDefinition(
     priority=CrawlerPriority.medium,
     schedule=CrawlerSchedule.twice_a_day,
     name="au.nemweb.dispatch",
-    url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
+    url="https://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
     latest=False,
     network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
@@ -377,7 +377,7 @@ if __name__ == "__main__":
     from opennem.crawl import run_crawl
 
     async def catchup_crawls():
-        crawlers = [AEMONemwebTradingIS, AEMONemwebDispatchIS]
-        await asyncio.gather(*[run_crawl(crawler, latest=False, limit=None, reverse=True) for crawler in crawlers])
+        crawlers = [AEMONemwebTradingIS]
+        await asyncio.gather(*[run_crawl(crawler, latest=False, limit=1, reverse=True) for crawler in crawlers])
 
     asyncio.run(catchup_crawls())
