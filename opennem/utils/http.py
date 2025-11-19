@@ -38,16 +38,16 @@ def _get_rnet_proxy() -> rnet.Proxy:
 def _get_random_rnet_browser() -> rnet.Emulation:
     """get a random emulated browser - pad out the list based on ~popularity"""
     rnet_browsers = [
+        rnet.Emulation.Chrome138,
+        rnet.Emulation.Chrome138,
+        rnet.Emulation.Chrome139,
+        rnet.Emulation.Chrome139,
+        rnet.Emulation.Chrome139,
         rnet.Emulation.Chrome140,
-        rnet.Emulation.Chrome141,
-        rnet.Emulation.Chrome141,
-        rnet.Emulation.Chrome141,
-        rnet.Emulation.Chrome141,
-        rnet.Emulation.Chrome142,
-        rnet.Emulation.Chrome142,
-        rnet.Emulation.Chrome142,
-        rnet.Emulation.Chrome142,
-        rnet.Emulation.Chrome142,
+        rnet.Emulation.Chrome140,
+        rnet.Emulation.Chrome140,
+        rnet.Emulation.Chrome140,
+        rnet.Emulation.Chrome140,
         rnet.Emulation.Edge134,
         rnet.Emulation.Firefox142,
         rnet.Emulation.Firefox143,
@@ -369,4 +369,4 @@ if __name__ == "__main__":
                 resp = await http.get(url)
                 print(f"Response status: {resp.status_code} with body length {len(resp.content)}")
 
-    asyncio.run(test_aemo_downloads_many())
+    asyncio.run(test_retry())
