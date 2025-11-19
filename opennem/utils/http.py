@@ -78,7 +78,11 @@ class HttpResponse:
 
     @property
     def headers(self) -> Any:
-        return self._resp.headers
+        """convert rnet headers to dict"""
+        headers: dict[str, str] = {}
+        for _header, _value in self._resp.headers:
+            headers[_header.decode("utf-8").lower()] = _value.decode("utf-8")
+        return headers
 
     @property
     def url(self) -> str:
