@@ -126,7 +126,13 @@ class HttpResponse:
     def json(self) -> Any:
         import json
 
-        return json.loads(self._text)
+        try:
+            json_response = json.loads(self._text)
+            return json_response
+        except json.JSONDecodeError as e:
+            raise Exception(f"Error parsing JSON: {e} (content: {self._text[:100]}) of length {len(self._text)}") from e
+        except Exception as e:
+            raise Exception(f"Error parsing JSON: {e} (content: {self._text[:100]}) of length {len(self._text)}") from e
 
     def raise_for_status(self) -> None:
         if self.status_code >= 400:
@@ -150,14 +156,14 @@ class HttpClient:
         proxy: bool = False,
         retry_403: bool = True,
         verify: bool = True,
-        timeout: float | None = None,
+        timeout: int | None = None,
         headers: dict[str, str] | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
         self.debug = debug
         self.retry_403 = retry_403
-        self.timeout = timeout
+        self.timeout = timeout if timeout else 30
         self.verify = verify
         self.headers = headers or {}
 
@@ -165,9 +171,9 @@ class HttpClient:
         emulation_browser_option = _get_random_rnet_browser() if mimic_browser else None
 
         if emulation_browser_option:
-            self._client = rnet.Client(emulation=emulation_browser_option)
+            self._client = rnet.Client(emulation=emulation_browser_option, timeout=self.timeout, allow_redirects=True)
         else:
-            self._client = rnet.Client()
+            self._client = rnet.Client(timeout=self.timeout, allow_redirects=True)
 
         # proxy settings
         self._proxy = None
@@ -218,6 +224,8 @@ class HttpClient:
                 # Pre-load content for compatibility
                 content = await resp.bytes()
                 text = await resp.text()
+
+                logger.debug(f"{url} - {resp.status} - {len(content)} bytes")
 
                 compat_resp = HttpResponse(resp, content, text)
 
