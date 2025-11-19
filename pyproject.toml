@@ -64,7 +64,6 @@ dependencies = [
     "humanize>=4.11.0",
     "clerk-backend-api>=1.5.0",
     "pyarrow>=18.1.0",
-    "curl-cffi>=0.7.4",
     "hypercorn>=0.17.3",
     "clickhouse-connect>=0.8.0",
     "opentelemetry-sdk<1.30.0",
