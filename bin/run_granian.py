@@ -25,7 +25,6 @@ RELOAD_PATH = Path(__file__).parent.parent.resolve() / "opennem"
 def run_server(
     host: str = "0.0.0.0",
     port: int = 8000,
-    server_ssl: bool = False,
     workers: int | None = 2,
     reload: bool = False,
 ) -> None:
@@ -47,12 +46,6 @@ def run_server(
 
     if not log_level:
         log_level = LogLevels.debug
-
-    # Configure development settings
-    if settings.debug or settings.is_dev or settings.is_local:
-        reload = True
-        log_level = LogLevels.debug
-        workers = 1
 
     logger.info(f"Running Granian server on {host}:{port} with {workers} workers")
 

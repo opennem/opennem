@@ -49,7 +49,7 @@ class OpennemSettings(BaseSettings):
     # API server settings
     api_server_host: str = "0.0.0.0"
     api_server_port: int = 8000
-    api_server_workers: int = 1
+    api_server_workers: int = 4
 
     # api messages
     api_messages: list[str] = [
