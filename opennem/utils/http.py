@@ -6,20 +6,8 @@ from urllib.parse import urlparse
 import rnet
 
 from opennem import settings
-from opennem.utils.random_agent import get_random_agent
-from opennem.utils.version import get_version
 
 logger = logging.getLogger("opennem.utils.http")
-
-DEFAULT_BROWSER_HEADERS = {
-    "Accept": (
-        "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,"
-        "image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
-    ),
-    "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
-    "Cache-Control": "no-cache",
-    "Connection": "keep-alive",
-}
 
 
 def get_rnet_proxy() -> rnet.Proxy:
@@ -247,7 +235,6 @@ def http_factory(
     debug: bool = False,
     proxy: bool = False,
     retry_403: bool = True,
-    *args: Any,
     **kwargs: Any,
 ) -> HttpClient:
     """
@@ -260,7 +247,6 @@ def http_factory(
     * debug: Enable debug logging
     * proxy: Whether to use proxy settings
     * retry_403: Whether to enable 403 retries
-    * args: Additional arguments to pass to the client
     * kwargs: Additional keyword arguments to pass to the client
 
     Returns:
@@ -274,17 +260,6 @@ def http_factory(
     print(resp.text)
     ```
     """
-
-    # Defaults logic
-    headers = kwargs.get("headers", {})
-
-    if mimic_browser:
-        headers.setdefault("user-agent", get_random_agent())
-        headers.update(DEFAULT_BROWSER_HEADERS)
-    else:
-        headers.setdefault("user-agent", f"OpenNEM/{get_version()}")
-
-    kwargs["headers"] = headers
 
     # Default timeout
     if not kwargs.get("timeout"):
@@ -303,6 +278,12 @@ http = http_factory(debug=settings.is_dev)
 
 if __name__ == "__main__":
 
+    async def test_retry():
+        http = http_factory(proxy=False, debug=True)
+        resp = await http.get("https://httpbin.org/status/403")
+        print(f"Response status: {resp.status_code}")
+        print(f"Response body length: {len(resp.content)}")
+
     async def test_client():
         print(f"Testing client with proxy setting: {settings.http_proxy_url}")
 
@@ -317,4 +298,25 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"Request failed: {e}")
 
-    asyncio.run(test_client())
+    async def test_aemo_downloads():
+        urls = [
+            "https://data.wa.aemo.com.au/public/market-data/wemde/tradingReport/tradingDayReport/previous/TradingDayReport_20231004.zip",
+            "https://nemweb.com.au/Reports/Current/DispatchIS_Reports/PUBLIC_DISPATCHIS_202511191035_0000000490006114.zip",
+        ]
+
+        http = http_factory(proxy=False, debug=True)
+
+        for url in urls:
+            resp = await http.get(url)
+            print(f"Response status: {resp.status_code}")
+            print(f"Response body length: {len(resp.content)}")
+
+    async def test_fingerprint():
+        http = http_factory(proxy=False, debug=True)
+        resp = await http.post("https://tls.peet.ws/api/all")
+        print(f"Response status: {resp.status_code}")
+        print(f"Response body length: {len(resp.content)}")
+        print(resp.headers)
+        print(resp.content)
+
+    asyncio.run(test_retry())
