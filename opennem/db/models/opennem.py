@@ -238,7 +238,7 @@ class Facility(Base):
     osm_way_id: Mapped[str | None] = mapped_column(Text, nullable=True)  # OpenStreetMap Way ID
     location = Column(Geometry("POINT", srid=4326), nullable=True)  # PostGIS location point
 
-    units: Mapped[list[Unit]] = relationship("Unit", innerjoin=True, lazy="selectin")
+    units: Mapped[list["Unit"]] = relationship("Unit", innerjoin=True, lazy="selectin")
 
     cms_id: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
     cms_created_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

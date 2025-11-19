@@ -191,7 +191,7 @@ class HttpClient:
             self._retry_codes.append(403)
         self._retry_delay = 1.0
 
-    async def __aenter__(self) -> HttpClient:
+    async def __aenter__(self) -> "HttpClient":
         return self
 
     async def __aexit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:

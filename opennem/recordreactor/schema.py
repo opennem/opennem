@@ -181,7 +181,7 @@ class MilestoneRecordOutputSchema(BaseModel):
     description: str | None = None
     description_long: str | None = None
     previous_instance_id: uuid.UUID | None = None
-    history: list[MilestoneRecordOutputSchema] | None = None
+    history: list["MilestoneRecordOutputSchema"] | None = None
 
 
 class MilestoneMetadataSchema(BaseModel):
