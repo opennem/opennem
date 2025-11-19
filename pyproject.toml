@@ -71,6 +71,7 @@ dependencies = [
     "atproto>=0.0.59",
     "rnet==3.0.0rc12",
     "python-sanity>=0.2.0",
+    "psycopg[binary]>=3.2.12",
 ]
 
 [dependency-groups]
