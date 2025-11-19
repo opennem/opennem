@@ -10,12 +10,12 @@ from opennem.utils.mime import mime_from_content, mime_from_url
 logger = logging.getLogger("opennem.downloader")
 
 
-async def url_downloader(url: str) -> bytes:
+async def url_downloader(url: str, use_proxy: bool = True) -> bytes:
     """Downloads a URL and returns content, handling embedded zips and other MIME's"""
 
     logger.debug(f"Downloading: {url}")
 
-    http = http_factory(proxy=True)
+    http = http_factory(proxy=use_proxy)
 
     response = await http.get(url)
 

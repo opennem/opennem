@@ -308,8 +308,12 @@ def parse_aemo_file(file: str, table_set: AEMOTableSet | None = None, values_onl
 # debug entry point
 if __name__ == "__main__":
     # @TODO parse into MMS schema
-    # url = "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220612.zip"
-    url = "https://nemweb.com.au/Reports/ARCHIVE/TradingIS_Reports/PUBLIC_TRADINGIS_20210620_20210626.zip"
-    # parse_aemo_url_optimized(url)
+    url = "https://nemweb.com.au/Reports/Current/DispatchIS_Reports/PUBLIC_DISPATCHIS_202511191035_0000000490006114.zip"
 
-    # controller_returns = store_aemo_tableset(r)
+    async def test_parse_aemo_url():
+        table_set = await parse_aemo_url(url)
+        print(table_set)
+
+    import asyncio
+
+    asyncio.run(test_parse_aemo_url())
