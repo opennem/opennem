@@ -66,7 +66,7 @@ def _get_random_rnet_browser() -> rnet.Emulation:
 
 
 class HttpResponse:
-    """Wrapper for rnet response to be compatible with httpx.Response"""
+    """Wrapper for rnet response to be compatible with old response"""
 
     def __init__(self, rnet_resp: Any, content: bytes, text: str) -> None:
         self._resp = rnet_resp

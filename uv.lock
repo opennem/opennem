@@ -1396,18 +1396,6 @@ wheels = [
 ]
 
 [[package]]
-name = "gunicorn"
-version = "22.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "packaging" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/1e/88/e2f93c5738a4c1f56a458fc7a5b1676fc31dcdbb182bef6b40a141c17d66/gunicorn-22.0.0.tar.gz", hash = "sha256:4a0b436239ff76fb33f11c07a16482c521a7e09c1ce3cc293c2330afe01bec63", size = 3639760, upload-time = "2024-04-16T22:58:19.218Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/29/97/6d610ae77b5633d24b69c2ff1ac3044e0e565ecbd1ec188f02c45073054c/gunicorn-22.0.0-py3-none-any.whl", hash = "sha256:350679f91b24062c86e386e198a15438d53a7a8207235a78ba1b53df4c4378d9", size = 84443, upload-time = "2024-04-16T22:58:15.233Z" },
-]
-
-[[package]]
 name = "h11"
 version = "0.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2514,7 +2502,6 @@ dependencies = [
     { name = "fastapi-versionizer" },
     { name = "geoalchemy2" },
     { name = "geojson" },
-    { name = "gunicorn" },
     { name = "humanize" },
     { name = "hypercorn" },
     { name = "instructor" },
@@ -2546,7 +2533,6 @@ dependencies = [
     { name = "tweepy", extra = ["async"] },
     { name = "typer" },
     { name = "unkey-py" },
-    { name = "uvicorn" },
     { name = "validators" },
     { name = "xlrd" },
 ]
@@ -2580,6 +2566,7 @@ dev = [
     { name = "types-cachetools" },
     { name = "types-redis" },
     { name = "types-requests" },
+    { name = "uvicorn" },
 ]
 
 [package.metadata]
@@ -2607,7 +2594,6 @@ requires-dist = [
     { name = "fastapi-versionizer", specifier = ">=4.0.1,<5.0.0" },
     { name = "geoalchemy2", specifier = ">=0.14.4,<1.0.0" },
     { name = "geojson", specifier = ">=3.1.0,<4.0.0" },
-    { name = "gunicorn", specifier = ">=22.0.0,<23.0.0" },
     { name = "humanize", specifier = ">=4.11.0" },
     { name = "hypercorn", specifier = ">=0.17.3" },
     { name = "instructor", specifier = ">=1.4.0,<2.0.0" },
@@ -2639,7 +2625,6 @@ requires-dist = [
     { name = "tweepy", extras = ["async"], specifier = ">=4.15.0" },
     { name = "typer", specifier = ">=0.15.1" },
     { name = "unkey-py", specifier = ">=0.7.1,<0.8.0" },
-    { name = "uvicorn", specifier = ">=0.30.4,<1.0.0" },
     { name = "validators", specifier = ">=0.18.1,<1.0.0" },
     { name = "xlrd", specifier = ">=2.0.1,<3.0.0" },
 ]
@@ -2673,6 +2658,7 @@ dev = [
     { name = "types-cachetools", specifier = ">=5.0.0,<6.0.0" },
     { name = "types-redis", specifier = ">=4.6.0.11,<5.0.0.0" },
     { name = "types-requests", specifier = ">=2.25.2,<3.0.0" },
+    { name = "uvicorn", specifier = ">=0.30.4,<1.0.0" },
 ]
 
 [[package]]

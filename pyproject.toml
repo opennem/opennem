@@ -39,8 +39,6 @@ dependencies = [
     "boto3<2.0.0,>=1.23.7",
     "seaborn<1.0.0,>=0.13.2",
     "fastapi-cache2[redis]<1.0.0,>=0.2.1",
-    "uvicorn<1.0.0,>=0.30.4",
-    "gunicorn<23.0.0,>=22.0.0",
     "unkey-py>=0.7.1,<0.8.0",
     "authlib<2.0.0,>=1.2.1",
     "pydantic-geojson<1.0.0,>=0.1.1",
@@ -107,6 +105,7 @@ dev = [
     "fuzzywuzzy>=0.18.0",
     "openai>=1.61.0",
     "ty>=0.0.1a21",
+    "uvicorn<1.0.0,>=0.30.4"
 ]
 
 [tool.uv]

@@ -26,7 +26,6 @@ LOGGING_CONFIG = {
         "aiobotocore": {"level": "ERROR"},
         "aioboto3": {"level": "ERROR"},
         "instructor": {"level": "ERROR"},
-        "httpx": {"level": "ERROR"},
         "openai": {"level": "ERROR"},
         "arq.worker": {"level": "INFO"},
         "clickhouse_connect": {"level": "INFO"},
