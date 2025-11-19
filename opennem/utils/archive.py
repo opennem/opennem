@@ -15,7 +15,7 @@ from tempfile import mkdtemp
 from typing import IO, Any
 from zipfile import ZipFile
 
-from opennem.utils.httpx import http
+from opennem.utils.http import http_factory
 from opennem.utils.url import get_filename_from_url
 
 logger = logging.getLogger("opennem.archive.utils")
@@ -156,14 +156,16 @@ async def download_and_unzip(url: str) -> Path:
 
     filename = get_filename_from_url(url)
 
+    http = http_factory(proxy=True)
+
     response = await http.get(url)
 
     if not response.is_success:
         raise Exception(f"Failed to download file: Status code {response.status_code}")
 
-    content_type = response.headers.get("Content-Type", None)
+    content_type = response.headers.get("content-type", None)
 
-    if not content_type or "zip" not in content_type:
+    if not content_type or "zip" not in content_type.lower():
         raise Exception(f"Invalid content type: {content_type}")
 
     save_path = Path(dest_dir) / filename
@@ -210,9 +212,11 @@ async def download_and_parse_json_zip(url: str, indent: int | None = None) -> li
     """
 
     # Create a temporary directory
-    temp_dir = Path(mkdtemp())
+    temp_dir = Path(mkdtemp(prefix="opennem_"))
 
     response_jsons = []
+
+    http = http_factory(proxy=False, debug=True)
 
     try:
         # Download the file
@@ -223,9 +227,11 @@ async def download_and_parse_json_zip(url: str, indent: int | None = None) -> li
             raise Exception(f"Failed to download file: Status code {response.status_code}")
 
         # Check the content type of the downloaded file
-        content_type = response.headers.get("Content-Type", "")
+        content_type = response.headers.get("content-type", "")
 
-        if "zip" in content_type:
+        logger.debug(f"Content type: {content_type}")
+
+        if "zip" in content_type.lower():
             # If the file is a ZIP, unzip it in the temporary directory
             with zipfile.ZipFile(io.BytesIO(response.content)) as zip_file:
                 zip_file.extractall(temp_dir)
