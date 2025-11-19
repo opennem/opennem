@@ -14,7 +14,7 @@ authors = [
     {name = "Dylan McConnell", email = "dylan.mcconnell@unimelb.edu.au"},
     {name = "Nik Cubrilovic", email = "git@nikcub.me"},
 ]
-requires-python = "<4.0,>=3.11"
+requires-python = "<3.13,>=3.11"
 version = "4.4.0.dev9"
 
 dependencies = [
