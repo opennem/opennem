@@ -30,8 +30,8 @@ def _get_rnet_proxy() -> rnet.Proxy:
 
     return rnet.Proxy.all(
         url=proxy_url,
-        username=parsed.username,
-        password=parsed.password,
+        username=parsed.username or "",
+        password=parsed.password or "",
     )
 
 
@@ -161,10 +161,15 @@ class HttpClient:
         self.verify = verify
         self.headers = headers or {}
 
-        # rnet specific setup
-        emulation = _get_random_rnet_browser() if mimic_browser else None
-        self._client = rnet.Client(emulation=emulation)
+        # rnet emulation
+        emulation_browser_option = _get_random_rnet_browser() if mimic_browser else None
 
+        if emulation_browser_option:
+            self._client = rnet.Client(emulation=emulation_browser_option)
+        else:
+            self._client = rnet.Client()
+
+        # proxy settings
         self._proxy = None
         if proxy:
             try:
@@ -174,7 +179,7 @@ class HttpClient:
 
         # Retry settings
         self._retries = settings.http_retries
-        self._retry_codes = [408, 429, 500, 502, 503, 504]
+        self._retry_codes = [408, 429, 500, 502, 503, 504]  # these are the base retry codes
         # @note this is custom for nemweb which does a 403
         if retry_403:
             self._retry_codes.append(403)
