@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import random
 from typing import Any
 from urllib.parse import urlparse
 
@@ -10,7 +11,7 @@ from opennem import settings
 logger = logging.getLogger("opennem.utils.http")
 
 
-def get_rnet_proxy() -> rnet.Proxy:
+def _get_rnet_proxy() -> rnet.Proxy:
     if not settings.http_proxy_url:
         raise ValueError("Proxy is enabled but no proxy URL is set")
 
@@ -32,6 +33,36 @@ def get_rnet_proxy() -> rnet.Proxy:
         username=parsed.username,
         password=parsed.password,
     )
+
+
+def _get_random_rnet_browser() -> rnet.Emulation:
+    """get a random emulated browser - pad out the list based on ~popularity"""
+    rnet_browsers = [
+        rnet.Emulation.Chrome140,
+        rnet.Emulation.Chrome141,
+        rnet.Emulation.Chrome141,
+        rnet.Emulation.Chrome141,
+        rnet.Emulation.Chrome141,
+        rnet.Emulation.Chrome142,
+        rnet.Emulation.Chrome142,
+        rnet.Emulation.Chrome142,
+        rnet.Emulation.Chrome142,
+        rnet.Emulation.Chrome142,
+        rnet.Emulation.Edge134,
+        rnet.Emulation.Firefox142,
+        rnet.Emulation.Firefox143,
+        rnet.Emulation.Firefox143,
+        rnet.Emulation.Firefox143,
+        rnet.Emulation.Safari26,
+        rnet.Emulation.Safari26,
+        rnet.Emulation.Safari26,
+        rnet.Emulation.SafariIos26,
+        rnet.Emulation.SafariIos26,
+        rnet.Emulation.SafariIos26,
+        rnet.Emulation.SafariIPad26,
+        rnet.Emulation.Opera119,
+    ]
+    return random.choice(rnet_browsers)
 
 
 class HttpResponse:
@@ -75,6 +106,10 @@ class HttpResponse:
     @property
     def content(self) -> bytes:
         return self._content
+
+    @property
+    def user_agent(self) -> str:
+        return self._resp.user_agent
 
     @property
     def headers(self) -> Any:
@@ -127,13 +162,13 @@ class HttpClient:
         self.headers = headers or {}
 
         # rnet specific setup
-        emulation = rnet.Emulation.Chrome140 if mimic_browser else None
+        emulation = _get_random_rnet_browser() if mimic_browser else None
         self._client = rnet.Client(emulation=emulation)
 
         self._proxy = None
         if proxy:
             try:
-                self._proxy = get_rnet_proxy()
+                self._proxy = _get_rnet_proxy()
             except ValueError:
                 logger.error("Proxy is enabled but no proxy URL is set")
 
@@ -323,4 +358,15 @@ if __name__ == "__main__":
         print(resp.headers)
         print(resp.content)
 
-    asyncio.run(test_retry())
+    async def test_aemo_downloads_many():
+        url = "https://nemweb.com.au/Reports/Current/DispatchIS_Reports/PUBLIC_DISPATCHIS_202511191035_0000000490006114.zip"
+
+        http = http_factory(proxy=True, debug=True)
+
+        semaphore = asyncio.Semaphore(10)
+        async with semaphore:
+            for _ in range(100):
+                resp = await http.get(url)
+                print(f"Response status: {resp.status_code} with body length {len(resp.content)}")
+
+    asyncio.run(test_aemo_downloads_many())
