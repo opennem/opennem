@@ -10,7 +10,7 @@ from geoalchemy2.elements import WKBElement
 from geoalchemy2.shape import from_shape
 from shapely.geometry import shape
 
-from opennem.utils.httpx import http
+from opennem.utils.http import http
 
 logger = logging.getLogger(__name__)
 

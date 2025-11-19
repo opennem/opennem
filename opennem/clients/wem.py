@@ -28,7 +28,7 @@ from pydantic import (
 
 from opennem.schema.network import NetworkWEM
 from opennem.utils.dates import get_date_component, parse_date
-from opennem.utils.httpx import http
+from opennem.utils.http import http
 
 logger = logging.getLogger("opennem.client.wem")
 

@@ -325,7 +325,7 @@ def http_factory(
 
 
 # Global client instance
-http = http_factory(debug=settings.is_dev)
+http = http_factory(debug=settings.is_dev, proxy=False, mimic_browser=False)
 
 
 if __name__ == "__main__":
