@@ -246,7 +246,7 @@ async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None,
         if "archive" in crawler.name.lower() and days < 3:
             continue
 
-        # await run_crawl(crawler, latest=latest, limit=_get_limit_for_crawler(crawler, days))
+        await run_crawl(crawler, latest=latest, limit=_get_limit_for_crawler(crawler, days))
 
         # run the archive crawler if required and if it exists
         if crawler.contains_days and days > crawler.contains_days:
@@ -254,12 +254,12 @@ async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None,
                 logger.error(f"Crawler {crawler.name} has no archive version to fulfill request")
                 continue
 
-            # await run_crawl(
-            #     crawler.archive_version,
-            #     latest=latest,
-            #     reverse=True,
-            #     limit=_get_limit_for_crawler(crawler.archive_version, days),
-            # )
+            await run_crawl(
+                crawler.archive_version,
+                latest=latest,
+                reverse=True,
+                limit=_get_limit_for_crawler(crawler.archive_version, days),
+            )
 
     # run aggregates
     # await process_energy_last_days(days=days)
