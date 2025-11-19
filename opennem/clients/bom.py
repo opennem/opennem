@@ -5,11 +5,10 @@ from datetime import UTC, datetime
 from typing import Annotated, Any
 from zoneinfo import ZoneInfo
 
-from curl_cffi.requests import AsyncSession
 from pydantic import BeforeValidator, model_validator
 
 from opennem.schema.core import BaseConfig
-from opennem.utils.httpx import DEFAULT_BROWSER_HEADERS
+from opennem.utils.http import http_factory
 from opennem.utils.timezone import get_timezone_for_state
 
 logger = logging.getLogger("opennem.clients.bom")
@@ -96,18 +95,12 @@ async def get_bom_observations(observation_url: str, station_code: str) -> BOMOb
 
     logger.info(f"Fetching {observation_url}")
 
-    async with AsyncSession(headers=DEFAULT_BROWSER_HEADERS) as http:
+    async with http_factory(mimic_browser=True, retry_403=True, debug=True) as http:
         response = await http.get(observation_url)
 
-    if response.status_code == 403:
-        raise Exception(f"BoM client request exception: {response.status_code} - {response.text}")
+    response.raise_for_status()
 
-    try:
-        resp_object = response.json()
-    except Exception:
-        raise BOMParsingException(
-            f"Error parsing BOM response: bad json. Status: {response.status_code}. Content length: {len(response.content)}"
-        ) from None
+    resp_object = response.json()
 
     if "observations" not in resp_object:
         raise BOMParsingException(f"Invalid BOM return for {observation_url}")
