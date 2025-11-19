@@ -21,11 +21,13 @@ FROM python-base as builder-base
 RUN apt-get update \
   && apt-get install --no-install-recommends -y \
     build-essential \
+    cmake \
     curl \
     git \
     ca-certificates \
     pkg-config \
     libssl-dev \
+    libclang-dev \
   && rm -rf /var/lib/apt/lists/*
 
 # Install Rust toolchain (needed for curl-cffi and other packages)
@@ -47,7 +49,7 @@ COPY LICENSE ./
 COPY bin/run_server.py bin/
 
 # Install runtime deps
-RUN uv sync --frozen
+RUN uv sync --frozen --no-dev
 
 ################################
 # PRODUCTION
