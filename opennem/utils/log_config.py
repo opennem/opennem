@@ -30,5 +30,7 @@ LOGGING_CONFIG = {
         "arq.worker": {"level": "INFO"},
         "clickhouse_connect": {"level": "INFO"},
         "httpcore.proxy": {"level": "INFO"},
+        "httpcore.http": {"level": "INFO"},
+        "hpack": {"level": "INFO"},
     },
 }
