@@ -17,7 +17,7 @@ from opennem.clients.slack import slack_message
 from opennem.db import get_read_session, get_write_session
 from opennem.db.models.opennem import Facility, Unit
 from opennem.schema.field_types import DUIDType
-from opennem.schema.unit import UnitDispatchType, UnitSchema
+from opennem.schema.unit import UnitDispatchType
 
 logger = logging.getLogger("opennem.core.battery")
 
@@ -152,13 +152,10 @@ async def _generate_battery_unit_map() -> dict[str, BatteryUnitMap]:
                 )
                 continue
 
-            charge_unit_schema = UnitSchema(**charge_unit[0].__dict__)
-            discharge_unit_schema = UnitSchema(**discharge_unit[0].__dict__)
-
             unit_map[str(bidirectional_unit.code)] = BatteryUnitMap(
                 unit=str(bidirectional_unit.code),
-                charge_unit=charge_unit_schema.code,
-                discharge_unit=discharge_unit_schema.code,
+                charge_unit=str(charge_unit[0].code),
+                discharge_unit=str(discharge_unit[0].code),
             )
 
             # create the charge and discharge units
