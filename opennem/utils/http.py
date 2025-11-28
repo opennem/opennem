@@ -172,7 +172,11 @@ class HttpClient:
         emulation_browser_option = _get_random_rnet_browser() if mimic_browser else None
 
         if emulation_browser_option:
-            self._client = rnet.Client(emulation=emulation_browser_option, timeout=self.timeout, allow_redirects=True)
+            self._client = rnet.Client(
+                emulation=emulation_browser_option,
+                timeout=self.timeout,
+                allow_redirects=True,
+            )
         else:
             self._client = rnet.Client(timeout=self.timeout, allow_redirects=True)
 
@@ -186,7 +190,14 @@ class HttpClient:
 
         # Retry settings
         self._retries = settings.http_retries
-        self._retry_codes = [408, 429, 500, 502, 503, 504]  # these are the base retry codes
+        self._retry_codes = [
+            408,
+            429,
+            500,
+            502,
+            503,
+            504,
+        ]  # these are the base retry codes
         # @note this is custom for nemweb which does a 403
         if retry_403:
             self._retry_codes.append(403)
@@ -323,7 +334,13 @@ def http_factory(
     if not kwargs.get("verify"):
         kwargs["verify"] = settings.http_verify_ssl
 
-    return HttpClient(mimic_browser=mimic_browser, debug=debug, proxy=proxy, retry_403=retry_403, **kwargs)
+    return HttpClient(
+        mimic_browser=mimic_browser,
+        debug=debug,
+        proxy=proxy,
+        retry_403=retry_403,
+        **kwargs,
+    )
 
 
 # Global client instance
