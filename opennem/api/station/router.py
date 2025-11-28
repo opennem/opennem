@@ -52,7 +52,7 @@ async def get_facilities(user: authenticated_user) -> APIV4ResponseSchema:
     name="Get station information",
     description="Get a single station by code",
     response_model_exclude_none=True,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
 )
 async def get_facility(
     network_id: str,

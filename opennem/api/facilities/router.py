@@ -27,7 +27,7 @@ logger = logging.getLogger("opennem.api.facilities")
 @router.get(
     path="/",
     response_model_exclude_none=True,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     tags=["Facilities"],
     description="Get all facilities and their associated units",
 )

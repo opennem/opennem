@@ -231,10 +231,7 @@ async def log_api_exception(request: Request, exc: Exception):
         error_msg = "An internal server error occurred. Please try again later."
 
     return OpennemExceptionResponse(
-        content=OpennemErrorSchema(
-            error=error_msg,
-            success=False,
-        ).model_dump(),
+        response_class=OpennemErrorSchema(error=error_msg, success=False),
         status_code=500,
     )
 
@@ -288,7 +285,7 @@ async def favicon_ico() -> str:
     "/networks",
     response_model=list[APINetworkSchema],
     response_model_exclude_none=True,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
     tags=["Core"],
     description="Get networks",
@@ -323,7 +320,7 @@ async def get_networks() -> list[APINetworkSchema]:
     "/networks/regions",
     response_model=list[APINetworkRegion],
     response_model_exclude_none=True,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
     tags=["Core"],
     description="Get network regions",
@@ -352,7 +349,7 @@ async def get_network_regions(
     "/fueltechs",
     response_model=list[FueltechSchema],
     response_model_exclude_none=True,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
     tags=["Core"],
     description="Get all fueltechs",
@@ -386,7 +383,7 @@ async def fueltechs(
     "/intervals",
     response_model=list[TimeInterval],
     response_model_exclude_none=True,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
     tags=["Core"],
     description="Get all intervals",
@@ -400,7 +397,7 @@ def intervals() -> list[TimeInterval]:
     "/periods",
     response_model=list[TimePeriod],
     response_model_exclude_none=True,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
     tags=["Core"],
     description="Get all periods",
@@ -414,7 +411,7 @@ def periods() -> list[TimePeriod]:
     "/units",
     response_model=list[UnitDefinition],
     response_model_exclude_none=True,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
     tags=["Core"],
     description="Get all units",
@@ -428,7 +425,7 @@ def units() -> list[UnitDefinition]:
     "/metrics",
     response_model=dict,
     response_model_exclude_none=True,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     tags=["Core"],
     description="Get all available metrics and their metadata",
 )
@@ -481,7 +478,7 @@ def health_check() -> str:
     "/me",
     response_model=OpennemUserResponse,
     response_model_exclude_none=True,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     tags=["User"],
     description="Get the current user",
 )

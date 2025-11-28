@@ -57,7 +57,7 @@ class ClerkWebhookEvent(BaseModel):
 @api_version(4)
 @router.post(
     "/sanity/{webhook_secret}",
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     description="Webhooks",
 )
 async def webhook_sanity_update(webhook_secret: str, request: Request) -> str:
@@ -97,7 +97,7 @@ async def webhook_sanity_update(webhook_secret: str, request: Request) -> str:
 @api_version(4)
 @router.post(
     "/clerk/{webhook_secret}",
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     description="Clerk webhook endpoint",
 )
 async def webhook_clerk_update(webhook_secret: str, request: Request) -> str:
