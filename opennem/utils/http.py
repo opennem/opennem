@@ -4,6 +4,7 @@ import random
 from typing import Any
 from urllib.parse import urlparse
 
+import logfire
 import rnet
 
 from opennem import settings
@@ -181,7 +182,7 @@ class HttpClient:
             try:
                 self._proxy = _get_rnet_proxy()
             except ValueError:
-                logger.error("Proxy is enabled but no proxy URL is set")
+                logfire.error("Proxy is enabled but no proxy URL is set")
 
         # Retry settings
         self._retries = settings.http_retries
@@ -212,7 +213,7 @@ class HttpClient:
         while attempts <= self._retries:
             try:
                 if self.debug:
-                    logger.debug(f"{method.upper()} {url}")
+                    logfire.info(f"{method.upper()} {url}")
 
                 # Map method string to rnet client method
                 rnet_method = getattr(self._client, method.lower())
@@ -231,11 +232,12 @@ class HttpClient:
 
                 if compat_resp.status_code in self._retry_codes:
                     if attempts == self._retries:
+                        logfire.error(f"Received {compat_resp.status_code} for {url}. Maximum retries reached")
                         return compat_resp
 
                     attempts += 1
                     retry_delay = self._retry_delay * (2 ** (attempts - 1))
-                    logger.warning(
+                    logfire.warning(
                         f"Received {compat_resp.status_code} for {url}. "
                         f"Attempt {attempts}/{self._retries}. Retrying in {retry_delay}s"
                     )
