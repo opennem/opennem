@@ -61,6 +61,7 @@ def run_server(
         loop=Loops.asyncio,
         # Enable reload if in dev mode
         reload=reload,
+        reload_paths=[RELOAD_PATH],
         # Respawn failed workers
         respawn_failed_workers=True,
         # Disable websockets if not needed (better performance)

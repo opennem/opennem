@@ -32,5 +32,6 @@ LOGGING_CONFIG = {
         "httpcore.proxy": {"level": "INFO"},
         "httpcore.http": {"level": "INFO"},
         "hpack": {"level": "INFO"},
+        "watchfiles": {"level": "INFO"},
     },
 }
