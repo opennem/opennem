@@ -239,6 +239,12 @@ async def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
         if primary_key in primary_keys:
             continue
 
+        # @NOTE there is a bug from AEMO data where sometimes the field value is unset
+        # because of corrupt records - we need to skip these records
+        if record["rrp"] is None:
+            logger.warning(f"No price for {interval} {record['regionid']}")
+            continue
+
         primary_keys.append(primary_key)
 
         records_to_store.append(
