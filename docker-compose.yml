@@ -9,19 +9,19 @@ services:
       - ./.env
     restart: on-failure
 
-  postgres:
-    image: timescale/timescaledb-ha:pg15-latest
-    shm_size: "2GB"
-    restart: unless-stopped
-    env_file: ./.env
-    environment:
-      - TZ
-      - TIMESCALEDB_TELEMETRY=off
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    ports:
-      - ${HOST:-127.0.0.1}:${POSTGRES_LOCAL_PORT:-5432}:5432
-    volumes:
-      - db_data:/var/lib/postgresql/
+  # postgres:
+  #   image: timescale/timescaledb-ha:pg15-latest
+  #   shm_size: "2GB"
+  #   restart: unless-stopped
+  #   env_file: ./.env
+  #   environment:
+  #     - TZ
+  #     - TIMESCALEDB_TELEMETRY=off
+  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+  #   ports:
+  #     - ${HOST:-127.0.0.1}:${POSTGRES_LOCAL_PORT:-5432}:5432
+  #   volumes:
+  #     - db_data:/var/lib/postgresql/
 
   clickhouse:
     image: clickhouse/clickhouse-server:latest
