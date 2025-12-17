@@ -29,7 +29,6 @@ api_token_scheme = HTTPBearer()
 
 # Default internal user for development
 _OPENNEM_INTERNAL_USER = OpenNEMUser(
-    valid=True,
     id="dev",
     owner_id="dev",
     roles=[OpenNEMRoles.admin, OpenNEMRoles.user, OpenNEMRoles.anonymous],
@@ -71,20 +70,20 @@ async def get_current_user(
             return user
 
         # Enrich with Clerk user data
-        clerk_user = await clerk_client.users.get_async(user_id=user.owner_id)
+        clerk_user = await clerk_client.users.get_async(user_id=user.owner_id or "")
 
         if not clerk_user:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
 
         user.full_name = f"{clerk_user.first_name} {clerk_user.last_name}"
         user.email = clerk_user.email_addresses[0].email_address
-        user.plan = clerk_user.private_metadata.get("plan")
+        user.plan = clerk_user.private_metadata.get("plan") if clerk_user.private_metadata else None
 
         return user
 
     except Exception as e:
         logger.error(f"Authentication error: {str(e)}")
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Authentication failed") from e
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication failed") from e
 
 
 def check_roles(required_roles: list[OpenNEMRoles]):
