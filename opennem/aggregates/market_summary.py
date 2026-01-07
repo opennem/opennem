@@ -862,10 +862,10 @@ if __name__ == "__main__":
     # Run the complete reset
     async def main():
         # Option 1: Full reset from the beginning
-        # await reset_market_summary()
+        await reset_market_summary()
 
         # Option 2: Reset from a specific date (e.g., last month for testing)
-        await reset_market_summary(start_date=datetime.fromisoformat("2020-01-01T00:00:00"))
+        # await reset_market_summary(start_date=datetime.fromisoformat("2020-01-01T00:00:00"))
 
         # Option 3: Incremental update without schema refresh
         # await reset_market_summary(
@@ -875,4 +875,4 @@ if __name__ == "__main__":
 
     import asyncio
 
-    asyncio.run(run_market_summary_aggregate_to_now())
+    asyncio.run(main())
