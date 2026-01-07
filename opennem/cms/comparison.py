@@ -550,8 +550,8 @@ def _has_closure_date(unit):
     return True if unit.closure_date else False
 
 
-def check_duid_data():
-    facilities = get_cms_facilities()
+async def check_duid_data():
+    facilities = await get_cms_facilities()
 
     csv_field_data = []
 

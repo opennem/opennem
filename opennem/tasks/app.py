@@ -56,6 +56,7 @@ from opennem.tasks.tasks import (
     task_send_cms_updates_slack_report,
     task_update_facility_first_seen,
     task_update_facility_seen_range,
+    task_update_max_generation_for_units,
     task_update_milestones,
     task_wem_day_crawl,
 )
@@ -270,6 +271,13 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
+        # Update max generation for units
+        cron(
+            task_update_max_generation_for_units,
+            hour=0,
+            minute=0,
+            second=0,
+        ),
         # clean tmp dir
         cron(
             task_clean_tmp_dir,
@@ -307,9 +315,20 @@ class WorkerSettings:
 
 def main() -> None:
     """Run the main worker"""
+    import asyncio
+
     from opennem import settings
 
     if settings.run_worker:
+        # Python 3.14 compatibility: ensure event loop exists before arq tries to get it
+        # arq calls asyncio.get_event_loop() in Worker.__init__ which no longer
+        # automatically creates a loop
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
         worker = create_worker(settings_cls=WorkerSettings)  # type: ignore
         worker.run()
     else:

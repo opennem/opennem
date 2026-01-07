@@ -13,7 +13,7 @@ from datetime import datetime
 from textwrap import dedent
 from typing import Any
 
-from clickhouse_driver.client import Client
+from clickhouse_connect.driver.client import Client
 from sqlalchemy import func, select, text
 
 from opennem import settings
@@ -112,13 +112,13 @@ def _get_source_table_and_interval_name(
     milestone_type: MilestoneType, period: MilestonePeriod, grouping: GroupingConfig
 ) -> tuple[str, str]:
     if milestone_type in [MilestoneType.power, MilestoneType.energy, MilestoneType.emissions, MilestoneType.market_value]:
-        if "fueltech_group_id" in grouping.group_by_fields:
+        if "fueltech_group_id" in grouping.group_by_fields if grouping.group_by_fields else False:
             return "fueltech_intervals_mv", "interval"
             # if period == MilestonePeriod.interval:
             #     return "fueltech_intervals_mv", "interval"
             # else:
             #     return "fueltech_intervals_daily_mv", "date"
-        elif "renewable" in grouping.group_by_fields:
+        elif "renewable" in grouping.group_by_fields if grouping.group_by_fields else False:
             return "renewable_intervals_mv", "interval"
             # if period == MilestonePeriod.interval:
             # else:
@@ -128,7 +128,7 @@ def _get_source_table_and_interval_name(
             # if period == MilestonePeriod.interval:
             # else:
             #     return "fueltech_intervals_daily_mv", "date"
-    elif milestone_type in [MilestoneType.price, MilestoneType.demand]:
+    elif milestone_type in [MilestoneType.price, MilestoneType.demand, MilestoneType.proportion]:
         return "market_summary", "interval"
     else:
         raise ValueError(f"Unsupported milestone type: {milestone_type}")
@@ -205,7 +205,7 @@ def _analyze_milestone_records(
     """
 
     # skip WEM region queries
-    if network == NetworkWEM and "network_region" in grouping.group_by_fields:
+    if (network == NetworkWEM) and ("network_region" in grouping.group_by_fields if grouping.group_by_fields else False):
         return []
 
     source_table, time_col = _get_source_table_and_interval_name(milestone_type, period, grouping)
@@ -270,6 +270,14 @@ def _analyze_milestone_records(
         else:
             metric_column = "demand_energy"
             agg_function = "SUM"
+    elif milestone_type == MilestoneType.proportion:
+        interval_count = "1"
+
+        if period != MilestonePeriod.interval:
+            interval_count = 10000000000  # @note hack until we do bounds on renew propoertion
+
+        metric_column = "round(if(sum(demand_gross) > 0, (sum(generation_renewable) / sum(demand_gross)) * 100, 0), 2)"
+        agg_function = ""
 
     if not metric_column:
         raise ValueError(f"Unsupported milestone type: {milestone_type}")
@@ -293,6 +301,10 @@ def _analyze_milestone_records(
     if milestone_type in [MilestoneType.energy, MilestoneType.emissions]:
         maxes_min_value = 1000
 
+    # for renewable proportion we need the min max to be 0
+    if milestone_type in [MilestoneType.proportion]:
+        maxes_min_value = 0
+
     # rounding
     round_values_to = 2 if milestone_type in [MilestoneType.proportion] else 0
 
@@ -305,12 +317,14 @@ def _analyze_milestone_records(
     if milestone_type in [MilestoneType.price, MilestoneType.demand]:
         date_cutoffs = "and time_bucket >= toDateTime('2009-07-01')"
 
+    total_value_query = f"{agg_function}({metric_column})" if agg_function else metric_column
+
     base_query = f"""
     WITH base_stats AS (
       SELECT
         {time_bucket_sql} as time_bucket{group_by_select},
         {interval_count} as interval_count,
-        {agg_function}({metric_column}) as total_value
+        {total_value_query} as total_value
       FROM {source_table} FINAL
       WHERE
         network_id in ('{network.code.upper()}', {list_to_case([i.code for i in network.subnetworks])})
@@ -444,7 +458,7 @@ def _analyze_milestone_records(
         if debug:
             print(dedent(base_query))
 
-        records = client.execute(base_query)
+        result = client.query(base_query)
         # Convert to list of dicts for easier processing
         field_names = [
             "interval",
@@ -458,7 +472,7 @@ def _analyze_milestone_records(
             "prev_instance_id",
         ]
 
-        records = [dict(zip(field_names, record, strict=False)) for record in records]
+        records = [dict(zip(field_names, record, strict=False)) for record in result.result_rows]
 
         return records
 
@@ -573,6 +587,7 @@ _DEFAULT_METRICS = [
     MilestoneType.energy,
     MilestoneType.emissions,
     # MilestoneType.market_value,
+    MilestoneType.proportion,
 ]
 
 _DEFAULT_NETWORKS = [
@@ -625,7 +640,7 @@ async def run_milestone_analysis(
                         if period != MilestonePeriod.interval:
                             continue
 
-                    if metric in [MilestoneType.demand, MilestoneType.price]:
+                    if metric in [MilestoneType.demand, MilestoneType.price, MilestoneType.proportion]:
                         # Skip fueltech-related groupings for market summary records
                         if grouping.name in [
                             "fueltech",
@@ -725,10 +740,14 @@ if __name__ == "__main__":
         logger.info("Milestones table deleted")
 
         await run_milestone_analysis(
-            start_date=datetime.fromisoformat("2025-01-01T00:00:00"),
-            metrics=[MilestoneType.power],
-            periods=[MilestonePeriod.interval],
-            groupings=[GroupingConfig(name="fueltech", group_by_fields=["network_region", "fueltech_group_id"])],
+            start_date=datetime.fromisoformat("2020-01-01T00:00:00"),
+            metrics=[MilestoneType.proportion],
+            periods=[
+                # MilestonePeriod.interval,
+                MilestonePeriod.day
+            ],
+            # groupings=[GroupingConfig(name="network", group_by_fields=[])],
+            # groupings=[GroupingConfig(name="fueltech", group_by_fields=["network_region", "fueltech_group_id"])],
             networks=[NetworkNEM],
             debug=True,
         )

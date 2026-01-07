@@ -12,7 +12,7 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 import deprecation
-from psycopg import AsyncConnection
+from asyncpg.connection import Connection as AsyncConnection
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
@@ -140,7 +140,7 @@ SessionNoTransaction = async_sessionmaker(
 
 
 @asynccontextmanager
-async def get_read_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_read_session() -> AsyncGenerator[AsyncSession]:
     async with SessionLocal() as session:
         try:
             yield session
@@ -149,7 +149,7 @@ async def get_read_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 @asynccontextmanager
-async def get_write_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_write_session() -> AsyncGenerator[AsyncSession]:
     async with SessionLocalAsync() as session:
         try:
             async with session.begin():
@@ -160,13 +160,13 @@ async def get_write_session() -> AsyncGenerator[AsyncSession, None]:
             raise
 
 
-async def get_scoped_read_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_scoped_read_session() -> AsyncGenerator[AsyncSession]:
     async with SessionLocal() as session:
         yield session
 
 
 @asynccontextmanager
-async def get_notransaction_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_notransaction_session() -> AsyncGenerator[AsyncSession]:
     """
     Gets a session that operates outside of transaction blocks.
     Used for operations that can't run inside transaction blocks like VACUUM or certain TimescaleDB operations.
@@ -184,7 +184,7 @@ async def get_notransaction_session() -> AsyncGenerator[AsyncSession, None]:
     current_version=get_version(dev_tag=False),
     details="Use get_read_session and get_write_session instead",
 )
-async def get_scoped_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_scoped_session() -> AsyncGenerator[AsyncSession]:
     async with SessionLocalAsync() as session:
         yield session
 
@@ -195,6 +195,6 @@ async def get_scoped_session() -> AsyncGenerator[AsyncSession, None]:
     current_version=get_version(dev_tag=False),
     details="Use the db_connect function instead",
 )
-async def get_scoped_connection() -> AsyncGenerator[AsyncConnection, None]:
+async def get_scoped_connection() -> AsyncGenerator[AsyncConnection]:
     async with engine.begin() as connection:
         yield connection

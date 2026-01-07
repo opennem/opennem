@@ -6,7 +6,7 @@ Takes an OpenNEM JSON output and debugs it
 import logging
 
 from opennem.utils.datatable import datatable_print
-from opennem.utils.httpx import http
+from opennem.utils.http import http
 
 logger = logging.getLogger("opennem.inspector")
 

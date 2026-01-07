@@ -60,6 +60,10 @@ async def _get_market_summary_data(
         float | None,
         float | None,
         float | None,
+        float | None,
+        float | None,
+        float | None,
+        float | None,
     ]
 ]:
     """
@@ -73,8 +77,9 @@ async def _get_market_summary_data(
     Returns:
         List of tuples containing
         (interval, network_id, network_region, price, demand, demand_total,
-         prev_demand, prev_demand_total, curtailment_solar_total,
-         curtailment_wind_total, prev_curtailment_solar_total,
+         prev_demand, prev_demand_total, rooftop_solar, prev_rooftop_solar,
+         renewable_generation, prev_renewable_generation,
+         curtailment_solar_total, curtailment_wind_total, prev_curtailment_solar_total,
          prev_curtailment_wind_total, curtailment_total)
         Note: Only returns complete interval pairs where both current and previous intervals are available
     """
@@ -89,6 +94,44 @@ async def _get_market_summary_data(
         FROM balancing_summary
         WHERE interval BETWEEN :start_time_window AND :end_time
         AND is_forecast = false
+    ),
+    rooftop_data AS (
+        -- Get rooftop solar generation aggregated by region with gap filling
+        SELECT
+            time_bucket_gapfill('5 minutes', fs.interval, :start_time_window, :end_time) as interval,
+            f.network_id,
+            f.network_region,
+            interpolate(avg(fs.generated)) as rooftop_solar
+        FROM facility_scada fs
+        JOIN units u ON fs.facility_code = u.code
+        JOIN facilities f ON u.station_id = f.id
+        WHERE fs.interval BETWEEN :start_time_window AND :end_time
+            AND u.fueltech_id = 'solar_rooftop'
+            AND fs.is_forecast = false
+            AND f.network_id IN (SELECT network_id FROM regions)
+            AND f.network_region IN (SELECT network_region FROM regions)
+        GROUP BY 1, 2, 3
+    ),
+    renewable_data AS (
+        -- Get all renewable generation (excluding rooftop which is handled separately)
+        SELECT
+            time_bucket_gapfill('5 minutes', fs.interval, :start_time_window, :end_time) as interval,
+            f.network_id,
+            f.network_region,
+            interpolate(sum(CASE
+                WHEN u.fueltech_id IN ('bioenergy_biogas', 'bioenergy_biomass', 'hydro',
+                                       'solar_utility', 'wind')
+                THEN fs.generated
+                ELSE 0
+            END)) as renewable_generation
+        FROM facility_scada fs
+        JOIN units u ON fs.facility_code = u.code
+        JOIN facilities f ON u.station_id = f.id
+        WHERE fs.interval BETWEEN :start_time_window AND :end_time
+            AND fs.is_forecast = false
+            AND f.network_id IN (SELECT network_id FROM regions)
+            AND f.network_region IN (SELECT network_region FROM regions)
+        GROUP BY 1, 2, 3
     ),
     gapfilled_data AS (
         -- Generate complete time series with gap filling for each region
@@ -108,6 +151,28 @@ async def _get_market_summary_data(
             AND network_region IN (SELECT network_region FROM regions)
         GROUP BY 1, 2, 3
     ),
+    combined_data AS (
+        SELECT
+            COALESCE(gd.interval, rd.interval, rn.interval) as interval,
+            COALESCE(gd.network_id, rd.network_id, rn.network_id) as network_id,
+            COALESCE(gd.network_region, rd.network_region, rn.network_region) as network_region,
+            gd.price,
+            gd.demand,
+            gd.demand_total,
+            COALESCE(rd.rooftop_solar, 0) as rooftop_solar,
+            COALESCE(rn.renewable_generation, 0) as renewable_generation,
+            gd.curtailment_solar_total,
+            gd.curtailment_wind_total
+        FROM gapfilled_data gd
+        FULL OUTER JOIN rooftop_data rd
+            ON gd.interval = rd.interval
+            AND gd.network_id = rd.network_id
+            AND gd.network_region = rd.network_region
+        FULL OUTER JOIN renewable_data rn
+            ON gd.interval = rn.interval
+            AND gd.network_id = rn.network_id
+            AND gd.network_region = rn.network_region
+    ),
     ranked_data AS (
         SELECT
             interval,
@@ -124,6 +189,16 @@ async def _get_market_summary_data(
                 PARTITION BY network_id, network_region
                 ORDER BY interval
             ) as prev_demand_total,
+            rooftop_solar,
+            LAG(rooftop_solar) OVER (
+                PARTITION BY network_id, network_region
+                ORDER BY interval
+            ) as prev_rooftop_solar,
+            renewable_generation,
+            LAG(renewable_generation) OVER (
+                PARTITION BY network_id, network_region
+                ORDER BY interval
+            ) as prev_renewable_generation,
             curtailment_solar_total,
             curtailment_wind_total,
             LAG(curtailment_solar_total) OVER (
@@ -134,7 +209,7 @@ async def _get_market_summary_data(
                 PARTITION BY network_id, network_region
                 ORDER BY interval
             ) as prev_curtailment_wind_total
-        FROM gapfilled_data
+        FROM combined_data
         ORDER BY interval
     )
     SELECT
@@ -146,6 +221,10 @@ async def _get_market_summary_data(
         demand_total,
         prev_demand,
         prev_demand_total,
+        rooftop_solar,
+        prev_rooftop_solar,
+        renewable_generation,
+        prev_renewable_generation,
         curtailment_solar_total,
         curtailment_wind_total,
         prev_curtailment_solar_total,
@@ -184,6 +263,10 @@ def _prepare_market_summary_data(
             float | None,
             float | None,
             float | None,
+            float | None,
+            float | None,
+            float | None,
+            float | None,
         ]
     ],
 ) -> list[
@@ -191,6 +274,12 @@ def _prepare_market_summary_data(
         datetime,
         str,
         str,
+        float | None,
+        float | None,
+        float | None,
+        float | None,
+        float | None,
+        float | None,
         float | None,
         float | None,
         float | None,
@@ -230,6 +319,10 @@ def _prepare_market_summary_data(
             "demand_total": pl.Float64,
             "prev_demand": pl.Float64,
             "prev_demand_total": pl.Float64,
+            "rooftop_solar": pl.Float64,
+            "prev_rooftop_solar": pl.Float64,
+            "renewable_generation": pl.Float64,
+            "prev_renewable_generation": pl.Float64,
             "curtailment_solar_total": pl.Float64,
             "curtailment_wind_total": pl.Float64,
             "prev_curtailment_solar_total": pl.Float64,
@@ -242,14 +335,34 @@ def _prepare_market_summary_data(
     # round all float64 columns to 4 decimal places
     df = df.with_columns([pl.col(col).round(4) for col in df.columns if isinstance(col, pl.Float64)])
 
-    # fill curtailment records with 0 if they are null
+    # fill curtailment, rooftop, and renewable records with 0 if they are null
     df = df.with_columns(
         [
+            pl.col("rooftop_solar").fill_null(0),
+            pl.col("prev_rooftop_solar").fill_null(0),
+            pl.col("renewable_generation").fill_null(0),
+            pl.col("prev_renewable_generation").fill_null(0),
             pl.col("curtailment_solar_total").fill_null(0),
             pl.col("curtailment_wind_total").fill_null(0),
             pl.col("prev_curtailment_solar_total").fill_null(0),
             pl.col("prev_curtailment_wind_total").fill_null(0),
             pl.col("curtailment_total").fill_null(0),
+        ]
+    )
+
+    # Calculate demand_gross (demand_total + rooftop_solar)
+    df = df.with_columns(
+        [
+            (pl.col("demand_total") + pl.col("rooftop_solar")).round(4).alias("demand_gross"),
+            (pl.col("prev_demand_total") + pl.col("prev_rooftop_solar")).round(4).alias("prev_demand_gross"),
+        ]
+    )
+
+    # Calculate generation_renewable (renewable_generation + rooftop_solar)
+    df = df.with_columns(
+        [
+            (pl.col("renewable_generation") + pl.col("rooftop_solar")).round(4).alias("generation_renewable"),
+            (pl.col("prev_renewable_generation") + pl.col("prev_rooftop_solar")).round(4).alias("prev_generation_renewable"),
         ]
     )
 
@@ -295,6 +408,34 @@ def _prepare_market_summary_data(
             ).alias("demand_total_energy"),
             (
                 (
+                    (pl.col("demand_gross") + pl.col("prev_demand_gross"))
+                    / 2
+                    / pl.when(pl.col("network_id").is_in(list(intervals_map.keys())))
+                    .then(
+                        pl.col("network_id").map_elements(
+                            lambda x: intervals_map.get(x, default_intervals), return_dtype=pl.Float64
+                        )
+                    )
+                    .otherwise(default_intervals)
+                    / 1000  # Convert from kWh to MWh
+                ).round(4)
+            ).alias("demand_gross_energy"),
+            (
+                (
+                    (pl.col("generation_renewable") + pl.col("prev_generation_renewable"))
+                    / 2
+                    / pl.when(pl.col("network_id").is_in(list(intervals_map.keys())))
+                    .then(
+                        pl.col("network_id").map_elements(
+                            lambda x: intervals_map.get(x, default_intervals), return_dtype=pl.Float64
+                        )
+                    )
+                    .otherwise(default_intervals)
+                    / 1000  # Convert from kWh to MWh
+                ).round(4)
+            ).alias("generation_renewable_energy"),
+            (
+                (
                     (pl.col("curtailment_solar_total") + pl.col("prev_curtailment_solar_total"))
                     / 2
                     / pl.when(pl.col("network_id").is_in(list(intervals_map.keys())))
@@ -338,6 +479,7 @@ def _prepare_market_summary_data(
         [
             (pl.col("demand_energy") * pl.col("price")).round(4).alias("demand_market_value"),
             (pl.col("demand_total_energy") * pl.col("price")).round(4).alias("demand_total_market_value"),
+            (pl.col("demand_gross_energy") * pl.col("price")).round(4).alias("demand_gross_market_value"),
             pl.lit(int(datetime.now().timestamp())).alias("version"),  # Add version column
         ]
     )
@@ -351,10 +493,15 @@ def _prepare_market_summary_data(
             "price",
             "demand",
             "demand_total",
+            "demand_gross",
+            "generation_renewable",
             "demand_energy",
             "demand_total_energy",
+            "demand_gross_energy",
+            "generation_renewable_energy",
             "demand_market_value",
             "demand_total_market_value",
+            "demand_gross_market_value",
             "curtailment_solar_total",
             "curtailment_wind_total",
             "curtailment_total",
@@ -396,10 +543,10 @@ def _refresh_clickhouse_schema() -> None:
 
     # Drop views first (in reverse order of creation to handle dependencies)
     for view in reversed(_MARKET_SUMMARY_MATERIALIZED_VIEWS):
-        client.execute(f"DROP TABLE IF EXISTS {view.name}")
+        client.command(f"DROP TABLE IF EXISTS {view.name}")
         logger.info(f"Dropped {view.name}")
 
-    client.execute("DROP TABLE IF EXISTS market_summary")
+    client.command("DROP TABLE IF EXISTS market_summary")
     logger.info("Dropped market_summary table")
 
     _ensure_clickhouse_schema()
@@ -433,20 +580,33 @@ async def process_market_summary_backlog(
             prepared_data = _prepare_market_summary_data(records)
 
             # Batch insert into ClickHouse
-            client.execute(
-                """
-                INSERT INTO market_summary
-                (
-                    interval, network_id, network_region, price, demand, demand_total,
-                    demand_energy, demand_total_energy, demand_market_value,
-                    demand_total_market_value, curtailment_solar_total,
-                    curtailment_wind_total, curtailment_total,
-                    curtailment_energy_solar_total, curtailment_energy_wind_total,
-                    curtailment_energy_total, version
-                )
-                VALUES
-                """,
+            client.insert(
+                "market_summary",
                 prepared_data,
+                column_names=[
+                    "interval",
+                    "network_id",
+                    "network_region",
+                    "price",
+                    "demand",
+                    "demand_total",
+                    "demand_gross",
+                    "generation_renewable",
+                    "demand_energy",
+                    "demand_total_energy",
+                    "demand_gross_energy",
+                    "generation_renewable_energy",
+                    "demand_market_value",
+                    "demand_total_market_value",
+                    "demand_gross_market_value",
+                    "curtailment_solar_total",
+                    "curtailment_wind_total",
+                    "curtailment_total",
+                    "curtailment_energy_solar_total",
+                    "curtailment_energy_wind_total",
+                    "curtailment_energy_total",
+                    "version",
+                ],
             )
 
             logger.info(f"Processed {len(prepared_data)} records from {current_start} to {chunk_end}")
@@ -459,23 +619,24 @@ async def run_market_summary_aggregate_to_now() -> int:
     client = get_clickhouse_client()
 
     # get the max interval from market_summary using FINAL modifier
-    result = client.execute("SELECT MAX(interval) FROM market_summary FINAL")
-    result_rows = list(result)  # type: ignore
+    result = client.query("SELECT MAX(interval) FROM market_summary FINAL")
 
-    if not result_rows or not result_rows[0] or result_rows[0][0] is None:
+    if result.row_count == 0 or result.result_rows[0][0] is None:
         logger.info("No market summary max interval found")
         return 0
 
-    max_interval = result_rows[0][0]  # type: ignore
-    date_from = max_interval + timedelta(minutes=5)  # type: ignore
-    date_to = get_last_completed_interval_for_network(network=NetworkNEM)
+    max_interval = result.result_rows[0][0]
+    date_from = max_interval.replace(tzinfo=None) + timedelta(minutes=5)
+    date_to = get_last_completed_interval_for_network(network=NetworkNEM).replace(tzinfo=None)
+
+    logger.info(f"Processing market summary from {date_from} to {date_to}")
 
     if date_from > date_to:
         logger.info("No new data to process")
         return 0
 
-    if date_from - date_to > timedelta(days=1):
-        logger.info("Date range is greater than 1 day, skipping")
+    if date_from - date_to > timedelta(days=7):
+        logger.info("Date range is greater than 7 days, skipping")
         return 0
 
     # run market summary from max_interval to now
@@ -483,20 +644,33 @@ async def run_market_summary_aggregate_to_now() -> int:
         records = await _get_market_summary_data(session, date_from, date_to)
         prepared_data = _prepare_market_summary_data(records)
 
-    client.execute(
-        """
-        INSERT INTO market_summary
-        (
-            interval, network_id, network_region, price, demand, demand_total,
-            demand_energy, demand_total_energy, demand_market_value,
-            demand_total_market_value, curtailment_solar_total,
-            curtailment_wind_total, curtailment_total,
-            curtailment_energy_solar_total, curtailment_energy_wind_total,
-            curtailment_energy_total, version
-        )
-        VALUES
-        """,
+    client.insert(
+        "market_summary",
         prepared_data,
+        column_names=[
+            "interval",
+            "network_id",
+            "network_region",
+            "price",
+            "demand",
+            "demand_total",
+            "demand_gross",
+            "generation_renewable",
+            "demand_energy",
+            "demand_total_energy",
+            "demand_gross_energy",
+            "generation_renewable_energy",
+            "demand_market_value",
+            "demand_total_market_value",
+            "demand_gross_market_value",
+            "curtailment_solar_total",
+            "curtailment_wind_total",
+            "curtailment_total",
+            "curtailment_energy_solar_total",
+            "curtailment_energy_wind_total",
+            "curtailment_energy_total",
+            "version",
+        ],
     )
 
     logger.info(f"Processed {len(prepared_data)} records from {date_from} to {date_to}")
@@ -517,23 +691,38 @@ async def run_market_summary_aggregate_for_last_intervals(num_intervals: int) ->
 
     client = get_clickhouse_client()
 
-    client.execute(
-        """
-        INSERT INTO market_summary
-        (
-            interval, network_id, network_region, price, demand, demand_total,
-            demand_energy, demand_total_energy, demand_market_value,
-            demand_total_market_value, curtailment_solar_total,
-            curtailment_wind_total, curtailment_total,
-            curtailment_energy_solar_total, curtailment_energy_wind_total,
-            curtailment_energy_total, version
-        )
-        VALUES
-        """,
+    client.insert(
+        "market_summary",
         prepared_data,
+        column_names=[
+            "interval",
+            "network_id",
+            "network_region",
+            "price",
+            "demand",
+            "demand_total",
+            "demand_gross",
+            "generation_renewable",
+            "demand_energy",
+            "demand_total_energy",
+            "demand_gross_energy",
+            "generation_renewable_energy",
+            "demand_market_value",
+            "demand_total_market_value",
+            "demand_gross_market_value",
+            "curtailment_solar_total",
+            "curtailment_wind_total",
+            "curtailment_total",
+            "curtailment_energy_solar_total",
+            "curtailment_energy_wind_total",
+            "curtailment_energy_total",
+            "version",
+        ],
     )
 
     logger.info(f"Processed {len(prepared_data)} records from {start_date} to {end_date}")
+
+    await optimize_clickhouse_tables(table_names=["market_summary"])
 
     return len(prepared_data)
 
@@ -547,6 +736,8 @@ async def run_market_summary_aggregate_for_last_days(days: int) -> int:
 
     async with get_write_session() as session:
         await process_market_summary_backlog(session=session, start_date=start_date, end_date=end_date)
+
+    await optimize_clickhouse_tables(table_names=["market_summary"])
 
     return 0  # Return 0 to indicate successful completion
 
@@ -576,7 +767,7 @@ async def run_market_summary_backlog() -> None:
         )
 
     # Verify the data was inserted
-    result = client.execute(
+    result = client.query(
         """
         SELECT
             network_id,
@@ -585,16 +776,16 @@ async def run_market_summary_backlog() -> None:
             min(interval) as first_interval,
             max(interval) as last_interval
         FROM market_summary
-        WHERE interval BETWEEN %(start)s AND %(end)s
+        WHERE interval BETWEEN {start:DateTime} AND {end:DateTime}
         GROUP BY network_id, network_region
         """,
-        {"start": start_date, "end": end_date},
+        parameters={"start": start_date, "end": end_date},
     )
 
     # Log the results
     logger.info("Processing complete. Summary of inserted data:")
-    result_rows = list(result)  # type: ignore
-    for row in result_rows:  # type: ignore
+    result_rows = result.result_rows
+    for row in result_rows:
         if len(row) >= 5:  # type: ignore
             network_id, region, count, first, last = row[:5]  # type: ignore
             logger.info(
@@ -657,7 +848,7 @@ async def reset_market_summary(start_date: datetime | None = None, skip_schema_r
 
     # Step 4: Optimize the tables
     logger.info("Optimizing ClickHouse tables...")
-    await optimize_clickhouse_tables()
+    await optimize_clickhouse_tables(table_names=["market_summary"])
 
     # Step 5: Backfill the materialized views (only if schema was refreshed)
     if not skip_schema_refresh:
@@ -674,7 +865,7 @@ if __name__ == "__main__":
         await reset_market_summary()
 
         # Option 2: Reset from a specific date (e.g., last month for testing)
-        # await reset_market_summary(start_date=datetime.fromisoformat("2025-06-01T00:00:00"))
+        # await reset_market_summary(start_date=datetime.fromisoformat("2020-01-01T00:00:00"))
 
         # Option 3: Incremental update without schema refresh
         # await reset_market_summary(

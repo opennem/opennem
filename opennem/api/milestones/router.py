@@ -36,7 +36,7 @@ milestones_router = APIRouter(tags=["Milestones"], include_in_schema=True)
 @milestones_router.get(
     "/records",
     response_model=APIV4ResponseSchema,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     response_model_exclude_none=True,
     description="Get milestones",
 )
@@ -185,7 +185,7 @@ async def get_milestones(
 @milestones_router.get(
     "/history/{record_id}",
     response_model=APIV4ResponseSchema,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     response_model_exclude_none=True,
     description="Get a single milestone",
 )
@@ -233,7 +233,7 @@ async def get_milestone_by_record_id(
 @milestones_router.get(
     "/instance/{instance_id}",
     response_model=APIV4ResponseSchema,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     response_model_exclude_none=True,
     description="Get a single milestone",
 )
@@ -282,7 +282,7 @@ async def get_milestone(
 @milestones_router.get(
     "/record_id",
     response_model=APIV4ResponseSchema,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     response_model_exclude_none=True,
     description="Get a list of milestone record ids with the most recent record for each record_id",
     include_in_schema=True,
@@ -375,7 +375,7 @@ async def api_get_milestone_record_ids(
 @milestones_router.get(
     "/metadata",
     response_model=MilestoneMetadataSchema,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     response_model_exclude_none=True,
     description="Get metadata for milestones",
 )

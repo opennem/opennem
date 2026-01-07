@@ -432,11 +432,11 @@ async def power_week(
 
     ch_client = get_clickhouse_client()
 
-    result_price_and_demand_and_curtailment = ch_client.execute(query)
+    result_price_and_demand_and_curtailment = ch_client.query(query)
 
     stats_price_results = [
         DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None)
-        for i in result_price_and_demand_and_curtailment
+        for i in result_price_and_demand_and_curtailment.result_rows
     ]
 
     stats_price = stats_factory(
@@ -453,7 +453,7 @@ async def power_week(
     #  demand
     stats_demand_results = [
         DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None)
-        for i in result_price_and_demand_and_curtailment
+        for i in result_price_and_demand_and_curtailment.result_rows
     ]
 
     stats_demand = stats_factory(
@@ -487,7 +487,7 @@ async def power_week(
 
     stats_curtailment_solar_results = [
         DataQueryResult(interval=i[0], result=i[7], group_by=i[1] if len(i) > 1 else None)
-        for i in result_price_and_demand_and_curtailment
+        for i in result_price_and_demand_and_curtailment.result_rows
     ]
 
     stats_curtailment_solar = stats_factory(
@@ -504,7 +504,7 @@ async def power_week(
 
     stats_curtailment_wind_results = [
         DataQueryResult(interval=i[0], result=i[8], group_by=i[1] if len(i) > 1 else None)
-        for i in result_price_and_demand_and_curtailment
+        for i in result_price_and_demand_and_curtailment.result_rows
     ]
 
     stats_curtailment_wind = stats_factory(
@@ -536,7 +536,7 @@ async def price_for_network_interval(
         networks_query=networks_query,
     )
 
-    with engine.begin() as conn:
+    async with engine.begin() as conn:
         logger.debug(query)
         result = await conn.execute(query)
         row = result.fetchall()
@@ -555,7 +555,7 @@ async def price_for_network_interval(
     return price_set
 
 
-def power_and_emissions_for_network_interval(
+async def power_and_emissions_for_network_interval(
     time_series: OpennemExportSeries,
     network_region_code: str | None = None,
     include_emission_factors: bool = False,
@@ -570,9 +570,10 @@ def power_and_emissions_for_network_interval(
         network_region=network_region_code,
     )
 
-    with engine.begin() as c:
+    async with engine.begin() as c:
         logger.debug(query)
-        row = list(c.execute(query))
+        result = await c.execute(query)
+        row = result.fetchall()
 
     power_stats = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
     emission_stats = [DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None) for i in row]
@@ -646,7 +647,7 @@ async def demand_network_region_daily(
         )
 
         logger.debug(f"Using ClickHouse for demand query: {query}")
-        row = ch_client.execute(str(query))
+        row = ch_client.query(str(query)).result_rows
 
         # ClickHouse returns different column structure depending on whether network_region is included
         if network_region_code:
@@ -722,7 +723,7 @@ async def curtailment_network_region_daily(
         network_region_code=network_region_code,
     )
 
-    result_curtailment = ch_client.execute(query)
+    result_curtailment = ch_client.query(query).result_rows
 
     result_curtailment_solar = [
         DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 1 else None) for i in result_curtailment

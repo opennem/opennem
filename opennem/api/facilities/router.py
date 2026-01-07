@@ -7,35 +7,42 @@ Handles facility and unit data queries and responses.
 import logging
 
 from fastapi import APIRouter, HTTPException, Query
+from fastapi_cache.decorator import cache
+from fastapi_versionizer import api_version
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from opennem.api.facilities.schema import FacilityResponse, UnitResponse
-from opennem.api.schema import APIV4ResponseSchema
+from opennem.api.facilities.schema import APIV4FacilityResponseSchema, FacilityResponseSchema, UnitResponseSchema
+from opennem.api.facilities.utils import unit_specificity_from_string
 from opennem.api.security import authenticated_user
 from opennem.db import get_read_session
-from opennem.db.models.opennem import Facility
-from opennem.schema.unit import UnitDispatchType, UnitFueltechType, UnitStatusType
+from opennem.db.models.opennem import Facility, FuelTech, Unit
+from opennem.schema.unit import UnitDispatchType, UnitFueltechGroupType, UnitFueltechType, UnitStatusType
 
 router = APIRouter()
 logger = logging.getLogger("opennem.api.facilities")
 
 
+@api_version(major=4)
 @router.get(
-    "/",
-    response_model=APIV4ResponseSchema,
+    path="/",
     response_model_exclude_none=True,
+    response_model_exclude_unset=False,
     tags=["Facilities"],
     description="Get all facilities and their associated units",
 )
+@cache(expire=60 * 15)  # 15 minute cache on facility endpoints
 async def get_facilities(
     user: authenticated_user,
     facility_code: list[str] | None = Query(None, description="Filter by facility code(s)"),
     status_id: list[UnitStatusType] | None = Query(None, description="Filter by unit status(es)"),
     fueltech_id: list[UnitFueltechType] | None = Query(None, description="Filter by unit fuel technology type(s)"),
+    fueltech_group_id: list[UnitFueltechGroupType] | None = Query(
+        None, description="Filter by unit fuel technology group type(s)"
+    ),
     network_id: list[str] | None = Query(None, description="Filter by network code(s)"),
     network_region: str | None = Query(None, description="Filter by network region"),
-) -> APIV4ResponseSchema:
+) -> APIV4FacilityResponseSchema:
     """
     Get all facilities and their associated units.
 
@@ -64,6 +71,16 @@ async def get_facilities(
             )
         )
 
+        # If fueltech_group_id is provided, we need to join through Unit and FuelTech tables
+        if fueltech_group_id:
+            fueltech_group_values = [f.value for f in fueltech_group_id]
+            stmt = (
+                stmt.join(Unit, Unit.station_id == Facility.id)
+                .join(FuelTech, Unit.fueltech_id == FuelTech.code)
+                .where(FuelTech.fueltech_group_id.in_(fueltech_group_values))
+                .distinct()
+            )
+
         # Add network filters if provided
         if network_id:
             stmt = stmt.where(Facility.network_id.in_(network_id))
@@ -79,6 +96,15 @@ async def get_facilities(
         # Convert enum lists to value lists for comparison
         status_values = [s.value for s in status_id] if status_id else None
         fueltech_values = [f.value for f in fueltech_id] if fueltech_id else None
+        fueltech_group_values = [f.value for f in fueltech_group_id] if fueltech_group_id else None
+
+        # Get fueltech to group mapping if we need to filter by group in memory
+        fueltech_groups = {}
+        if fueltech_group_values:
+            ft_result = await session.execute(select(FuelTech))
+            for ft in ft_result.scalars().all():
+                if str(ft.fueltech_group_id):
+                    fueltech_groups[ft.code] = ft.fueltech_group_id
 
         # Filter facilities and units based on criteria
         filtered_facilities = []
@@ -93,6 +119,10 @@ async def get_facilities(
                     and unit.fueltech_id not in ["solar_rooftop", "imports", "exports"]
                     and (status_values is None or unit.status_id in status_values)
                     and (fueltech_values is None or unit.fueltech_id in fueltech_values)
+                    and (
+                        fueltech_group_values is None
+                        or (unit.fueltech_id and fueltech_groups.get(unit.fueltech_id) in fueltech_group_values)
+                    )
                 )
             ]
 
@@ -106,7 +136,7 @@ async def get_facilities(
                         from geoalchemy2.shape import to_shape
 
                         # Convert PostGIS geometry to shapely shape
-                        shape = to_shape(facility.location)
+                        shape = to_shape(facility.location)  # type: ignore
                         # Use coords to get x,y from Point geometry
                         coords = list(shape.coords)[0]
                         location_dict = {"lat": coords[1], "lng": coords[0]}
@@ -115,25 +145,81 @@ async def get_facilities(
                         logger.debug(f"Failed to parse location for {facility.code}: {e}")
 
                 # Create unit response objects from filtered units
-                unit_responses = [
-                    UnitResponse(
-                        code=unit.code,
-                        fueltech_id=UnitFueltechType(unit.fueltech_id) if unit.fueltech_id else None,
-                        status_id=UnitStatusType(unit.status_id) if unit.status_id else None,
-                        capacity_registered=unit.capacity_registered,
-                        capacity_maximum=unit.capacity_maximum,
-                        capacity_storage=unit.capacity_storage,
-                        emissions_factor_co2=unit.emissions_factor_co2,
-                        data_first_seen=unit.data_first_seen,
-                        data_last_seen=unit.data_last_seen,
-                        dispatch_type=UnitDispatchType(unit.dispatch_type),
-                        created_at=unit.cms_created_at,
-                        updated_at=unit.cms_updated_at,
-                    )
-                    for unit in filtered_units
-                ]
+                unit_responses = []
 
-                facility_response = FacilityResponse(
+                for unit in filtered_units:
+                    unit_response_schema = UnitResponseSchema(
+                        code=str(unit.code),
+                        fueltech_id=UnitFueltechType(unit.fueltech_id),
+                        status_id=UnitStatusType(unit.status_id),
+                    )
+
+                    if unit.capacity_registered:
+                        unit_response_schema.capacity_registered = unit.capacity_registered
+                    if unit.capacity_maximum:
+                        unit_response_schema.capacity_maximum = unit.capacity_maximum
+                    if unit.capacity_storage:
+                        unit_response_schema.capacity_storage = unit.capacity_storage
+                    if unit.emissions_factor_co2:
+                        unit_response_schema.emissions_factor_co2 = unit.emissions_factor_co2
+                    if unit.data_first_seen:
+                        unit_response_schema.data_first_seen = unit.data_first_seen
+                    if unit.data_last_seen:
+                        unit_response_schema.data_last_seen = unit.data_last_seen
+                    if unit.dispatch_type:
+                        unit_response_schema.dispatch_type = UnitDispatchType(unit.dispatch_type)
+                    if unit.commencement_date:
+                        unit_response_schema.commencement_date = unit.commencement_date
+                    if unit.closure_date:
+                        unit_response_schema.closure_date = unit.closure_date
+                    if unit.expected_operation_date:
+                        unit_response_schema.expected_operation_date = unit.expected_operation_date
+                    if unit.expected_closure_date:
+                        unit_response_schema.expected_closure_date = unit.expected_closure_date
+                    if unit.construction_start_date:
+                        unit_response_schema.construction_start_date = unit.construction_start_date
+                    if unit.project_approval_date:
+                        unit_response_schema.project_approval_date = unit.project_approval_date
+                    if unit.project_approval_lodgement_date:
+                        unit_response_schema.project_lodgement_date = unit.project_approval_lodgement_date
+                    if unit.commencement_date_specificity:
+                        unit_response_schema.commencement_date_specificity = unit_specificity_from_string(
+                            unit.commencement_date_specificity
+                        )
+                    if unit.closure_date_specificity:
+                        unit_response_schema.closure_date_specificity = unit_specificity_from_string(
+                            unit.closure_date_specificity
+                        )
+                    if unit.expected_operation_date_specificity:
+                        unit_response_schema.expected_operation_date_specificity = unit_specificity_from_string(
+                            unit.expected_operation_date_specificity
+                        )
+                    if unit.expected_closure_date_specificity:
+                        unit_response_schema.expected_closure_date_specificity = unit_specificity_from_string(
+                            unit.expected_closure_date_specificity
+                        )
+                    if unit.construction_start_date_specificity:
+                        unit_response_schema.construction_start_date_specificity = unit_specificity_from_string(
+                            unit.construction_start_date_specificity
+                        )
+                    if unit.project_approval_date_specificity:
+                        unit_response_schema.project_approval_date_specificity = unit_specificity_from_string(
+                            unit.project_approval_date_specificity
+                        )
+                    if unit.cms_created_at:
+                        unit_response_schema.created_at = unit.cms_created_at
+                    if unit.cms_updated_at:
+                        unit_response_schema.updated_at = unit.cms_updated_at
+
+                    # max generation fields
+                    if unit.max_generation:
+                        unit_response_schema.max_generation = unit.max_generation
+                    if unit.max_generation_interval:
+                        unit_response_schema.max_generation_interval = unit.max_generation_interval
+
+                    unit_responses.append(unit_response_schema)
+
+                facility_response = FacilityResponseSchema(
                     code=facility.code,
                     name=facility.name,
                     network_id=facility.network_id,
@@ -157,6 +243,7 @@ async def get_facilities(
                     f"network_region={network_region}" if network_region else None,
                     f"status_ids=[{','.join(str(s) for s in status_id)}]" if status_id else None,
                     f"fueltech_ids=[{','.join(str(f) for f in fueltech_id)}]" if fueltech_id else None,
+                    f"fueltech_group_ids=[{','.join(str(g) for g in fueltech_group_id)}]" if fueltech_group_id else None,
                 ]
                 if filter_str is not None
             )
@@ -168,4 +255,4 @@ async def get_facilities(
         # Sort facilities by name before returning
         filtered_facilities.sort(key=lambda x: x.name.lower())
 
-        return APIV4ResponseSchema(success=True, data=filtered_facilities, total_records=len(filtered_facilities))
+        return APIV4FacilityResponseSchema(success=True, data=filtered_facilities, total_records=len(filtered_facilities))

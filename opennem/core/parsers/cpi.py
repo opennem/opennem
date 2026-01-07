@@ -12,7 +12,7 @@ import xlrd
 from pydantic import ValidationError
 
 from opennem.schema.stats import AUCpiData, StatDatabase, StatsSet, StatTypes
-from opennem.utils.httpx import http
+from opennem.utils.http import http
 
 logger = logging.getLogger("opennem.stats.au.api")
 

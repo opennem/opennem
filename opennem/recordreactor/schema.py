@@ -44,7 +44,7 @@ class MilestoneType(str, Enum):
     price = "price"
     market_value = "market_value"
     emissions = "emissions"
-    proportion = "proportion"
+    proportion = "renewable_proportion"
 
 
 class MilestoneUnit(str, Enum):
@@ -220,12 +220,12 @@ def get_milestone_record_id(
         milestone.network.parent_network or milestone.network.code,
         milestone.network_region,
         milestone.fueltech.value if milestone.fueltech else None,
-        milestone.metric.value,
+        milestone.metric.value if milestone.metric not in [MilestoneType.proportion] else "renewables.proportion",
         map_date_start_to_season(milestone.interval) if milestone.period is MilestonePeriod.season else milestone.period.value,
         milestone.aggregate.value,
     ]
 
     # remove empty items from record id components list and join with a period
-    record_id = ".".join(filter(None, record_id_components)).lower()
+    record_id = ".".join([str(item) for item in record_id_components if item is not None]).lower()
 
     return record_id

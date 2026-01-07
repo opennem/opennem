@@ -62,7 +62,7 @@ async def get_network_data(
     ] = None,
     client: Any = Depends(get_clickhouse_dependency),
     user: authenticated_user = None,
-) -> APIV4ResponseSchema:
+) -> ORJSONResponse:
     """
     Get time series data for a network.
 

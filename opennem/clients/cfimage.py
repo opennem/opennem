@@ -3,13 +3,11 @@
 import logging
 from datetime import datetime
 from io import BytesIO
-from typing import Any
 
 from pydantic import BaseModel
-from requests.exceptions import RequestException
 
 from opennem import settings
-from opennem.utils.httpx import API_CLIENT_HEADERS, http
+from opennem.utils.http import http_factory
 
 logger = logging.getLogger("opennem.clients.cfimage")
 
@@ -34,31 +32,23 @@ async def save_image_to_cloudflare(image: bytes | BytesIO) -> CloudflareImageRes
     if not settings.cloudflare_api_key or not settings.cloudflare_account_id:
         raise CloudflareImageException("API not configured with account id and key")
 
-    headers = API_CLIENT_HEADERS
+    async with http_factory(proxy=False, mimic_browser=False) as http:
+        headers = {"Authorization": f"Bearer {settings.cloudflare_api_key}"}
 
-    headers["Authorization"] = f"Bearer {settings.cloudflare_api_key}"
+        cfimage_url = CF_URL.format(account_id=settings.cloudflare_account_id)
 
-    cfimage_url = CF_URL.format(account_id=settings.cloudflare_account_id)
+        response = await http.post(cfimage_url, headers=headers, files={"file": image})
 
-    image_handle = BytesIO(image) if isinstance(image, bytes) else image
-    file_upload = {"file": image_handle}
+        response.raise_for_status()
 
-    json_response: dict[str, Any] | None = None
+        if not response.is_success:
+            logger.debug(response.text)
+            raise CloudflareImageException(f"Response error: {response.status_code}. {response.text}")
 
-    try:
-        response = await http.post(cfimage_url, headers=headers, files=file_upload)
-
-    except RequestException as e:
-        raise CloudflareImageException(f"Request error: {e}") from e
-
-    if not response.is_success:
-        logger.debug(response.text)
-        raise CloudflareImageException(f"Response error: {response.status_code}. {response.text}")
-
-    try:
-        json_response = response.json()
-    except ValueError as e:
-        raise CloudflareImageException("Bad response json") from e
+        try:
+            json_response = response.json()
+        except ValueError as e:
+            raise CloudflareImageException("Bad response json") from e
 
     if not json_response:
         raise CloudflareImageException("No json response")

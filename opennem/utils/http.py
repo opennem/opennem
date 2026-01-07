@@ -4,6 +4,7 @@ import random
 from typing import Any
 from urllib.parse import urlparse
 
+import logfire
 import rnet
 
 from opennem import settings
@@ -171,7 +172,11 @@ class HttpClient:
         emulation_browser_option = _get_random_rnet_browser() if mimic_browser else None
 
         if emulation_browser_option:
-            self._client = rnet.Client(emulation=emulation_browser_option, timeout=self.timeout, allow_redirects=True)
+            self._client = rnet.Client(
+                emulation=emulation_browser_option,
+                timeout=self.timeout,
+                allow_redirects=True,
+            )
         else:
             self._client = rnet.Client(timeout=self.timeout, allow_redirects=True)
 
@@ -181,11 +186,18 @@ class HttpClient:
             try:
                 self._proxy = _get_rnet_proxy()
             except ValueError:
-                logger.error("Proxy is enabled but no proxy URL is set")
+                logfire.error("Proxy is enabled but no proxy URL is set")
 
         # Retry settings
         self._retries = settings.http_retries
-        self._retry_codes = [408, 429, 500, 502, 503, 504]  # these are the base retry codes
+        self._retry_codes = [
+            408,
+            429,
+            500,
+            502,
+            503,
+            504,
+        ]  # these are the base retry codes
         # @note this is custom for nemweb which does a 403
         if retry_403:
             self._retry_codes.append(403)
@@ -212,7 +224,7 @@ class HttpClient:
         while attempts <= self._retries:
             try:
                 if self.debug:
-                    logger.debug(f"{method.upper()} {url}")
+                    logfire.info(f"{method.upper()} {url}")
 
                 # Map method string to rnet client method
                 rnet_method = getattr(self._client, method.lower())
@@ -231,11 +243,12 @@ class HttpClient:
 
                 if compat_resp.status_code in self._retry_codes:
                     if attempts == self._retries:
+                        logfire.error(f"Received {compat_resp.status_code} for {url}. Maximum retries reached")
                         return compat_resp
 
                     attempts += 1
                     retry_delay = self._retry_delay * (2 ** (attempts - 1))
-                    logger.warning(
+                    logfire.warning(
                         f"Received {compat_resp.status_code} for {url}. "
                         f"Attempt {attempts}/{self._retries}. Retrying in {retry_delay}s"
                     )
@@ -321,7 +334,13 @@ def http_factory(
     if not kwargs.get("verify"):
         kwargs["verify"] = settings.http_verify_ssl
 
-    return HttpClient(mimic_browser=mimic_browser, debug=debug, proxy=proxy, retry_403=retry_403, **kwargs)
+    return HttpClient(
+        mimic_browser=mimic_browser,
+        debug=debug,
+        proxy=proxy,
+        retry_403=retry_403,
+        **kwargs,
+    )
 
 
 # Global client instance

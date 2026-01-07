@@ -33,7 +33,7 @@ def ensure_materialized_views_exist(views: list[MaterializedView] | None = None)
 
     for view in views:
         if not table_exists(client, view.name):
-            client.execute(view.schema)
+            client.command(view.schema)
             logger.info(f"Created materialized view: {view.name}")
         else:
             logger.debug(f"Materialized view already exists: {view.name}")
@@ -68,10 +68,10 @@ def refresh_materialized_views(views: list[MaterializedView | str] | None = None
     for view in views_to_process:
         if drop_existing:
             logger.info(f"Dropping existing view: {view.name}")
-            client.execute(f"DROP TABLE IF EXISTS {view.name}")
+            client.command(f"DROP TABLE IF EXISTS {view.name}")
 
         if not table_exists(client, view.name) or drop_existing:
-            client.execute(view.schema)
+            client.command(view.schema)
             logger.info(f"Created materialized view: {view.name}")
 
 
@@ -98,18 +98,18 @@ def backfill_materialized_view(
     # Get date range if not provided
     if start_date is None or end_date is None:
         try:
-            result = client.execute(f"""
+            result = client.query(f"""
                 SELECT
                     min({view.timestamp_column}) as min_date,
                     max({view.timestamp_column}) as max_date
                 FROM {source_table}
             """)
 
-            if result and result[0][0] is not None:
+            if result.result_rows and result.result_rows[0][0] is not None:
                 if start_date is None:
-                    start_date = result[0][0]
+                    start_date = result.result_rows[0][0]
                 if end_date is None:
-                    end_date = result[0][1]
+                    end_date = result.result_rows[0][1]
             else:
                 logger.warning(f"No data found in source table {source_table}")
                 return 0
@@ -119,8 +119,8 @@ def backfill_materialized_view(
             # Try to provide helpful debugging information
             try:
                 # Get the actual columns from the source table
-                result = client.execute(f"DESCRIBE TABLE {source_table}")
-                columns = [row[0] for row in result]
+                result = client.query(f"DESCRIBE TABLE {source_table}")
+                columns = [row[0] for row in result.result_rows]
                 logger.info(f"Available columns in {source_table}: {columns}")
             except Exception:
                 pass
@@ -138,9 +138,9 @@ def backfill_materialized_view(
             logger.info(f"Backfilling {view.name} from {current_date} to {chunk_end}")
 
             try:
-                client.execute(
+                client.command(
                     view.backfill_query,
-                    {"start": current_date, "end": chunk_end},
+                    parameters={"start": current_date, "end": chunk_end},
                 )
             except Exception as e:
                 logger.error(f"Failed to backfill {view.name} for period {current_date} to {chunk_end}: {e}")
@@ -152,14 +152,14 @@ def backfill_materialized_view(
         # Execute backfill query without parameters
         logger.info(f"Backfilling {view.name} (full table)")
         try:
-            client.execute(view.backfill_query)
+            client.command(view.backfill_query)
         except Exception as e:
             logger.error(f"Failed to backfill {view.name} (full table): {e}")
             return 0
 
     # Return count of records in the view
-    result = client.execute(f"SELECT count() FROM {view.name}")
-    total_records = result[0][0] if result else 0
+    result = client.query(f"SELECT count() FROM {view.name}")
+    total_records = result.result_rows[0][0] if result.result_rows else 0
 
     logger.info(f"Backfill complete for {view.name}. Total records: {total_records}")
     return total_records
@@ -287,14 +287,14 @@ def get_materialized_view_stats(view_names: list[str] | None = None) -> dict:
             continue
 
         # Get table size from system.parts
-        size_result = client.execute(f"""
+        size_result = client.query(f"""
             SELECT formatReadableSize(sum(bytes)) as size
             FROM system.parts
             WHERE table = '{view_name}'
         """)
 
         # Get actual data stats from the view itself
-        stats_result = client.execute(f"""
+        stats_result = client.query(f"""
             SELECT
                 count() as record_count,
                 min({view.timestamp_column}) as min_date,
@@ -302,13 +302,13 @@ def get_materialized_view_stats(view_names: list[str] | None = None) -> dict:
             FROM {view_name}
         """)
 
-        if stats_result and stats_result[0]:
+        if stats_result.result_rows and stats_result.result_rows[0]:
             stats[view_name] = {
                 "exists": True,
-                "record_count": stats_result[0][0] if stats_result[0][0] else 0,
-                "min_date": stats_result[0][1],
-                "max_date": stats_result[0][2],
-                "size": size_result[0][0] if size_result and size_result[0] else "0B",
+                "record_count": stats_result.result_rows[0][0] if stats_result.result_rows[0][0] else 0,
+                "min_date": stats_result.result_rows[0][1],
+                "max_date": stats_result.result_rows[0][2],
+                "size": size_result.result_rows[0][0] if size_result.result_rows and size_result.result_rows[0] else "0B",
             }
         else:
             stats[view_name] = {

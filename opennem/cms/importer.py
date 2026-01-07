@@ -29,6 +29,7 @@ from sqlalchemy.orm import selectinload
 from opennem import settings
 from opennem.clients.slack import slack_message
 from opennem.cms.queries import get_cms_facilities
+from opennem.core.networks import network_from_network_code
 from opennem.db import get_read_session, get_write_session
 from opennem.db.models.opennem import Facility, Unit
 from opennem.schema.facility import FacilitySchema
@@ -163,6 +164,8 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
             facility_db.network_id = facility.network_id
             record_updated = True
 
+        facility_network_schema = network_from_network_code(facility.network_id)
+
         if facility.name:
             facility_db.name = facility.name.strip()
             record_updated = True
@@ -222,27 +225,43 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
             if not unit_db:
                 # Prepare date conversions
                 expected_op_date = (
-                    datetime.combine(unit.expected_operation_date, datetime.min.time()) if unit.expected_operation_date else None
+                    datetime.combine(
+                        unit.expected_operation_date, datetime.min.time(), facility_network_schema.get_fixed_offset()
+                    )
+                    if unit.expected_operation_date
+                    else None
                 )
                 expected_cl_date = (
-                    datetime.combine(unit.expected_closure_date, datetime.min.time()) if unit.expected_closure_date else None
+                    datetime.combine(unit.expected_closure_date, datetime.min.time(), facility_network_schema.get_fixed_offset())
+                    if unit.expected_closure_date
+                    else None
                 )
                 commencement_dt = (
-                    datetime.combine(unit.commencement_date, datetime.min.time()) if unit.commencement_date else None
+                    datetime.combine(unit.commencement_date, datetime.min.time(), facility_network_schema.get_fixed_offset())
+                    if unit.commencement_date
+                    else None
                 )
-                closure_dt = datetime.combine(unit.closure_date, datetime.min.time()) if unit.closure_date else None
+                closure_dt = (
+                    datetime.combine(unit.closure_date, datetime.min.time(), facility_network_schema.get_fixed_offset())
+                    if unit.closure_date
+                    else None
+                )
                 construction_start_dt = (
-                    datetime.combine(unit.construction_start_date, datetime.min.time())
+                    datetime.combine(
+                        unit.construction_start_date, datetime.min.time(), facility_network_schema.get_fixed_offset()
+                    )
                     if hasattr(unit, "construction_start_date") and unit.construction_start_date
                     else None
                 )
                 project_approval_dt = (
-                    datetime.combine(unit.project_approval_date, datetime.min.time())
+                    datetime.combine(unit.project_approval_date, datetime.min.time(), facility_network_schema.get_fixed_offset())
                     if hasattr(unit, "project_approval_date") and unit.project_approval_date
                     else None
                 )
                 project_lodgement_dt = (
-                    datetime.combine(unit.project_approval_lodgement_date, datetime.min.time())
+                    datetime.combine(
+                        unit.project_approval_lodgement_date, datetime.min.time(), facility_network_schema.get_fixed_offset()
+                    )
                     if hasattr(unit, "project_approval_lodgement_date") and unit.project_approval_lodgement_date
                     else None
                 )
@@ -372,7 +391,9 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 record_updated = True
 
             if unit.expected_operation_date is not None:
-                unit_db.expected_operation_date = datetime.combine(unit.expected_operation_date, datetime.min.time())
+                unit_db.expected_operation_date = datetime.combine(
+                    unit.expected_operation_date, datetime.min.time(), facility_network_schema.get_fixed_offset()
+                )
                 record_updated = True
 
             if hasattr(unit, "expected_operation_date_specificity") and unit.expected_operation_date_specificity is not None:
@@ -384,7 +405,9 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 record_updated = True
 
             if unit.expected_closure_date is not None:
-                unit_db.expected_closure_date = datetime.combine(unit.expected_closure_date, datetime.min.time())
+                unit_db.expected_closure_date = datetime.combine(
+                    unit.expected_closure_date, datetime.min.time(), facility_network_schema.get_fixed_offset()
+                )
                 record_updated = True
 
             if hasattr(unit, "expected_closure_date_specificity") and unit.expected_closure_date_specificity is not None:
@@ -396,7 +419,9 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 record_updated = True
 
             if unit.commencement_date is not None:
-                unit_db.commencement_date = datetime.combine(unit.commencement_date, datetime.min.time())
+                unit_db.commencement_date = datetime.combine(
+                    unit.commencement_date, datetime.min.time(), facility_network_schema.get_fixed_offset()
+                )
                 unit_db.registered = datetime.combine(unit.commencement_date, datetime.min.time())
                 record_updated = True
 
@@ -405,8 +430,12 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 record_updated = True
 
             if unit.closure_date is not None:
-                unit_db.closure_date = datetime.combine(unit.closure_date, datetime.min.time())
-                unit_db.deregistered = datetime.combine(unit.closure_date, datetime.min.time())
+                unit_db.closure_date = datetime.combine(
+                    unit.closure_date, datetime.min.time(), facility_network_schema.get_fixed_offset()
+                )
+                unit_db.deregistered = datetime.combine(
+                    unit.closure_date, datetime.min.time(), facility_network_schema.get_fixed_offset()
+                )
                 record_updated = True
 
             if hasattr(unit, "closure_date_specificity") and unit.closure_date_specificity is not None:
@@ -415,7 +444,9 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
 
             # Construction fields
             if hasattr(unit, "construction_start_date") and unit.construction_start_date is not None:
-                unit_db.construction_start_date = datetime.combine(unit.construction_start_date, datetime.min.time())
+                unit_db.construction_start_date = datetime.combine(
+                    unit.construction_start_date, datetime.min.time(), facility_network_schema.get_fixed_offset()
+                )
                 record_updated = True
 
             if hasattr(unit, "construction_start_date_specificity") and unit.construction_start_date_specificity is not None:
@@ -436,7 +467,9 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
 
             # Project approval fields
             if hasattr(unit, "project_approval_date") and unit.project_approval_date is not None:
-                unit_db.project_approval_date = datetime.combine(unit.project_approval_date, datetime.min.time())
+                unit_db.project_approval_date = datetime.combine(
+                    unit.project_approval_date, datetime.min.time(), facility_network_schema.get_fixed_offset()
+                )
                 record_updated = True
 
             if hasattr(unit, "project_approval_date_specificity") and unit.project_approval_date_specificity is not None:
@@ -449,7 +482,7 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
 
             if hasattr(unit, "project_approval_lodgement_date") and unit.project_approval_lodgement_date is not None:
                 unit_db.project_approval_lodgement_date = datetime.combine(
-                    unit.project_approval_lodgement_date, datetime.min.time()
+                    unit.project_approval_lodgement_date, datetime.min.time(), facility_network_schema.get_fixed_offset()
                 )
                 record_updated = True
 
@@ -535,7 +568,7 @@ async def update_facility_from_cms(facility_code: str, send_slack: bool = True) 
         If the facility is not found in the CMS, a log message is generated
         but no error is raised.
     """
-    sanity_facilities = get_cms_facilities(facility_code=facility_code)
+    sanity_facilities = await get_cms_facilities(facility_code=facility_code)
 
     if not sanity_facilities:
         logger.info(f"Facility {facility_code} not found in CMS")
@@ -569,7 +602,7 @@ async def update_database_facilities_from_cms(
         facility_code: Optional specific facility code to update
     """
     # Get facilities from CMS
-    sanity_facilities = get_cms_facilities(facility_code=facility_code, cms_id=cms_id)
+    sanity_facilities = await get_cms_facilities(facility_code=facility_code, cms_id=cms_id)
     logger.info(f"Processing {len(sanity_facilities)} facilities from CMS")
 
     # Track statistics and created facility codes
@@ -606,7 +639,7 @@ async def check_orphaned_facilities() -> list[str]:
     Returns:
         List of facility codes that exist in database but not in CMS
     """
-    sanity_facilities = get_cms_facilities()
+    sanity_facilities = await get_cms_facilities()
     database_facilities = await get_database_facilities()
 
     # Get all CMS facility codes

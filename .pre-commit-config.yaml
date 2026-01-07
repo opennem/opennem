@@ -5,7 +5,7 @@ default_stages: [pre-commit, pre-push]
 
 repos:
     - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v5.0.0
+      rev: v6.0.0
       hooks:
           - id: check-added-large-files
             args: ['--maxkb=1024']
@@ -15,7 +15,7 @@ repos:
             exclude: LICENSE
 
     - repo: https://github.com/charliermarsh/ruff-pre-commit
-      rev: v0.8.4
+      rev: v0.14.3
       hooks:
         - id: ruff
           args: [ --fix ]

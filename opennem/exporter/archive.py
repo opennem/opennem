@@ -22,8 +22,12 @@ from textwrap import dedent
 
 import polars as pl
 import psutil
-import pyarrow.parquet as pq
 from humanize import naturalsize
+
+try:
+    import pyarrow.parquet as pq
+except ImportError:
+    pq = None  # type: ignore
 
 from opennem import settings
 from opennem.core.templates import serve_template
@@ -293,6 +297,8 @@ async def _stream_to_parquet(export_definition: OpenNEMDataExport, buffer: io.By
             schema = first_chunk.to_arrow().schema
 
             # Create PyArrow writer
+            if pq is None:
+                raise ImportError("pyarrow is required for archive exports. Install it with: uv pip install pyarrow>=18.1.0")
             writer = pq.ParquetWriter(buffer, schema, compression="snappy", version="2.6", write_statistics=True)
 
             # Process time chunks

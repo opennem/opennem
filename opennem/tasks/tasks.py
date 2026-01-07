@@ -37,7 +37,6 @@ from opennem.crawlers.nemweb import (
 )
 from opennem.crawlers.wemde import run_all_wem_crawlers
 from opennem.db.clickhouse_schema import optimize_clickhouse_tables
-from opennem.exporter.archive import generate_archive_dirlisting, sync_archive_exports
 from opennem.exporter.facilities import export_facilities_static
 
 # from opennem.exporter.historic import export_historic_intervals
@@ -49,6 +48,7 @@ from opennem.workers.catchup import catchup_last_days, run_catchup_check
 from opennem.workers.energy import process_energy_last_intervals
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
+from opennem.workers.generation_max import update_max_generation_for_units
 from opennem.workers.system import clean_tmp_dir
 
 logger = logging.getLogger("opennem.pipelines.nem")
@@ -109,6 +109,12 @@ async def task_nem_rooftop_crawl(ctx) -> None:
 
     if not rooftop or not any(r.inserted_records for r in rooftop if r):
         raise Retry(defer=ctx["job_try"] * 15)
+
+
+@logfire.instrument("task_update_max_generation_for_units")
+async def task_update_max_generation_for_units(ctx) -> None:
+    """This task runs daily to update the max generation for each unit"""
+    await update_max_generation_for_units(days_since=2)
 
 
 @logfire.instrument("task_wem_day_crawl")
@@ -213,11 +219,11 @@ async def task_export_facility_geojson(ctx) -> None:
     await export_facilities_static()
 
 
-@logfire.instrument("task_sync_archive_exports")
-async def task_sync_archive_exports(ctx) -> None:
-    """Run and sync parquet exports to output bucket"""
-    await sync_archive_exports()
-    await generate_archive_dirlisting()
+# @logfire.instrument("task_sync_archive_exports")
+# async def task_sync_archive_exports(ctx) -> None:
+#     """Run and sync parquet exports to output bucket"""
+#     await sync_archive_exports()
+#     await generate_archive_dirlisting()
 
 
 @logfire.instrument("task_export_daily_monthly")

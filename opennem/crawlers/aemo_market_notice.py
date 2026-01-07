@@ -19,7 +19,7 @@ from opennem.core.parsers.dirlisting import get_dirlisting
 from opennem.db import get_read_session, get_write_session
 from opennem.db.models.opennem import AEMOMarketNotice
 from opennem.schema.market_notice import AEMOMarketNoticeSchema, AEMOMarketNoticeType
-from opennem.utils.httpx import httpx_factory
+from opennem.utils.http import http_factory
 
 logger = logging.getLogger("opennem.crawlers.aemo_market_notice")
 
@@ -27,15 +27,14 @@ logger = logging.getLogger("opennem.crawlers.aemo_market_notice")
 _MARKET_NOTICE_URL = "https://www.nemweb.com.au/REPORTS/CURRENT/Market_Notice/"
 
 
-_http = httpx_factory()
+_http = http_factory(proxy=False, mimic_browser=False)
 
 
 async def _get_market_notice_file(url: str) -> str:
     """given a market notice url return the content"""
-    req = await _http.get(url)
-    content = req.text
-
-    return content
+    async with _http as http:
+        req = await http.get(url)
+        return req.text
 
 
 async def _run_aemo_market_notice_craw(

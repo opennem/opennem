@@ -7,17 +7,7 @@ LOGGING_CONFIG = {
         "clean": {"format": "%(message)s"},
     },
     "handlers": {
-        "console": {"class": "logging.StreamHandler", "level": "DEBUG", "formatter": "basic", "stream": "ext://sys.stdout"},
-        "file_debug": {"class": "logging.FileHandler", "level": "WARNING", "formatter": "standard", "filename": "debug-run.log"},
-        "file_archive": {
-            "class": "logging.handlers.RotatingFileHandler",
-            "level": "DEBUG",
-            "formatter": "standard",
-            "filename": "opennem.log",
-            "maxBytes": 10485760,
-            "backupCount": 10,
-            "encoding": "utf8",
-        },
+        "console": {"class": "logging.StreamHandler", "level": "DEBUG", "formatter": "basic", "stream": "ext://sys.stdout"}
     },
     "root": {"level": "ERROR", "handlers": ["console"]},
     "loggers": {
@@ -36,10 +26,12 @@ LOGGING_CONFIG = {
         "aiobotocore": {"level": "ERROR"},
         "aioboto3": {"level": "ERROR"},
         "instructor": {"level": "ERROR"},
-        "httpx": {"level": "ERROR"},
         "openai": {"level": "ERROR"},
         "arq.worker": {"level": "INFO"},
-        "clickhouse_driver": {"level": "INFO"},
+        "clickhouse_connect": {"level": "INFO"},
         "httpcore.proxy": {"level": "INFO"},
+        "httpcore.http": {"level": "INFO"},
+        "hpack": {"level": "INFO"},
+        "watchfiles": {"level": "INFO"},
     },
 }

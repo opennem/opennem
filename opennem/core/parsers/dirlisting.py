@@ -27,7 +27,7 @@ from opennem.core.normalizers import is_number, strip_double_spaces
 from opennem.core.parsers.aemo.filenames import AEMOMMSFilename, parse_aemo_filename
 from opennem.schema.core import BaseConfig
 from opennem.schema.date_range import CrawlDateRange
-from opennem.utils.httpx import http
+from opennem.utils.http import http
 
 logger = logging.getLogger("opennem.parsers.dirlisting")
 

@@ -41,7 +41,7 @@ router = APIRouter()
     "/power/station/{network_code}/{facility_code:path}",
     name="Power by Station",
     response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     description="Get the power outputs for a station",
     include_in_schema=False,
 )
@@ -156,7 +156,7 @@ async def power_station(
     "/energy/station/{network_code}/{facility_code:path}",
     name="Energy by Station",
     response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
 )
 @api_protected(roles=[OpenNEMRoles.admin])
@@ -333,14 +333,14 @@ Flows endpoints
     "/flow/network/{network_code}/{network_region_code}",
     name="Interconnector Flow Network for network region",
     response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
 )
 @router.get(
     "/flow/network/{network_code}",
     name="Interconnector Flow Network",
     response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
 )
 @api_protected(roles=[OpenNEMRoles.admin])
@@ -432,14 +432,14 @@ async def power_flows_network_week(
     "/power/network/fueltech/{network_code}/{network_region_code}",
     name="Power Network Region by Fueltech",
     response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
 )
 @router.get(
     "/power/network/fueltech/{network_code}",
     name="Power Network Region by Fueltech",
     response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
 )
 @api_protected(roles=[OpenNEMRoles.admin])
@@ -524,14 +524,14 @@ async def power_network_region_fueltech(
     "/emissionfactor/network/{network_code}",
     name="Emission Factor per Network Region",
     response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
 )
 @router.get(
     "/emissionfactor/network/{network_code}/{network_region_code}",
     name="Emission Factor for a Network Region",
     response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
 )
 @api_protected(roles=[OpenNEMRoles.admin])
@@ -634,28 +634,28 @@ async def emission_factor_per_network(  # type: ignore
     "/price/{network_code}/{network_region_code}",
     name="Price history by network and network region",
     response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
 )
 @router.get(
     "/price/{network_code}",
     name="Price history by network and network region",
     response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
 )
 @router.get(
     "/price/network/{network_code}/{network_region_code}",
     name="Price history by network and network region",
     response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
 )
 @router.get(
     "/price/network/{network_code}",
     name="Price history by network and network region",
     response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=False,
     include_in_schema=False,
 )
 @api_protected(roles=[OpenNEMRoles.admin])
