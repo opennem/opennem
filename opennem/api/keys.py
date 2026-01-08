@@ -9,7 +9,7 @@ from typing import Annotated, Any, TypeVar
 from clerk_backend_api import Clerk
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from unkey import models
+from unkey.py import models
 
 from opennem import settings
 from opennem.clients.unkey import OpenNEMUser, UnkeyInvalidUserException, unkey_validate
@@ -26,7 +26,7 @@ DecoratorT = CallableT[CallbackT]
 ExtractorT = Callable[[tuple[Any], dict[str, Any]], str | None]
 
 
-InvalidKeyHandlerT = Callable[[dict[str, Any], models.ApiKeyVerification | None], Any]
+InvalidKeyHandlerT = Callable[[dict[str, Any], models.V2KeysVerifyKeyResponseBody | None], Any]
 """The type of a callback used to handle cases where the key was invalid."""
 
 ExcHandlerT = Callable[[Exception], Any]
@@ -119,16 +119,22 @@ def api_protected(
 
                 user = unkey_verification
 
-                # attach the clerk user to the user
-                clerk_user = await clerk_client.users.get_async(user_id=user.owner_id)
+                # Attach Clerk user data if key has owner association
+                if user.owner_id:
+                    clerk_user = await clerk_client.users.get_async(user_id=user.owner_id)
 
-                if not clerk_user:
-                    logger.error(f"Clerk user not found for {user.owner_id}")
-                    raise HTTPException(status_code=403, detail="Permission denied")
+                    if not clerk_user:
+                        logger.error(f"Clerk user not found for {user.owner_id}")
+                        raise HTTPException(status_code=403, detail="Permission denied")
 
-                user.full_name = clerk_user.first_name + " " + clerk_user.last_name
-                user.email = clerk_user.email_addresses[0].email_address
-                user.plan = clerk_user.private_metadata.get("plan")
+                    user.full_name = clerk_user.first_name + " " + clerk_user.last_name
+                    user.email = clerk_user.email_addresses[0].email_address
+                    user.plan = clerk_user.private_metadata.get("plan")
+                else:
+                    logger.info(f"Key {user.id} not associated with Clerk user, skipping enrichment")
+                    user.full_name = None
+                    user.email = None
+                    user.plan = None
 
                 if "user" in inspect.signature(func).parameters:
                     kwargs["user"] = user

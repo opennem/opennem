@@ -27,7 +27,8 @@ async def create_user(email: str, name: str, roles: list[OpenNEMRoles]) -> None 
         logger.error(f"Failed to create user with key for user {name} at {email}")
         return None
 
-    print(f"Created user with key: {user_key.key} and id {user_key.key_id} for user {name} at {email}")
+    # user_key is now a string directly
+    print(f"Created user with key: {user_key} for user {name} at {email}")
 
     access_level = "user"
     access_level = "pro" if OpenNEMRoles.pro in roles else "user"
@@ -38,7 +39,7 @@ async def create_user(email: str, name: str, roles: list[OpenNEMRoles]) -> None 
 
     invite = OpenNEMAPIInvite(
         name=name,
-        api_key=user_key.key,
+        api_key=user_key,
         access_level=access_level,
         limit=invite_limit,
         limit_interval=limit_interval,

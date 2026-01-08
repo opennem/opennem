@@ -36,7 +36,6 @@ from opennem.api.security import authenticated_user
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
 from opennem.api.webhooks.router import router as webhooks_router
-from opennem.clients.unkey import unkey_client
 from opennem.core.metric import METRIC_METADATA
 from opennem.core.time import INTERVALS, PERIODS
 from opennem.core.units import UNITS
@@ -72,12 +71,9 @@ async def lifespan(app: FastAPI):
         FastAPICache.init(RedisBackend(redis), prefix="api-cache")
         logger.info("Enabled API cache")
 
-    await unkey_client.start()
-
     yield
 
     # Shutdown logic
-    await unkey_client.close()
 
 
 app = FastAPI(
