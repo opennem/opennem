@@ -251,7 +251,6 @@ def _validate_unique_codes(facilities: list[FacilitySchema]) -> None:
             unit_codes[unit.code] = facility.code
 
 
-@timed_lru_cache(seconds=300 if not settings.is_dev else 0)  # 5 minute cache
 @retry(
     stop=stop_after_attempt(3),
     wait=wait_exponential(multiplier=1, min=4, max=10),
@@ -263,10 +262,9 @@ async def get_cms_facilities(facility_code: str | None = None, cms_id: str | Non
 
     This is the primary function for retrieving facility data from the CMS. It includes
     comprehensive facility metadata, unit data, and related information. The function
-    includes caching and retry logic for reliability.
+    includes retry logic for reliability.
 
     Features:
-    - 5-minute cache in non-development environments
     - Retries up to 3 times with exponential backoff
     - Converts rich text descriptions to HTML
     - Validates all data against Pydantic models
