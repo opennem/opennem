@@ -9,7 +9,7 @@ from typing import Annotated, Any, TypeVar
 from clerk_backend_api import Clerk
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from unkey import models
+from unkey.py import models
 
 from opennem import settings
 from opennem.clients.unkey import OpenNEMUser, UnkeyInvalidUserException, unkey_validate
@@ -26,7 +26,7 @@ DecoratorT = CallableT[CallbackT]
 ExtractorT = Callable[[tuple[Any], dict[str, Any]], str | None]
 
 
-InvalidKeyHandlerT = Callable[[dict[str, Any], models.ApiKeyVerification | None], Any]
+InvalidKeyHandlerT = Callable[[dict[str, Any], models.V2KeysVerifyKeyResponseBody | None], Any]
 """The type of a callback used to handle cases where the key was invalid."""
 
 ExcHandlerT = Callable[[Exception], Any]
