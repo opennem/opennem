@@ -1,21 +1,18 @@
-"""unkney client for validating api keys"""
+"""unkey client for validating api keys"""
 
 import asyncio
 import logging
 from functools import wraps
 
-import unkey
 from cachetools import TTLCache
 from pydantic import ValidationError
-from unkey import ApiKey, ErrorCode
+from unkey.py import Unkey, models
 
 from opennem import settings
 from opennem.users.ratelimit import OPENNEM_RATELIMIT_ADMIN, OPENNEM_RATELIMIT_PRO, OPENNEM_RATELIMIT_USER
 from opennem.users.schema import OpennemAPIRequestMeta, OpenNEMRoles, OpenNEMUser, OpenNEMUserRateLimit
 
 logger = logging.getLogger("opennem.clients.unkey")
-
-unkey_client = unkey.Client(api_key=settings.unkey_root_key)
 
 # Cache for unkey validation results - 5 minute TTL
 _unkey_cache = TTLCache(maxsize=10000, ttl=60 * 5)
@@ -73,56 +70,40 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
     if not settings.unkey_root_key:
         raise Exception("No unkey root key set")
 
-    if not settings.unkey_api_id:
-        raise Exception("No unkey app id set")
-
     try:
-        async with unkey_client as c:
-            result = await c.keys.verify_key(key=api_key, api_id=settings.unkey_api_id)  # type: ignore
+        async with Unkey(root_key=settings.unkey_root_key) as client:
+            # New SDK: verify_key takes keyword arguments, returns direct response
+            data = await client.keys.verify_key_async(key=api_key)
 
-        if not result.is_ok:
-            logger.warning("Unkey verification failed")
-            raise UnkeyInvalidUserException("Verification failed: invalid key")
-
-        if result.is_err:
-            err = result.unwrap_err()
-            code = (err.code or unkey.models.ErrorCode.Unknown).value
-            logger.info(f"Unkey verification failed: {code}")
-            raise UnkeyInvalidUserException("Verification failed: error")
-
-        data = result.unwrap()
-
-        # Check if the code is NOT_FOUND and return None if so
-        if data.code == ErrorCode.NotFound:
-            logger.info("API key not found")
-            raise UnkeyInvalidUserException("Verification failed: not found")
+        # New SDK: Direct property access to response data
+        if not data:
+            logger.warning("Unkey verification failed: no response")
+            raise UnkeyInvalidUserException("Verification failed: no response")
 
         if not data.valid:
             logger.info("API key is not valid")
             raise UnkeyInvalidUserException("Verification failed: not valid")
 
-        if data.error:
-            logger.info(f"API key error: {data.error}")
-            raise UnkeyInvalidUserException("Verification failed: data error")
-
-        if not data.id:
+        if not data.key_id:
             logger.info("API key id is not valid no id")
             raise UnkeyInvalidUserException("Verification failed: no id")
 
         try:
             model = OpenNEMUser(
-                id=data.id,
+                id=data.key_id,  # New field name
                 valid=data.valid,
                 owner_id=data.owner_id,
                 meta=data.meta,
-                error=data.error,
+                error=None,
             )
 
             model.meta = OpennemAPIRequestMeta(remaining=data.remaining, reset=data.expires)
 
-            if data.ratelimit:
+            # New SDK: ratelimits is array
+            if data.ratelimits and len(data.ratelimits) > 0:
+                first_ratelimit = data.ratelimits[0]
                 model.rate_limit = OpenNEMUserRateLimit(
-                    limit=data.ratelimit.limit, remaining=data.ratelimit.remaining, reset=data.ratelimit.reset
+                    limit=first_ratelimit.limit, remaining=first_ratelimit.remaining, reset=first_ratelimit.reset
                 )
 
             if data.meta:
@@ -143,8 +124,8 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
 
 
 async def unkey_create_key(
-    email: str, name: str, roles: list[OpenNEMRoles], ratelimit: unkey.Ratelimit | None = None
-) -> ApiKey | None:
+    email: str, name: str, roles: list[OpenNEMRoles], ratelimit: models.RatelimitRequest | None = None
+) -> str | None:
     """Create a key with unkey"""
     if not settings.unkey_root_key:
         raise Exception("No unkey root key set")
@@ -159,35 +140,39 @@ async def unkey_create_key(
 
     meta = {"roles": [role.value for role in roles], "email": email, "name": name}
 
+    # Select rate limit based on roles
     if not ratelimit:
         ratelimit = OPENNEM_RATELIMIT_USER
 
-        if "pro" in roles:
+        if OpenNEMRoles.pro in roles:
             ratelimit = OPENNEM_RATELIMIT_PRO
 
-        if "admin" in roles:
+        if OpenNEMRoles.admin in roles:
             ratelimit = OPENNEM_RATELIMIT_ADMIN
 
     try:
-        async with unkey.client.Client(api_key=settings.unkey_root_key) as c:
-            result = await c.keys.create_key(
-                api_id=settings.unkey_api_id, name=name, prefix=prefix, meta=meta, owner_id=email, ratelimit=ratelimit
+        async with Unkey(root_key=settings.unkey_root_key) as client:
+            # New SDK: Direct keyword arguments
+            data = await client.keys.create_key_async(
+                api_id=settings.unkey_api_id,
+                name=name,
+                prefix=prefix,
+                meta=meta,
+                external_id=email,  # external_id for user tracking
+                ratelimits=[ratelimit] if ratelimit else None,
             )
 
-            if not result.is_ok:
-                error = result.unwrap_err()
-                logger.error(f"Unkey key creation failed: {error}")
+            if not data or not data.key:
+                logger.error("Unkey key creation failed: no key returned")
                 return None
+
+            logger.info(f"Unkey key created: {data.key} {data.key_id}")
+
+            return data.key
 
     except Exception as e:
         logger.exception(f"Unexpected error in unkey_create_key: {e}")
         return None
-
-    data = result.unwrap()
-
-    logger.info(f"Unkey key created: {data.key} {data.key_id}")
-
-    return data
 
 
 # debug entry point
