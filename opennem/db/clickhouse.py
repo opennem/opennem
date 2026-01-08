@@ -8,8 +8,7 @@ import logging
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
-import clickhouse_connect
-from clickhouse_connect.driver.client import Client
+from clickhouse_driver import Client
 
 from opennem import settings
 
@@ -23,18 +22,18 @@ def get_clickhouse_client(timeout: int = 10) -> Client:
     Returns:
         Client: A configured ClickHouse client instance
     """
-    return clickhouse_connect.get_client(
-        host=settings.clickhouse_url.host or "localhost",
-        port=settings.clickhouse_url.port or 8123,
-        username=settings.clickhouse_url.username or "default",
-        password=settings.clickhouse_url.password or "",
-        database=settings.clickhouse_url.path.lstrip("/") if settings.clickhouse_url.path else "default",
-        connect_timeout=timeout,
+    return Client(
+        host=settings.clickhouse_url.host,
+        port=settings.clickhouse_url.port,
+        user=settings.clickhouse_url.username,
+        password=settings.clickhouse_url.password,
+        database=settings.clickhouse_url.path.lstrip("/") if settings.clickhouse_url.path else "",
+        settings={"connect_timeout": timeout},
     )
 
 
 @asynccontextmanager
-async def get_clickhouse_context() -> AsyncGenerator[Client]:
+async def get_clickhouse_context() -> AsyncGenerator[Client, None]:
     """
     Async context manager for ClickHouse client connections.
 
@@ -48,10 +47,10 @@ async def get_clickhouse_context() -> AsyncGenerator[Client]:
     try:
         yield client
     finally:
-        client.close()
+        client.disconnect()
 
 
-async def get_clickhouse_dependency() -> AsyncGenerator[Client]:
+async def get_clickhouse_dependency() -> AsyncGenerator[Client, None]:
     """
     FastAPI dependency for injecting ClickHouse client into route handlers.
 
@@ -71,7 +70,7 @@ def create_table_if_not_exists(client: Client, table_name: str, schema: str) -> 
         table_name (str): Name of the table to create
         schema (str): CREATE TABLE schema definition
     """
-    client.command(schema)
+    client.execute(schema)
 
 
 def drop_table_if_exists(client: Client, table_name: str) -> None:
@@ -82,7 +81,7 @@ def drop_table_if_exists(client: Client, table_name: str) -> None:
         client (Client): ClickHouse client
         table_name (str): Name of the table to drop
     """
-    client.command(f"DROP TABLE IF EXISTS {table_name}")
+    client.execute(f"DROP TABLE IF EXISTS {table_name}")
 
 
 def table_exists(client: Client, table_name: str) -> bool:
@@ -96,8 +95,7 @@ def table_exists(client: Client, table_name: str) -> bool:
     Returns:
         bool: True if table exists, False otherwise
     """
-    result = client.query(
-        "SELECT name FROM system.tables WHERE database = currentDatabase() AND name = {table:String}",
-        parameters={"table": table_name},
+    result = client.execute(
+        "SELECT name FROM system.tables WHERE database = currentDatabase() AND name = %(table)s", {"table": table_name}
     )
-    return result.row_count > 0
+    return len(result) > 0

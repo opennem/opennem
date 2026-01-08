@@ -1,4 +1,4 @@
-FROM python:3.12-bullseye as python-base
+FROM python:3.14-slim as python-base
 
 ENV PROJECT_NAME="opennem" \
   PYTHONUNBUFFERED=1 \
@@ -14,25 +14,22 @@ ENV PROJECT_NAME="opennem" \
 ENV PATH="$VENV_PATH/bin:$PATH"
 
 ################################
-# BUILDER-BASE
+# BUILDER
 ################################
-FROM python-base as builder-base
+FROM python-base as builder
 
 RUN apt-get update \
   && apt-get install --no-install-recommends -y \
     build-essential \
-    cmake \
+    gcc \
+    g++ \
+    make \
     curl \
     git \
     ca-certificates \
     pkg-config \
     libssl-dev \
-    libclang-dev \
   && rm -rf /var/lib/apt/lists/*
-
-# Install Rust toolchain (needed for curl-cffi and other packages)
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
 
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
@@ -48,8 +45,9 @@ COPY opennem/__init__.py ${PROJECT_NAME}/__init__.py
 COPY LICENSE ./
 COPY bin/run_server.py bin/
 
-# Install runtime deps
-RUN uv sync --frozen --no-dev
+# Install dependencies with cache mount for faster rebuilds
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev
 
 ################################
 # PRODUCTION
@@ -58,14 +56,30 @@ FROM python-base as production
 
 ENV FASTAPI_ENV=production
 
-# Copy uv binary for runtime
+# Copy uv binary for runtime (needed for "uv run" commands)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
+# Install runtime dependencies and build tools (needed for Python 3.14 packages)
+RUN apt-get update \
+  && apt-get install --no-install-recommends -y \
+    ca-certificates \
+    build-essential \
+    gcc \
+    g++ \
+    python3-dev \
+  && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user for security
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
 # Copy venv from builder
-COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
+COPY --from=builder $PYSETUP_PATH $PYSETUP_PATH
 
 # Copy application code
 WORKDIR /app
-COPY . .
+COPY --chown=appuser:appuser . .
+
+# Switch to non-root user
+USER appuser
 
 EXPOSE 8000

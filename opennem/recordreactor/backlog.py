@@ -13,7 +13,7 @@ from datetime import datetime
 from textwrap import dedent
 from typing import Any
 
-from clickhouse_connect.driver.client import Client
+from clickhouse_driver.client import Client
 from sqlalchemy import func, select, text
 
 from opennem import settings
@@ -458,7 +458,7 @@ def _analyze_milestone_records(
         if debug:
             print(dedent(base_query))
 
-        result = client.query(base_query)
+        records = client.execute(base_query)
         # Convert to list of dicts for easier processing
         field_names = [
             "interval",
@@ -472,7 +472,7 @@ def _analyze_milestone_records(
             "prev_instance_id",
         ]
 
-        records = [dict(zip(field_names, record, strict=False)) for record in result.result_rows]
+        records = [dict(zip(field_names, record, strict=False)) for record in records]
 
         return records
 

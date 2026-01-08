@@ -76,5 +76,5 @@ async def optimize_clickhouse_tables(table_names: list[str] | None = None) -> No
         table_names = ["unit_intervals", "market_summary"]
 
     for _table_name in table_names:
-        client.command(f"OPTIMIZE TABLE {_table_name} FINAL")
+        client.execute(f"OPTIMIZE TABLE {_table_name} FINAL")
         logger.info(f"Optimized {_table_name} table")
