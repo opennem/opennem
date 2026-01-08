@@ -45,20 +45,22 @@ logger = logging.getLogger("opennem.api.pollution")
 async def get_facility_pollution(
     user: authenticated_user,
     facility_code: Annotated[
-        list[str] | None, Query(description="The facility code(s) to get pollution data for", example="YALLOURN")
+        list[str] | None, Query(description="The facility code(s) to get pollution data for", examples=["YALLOURN"])
     ] = None,
     pollutant_code: Annotated[
-        list[PollutantCode] | None, Query(description="Specific pollutant codes to filter by", example=PollutantCode.NOX)
+        list[PollutantCode] | None, Query(description="Specific pollutant codes to filter by", examples=[PollutantCode.NOX])
     ] = None,
     pollutant_category: Annotated[
         list[PollutantCategory] | None,
         Query(
             description="Filter by pollutant category(ies). Defaults to 'air_pollutant' if no filters specified",
-            example=PollutantCategory.AIR_POLLUTANT,
+            examples=[PollutantCategory.AIR_POLLUTANT],
         ),
     ] = None,
-    date_start: Annotated[datetime | None, Query(description="Start time for the query", example="1998-01-01T00:00:00")] = None,
-    date_end: Annotated[datetime | None, Query(description="End time for the query", example="2024-12-31T00:00:00")] = None,
+    date_start: Annotated[
+        datetime | None, Query(description="Start time for the query", examples=["1998-01-01T00:00:00"])
+    ] = None,
+    date_end: Annotated[datetime | None, Query(description="End time for the query", examples=["2024-12-31T00:00:00"])] = None,
 ) -> APIV4ResponseSchema:
     """
     Get pollution data for facilities that have NPI tracking.

@@ -130,8 +130,7 @@ async def get_network_data(
     start_time = time.time()
     try:
         logger.debug(query, params)
-        result = client.query(query, parameters=params)
-        results = result.result_rows
+        results = client.execute(query, params)
         elapsed_ms = (time.time() - start_time) * 1000
         logger.debug(f"Query execution time: {elapsed_ms:.2f} ms")
     except Exception as e:
@@ -230,8 +229,7 @@ async def get_facility_data(
     try:
         logger.debug(f"Executing query: {query}")
         logger.debug(f"Query params: {params}")
-        result = client.query(query, parameters=params)
-        results = result.result_rows
+        results = client.execute(query, params)
         logger.debug(f"Query returned {len(results)} rows")
     except Exception as e:
         logger.error(f"Error executing query: {e}")
