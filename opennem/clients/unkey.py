@@ -93,6 +93,7 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
         try:
             # Extract owner_id from identity if available
             owner_id = data.identity.id if data.identity else None
+            logger.debug(f"Unkey response - identity: {data.identity}, owner_id extracted: {owner_id}")
 
             model = OpenNEMUser(
                 id=data.key_id,

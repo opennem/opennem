@@ -70,7 +70,17 @@ async def get_current_user(
             return user
 
         # Enrich with Clerk user data
-        clerk_user = await clerk_client.users.get_async(user_id=user.owner_id or "")
+        logger.debug(f"Fetching Clerk user for owner_id: {user.owner_id}")
+
+        if not user.owner_id:
+            logger.info(f"No owner_id for user {user.id} (key not associated with Clerk user), skipping Clerk enrichment")
+            # Set safe defaults for keys without Clerk association
+            user.full_name = None
+            user.email = None
+            user.plan = None
+            return user
+
+        clerk_user = await clerk_client.users.get_async(user_id=user.owner_id)
 
         if not clerk_user:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
