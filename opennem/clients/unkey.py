@@ -72,13 +72,15 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
 
     try:
         async with Unkey(root_key=settings.unkey_root_key) as client:
-            # New SDK: verify_key takes keyword arguments, returns direct response
-            data = await client.keys.verify_key_async(key=api_key)
+            # New SDK: verify_key returns wrapped response
+            response = await client.keys.verify_key_async(key=api_key)
 
-        # New SDK: Direct property access to response data
-        if not data:
-            logger.warning("Unkey verification failed: no response")
+        # Response has .data attribute with actual verification data
+        if not response or not response.data:
+            logger.warning("Unkey verification failed: no response data")
             raise UnkeyInvalidUserException("Verification failed: no response")
+
+        data = response.data
 
         if not data.valid:
             logger.info("API key is not valid")
@@ -89,17 +91,21 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
             raise UnkeyInvalidUserException("Verification failed: no id")
 
         try:
+            # Extract owner_id from identity if available
+            owner_id = data.identity.id if data.identity else None
+
             model = OpenNEMUser(
-                id=data.key_id,  # New field name
+                id=data.key_id,
                 valid=data.valid,
-                owner_id=data.owner_id,
+                owner_id=owner_id,
                 meta=data.meta,
                 error=None,
             )
 
-            model.meta = OpennemAPIRequestMeta(remaining=data.remaining, reset=data.expires)
+            # Set meta with credits and expiry
+            model.meta = OpennemAPIRequestMeta(remaining=data.key_credits if data.key_credits else None, reset=data.expires)
 
-            # New SDK: ratelimits is array
+            # Process ratelimits array
             if data.ratelimits and len(data.ratelimits) > 0:
                 first_ratelimit = data.ratelimits[0]
                 model.rate_limit = OpenNEMUserRateLimit(
@@ -152,8 +158,8 @@ async def unkey_create_key(
 
     try:
         async with Unkey(root_key=settings.unkey_root_key) as client:
-            # New SDK: Direct keyword arguments
-            data = await client.keys.create_key_async(
+            # New SDK: Direct keyword arguments, returns wrapped response
+            response = await client.keys.create_key_async(
                 api_id=settings.unkey_api_id,
                 name=name,
                 prefix=prefix,
@@ -162,10 +168,11 @@ async def unkey_create_key(
                 ratelimits=[ratelimit] if ratelimit else None,
             )
 
-            if not data or not data.key:
+            if not response or not response.data or not response.data.key:
                 logger.error("Unkey key creation failed: no key returned")
                 return None
 
+            data = response.data
             logger.info(f"Unkey key created: {data.key} {data.key_id}")
 
             return data.key
