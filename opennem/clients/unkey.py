@@ -71,16 +71,14 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
         raise Exception("No unkey root key set")
 
     try:
-        async with Unkey(bearer_auth=settings.unkey_root_key) as client:
-            # New SDK: verify_key returns direct object, no api_id param
-            verification = await client.keys.verify_key_async(models.V2KeysVerifyKeyRequestBody(key=api_key))
+        async with Unkey(root_key=settings.unkey_root_key) as client:
+            # New SDK: verify_key takes keyword arguments, returns direct response
+            data = await client.keys.verify_key_async(key=api_key)
 
-        # New SDK: Direct property access (no .unwrap())
-        if not verification.v2_keys_verify_key_response_body:
-            logger.warning("Unkey verification failed: no response body")
+        # New SDK: Direct property access to response data
+        if not data:
+            logger.warning("Unkey verification failed: no response")
             raise UnkeyInvalidUserException("Verification failed: no response")
-
-        data = verification.v2_keys_verify_key_response_body
 
         if not data.valid:
             logger.info("API key is not valid")
@@ -153,25 +151,20 @@ async def unkey_create_key(
             ratelimit = OPENNEM_RATELIMIT_ADMIN
 
     try:
-        async with Unkey(bearer_auth=settings.unkey_root_key) as client:
-            # New SDK: Request object pattern
-            request = models.V2KeysCreateKeyRequestBody(
+        async with Unkey(root_key=settings.unkey_root_key) as client:
+            # New SDK: Direct keyword arguments
+            data = await client.keys.create_key_async(
                 api_id=settings.unkey_api_id,
                 name=name,
                 prefix=prefix,
                 meta=meta,
-                owner_id=email,
-                ratelimits=[ratelimit],  # Array
-                external_id=email,
+                external_id=email,  # external_id for user tracking
+                ratelimits=[ratelimit] if ratelimit else None,
             )
 
-            result = await client.keys.create_key_async(request=request)
-
-            if not result.v2_keys_create_key_response_body:
-                logger.error("Unkey key creation failed: no response body")
+            if not data or not data.key:
+                logger.error("Unkey key creation failed: no key returned")
                 return None
-
-            data = result.v2_keys_create_key_response_body
 
             logger.info(f"Unkey key created: {data.key} {data.key_id}")
 
