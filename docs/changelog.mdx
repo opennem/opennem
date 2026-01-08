@@ -29,14 +29,8 @@ Stay up to date with the latest features, improvements, and bug fixes in OpenEle
 
 - **Unified HTTP Client** - New rnet-based HTTP client replacing legacy libraries ([#466](https://github.com/opennem/opennem/issues/466), [#467](https://github.com/opennem/opennem/issues/467), [#475](https://github.com/opennem/opennem/issues/475))
   - Resolve crawl request errors with new rust-based HTTP client for all requests
-  - Replaced httpx, requests, and curl_cffi with unified rnet client
-  - Features include custom retry logic, browser mimicking, proxy support, and random user agents
-  - Migrated all external clients (APVI, BOM, AEMO notices, Slack)
-  - Improved reliability and reduced dependency footprint
 
 - **Granian ASGI Server** - Application server upgraded from Hypercorn to Granian ([#476](https://github.com/opennem/opennem/issues/476))
-  - Enhanced performance with configurable worker threads
-  - Improved development experience with watch mode
   - Better resource utilization
 
 ## API Improvements
@@ -46,13 +40,6 @@ Stay up to date with the latest features, improvements, and bug fixes in OpenEle
   - Unit datetime metadata fields synchronized from CMS
   - Timezone-aware datetime handling per network
   - Improved serialization excluding None values
-  - Versioning and caching enabled for better performance
-
-- **CMS Sync Improvements** - Enhanced content management synchronization ([#453](https://github.com/opennem/opennem/issues/453))
-  - Webhook sync by cms_id for reliable updates
-  - Track created and updated timestamps from CMS
-  - NPI ID and OSM way ID synchronization
-  - Automated CMS update reports and scheduling
 
 ## Bug Fixes
 
