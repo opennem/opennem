@@ -6,6 +6,74 @@ icon: 'calendar'
 
 Stay up to date with the latest features, improvements, and bug fixes in OpenElectricity.
 
+<Update label="v4.4.0" description="January 8, 2026" tags={["Platform", "Infrastructure", "API", "Data"]}>
+
+## Major Features
+
+- **Renewable Energy Proportion Tracking** - Real-time renewable energy percentage tracking across the network ([#423](https://github.com/opennem/opennem/issues/423))
+  - New milestone type in RecordReactor for tracking renewable proportion
+  - Significance scoring for renewable energy records
+  - Exposed via API endpoints for programmatic access
+
+- **Max Generation Tracking** - Historical peak generation capacity tracking per facility unit ([#461](https://github.com/opennem/opennem/issues/461))
+  - New `max_generation` and `max_generation_interval` fields on facility units
+  - Backfill support for historical peak data
+  - Available via Facilities API endpoints
+
+## Infrastructure & Technology Upgrades
+
+- **Python 3.14 Support** - Platform upgraded to Python 3.14 for improved performance and compatibility ([#468](https://github.com/opennem/opennem/issues/468))
+  - Updated python-sanity dependency with async client and HTTP/2 support
+  - Migrated from clickhouse-connect to clickhouse-http driver
+  - Enhanced async patterns and event loop handling
+
+- **Unified HTTP Client** - New rnet-based HTTP client replacing legacy libraries ([#466](https://github.com/opennem/opennem/issues/466), [#467](https://github.com/opennem/opennem/issues/467), [#475](https://github.com/opennem/opennem/issues/475))
+  - Resolve crawl request errors with new rust-based HTTP client for all requests
+  - Replaced httpx, requests, and curl_cffi with unified rnet client
+  - Features include custom retry logic, browser mimicking, proxy support, and random user agents
+  - Migrated all external clients (APVI, BOM, AEMO notices, Slack)
+  - Improved reliability and reduced dependency footprint
+
+- **Granian ASGI Server** - Application server upgraded from Hypercorn to Granian ([#476](https://github.com/opennem/opennem/issues/476))
+  - Enhanced performance with configurable worker threads
+  - Improved development experience with watch mode
+  - Better resource utilization
+
+## API Improvements
+
+- **Facility API Enhancements** - Expanded facility endpoint capabilities ([#464](https://github.com/opennem/opennem/issues/464))
+  - Filter facilities by fueltech group
+  - Unit datetime metadata fields synchronized from CMS
+  - Timezone-aware datetime handling per network
+  - Improved serialization excluding None values
+  - Versioning and caching enabled for better performance
+
+- **CMS Sync Improvements** - Enhanced content management synchronization ([#453](https://github.com/opennem/opennem/issues/453))
+  - Webhook sync by cms_id for reliable updates
+  - Track created and updated timestamps from CMS
+  - NPI ID and OSM way ID synchronization
+  - Automated CMS update reports and scheduling
+
+## Bug Fixes
+
+- **Curtailment Data Alignment** - Fixed AEMO timestamp handling for curtailment data ([#455](https://github.com/opennem/opennem/issues/455))
+- **Interval Limits** - Increased max interval days for better data coverage ([#454](https://github.com/opennem/opennem/issues/454))
+- **Data Storage** - Fixed empty price data storage to prevent null records
+- **Market Summary** - Fixed market summary refresh and column alignment
+- **Worker Stability** - Catchup worker now runs all aggregates correctly
+- **Battery Mapping** - Fixed battery unit mapping schema parsing issues
+- **Export Controller** - Resolved ClickHouse query iteration and record processing
+- **API Responses** - Fixed unset field handling by setting response_model_exclude_unset to false
+- **Logging** - Reduced debug noise from httpcore and hpack, improved Logfire integration
+
+## Documentation
+
+- Enhanced documentation for AEMO timestamp handling in curtailment data
+- Updated API documentation with new endpoints and fields
+- Infrastructure upgrade documentation and migration guides
+
+</Update>
+
 <Update label="v4.3.0" description="September 8, 2025" tags={["API", "Features", "Data", "Pollution", "Battery"]}>
 
 ## Major Features
