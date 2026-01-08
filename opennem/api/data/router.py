@@ -47,22 +47,18 @@ _SUPPORTED_METRICS = [
 @cache(expire=60 * 5)
 async def get_network_data(
     network_code: str,
-    metrics: Annotated[list[Metric], Query(description="The metrics to get data for", examples=["energy"])],
-    interval: Annotated[
-        Interval, Query(description="The time interval to aggregate data by", examples=["1h"])
-    ] = Interval.INTERVAL,
-    date_start: Annotated[
-        datetime | None, Query(description="Start time for the query", examples=["2024-01-01T00:00:00"])
-    ] = None,
-    date_end: Annotated[datetime | None, Query(description="End time for the query", examples=["2024-01-02T00:00:00"])] = None,
-    network_region: Annotated[str | None, Query(description="Network region to get data for", examples=["NSW1"])] = None,
-    fueltech: Annotated[list[str] | None, Query(description="Fueltechs to get data for", examples=["coal_black"])] = None,
-    fueltech_group: Annotated[list[str] | None, Query(description="Fueltech groups to get data for", examples=["coal"])] = None,
+    metrics: Annotated[list[Metric], Query(description="The metrics to get data for", example="energy")],
+    interval: Annotated[Interval, Query(description="The time interval to aggregate data by", example="1h")] = Interval.INTERVAL,
+    date_start: Annotated[datetime | None, Query(description="Start time for the query", example="2024-01-01T00:00:00")] = None,
+    date_end: Annotated[datetime | None, Query(description="End time for the query", example="2024-01-02T00:00:00")] = None,
+    network_region: Annotated[str | None, Query(description="Network region to get data for", example="NSW1")] = None,
+    fueltech: Annotated[list[str] | None, Query(description="Fueltechs to get data for", example="coal_black")] = None,
+    fueltech_group: Annotated[list[str] | None, Query(description="Fueltech groups to get data for", example="coal")] = None,
     primary_grouping: Annotated[
-        PrimaryGrouping, Query(description="Primary grouping to apply", examples=["network_region"])
+        PrimaryGrouping, Query(description="Primary grouping to apply", example="network_region")
     ] = PrimaryGrouping.NETWORK,
     secondary_grouping: Annotated[
-        SecondaryGrouping | None, Query(description="Optional secondary grouping to apply", examples=["fueltech_group"])
+        SecondaryGrouping | None, Query(description="Optional secondary grouping to apply", example="fueltech_group")
     ] = None,
     client: Any = Depends(get_clickhouse_dependency),
     user: authenticated_user = None,
@@ -134,8 +130,7 @@ async def get_network_data(
     start_time = time.time()
     try:
         logger.debug(query, params)
-        result = client.query(query, parameters=params)
-        results = result.result_rows
+        results = client.execute(query, params)
         elapsed_ms = (time.time() - start_time) * 1000
         logger.debug(f"Query execution time: {elapsed_ms:.2f} ms")
     except Exception as e:
@@ -176,17 +171,13 @@ async def get_network_data(
 @cache(expire=60 * 5)
 async def get_facility_data(
     network_code: str,
-    metrics: Annotated[list[Metric], Query(description="The metrics to get data for", examples=["energy"])],
-    interval: Annotated[
-        Interval, Query(description="The time interval to aggregate data by", examples=["1h"])
-    ] = Interval.INTERVAL,
+    metrics: Annotated[list[Metric], Query(description="The metrics to get data for", example="energy")],
+    interval: Annotated[Interval, Query(description="The time interval to aggregate data by", example="1h")] = Interval.INTERVAL,
     facility_code: Annotated[
-        list[str] | None, Query(description="The facility code to get data for", examples=["AEMO_DISCOS_01"])
+        list[str] | None, Query(description="The facility code to get data for", example="AEMO_DISCOS_01")
     ] = None,
-    date_start: Annotated[
-        datetime | None, Query(description="Start time for the query", examples=["2024-01-01T00:00:00"])
-    ] = None,
-    date_end: Annotated[datetime | None, Query(description="End time for the query", examples=["2024-01-02T00:00:00"])] = None,
+    date_start: Annotated[datetime | None, Query(description="Start time for the query", example="2024-01-01T00:00:00")] = None,
+    date_end: Annotated[datetime | None, Query(description="End time for the query", example="2024-01-02T00:00:00")] = None,
     client: Any = Depends(get_clickhouse_dependency),
     user: authenticated_user = None,
 ) -> APIV4ResponseSchema:
@@ -238,8 +229,7 @@ async def get_facility_data(
     try:
         logger.debug(f"Executing query: {query}")
         logger.debug(f"Query params: {params}")
-        result = client.query(query, parameters=params)
-        results = result.result_rows
+        results = client.execute(query, params)
         logger.debug(f"Query returned {len(results)} rows")
     except Exception as e:
         logger.error(f"Error executing query: {e}")

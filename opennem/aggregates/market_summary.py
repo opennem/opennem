@@ -614,6 +614,14 @@ async def run_market_summary_aggregate_to_now() -> int:
         return 0
 
     max_interval = result_rows[0][0]  # type: ignore
+
+    # Check if table is empty (returns epoch time)
+    if max_interval.year < 2000:
+        logger.info(
+            "Market summary table appears to be empty (max interval is before 2000). Please run reset_market_summary() first."
+        )
+        return 0
+
     date_from = max_interval + timedelta(minutes=5)  # type: ignore
     date_to = get_last_completed_interval_for_network(network=NetworkNEM)
 
@@ -621,8 +629,12 @@ async def run_market_summary_aggregate_to_now() -> int:
         logger.info("No new data to process")
         return 0
 
-    if date_from - date_to > timedelta(days=7):
-        logger.info("Date range is greater than 7 days, skipping")
+    # Fix: calculate date range correctly (should be date_to - date_from, not date_from - date_to)
+    date_range_days = (date_to - date_from).days
+    if date_range_days > 7:
+        logger.info(
+            f"Date range is {date_range_days} days (greater than 7 days), skipping. Use reset_market_summary() for large gaps."
+        )
         return 0
 
     # run market summary from max_interval to now
