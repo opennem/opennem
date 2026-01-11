@@ -199,6 +199,8 @@ class OpennemExportSeries(BaseConfig):
                     second=59,
                 )
 
+                # Subtract 1 day to only include complete days in current year exports
+                # We don't export partial day data to ensure consistency
                 end = end - timedelta(days=1)
 
         if self.month:
