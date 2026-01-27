@@ -847,4 +847,6 @@ if __name__ == "__main__":
 
     import asyncio
 
-    asyncio.run(run_market_summary_aggregate_to_now())
+    asyncio.run(run_market_summary_aggregate_for_last_days(days=35))
+
+    # asyncio.run(run_market_summary_aggregate_to_now())

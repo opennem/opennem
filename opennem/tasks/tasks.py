@@ -44,7 +44,7 @@ from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.recordreactor.backlog import run_milestone_analysis_backlog
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_today_opennem
-from opennem.workers.catchup import catchup_last_days, run_catchup_check
+from opennem.workers.catchup import catchup_aggregates, catchup_last_days, run_catchup_check
 from opennem.workers.energy import process_energy_last_intervals
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
@@ -284,6 +284,16 @@ async def task_catchup_check(ctx) -> None:
 async def task_catchup_days(ctx) -> None:
     """Run a catchup for the last 24 hours"""
     await catchup_last_days(days=1)
+
+
+@logfire.instrument("task_catchup_aggregates")
+async def task_catchup_aggregates(ctx) -> None:
+    """Backfill ClickHouse aggregates (market_summary and unit_intervals) for last 7 days.
+
+    Runs hourly to fill gaps caused by timing race conditions where the scheduled
+    aggregate runs before PostgreSQL has the crawled data.
+    """
+    await catchup_aggregates(days=7)
 
 
 @logfire.instrument("task_update_milestones")

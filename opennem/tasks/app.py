@@ -37,6 +37,7 @@ from opennem.tasks.broker import REDIS_SETTINGS, get_redis_pool
 from opennem.tasks.tasks import (
     task_apvi_crawl,
     task_bom_capitals_crawl,
+    task_catchup_aggregates,
     task_catchup_check,
     task_catchup_days,
     task_check_unsplit_batteries,
@@ -292,6 +293,14 @@ class WorkerSettings:
             minute=15,
             second=0,
             hour=0,
+            timeout=None,
+            unique=True,
+        ),
+        # hourly aggregate backfill to fill gaps from timing race conditions
+        cron(
+            task_catchup_aggregates,
+            minute=45,
+            second=0,
             timeout=None,
             unique=True,
         ),

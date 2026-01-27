@@ -302,7 +302,28 @@ async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None,
     )
 
 
+@logfire.instrument("catchup_aggregates")
+async def catchup_aggregates(days: int = 7) -> None:
+    """
+    Backfill ClickHouse aggregates (market_summary and unit_intervals) for the last N days.
+
+    This function fills gaps caused by timing race conditions where the scheduled
+    aggregate runs before PostgreSQL has the crawled data. Running hourly ensures
+    any missed intervals get backfilled.
+
+    Args:
+        days: Number of days to backfill (default: 7)
+    """
+    logger.info(f"Running catchup_aggregates for last {days} days")
+
+    await run_market_summary_aggregate_for_last_days(days=days)
+    await run_unit_intervals_aggregate_for_last_days(days=days)
+
+    logger.info(f"Completed catchup_aggregates for last {days} days")
+
+
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(catchup_last_days(days=1, network=NetworkNEM))
+    # asyncio.run(catchup_last_days(days=4))
+    asyncio.run(catchup_aggregates(days=7))
