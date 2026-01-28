@@ -737,11 +737,17 @@ async def run_unit_intervals_aggregate_to_now() -> int:
     """
     client = get_clickhouse_client()
 
-    # get the max interval from unit_intervals using FINAL modifier
-    result = client.execute("SELECT MAX(interval) FROM unit_intervals FINAL")
-    max_interval = result[0][0]
+    # get the MIN of MAX intervals per network to ensure we don't miss any lagging networks (e.g. AEMO_ROOFTOP)
+    result = client.execute("""
+        SELECT MIN(max_interval) FROM (
+            SELECT network_id, MAX(interval) as max_interval
+            FROM unit_intervals FINAL
+            GROUP BY network_id
+        )
+    """)
+    min_max_interval = result[0][0]
 
-    date_from = max_interval + timedelta(minutes=5)
+    date_from = min_max_interval + timedelta(minutes=5)
     date_to = get_last_completed_interval_for_network(network=NetworkNEM)
 
     if date_from > date_to:
@@ -752,7 +758,7 @@ async def run_unit_intervals_aggregate_to_now() -> int:
         logger.info("Date range is greater than 1 day, skipping")
         return 0
 
-    # run unit intervals from max_interval to now
+    # run unit intervals from earliest lagging network to now
     async with get_write_session() as session:
         records = await _get_unit_interval_data(session, date_from, date_to)
         prepared_data = _prepare_unit_interval_data(records)
