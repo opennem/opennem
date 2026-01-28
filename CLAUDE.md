@@ -107,3 +107,45 @@ The application uses environment variables for configuration. These are loaded a
 - Use asyncpg for database operations
 - Use httpx for all HTTP requests by loading it from `opennem.utils.http`
 - Use sqlalchemy for database operations
+
+### Git Workflow
+- **NEVER commit or merge into the `production` branch** - always use `main` branch for development
+- The `production` branch is for releases only
+- Create PRs against `main`, not `production`
+
+## Network-Specific Data Considerations
+
+### NEM vs WEM
+- **NEM** (National Electricity Market): Covers eastern Australia (NSW, QLD, SA, TAS, VIC)
+- **WEM** (Wholesale Electricity Market): Covers Western Australia, isolated grid with no interconnectors
+
+### WEM Data Limitations
+- WEM public data sources (`referenceTradingPrices`) only provide **price data, not demand**
+- The `balancing_summary` table for WEM only has `price` populated; `demand` and `generation_total` are NULL
+- **Solution**: Since WEM is isolated (no interconnectors), demand ≈ total generation. Calculate WEM demand from `facility_scada` generation totals
+- This is implemented in `opennem/aggregates/market_summary.py` via the `wem_generation` CTE
+
+### Market Summary Aggregation
+- `opennem/aggregates/market_summary.py` aggregates data from PostgreSQL to ClickHouse
+- Feature flag `DEMAND_FROM_MARKET_SUMMARY` controls whether API uses ClickHouse (True) or PostgreSQL (False)
+- Dev environment uses ClickHouse; Prod currently uses PostgreSQL
+- Materialized views: `market_summary_daily_mv`, `market_summary_monthly_mv`
+
+### Backfill Commands
+```python
+# Backfill last N days
+from opennem.aggregates.market_summary import run_market_summary_aggregate_for_last_days
+asyncio.run(run_market_summary_aggregate_for_last_days(days=400))
+
+# Full historical backfill (takes several hours)
+from opennem.aggregates.market_summary import reset_market_summary
+asyncio.run(reset_market_summary(start_date=datetime(1999, 1, 1), skip_schema_refresh=True))
+
+# Backfill materialized views
+from opennem.aggregates.market_summary import backfill_market_summary_views
+backfill_market_summary_views(refresh_views=True)
+```
+
+### Known Data Quality Issues
+- Pre-existing bad data with `network_id='NEM', network_region='WEM'` exists in `market_summary` table (WEM should not be a NEM region)
+- WEM `facility_scada` data may lag behind `balancing_summary` by several hours
