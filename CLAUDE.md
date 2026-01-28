@@ -181,3 +181,78 @@ asyncio.run(run_unit_intervals_aggregate_to_now())
 from opennem.aggregates.unit_intervals import run_unit_intervals_backlog
 asyncio.run(run_unit_intervals_backlog(start_date=datetime(2025, 1, 1)))
 ```
+
+### ClickHouse Materialized Views
+
+All MVs are defined in `opennem/db/clickhouse_views.py` and managed via `opennem/db/clickhouse_materialized_views.py`.
+
+| View | Source | Timestamp Col | Purpose |
+|------|--------|---------------|---------|
+| `unit_intervals_daily_mv` | `unit_intervals` | `date` | Daily aggregation per unit |
+| `fueltech_intervals_mv` | `unit_intervals` | `interval` | 5-min intervals by fueltech |
+| `fueltech_intervals_daily_mv` | `unit_intervals` | `date` | Daily by fueltech |
+| `renewable_intervals_mv` | `unit_intervals` | `interval` | 5-min by renewable flag |
+| `renewable_intervals_daily_mv` | `unit_intervals` | `date` | Daily by renewable flag |
+| `market_summary_daily_mv` | `market_summary` | `date` | Daily market summary |
+| `market_summary_monthly_mv` | `market_summary` | `month` | Monthly market summary |
+
+**RecordReactor dependency**: The milestone/records system (`opennem/recordreactor/`) queries `fueltech_intervals_mv` and `renewable_intervals_mv` for power/energy/emissions metrics. If these MVs are missing historical data, milestones will only show recent records.
+
+### MV Backfill Commands
+```python
+from datetime import datetime
+from opennem.db.clickhouse_materialized_views import (
+    backfill_materialized_views,
+    get_materialized_view_stats,
+)
+
+# Check MV status (records, date range)
+stats = get_materialized_view_stats()
+for name, s in stats.items():
+    print(f"{name}: {s['record_count']:,} records, {s['min_date']} to {s['max_date']}")
+
+# Backfill specific views
+backfill_materialized_views(
+    views=['fueltech_intervals_mv', 'renewable_intervals_mv'],
+    start_date=datetime(1999, 1, 1),
+    end_date=datetime(2025, 12, 31),
+    refresh_views=False,  # Don't drop existing data
+)
+
+# Backfill all views
+backfill_materialized_views(
+    start_date=datetime(1999, 1, 1),
+    end_date=datetime(2025, 12, 31),
+)
+```
+
+### MV Backfill Troubleshooting
+
+**Symptom**: Backfill fails with "Cannot reserve X MiB, not enough space"
+- This is usually **disk space**, not RAM
+- Check ch-prod disk: `ssh ch-prod "df -h /mnt/volume_ch_prod"`
+- ClickHouse needs disk space for temp files during GROUP BY operations
+- Solution: Free up or expand `/mnt/volume_ch_prod` disk
+
+**Symptom**: Milestones only showing recent records (e.g., from start of year)
+- Check MV date ranges: `get_materialized_view_stats(['fueltech_intervals_mv', 'renewable_intervals_mv'])`
+- If min_date is recent, MVs need backfilling from 1999
+
+**ch-prod server specs** (as of Jan 2026):
+- RAM: 31GB (plenty for queries)
+- Data disk: `/mnt/volume_ch_prod` - needs ~100GB free for backfills
+- No swap configured
+- Config: `/etc/clickhouse-server/config.d/`
+
+### Milestone Analysis Backfill
+```python
+import asyncio
+from opennem.recordreactor.backlog import run_milestone_analysis_backlog
+
+# Full refresh of milestones table (deletes existing, re-analyzes all)
+asyncio.run(run_milestone_analysis_backlog(refresh=True))
+
+# Update milestones from last recorded to now
+from opennem.recordreactor.backlog import run_update_milestone_analysis_to_now
+asyncio.run(run_update_milestone_analysis_to_now())
+```
