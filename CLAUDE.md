@@ -149,3 +149,35 @@ backfill_market_summary_views(refresh_views=True)
 ### Known Data Quality Issues
 - Pre-existing bad data with `network_id='NEM', network_region='WEM'` exists in `market_summary` table (WEM should not be a NEM region)
 - WEM `facility_scada` data may lag behind `balancing_summary` by several hours
+
+## ClickHouse
+
+### Environment Access
+- **ch-dev**: Default local connection via `.env.local`
+- **ch-prod**: Use `ENV=production` prefix (e.g., `ENV=production uv run python script.py`)
+- ch-dev has data from 2020; ch-prod has full history from 1999
+
+### unit_intervals Table
+- **Network IDs**: `NEM`, `WEM`, `AEMO_ROOFTOP`, `APVI` (not `AEMO_NEM`)
+- **Coverage**: 1999-01-01 to present, ~749M records, continuous daily coverage
+- **All timestamps in UTC** - no DST transitions
+- Aggregation code: `opennem/aggregates/unit_intervals.py`
+
+### Network Data Intervals & Lag
+| Network | Interval | Expected Lag |
+|---------|----------|--------------|
+| NEM | 5 min | Near real-time |
+| AEMO_ROOFTOP | 30 min | ~30 minutes max |
+| WEM | 5 min | ~24 hours (publishes daily) |
+| APVI | 5 min | Follows AEMO_ROOFTOP |
+
+### unit_intervals Aggregation
+```python
+# Catch up all networks to current time
+from opennem.aggregates.unit_intervals import run_unit_intervals_aggregate_to_now
+asyncio.run(run_unit_intervals_aggregate_to_now())
+
+# Backfill from specific date
+from opennem.aggregates.unit_intervals import run_unit_intervals_backlog
+asyncio.run(run_unit_intervals_backlog(start_date=datetime(2025, 1, 1)))
+```
