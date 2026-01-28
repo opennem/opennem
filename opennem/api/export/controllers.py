@@ -657,10 +657,15 @@ async def demand_network_region_daily(
             ]
         else:
             # Without region: (interval, network_id, demand_energy, demand_market_value)
-            # Use network_id as group_by for consistency
-            results_energy = [DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 2 else None) for i in row]
+            # Use constant network code as group_by (matching PostgreSQL behavior which uses
+            # a constant network_region_select when no region filter is applied)
+            # This ensures all rows get the same group_by value and are aggregated together
+            network_code = time_series.network.code
+            results_energy = [
+                DataQueryResult(interval=i[0], group_by=network_code, result=i[2] if len(i) > 2 else None) for i in row
+            ]
             results_market_value = [
-                DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 3 else None) for i in row
+                DataQueryResult(interval=i[0], group_by=network_code, result=i[3] if len(i) > 3 else None) for i in row
             ]
     else:
         # Use PostgreSQL at_network_demand table (existing behavior)
