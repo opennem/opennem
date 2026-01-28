@@ -15,7 +15,7 @@ authors = [
     {name = "Nik Cubrilovic", email = "git@nikcub.me"},
 ]
 requires-python = "<3.13,>=3.11"
-version = "4.4.6.dev1"
+version = "4.4.6.dev2"
 
 dependencies = [
     "sentry-sdk[asyncpg,fastapi,httpx,sqlalchemy]",
