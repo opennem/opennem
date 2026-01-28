@@ -238,6 +238,47 @@ backfill_materialized_views(
 - Check MV date ranges: `get_materialized_view_stats(['fueltech_intervals_mv', 'renewable_intervals_mv'])`
 - If min_date is recent, MVs need backfilling from 1999
 
+**Symptom**: Energy export shows incorrect values (e.g., every 3rd day has ~10% of expected energy)
+- **Root cause**: Daily MVs (`fueltech_intervals_daily_mv`, `renewable_intervals_daily_mv`) have stale data
+- Daily MVs use ReplacingMergeTree - if backfilled when source was incomplete, they retain old aggregations
+- The energy export (`energy_fueltech_daily_v4`) queries `fueltech_intervals_daily_mv` for daily intervals
+- **Diagnosis**: Compare daily MV vs 5-min MV totals:
+```python
+# Check for divergence between daily MV and 5-min MV
+from opennem.db.clickhouse import get_clickhouse_client
+client = get_clickhouse_client()
+result = client.execute("""
+    WITH daily AS (
+        SELECT date, sum(energy)/1000 as gwh FROM fueltech_intervals_daily_mv FINAL
+        WHERE date >= '2026-01-01' AND network_id = 'NEM' GROUP BY date
+    ),
+    fivemin AS (
+        SELECT toDate(interval) as date, sum(energy)/1000 as gwh FROM fueltech_intervals_mv FINAL
+        WHERE interval >= '2026-01-01' AND network_id = 'NEM' GROUP BY date
+    )
+    SELECT f.date, round(d.gwh, 1) as daily, round(f.gwh, 1) as fivemin,
+           round(d.gwh/f.gwh*100, 1) as pct
+    FROM fivemin f LEFT JOIN daily d ON f.date = d.date ORDER BY f.date
+""")
+for r in result: print(f"{r[0]}: {r[3]}%")  # Should be ~100% for all days
+```
+- **Fix**: Re-backfill the daily MVs and run OPTIMIZE FINAL:
+```python
+from datetime import datetime
+from opennem.db.clickhouse_materialized_views import backfill_materialized_views
+from opennem.db.clickhouse import get_clickhouse_client
+
+backfill_materialized_views(
+    views=['fueltech_intervals_daily_mv', 'renewable_intervals_daily_mv'],
+    start_date=datetime(2025, 1, 1),
+    end_date=datetime.now(),
+    refresh_views=False,
+)
+client = get_clickhouse_client()
+client.execute("OPTIMIZE TABLE fueltech_intervals_daily_mv FINAL")
+client.execute("OPTIMIZE TABLE renewable_intervals_daily_mv FINAL")
+```
+
 **ch-prod server specs** (as of Jan 2026):
 - RAM: 31GB (plenty for queries)
 - Data disk: `/mnt/volume_ch_prod` - needs ~100GB free for backfills
