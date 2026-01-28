@@ -734,24 +734,6 @@ if __name__ == "__main__":
     # Run test for last year of data
     import asyncio
 
-    async def _test_analyze_milestone_records():
-        async with get_write_session() as session:
-            await session.execute(text("delete from milestones"))
-        logger.info("Milestones table deleted")
-
-        await run_milestone_analysis(
-            start_date=datetime.fromisoformat("2020-01-01T00:00:00"),
-            metrics=[MilestoneType.proportion],
-            periods=[
-                # MilestonePeriod.interval,
-                MilestonePeriod.day
-            ],
-            # groupings=[GroupingConfig(name="network", group_by_fields=[])],
-            # groupings=[GroupingConfig(name="fueltech", group_by_fields=["network_region", "fueltech_group_id"])],
-            networks=[NetworkNEM],
-            debug=True,
-        )
-
     async def test():
         await run_milestone_analysis_backlog(refresh=True)
 
