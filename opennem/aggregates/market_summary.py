@@ -133,6 +133,20 @@ async def _get_market_summary_data(
             AND f.network_region IN (SELECT network_region FROM regions)
         GROUP BY 1, 2, 3
     ),
+    wem_generation AS (
+        -- Calculate WEM total generation from facility_scada as demand proxy
+        -- WEM is isolated (no interconnectors) so demand ≈ generation
+        SELECT
+            time_bucket_gapfill('5 minutes', fs.interval, :start_time_window, :end_time) as interval,
+            interpolate(sum(fs.generated)) as total_generation
+        FROM facility_scada fs
+        JOIN units u ON fs.facility_code = u.code
+        JOIN facilities f ON u.station_id = f.id
+        WHERE fs.interval BETWEEN :start_time_window AND :end_time
+            AND f.network_id = 'WEM'
+            AND fs.is_forecast = false
+        GROUP BY 1
+    ),
     gapfilled_data AS (
         -- Generate complete time series with gap filling for each region
         SELECT
@@ -152,13 +166,22 @@ async def _get_market_summary_data(
         GROUP BY 1, 2, 3
     ),
     combined_data AS (
+        -- For WEM, use total generation as demand proxy since WEM public data lacks demand
         SELECT
             COALESCE(gd.interval, rd.interval, rn.interval) as interval,
             COALESCE(gd.network_id, rd.network_id, rn.network_id) as network_id,
             COALESCE(gd.network_region, rd.network_region, rn.network_region) as network_region,
             gd.price,
-            gd.demand,
-            gd.demand_total,
+            CASE
+                WHEN COALESCE(gd.network_id, rd.network_id, rn.network_id) = 'WEM'
+                THEN COALESCE(gd.demand, wg.total_generation)
+                ELSE gd.demand
+            END as demand,
+            CASE
+                WHEN COALESCE(gd.network_id, rd.network_id, rn.network_id) = 'WEM'
+                THEN COALESCE(gd.demand_total, wg.total_generation)
+                ELSE gd.demand_total
+            END as demand_total,
             COALESCE(rd.rooftop_solar, 0) as rooftop_solar,
             COALESCE(rn.renewable_generation, 0) as renewable_generation,
             gd.curtailment_solar_total,
@@ -172,6 +195,8 @@ async def _get_market_summary_data(
             ON gd.interval = rn.interval
             AND gd.network_id = rn.network_id
             AND gd.network_region = rn.network_region
+        LEFT JOIN wem_generation wg
+            ON COALESCE(gd.interval, rd.interval, rn.interval) = wg.interval
     ),
     ranked_data AS (
         SELECT
