@@ -27,7 +27,7 @@ class MaterializedView:
 
 UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
     name="unit_intervals_daily_mv",
-    timestamp_column="interval",
+    timestamp_column="date",
     schema="""
         CREATE MATERIALIZED VIEW unit_intervals_daily_mv
         ENGINE = ReplacingMergeTree(version)
@@ -147,7 +147,7 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
 
 FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
     name="fueltech_intervals_daily_mv",
-    timestamp_column="interval",
+    timestamp_column="date",
     schema="""
         CREATE MATERIALIZED VIEW fueltech_intervals_daily_mv
         ENGINE = ReplacingMergeTree(version)
@@ -246,7 +246,7 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
 
 RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
     name="renewable_intervals_daily_mv",
-    timestamp_column="interval",
+    timestamp_column="date",
     schema="""
         CREATE MATERIALIZED VIEW renewable_intervals_daily_mv
         ENGINE = ReplacingMergeTree(version)
@@ -292,7 +292,7 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
 # Market Summary Materialized Views
 MARKET_SUMMARY_DAILY_VIEW = MaterializedView(
     name="market_summary_daily_mv",
-    timestamp_column="interval",
+    timestamp_column="date",
     schema="""
         CREATE MATERIALIZED VIEW market_summary_daily_mv
         ENGINE = ReplacingMergeTree(version)
@@ -364,7 +364,7 @@ MARKET_SUMMARY_DAILY_VIEW = MaterializedView(
 
 MARKET_SUMMARY_MONTHLY_VIEW = MaterializedView(
     name="market_summary_monthly_mv",
-    timestamp_column="interval",
+    timestamp_column="month",
     schema="""
         CREATE MATERIALIZED VIEW market_summary_monthly_mv
         ENGINE = ReplacingMergeTree(version)

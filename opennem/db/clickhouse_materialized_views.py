@@ -322,24 +322,125 @@ def get_materialized_view_stats(view_names: list[str] | None = None) -> dict:
     return stats
 
 
+def refresh_all_materialized_views(
+    days: int = 30,
+    optimize: bool = True,
+    views: list[str] | None = None,
+) -> dict[str, int]:
+    """
+    Refresh all ClickHouse materialized views by re-backfilling recent data.
+
+    This is useful when:
+    - MVs have stale/corrupt data from incomplete backfills
+    - Source data was updated and MVs need to reflect changes
+    - ReplacingMergeTree tables have duplicate versions
+
+    Args:
+        days: Number of days to backfill (default 30)
+        optimize: Run OPTIMIZE TABLE FINAL after backfill (default True)
+        views: Specific view names to refresh. If None, refreshes all views.
+
+    Returns:
+        dict: Mapping of view names to record counts
+
+    Usage:
+        # From CLI:
+        uv run python -m opennem.db.clickhouse_materialized_views --days 30
+
+        # From Python:
+        from opennem.db.clickhouse_materialized_views import refresh_all_materialized_views
+        refresh_all_materialized_views(days=30)
+    """
+    from datetime import datetime, timedelta
+
+    client = get_clickhouse_client()
+
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=days)
+
+    logger.info(f"Refreshing materialized views from {start_date.date()} to {end_date.date()}")
+
+    # Print current stats
+    print("\n=== Current MV Stats ===")
+    stats = get_materialized_view_stats(views)
+    for name, s in stats.items():
+        if s.get("exists"):
+            print(f"  {name}: {s['record_count']:,} records, {s['min_date']} to {s['max_date']}")
+        else:
+            print(f"  {name}: does not exist")
+
+    # Backfill
+    print(f"\n=== Backfilling {days} days ===")
+    results = backfill_materialized_views(
+        views=views,
+        start_date=start_date,
+        end_date=end_date,
+        refresh_views=False,
+    )
+
+    for name, count in results.items():
+        print(f"  {name}: {count:,} records")
+
+    # Optimize tables to merge duplicates
+    if optimize:
+        print("\n=== Optimizing tables ===")
+        view_names = views or list(CLICKHOUSE_MATERIALIZED_VIEWS.keys())
+        for name in view_names:
+            try:
+                print(f"  Optimizing {name}...")
+                client.execute(f"OPTIMIZE TABLE {name} FINAL")
+            except Exception as e:
+                logger.error(f"Failed to optimize {name}: {e}")
+
+    # Print final stats
+    print("\n=== Final MV Stats ===")
+    stats = get_materialized_view_stats(views)
+    for name, s in stats.items():
+        if s.get("exists"):
+            print(f"  {name}: {s['record_count']:,} records, {s['min_date']} to {s['max_date']}")
+
+    return results
+
+
 if __name__ == "__main__":
-    # Example usage
-    import asyncio
+    import argparse
 
-    async def main():
-        # Ensure all views exist
-        ensure_materialized_views_exist()
+    parser = argparse.ArgumentParser(
+        description="Manage ClickHouse materialized views",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Show stats for all MVs
+  uv run python -m opennem.db.clickhouse_materialized_views --stats
 
-        # Get stats for all views
+  # Refresh all MVs for last 30 days
+  uv run python -m opennem.db.clickhouse_materialized_views --days 30
+
+  # Refresh specific MV
+  uv run python -m opennem.db.clickhouse_materialized_views --days 30 --view fueltech_intervals_daily_mv
+
+  # Refresh without optimize (faster but may leave duplicates)
+  uv run python -m opennem.db.clickhouse_materialized_views --days 30 --no-optimize
+        """,
+    )
+    parser.add_argument("--stats", action="store_true", help="Show stats for all materialized views")
+    parser.add_argument("--days", type=int, default=30, help="Number of days to backfill (default: 30)")
+    parser.add_argument("--view", type=str, action="append", help="Specific view(s) to refresh (can be repeated)")
+    parser.add_argument("--no-optimize", action="store_true", help="Skip OPTIMIZE TABLE FINAL after backfill")
+
+    args = parser.parse_args()
+
+    if args.stats:
+        print("=== Materialized View Stats ===")
         stats = get_materialized_view_stats()
-        for view_name, view_stats in stats.items():
-            print(f"{view_name}: {view_stats}")
-
-        # Backfill specific views
-        # results = backfill_materialized_views(
-        #     views=["market_summary_daily_mv", "market_summary_monthly_mv"],
-        #     refresh_views=True
-        # )
-        # print(f"Backfill results: {results}")
-
-    asyncio.run(main())
+        for name, s in stats.items():
+            if s.get("exists"):
+                print(f"  {name}: {s['record_count']:,} records, {s['min_date']} to {s['max_date']}, size={s['size']}")
+            else:
+                print(f"  {name}: does not exist")
+    else:
+        refresh_all_materialized_views(
+            days=args.days,
+            optimize=not args.no_optimize,
+            views=args.view,
+        )
