@@ -343,7 +343,7 @@ def main() -> None:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
 
-        worker = create_worker(settings_cls=WorkerSettings)  # type: ignore
+        worker = create_worker(WorkerSettings)  # type: ignore
         worker.run()
     else:
         print(" * Worker not enabled - waiting for worker to restart")
