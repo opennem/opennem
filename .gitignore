@@ -136,3 +136,4 @@ plans/
 appspec.yml
 deploy-dev.sh
 scripts/
+docs/
