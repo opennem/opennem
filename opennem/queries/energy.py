@@ -316,6 +316,7 @@ def get_energy_network_fueltech_query_clickhouse(
     )
 
     # Build the query
+    # NOTE: Exclude 'battery' fueltech to prevent double-counting with battery_charging/battery_discharging
     __query = f"""
     SELECT
         {interval_expr} as interval,
@@ -328,6 +329,7 @@ def get_energy_network_fueltech_query_clickhouse(
         {date_column} >= toDateTime('{start_str}')
         AND {date_column} <= toDateTime('{end_str}')
         AND ({network_query})
+        AND fueltech_id NOT IN ('battery')
         {network_region_query}
     GROUP BY interval, fueltech_code
     ORDER BY interval DESC, fueltech_code
