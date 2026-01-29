@@ -334,5 +334,16 @@ async def task_optimize_clickhouse_tables(ctx: dict) -> None:
     await optimize_clickhouse_tables()
 
 
+@logfire.instrument("task_refresh_clickhouse_materialized_views")
+async def task_refresh_clickhouse_materialized_views(ctx: dict) -> None:
+    """
+    Refresh all ClickHouse materialized views by re-backfilling recent data.
+    Runs every 6 hours to keep MVs fresh and fix any data gaps.
+    """
+    from opennem.db.clickhouse_materialized_views import refresh_all_materialized_views
+
+    refresh_all_materialized_views(days=7, optimize=True)
+
+
 if __name__ == "__main__":
     asyncio.run(task_nem_interval_check(ctx={"job_try": 0}))

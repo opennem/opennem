@@ -52,6 +52,7 @@ from opennem.tasks.tasks import (
     task_nem_per_day_check,
     task_nem_rooftop_crawl,
     task_optimize_clickhouse_tables,
+    task_refresh_clickhouse_materialized_views,
     task_refresh_from_cms,
     task_run_aggregates_demand_network_days,
     task_send_cms_updates_slack_report,
@@ -114,6 +115,15 @@ class WorkerSettings:
             task_optimize_clickhouse_tables,
             hour={0, 6, 12, 18},
             minute=15,
+            second=0,
+            timeout=None,
+            unique=True,
+        ),
+        # Refresh ClickHouse materialized views every 6 hours
+        cron(
+            task_refresh_clickhouse_materialized_views,
+            hour={1, 7, 13, 19},
+            minute=30,
             second=0,
             timeout=None,
             unique=True,
