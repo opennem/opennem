@@ -31,7 +31,7 @@ import logfire
 from arq import cron
 from arq.worker import create_worker
 
-from opennem import settings
+from opennem import ENV, settings
 from opennem.api.maintenance_app import run_maintenance_app
 from opennem.tasks.broker import REDIS_SETTINGS, get_redis_pool
 from opennem.tasks.tasks import (
@@ -62,9 +62,14 @@ from opennem.tasks.tasks import (
     task_wem_day_crawl,
 )
 from opennem.utils.host import get_hostname
+from opennem.utils.sentry import setup_sentry
 from opennem.utils.version import get_version
 
 logger = logging.getLogger("openenm.tasks.app")
+
+# Initialize Sentry for worker service (separate from API init in opennem/__init__.py)
+if settings.sentry_url:
+    setup_sentry(sentry_url=settings.sentry_url, environment=ENV, service="worker")
 
 
 async def startup(ctx: dict) -> None:
