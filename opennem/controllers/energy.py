@@ -18,7 +18,7 @@ async def energy_fueltech_daily_v3(
     network: NetworkSchema,
     time_series: OpennemExportSeries,
     network_region_code: str | None = None,
-) -> OpennemDataSet:
+) -> OpennemDataSet | None:
     engine = db_connect()
     units = get_unit("energy_giga")
 
@@ -51,7 +51,7 @@ async def energy_fueltech_daily_v3(
     ]
 
     if not results_energy:
-        raise Exception(f"No results from query: {query}")
+        return None
 
     stats = stats_factory(
         stats=results_energy,
@@ -97,7 +97,7 @@ async def energy_fueltech_daily_v4(
     network: NetworkSchema,
     time_series: OpennemExportSeries,
     network_region_code: str | None = None,
-) -> OpennemDataSet:
+) -> OpennemDataSet | None:
     """
     Energy controller v4 that uses ClickHouse as the data source.
     Returns the same format as v3 but queries from ClickHouse materialized views.
@@ -150,7 +150,7 @@ async def energy_fueltech_daily_v4(
         ]
 
         if not results_energy:
-            raise Exception(f"No results from ClickHouse query: {query}")
+            return None
 
         # Create the stats objects (same as v3)
         stats = stats_factory(
