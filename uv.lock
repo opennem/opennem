@@ -1762,7 +1762,7 @@ dependencies = [
     { name = "rich" },
     { name = "rnet" },
     { name = "seaborn" },
-    { name = "sentry-sdk", extra = ["asyncpg", "fastapi", "httpx", "sqlalchemy"] },
+    { name = "sentry-sdk", extra = ["arq", "asyncpg", "fastapi", "httpx", "sqlalchemy", "starlette"] },
     { name = "shapely" },
     { name = "sqlalchemy", extra = ["asyncio"] },
     { name = "tenacity" },
@@ -1851,7 +1851,7 @@ requires-dist = [
     { name = "rich", specifier = ">=13.7.0,<14.0.0" },
     { name = "rnet", specifier = "==3.0.0rc12" },
     { name = "seaborn", specifier = ">=0.13.2,<1.0.0" },
-    { name = "sentry-sdk", extras = ["asyncpg", "fastapi", "httpx", "sqlalchemy"] },
+    { name = "sentry-sdk", extras = ["arq", "asyncpg", "fastapi", "httpx", "sqlalchemy", "starlette"], specifier = ">=2.51.0" },
     { name = "shapely", specifier = ">=2.0.2,<3.0.0" },
     { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.0.32,<3.0.0" },
     { name = "tenacity", specifier = ">=9.0.0" },
@@ -3091,18 +3091,21 @@ wheels = [
 
 [[package]]
 name = "sentry-sdk"
-version = "2.48.0"
+version = "2.51.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/40/f0/0e9dc590513d5e742d7799e2038df3a05167cba084c6ca4f3cdd75b55164/sentry_sdk-2.48.0.tar.gz", hash = "sha256:5213190977ff7fdff8a58b722fb807f8d5524a80488626ebeda1b5676c0c1473", size = 384828, upload-time = "2025-12-16T14:55:41.722Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6f/9f/094bbb6be5cf218ab6712c6528310687f3d3fe8818249fcfe1d74192f7c5/sentry_sdk-2.51.0.tar.gz", hash = "sha256:b89d64577075fd8c13088bc3609a2ce77a154e5beb8cba7cc16560b0539df4f7", size = 407447, upload-time = "2026-01-28T10:29:50.962Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4d/19/8d77f9992e5cbfcaa9133c3bf63b4fbbb051248802e1e803fed5c552fbb2/sentry_sdk-2.48.0-py2.py3-none-any.whl", hash = "sha256:6b12ac256769d41825d9b7518444e57fa35b5642df4c7c5e322af4d2c8721172", size = 414555, upload-time = "2025-12-16T14:55:40.152Z" },
+    { url = "https://files.pythonhosted.org/packages/a0/da/df379404d484ca9dede4ad8abead5de828cdcff35623cd44f0351cf6869c/sentry_sdk-2.51.0-py2.py3-none-any.whl", hash = "sha256:e21016d318a097c2b617bb980afd9fc737e1efc55f9b4f0cdc819982c9717d5f", size = 431426, upload-time = "2026-01-28T10:29:48.868Z" },
 ]
 
 [package.optional-dependencies]
+arq = [
+    { name = "arq" },
+]
 asyncpg = [
     { name = "asyncpg" },
 ]
@@ -3114,6 +3117,9 @@ httpx = [
 ]
 sqlalchemy = [
     { name = "sqlalchemy" },
+]
+starlette = [
+    { name = "starlette" },
 ]
 
 [[package]]
