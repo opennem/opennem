@@ -138,6 +138,17 @@ def backfill_materialized_view(
             logger.info(f"Backfilling {view.name} from {current_date} to {chunk_end}")
 
             try:
+                # DELETE existing data for this date range to prevent double-counting
+                # This is required for SummingMergeTree which adds values during merges
+                delete_query = f"""
+                    ALTER TABLE {view.name} DELETE
+                    WHERE {view.timestamp_column} >= %(start)s
+                    AND {view.timestamp_column} <= %(end)s
+                """
+                client.execute(delete_query, {"start": current_date.date(), "end": chunk_end.date()})
+                logger.debug(f"Deleted existing data from {view.name} for {current_date.date()} to {chunk_end.date()}")
+
+                # INSERT new data
                 client.execute(
                     view.backfill_query,
                     {"start": current_date, "end": chunk_end},

@@ -30,7 +30,7 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
     timestamp_column="date",
     schema="""
         CREATE MATERIALIZED VIEW unit_intervals_daily_mv
-        ENGINE = ReplacingMergeTree(version)
+        ENGINE = SummingMergeTree()
         ORDER BY (date, network_id, network_region, facility_code, unit_code, fueltech_id, fueltech_group_id)
         AS SELECT
             toDate(interval) as date,
@@ -44,11 +44,11 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             any(status_id) as status_id,
             sum(generated) as generated,
             sum(energy) as energy,
-            avg(energy_storage) as energy_storage,
+            sum(coalesce(energy_storage, 0)) as energy_storage_sum,
+            countIf(energy_storage IS NOT NULL) as energy_storage_count,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
-            count() as count,
-            max(version) as version
+            count() as count
         FROM unit_intervals
         GROUP BY
             date,
@@ -73,11 +73,11 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             any(status_id) as status_id,
             sum(generated) as generated,
             sum(energy) as energy,
-            avg(energy_storage) as energy_storage,
+            sum(coalesce(energy_storage, 0)) as energy_storage_sum,
+            countIf(energy_storage IS NOT NULL) as energy_storage_count,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
-            count() as count,
-            max(version) as version
+            count() as count
         FROM unit_intervals FINAL
         WHERE interval >= %(start)s AND interval <= %(end)s
         GROUP BY
@@ -150,7 +150,7 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
     timestamp_column="date",
     schema="""
         CREATE MATERIALIZED VIEW fueltech_intervals_daily_mv
-        ENGINE = ReplacingMergeTree(version)
+        ENGINE = SummingMergeTree()
         ORDER BY (date, network_id, network_region, fueltech_id, fueltech_group_id)
         AS SELECT
             toDate(interval) as date,
@@ -160,12 +160,12 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             fueltech_group_id,
             sum(generated) as generated,
             sum(energy) as energy,
-            avg(energy_storage) as energy_storage,
+            sum(coalesce(energy_storage, 0)) as energy_storage_sum,
+            countIf(energy_storage IS NOT NULL) as energy_storage_count,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
-            count(distinct interval) as interval_count,
-            max(version) as version
+            count(distinct interval) as interval_count
         FROM unit_intervals
         GROUP BY
             date,
@@ -184,12 +184,12 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             fueltech_group_id,
             sum(generated) as generated,
             sum(energy) as energy,
-            avg(energy_storage) as energy_storage,
+            sum(coalesce(energy_storage, 0)) as energy_storage_sum,
+            countIf(energy_storage IS NOT NULL) as energy_storage_count,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
-            count(distinct interval) as interval_count,
-            max(version) as version
+            count(distinct interval) as interval_count
         FROM unit_intervals FINAL
         WHERE interval >= %(start)s AND interval <= %(end)s
         GROUP BY
@@ -249,7 +249,7 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
     timestamp_column="date",
     schema="""
         CREATE MATERIALIZED VIEW renewable_intervals_daily_mv
-        ENGINE = ReplacingMergeTree(version)
+        ENGINE = SummingMergeTree()
         ORDER BY (date, network_id, network_region, renewable)
         AS SELECT
             toDate(interval) as date,
@@ -258,12 +258,12 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             renewable,
             sum(generated) as generated,
             sum(energy) as energy,
-            avg(energy_storage) as energy_storage,
+            sum(coalesce(energy_storage, 0)) as energy_storage_sum,
+            countIf(energy_storage IS NOT NULL) as energy_storage_count,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
-            count(distinct interval) as interval_count,
-            max(version) as version
+            count(distinct interval) as interval_count
         FROM unit_intervals
         WHERE fueltech_id not in ('pumps')
         GROUP BY date, network_id, network_region, renewable
@@ -277,12 +277,12 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             renewable,
             sum(generated) as generated,
             sum(energy) as energy,
-            avg(energy_storage) as energy_storage,
+            sum(coalesce(energy_storage, 0)) as energy_storage_sum,
+            countIf(energy_storage IS NOT NULL) as energy_storage_count,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
             count() as unit_count,
-            count(distinct interval) as interval_count,
-            max(version) as version
+            count(distinct interval) as interval_count
         FROM unit_intervals FINAL
         WHERE fueltech_id not in ('pumps') and interval >= %(start)s AND interval <= %(end)s
         GROUP BY date, network_id, network_region, renewable
@@ -295,13 +295,14 @@ MARKET_SUMMARY_DAILY_VIEW = MaterializedView(
     timestamp_column="date",
     schema="""
         CREATE MATERIALIZED VIEW market_summary_daily_mv
-        ENGINE = ReplacingMergeTree(version)
+        ENGINE = SummingMergeTree()
         ORDER BY (date, network_id, network_region)
         AS SELECT
             toDate(interval) as date,
             network_id,
             network_region,
-            avg(price) as price_avg,
+            sum(price) as price_sum,
+            countIf(price IS NOT NULL) as price_count,
             sum(demand) as demand_sum,
             sum(demand_total) as demand_total_sum,
             sum(demand_gross) as demand_gross_sum,
@@ -319,8 +320,7 @@ MARKET_SUMMARY_DAILY_VIEW = MaterializedView(
             sum(curtailment_energy_solar_total) as curtailment_energy_solar_total_daily,
             sum(curtailment_energy_wind_total) as curtailment_energy_wind_total_daily,
             sum(curtailment_energy_total) as curtailment_energy_total_daily,
-            count() as interval_count,
-            max(version) as version
+            count() as interval_count
         FROM market_summary
         GROUP BY
             date,
@@ -333,7 +333,8 @@ MARKET_SUMMARY_DAILY_VIEW = MaterializedView(
             toDate(interval) as date,
             network_id,
             network_region,
-            avg(price) as price_avg,
+            sum(price) as price_sum,
+            countIf(price IS NOT NULL) as price_count,
             sum(demand) as demand_sum,
             sum(demand_total) as demand_total_sum,
             sum(demand_gross) as demand_gross_sum,
@@ -351,8 +352,7 @@ MARKET_SUMMARY_DAILY_VIEW = MaterializedView(
             sum(curtailment_energy_solar_total) as curtailment_energy_solar_total_daily,
             sum(curtailment_energy_wind_total) as curtailment_energy_wind_total_daily,
             sum(curtailment_energy_total) as curtailment_energy_total_daily,
-            count() as interval_count,
-            max(version) as version
+            count() as interval_count
         FROM market_summary FINAL
         WHERE interval >= %(start)s AND interval <= %(end)s
         GROUP BY
@@ -367,13 +367,14 @@ MARKET_SUMMARY_MONTHLY_VIEW = MaterializedView(
     timestamp_column="month",
     schema="""
         CREATE MATERIALIZED VIEW market_summary_monthly_mv
-        ENGINE = ReplacingMergeTree(version)
+        ENGINE = SummingMergeTree()
         ORDER BY (month, network_id, network_region)
         AS SELECT
             toStartOfMonth(interval) as month,
             network_id,
             network_region,
-            avg(price) as price_avg,
+            sum(price) as price_sum,
+            countIf(price IS NOT NULL) as price_count,
             sum(demand) as demand_sum,
             sum(demand_total) as demand_total_sum,
             sum(demand_gross) as demand_gross_sum,
@@ -391,8 +392,7 @@ MARKET_SUMMARY_MONTHLY_VIEW = MaterializedView(
             sum(curtailment_energy_solar_total) as curtailment_energy_solar_total_monthly,
             sum(curtailment_energy_wind_total) as curtailment_energy_wind_total_monthly,
             sum(curtailment_energy_total) as curtailment_energy_total_monthly,
-            count() as interval_count,
-            max(version) as version
+            count() as interval_count
         FROM market_summary
         GROUP BY
             month,
@@ -405,7 +405,8 @@ MARKET_SUMMARY_MONTHLY_VIEW = MaterializedView(
             toStartOfMonth(interval) as month,
             network_id,
             network_region,
-            avg(price) as price_avg,
+            sum(price) as price_sum,
+            countIf(price IS NOT NULL) as price_count,
             sum(demand) as demand_sum,
             sum(demand_total) as demand_total_sum,
             sum(demand_gross) as demand_gross_sum,
@@ -423,8 +424,7 @@ MARKET_SUMMARY_MONTHLY_VIEW = MaterializedView(
             sum(curtailment_energy_solar_total) as curtailment_energy_solar_total_monthly,
             sum(curtailment_energy_wind_total) as curtailment_energy_wind_total_monthly,
             sum(curtailment_energy_total) as curtailment_energy_total_monthly,
-            count() as interval_count,
-            max(version) as version
+            count() as interval_count
         FROM market_summary FINAL
         WHERE interval >= %(start)s AND interval <= %(end)s
         GROUP BY
