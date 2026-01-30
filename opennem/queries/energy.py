@@ -261,27 +261,30 @@ def get_energy_network_fueltech_query_clickhouse(
     # Determine which table/view to use based on interval
     interval_sql = time_series_range.interval.interval_sql
 
-    # Always use unit_intervals directly and aggregate in query
-    # The MVs (fueltech_intervals_mv, fueltech_intervals_daily_mv) have auto-population
-    # issues that cause partial aggregations to overwrite complete backfilled data
-    table_name = "unit_intervals"
-    date_column = "interval"
-
-    # Map interval to ClickHouse date functions
-    if interval_sql == "1 day":
-        interval_expr = "toDate(interval)"
-    elif interval_sql == "1 month":
-        interval_expr = "toStartOfMonth(interval)"
-    elif interval_sql == "1 year":
-        interval_expr = "toStartOfYear(interval)"
-    elif interval_sql == "5 minutes":
-        interval_expr = "toStartOfFiveMinute(interval)"
-    elif interval_sql == "30 minutes":
-        interval_expr = "toStartOfHalfHour(interval)"
-    elif interval_sql == "1 hour":
-        interval_expr = "toStartOfHour(interval)"
+    # For daily or monthly intervals, use the daily materialized view for performance
+    if interval_sql in ["1 day", "1 month", "1 year"]:
+        table_name = "fueltech_intervals_daily_mv"
+        date_column = "date"
+        # For monthly/yearly, we need to aggregate the daily data
+        if interval_sql == "1 month":
+            interval_expr = "toStartOfMonth(date)"
+        elif interval_sql == "1 year":
+            interval_expr = "toStartOfYear(date)"
+        else:
+            interval_expr = "date"
     else:
-        interval_expr = "interval"
+        # For smaller intervals, use the raw fueltech_intervals_mv
+        table_name = "fueltech_intervals_mv"
+        date_column = "interval"
+        # Map PostgreSQL time_bucket to ClickHouse date functions
+        if interval_sql == "5 minutes":
+            interval_expr = "toStartOfFiveMinute(interval)"
+        elif interval_sql == "30 minutes":
+            interval_expr = "toStartOfHalfHour(interval)"
+        elif interval_sql == "1 hour":
+            interval_expr = "toStartOfHour(interval)"
+        else:
+            interval_expr = "interval"
 
     # Build network filter
     networks_list = "', '".join([n.code for n in networks_query])
