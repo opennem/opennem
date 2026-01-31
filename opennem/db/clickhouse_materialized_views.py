@@ -92,6 +92,13 @@ def backfill_materialized_view(
     """
     client = get_clickhouse_client(timeout=300)
 
+    # Normalize dates to capture full days (start at 00:00:00, end at 23:59:59)
+    # This prevents partial day captures when the job runs mid-day
+    if start_date is not None:
+        start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    if end_date is not None:
+        end_date = end_date.replace(hour=23, minute=59, second=59, microsecond=0)
+
     # Determine source table from the view schema
     source_table = _get_source_table_from_view(view)
 
@@ -366,8 +373,11 @@ def refresh_all_materialized_views(
 
     client = get_clickhouse_client()
 
-    end_date = datetime.now()
-    start_date = end_date - timedelta(days=days)
+    # Use start-of-day for start_date and end-of-day for end_date
+    # to ensure we capture full days, not partial days based on when the job runs
+    now = datetime.now()
+    end_date = now.replace(hour=23, minute=59, second=59, microsecond=0)
+    start_date = (now - timedelta(days=days)).replace(hour=0, minute=0, second=0, microsecond=0)
 
     logger.info(f"Refreshing materialized views from {start_date.date()} to {end_date.date()}")
 
