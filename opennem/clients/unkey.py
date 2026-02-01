@@ -105,7 +105,7 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
             )
 
             # Set meta with credits and expiry
-            model.meta = OpennemAPIRequestMeta(remaining=data.key_credits if data.key_credits else None, reset=data.expires)
+            model.meta = OpennemAPIRequestMeta(remaining=data.credits if data.credits else None, reset=data.expires)
 
             # Process ratelimits array
             if data.ratelimits and len(data.ratelimits) > 0:
