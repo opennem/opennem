@@ -1,12 +1,8 @@
 {
   "mcpServers": {
-    "postgres": {
-      "type": "stdio",
-      "command": "uvx",
-      "args": [
-        "postgres-mcp",
-        "--access-mode=unrestricted"
-      ]
+    "sentry-openelectricity": {
+      "type": "http",
+      "url": "https://mcp.sentry.dev/mcp"
     }
   }
 }

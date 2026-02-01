@@ -31,7 +31,7 @@ import logfire
 from arq import cron
 from arq.worker import create_worker
 
-from opennem import settings
+from opennem import ENV, settings
 from opennem.api.maintenance_app import run_maintenance_app
 from opennem.tasks.broker import REDIS_SETTINGS, get_redis_pool
 from opennem.tasks.tasks import (
@@ -52,6 +52,7 @@ from opennem.tasks.tasks import (
     task_nem_per_day_check,
     task_nem_rooftop_crawl,
     task_optimize_clickhouse_tables,
+    task_refresh_clickhouse_materialized_views,
     task_refresh_from_cms,
     task_run_aggregates_demand_network_days,
     task_send_cms_updates_slack_report,
@@ -62,9 +63,14 @@ from opennem.tasks.tasks import (
     task_wem_day_crawl,
 )
 from opennem.utils.host import get_hostname
+from opennem.utils.sentry import setup_sentry
 from opennem.utils.version import get_version
 
 logger = logging.getLogger("openenm.tasks.app")
+
+# Initialize Sentry for worker service (separate from API init in opennem/__init__.py)
+if settings.sentry_url:
+    setup_sentry(sentry_url=settings.sentry_url, environment=ENV, service="worker")
 
 
 async def startup(ctx: dict) -> None:
@@ -109,6 +115,15 @@ class WorkerSettings:
             task_optimize_clickhouse_tables,
             hour={0, 6, 12, 18},
             minute=15,
+            second=0,
+            timeout=None,
+            unique=True,
+        ),
+        # Refresh ClickHouse materialized views every 6 hours
+        cron(
+            task_refresh_clickhouse_materialized_views,
+            hour={1, 7, 13, 19},
+            minute=30,
             second=0,
             timeout=None,
             unique=True,
@@ -338,7 +353,7 @@ def main() -> None:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
 
-        worker = create_worker(settings_cls=WorkerSettings)  # type: ignore
+        worker = create_worker(WorkerSettings)  # type: ignore
         worker.run()
     else:
         print(" * Worker not enabled - waiting for worker to restart")
