@@ -308,7 +308,7 @@ def get_timeseries_query(
             {time_fn} as interval,
             {", ".join(group_cols)},
             {", ".join(metric_selects)}
-        FROM {table_name}
+        FROM {table_name} FINAL
         WHERE {" AND ".join(where_clauses)}
         GROUP BY
             interval,
