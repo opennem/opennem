@@ -137,3 +137,5 @@ appspec.yml
 deploy-dev.sh
 scripts/
 docs/
+.agents/
+.claude/
