@@ -160,6 +160,23 @@ def backfill_materialized_view(
                     view.backfill_query,
                     {"start": current_date, "end": chunk_end},
                 )
+
+                # Verify data was inserted — silent failures here cause data gaps
+                verify = client.execute(
+                    (
+                        f"SELECT count() FROM {view.name} WHERE {view.timestamp_column} >= %(start)s "
+                        f"AND {view.timestamp_column} <= %(end)s"
+                    ),
+                    {"start": current_date.date(), "end": chunk_end.date()},
+                )
+                row_count = verify[0][0] if verify else 0
+                if row_count == 0:
+                    logger.error(
+                        f"CRITICAL: Backfill {view.name} inserted 0 rows "
+                        f"for {current_date.date()} to {chunk_end.date()} — data gap!"
+                    )
+                else:
+                    logger.info(f"Backfill {view.name}: {row_count} rows for {current_date.date()} to {chunk_end.date()}")
             except Exception as e:
                 logger.error(f"Failed to backfill {view.name} for period {current_date} to {chunk_end}: {e}")
                 # Continue with next chunk instead of failing completely
