@@ -240,6 +240,8 @@ class Facility(Base):
 
     units: Mapped[list["Unit"]] = relationship("Unit", innerjoin=True, lazy="selectin")
 
+    code_display: Mapped[str | None] = mapped_column(Text, nullable=True)
+
     cms_id: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
     cms_created_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     cms_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
@@ -332,6 +334,8 @@ class Unit(Base):
     project_approval_date_specificity: Mapped[str | None] = mapped_column(Text, nullable=True)  # day, month, year
     project_approval_date_source: Mapped[str | None] = mapped_column(Text, nullable=True)
     project_approval_lodgement_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    code_display: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     cms_id: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
     cms_created_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

@@ -150,6 +150,7 @@ async def get_facilities(
                 for unit in filtered_units:
                     unit_response_schema = UnitResponseSchema(
                         code=str(unit.code),
+                        code_display=unit.code_display,
                         fueltech_id=UnitFueltechType(unit.fueltech_id),
                         status_id=UnitStatusType(unit.status_id),
                     )
@@ -221,6 +222,7 @@ async def get_facilities(
 
                 facility_response = FacilityResponseSchema(
                     code=facility.code,
+                    code_display=facility.code_display,
                     name=facility.name,
                     network_id=facility.network_id,
                     network_region=facility.network_region,

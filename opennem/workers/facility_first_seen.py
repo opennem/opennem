@@ -159,4 +159,4 @@ async def facility_first_seen_check(
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(facility_first_seen_check(send_slack=True, only_generation=True))
+    asyncio.run(facility_first_seen_check(send_slack=False, only_generation=True))

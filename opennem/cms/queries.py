@@ -34,6 +34,7 @@ from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_ex
 
 from opennem import settings
 from opennem.cms.client import sanity_client
+from opennem.cms.utils import strip_synthetic_prefix
 from opennem.schema.facility import FacilityPhotoOutputSchema, FacilitySchema
 from opennem.schema.unit import UnitSchema
 
@@ -204,51 +205,54 @@ def get_unit_factors() -> list[dict]:
     return res["result"]
 
 
-def _validate_unique_codes(facilities: list[FacilitySchema]) -> None:
-    """Validate that all facility and unit codes are unique across the dataset.
+def _validate_unique_codes(facilities: list[FacilitySchema]) -> list[FacilitySchema]:
+    """Validate unique codes and deduplicate synthetic/real collisions.
 
-    This method checks for duplicate codes in both facilities and units returned
-    from the CMS. While Sanity CMS allows duplicates, this is not valid in our system
-    and must be caught early. It also validates that no facility or unit is missing
-    a code.
+    Checks for duplicate codes using stripped operational codes (no "0" prefix).
+    When a synthetic (0-prefixed) facility collides with a real one, the synthetic
+    is dropped with a warning. True duplicates (same raw code) still raise.
 
-    Args:
-        facilities: List of facility models to validate
-
-    Raises:
-        DuplicateCodeError: If any duplicate facility or unit codes are found
-        CMSQueryError: If any facility or unit is missing a code
+    Returns:
+        Filtered list with synthetic duplicates removed.
     """
-    facility_codes = {}
-    unit_codes = {}
+    facility_codes: dict[str, str] = {}
+    unit_codes: dict[str, str] = {}
+    filtered_facilities: list[FacilitySchema] = []
 
     for facility in facilities:
-        # Check facility has a code
         if not facility.code:
-            raise CMSQueryError(f"Facility missing code (facility id: {facility.id})")
+            raise CMSQueryError(f"Facility missing code (facility id: {facility.cms_id})")
 
-        # Check facility codes for duplicates
-        if facility.code in facility_codes:
+        facility_op_code, _ = strip_synthetic_prefix(facility.code)
+        if facility_op_code in facility_codes:
+            existing_code = facility_codes[facility_op_code]
+            if existing_code != facility.code:
+                # Synthetic/real collision — skip synthetic
+                logger.warning(f"Skipping duplicate facility {facility.code} (collides with {existing_code})")
+                continue
             raise DuplicateCodeError(
-                f"Duplicate facility code found: {facility.code} (first: {facility_codes[facility.code]}, second: {facility.id})"
+                f"Duplicate facility code: {facility.code} (first: {existing_code}, second: {facility.cms_id})"
             )
-        facility_codes[facility.code] = facility.code
+        facility_codes[facility_op_code] = facility.code
 
-        # Check unit codes if facility has units
-        if not facility.units:
-            continue
+        if facility.units:
+            filtered_units = []
+            for unit in facility.units:
+                if not unit.code:
+                    raise CMSQueryError(f"Unit missing code in facility: {facility.code}")
 
-        for unit in facility.units:
-            # Check unit has a code
-            if not unit.code:
-                raise CMSQueryError(f"Unit missing code in facility: {facility.code} (facility id: {facility.id})")
+                unit_op_code, _ = strip_synthetic_prefix(unit.code)
+                if unit_op_code in unit_codes:
+                    existing_fac = unit_codes[unit_op_code]
+                    logger.warning(f"Skipping duplicate unit {unit.code} in {facility.code} (collides with {existing_fac})")
+                    continue
+                unit_codes[unit_op_code] = facility.code
+                filtered_units.append(unit)
+            facility.units = filtered_units
 
-            # Check for duplicate unit codes
-            if unit.code in unit_codes:
-                raise DuplicateCodeError(
-                    f"Duplicate unit code found: {unit.code} (in facilities: {unit_codes[unit.code]}, {facility.code})"
-                )
-            unit_codes[unit.code] = facility.code
+        filtered_facilities.append(facility)
+
+    return filtered_facilities
 
 
 @retry(
@@ -421,11 +425,11 @@ async def get_cms_facilities(facility_code: str | None = None, cms_id: str | Non
     facilities = list(result_models.values())
 
     try:
-        _validate_unique_codes(facilities)
+        facilities = _validate_unique_codes(facilities)
     except (DuplicateCodeError, CMSQueryError) as e:
         logger.error(f"CMS Error: {e}")
-
         raise e
+
     return facilities
 
 

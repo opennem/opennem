@@ -29,6 +29,7 @@ from sqlalchemy.orm import selectinload
 from opennem import settings
 from opennem.clients.slack import slack_message
 from opennem.cms.queries import get_cms_facilities
+from opennem.cms.utils import strip_synthetic_prefix
 from opennem.core.networks import network_from_network_code
 from opennem.db import get_read_session, get_write_session
 from opennem.db.models.opennem import Facility, Unit
@@ -116,8 +117,11 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 logger.info(f"Would create new facility: {facility.code} - {facility.name}")
                 return False
 
+            facility_operational_code, facility_display_code = strip_synthetic_prefix(facility.code)
+
             facility_db = Facility(
-                code=facility.code,
+                code=facility_operational_code,
+                code_display=facility_display_code,
                 name=facility.name,
                 network_id=facility.network_id,
                 network_region=facility.network_region,
@@ -156,9 +160,14 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
             facility_db.cms_updated_at = facility.cms_updated_at
             record_updated = True
 
-        if facility.code and facility.code != facility_db.code:
-            facility_db.code = facility.code
-            record_updated = True
+        if facility.code:
+            facility_op_code, facility_disp_code = strip_synthetic_prefix(facility.code)
+            if facility_op_code != facility_db.code:
+                facility_db.code = facility_op_code
+                record_updated = True
+            if facility_disp_code != facility_db.code_display:
+                facility_db.code_display = facility_disp_code
+                record_updated = True
 
         if facility.network_id:
             facility_db.network_id = facility.network_id
@@ -266,8 +275,11 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                     else None
                 )
 
+                unit_operational_code, unit_display_code = strip_synthetic_prefix(unit.code)
+
                 unit_db = Unit(
-                    code=unit.code,
+                    code=unit_operational_code,
+                    code_display=unit_display_code,
                     fueltech_id=unit.fueltech_id.value if unit.fueltech_id else None,
                     status_id=unit.status_id.value if unit.status_id else None,
                     dispatch_type=unit.dispatch_type.value if unit.dispatch_type else None,
@@ -351,11 +363,14 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 record_updated = True
 
             # Always update all unit metadata from CMS
-            if unit.code and unit.code != unit_db.code:
-                # Since we're syncing by cms_id, we can safely update the code
-                # Any code conflicts should be handled by the orphan checker
-                unit_db.code = unit.code  # type: ignore
-                record_updated = True
+            if unit.code:
+                unit_op_code, unit_disp_code = strip_synthetic_prefix(unit.code)
+                if unit_op_code != unit_db.code:
+                    unit_db.code = unit_op_code  # type: ignore
+                    record_updated = True
+                if unit_disp_code != unit_db.code_display:
+                    unit_db.code_display = unit_disp_code
+                    record_updated = True
 
             if unit.fueltech_id:
                 unit_db.fueltech_id = unit.fueltech_id.value
