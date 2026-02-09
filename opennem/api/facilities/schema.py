@@ -29,6 +29,7 @@ class UnitResponseSchema(BaseModel):
     """Unit response schema with selected fields"""
 
     code: str
+    code_display: str | None = None
     fueltech_id: UnitFueltechType
     status_id: UnitStatusType
     capacity_registered: RoundedFloat2 | None = None
@@ -107,6 +108,7 @@ class FacilityResponseSchema(BaseModel):
     """Facility response schema with selected fields and associated units"""
 
     code: str
+    code_display: str | None = None
     name: str
     network_id: str
     network_region: str
