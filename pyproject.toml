@@ -15,7 +15,7 @@ authors = [
     {name = "Nik Cubrilovic", email = "git@nikcub.me"},
 ]
 requires-python = "<3.13,>=3.11"
-version = "4.4.11"
+version = "4.4.12"
 
 dependencies = [
     "sentry-sdk[arq,asyncpg,fastapi,httpx,sqlalchemy,starlette]>=2.51.0",
@@ -91,7 +91,7 @@ dev = [
     "pytest-cov<6.0.0,>=5.0.0",
     "types-cachetools<6.0.0,>=5.0.0",
     "freezegun<2.0.0,>=1.2.2",
-    "pyright<2.0.0,>=1.1.299",
+    "basedpyright>=1.29.0",
     "ruff>=0.6.5,<1.0.0",
     "pytest-asyncio<1.0.0,>=0.24.0",
     "types-redis<5.0.0.0,>=4.6.0.11",
@@ -155,7 +155,7 @@ quote-style = "double"
 docstring-code-format = true
 docstring-code-line-length = 100
 
-[tool.pyright]
+[tool.basedpyright]
 include = ["opennem/**/*.py"]
 exclude = ["opennem/db/migrations/env.py"]
 reportMissingImports = "error"

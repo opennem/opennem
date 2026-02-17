@@ -121,7 +121,7 @@ async def facility_first_seen_check(
     Returns:
         list[FacilitySeen]: a list of FacilitySeen models
     """
-    facs = await get_facility_first_seen("7 days")
+    facs = await get_facility_first_seen("30 days")
 
     if filter_ignored_duids:
         facs = ignored_duids(facs)
@@ -138,7 +138,7 @@ async def facility_first_seen_check(
             )
 
             if send_slack:
-                await slack_message(
+                _ = await slack_message(
                     webhook_url=settings.slack_hook_new_facilities, tag_users=settings.slack_admin_alert, message=msg
                 )
                 logger.debug(msg)
@@ -159,4 +159,4 @@ async def facility_first_seen_check(
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(facility_first_seen_check(send_slack=False, only_generation=True))
+    _ = asyncio.run(facility_first_seen_check(send_slack=False, only_generation=True))

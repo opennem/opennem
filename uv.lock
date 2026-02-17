@@ -292,6 +292,18 @@ wheels = [
 ]
 
 [[package]]
+name = "basedpyright"
+version = "1.38.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "nodejs-wheel-binaries" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a2/d4/4ac6eeba6cfe2ad8586dcf87fdb9e8b045aa467b559bc2e24e91e84f58b2/basedpyright-1.38.0.tar.gz", hash = "sha256:7a9cf631d7eaf5859022a4352b51ed0e78ce115435a8599402239804000d0cdf", size = 25257385, upload-time = "2026-02-11T16:05:47.834Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d5/90/1883cec16d667d944b08e8d8909b9b2f46cc1d2b9731e855e3c71f9b0450/basedpyright-1.38.0-py3-none-any.whl", hash = "sha256:a6c11a343fd12a2152a0d721b0e92f54f2e2e3322ee2562197e27dad952f1a61", size = 12303557, upload-time = "2026-02-11T16:05:44.863Z" },
+]
+
+[[package]]
 name = "betamax"
 version = "0.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1651,6 +1663,22 @@ wheels = [
 ]
 
 [[package]]
+name = "nodejs-wheel-binaries"
+version = "24.13.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e5/d0/81d98b8fddc45332f79d6ad5749b1c7409fb18723545eae75d9b7e0048fb/nodejs_wheel_binaries-24.13.1.tar.gz", hash = "sha256:512659a67449a038231e2e972d49e77049d2cf789ae27db39eff4ab1ca52ac57", size = 8056, upload-time = "2026-02-12T17:31:04.368Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/aa/04/1ffe1838306654fcb50bcf46172567d50c8e27a76f4b9e55a1971fab5c4f/nodejs_wheel_binaries-24.13.1-py2.py3-none-macosx_13_0_arm64.whl", hash = "sha256:360ac9382c651de294c23c4933a02358c4e11331294983f3cf50ca1ac32666b1", size = 54757440, upload-time = "2026-02-12T17:30:35.748Z" },
+    { url = "https://files.pythonhosted.org/packages/66/f6/81ad81bc3bd919a20b110130c4fd318c7b6a5abb37eb53daa353ad908012/nodejs_wheel_binaries-24.13.1-py2.py3-none-macosx_13_0_x86_64.whl", hash = "sha256:035b718946793986762cdd50deee7f5f1a8f1b0bad0f0cfd57cad5492f5ea018", size = 54932957, upload-time = "2026-02-12T17:30:40.114Z" },
+    { url = "https://files.pythonhosted.org/packages/14/be/8e8a2bd50953c4c5b7e0fca07368d287917b84054dc3c93dd26a2940f0f9/nodejs_wheel_binaries-24.13.1-py2.py3-none-manylinux_2_28_aarch64.whl", hash = "sha256:f795e9238438c4225f76fbd01e2b8e1a322116bbd0dc15a7dbd585a3ad97961e", size = 59287257, upload-time = "2026-02-12T17:30:43.781Z" },
+    { url = "https://files.pythonhosted.org/packages/58/57/92f6dfa40647702a9fa6d32393ce4595d0fc03c1daa9b245df66cc60e959/nodejs_wheel_binaries-24.13.1-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:978328e3ad522571eb163b042dfbd7518187a13968fe372738f90fdfe8a46afc", size = 59781783, upload-time = "2026-02-12T17:30:47.387Z" },
+    { url = "https://files.pythonhosted.org/packages/f7/a5/457b984cf675cf86ace7903204b9c36edf7a2d1b4325ddf71eaf8d1027c7/nodejs_wheel_binaries-24.13.1-py2.py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:e1dc893df85299420cd2a5feea0c3f8482a719b5f7f82d5977d58718b8b78b5f", size = 61287166, upload-time = "2026-02-12T17:30:50.646Z" },
+    { url = "https://files.pythonhosted.org/packages/3c/99/da515f7bc3bce35cfa6005f0e0c4e3c4042a466782b143112eb393b663be/nodejs_wheel_binaries-24.13.1-py2.py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:0e581ae219a39073dcadd398a2eb648f0707b0f5d68c565586139f919c91cbe9", size = 61870142, upload-time = "2026-02-12T17:30:54.563Z" },
+    { url = "https://files.pythonhosted.org/packages/cc/c0/22001d2c96d8200834af7d1de5e72daa3266c7270330275104c3d9ddd143/nodejs_wheel_binaries-24.13.1-py2.py3-none-win_amd64.whl", hash = "sha256:d4c969ea0bcb8c8b20bc6a7b4ad2796146d820278f17d4dc20229b088c833e22", size = 41185473, upload-time = "2026-02-12T17:30:57.524Z" },
+    { url = "https://files.pythonhosted.org/packages/ab/c4/7532325f968ecfc078e8a028e69a52e4c3f95fb800906bf6931ac1e89e2b/nodejs_wheel_binaries-24.13.1-py2.py3-none-win_arm64.whl", hash = "sha256:caec398cb9e94c560bacdcba56b3828df22a355749eb291f47431af88cbf26dc", size = 38881194, upload-time = "2026-02-12T17:31:00.214Z" },
+]
+
+[[package]]
 name = "numpy"
 version = "2.4.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1717,7 +1745,7 @@ wheels = [
 
 [[package]]
 name = "opennem"
-version = "4.4.11"
+version = "4.4.12"
 source = { editable = "." }
 dependencies = [
     { name = "aioboto3" },
@@ -1778,6 +1806,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "basedpyright" },
     { name = "betamax" },
     { name = "coverage" },
     { name = "duckdb" },
@@ -1788,7 +1817,6 @@ dev = [
     { name = "openai" },
     { name = "pdbpp" },
     { name = "psycopg2-binary" },
-    { name = "pyright" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "pytest-benchmark" },
@@ -1867,6 +1895,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "basedpyright", specifier = ">=1.29.0" },
     { name = "betamax", specifier = ">=0.9.0,<1.0.0" },
     { name = "coverage", specifier = ">=7.1.0,<8.0.0" },
     { name = "duckdb", specifier = ">=1.1.3" },
@@ -1877,7 +1906,6 @@ dev = [
     { name = "openai", specifier = ">=1.61.0" },
     { name = "pdbpp", specifier = ">=0.10.2,<1.0.0" },
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
-    { name = "pyright", specifier = ">=1.1.299,<2.0.0" },
     { name = "pytest", specifier = ">=8.0.0,<9.0.0" },
     { name = "pytest-asyncio", specifier = ">=0.24.0,<1.0.0" },
     { name = "pytest-benchmark", specifier = ">=4.0.0,<5.0.0" },
@@ -2685,19 +2713,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/08/4f/7088417e5465c53a30b918d30542aad89352ea0d635a5d077717c69a7d2b/pyrepl-0.11.4.tar.gz", hash = "sha256:efe988b4a6e5eed587e9769dc2269aeec2b6feec2f5d77995ee85b9ad7cf7063", size = 51089, upload-time = "2025-07-17T22:56:25.42Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/bd/a5/ce97a778f096aaa27cfcb7ad09f1198cf73277dcab6c68a4b8f332d91e48/pyrepl-0.11.4-py3-none-any.whl", hash = "sha256:ac30d6340267a21c39e1b1934f92bca6b8735017d14b17e40f903b2d1563541d", size = 55596, upload-time = "2025-07-17T22:56:24.537Z" },
-]
-
-[[package]]
-name = "pyright"
-version = "1.1.408"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "nodeenv" },
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/74/b2/5db700e52554b8f025faa9c3c624c59f1f6c8841ba81ab97641b54322f16/pyright-1.1.408.tar.gz", hash = "sha256:f28f2321f96852fa50b5829ea492f6adb0e6954568d1caa3f3af3a5f555eb684", size = 4400578, upload-time = "2026-01-08T08:07:38.795Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/0c/82/a2c93e32800940d9573fb28c346772a14778b84ba7524e691b324620ab89/pyright-1.1.408-py3-none-any.whl", hash = "sha256:090b32865f4fdb1e0e6cd82bf5618480d48eecd2eb2e70f960982a3d9a4c17c1", size = 6399144, upload-time = "2026-01-08T08:07:37.082Z" },
 ]
 
 [[package]]

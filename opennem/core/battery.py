@@ -56,6 +56,9 @@ def _generate_manual_battery_unit_map() -> dict[str, BatteryUnitMap]:
         "TARBESS1": BatteryUnitMap(unit="TARBESS1", charge_unit="TARBESSL1", discharge_unit="TARBESSG1"),  # tarong
         "TEMPB1": BatteryUnitMap(unit="TEMPB1", charge_unit="TEMPBL1", discharge_unit="TEMPBG1"),  # templers
         "WDBESS1": BatteryUnitMap(unit="WDBESS1", charge_unit="WDBESSL1", discharge_unit="WDBESSG1"),  # western downs
+        "DALNTH1": BatteryUnitMap(unit="DALNTH1", charge_unit="DALNTHL1", discharge_unit="DALNTHG1"),  # dairymple north
+        "DALNTH01": BatteryUnitMap(unit="DALNTH01", charge_unit="DALNTHL1", discharge_unit="DALNTHG1"),  # dairymple north
+        "BBATTERY1": BatteryUnitMap(unit="BBATTERY1", charge_unit="BBATTERYL1", discharge_unit="BBATTERYG1"),  # battery
         # station code based?
         "0COLLIE_ESR2": BatteryUnitMap(unit="COLLIE_BESS2", charge_unit="COLLIE_BESSL2", discharge_unit="COLLIE_BESSG2"),
         "0LVBESS": BatteryUnitMap(unit="LVES1", charge_unit="LVESL1", discharge_unit="LVESG1"),  # latrobe valley
@@ -64,6 +67,8 @@ def _generate_manual_battery_unit_map() -> dict[str, BatteryUnitMap]:
         "0TARONGBESS": BatteryUnitMap(unit="TARBESS1", charge_unit="TARBESSL1", discharge_unit="TARBESSG1"),  # tarong
         "0TEMPLERBESS": BatteryUnitMap(unit="TEMPB1", charge_unit="TEMPBL1", discharge_unit="TEMPBG1"),  # templers
         "WDBESS": BatteryUnitMap(unit="WDBESS1", charge_unit="WDBESSL1", discharge_unit="WDBESSG1"),  # western downs
+        "DALNTH": BatteryUnitMap(unit="DALNTH", charge_unit="DALNTHL1", discharge_unit="DALNTHG1"),  # dairymple north
+        "BBATTERY": BatteryUnitMap(unit="BBATTERY1", charge_unit="BBATTERYL1", discharge_unit="BBATTERYG1"),  # battery
     }
 
 
