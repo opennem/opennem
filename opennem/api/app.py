@@ -135,7 +135,13 @@ async def opennem_exception_handler(request: Request, exc: OpennemBaseHttpExcept
 async def http_exception_handler(request: Request, exc: HTTPException) -> OpennemExceptionResponse:
     logger.debug(f"HTTP Exception: {exc.status_code} {exc.detail}")
 
-    resp_content = OpennemErrorSchema(error=exc.detail, success=False)
+    if isinstance(exc.detail, str):
+        detail = exc.detail
+    elif isinstance(exc.detail, dict):
+        detail = exc.detail.get("error", str(exc.detail))
+    else:
+        detail = str(exc.detail)
+    resp_content = OpennemErrorSchema(error=detail, success=False)
 
     return OpennemExceptionResponse(
         status_code=exc.status_code,
@@ -180,10 +186,10 @@ async def validation_exception_handler(request: Request, exc: ValidationError) -
     error_message = "Validation error: " + "; ".join(error_details) if error_details else "Invalid request data"
 
     return OpennemExceptionResponse(
-        content=OpennemErrorSchema(
+        response_class=OpennemErrorSchema(
             error=error_message,
             success=False,
-        ).model_dump(),
+        ),
         status_code=422,
     )
 
@@ -199,18 +205,18 @@ async def value_error_handler(request: Request, exc: ValueError) -> OpennemExcep
         # Extract the metric name and provide helpful message
         metric_name = error_msg.split(": ")[-1] if ": " in error_msg else "unknown"
         return OpennemExceptionResponse(
-            content=OpennemErrorSchema(
+            response_class=OpennemErrorSchema(
                 error=f"Invalid metric: '{metric_name}'. Use /v4/metrics endpoint to see available metrics.",
                 success=False,
-            ).model_dump(),
+            ),
             status_code=400,
         )
 
     return OpennemExceptionResponse(
-        content=OpennemErrorSchema(
+        response_class=OpennemErrorSchema(
             error=str(exc),
             success=False,
-        ).model_dump(),
+        ),
         status_code=400,
     )
 
