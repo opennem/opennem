@@ -126,6 +126,8 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
                 logger.error(f"Field: {error['loc'][0]}, Error: {error['msg']}")
             raise UnkeyInvalidUserException("Unkey verification failed: model validation error") from ve
 
+    except UnkeyInvalidUserException:
+        raise
     except Exception as e:
         logger.exception(f"Unexpected error in unkey_validate: {e}")
         raise UnkeyInvalidUserException("Unkey verification failed: unexpected error") from e

@@ -8,6 +8,7 @@ from sqlalchemy import select
 from starlette import status
 
 from opennem import settings
+from opennem.api.data.utils import get_max_interval_days
 from opennem.api.export.controllers import power_week
 from opennem.api.export.queries import interconnector_flow_network_regions_query
 from opennem.api.keys import ApiAuthorization, api_protected
@@ -15,6 +16,7 @@ from opennem.api.time import human_to_interval, human_to_period, valid_database_
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
 from opennem.core.networks import network_from_network_code
+from opennem.core.time_interval import Interval
 from opennem.core.units import get_unit
 from opennem.db import db_connect, get_read_session
 from opennem.db.models.opennem import Facility
@@ -23,7 +25,7 @@ from opennem.queries.energy import get_energy_facility_query
 from opennem.queries.price import get_network_region_price_query
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.schema.time import TimePeriod
-from opennem.users.schema import OpenNEMRoles
+from opennem.users.schema import OpenNEMRoles, OpenNEMUser
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem
 
 from .controllers import get_scada_range, get_scada_range_optimized, stats_factory
@@ -36,7 +38,6 @@ router = APIRouter()
 
 
 @api_version(3)
-@api_protected()
 @router.get(
     "/power/station/{network_code}/{facility_code:path}",
     name="Power by Station",
@@ -53,6 +54,7 @@ async def power_station(
     interval_human: str | None = None,
     period_human: str | None = None,
     period: str | None = None,  # type: ignore
+    user: OpenNEMUser | None = None,
 ) -> OpennemDataSet:
     if not network_code:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No network code")
@@ -82,6 +84,21 @@ async def power_station(
 
     interval = human_to_interval(interval_human)
     period_obj: TimePeriod = human_to_period(period_human)
+
+    # Validate date range against interval limits
+    try:
+        interval_enum = Interval(interval.interval_human)
+    except ValueError:
+        interval_enum = Interval.INTERVAL
+
+    max_days = get_max_interval_days(interval_enum, user=user)
+    period_days = period_obj.period / 1440
+
+    if period_days > max_days:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Period too large for {interval.interval_human} interval. Maximum range is {max_days} days.",
+        )
     units = get_unit("power")
 
     async with get_read_session() as session:
@@ -166,6 +183,7 @@ async def energy_station(
     facility_code: str,
     interval: str | None = None,
     period: str | None = None,
+    user: OpenNEMUser | None = None,
 ) -> OpennemDataSet:
     """
     Get energy output for a station (list of facilities)
@@ -204,6 +222,22 @@ async def energy_station(
         period = "7d"
 
     period_obj = human_to_period(period)
+
+    # Validate date range against interval limits
+    try:
+        interval_enum = Interval(interval_obj.interval_human)
+    except ValueError:
+        interval_enum = Interval.INTERVAL
+
+    max_days = get_max_interval_days(interval_enum, user=user)
+    period_days = period_obj.period / 1440
+
+    if period_days > max_days:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Period too large for {interval_obj.interval_human} interval. Maximum range is {max_days} days.",
+        )
+
     units = get_unit("energy")
 
     async with get_read_session() as session:
