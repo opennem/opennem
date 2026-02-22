@@ -6,10 +6,9 @@ from functools import wraps
 
 from cachetools import TTLCache
 from pydantic import ValidationError
-from unkey.py import Unkey, models
+from unkey.py import Unkey
 
 from opennem import settings
-from opennem.users.ratelimit import OPENNEM_RATELIMIT_ADMIN, OPENNEM_RATELIMIT_PRO, OPENNEM_RATELIMIT_USER
 from opennem.users.schema import OpennemAPIRequestMeta, OpenNEMRoles, OpenNEMUser, OpenNEMUserRateLimit
 
 logger = logging.getLogger("opennem.clients.unkey")
@@ -19,15 +18,7 @@ _unkey_cache = TTLCache(maxsize=10000, ttl=60 * 5)
 
 
 def cache_unkey_result(func):
-    """
-    Decorator to cache unkey validation results for 5 minutes.
-
-    Args:
-        func: The async function to cache
-
-    Returns:
-        Cached result if available, otherwise calls function and caches result
-    """
+    """Decorator to cache unkey validation results for 5 minutes."""
 
     @wraps(func)
     async def wrapper(api_key: str, *args, **kwargs) -> OpenNEMUser | None:
@@ -56,15 +47,6 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
     """
     Validate a key with unkey.
     Results are cached for 5 minutes to reduce API calls.
-
-    Args:
-        api_key: The API key to validate
-
-    Returns:
-        OpenNEMUser if validation successful, None otherwise
-
-    Raises:
-        UnkeyInvalidUserException: If validation fails
     """
 
     if not settings.unkey_root_key:
@@ -72,10 +54,8 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
 
     try:
         async with Unkey(root_key=settings.unkey_root_key) as client:
-            # New SDK: verify_key returns wrapped response
             response = await client.keys.verify_key_async(key=api_key)
 
-        # Response has .data attribute with actual verification data
         if not response or not response.data:
             logger.warning("Unkey verification failed: no response data")
             raise UnkeyInvalidUserException("Verification failed: no response")
@@ -92,16 +72,13 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
 
         try:
             # Extract owner_id from identity if available
-            # Use external_id (Clerk user ID) not id (Unkey identity ID)
             owner_id = data.identity.external_id if data.identity else None
             logger.debug(f"Unkey response - identity: {data.identity}, owner_id extracted: {owner_id}")
 
             model = OpenNEMUser(
                 id=data.key_id,
-                valid=data.valid,
                 owner_id=owner_id,
-                meta=data.meta,
-                error=None,
+                unkey_meta=data.meta,
             )
 
             # Set meta with credits and expiry
@@ -114,10 +91,14 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
                     limit=first_ratelimit.limit, remaining=first_ratelimit.remaining, reset=first_ratelimit.reset
                 )
 
-            if data.meta:
-                if "roles" in data.meta:
-                    for role in data.meta["roles"]:
+            # Resolve roles from unkey meta (admin only)
+            if data.meta and "roles" in data.meta:
+                for role in data.meta["roles"]:
+                    try:
                         model.roles.append(OpenNEMRoles(role))
+                    except ValueError:
+                        # Skip unknown roles (legacy pro/academic/user)
+                        pass
 
             return model
         except ValidationError as ve:
@@ -131,59 +112,6 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
     except Exception as e:
         logger.exception(f"Unexpected error in unkey_validate: {e}")
         raise UnkeyInvalidUserException("Unkey verification failed: unexpected error") from e
-
-
-async def unkey_create_key(
-    email: str, name: str, roles: list[OpenNEMRoles], ratelimit: models.RatelimitRequest | None = None
-) -> str | None:
-    """Create a key with unkey"""
-    if not settings.unkey_root_key:
-        raise Exception("No unkey root key set")
-
-    if not settings.unkey_api_id:
-        raise Exception("No unkey app id set")
-
-    prefix = "on"
-
-    if settings.is_dev:
-        prefix = "on_dev"
-
-    meta = {"roles": [role.value for role in roles], "email": email, "name": name}
-
-    # Select rate limit based on roles
-    if not ratelimit:
-        ratelimit = OPENNEM_RATELIMIT_USER
-
-        if OpenNEMRoles.pro in roles:
-            ratelimit = OPENNEM_RATELIMIT_PRO
-
-        if OpenNEMRoles.admin in roles:
-            ratelimit = OPENNEM_RATELIMIT_ADMIN
-
-    try:
-        async with Unkey(root_key=settings.unkey_root_key) as client:
-            # New SDK: Direct keyword arguments, returns wrapped response
-            response = await client.keys.create_key_async(
-                api_id=settings.unkey_api_id,
-                name=name,
-                prefix=prefix,
-                meta=meta,
-                external_id=email,  # external_id for user tracking
-                ratelimits=[ratelimit] if ratelimit else None,
-            )
-
-            if not response or not response.data or not response.data.key:
-                logger.error("Unkey key creation failed: no key returned")
-                return None
-
-            data = response.data
-            logger.info(f"Unkey key created: {data.key} {data.key_id}")
-
-            return data.key
-
-    except Exception as e:
-        logger.exception(f"Unexpected error in unkey_create_key: {e}")
-        return None
 
 
 # debug entry point

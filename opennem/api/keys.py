@@ -12,8 +12,9 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from unkey.py import models
 
 from opennem import settings
-from opennem.clients.unkey import OpenNEMUser, UnkeyInvalidUserException, unkey_validate
-from opennem.users.schema import OpenNEMRoles
+from opennem.clients.unkey import UnkeyInvalidUserException, unkey_validate
+from opennem.users.plans import OpenNEMPlan
+from opennem.users.schema import OpenNEMRoles, OpenNEMUser
 
 logger = logging.getLogger("opennem.api.keys")
 
@@ -89,10 +90,10 @@ def api_protected(
                 # dev key bypasses unkey
                 if key == settings.api_dev_key:
                     user = OpenNEMUser(
-                        valid=True,
                         id="dev",
                         owner_id="dev",
-                        roles=[OpenNEMRoles.admin, OpenNEMRoles.user, OpenNEMRoles.anonymous],
+                        plan=OpenNEMPlan.ENTERPRISE,
+                        roles=[OpenNEMRoles.admin, OpenNEMRoles.anonymous],
                     )
 
                     if "user" in inspect.signature(func).parameters:
@@ -129,12 +130,25 @@ def api_protected(
 
                     user.full_name = clerk_user.first_name + " " + clerk_user.last_name
                     user.email = clerk_user.email_addresses[0].email_address
-                    user.plan = clerk_user.private_metadata.get("plan")
+
+                    # Resolve plan from Clerk privateMetadata
+                    raw_plan = clerk_user.private_metadata.get("plan") if clerk_user.private_metadata else None
+                    if raw_plan:
+                        try:
+                            user.plan = OpenNEMPlan(raw_plan if raw_plan != "BASIC" else "COMMUNITY")
+                        except ValueError:
+                            user.plan = OpenNEMPlan.COMMUNITY
+                    else:
+                        user.plan = OpenNEMPlan.COMMUNITY
+
+                    # Resolve admin from Clerk privateMetadata.role
+                    if clerk_user.private_metadata and clerk_user.private_metadata.get("role") == "admin":
+                        if OpenNEMRoles.admin not in user.roles:
+                            user.roles.append(OpenNEMRoles.admin)
                 else:
                     logger.info(f"Key {user.id} not associated with Clerk user, skipping enrichment")
                     user.full_name = None
                     user.email = None
-                    user.plan = None
 
                 if "user" in inspect.signature(func).parameters:
                     kwargs["user"] = user
