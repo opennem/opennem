@@ -11,7 +11,7 @@ from fastapi import HTTPException
 
 from opennem.core.time_interval import Interval
 from opennem.schema.network import NetworkSchema
-from opennem.users.plans import ADMIN_MAX_DAYS, get_max_interval_days_for_plan
+from opennem.users.plans import BUCKET_LIMITS_ADMIN, OpenNEMPlan, get_max_interval_days_for_plan, get_plan_config
 from opennem.users.schema import OpenNEMUser
 from opennem.utils.dates import get_last_completed_interval_for_network
 
@@ -26,14 +26,10 @@ def _raise_invalid_date_range(interval: Interval, max_days: int) -> NoReturn:
 def get_max_interval_days(interval: Interval, user: OpenNEMUser | None = None) -> int:
     """Get the maximum allowed days for a given interval based on user's plan."""
     if user and user.is_admin:
-        return ADMIN_MAX_DAYS.get(interval, 10_000)
+        return BUCKET_LIMITS_ADMIN.get(interval, 10_000)
 
     if user:
-        plan_days = get_max_interval_days_for_plan(user.plan, interval)
-        return plan_days
-
-    # Anonymous / no user — use COMMUNITY defaults
-    from opennem.users.plans import OpenNEMPlan
+        return get_max_interval_days_for_plan(user.plan, interval)
 
     return get_max_interval_days_for_plan(OpenNEMPlan.COMMUNITY, interval)
 
@@ -67,6 +63,17 @@ def validate_date_range(
 
     if date_range.days > max_days:
         _raise_invalid_date_range(interval, max_days)
+
+    # Period limit — restrict how far back date_start can be
+    plan = user.plan if user else OpenNEMPlan.COMMUNITY
+    period_limit = get_plan_config(plan).period_limit_days
+    if not (user and user.is_admin) and period_limit != -1:
+        earliest = datetime.now() - timedelta(days=period_limit)
+        if date_start < earliest:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Date start is too far in the past. Your plan allows data from the last {period_limit} days.",
+            )
 
     return date_start, date_end
 

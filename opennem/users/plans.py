@@ -26,14 +26,35 @@ class PlanConfig(BaseModel):
     daily_credits: int
     burst_rate_limit: str
     key_limit: int
-    max_days_5m: int
-    max_days_1h: int
-    max_days_1d: int
+    bucket_limits: dict[str, int]
+    period_limit_days: int
     historical_data: str
     features: list[str]
     visible: bool = True
     cta: str | None = None
 
+
+BUCKET_LIMITS_USER: dict[Interval, int] = {
+    Interval.INTERVAL: 8,
+    Interval.HOUR: 32,
+    Interval.DAY: 366,
+    Interval.WEEK: 366,
+    Interval.MONTH: 732,
+    Interval.QUARTER: 1830,
+    Interval.SEASON: 1830,
+    Interval.YEAR: 3700,
+}
+
+BUCKET_LIMITS_ADMIN: dict[Interval, int] = {
+    Interval.INTERVAL: 30,
+    Interval.HOUR: 365,
+    Interval.DAY: 3650,
+    Interval.WEEK: 3650,
+    Interval.MONTH: 10000,
+    Interval.QUARTER: 10000,
+    Interval.SEASON: 10000,
+    Interval.YEAR: 10000,
+}
 
 # Concrete plan values
 COMMUNITY_CREDITS = 500
@@ -50,9 +71,8 @@ PLAN_CONFIGS: dict[OpenNEMPlan, PlanConfig] = {
         daily_credits=COMMUNITY_CREDITS,
         burst_rate_limit="2/s",
         key_limit=1,
-        max_days_5m=8,
-        max_days_1h=32,
-        max_days_1d=366,
+        bucket_limits={k.value: v for k, v in BUCKET_LIMITS_USER.items()},
+        period_limit_days=367,
         historical_data="1 year",
         features=["Community support"],
         visible=True,
@@ -66,9 +86,8 @@ PLAN_CONFIGS: dict[OpenNEMPlan, PlanConfig] = {
         daily_credits=PRO_CREDITS,
         burst_rate_limit="5/s",
         key_limit=10,
-        max_days_5m=30,
-        max_days_1h=365,
-        max_days_1d=3_650,
+        bucket_limits={k.value: v for k, v in BUCKET_LIMITS_ADMIN.items()},
+        period_limit_days=-1,
         historical_data="Full",
         features=["Priority email support"],
         visible=False,  # not ready yet
@@ -81,9 +100,8 @@ PLAN_CONFIGS: dict[OpenNEMPlan, PlanConfig] = {
         daily_credits=ACADEMIC_CREDITS,
         burst_rate_limit="2/s",
         key_limit=5,
-        max_days_5m=30,
-        max_days_1h=365,
-        max_days_1d=3_650,
+        bucket_limits={k.value: v for k, v in BUCKET_LIMITS_ADMIN.items()},
+        period_limit_days=-1,
         historical_data="Full",
         features=["Community support"],
         visible=True,
@@ -97,38 +115,13 @@ PLAN_CONFIGS: dict[OpenNEMPlan, PlanConfig] = {
         daily_credits=ENTERPRISE_CREDITS,
         burst_rate_limit="10/s",
         key_limit=-1,  # unlimited
-        max_days_5m=30,
-        max_days_1h=365,
-        max_days_1d=10_000,
+        bucket_limits={k.value: v for k, v in BUCKET_LIMITS_ADMIN.items()},
+        period_limit_days=-1,
         historical_data="Full",
         features=["Priority email support", "SLA guarantee"],
         visible=True,
         cta="contact",
     ),
-}
-
-# Admin limits — orthogonal to plan, grants max across all tiers
-ADMIN_MAX_DAYS = {
-    Interval.INTERVAL: 30,
-    Interval.HOUR: 365,
-    Interval.DAY: 10_000,
-    Interval.WEEK: 10_000,
-    Interval.MONTH: 10_000,
-    Interval.QUARTER: 10_000,
-    Interval.SEASON: 10_000,
-    Interval.YEAR: 10_000,
-}
-
-# Map plan max_days fields to Interval enum
-_PLAN_INTERVAL_MAP = {
-    Interval.INTERVAL: "max_days_5m",
-    Interval.HOUR: "max_days_1h",
-    Interval.DAY: "max_days_1d",
-    Interval.WEEK: "max_days_1d",
-    Interval.MONTH: "max_days_1d",
-    Interval.QUARTER: "max_days_1d",
-    Interval.SEASON: "max_days_1d",
-    Interval.YEAR: "max_days_1d",
 }
 
 
@@ -138,5 +131,4 @@ def get_plan_config(plan: OpenNEMPlan) -> PlanConfig:
 
 def get_max_interval_days_for_plan(plan: OpenNEMPlan, interval: Interval) -> int:
     config = PLAN_CONFIGS[plan]
-    field = _PLAN_INTERVAL_MAP.get(interval, "max_days_1d")
-    return getattr(config, field)
+    return config.bucket_limits.get(interval.value, 7)
