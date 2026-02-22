@@ -11,7 +11,6 @@ from datetime import datetime
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from fastapi.responses import ORJSONResponse
 from fastapi_cache.decorator import cache
 from fastapi_versionizer import api_version
 
@@ -62,7 +61,7 @@ async def get_network_data(
     ] = None,
     client: Any = Depends(get_clickhouse_dependency),
     user: authenticated_user = None,
-) -> ORJSONResponse:
+) -> APIV4ResponseSchema:
     """
     Get time series data for a network.
 
@@ -159,7 +158,7 @@ async def get_network_data(
     )
 
     # Return all TimeSeries objects, one per metric
-    return ORJSONResponse(APIV4ResponseSchema(data=timeseries_list).model_dump())
+    return APIV4ResponseSchema(data=timeseries_list)
 
 
 @api_version(4)
@@ -260,14 +259,14 @@ async def get_facility_data(
     logger.debug(f"Formatted into {len(timeseries_list)} time series")
 
     # Debug the response structure
-    response_data = APIV4ResponseSchema(data=timeseries_list).model_dump()
-    logger.debug(f"Response has {len(response_data.get('data', []))} timeseries objects")
-    if response_data.get("data"):
-        first_ts = response_data["data"][0]
-        logger.debug(f"First timeseries: metric={first_ts.get('metric')}, results_count={len(first_ts.get('results', []))}")
-        if first_ts.get("results"):
-            first_result = first_ts["results"][0]
-            logger.debug(f"First result has {len(first_result.get('data', []))} data points")
+    response_schema = APIV4ResponseSchema(data=timeseries_list)
+    logger.debug(f"Response has {len(response_schema.data)} timeseries objects")
+    if response_schema.data:
+        first_ts = response_schema.data[0]
+        logger.debug(f"First timeseries: metric={first_ts.metric}, results_count={len(first_ts.results)}")
+        if first_ts.results:
+            first_result = first_ts.results[0]
+            logger.debug(f"First result has {len(first_result.data)} data points")
 
     # Return all TimeSeries objects, one per metric
-    return ORJSONResponse(response_data)
+    return response_schema

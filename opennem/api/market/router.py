@@ -10,7 +10,6 @@ from datetime import datetime
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from fastapi.responses import ORJSONResponse
 from fastapi_cache.decorator import cache
 from fastapi_versionizer import api_version
 
@@ -149,4 +148,4 @@ async def get_network_data(
     )
 
     # Return all TimeSeries objects, one per metric
-    return ORJSONResponse(APIV4ResponseSchema(data=timeseries_list).model_dump())  # type: ignore
+    return APIV4ResponseSchema(data=timeseries_list)
