@@ -118,7 +118,7 @@ PLAN_CONFIGS: dict[OpenNEMPlan, PlanConfig] = {
         bucket_limits={k.value: v for k, v in BUCKET_LIMITS_ADMIN.items()},
         period_limit_days=-1,
         historical_data="Full",
-        features=["Priority email support", "SLA guarantee"],
+        features=["Priority email support"],
         visible=True,
         cta="contact",
     ),
