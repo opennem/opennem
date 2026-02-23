@@ -70,7 +70,7 @@ def _resolve_admin(private_metadata: dict | None) -> bool:
 
 
 async def get_current_user(
-    authorization: Annotated[HTTPAuthorizationCredentials, Depends(api_token_scheme)], with_clerk: bool = True
+    authorization: Annotated[HTTPAuthorizationCredentials, Depends(api_token_scheme)],
 ) -> OpenNEMUser:
     """FastAPI dependency: validate API key, resolve plan + roles from Clerk."""
     try:
@@ -88,9 +88,6 @@ async def get_current_user(
 
         if not user:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key")
-
-        if not with_clerk:
-            return user
 
         # Enrich with Clerk user data
         if not user.owner_id:

@@ -45,7 +45,7 @@ from opennem.db.models.opennem import FuelTech, Network, NetworkRegion
 from opennem.schema.opennem import FueltechSchema, OpennemErrorSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
-from opennem.users.schema import OpennemUserResponse
+from opennem.users.schema import OpenNEMUserMeResponse, to_user_me
 from opennem.utils.host import get_hostname
 from opennem.utils.version import get_version
 
@@ -480,14 +480,14 @@ def health_check() -> str:
 @api_version(4)
 @app.get(
     "/me",
-    response_model=OpennemUserResponse,
+    response_model=OpenNEMUserMeResponse,
     response_model_exclude_none=True,
     response_model_exclude_unset=False,
     tags=["User"],
     description="Get the current user",
 )
-async def get_user_me(user: authenticated_user) -> OpennemUserResponse:
-    return OpennemUserResponse(data=user)
+async def get_user_me(user: authenticated_user) -> OpenNEMUserMeResponse:
+    return OpenNEMUserMeResponse(data=to_user_me(user))
 
 
 @app.get("/sentry-debug", include_in_schema=False)

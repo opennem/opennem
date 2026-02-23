@@ -60,3 +60,33 @@ class OpenNEMUser(BaseModel):
 
 class OpennemUserResponse(APIV4ResponseSchema):
     data: OpenNEMUser
+
+
+class OpenNEMUserMe(BaseModel):
+    """Public-facing user profile for /v4/me"""
+
+    id: str
+    full_name: str | None = None
+    email: str | None = None
+    plan: OpenNEMPlan = OpenNEMPlan.COMMUNITY
+    roles: list[OpenNEMRoles] = []
+    is_admin: bool | None = None
+    rate_limit: OpenNEMUserRateLimit | None = None
+    credits: OpennemAPIRequestMeta | None = None
+
+
+class OpenNEMUserMeResponse(APIV4ResponseSchema):
+    data: OpenNEMUserMe
+
+
+def to_user_me(user: OpenNEMUser) -> OpenNEMUserMe:
+    return OpenNEMUserMe(
+        id=user.id,
+        full_name=user.full_name,
+        email=user.email,
+        plan=user.plan,
+        roles=user.roles,
+        is_admin=True if user.is_admin else None,
+        rate_limit=user.rate_limit,
+        credits=user.meta,
+    )
