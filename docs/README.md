@@ -1,8 +1,8 @@
-# OpenElectricity Documentation
+# Open Electricity Documentation
 
 Documentation lives at https://docs.openelectricity.org.au
 
-This folder contains the documentation for OpenElectricity, built with [Mintlify](https://mintlify.com).
+This folder contains the documentation for Open Electricity, built with [Mintlify](https://mintlify.com).
 
 ## Prerequisites
 

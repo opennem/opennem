@@ -32,23 +32,23 @@ The grid operator (AEMO) may curtail generation to maintain system stability, in
 - Maintaining frequency within safe limits
 - Ensuring adequate reserves for unexpected events
 
-## How OpenElectricity Reports Curtailment
+## How Open Electricity Reports Curtailment
 
-OpenElectricity calculates curtailment by comparing what renewable generators could have produced (unconstrained generation) with what they actually produced (actual generation). This data comes from AEMO's dispatch data, which provides target values and unconstrained intermittent generation forecasts (UIGF) for wind and solar.
+Open Electricity calculates curtailment by comparing what renewable generators could have produced (unconstrained generation) with what they actually produced (actual generation). This data comes from AEMO's dispatch data, which provides target values and unconstrained intermittent generation forecasts (UIGF) for wind and solar.
 
-### OpenElectricity Website
+### Open Electricity Website
 
-Curtailment is displayed in the network generation views on the [tracker of the OpenElectricity website](https://explore.openelectricity.org.au/energy/nem/?range=7d&interval=30m&view=discrete-time&group=Detailed).
+Curtailment is displayed in the network generation views on the [tracker of the Open Electricity website](https://explore.openelectricity.org.au/energy/nem/?range=7d&interval=30m&view=discrete-time&group=Detailed).
 
 <Frame>
-    <img src="/images/curtailment_frontend.png" alt="Curtailment displayed in the network generation views on the tracker of the OpenElectricity website" />
+    <img src="/images/curtailment_frontend.png" alt="Curtailment displayed in the network generation views on the tracker of the Open Electricity website" />
 </Frame>
 
 Each of wind and solar curtailment can be seen in the chart for both power and energy views, and are accounted for in the table on the right.
 
 ### Available Metrics
 
-OpenElectricity provides curtailment data through several metrics:
+Open Electricity provides curtailment data through several metrics:
 
 #### Power Metrics (MW)
 - **`curtailment`** - Total curtailed power across all renewable sources
@@ -143,7 +143,7 @@ High curtailment levels signal:
 
 ## Data Sources
 
-OpenElectricity calculates curtailment using AEMO's official dispatch data:
+Open Electricity calculates curtailment using AEMO's official dispatch data:
 - **DISPATCHREGIONSUM** table provides regional target and unconstrained generation values
 - **Semi-scheduled generator data** includes wind and solar farm constraints
 - Updates every 5 minutes with NEM dispatch intervals

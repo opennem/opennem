@@ -1,10 +1,10 @@
 ---
 title: 'Chart Styling'
-description: 'Create charts with OpenElectricity branding and colors'
+description: 'Create charts with Open Electricity branding and colors'
 icon: 'palette'
 ---
 
-The OpenElectricity Python SDK includes a comprehensive styling module that helps you create professional charts matching the OpenElectricity brand guidelines.
+The Open Electricity Python SDK includes a comprehensive styling module that helps you create professional charts matching the Open Electricity brand guidelines.
 
 ## Installation
 
@@ -36,7 +36,7 @@ pip install matplotlib seaborn pillow
 from openelectricity import styles
 import matplotlib.pyplot as plt
 
-# Apply OpenElectricity styling globally
+# Apply Open Electricity styling globally
 styles.set_openelectricity_style()
 
 # Create a styled figure
@@ -45,7 +45,7 @@ fig, ax = styles.create_styled_figure(figsize=(12, 6))
 # Your plotting code here
 ax.plot(data)
 
-# Format with OpenElectricity branding
+# Format with Open Electricity branding
 styles.format_chart(
     ax,
     title="My Energy Chart",
@@ -148,7 +148,7 @@ colors = styles.get_fueltech_palette(fueltechs)
 
 ## Logo Watermark
 
-Add the official OpenElectricity logo as a watermark to your charts.
+Add the official Open Electricity logo as a watermark to your charts.
 
 ```python
 # Add watermark with defaults (15% size, 30% opacity)
@@ -164,12 +164,12 @@ styles.add_watermark(
 ```
 
 <Note>
-The logo is automatically downloaded and cached from the official OpenElectricity platform on first use.
+The logo is automatically downloaded and cached from the official Open Electricity platform on first use.
 </Note>
 
 ## Chart Formatting
 
-The `format_chart()` function applies consistent OpenElectricity branding:
+The `format_chart()` function applies consistent Open Electricity branding:
 
 ```python
 styles.format_chart(
@@ -196,7 +196,7 @@ styles.format_chart(
 
 ### Stacked Area Chart
 
-Recreate the OpenElectricity website's generation chart:
+Recreate the Open Electricity website's generation chart:
 
 ```python
 import pandas as pd
@@ -379,7 +379,7 @@ The module applies these consistent style settings:
 |----------|------------|
 | `set_openelectricity_style()` | Apply global matplotlib/seaborn styling |
 | `create_styled_figure(figsize, dpi)` | Create pre-styled figure and axes |
-| `format_chart(ax, **kwargs)` | Apply OpenElectricity formatting to axes |
+| `format_chart(ax, **kwargs)` | Apply Open Electricity formatting to axes |
 | `add_watermark(ax, **kwargs)` | Add logo watermark to axes |
 
 ### Color Functions
@@ -389,7 +389,7 @@ The module applies these consistent style settings:
 | `get_fueltech_color(fueltech)` | Get hex color for a fuel technology |
 | `get_fueltech_palette(fueltechs)` | Get list of colors for multiple technologies |
 | `get_color_map()` | Get complete fuel technology color dictionary |
-| `get_brand_colors()` | Get OpenElectricity brand color palette |
+| `get_brand_colors()` | Get Open Electricity brand color palette |
 
 ## Troubleshooting
 

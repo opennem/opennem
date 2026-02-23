@@ -86,9 +86,9 @@ The NEM (National Electricity Market) changed its approach to managing battery f
 - Positive generation values represent discharging (export to the grid).
 - Negative generation values represent charging (import from the grid).
 
-This change simplifies implementation for AEMO by consolidating batteries into a single unit, but it introduces challenges for OpenElectricity (formerly OpenNEM), which relies on the legacy method of splitting batteries into two distinct units.
+This change simplifies implementation for AEMO by consolidating batteries into a single unit, but it introduces challenges for Open Electricity (formerly OpenNEM), which relies on the legacy method of splitting batteries into two distinct units.
 
-The reasons for splitting the new bidirectional units back into two separate units in OpenElectricity are:
+The reasons for splitting the new bidirectional units back into two separate units in Open Electricity are:
 
 - **Visual Clarity**: Separating charging and discharging makes it easier for users to visualize and understand battery behavior, as they can clearly see when batteries are importing versus exporting power to the grid.
 
@@ -96,11 +96,11 @@ The reasons for splitting the new bidirectional units back into two separate uni
 
 - **Granular Representation**: Splitting the values allows for clear and consistent representation of battery performance, ensuring better understanding and reporting of energy data.
 
-### How OpenElectricity Splits Bidirectional Units
+### How Open Electricity Splits Bidirectional Units
 
-The splitting of bidirectional units into two distinct units (for load and generation) is being achieved through a series of steps in the OpenElectricity backend. Here’s a detailed breakdown of the process:
+The splitting of bidirectional units into two distinct units (for load and generation) is being achieved through a series of steps in the Open Electricity backend. Here’s a detailed breakdown of the process:
 
-A new dispatch type named `BIDIRECTIONAL` was added to identify batteries that use the single-unit model. This allows OpenElectricity to distinguish between legacy units and new bidirectional units.
+A new dispatch type named `BIDIRECTIONAL` was added to identify batteries that use the single-unit model. This allows Open Electricity to distinguish between legacy units and new bidirectional units.
 
 In the generation pipeline, which processes incoming real-time power data from AEMO, is intercepted in memory and transformed. This enables quick and efficient data processing before persisting the results to the main database.
 
@@ -114,7 +114,7 @@ For example, consider the battery facility BHB1 (Broken Hill Battery), which was
 - `BHBG1`  for generation (`battery_discharging` fueltech type).
 - `BHBL1` for load (`battery_charging` fueltech type).
 
-After the AEMO change, BHB1 becomes a single unit with bidirectional values. OpenElectricity re-splits it in memory as:
+After the AEMO change, BHB1 becomes a single unit with bidirectional values. Open Electricity re-splits it in memory as:
 
 - `BHBG1` → Generation unit (positive values).
 - `BHBL1` → Load unit (negative values).
