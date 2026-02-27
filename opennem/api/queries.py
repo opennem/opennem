@@ -41,24 +41,27 @@ class QueryConfig:
         monthly_mv: str | None,
         metric_columns: dict[MetricType, str],
         metric_agg_functions: dict[MetricType, str],
+        daily_metric_columns: dict[MetricType, str] | None = None,
+        daily_metric_agg_functions: dict[MetricType, str] | None = None,
     ):
-        """
-        Initialize query configuration.
-
-        Args:
-            query_type: Type of query (market or data)
-            base_table: Name of the base table to query
-            daily_mv: Name of daily materialized view (if available)
-            monthly_mv: Name of monthly materialized view (if available)
-            metric_columns: Mapping of metrics to their column names
-            metric_agg_functions: Mapping of metrics to their aggregation functions
-        """
         self.query_type = query_type
         self.base_table = base_table
         self.daily_mv = daily_mv
         self.monthly_mv = monthly_mv
         self.metric_columns = metric_columns
         self.metric_agg_functions = metric_agg_functions
+        self.daily_metric_columns = daily_metric_columns
+        self.daily_metric_agg_functions = daily_metric_agg_functions
+
+    def get_metric_column(self, metric: MetricType, table: str) -> str:
+        if table == self.daily_mv and self.daily_metric_columns and metric in self.daily_metric_columns:
+            return self.daily_metric_columns[metric]
+        return self.metric_columns[metric]
+
+    def get_metric_agg(self, metric: MetricType, table: str) -> str:
+        if table == self.daily_mv and self.daily_metric_agg_functions and metric in self.daily_metric_agg_functions:
+            return self.daily_metric_agg_functions[metric]
+        return self.metric_agg_functions[metric]
 
     def _get_table_for_interval(self, interval: Interval) -> str:
         """
@@ -94,8 +97,8 @@ QUERY_CONFIGS = {
     QueryType.MARKET: QueryConfig(
         query_type=QueryType.MARKET,
         base_table="market_summary",
-        daily_mv=None,  # Will be added when market summary MVs are created
-        monthly_mv=None,  # Will be added when market summary MVs are created
+        daily_mv="market_summary_daily_mv",
+        monthly_mv="market_summary_monthly_mv",
         metric_columns={
             Metric.PRICE: "price",
             Metric.DEMAND: "demand",
@@ -128,11 +131,43 @@ QUERY_CONFIGS = {
             Metric.CURTAILMENT_WIND_ENERGY: "sum",
             Metric.RENEWABLE_PROPORTION: "",
         },
+        daily_metric_columns={
+            Metric.PRICE: "sum(price_sum) / nullIf(sum(price_count), 0)",
+            Metric.DEMAND: "demand_sum",
+            Metric.DEMAND_ENERGY: "demand_energy_daily",
+            Metric.DEMAND_GROSS: "demand_gross_sum",
+            Metric.DEMAND_GROSS_ENERGY: "demand_gross_energy_daily",
+            Metric.GENERATION_RENEWABLE: "generation_renewable_sum",
+            Metric.GENERATION_RENEWABLE_ENERGY: "generation_renewable_energy_daily",
+            Metric.CURTAILMENT: "curtailment_total_daily",
+            Metric.CURTAILMENT_ENERGY: "curtailment_energy_total_daily",
+            Metric.CURTAILMENT_SOLAR_UTILITY: "curtailment_solar_total_daily",
+            Metric.CURTAILMENT_WIND: "curtailment_wind_total_daily",
+            Metric.CURTAILMENT_SOLAR_UTILITY_ENERGY: "curtailment_energy_solar_total_daily",
+            Metric.CURTAILMENT_WIND_ENERGY: "curtailment_energy_wind_total_daily",
+            Metric.RENEWABLE_PROPORTION: "round(if(sum(demand_gross_sum) > 0, (sum(generation_renewable_sum) / sum(demand_gross_sum)) * 100, 0), 2)",  # noqa: E501
+        },
+        daily_metric_agg_functions={
+            Metric.PRICE: "",
+            Metric.DEMAND: "sum",
+            Metric.DEMAND_ENERGY: "sum",
+            Metric.DEMAND_GROSS: "sum",
+            Metric.DEMAND_GROSS_ENERGY: "sum",
+            Metric.GENERATION_RENEWABLE: "sum",
+            Metric.GENERATION_RENEWABLE_ENERGY: "sum",
+            Metric.CURTAILMENT: "sum",
+            Metric.CURTAILMENT_ENERGY: "sum",
+            Metric.CURTAILMENT_SOLAR_UTILITY: "sum",
+            Metric.CURTAILMENT_WIND: "sum",
+            Metric.CURTAILMENT_SOLAR_UTILITY_ENERGY: "sum",
+            Metric.CURTAILMENT_WIND_ENERGY: "sum",
+            Metric.RENEWABLE_PROPORTION: "",
+        },
     ),
     QueryType.DATA: QueryConfig(
         query_type=QueryType.DATA,
         base_table="unit_intervals",
-        daily_mv=None,
+        daily_mv="unit_intervals_daily_mv",
         monthly_mv=None,
         metric_columns={
             DataMetric.POWER: "generated",
@@ -147,12 +182,18 @@ QUERY_CONFIGS = {
             DataMetric.EMISSIONS: "sum",
             DataMetric.MARKET_VALUE: "sum",
             DataMetric.STORAGE_BATTERY: "avg",
+        },
+        daily_metric_columns={
+            DataMetric.STORAGE_BATTERY: "sum(energy_storage_sum) / nullIf(sum(energy_storage_count), 0)",
+        },
+        daily_metric_agg_functions={
+            DataMetric.STORAGE_BATTERY: "",
         },
     ),
     QueryType.FACILITY: QueryConfig(
         query_type=QueryType.FACILITY,
         base_table="unit_intervals",
-        daily_mv=None,
+        daily_mv="unit_intervals_daily_mv",
         monthly_mv=None,
         metric_columns={
             DataMetric.POWER: "generated",
@@ -167,6 +208,12 @@ QUERY_CONFIGS = {
             DataMetric.EMISSIONS: "sum",
             DataMetric.MARKET_VALUE: "sum",
             DataMetric.STORAGE_BATTERY: "avg",
+        },
+        daily_metric_columns={
+            DataMetric.STORAGE_BATTERY: "sum(energy_storage_sum) / nullIf(sum(energy_storage_count), 0)",
+        },
+        daily_metric_agg_functions={
+            DataMetric.STORAGE_BATTERY: "",
         },
     ),
 }
@@ -249,11 +296,9 @@ def get_timeseries_query(
             )
         if m not in config.metric_agg_functions:
             raise ValueError(f"No aggregation function defined for metric '{m.value}'")
-        metric_selects.append(
-            f"{config.metric_agg_functions[m]}({config.metric_columns[m]}) as {m.value.lower()}"
-            if config.metric_agg_functions[m]
-            else f"{config.metric_columns[m]} as {m.value.lower()}"
-        )
+        col = config.get_metric_column(m, table_name)
+        agg = config.get_metric_agg(m, table_name)
+        metric_selects.append(f"{agg}({col}) as {m.value.lower()}" if agg else f"{col} as {m.value.lower()}")
 
     # Build grouping columns based on query type
     group_cols = [f"'{network.code}' as network"]
