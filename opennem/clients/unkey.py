@@ -110,7 +110,7 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
     except UnkeyInvalidUserException:
         raise
     except Exception as e:
-        logger.exception(f"Unexpected error in unkey_validate: {e}")
+        logger.warning(f"Unexpected error in unkey_validate: {e}")
         raise UnkeyInvalidUserException("Unkey verification failed: unexpected error") from e
 
 

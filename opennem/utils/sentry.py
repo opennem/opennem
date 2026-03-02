@@ -9,11 +9,20 @@ from sentry_sdk.integrations.redis import RedisIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from sentry_sdk.integrations.starlette import StarletteIntegration
 
+from opennem.api.exceptions import BadCredentials, RevokedCredentials, UnauthorizedRequest
+from opennem.clients.unkey import UnkeyInvalidUserException
+
 logger = logging.getLogger("opennem.utils.sentry")
 
 ServiceType = Literal["api", "worker"]
 
-_SENTRY_IGNORE_EXCEPTION_TYPES = [HTTPException]
+_SENTRY_IGNORE_EXCEPTION_TYPES = [
+    HTTPException,
+    UnkeyInvalidUserException,
+    UnauthorizedRequest,
+    BadCredentials,
+    RevokedCredentials,
+]
 
 
 def _sentry_before_send(event, hint):
@@ -70,9 +79,11 @@ def setup_sentry(
             ArqIntegration(),
         ]
 
+    # Filter auth exceptions in all non-local environments
+    sentry_options["before_send"] = _sentry_before_send
+
     # Production-specific config
     if environment == "production":
-        sentry_options["before_send"] = _sentry_before_send
         sentry_options["traces_sample_rate"] = 0.1
         sentry_options["profiles_sample_rate"] = 0.1
 
