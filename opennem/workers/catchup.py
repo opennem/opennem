@@ -258,7 +258,7 @@ async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None,
         crawlers.extend(ALL_NEMWEB_CRAWLERS)
         crawlers.extend(ALL_WEM_CRAWLERS)
 
-    semaphore = asyncio.Semaphore(3)
+    semaphore = asyncio.Semaphore(2)
 
     async def _crawl_limited(crawler: CrawlerDefinition, **kwargs) -> ControllerReturn | None:
         async with semaphore:
