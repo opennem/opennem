@@ -27,7 +27,6 @@ Running the script:
 import logging
 from datetime import timedelta, timezone
 
-import logfire
 from arq import cron
 from arq.worker import create_worker
 
@@ -82,7 +81,7 @@ async def startup(ctx: dict) -> None:
     Args:
         ctx (dict): The worker context
     """
-    logfire.info(f"OpenNEM worker starting up on {settings.env}: v{get_version()} on host {get_hostname()}", service="worker")
+    logger.info(f"OpenNEM worker starting up on {settings.env}: v{get_version()} on host {get_hostname()}")
 
     redis = await get_redis_pool()
     await redis.flushdb()

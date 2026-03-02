@@ -11,7 +11,6 @@ import logging
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-import logfire
 from sqlalchemy import text
 
 from opennem import settings
@@ -106,7 +105,6 @@ async def check_facility_data_gaps(
         return has_gap, last_seen
 
 
-@logfire.instrument("task_catchup_check")
 async def run_catchup_check(max_gap_minutes: int = 30) -> None:
     """
     Check for data gaps and trigger catchup processes if needed.
@@ -335,7 +333,6 @@ async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None,
     )
 
 
-@logfire.instrument("catchup_aggregates")
 async def catchup_aggregates(days: int = 7) -> None:
     """
     Backfill ClickHouse aggregates (market_summary and unit_intervals) for the last N days.

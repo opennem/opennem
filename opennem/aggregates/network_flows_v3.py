@@ -9,7 +9,6 @@ import logging
 from datetime import datetime, timedelta
 from textwrap import dedent
 
-import logfire
 import pandas as pd
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
@@ -350,7 +349,6 @@ def run_flows_for_last_intervals(interval_number: int, network: NetworkSchema = 
     )
 
 
-@logfire.instrument("run_flows_for_last_days")
 def run_flows_for_last_days(days: int, network: NetworkSchema = NetworkNEM) -> None:
     """ " Run flow processor for last x interval starting from now"""
 

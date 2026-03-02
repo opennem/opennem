@@ -2,7 +2,6 @@ import asyncio
 import logging
 from datetime import date, datetime, time, timedelta
 
-import logfire
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -178,7 +177,6 @@ async def _process_aggregate_chunk(
             await update_facility_aggregates(session, start_time, end_time, network=network, refresh=refresh)
 
 
-@logfire.instrument("update_facility_aggregate_last_hours")
 async def update_facility_aggregate_last_hours(hours_back: int = 1, network: NetworkSchema | None = None) -> None:
     """
     Updates facility aggregates for the current day, looking back a specified number of hours.

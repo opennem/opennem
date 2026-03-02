@@ -34,7 +34,6 @@ from datetime import datetime
 from pathlib import Path
 from platform import platform
 
-import logfire
 from dotenv import load_dotenv
 from rich.console import Console
 
@@ -88,15 +87,6 @@ if settings.sentry_url:
 else:
     console.print(" * Sentry not configured")
 
-
-# setup logfire
-if not settings.is_local:
-    logfire.configure(
-        service_name="opennem",
-        service_version=__version__,
-        environment=ENV,
-        code_source=logfire.CodeSource(repository="https://github.com/opennem/opennem", revision="master"),
-    )
 
 if settings.db_url:
     console.print(f" * Using database connection: [red bold encircle]{obfuscate_dsn_password(settings.db_url)}[/]")

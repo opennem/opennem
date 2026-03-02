@@ -7,7 +7,6 @@ Primary Router. All the main setup of the API is here.
 import logging
 from contextlib import asynccontextmanager
 
-import logfire
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.param_functions import Query
@@ -62,7 +61,7 @@ async def lifespan(app: FastAPI):
     """
     # Startup logic
 
-    logfire.info(f"OpenElectricity API starting up on {settings.env}: v{get_version()} on host {get_hostname()}", service="api")
+    logger.info(f"OpenElectricity API starting up on {settings.env}: v{get_version()} on host {get_hostname()}")
 
     if settings.is_dev:
         logger.info("Cache disabled")
@@ -80,8 +79,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="OpenElectricity", debug=settings.debug, version=get_version(), redoc_url="/docs", docs_url=None, lifespan=lifespan
 )
-
-logfire.instrument_fastapi(app)
 
 # @TODO put CORS available/permissions in settings
 origins = [
@@ -159,11 +156,6 @@ async def http_type_exception_handler(request: Request, exc: HTTPException) -> O
         status_code=exc.status_code,
         response_class=resp_content,
     )
-
-
-# log API requests
-api_request_counter = logfire.metric_counter("api_request_counter")
-api_exception_counter = logfire.metric_counter("api_exception_counter")
 
 
 # @app.middleware("http")
