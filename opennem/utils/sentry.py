@@ -9,27 +9,30 @@ from sentry_sdk.integrations.redis import RedisIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from sentry_sdk.integrations.starlette import StarletteIntegration
 
-from opennem.api.exceptions import BadCredentials, RevokedCredentials, UnauthorizedRequest
-from opennem.clients.unkey import UnkeyInvalidUserException
-
 logger = logging.getLogger("opennem.utils.sentry")
 
 ServiceType = Literal["api", "worker"]
 
-_SENTRY_IGNORE_EXCEPTION_TYPES = [
-    HTTPException,
-    UnkeyInvalidUserException,
-    UnauthorizedRequest,
-    BadCredentials,
-    RevokedCredentials,
-]
+
+def _get_sentry_ignore_exception_types() -> list[type]:
+    """Lazy import to avoid circular import with opennem.__init__"""
+    from opennem.api.exceptions import BadCredentials, RevokedCredentials, UnauthorizedRequest
+    from opennem.clients.unkey import UnkeyInvalidUserException
+
+    return [
+        HTTPException,
+        UnkeyInvalidUserException,
+        UnauthorizedRequest,
+        BadCredentials,
+        RevokedCredentials,
+    ]
 
 
 def _sentry_before_send(event, hint):
     """Filter out HTTPExceptions in production"""
     if "exc_info" in hint:
         _, exc_value, _ = hint["exc_info"]
-        if isinstance(exc_value, tuple(_SENTRY_IGNORE_EXCEPTION_TYPES)):
+        if isinstance(exc_value, tuple(_get_sentry_ignore_exception_types())):
             return None
     return event
 

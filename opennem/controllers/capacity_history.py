@@ -162,7 +162,9 @@ async def export_capacity_history_json() -> str:
         elif df_rooftop.is_empty():
             df = df_units
         else:
-            # Concatenate both dataframes
+            # Normalize month_start to naive datetime before concat (postgres returns mixed tz)
+            df_units = df_units.with_columns(pl.col("month_start").cast(pl.Datetime("us")))
+            df_rooftop = df_rooftop.with_columns(pl.col("month_start").cast(pl.Datetime("us")))
             df = pl.concat([df_units, df_rooftop], how="vertical")
 
         logger.info(f"Combined capacity history: {len(df)} total records ({len(df_units)} units, {len(df_rooftop)} rooftop)")
