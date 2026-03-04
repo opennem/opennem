@@ -27,6 +27,7 @@
               "guides/power",
               "guides/energy",
               "guides/price",
+              "guides/demand",
               "guides/curtailment",
               "guides/capacity",
               "guides/emissions",
@@ -109,6 +110,17 @@
                   "sdk/python/styling"
                 ]
               }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "How-To",
+        "groups": [
+          {
+            "group": "How-To Guides",
+            "pages": [
+              "howto/getting-started"
             ]
           }
         ]
