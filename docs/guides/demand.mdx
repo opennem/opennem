@@ -4,53 +4,77 @@ icon: 'chart-line'
 sidebarTitle: 'Demand'
 ---
 
+<Note>
+We're working on a new **gross demand** metric and **renewable proportion** calculation. Gross demand adds rooftop solar generation to AEMO's `DEMAND_AND_NONSCHEDGEN`, capturing consumption that the current scheduled demand figure misses. Renewable proportion uses gross demand as the denominator. Track progress in [#398](https://github.com/opennem/opennem/issues/398).
+</Note>
+
 ## Overview
 
-Demand measures the amount of electricity being consumed from the grid at any point in time, expressed in megawatts (MW). While generation represents electricity flowing *into* the grid, demand represents electricity flowing *out* to consumers. Over a time interval, demand is expressed as energy in megawatt-hours (MWh).
+**Demand** is how much electricity is being pulled from the grid at any moment, measured in megawatts (MW). Over time, it becomes energy, measured in megawatt-hours (MWh).
 
-In a balanced grid, total generation (plus imports minus exports via interconnectors) must equal demand at every moment. AEMO's dispatch engine (NEMDE) continuously adjusts generation to match demand.
+Everything plugged in contributes: factories, trains, streetlights, air conditioners, your kettle. Add it all up across a region and that's the demand number AEMO has to match with generation.
+
+### Daily shape
+
+Demand has a pretty consistent daily shape. It's lowest overnight when most people are asleep and businesses are shut. Morning brings a ramp as the country wakes up. Then around midday, something interesting happens: rooftop solar kicks in hard, and the demand that centralised power stations have to meet drops into a trough. This is the "duck curve" you'll see referenced everywhere in energy commentary.
+
+The tricky part comes at sunset. Solar output falls off a cliff, but people are arriving home, cooking, running heaters or AC. The grid has to ramp conventional generators fast to cover that gap. It's the steepest climb of the day and the period most likely to cause problems.
+
+### Seasons
+
+Summer heatwaves drive the absolute peaks, mostly from air conditioning. Winter heating pushes demand up too, especially in Victoria and Tasmania. Spring and autumn tend to be quieter.
+
+### Why it matters
+
+AEMO dispatches generation to match demand every five minutes. If generation falls short, you get load shedding (rolling blackouts). If there's too much, frequency drifts and the system becomes unstable. Either way, bad.
+
+### The rooftop solar problem
+
+Rooftop solar has made demand harder to measure. A house with panels running the air conditioner at midday might draw nothing from the grid, so from AEMO's perspective that demand doesn't exist. But the person is still consuming electricity. It's just being met behind the meter, invisible to the dispatch engine.
+
+As more rooftop solar gets installed, the gap between what AEMO can see (scheduled demand) and what's actually being consumed (underlying demand) keeps widening, especially during the middle of the day.
 
 ---
 
 ## Demand Metrics in Open Electricity
 
-Open Electricity provides several demand metrics sourced from AEMO's DISPATCHREGIONSUM table:
+Open Electricity sources demand from AEMO's `DISPATCHREGIONSUM` table:
 
 | Metric | AEMO Source Field | Description |
 |---|---|---|
-| `demand` | `TOTALDEMAND` | Scheduled demand — met by scheduled + semi-scheduled generation and interconnector flows |
+| `demand` | `TOTALDEMAND` | Scheduled demand, met by scheduled + semi-scheduled generation and interconnector flows |
 | `demand_energy` | Calculated | Energy derived from demand over the interval (MWh) |
 
-### Scheduled vs Operational vs Underlying Demand
+### Scheduled vs operational vs underlying demand
 
-There are multiple ways to measure demand depending on what generation is visible:
+"Demand" means different things depending on how much generation you can see:
 
-- **Scheduled demand** (`TOTALDEMAND`) — what NEMDE dispatches against. Includes only load visible to the dispatch engine: large industrial consumers and distribution network load as seen at transmission connection points. This is the primary demand figure in Open Electricity.
+- **Scheduled demand** (`TOTALDEMAND`) is what NEMDE dispatches against. It only includes load visible to the dispatch engine: large industrial consumers and distribution network load as seen at transmission connection points. This is the demand figure Open Electricity uses.
 
-- **Operational demand** (`DEMAND_AND_NONSCHEDGEN`) — scheduled demand plus non-scheduled generation that has AEMO telemetry (e.g. smaller wind and solar farms). This represents the total demand being met by all grid-connected generation that AEMO can observe.
+- **Operational demand** (`DEMAND_AND_NONSCHEDGEN`) adds non-scheduled generation that AEMO has telemetry for (smaller wind and solar farms). It's the total demand being met by all grid-connected generation AEMO can observe.
 
-- **Underlying/native demand** — operational demand plus embedded generation invisible to AEMO, primarily rooftop solar. This represents the true total consumption including load being met by behind-the-meter generation.
+- **Underlying (or native) demand** adds embedded generation that AEMO can't see, mostly rooftop solar. This is the closest measure to true total consumption, including load being met behind the meter.
 
-As rooftop solar penetration has increased, the gap between scheduled demand and underlying demand has grown significantly, particularly during midday hours.
+The gap between scheduled and underlying demand has grown as more rooftop solar gets installed. During midday in sunny states, the difference can be substantial.
 
 ---
 
-## How AEMO Calculates TOTALDEMAND
+## How AEMO calculates TOTALDEMAND
 
-AEMO calculates `TOTALDEMAND` for each region in each 5-minute dispatch interval using a combination of actual metering and forecast data:
+AEMO calculates `TOTALDEMAND` per region per 5-minute dispatch interval. It combines two inputs:
 
-1. **INITIALSUPPLY** — the measured generation output from all scheduled and semi-scheduled generators in the region, adjusted for interconnector flows
-2. **Forecast adjustment** — AEMO applies demand forecast corrections to account for the time lag between physical metering and dispatch
+1. `INITIALSUPPLY` — measured generation output from scheduled and semi-scheduled generators in the region, adjusted for interconnector flows
+2. A forecast adjustment to account for time lag between physical metering and dispatch
 
-The formula is approximately:
+Roughly:
 
 $$
 \text{TOTALDEMAND} = \text{INITIALSUPPLY} + \text{forecast adjustment}
 $$
 
-This means `TOTALDEMAND` reflects a near-real-time estimate of the electricity demand being served by scheduled generation and interconnectors. It does not include demand being met by non-scheduled generators or embedded generation like rooftop solar.
+So `TOTALDEMAND` is a near-real-time estimate of the demand being served by scheduled generation and interconnectors. It doesn't include demand met by non-scheduled generators or behind-the-meter generation like rooftop solar.
 
-For the full technical specification, see AEMO's [Demand Terms in EMMS Data Model](https://www.aemo.com.au/-/media/Files/Electricity/NEM/Security_and_Reliability/Dispatch/Policy_and_Process/Demand-terms-in-EMMS-Data-Model.pdf).
+For the full technical spec, see AEMO's [Demand Terms in EMMS Data Model](https://www.aemo.com.au/-/media/Files/Electricity/NEM/Security_and_Reliability/Dispatch/Policy_and_Process/Demand-terms-in-EMMS-Data-Model.pdf).
 
 ---
 
@@ -58,46 +82,35 @@ For the full technical specification, see AEMO's [Demand Terms in EMMS Data Mode
 
 ### NEM
 
-The NEM provides demand data directly via the DISPATCHREGIONSUM table, with 5-minute resolution. Open Electricity uses `TOTALDEMAND` from this source.
+The NEM provides demand directly via `DISPATCHREGIONSUM` at 5-minute resolution. Open Electricity uses `TOTALDEMAND` from this source.
 
 ### WEM
 
-WEM public data sources (`referenceTradingPrices`) only provide **price data, not demand**. The `balancing_summary` table for WEM has `price` populated but `demand` and `generation_total` are NULL.
+The WEM is trickier. Its public data sources (`referenceTradingPrices`) only publish **prices, not demand**. The `balancing_summary` table has `price` but `demand` and `generation_total` are NULL.
 
-Since the WEM is an isolated grid with no interconnectors, total demand approximately equals total generation. Open Electricity derives WEM demand by summing generation output from all WEM facilities in the `facility_scada` table.
+Since the WEM is an isolated grid with no interconnectors, demand roughly equals total generation. Open Electricity derives WEM demand by summing generation from all WEM facilities in the `facility_scada` table.
 
 <Note>
-WEM demand data may have a lag of up to 24 hours compared to NEM data, as WEM facility-level generation data is published daily rather than in near-real-time.
+WEM demand can lag NEM by up to 24 hours because WEM facility generation data is published daily, not in near-real-time.
 </Note>
 
 ---
 
-## Demand Response
+## Demand response
 
-A common question is whether demand figures are affected by demand response (DR) programs.
+Demand response (DR) programs pay consumers to reduce consumption during peak periods or high-price events. Since `TOTALDEMAND` is derived from `INITIALSUPPLY` (actual generation output), it already reflects demand *after* DR has taken effect. When DR kicks in, consumption drops, less generation gets dispatched, and `TOTALDEMAND` falls with it.
 
-**Yes — `TOTALDEMAND` reflects actual grid demand *after* demand response has taken effect.** When demand response activates, consumers reduce their consumption, which means less electricity needs to be generated. This reduction flows through to the demand figures:
+### Wholesale Demand Response (WDR)
 
-1. DR participants reduce consumption
-2. Less generation is dispatched to meet load
-3. `INITIALSUPPLY` drops (less generation output)
-4. `TOTALDEMAND` drops accordingly
+Since October 2021, AEMO's [Wholesale Demand Response Mechanism](https://www.aemo.com.au/initiatives/trials-and-initiatives/past-trials-and-initiatives/wholesale-demand-response-mechanism) lets aggregators bid load reductions directly into NEM dispatch. DR providers submit availability and price bids just like generators, and when dispatched, the load reduction shows up as reduced `TOTALDEMAND`.
 
-### Wholesale Demand Response (WDR) Mechanism
+Open Electricity doesn't distinguish between organic consumption changes and DR-driven reductions. A drop in `TOTALDEMAND` could be people using less electricity, DR activation, or both.
 
-Since October 2021, AEMO operates the [Wholesale Demand Response Mechanism](https://www.aemo.com.au/initiatives/trials-and-initiatives/past-trials-and-initiatives/wholesale-demand-response-mechanism) which allows demand response aggregators to bid load reductions into the NEM dispatch process. Under WDR:
-
-- Demand response is treated as a **supply-side resource** in NEMDE
-- DR providers submit availability and price bids, similar to generators
-- When dispatched, the load reduction appears as reduced demand in `TOTALDEMAND`
-
-**Open Electricity's demand figures do not separate "organic" demand changes from DR-driven reductions.** A drop in `TOTALDEMAND` could be caused by consumers naturally using less electricity, demand response activation, or a combination of both.
-
-For further reading on demand measurement concepts, see the [WattClarity demand explainer](https://wattclarity.com.au/articles/2025/02/3measures-demand/) and [AEMO Operational Demand Data](https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/data-nem/operational-demand-data).
+For more on demand measurement, see the [WattClarity demand explainer](https://wattclarity.com.au/articles/2025/02/3measures-demand/) and [AEMO Operational Demand Data](https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/data-nem/operational-demand-data).
 
 ---
 
-## Accessing Demand Data
+## Accessing demand data
 
 Demand data is available via the market endpoint:
 
@@ -146,9 +159,9 @@ const { datatable } = await client.getMarket("NEM", ["demand", "demand_energy"],
 
 ---
 
-## Data Intervals
+## Data intervals
 
 | Network | Interval | Source |
 |---|---|---|
-| NEM | 5 min | AEMO DISPATCHREGIONSUM (`TOTALDEMAND`) |
+| NEM | 5 min | AEMO `DISPATCHREGIONSUM` (`TOTALDEMAND`) |
 | WEM | 30 min | Derived from `facility_scada` generation totals |
