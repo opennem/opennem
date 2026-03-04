@@ -1,0 +1,219 @@
+---
+title: "Getting Started"
+description: "Fetch and display power generation by fuel type from the NEM"
+icon: "rocket"
+sidebarTitle: "Getting Started"
+---
+
+This guide walks through fetching a day of power generation data from Australia's National Electricity Market (NEM), grouped by fuel technology, and displaying it as a table. By the end you'll have a working script in either Python or TypeScript.
+
+## Prerequisites
+
+You'll need an API key from the [Open Electricity Platform](https://platform.openelectricity.org.au). See [SDK configuration](/sdk/configuration) for how to set it up as an environment variable.
+
+## Install the SDK
+
+<CodeGroup>
+```bash uv
+uv add openelectricity
+```
+
+```bash pip
+pip install openelectricity
+```
+
+```bash npm
+npm install openelectricity
+```
+
+```bash bun
+bun add openelectricity
+```
+</CodeGroup>
+
+Both SDKs read your `OPENELECTRICITY_API_KEY` environment variable automatically — no need to pass credentials in code.
+
+<Steps>
+
+### Initialise the client
+
+The client handles authentication, request retries and response parsing. See the [SDK overview](/sdk/overview) for more detail.
+
+<CodeGroup>
+```python Python
+from openelectricity import OEClient
+
+client = OEClient()
+```
+
+```typescript TypeScript
+import { OpenElectricityClient } from "openelectricity"
+
+const client = new OpenElectricityClient()
+```
+</CodeGroup>
+
+### Build the date range
+
+We'll query yesterday's full 24-hour window so the data is complete.
+
+<CodeGroup>
+```python Python
+from datetime import datetime, timedelta
+
+yesterday = (datetime.now() - timedelta(days=1)).replace(
+    hour=0, minute=0, second=0, microsecond=0
+)
+today = yesterday + timedelta(days=1)
+```
+
+```typescript TypeScript
+const yesterday = new Date()
+yesterday.setDate(yesterday.getDate() - 1)
+yesterday.setHours(0, 0, 0, 0)
+
+const today = new Date(yesterday)
+today.setDate(today.getDate() + 1)
+
+const fmt = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}T00:00:00`
+```
+</CodeGroup>
+
+<Tip>Using yesterday ensures you always get a full day of settled data. Today's data may still be arriving.</Tip>
+
+### Request power data
+
+Call `get_network_data` / `getNetworkData` with these parameters:
+
+- **`network_code="NEM"`** — the [National Electricity Market](/guides/networks) covering eastern Australia
+- **`metrics=[DataMetric.POWER]`** — instantaneous generation in MW. See the [power guide](/guides/power)
+- **`interval="1h"`** — hourly aggregation
+- **`secondary_grouping="fueltech_group"`** — break results down by [fuel technology group](/guides/fueltechs) (solar, wind, coal, etc.)
+
+<CodeGroup>
+```python Python
+from openelectricity.types import DataMetric
+
+with OEClient() as client:
+    response = client.get_network_data(
+        network_code="NEM",
+        metrics=[DataMetric.POWER],
+        interval="1h",
+        date_start=yesterday,
+        date_end=today,
+        secondary_grouping="fueltech_group",
+    )
+```
+
+```typescript TypeScript
+const { datatable } = await client.getNetworkData("NEM", ["power"], {
+  interval: "1h",
+  dateStart: fmt(yesterday),
+  dateEnd: fmt(today),
+  secondaryGrouping: ["fueltech_group"],
+})
+```
+</CodeGroup>
+
+### Understand the response
+
+The API returns time series data grouped by your requested dimensions. Each series contains:
+
+| Field | Description |
+|-------|-------------|
+| **metric** | The metric name (`power`) |
+| **unit** | Unit of measurement (`MW`) |
+| **results** | Array of named series, one per fuel technology group |
+
+Each result has a `data` array of `{ timestamp, value }` pairs at the requested interval.
+
+### Display as a table
+
+<CodeGroup>
+```python Python
+# Option 1: Polars DataFrame
+df = response.to_polars()
+print(df)
+
+# Option 2: Console-friendly records
+for record in response.to_records():
+    print(record)
+```
+
+```typescript TypeScript
+console.table(datatable.toConsole())
+```
+</CodeGroup>
+
+</Steps>
+
+## Complete example
+
+Runnable end-to-end scripts you can copy and execute directly.
+
+<CodeGroup>
+```python Python
+from datetime import datetime, timedelta
+from openelectricity import OEClient
+from openelectricity.types import DataMetric
+
+yesterday = (datetime.now() - timedelta(days=1)).replace(
+    hour=0, minute=0, second=0, microsecond=0
+)
+today = yesterday + timedelta(days=1)
+
+with OEClient() as client:
+    response = client.get_network_data(
+        network_code="NEM",
+        metrics=[DataMetric.POWER],
+        interval="1h",
+        date_start=yesterday,
+        date_end=today,
+        secondary_grouping="fueltech_group",
+    )
+    df = response.to_polars()
+    print(df)
+```
+
+```typescript TypeScript
+import { OpenElectricityClient } from "openelectricity"
+
+const yesterday = new Date()
+yesterday.setDate(yesterday.getDate() - 1)
+yesterday.setHours(0, 0, 0, 0)
+
+const today = new Date(yesterday)
+today.setDate(today.getDate() + 1)
+
+const fmt = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}T00:00:00`
+
+const client = new OpenElectricityClient()
+const { datatable } = await client.getNetworkData("NEM", ["power"], {
+  interval: "1h",
+  dateStart: fmt(yesterday),
+  dateEnd: fmt(today),
+  secondaryGrouping: ["fueltech_group"],
+})
+
+console.table(datatable.toConsole())
+```
+</CodeGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="SDK Reference — Python" icon="python" href="/sdk/python/overview">
+    Full Python client API and DataFrame integrations
+  </Card>
+  <Card title="SDK Reference — TypeScript" icon="js" href="/sdk/typescript/overview">
+    Full TypeScript client API and DataTable analysis tools
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/overview">
+    Explore all available API endpoints directly
+  </Card>
+  <Card title="Guides" icon="book" href="/guides/networks">
+    Learn about networks, fuel technologies, emissions and more
+  </Card>
+</CardGroup>
