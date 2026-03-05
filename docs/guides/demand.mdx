@@ -5,8 +5,12 @@ sidebarTitle: 'Demand'
 ---
 
 <Note>
-We're working on a new **gross demand** metric and **renewable proportion** calculation. Gross demand adds rooftop solar generation to AEMO's `DEMAND_AND_NONSCHEDGEN`, capturing consumption that the current scheduled demand figure misses. Renewable proportion uses gross demand as the denominator. Track progress in [#398](https://github.com/opennem/opennem/issues/398).
+We're working on a new **gross demand** metric and **renewable proportion** calculation. Track progress in [#398](https://github.com/opennem/opennem/issues/398).
 </Note>
+
+<Frame>
+<img src="/images/tod_chart.png" alt="time of day chart on open electricity" />
+</Frame>
 
 ## Overview
 
@@ -16,9 +20,9 @@ Everything plugged in contributes: factories, trains, streetlights, air conditio
 
 ### Daily shape
 
-Demand has a pretty consistent daily shape. It's lowest overnight when most people are asleep and businesses are shut. Morning brings a ramp as the country wakes up. Then around midday, something interesting happens: rooftop solar kicks in hard, and the demand that centralised power stations have to meet drops into a trough. This is the "duck curve" you'll see referenced everywhere in energy commentary.
+Demand has a pretty consistent daily shape. It's lowest overnight when most people are asleep and businesses are shut. Morning brings a ramp as the country wakes up. Then around midday, something interesting happens: rooftop solar kicks in hard, and the demand that centralised power stations have to meet drops into a trough. This is the [duck curve](https://en.wikipedia.org/wiki/Duck_curve) you'll see referenced in energy commentary and pictured above on Open Electricity.
 
-The tricky part comes at sunset. Solar output falls off a cliff, but people are arriving home, cooking, running heaters or AC. The grid has to ramp conventional generators fast to cover that gap. It's the steepest climb of the day and the period most likely to cause problems.
+At sunset, solar output falls off a cliff, but people are arriving home, cooking, running heaters or AC. The grid has to ramp conventional generators fast to cover that gap. It's the steepest climb of the day and the period most likely to cause problems.
 
 ### Seasons
 
@@ -28,11 +32,11 @@ Summer heatwaves drive the absolute peaks, mostly from air conditioning. Winter 
 
 AEMO dispatches generation to match demand every five minutes. If generation falls short, you get load shedding (rolling blackouts). If there's too much, frequency drifts and the system becomes unstable. Either way, bad.
 
-### The rooftop solar problem
+### Rooftop Solar and Home Batteries
 
-Rooftop solar has made demand harder to measure. A house with panels running the air conditioner at midday might draw nothing from the grid, so from AEMO's perspective that demand doesn't exist. But the person is still consuming electricity. It's just being met behind the meter, invisible to the dispatch engine.
+Rooftop solar and home batteries have made demand harder to measure. A house with panels running the air conditioner at midday might draw nothing from the grid, so from AEMO's perspective that demand doesn't exist. But the person is still consuming electricity. It's just being met behind the meter, invisible to the dispatch engine.
 
-As more rooftop solar gets installed, the gap between what AEMO can see (scheduled demand) and what's actually being consumed (underlying demand) keeps widening, especially during the middle of the day.
+As more rooftop solar gets installed, and more home batteries rolled out, the gap between what Open Electricity can see (scheduled demand) and what's actually being consumed (underlying demand) keeps widening, especially during the the day.
 
 ---
 
