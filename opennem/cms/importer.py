@@ -200,12 +200,12 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
             record_updated = True
 
         # Update new fields
-        if hasattr(facility, "osm_way_id"):
-            facility_db.osm_way_id = facility.osm_way_id.strip() if facility.osm_way_id else None
+        if hasattr(facility, "osm_way_id") and facility.osm_way_id:
+            facility_db.osm_way_id = facility.osm_way_id.strip()
             record_updated = True
 
-        if hasattr(facility, "npi_id"):
-            facility_db.npi_id = facility.npi_id.strip() if facility.npi_id else None
+        if hasattr(facility, "npi_id") and facility.npi_id:
+            facility_db.npi_id = facility.npi_id.strip()
             record_updated = True
 
         if hasattr(facility, "location") and facility.location:
