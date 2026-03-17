@@ -132,17 +132,25 @@ async def get_facilities(
                 location_dict = None
                 if facility.location is not None:
                     try:
-                        # Import here to avoid circular dependency
                         from geoalchemy2.shape import to_shape
 
-                        # Convert PostGIS geometry to shapely shape
-                        shape = to_shape(facility.location)  # type: ignore
-                        # Use coords to get x,y from Point geometry
-                        coords = list(shape.coords)[0]
+                        point_shape = to_shape(facility.location)  # type: ignore
+                        coords = list(point_shape.coords)[0]
                         location_dict = {"lat": coords[1], "lng": coords[0]}
                     except Exception as e:
-                        # Log but don't fail if geometry conversion fails
                         logger.debug(f"Failed to parse location for {facility.code}: {e}")
+
+                # Extract boundary polygon as GeoJSON if available
+                boundary_dict = None
+                if facility.boundary is not None:
+                    try:
+                        from geoalchemy2.shape import to_shape
+                        from shapely.geometry import mapping
+
+                        boundary_shape = to_shape(facility.boundary)  # type: ignore
+                        boundary_dict = mapping(boundary_shape)
+                    except Exception as e:
+                        logger.debug(f"Failed to parse boundary for {facility.code}: {e}")
 
                 # Create unit response objects from filtered units
                 unit_responses = []
@@ -228,7 +236,9 @@ async def get_facilities(
                     network_region=facility.network_region,
                     description=facility.description,
                     npi_id=facility.npi_id,
+                    osm_way_id=facility.osm_way_id,
                     location=location_dict,
+                    boundary=boundary_dict,
                     units=unit_responses,
                     created_at=facility.cms_created_at,
                     updated_at=facility.cms_updated_at,

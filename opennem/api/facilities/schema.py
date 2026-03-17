@@ -114,7 +114,9 @@ class FacilityResponseSchema(BaseModel):
     network_region: str
     description: str | None = None
     npi_id: str | None = None
+    osm_way_id: str | None = None
     location: dict | None = None  # Will contain lat/lng from PostGIS geometry
+    boundary: dict | None = None  # GeoJSON geometry (Polygon/MultiPolygon)
     units: list[UnitResponseSchema]
 
     updated_at: datetime | None = None
