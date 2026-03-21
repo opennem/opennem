@@ -1,85 +1,10 @@
-"""OpenNEM Price Queries"""
+"""Price + demand queries — ClickHouse only"""
 
 from datetime import datetime
-from textwrap import dedent
-
-from sqlalchemy import text as sql
-from sqlalchemy.sql.expression import TextClause
 
 from opennem.db.utils import get_clickhouse_interval
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval
-from opennem.utils.dates import num_intervals_between_datetimes
-
-from .exceptions import TooManyIntervals
-
-
-def get_network_region_price_query(
-    network: NetworkSchema,
-    date_min: datetime,
-    date_max: datetime | None = None,
-    interval: TimeInterval | None = None,
-    network_region_code: str | None = None,
-    forecast: bool = False,
-) -> TextClause:
-    """Gets a price query"""
-
-    __query = """
-        select
-            time_bucket_gapfill('{trunc}', bs.interval) as interval,
-            bs.network_id,
-            bs.network_region,
-            avg(bs.price) as price,
-            avg(bs.demand) as demand,
-            avg(bs.demand_total) as demand_total,
-            max(bs.ss_solar_uigf - bs.ss_solar_clearedmw) as curtailment_solar_utility_total,
-            max(bs.ss_wind_uigf - bs.ss_wind_clearedmw) as curtailment_wind_total,
-        from mv_balancing_summary bs
-        where
-            bs.interval >= '{date_min}'
-            and bs.interval <= '{date_max}'
-            and bs.network_id = '{network_id}'
-            {forecast_clause}
-            {network_regions_query}
-        group by 1, 2, 3;
-    """
-    # if only a single interval with date_min set date_max
-    if not date_max:
-        date_max = date_min
-
-    # regions clause
-    network_regions_query: str = ""
-
-    if network_region_code:
-        network_regions_query = f"and bs.network_region = '{network_region_code.upper()}'"
-
-    # forecast clause
-    forecast_clause: str = ""
-
-    if forecast:
-        forecast_clause = "and bs.forecast = true"
-
-    # if not interval provided get the default from the network
-    if not interval:
-        interval = network.get_interval()
-
-    num_intervals = num_intervals_between_datetimes(interval.get_timedelta(), date_min, date_max)
-
-    if num_intervals > 2016:  # max 7 days of 5 minute intervals
-        raise TooManyIntervals("Too many intervals: {num_intervals}. Try reducing date range or interval size")
-
-    return sql(
-        dedent(
-            __query.format(
-                network_id=network.code,
-                trunc=interval.interval_human,
-                date_max=date_max,
-                date_min=date_min,
-                network_regions_query=network_regions_query,
-                forecast_clause=forecast_clause,
-            )
-        )
-    )
 
 
 def get_network_price_demand_query_analytics(
@@ -89,42 +14,26 @@ def get_network_price_demand_query_analytics(
     interval: TimeInterval | None = None,
     network_region_code: str | None = None,
 ) -> str:
-    """
-    Get price, demand and curtailment energy from ClickHouse market_summary table.
-
-    Args:
-        network: Network schema
-        date_min: Start date
-        date_max: End date (optional)
-        interval: Time interval for aggregation (optional)
-        network_region_code: Specific network region (optional)
-
-    Returns:
-        str: ClickHouse SQL query with energy values in MWh
-    """
-    # If only a single interval with date_min set date_max
+    """Price, demand and curtailment from ClickHouse market_summary."""
     if not date_max:
         date_max = date_min
 
-    # If no interval provided get the default from the network
     if not interval:
         interval = network.get_interval()
 
     time_bucket = get_clickhouse_interval(interval)
 
-    # network regions query
     network_regions_query = ""
-    network_region_grouping = "'NEM' as network_region,"
+    network_region_grouping = f"'{network.code}' as network_region,"
 
     if network_region_code:
         network_regions_query = f"and network_region = '{network_region_code.upper()}'"
         network_region_grouping = "network_region,"
 
-    # strip timezone from date_min and date_max
     date_min = date_min.replace(tzinfo=None)
     date_max = date_max.replace(tzinfo=None)
 
-    query = f"""
+    return f"""
         SELECT
             {time_bucket}(interval) AS interval,
             network_id,
@@ -140,9 +49,6 @@ def get_network_price_demand_query_analytics(
             AND interval >= parseDateTimeBestEffort('{date_min}')
             AND interval <= parseDateTimeBestEffort('{date_max}')
             {network_regions_query}
-        GROUP BY
-            1, 2, 3
+        GROUP BY 1, 2, 3
         ORDER BY 1 DESC, 2, 3
     """
-
-    return query

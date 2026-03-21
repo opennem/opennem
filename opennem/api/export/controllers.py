@@ -18,7 +18,7 @@ from opennem.db.clickhouse import get_clickhouse_client
 from opennem.queries.curtailment import get_network_curtailment_energy_query_analytics
 from opennem.queries.flows import get_network_flows_emissions_market_value_query
 from opennem.queries.power import (
-    get_fueltech_generation_query,
+    get_fueltech_power_query_clickhouse,
     get_rooftop_forecast_generation_query,
     get_rooftop_generation_combined_query,
 )
@@ -113,17 +113,15 @@ async def power_week(
     if network_region_code and not re.match(_valid_region, network_region_code):
         raise OpenNEMInvalidNetworkRegion()
 
-    query = get_fueltech_generation_query(
+    # Fueltech generation from ClickHouse
+    ch_client = get_clickhouse_client()
+    query = get_fueltech_power_query_clickhouse(
         time_series=time_series,
         networks_query=networks_query,
         network_region=network_region_code,
     )
-
     logger.debug(query)
-
-    async with engine.begin() as conn:
-        result = await conn.execute(query)
-        row = result.fetchall()
+    row = ch_client.execute(query)
 
     stats = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
 
