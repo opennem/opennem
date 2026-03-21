@@ -15,7 +15,6 @@ from zoneinfo import ZoneInfo
 
 from sqlalchemy import select
 
-from opennem import settings
 from opennem.api.export.controllers import (
     NoResults,
     curtailment_network_region_daily,
@@ -30,7 +29,7 @@ from opennem.api.export.utils import write_output
 from opennem.api.stats.controllers import get_scada_range, get_scada_range_optimized
 from opennem.api.stats.schema import OpennemDataSet, ScadaDateRange
 from opennem.api.time import human_to_interval, human_to_period
-from opennem.controllers.energy import energy_fueltech_daily_v3, energy_fueltech_daily_v4
+from opennem.controllers.energy import energy_fueltech_daily
 from opennem.controllers.output.flows import power_flows_per_interval
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.controllers.output.weather import run_weather_daily_v3
@@ -193,20 +192,11 @@ async def export_energy(
                 logger.debug(f"Skipping since we only want latest and this is not the current year {energy_stat.year}")
                 continue
 
-            # Use v4 (ClickHouse) if feature flag is enabled, otherwise v3 (PostgreSQL)
-            if settings.use_analytics_outputs:
-                logger.info(f"Using ClickHouse analytics for energy export: {energy_stat.network.code} {energy_stat.year}")
-                stat_set = await energy_fueltech_daily_v4(
-                    network=energy_stat.network,
-                    time_series=time_series,
-                    network_region_code=energy_stat.network_region_query or energy_stat.network_region,
-                )
-            else:
-                stat_set = await energy_fueltech_daily_v3(
-                    network=energy_stat.network,
-                    time_series=time_series,
-                    network_region_code=energy_stat.network_region_query or energy_stat.network_region,
-                )
+            stat_set = await energy_fueltech_daily(
+                network=energy_stat.network,
+                time_series=time_series,
+                network_region_code=energy_stat.network_region_query or energy_stat.network_region,
+            )
 
             if not stat_set:
                 logger.error(
@@ -260,21 +250,11 @@ async def export_energy(
             time_series.year = None
             time_series.interval = human_to_interval("1M")
 
-            # Use v4 (ClickHouse) if feature flag is enabled, otherwise v3 (PostgreSQL)
-            if settings.use_analytics_outputs:
-                logger.info(f"Using ClickHouse analytics for energy export (all): {energy_stat.network.code}")
-                stat_set = await energy_fueltech_daily_v4(
-                    network=energy_stat.network,
-                    time_series=time_series,
-                    network_region_code=energy_stat.network_region_query or energy_stat.network_region,
-                )
-            else:
-                stat_set = await energy_fueltech_daily_v3(
-                    network=energy_stat.network,
-                    time_series=time_series,
-                    # networks_query=energy_stat.networks,
-                    network_region_code=energy_stat.network_region_query or energy_stat.network_region,
-                )
+            stat_set = await energy_fueltech_daily(
+                network=energy_stat.network,
+                time_series=time_series,
+                network_region_code=energy_stat.network_region_query or energy_stat.network_region,
+            )
 
             if not stat_set:
                 continue
@@ -363,21 +343,11 @@ async def export_all_monthly(networks: list[NetworkSchema] | None = None, networ
                     period=human_to_period("all"),
                 )
 
-                # Use v4 (ClickHouse) if feature flag is enabled, otherwise v3 (PostgreSQL)
-                if settings.use_analytics_outputs:
-                    logger.info(f"Using ClickHouse analytics for monthly export: {network.code} {network_region.code}")
-                    stat_set = await energy_fueltech_daily_v4(
-                        network=network,
-                        time_series=time_series,
-                        network_region_code=str(network_region.code),
-                    )
-                else:
-                    stat_set = await energy_fueltech_daily_v3(
-                        network=network,
-                        time_series=time_series,
-                        # networks_query=networks,
-                        network_region_code=str(network_region.code),
-                    )
+                stat_set = await energy_fueltech_daily(
+                    network=network,
+                    time_series=time_series,
+                    network_region_code=str(network_region.code),
+                )
 
                 if not stat_set:
                     logger.error(f"Could not get a monthly stat set for {network.code} and {network_region.code}")
@@ -452,21 +422,11 @@ async def export_all_daily(networks: list[NetworkSchema] | None = None, network_
                     period=human_to_period("all"),
                 )
 
-                # Use v4 (ClickHouse) if feature flag is enabled, otherwise v3 (PostgreSQL)
-                if settings.use_analytics_outputs:
-                    logger.info(f"Using ClickHouse analytics for monthly export: {network.code} {network_region.code}")
-                    stat_set = await energy_fueltech_daily_v4(
-                        network=network,
-                        time_series=time_series,
-                        network_region_code=str(network_region.code),
-                    )
-                else:
-                    stat_set = await energy_fueltech_daily_v3(
-                        network=network,
-                        time_series=time_series,
-                        # networks_query=networks,
-                        network_region_code=str(network_region.code),
-                    )
+                stat_set = await energy_fueltech_daily(
+                    network=network,
+                    time_series=time_series,
+                    network_region_code=str(network_region.code),
+                )
 
                 if not stat_set:
                     continue
