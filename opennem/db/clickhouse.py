@@ -1,11 +1,12 @@
 """
 ClickHouse database connection and utilities module.
 
-This module provides a singleton ClickHouse client and common utilities for working with ClickHouse.
+This module provides thread-local ClickHouse clients and common utilities for working with ClickHouse.
 """
 
 import asyncio
 import logging
+import threading
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Any
@@ -16,46 +17,55 @@ from opennem import settings
 
 logger = logging.getLogger("opennem.db.clickhouse")
 
-# Module-level singleton — clickhouse-driver Client auto-reconnects on
-# dropped connections.  Safe under Granian's single-threaded-per-worker
-# asyncio model (one Client per process).
-_client: Client | None = None
+# Thread-local storage — one Client per thread.  asyncio.to_thread dispatches
+# queries to a thread pool, so each thread needs its own connection to avoid
+# "Simultaneous queries on single connection" errors.
+_local = threading.local()
+
+
+def _make_client(timeout: int = 10) -> Client:
+    return Client(
+        host=settings.clickhouse_url.host,
+        port=settings.clickhouse_url.port,
+        user=settings.clickhouse_url.username,
+        password=settings.clickhouse_url.password,
+        database=settings.clickhouse_url.path.lstrip("/") if settings.clickhouse_url.path else "",
+        settings={"connect_timeout": timeout},
+    )
 
 
 def get_clickhouse_client(timeout: int = 10) -> Client:
     """
-    Get (or create) the singleton ClickHouse client instance.
-
-    Returns:
-        Client: A configured ClickHouse client instance
+    Get (or create) a thread-local ClickHouse client instance.
+    Connections are reused within the same thread, avoiding TCP
+    handshake overhead while remaining thread-safe.
     """
-    global _client
-    if _client is None:
-        _client = Client(
-            host=settings.clickhouse_url.host,
-            port=settings.clickhouse_url.port,
-            user=settings.clickhouse_url.username,
-            password=settings.clickhouse_url.password,
-            database=settings.clickhouse_url.path.lstrip("/") if settings.clickhouse_url.path else "",
-            settings={"connect_timeout": timeout},
-        )
-    return _client
+    client = getattr(_local, "client", None)
+    if client is None:
+        client = _make_client(timeout)
+        _local.client = client
+    return client
 
 
 async def execute_async(client: Client, query: str, params: dict | None = None, **kwargs: Any) -> Any:
     """
     Run a blocking clickhouse-driver execute() in a thread so the
-    asyncio event loop is not blocked.
+    asyncio event loop is not blocked.  Each thread in the pool gets
+    its own Client via thread-local storage.
     """
-    return await asyncio.to_thread(client.execute, query, params, **kwargs)
+
+    def _run() -> Any:
+        tl_client = get_clickhouse_client()
+        return tl_client.execute(query, params, **kwargs)
+
+    return await asyncio.to_thread(_run)
 
 
 @asynccontextmanager
 async def get_clickhouse_context() -> AsyncGenerator[Client, None]:
     """
     Async context manager for ClickHouse client connections.
-
-    Yields the singleton client — no per-request connect/disconnect.
+    Yields a thread-local client.
     """
     yield get_clickhouse_client()
 
@@ -69,39 +79,17 @@ async def get_clickhouse_dependency() -> AsyncGenerator[Client, None]:
 
 
 def create_table_if_not_exists(client: Client, table_name: str, schema: str) -> None:
-    """
-    Create a ClickHouse table if it doesn't exist.
-
-    Args:
-        client (Client): ClickHouse client
-        table_name (str): Name of the table to create
-        schema (str): CREATE TABLE schema definition
-    """
+    """Create a ClickHouse table if it doesn't exist."""
     client.execute(schema)
 
 
 def drop_table_if_exists(client: Client, table_name: str) -> None:
-    """
-    Drop a ClickHouse table if it exists.
-
-    Args:
-        client (Client): ClickHouse client
-        table_name (str): Name of the table to drop
-    """
+    """Drop a ClickHouse table if it exists."""
     client.execute(f"DROP TABLE IF EXISTS {table_name}")
 
 
 def table_exists(client: Client, table_name: str) -> bool:
-    """
-    Check if a ClickHouse table exists.
-
-    Args:
-        client (Client): ClickHouse client
-        table_name (str): Name of the table to check
-
-    Returns:
-        bool: True if table exists, False otherwise
-    """
+    """Check if a ClickHouse table exists."""
     result = client.execute(
         "SELECT name FROM system.tables WHERE database = currentDatabase() AND name = %(table)s", {"table": table_name}
     )
