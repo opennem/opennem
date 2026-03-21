@@ -7,7 +7,7 @@ for both market and data endpoints.
 
 import logging
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 
 from opennem.api.data.schema import DataMetric
 from opennem.api.market.schema import MarketMetric
@@ -22,7 +22,7 @@ logger = logging.getLogger("opennem.api.queries")
 type MetricType = DataMetric | MarketMetric | Metric
 
 
-class QueryType(str, Enum):
+class QueryType(StrEnum):
     """Type of query to build."""
 
     MARKET = "market"

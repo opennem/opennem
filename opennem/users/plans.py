@@ -4,14 +4,14 @@ API is the single source of truth for plan config.
 Clerk privateMetadata.plan is the source of truth for a user's current plan.
 """
 
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel
 
 from opennem.core.time_interval import Interval
 
 
-class OpenNEMPlan(str, Enum):
+class OpenNEMPlan(StrEnum):
     COMMUNITY = "COMMUNITY"
     PRO = "PRO"
     ACADEMIC = "ACADEMIC"

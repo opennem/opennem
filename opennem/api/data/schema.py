@@ -5,7 +5,7 @@ This module contains the Pydantic models used for data endpoint responses.
 """
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import computed_field, model_validator
 
@@ -17,7 +17,7 @@ from opennem.schema.core import BaseConfig
 from opennem.schema.field_types import SignificantFigures8
 
 
-class DataMetric(str, Enum):
+class DataMetric(StrEnum):
     """
     Data-specific metrics.
 

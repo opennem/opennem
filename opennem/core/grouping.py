@@ -7,10 +7,10 @@ It separates groupings into primary (network-based) and secondary (data-based) t
 
 from collections.abc import Sequence
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 
-class PrimaryGrouping(str, Enum):
+class PrimaryGrouping(StrEnum):
     """
     Primary grouping types for time series data.
 
@@ -25,7 +25,7 @@ class PrimaryGrouping(str, Enum):
     NETWORK_REGION = "network_region"
 
 
-class SecondaryGrouping(str, Enum):
+class SecondaryGrouping(StrEnum):
     """
     Secondary grouping types for time series data.
 

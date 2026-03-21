@@ -5,7 +5,7 @@ see matching ORM schema in database. This applies within record reactor and the 
 
 import uuid
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, Field, computed_field
 
@@ -15,7 +15,7 @@ from opennem.utils.seasons import map_date_start_to_season
 MILESTONE_SUPPORTED_NETWORKS = [NetworkNEM, NetworkWEM]
 
 
-class MilestoneAggregate(str, Enum):
+class MilestoneAggregate(StrEnum):
     """
     Enum representing different types of aggregates for milestones in the OpenNEM project.
 
@@ -28,7 +28,7 @@ class MilestoneAggregate(str, Enum):
     high = "high"
 
 
-class MilestoneType(str, Enum):
+class MilestoneType(StrEnum):
     """
     Enum representing different types of milestones in the OpenNEM project.
 
@@ -47,7 +47,7 @@ class MilestoneType(str, Enum):
     proportion = "renewable_proportion"
 
 
-class MilestoneUnit(str, Enum):
+class MilestoneUnit(StrEnum):
     """
     Enum representing different units for milestones in the OpenNEM project.
 
@@ -62,7 +62,7 @@ class MilestoneUnit(str, Enum):
     renewable_proportion = "renewable_proportion"
 
 
-class MilestonePeriod(str, Enum):
+class MilestonePeriod(StrEnum):
     """
     Enum representing different periods for milestones in the OpenNEM project.
 
@@ -82,7 +82,7 @@ class MilestonePeriod(str, Enum):
     financial_year = "financial_year"
 
 
-class MilestoneFueltechGrouping(str, Enum):
+class MilestoneFueltechGrouping(StrEnum):
     """
     Enum representing different fuel technology groupings for milestones in the OpenNEM project.
 
