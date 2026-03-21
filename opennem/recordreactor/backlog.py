@@ -3,8 +3,6 @@ Bulk analysis of milestone records.
 
 This module analyzes data from ClickHouse tables to find milestone records (highs and lows)
 across different metrics, networks, periods and grouping configurations.
-
-The live engine which runs per interval is located at opennem.recordreactor.engine
 """
 
 import logging
