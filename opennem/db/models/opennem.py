@@ -528,32 +528,6 @@ class AggregateNetworkFlows(Base):
     )
 
 
-class AggregateNetworkDemand(Base):
-    __tablename__ = "at_network_demand"
-
-    trading_day = Column(TIMESTAMP(timezone=True), primary_key=True, nullable=False)
-    network_id = Column(
-        Text, ForeignKey("network.code", name="fk_at_facility_daily_network_code"), primary_key=True, nullable=False
-    )
-    network_region = Column(Text, primary_key=True)
-    demand_energy = Column(Numeric, nullable=True)
-    demand_market_value = Column(Numeric, nullable=True)
-
-    network = relationship("Network")
-
-    __table_args__ = (
-        Index("idx_at_network_demand_network_id_trading_interval", network_id, trading_day, postgresql_using="btree"),
-        Index("idx_at_network_demand_trading_interval_network_region", trading_day, network_id, network_region),
-        Index(
-            "idx_at_network_demand_query_optimization",
-            network_id,
-            network_region,
-            trading_day,
-            postgresql_include=["demand_energy", "demand_market_value"],
-        ),
-    )
-
-
 class Milestones(Base):
     __tablename__ = "milestones"
 
@@ -592,70 +566,3 @@ class AEMOMarketNotice(Base):
     issue_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False)
     external_reference: Mapped[str | None] = mapped_column(Text, nullable=True)
     reason: Mapped[str] = mapped_column(Text, nullable=False)
-
-
-class FacilityAggregate(Base):
-    """Stores aggregated facility data with pricing and emissions calculations"""
-
-    __tablename__ = "at_facility_intervals"
-
-    # Primary key columns
-    interval: Mapped[datetime] = mapped_column(DateTime(timezone=False), primary_key=True, nullable=False)
-    network_id: Mapped[str] = mapped_column(
-        Text, ForeignKey("network.code", name="fk_facility_aggregates_network_code"), primary_key=True, nullable=False, index=True
-    )
-    facility_code: Mapped[str] = mapped_column(Text, primary_key=True, nullable=False, index=True)
-    unit_code: Mapped[str] = mapped_column(Text, primary_key=True, nullable=False, index=True)
-
-    # Data columns
-    fueltech_code: Mapped[str | None] = mapped_column(Text, nullable=False)
-    network_region: Mapped[str] = mapped_column(Text, nullable=False)
-    status_id: Mapped[str | None] = mapped_column(Text, nullable=True)
-    generated: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
-    energy: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
-    emissions: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
-    emissions_intensity: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
-    market_value: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
-
-    # Metadata
-    last_updated: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("now()"))
-
-    __table_args__ = (
-        Index("at_facility_intervals_interval_idx", interval.desc()),
-        Index("idx_at_facility_intervals_interval_network", interval.desc(), network_id),
-        Index("idx_at_facility_intervals_facility_interval", facility_code, interval.desc()),
-        Index("idx_at_facility_intervals_network_region", network_region),
-        Index(
-            "idx_facility_intervals_monthly_agg",
-            network_id,
-            interval,
-            fueltech_code,
-            postgresql_where=text(
-                "network_id = ANY (ARRAY['NEM'::text, 'AEMO_ROOFTOP'::text, 'OPENNEM_ROOFTOP_BACKFILL'::text])"
-            ),
-            postgresql_include=["energy", "market_value", "emissions"],
-        ),
-        Index(
-            "idx_facility_intervals_region_monthly_agg",
-            network_id,
-            network_region,
-            interval,
-            fueltech_code,
-            postgresql_where=text(
-                "network_id = ANY (ARRAY['NEM'::text, 'AEMO_ROOFTOP'::text, 'OPENNEM_ROOFTOP_BACKFILL'::text])"
-            ),
-            postgresql_include=["energy", "market_value", "emissions"],
-        ),
-        # Index for time bucket operations
-        Index(
-            "idx_at_facility_intervals_time_facility",
-            interval.desc(),
-            facility_code,
-        ),
-        # Index for unit code grouping
-        Index(
-            "idx_at_facility_intervals_unit_time",
-            unit_code,
-            interval.desc(),
-        ),
-    )
