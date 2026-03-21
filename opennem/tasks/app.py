@@ -53,7 +53,6 @@ from opennem.tasks.tasks import (
     task_optimize_clickhouse_tables,
     task_refresh_clickhouse_materialized_views,
     task_refresh_from_cms,
-    task_run_aggregates_demand_network_days,
     task_send_cms_updates_slack_report,
     task_update_facility_first_seen,
     task_update_facility_seen_range,
@@ -195,14 +194,6 @@ class WorkerSettings:
         #     timeout=None,
         #     unique=True,
         # ),
-        # demand aggregates
-        cron(
-            task_run_aggregates_demand_network_days,
-            minute=27,
-            second=0,
-            timeout=None,
-            unique=True,
-        ),
         # export flows and electricitymap
         cron(
             task_export_flows,

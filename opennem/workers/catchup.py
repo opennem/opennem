@@ -14,10 +14,6 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import text
 
 from opennem import settings
-from opennem.aggregates.facility_interval import (
-    run_update_facility_aggregate_last_interval,
-    update_facility_aggregate_last_hours,
-)
 from opennem.aggregates.market_summary import run_market_summary_aggregate_for_last_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.aggregates.unit_intervals import run_unit_intervals_aggregate_for_last_days
@@ -41,7 +37,6 @@ from opennem.crawlers.nemweb import (
 )
 from opennem.crawlers.wemde import ALL_WEM_CRAWLERS, run_all_wem_crawlers
 from opennem.db import get_read_session
-from opennem.db.views import refresh_recent_aggregates
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.workers.energy import (
     process_energy_last_days,
@@ -194,9 +189,6 @@ async def run_catchup_check(max_gap_minutes: int = 30) -> None:
     # run energy calculation
     await process_energy_last_intervals(num_intervals=num_intervals)
 
-    # run facility aggregate updates
-    await run_update_facility_aggregate_last_interval(num_intervals=num_intervals)
-
     # Check if the gap is now resolved
     has_gap, _ = await check_facility_data_gaps(max_gap_minutes=max_gap_minutes)
 
@@ -317,10 +309,6 @@ async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None,
     await run_unit_intervals_aggregate_for_last_days(days=days)
     await run_market_summary_aggregate_for_last_days(days=days)
     run_flows_for_last_days(days=days, network=NetworkNEM)
-    await update_facility_aggregate_last_hours(hours_back=days * 24)
-
-    # refresh materialized views
-    await refresh_recent_aggregates(days_back=days + 1)
 
     # run exports
     CURRENT_YEAR = datetime.now(ZoneInfo("Australia/Brisbane")).year

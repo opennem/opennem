@@ -133,48 +133,44 @@ def load_energy_and_emissions_for_intervals(
         2023-04-09 10:20:00        NEM           VIC1  387.120670  236.121274             0.609942
     """
 
-    engine = db_connect_sync()
+    from opennem.db.clickhouse import get_clickhouse_client
 
     if not interval_end:
         interval_end = interval_start
 
+    start_str = interval_start.strftime("%Y-%m-%d %H:%M:%S")
+    end_str = interval_end.strftime("%Y-%m-%d %H:%M:%S")
+
     query = f"""
-        select
-            fs.interval as interval,
-            fs.network_id,
-            fs.network_region,
-            sum(fs.generated) as generated,
-            sum(fs.energy) as energy,
-            sum(fs.emissions) as emissions,
-            case when sum(fs.emissions) > 0
-                then sum(fs.emissions) / sum(fs.energy)
-                else 0
-            end as emissions_intensity
-        from at_facility_intervals fs
-        where
-            fs.interval >= '{interval_start}'
-            and fs.interval <= '{interval_end}'
-            and fs.network_id IN ('{network.code}')
-            and fs.fueltech_code not in ('battery_charging')
-            and fs.generated > 0
-        group by 1, 2, 3
-        order by 1 asc;
+        SELECT
+            interval,
+            network_id,
+            network_region,
+            sum(generated) as generated,
+            sum(energy) as energy,
+            sum(emissions) as emissions,
+            if(sum(energy) > 0, sum(emissions) / sum(energy), 0) as emissions_intensity
+        FROM unit_intervals FINAL
+        WHERE
+            interval >= toDateTime('{start_str}')
+            AND interval <= toDateTime('{end_str}')
+            AND network_id = '{network.code}'
+            AND fueltech_id NOT IN ('battery_charging')
+            AND generated > 0
+        GROUP BY 1, 2, 3
+        ORDER BY 1 ASC
     """
 
     logger.debug(dedent(query))
 
-    df_gen = pd.read_sql(query, con=engine, index_col=["interval"])  # type: ignore
+    client = get_clickhouse_client()
+    rows = client.execute(query)
 
-    if df_gen.empty:
+    if not rows:
         raise FlowWorkerException("No results from load_energy_and_emissions_for_intervals")
 
-    # convert index to local timezone
-    # df_gen.index.tz_localize(network.get_fixed_offset(), ambiguous="infer")
-
-    df_gen.reset_index(inplace=True)
-
-    if df_gen.empty:
-        raise FlowWorkerException("No results from load_energy_and_emissions_for_intervals")
+    cols = ["interval", "network_id", "network_region", "generated", "energy", "emissions", "emissions_intensity"]
+    df_gen = pd.DataFrame(rows, columns=cols)
 
     return df_gen
 

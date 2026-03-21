@@ -6,13 +6,7 @@ import logging
 from arq import Retry
 
 from opennem import settings
-from opennem.aggregates.facility_interval import (
-    run_facility_aggregate_updates,
-    run_update_facility_aggregate_last_interval,
-    update_facility_aggregate_last_hours,
-)
 from opennem.aggregates.market_summary import run_market_summary_aggregate_to_now
-from opennem.aggregates.network_demand import run_aggregates_demand_network_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.aggregates.unit_intervals import run_unit_intervals_aggregate_to_now
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy
@@ -64,11 +58,7 @@ async def task_nem_interval_check(ctx) -> None:
     # update energy
     await process_energy_last_intervals(num_intervals=12 * 3)
 
-    # update facility aggregates
-    await run_update_facility_aggregate_last_interval(num_intervals=12 * 3)
-
     # update aggregates
-    # update market summary
     await run_market_summary_aggregate_to_now()
     await run_unit_intervals_aggregate_to_now()
 
@@ -89,8 +79,6 @@ async def task_nem_per_day_check(ctx) -> None:
         raise Retry(defer=ctx["job_try"] * 15)
 
     await process_energy_last_intervals(num_intervals=24 * 3)
-
-    await run_facility_aggregate_updates(lookback_days=7)
 
 
 async def task_nem_rooftop_crawl(ctx) -> None:
@@ -115,7 +103,6 @@ async def task_update_max_generation_for_units(ctx) -> None:
 async def task_wem_day_crawl(ctx) -> None:
     """This task runs per interval and checks for new data"""
     await run_all_wem_crawlers(latest=True, limit=3)
-    await update_facility_aggregate_last_hours(hours_back=36, network=NetworkWEM)
     await run_export_power_latest_for_network(network=NetworkWEM)
     await run_export_energy_for_year(network=NetworkWEM)
 
@@ -141,11 +128,6 @@ async def task_run_energy_calculation(ctx) -> None:
 async def task_run_flows_for_last_days(ctx) -> None:
     """Runs the flows for the last 2 days"""
     run_flows_for_last_days(days=2, network=NetworkNEM)
-
-
-async def task_run_aggregates_demand_network_days(ctx) -> None:
-    """Runs the demand aggregates for the last 14 days"""
-    await run_aggregates_demand_network_days(days=2)
 
 
 async def task_facility_first_seen_check(ctx) -> None:
