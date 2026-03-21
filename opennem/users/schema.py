@@ -4,14 +4,12 @@ from enum import Enum
 from pydantic import BaseModel, field_validator
 
 from opennem.api.schema import APIV4ResponseSchema
+from opennem.users.plans import OpenNEMPlan, PlanConfig, get_plan_config
 from opennem.utils.dates import chop_datetime_microseconds
 
 
 class OpenNEMRoles(Enum):
     admin = "admin"
-    pro = "pro"
-    acedemic = "academic"
-    user = "user"
     anonymous = "anonymous"
 
 
@@ -42,7 +40,7 @@ class OpenNEMUser(BaseModel):
     full_name: str | None = None
     email: str | None = None
     owner_id: str | None = None
-    plan: str | None = None
+    plan: OpenNEMPlan = OpenNEMPlan.COMMUNITY
     rate_limit: OpenNEMUserRateLimit | None = None
     unkey_meta: dict | None = None
     roles: list[OpenNEMRoles] = [OpenNEMRoles.anonymous]
@@ -55,15 +53,40 @@ class OpenNEMUser(BaseModel):
     def has_role(self, role: OpenNEMRoles) -> bool:
         return role in self.roles
 
-
-class OpenNEMAPIInvite(BaseModel):
-    name: str
-    api_key: str
-    access_level: str
-    limit: int
-    limit_interval: str
-    domain: str = "opennem.org.au"
+    @property
+    def plan_config(self) -> PlanConfig:
+        return get_plan_config(self.plan)
 
 
 class OpennemUserResponse(APIV4ResponseSchema):
     data: OpenNEMUser
+
+
+class OpenNEMUserMe(BaseModel):
+    """Public-facing user profile for /v4/me"""
+
+    id: str
+    full_name: str | None = None
+    email: str | None = None
+    plan: OpenNEMPlan = OpenNEMPlan.COMMUNITY
+    roles: list[OpenNEMRoles] = []
+    is_admin: bool | None = None
+    rate_limit: OpenNEMUserRateLimit | None = None
+    credits: OpennemAPIRequestMeta | None = None
+
+
+class OpenNEMUserMeResponse(APIV4ResponseSchema):
+    data: OpenNEMUserMe
+
+
+def to_user_me(user: OpenNEMUser) -> OpenNEMUserMe:
+    return OpenNEMUserMe(
+        id=user.id,
+        full_name=user.full_name,
+        email=user.email,
+        plan=user.plan,
+        roles=user.roles,
+        is_admin=True if user.is_admin else None,
+        rate_limit=user.rate_limit,
+        credits=user.meta,
+    )

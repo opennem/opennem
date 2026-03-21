@@ -1,7 +1,7 @@
 {
   "name": "opennem-docs",
   "version": "1.0.0",
-  "description": "OpenElectricity Documentation",
+  "description": "Open Electricity Documentation",
   "scripts": {
     "dev": "mintlify dev",
     "build": "mintlify build",

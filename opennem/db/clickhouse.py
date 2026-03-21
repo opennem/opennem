@@ -1,12 +1,14 @@
 """
 ClickHouse database connection and utilities module.
 
-This module provides a global ClickHouse client and common utilities for working with ClickHouse.
+This module provides a singleton ClickHouse client and common utilities for working with ClickHouse.
 """
 
+import asyncio
 import logging
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
+from typing import Any
 
 from clickhouse_driver import Client
 
@@ -14,22 +16,38 @@ from opennem import settings
 
 logger = logging.getLogger("opennem.db.clickhouse")
 
+# Module-level singleton — clickhouse-driver Client auto-reconnects on
+# dropped connections.  Safe under Granian's single-threaded-per-worker
+# asyncio model (one Client per process).
+_client: Client | None = None
+
 
 def get_clickhouse_client(timeout: int = 10) -> Client:
     """
-    Get a ClickHouse client instance using settings from environment.
+    Get (or create) the singleton ClickHouse client instance.
 
     Returns:
         Client: A configured ClickHouse client instance
     """
-    return Client(
-        host=settings.clickhouse_url.host,
-        port=settings.clickhouse_url.port,
-        user=settings.clickhouse_url.username,
-        password=settings.clickhouse_url.password,
-        database=settings.clickhouse_url.path.lstrip("/") if settings.clickhouse_url.path else "",
-        settings={"connect_timeout": timeout},
-    )
+    global _client
+    if _client is None:
+        _client = Client(
+            host=settings.clickhouse_url.host,
+            port=settings.clickhouse_url.port,
+            user=settings.clickhouse_url.username,
+            password=settings.clickhouse_url.password,
+            database=settings.clickhouse_url.path.lstrip("/") if settings.clickhouse_url.path else "",
+            settings={"connect_timeout": timeout},
+        )
+    return _client
+
+
+async def execute_async(client: Client, query: str, params: dict | None = None, **kwargs: Any) -> Any:
+    """
+    Run a blocking clickhouse-driver execute() in a thread so the
+    asyncio event loop is not blocked.
+    """
+    return await asyncio.to_thread(client.execute, query, params, **kwargs)
 
 
 @asynccontextmanager
@@ -37,25 +55,14 @@ async def get_clickhouse_context() -> AsyncGenerator[Client, None]:
     """
     Async context manager for ClickHouse client connections.
 
-    Yields:
-        Client: ClickHouse client for executing queries
-
-    Raises:
-        Exception: If connection fails
+    Yields the singleton client — no per-request connect/disconnect.
     """
-    client = get_clickhouse_client()
-    try:
-        yield client
-    finally:
-        client.disconnect()
+    yield get_clickhouse_client()
 
 
 async def get_clickhouse_dependency() -> AsyncGenerator[Client, None]:
     """
     FastAPI dependency for injecting ClickHouse client into route handlers.
-
-    Yields:
-        Client: ClickHouse client for executing queries
     """
     async with get_clickhouse_context() as client:
         yield client

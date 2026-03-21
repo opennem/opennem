@@ -237,6 +237,7 @@ class Facility(Base):
     npi_id: Mapped[str | None] = mapped_column(String(50), nullable=True, unique=True)  # NPI facility ID
     osm_way_id: Mapped[str | None] = mapped_column(Text, nullable=True)  # OpenStreetMap Way ID
     location = Column(Geometry("POINT", srid=4326), nullable=True)  # PostGIS location point
+    boundary = Column(Geometry("GEOMETRY", srid=4326), nullable=True)  # OSM boundary polygon/multipolygon
 
     units: Mapped[list["Unit"]] = relationship("Unit", innerjoin=True, lazy="selectin")
 

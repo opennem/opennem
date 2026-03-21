@@ -11,7 +11,6 @@ import logging
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-import logfire
 from sqlalchemy import text
 
 from opennem import settings
@@ -25,6 +24,7 @@ from opennem.aggregates.unit_intervals import run_unit_intervals_aggregate_for_l
 from opennem.api.export.tasks import export_power
 from opennem.clients.slack import slack_message
 from opennem.controllers.export import run_export_all, run_export_energy_for_year
+from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.schema import CrawlerDefinition
 from opennem.core.parsers.aemo.filenames import AEMODataBucketSize
 from opennem.crawl import run_crawl
@@ -105,7 +105,6 @@ async def check_facility_data_gaps(
         return has_gap, last_seen
 
 
-@logfire.instrument("task_catchup_check")
 async def run_catchup_check(max_gap_minutes: int = 30) -> None:
     """
     Check for data gaps and trigger catchup processes if needed.
@@ -129,9 +128,6 @@ async def run_catchup_check(max_gap_minutes: int = 30) -> None:
         return
 
     datetime_now = datetime.now(ZoneInfo("Australia/Brisbane")).replace(tzinfo=None, microsecond=0)
-
-    # Create a new incident
-    await create_incident(start_time=datetime_now, last_seen=last_seen)
 
     # Create a new incident
     await create_incident(start_time=datetime_now, last_seen=last_seen)
@@ -243,10 +239,14 @@ def _get_limit_for_crawler(crawler: CrawlerDefinition, days: int) -> int:
             return days * 12 * 24
 
 
-async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None, latest: bool = False):
-    """Run a catchup for the last 24 hours"""
+async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None, latest: bool = True):
+    """Run a gap-aware catchup for the last N days.
 
-    crawlers = []
+    When latest=True (default), crawlers use gap detection to only download missing data.
+    Aggregates and exports are skipped if no new data was crawled.
+    """
+
+    crawlers: list[CrawlerDefinition] = []
 
     if network == NetworkNEM:
         crawlers.extend(ALL_NEMWEB_CRAWLERS)
@@ -256,13 +256,30 @@ async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None,
         crawlers.extend(ALL_NEMWEB_CRAWLERS)
         crawlers.extend(ALL_WEM_CRAWLERS)
 
+    semaphore = asyncio.Semaphore(2)
+
+    async def _crawl_limited(crawler: CrawlerDefinition, **kwargs) -> ControllerReturn | None:
+        async with semaphore:
+            try:
+                return await run_crawl(crawler, **kwargs)
+            except Exception as e:
+                logger.error(f"Catchup crawler {crawler.name} failed: {e}")
+                return None
+
     crawl_tasks = []
 
     for crawler in crawlers:
         if "archive" in crawler.name.lower() and days < 3:
             continue
 
-        crawl_tasks.append(run_crawl(crawler, latest=latest, limit=_get_limit_for_crawler(crawler, days)))
+        # when latest=True, omit limit — gap detection is the filter
+        # passing limit with latest causes WEM crawlers to skip gap detection
+        if latest:
+            kwargs = {"latest": True}
+        else:
+            kwargs = {"latest": False, "limit": _get_limit_for_crawler(crawler, days)}
+
+        crawl_tasks.append((crawler.name, _crawl_limited(crawler, **kwargs)))
 
         # run the archive crawler if required and if it exists
         if crawler.contains_days and days > crawler.contains_days:
@@ -270,16 +287,30 @@ async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None,
                 logger.error(f"Crawler {crawler.name} has no archive version to fulfill request")
                 continue
 
-            crawl_tasks.append(
-                run_crawl(
-                    crawler.archive_version,
-                    latest=latest,
-                    reverse=True,
-                    limit=_get_limit_for_crawler(crawler.archive_version, days),
-                )
-            )
+            archive = crawler.archive_version
+            if latest:
+                archive_kwargs = {"latest": True, "reverse": True}
+            else:
+                archive_kwargs = {"latest": False, "reverse": True, "limit": _get_limit_for_crawler(archive, days)}
 
-    await asyncio.gather(*crawl_tasks)
+            crawl_tasks.append((archive.name, _crawl_limited(archive, **archive_kwargs)))
+
+    # run all crawl tasks
+    names = [name for name, _ in crawl_tasks]
+    coros = [coro for _, coro in crawl_tasks]
+    results: list[ControllerReturn | None] = await asyncio.gather(*coros)
+
+    # summarise what was crawled
+    total_records = sum(r.total_records for r in results if r)
+    crawled_details = [(name, r) for name, r in zip(names, results, strict=True) if r and r.total_records > 0]
+
+    if crawled_details:
+        logger.info(f"Catchup crawled {total_records} records from {len(crawled_details)} crawlers")
+        for name, r in crawled_details:
+            logger.info(f"  {name}: {r.total_records} records")
+    else:
+        logger.info(f"Catchup found no missing data for last {days} days, skipping aggregates")
+        return
 
     # run aggregates
     await process_energy_last_days(days=days)
@@ -302,7 +333,6 @@ async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None,
     )
 
 
-@logfire.instrument("catchup_aggregates")
 async def catchup_aggregates(days: int = 7) -> None:
     """
     Backfill ClickHouse aggregates (market_summary and unit_intervals) for the last N days.
@@ -326,4 +356,4 @@ if __name__ == "__main__":
     import asyncio
 
     # asyncio.run(catchup_last_days(days=4))
-    asyncio.run(catchup_aggregates(days=7))
+    asyncio.run(catchup_last_days(days=4))

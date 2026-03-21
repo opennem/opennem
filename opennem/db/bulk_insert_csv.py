@@ -6,8 +6,10 @@ Bulk inserts records using temporary tables and CSV imports with copy_from
 
 """
 
+import asyncio
 import csv
 import logging
+import random
 from datetime import datetime
 from io import StringIO
 from typing import Any, TypeVar
@@ -120,6 +122,68 @@ async def get_pool() -> Pool:
     return pool
 
 
+async def _bulkinsert_mms_items_inner[ORMTableType: Table](
+    table: type[ORMTableType],
+    records: list[dict],
+    update_fields: list[str | Column[Any]] | None = None,
+) -> int:
+    """Execute bulk insert in a single transaction. Caller handles retries."""
+    tmp_table_name, sql_queries = build_insert_query(table=table, update_cols=update_fields)
+
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            # Execute CREATE TEMP TABLE
+            await conn.execute(sql_queries[0])
+
+            # Get column names and types from the temporary table
+            table_info = await conn.fetch(f"""
+                SELECT column_name, data_type
+                FROM information_schema.columns
+                WHERE table_name = '{tmp_table_name.split(".")[-1]}'
+            """)
+
+            # Prepare records
+            columns = [col["column_name"] for col in table_info]
+            column_types = {col["column_name"]: col["data_type"] for col in table_info}
+
+            records_to_insert = []
+            for record in records:
+                record_values = []
+                for col in columns:
+                    value = record.get(col)
+                    if value is None:
+                        record_values.append(None)
+                    elif column_types[col] == "timestamp without time zone":
+                        record_values.append(value if isinstance(value, datetime) else datetime.fromisoformat(str(value)))
+                    elif column_types[col] == "numeric":
+                        record_values.append(float(value) if value is not None and value != "" else None)
+                    elif column_types[col] == "boolean":
+                        value = str(value).lower()
+                        record_values.append(value in ("true", "t", "yes", "y", "1"))
+                    elif column_types[col] in ("integer", "bigint", "smallint"):
+                        record_values.append(int(value) if value is not None else None)
+                    else:
+                        record_values.append(str(value))
+                records_to_insert.append(record_values)
+
+            await conn.copy_records_to_table(
+                tmp_table_name.split(".")[-1],
+                records=records_to_insert,
+                columns=columns,
+            )
+
+            insert_result = await conn.execute(sql_queries[2])
+
+            num_records = len(records)
+            logger.info(f"Bulk inserted {num_records} records: {insert_result}")
+
+            return num_records
+
+
+_DEADLOCK_MAX_RETRIES = 3
+
+
 async def bulkinsert_mms_items[ORMTableType: Table](
     table: type[ORMTableType],
     records: list[dict],
@@ -128,67 +192,23 @@ async def bulkinsert_mms_items[ORMTableType: Table](
     if not records:
         return 0
 
-    tmp_table_name, sql_queries = build_insert_query(table=table, update_cols=update_fields)
+    table_name = table.__table__.name
 
-    pool = await get_pool()
-    async with pool.acquire() as conn:
-        async with conn.transaction():
-            try:
-                # Execute CREATE TEMP TABLE
-                await conn.execute(sql_queries[0])
+    for attempt in range(_DEADLOCK_MAX_RETRIES):
+        try:
+            return await _bulkinsert_mms_items_inner(table, records, update_fields)
+        except asyncpg.exceptions.DeadlockDetectedError:
+            if attempt == _DEADLOCK_MAX_RETRIES - 1:
+                logger.error(f"Deadlock on {table_name} after {_DEADLOCK_MAX_RETRIES} retries, raising")
+                raise
+            wait = (2**attempt) + random.uniform(0, 1)
+            logger.warning(f"Deadlock on {table_name}, retry {attempt + 1}/{_DEADLOCK_MAX_RETRIES} in {wait:.1f}s")
+            await asyncio.sleep(wait)
+        except Exception as e:
+            logger.error(f"Error during bulk insert: {e}")
+            raise
 
-                # Get column names and types from the temporary table
-                table_info = await conn.fetch(f"""
-                    SELECT column_name, data_type
-                    FROM information_schema.columns
-                    WHERE table_name = '{tmp_table_name.split(".")[-1]}'
-                """)
-
-                # Prepare records
-                columns = [col["column_name"] for col in table_info]
-                column_types = {col["column_name"]: col["data_type"] for col in table_info}
-
-                records_to_insert = []
-                for record in records:
-                    record_values = []
-                    for col in columns:
-                        value = record.get(col)
-                        if value is None:
-                            record_values.append(None)
-                        elif column_types[col] == "timestamp without time zone":
-                            # Convert string to datetime object if it's not already
-                            record_values.append(value if isinstance(value, datetime) else datetime.fromisoformat(str(value)))
-                        elif column_types[col] == "numeric":
-                            # Ensure numeric values are passed as float or Decimal
-                            record_values.append(float(value) if value is not None and value != "" else None)
-                        elif column_types[col] == "boolean":
-                            # Convert string to boolean
-                            value = str(value).lower()
-                            record_values.append(value in ("true", "t", "yes", "y", "1"))
-                        elif column_types[col] in ("integer", "bigint", "smallint"):
-                            record_values.append(int(value) if value is not None else None)
-                        else:
-                            record_values.append(str(value))
-                    records_to_insert.append(record_values)
-
-                # Use copy_records_to_table to bulk insert the records
-                await conn.copy_records_to_table(
-                    tmp_table_name.split(".")[-1],  # Remove schema if present
-                    records=records_to_insert,
-                    columns=columns,
-                )
-
-                # Execute the INSERT ... ON CONFLICT query
-                insert_result = await conn.execute(sql_queries[2])
-
-                num_records = len(records)
-                logger.info(f"Bulk inserted {num_records} records: {insert_result}")
-
-                return num_records
-
-            except Exception as generic_error:
-                logger.error(f"Error during bulk insert: {generic_error}")
-                raise generic_error
+    return 0
 
 
 def generate_csv_from_records(

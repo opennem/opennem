@@ -7,7 +7,6 @@ Primary Router. All the main setup of the API is here.
 import logging
 from contextlib import asynccontextmanager
 
-import logfire
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.param_functions import Query
@@ -30,6 +29,7 @@ from opennem.api.facilities.router import router as facilities_router
 from opennem.api.feedback.router import router as feedback_router
 from opennem.api.market.router import router as market_router
 from opennem.api.milestones.router import milestones_router
+from opennem.api.plans.router import router as plans_router
 from opennem.api.pollution.router import router as pollution_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
 from opennem.api.security import authenticated_user
@@ -44,7 +44,7 @@ from opennem.db.models.opennem import FuelTech, Network, NetworkRegion
 from opennem.schema.opennem import FueltechSchema, OpennemErrorSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
-from opennem.users.schema import OpennemUserResponse
+from opennem.users.schema import OpenNEMUserMeResponse, to_user_me
 from opennem.utils.host import get_hostname
 from opennem.utils.version import get_version
 
@@ -61,7 +61,7 @@ async def lifespan(app: FastAPI):
     """
     # Startup logic
 
-    logfire.info(f"OpenElectricity API starting up on {settings.env}: v{get_version()} on host {get_hostname()}", service="api")
+    logger.info(f"OpenElectricity API starting up on {settings.env}: v{get_version()} on host {get_hostname()}")
 
     if settings.is_dev:
         logger.info("Cache disabled")
@@ -79,8 +79,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="OpenElectricity", debug=settings.debug, version=get_version(), redoc_url="/docs", docs_url=None, lifespan=lifespan
 )
-
-logfire.instrument_fastapi(app)
 
 # @TODO put CORS available/permissions in settings
 origins = [
@@ -158,11 +156,6 @@ async def http_type_exception_handler(request: Request, exc: HTTPException) -> O
         status_code=exc.status_code,
         response_class=resp_content,
     )
-
-
-# log API requests
-api_request_counter = logfire.metric_counter("api_request_counter")
-api_exception_counter = logfire.metric_counter("api_exception_counter")
 
 
 # @app.middleware("http")
@@ -248,6 +241,7 @@ app.include_router(milestones_router, tags=["Milestones"], prefix="/milestones",
 app.include_router(webhooks_router, tags=["Webhooks"], prefix="/webhooks", include_in_schema=False)
 app.include_router(data_router, tags=["Data"], prefix="/data")
 app.include_router(market_router, tags=["Market"], prefix="/market")
+app.include_router(plans_router, tags=["Plans"], prefix="/plans")
 
 # new v4 routes
 try:
@@ -478,14 +472,14 @@ def health_check() -> str:
 @api_version(4)
 @app.get(
     "/me",
-    response_model=OpennemUserResponse,
+    response_model=OpenNEMUserMeResponse,
     response_model_exclude_none=True,
     response_model_exclude_unset=False,
     tags=["User"],
     description="Get the current user",
 )
-async def get_user_me(user: authenticated_user) -> OpennemUserResponse:
-    return OpennemUserResponse(data=user)
+async def get_user_me(user: authenticated_user) -> OpenNEMUserMeResponse:
+    return OpenNEMUserMeResponse(data=to_user_me(user))
 
 
 @app.get("/sentry-debug", include_in_schema=False)

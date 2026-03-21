@@ -10,7 +10,6 @@ from datetime import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query
-from fastapi.responses import ORJSONResponse
 from fastapi_versionizer import api_version
 from sqlalchemy import select
 
@@ -234,4 +233,4 @@ async def get_facility_pollution(
 
             timeseries_list.append(timeseries)
 
-        return ORJSONResponse(APIV4ResponseSchema(data=timeseries_list).model_dump())
+        return APIV4ResponseSchema(data=timeseries_list)

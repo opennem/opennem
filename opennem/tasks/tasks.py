@@ -3,7 +3,6 @@
 import asyncio
 import logging
 
-import logfire
 from arq import Retry
 
 from opennem import settings
@@ -56,13 +55,11 @@ logger = logging.getLogger("opennem.pipelines.nem")
 # crawl tasks
 
 
-@logfire.instrument("task_nem_interval_check")
 async def task_nem_interval_check(ctx) -> None:
     """This task runs per interval and checks for new data"""
-    with logfire.span("task_nem_interval_check"):
-        _ = await run_crawl(AEMONemwebDispatchIS, latest=True)
-        _ = await run_crawl(AEMONNemwebDispatchScada, latest=True)
-        _ = await run_crawl(AEMONemwebTradingIS, latest=True)
+    _ = await run_crawl(AEMONemwebDispatchIS, latest=True)
+    _ = await run_crawl(AEMONNemwebDispatchScada, latest=True)
+    _ = await run_crawl(AEMONemwebTradingIS, latest=True)
 
     # update energy
     await process_energy_last_intervals(num_intervals=12 * 3)
@@ -83,7 +80,6 @@ async def task_nem_interval_check(ctx) -> None:
     )
 
 
-@logfire.instrument("task_nem_per_day_check")
 async def task_nem_per_day_check(ctx) -> None:
     """This task is run daily for NEM"""
     dispatch_actuals = await run_crawl(AEMONEMDispatchActualGEN, latest=True, limit=3)
@@ -111,13 +107,11 @@ async def task_nem_rooftop_crawl(ctx) -> None:
         raise Retry(defer=ctx["job_try"] * 15)
 
 
-@logfire.instrument("task_update_max_generation_for_units")
 async def task_update_max_generation_for_units(ctx) -> None:
     """This task runs daily to update the max generation for each unit"""
     await update_max_generation_for_units(days_since=2)
 
 
-@logfire.instrument("task_wem_day_crawl")
 async def task_wem_day_crawl(ctx) -> None:
     """This task runs per interval and checks for new data"""
     await run_all_wem_crawlers(latest=True, limit=3)
@@ -126,13 +120,11 @@ async def task_wem_day_crawl(ctx) -> None:
     await run_export_energy_for_year(network=NetworkWEM)
 
 
-@logfire.instrument("task_apvi_crawl")
 async def task_apvi_crawl(ctx) -> None:
     """Runs the APVI crawler every 10 minutes"""
     await run_crawl(APVIRooftopTodayCrawler)
 
 
-@logfire.instrument("task_bom_capitals_crawl")
 async def task_bom_capitals_crawl(ctx) -> None:
     """Runs the BOM Capitals crawler every 10 minutes"""
     await run_crawl(BOMCapitals)
@@ -141,37 +133,31 @@ async def task_bom_capitals_crawl(ctx) -> None:
 #  processing tasks
 
 
-@logfire.instrument("task_run_energy_calculation")
 async def task_run_energy_calculation(ctx) -> None:
     """Runs the energy calculation for the last 2 hours"""
     await process_energy_last_intervals(num_intervals=4)
 
 
-@logfire.instrument("task_run_flows_for_last_days")
 async def task_run_flows_for_last_days(ctx) -> None:
     """Runs the flows for the last 2 days"""
     run_flows_for_last_days(days=2, network=NetworkNEM)
 
 
-@logfire.instrument("task_run_aggregates_demand_network_days")
 async def task_run_aggregates_demand_network_days(ctx) -> None:
     """Runs the demand aggregates for the last 14 days"""
     await run_aggregates_demand_network_days(days=2)
 
 
-@logfire.instrument("task_facility_first_seen_check")
 async def task_facility_first_seen_check(ctx) -> None:
     """Runs the facility first seen check"""
     await facility_first_seen_check(send_slack=True, only_generation=True)
 
 
-@logfire.instrument("task_update_facility_seen_range")
 async def task_update_facility_seen_range(ctx) -> None:
     """Updates the facility seen range"""
     await update_facility_seen_range(interval_window_days=7)
 
 
-@logfire.instrument("task_update_facility_first_seen")
 async def task_update_facility_first_seen(ctx) -> None:
     """Updates the facility first seen"""
     await update_facility_seen_range(include_first_seen=True, interval_window_days=7)
@@ -180,7 +166,6 @@ async def task_update_facility_first_seen(ctx) -> None:
 # Output tasks
 
 
-@logfire.instrument("task_nem_power_exports")
 async def task_nem_power_exports(ctx) -> None:
     """Runs the NEM exports"""
     await asyncio.gather(
@@ -190,7 +175,6 @@ async def task_nem_power_exports(ctx) -> None:
     )
 
 
-@logfire.instrument("task_export_flows")
 async def task_export_flows(ctx) -> None:
     """Runs the flows export"""
     pass
@@ -198,7 +182,6 @@ async def task_export_flows(ctx) -> None:
     # await export_flows()
 
 
-@logfire.instrument("task_export_energy")
 async def task_export_energy(ctx) -> None:
     """Runs the energy export"""
     await export_energy(latest=True)
@@ -213,27 +196,23 @@ async def task_export_energy(ctx) -> None:
     await run_export_energy_all()
 
 
-@logfire.instrument("task_export_facility_geojson")
 async def task_export_facility_geojson(ctx) -> None:
     """Exports the facility geojson"""
     await export_facilities_static()
 
 
-# @logfire.instrument("task_sync_archive_exports")
 # async def task_sync_archive_exports(ctx) -> None:
 #     """Run and sync parquet exports to output bucket"""
 #     await sync_archive_exports()
 #     await generate_archive_dirlisting()
 
 
-@logfire.instrument("task_export_daily_monthly")
 async def task_export_daily_monthly(ctx) -> None:
     """Runs the daily and monthly exports"""
     await export_all_daily()
     await export_all_monthly()
 
 
-@logfire.instrument("task_export_capacity_history")
 async def task_export_capacity_history(ctx) -> None:
     """Export capacity history data to JSON and upload to Cloudflare.
 
@@ -246,7 +225,6 @@ async def task_export_capacity_history(ctx) -> None:
 # cms tasks from webhooks
 
 
-@logfire.instrument("task_refresh_from_cms")
 async def task_refresh_from_cms(ctx) -> None:
     """Update a unit from the CMS"""
     pass
@@ -257,36 +235,30 @@ async def task_refresh_from_cms(ctx) -> None:
 # other tasks
 
 
-@logfire.instrument("task_clean_tmp_dir")
 async def task_clean_tmp_dir(ctx) -> None:
     """Clean the tmp dir"""
     clean_tmp_dir()
 
 
-@logfire.instrument("task_run_market_notice_update")
 async def task_run_market_notice_update(ctx):
     await run_market_notice_update()
 
 
-@logfire.instrument("task_send_cms_updates_slack_report")
 async def task_send_cms_updates_slack_report(ctx):
     """Send the CMS updates slack report"""
     await send_cms_updates_slack_report()
 
 
-@logfire.instrument("task_catchup_check")
 async def task_catchup_check(ctx) -> None:
     """Check for data gaps and trigger catchup processes if needed"""
     await run_catchup_check(max_gap_minutes=settings.catchup_max_gap_minutes)
 
 
-@logfire.instrument("task_catchup_days")
 async def task_catchup_days(ctx) -> None:
     """Run a catchup for the last 24 hours"""
     await catchup_last_days(days=1)
 
 
-@logfire.instrument("task_catchup_aggregates")
 async def task_catchup_aggregates(ctx) -> None:
     """Backfill ClickHouse aggregates (market_summary and unit_intervals) for last 7 days.
 
@@ -296,7 +268,6 @@ async def task_catchup_aggregates(ctx) -> None:
     await catchup_aggregates(days=7)
 
 
-@logfire.instrument("task_update_milestones")
 async def task_update_milestones(ctx: dict) -> None:
     """
     Task to update milestone records from the last recorded milestone to now.
@@ -325,7 +296,6 @@ async def task_check_unsplit_batteries(ctx: dict) -> None:
         raise
 
 
-@logfire.instrument("task_optimize_clickhouse_tables")
 async def task_optimize_clickhouse_tables(ctx: dict) -> None:
     """
     Optimize the unit_intervals and market_summary tables to force merges and deduplication.
@@ -334,7 +304,6 @@ async def task_optimize_clickhouse_tables(ctx: dict) -> None:
     await optimize_clickhouse_tables()
 
 
-@logfire.instrument("task_refresh_clickhouse_materialized_views")
 async def task_refresh_clickhouse_materialized_views(ctx: dict) -> None:
     """
     Refresh all ClickHouse materialized views by re-backfilling recent data.
