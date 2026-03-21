@@ -21,7 +21,6 @@ from pathlib import Path
 from textwrap import dedent
 
 import polars as pl
-import psutil
 from humanize import naturalsize
 
 try:
@@ -259,18 +258,8 @@ def _get_memory_chunk_size() -> int:
     Returns:
         int: Recommended chunk size for data processing
     """
-    # Get available memory in bytes
-    available_memory = psutil.virtual_memory().available
-
-    # Use 25% of available memory as a safe buffer
-    safe_memory = available_memory * 0.5
-
-    # Estimate row size (adjust based on your data - this assumes 100 bytes per row)
-    estimated_row_size = 100
-
-    # Calculate chunk size with a minimum of 10,000 and maximum of 500,000 rows
-    chunk_size = int(safe_memory / estimated_row_size)
-    return max(10_000, min(500_000, chunk_size))
+    # Default to 200k rows — safe for typical worker memory (2-4GB)
+    return 200_000
 
 
 async def _stream_to_parquet(export_definition: OpenNEMDataExport, buffer: io.BytesIO) -> tuple[int, int]:

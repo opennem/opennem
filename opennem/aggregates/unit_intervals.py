@@ -7,11 +7,12 @@ It calculates energy values, emissions, and market values for each unit and stor
 
 import gc
 import logging
+import resource
+import sys
 from collections.abc import AsyncIterator, Sequence
 from datetime import datetime, timedelta
 
 import polars as pl
-import psutil
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -45,8 +46,10 @@ def _monitor_memory_usage() -> float:
     Returns:
         Memory usage in MB
     """
-    process = psutil.Process()
-    memory_mb = process.memory_info().rss / 1024 / 1024
+    # resource.getrusage returns maxrss in bytes on Linux, kilobytes on macOS
+    rusage = resource.getrusage(resource.RUSAGE_SELF)
+    # macOS: ru_maxrss in bytes; Linux: ru_maxrss in kilobytes
+    memory_mb = rusage.ru_maxrss / (1024 * 1024 if sys.platform == "darwin" else 1024)
     logger.debug(f"Memory usage: {memory_mb:.1f} MB")
 
     if memory_mb > 6000:  # 6GB threshold
