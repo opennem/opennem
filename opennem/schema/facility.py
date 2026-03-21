@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from opennem.schema.field_types import RoundedFloat6
 from opennem.schema.unit import UnitSchema
@@ -44,6 +44,15 @@ class FacilitySchema(BaseModel):
     website: str | None = None
     description: str | None = None
     wikipedia: str | None = None
+
+    @field_validator("description", mode="before")
+    @classmethod
+    def coerce_description(cls, v: object) -> str | None:
+        """Sanity sends description as a rich text block array — coerce to None."""
+        if isinstance(v, list):
+            return None
+        return v
+
     osm_way_id: str | None = None  # OpenStreetMap Way ID
     npi_id: str | None = None  # NPI facility ID
     photos: list[FacilityPhotoOutputSchema] | None = None
