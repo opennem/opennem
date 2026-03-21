@@ -8,7 +8,7 @@ and maintain the list of continuous aggregates in the system.
 
 import logging
 from datetime import datetime, timedelta
-from enum import Enum
+from enum import StrEnum
 
 from sqlalchemy import text
 
@@ -19,7 +19,7 @@ from opennem.utils.dates import get_last_completed_interval_for_network
 logger = logging.getLogger("opennem.db.views")
 
 
-class ContinuousAggregate(str, Enum):
+class ContinuousAggregate(StrEnum):
     """Enumeration of all continuous aggregates in the system"""
 
     FUELTECH_DAILY = "mv_fueltech_daily"

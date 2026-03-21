@@ -6,11 +6,11 @@ time interval queries in both TimescaleDB and ClickHouse databases. The interval
 are used for aggregating time series data at different granularities.
 """
 
-from enum import Enum
+from enum import StrEnum
 from typing import Literal
 
 
-class Interval(str, Enum):
+class Interval(StrEnum):
     """
     Time intervals for aggregating time series data.
 

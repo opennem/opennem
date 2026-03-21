@@ -1,5 +1,5 @@
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import Field
 
@@ -125,7 +125,7 @@ class StationUpdateResponse(ApiBase):
     record: StationRecord
 
 
-class StationModificationTypes(str, Enum):
+class StationModificationTypes(StrEnum):
     approve = "approve"
     reject = "reject"
 

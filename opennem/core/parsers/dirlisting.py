@@ -152,8 +152,10 @@ class DirectoryListing(BaseModel):
 
         return list(
             filter(
-                lambda x: x.entry_type == DirlistingEntryType.file
-                and (x.filename.suffix.lower() in accepted_extensions if accepted_extensions else True),
+                lambda x: (
+                    x.entry_type == DirlistingEntryType.file
+                    and (x.filename.suffix.lower() in accepted_extensions if accepted_extensions else True)
+                ),
                 self.entries,
             )
         )

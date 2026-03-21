@@ -3,7 +3,7 @@
 # pylint: disable=no-member
 import logging
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from geoalchemy2.elements import WKBElement
@@ -77,7 +77,7 @@ class GeoBoundary(BaseModel):
     pass
 
 
-class RecordTypes(str, Enum):
+class RecordTypes(StrEnum):
     station = "station"
     facility = "facility"
     location = "location"

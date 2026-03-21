@@ -5,14 +5,14 @@ This module contains schema definitions for market data endpoints and Pydantic m
 """
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
 from opennem.api.utils import get_api_network_from_code
 
 
-class MarketMetric(str, Enum):
+class MarketMetric(StrEnum):
     """Market metrics available in the API."""
 
     PRICE = "price"

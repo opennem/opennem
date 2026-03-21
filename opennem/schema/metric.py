@@ -5,14 +5,14 @@ Defines the OpenNEM metric schema
 
 import builtins
 from decimal import Decimal
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import Field
 
 from opennem.schema.core import BaseConfig
 
 
-class MetricId(str, Enum):
+class MetricId(StrEnum):
     demand_mega = "demand_mega"
     demand_giga = "demand_giga"
     energy_mega = "energy_mega"
@@ -22,7 +22,7 @@ class MetricId(str, Enum):
     renewable_proportion = "renewable_proportion"
 
 
-class MetricType(str, Enum):
+class MetricType(StrEnum):
     """The data type of the metric's values"""
 
     INTEGER = "integer"

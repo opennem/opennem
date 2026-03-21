@@ -8,10 +8,10 @@ units and how it should be aggregated.
 """
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 
-class Metric(str, Enum):
+class Metric(StrEnum):
     """
     Types of metrics that can be queried in OpenNEM.
 

@@ -2,10 +2,10 @@
 Pollution data schemas and enums for NPI substances
 """
 
-from enum import Enum
+from enum import StrEnum
 
 
-class DataQuality(str, Enum):
+class DataQuality(StrEnum):
     """Data quality indicators for pollution measurements"""
 
     MEASURED = "measured"  # Direct measurement
@@ -17,7 +17,7 @@ class DataQuality(str, Enum):
     UNKNOWN = "unknown"  # Quality not specified
 
 
-class PollutantCategory(str, Enum):
+class PollutantCategory(StrEnum):
     """Categories of pollutants tracked in NPI data"""
 
     AIR_POLLUTANT = "air_pollutant"
@@ -31,7 +31,7 @@ class PollutantCategory(str, Enum):
         return cls.AIR_POLLUTANT
 
 
-class PollutantCode(str, Enum):
+class PollutantCode(StrEnum):
     """Pollutant substance codes used in the database"""
 
     # Air pollutants
