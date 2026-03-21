@@ -298,7 +298,11 @@ def get_timeseries_query(
             raise ValueError(f"No aggregation function defined for metric '{m.value}'")
         col = config.get_metric_column(m, table_name)
         agg = config.get_metric_agg(m, table_name)
-        metric_selects.append(f"{agg}({col}) as {m.value.lower()}" if agg else f"{col} as {m.value.lower()}")
+        # Round in ClickHouse to avoid per-float Python rounding overhead
+        if agg:
+            metric_selects.append(f"round({agg}({col}), 6) as {m.value.lower()}")
+        else:
+            metric_selects.append(f"round({col}, 6) as {m.value.lower()}")
 
     # Build grouping columns based on query type
     group_cols = [f"'{network.code}' as network"]
