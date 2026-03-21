@@ -288,21 +288,21 @@ class Unit(Base):
         Integer, ForeignKey("facilities.id", name="fk_unit_facility_id"), nullable=True
     )
     dispatch_type: Mapped[str] = mapped_column(Text, nullable=False, default="GENERATOR")
-    capacity_registered: Mapped[float | None] = mapped_column(Numeric(precision=16, scale=4), nullable=True)
+    capacity_registered: Mapped[float | None] = mapped_column(Numeric(precision=16, scale=4, asdecimal=False), nullable=True)
     capacity_maximum: Mapped[float | None] = mapped_column(
-        Numeric(precision=12, scale=4), nullable=True
+        Numeric(precision=12, scale=4, asdecimal=False), nullable=True
     )  # Maximum capacity in MW
     capacity_storage: Mapped[float | None] = mapped_column(
-        Numeric(precision=12, scale=4), nullable=True
+        Numeric(precision=12, scale=4, asdecimal=False), nullable=True
     )  # Storage capacity in MWh
     registered: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     deregistered: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     # max generation fields - this is the max observed generation of the unit and when
-    max_generation: Mapped[float | None] = mapped_column(Numeric(precision=12, scale=4), nullable=True)
+    max_generation: Mapped[float | None] = mapped_column(Numeric(precision=12, scale=4, asdecimal=False), nullable=True)
     max_generation_interval: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
 
-    emissions_factor_co2: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    emissions_factor_co2: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6, asdecimal=False), nullable=True)
     emission_factor_source: Mapped[str | None] = mapped_column(Text, nullable=True)
     interconnector: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     interconnector_region_to: Mapped[str | None] = mapped_column(Text, nullable=True, index=True)
@@ -327,7 +327,9 @@ class Unit(Base):
     construction_start_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     construction_start_date_specificity: Mapped[str | None] = mapped_column(Text, nullable=True)  # day, month, year
     construction_start_date_source: Mapped[str | None] = mapped_column(Text, nullable=True)
-    construction_cost: Mapped[float | None] = mapped_column(Numeric(precision=12, scale=2), nullable=True)  # $ AUD Millions
+    construction_cost: Mapped[float | None] = mapped_column(
+        Numeric(precision=12, scale=2, asdecimal=False), nullable=True
+    )  # $ AUD Millions
     construction_cost_source: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Project approval fields
@@ -385,8 +387,8 @@ class UnitHistory(Base, BaseModel):
     change_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Tracked fields - NULL means no change to this field
-    capacity_registered: Mapped[float | None] = mapped_column(Numeric(precision=16, scale=4), nullable=True)
-    emissions_factor_co2: Mapped[float | None] = mapped_column(Numeric(precision=16, scale=4), nullable=True)
+    capacity_registered: Mapped[float | None] = mapped_column(Numeric(precision=16, scale=4, asdecimal=False), nullable=True)
+    emissions_factor_co2: Mapped[float | None] = mapped_column(Numeric(precision=16, scale=4, asdecimal=False), nullable=True)
     emission_factor_source: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Relationship
