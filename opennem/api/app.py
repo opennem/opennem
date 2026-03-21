@@ -67,7 +67,7 @@ async def lifespan(app: FastAPI):
         logger.info("Cache disabled")
         FastAPICache.init(backend=InMemoryBackend())
     else:
-        redis = await aioredis.from_url(str(settings.redis_url), encoding="utf8", decode_responses=True)
+        redis = await aioredis.from_url(str(settings.redis_url))
         FastAPICache.init(RedisBackend(redis), prefix="api-cache")
         logger.info("Enabled API cache")
 
