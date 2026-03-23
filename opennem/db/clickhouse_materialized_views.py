@@ -145,6 +145,14 @@ def backfill_materialized_view(
             logger.info(f"Backfilling {view.name} from {current_date} to {chunk_end}")
 
             try:
+                # For monthly views, align date ranges to month boundaries
+                # since timestamp_column stores toStartOfMonth() values
+                if view.timestamp_column == "month":
+                    range_start = current_date.replace(day=1).date()
+                else:
+                    range_start = current_date.date()
+                range_end = chunk_end.date()
+
                 # DELETE existing data for this date range to prevent double-counting
                 # This is required for SummingMergeTree which adds values during merges
                 delete_query = f"""
@@ -152,8 +160,8 @@ def backfill_materialized_view(
                     WHERE {view.timestamp_column} >= %(start)s
                     AND {view.timestamp_column} <= %(end)s
                 """
-                client.execute(delete_query, {"start": current_date.date(), "end": chunk_end.date()})
-                logger.debug(f"Deleted existing data from {view.name} for {current_date.date()} to {chunk_end.date()}")
+                client.execute(delete_query, {"start": range_start, "end": range_end})
+                logger.debug(f"Deleted existing data from {view.name} for {range_start} to {range_end}")
 
                 # INSERT new data
                 client.execute(
@@ -167,16 +175,13 @@ def backfill_materialized_view(
                         f"SELECT count() FROM {view.name} WHERE {view.timestamp_column} >= %(start)s "
                         f"AND {view.timestamp_column} <= %(end)s"
                     ),
-                    {"start": current_date.date(), "end": chunk_end.date()},
+                    {"start": range_start, "end": range_end},
                 )
                 row_count = verify[0][0] if verify else 0
                 if row_count == 0:
-                    logger.error(
-                        f"CRITICAL: Backfill {view.name} inserted 0 rows "
-                        f"for {current_date.date()} to {chunk_end.date()} — data gap!"
-                    )
+                    logger.error(f"CRITICAL: Backfill {view.name} inserted 0 rows for {range_start} to {range_end} — data gap!")
                 else:
-                    logger.info(f"Backfill {view.name}: {row_count} rows for {current_date.date()} to {chunk_end.date()}")
+                    logger.info(f"Backfill {view.name}: {row_count} rows for {range_start} to {range_end}")
             except Exception as e:
                 logger.error(f"Failed to backfill {view.name} for period {current_date} to {chunk_end}: {e}")
                 # Continue with next chunk instead of failing completely
