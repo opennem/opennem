@@ -157,7 +157,7 @@ async def run_catchup_check(max_gap_minutes: int = 30) -> None:
         try:
             await run_crawl(crawler, latest=True)
         except Exception as e:
-            logger.error(f"Error running crawler {crawler.__name__}: {e}")
+            logger.error(f"Error running crawler {crawler.name}: {e}")
 
     time_gap = datetime_now - last_seen
 
@@ -172,7 +172,7 @@ async def run_catchup_check(max_gap_minutes: int = 30) -> None:
             try:
                 await run_crawl(crawler, latest=True, limit=3, reverse=True)
             except Exception as e:
-                logger.error(f"Error running historical crawler {crawler.__name__}: {e}")
+                logger.error(f"Error running historical crawler {crawler.name}: {e}")
 
     # run wem crawlers
     await run_all_wem_crawlers(latest=False, limit=7)
@@ -344,4 +344,4 @@ if __name__ == "__main__":
     import asyncio
 
     # asyncio.run(catchup_last_days(days=4))
-    asyncio.run(catchup_last_days(days=4))
+    asyncio.run(catchup_last_days(days=2))
