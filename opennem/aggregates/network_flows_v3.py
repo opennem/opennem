@@ -156,8 +156,8 @@ def load_energy_and_emissions_for_intervals(
             AND interval <= toDateTime('{end_str}')
             AND network_id = '{network.code}'
             AND fueltech_id NOT IN ('battery_charging')
-            AND generated > 0
         GROUP BY 1, 2, 3
+        HAVING generated > 0
         ORDER BY 1 ASC
     """
 
