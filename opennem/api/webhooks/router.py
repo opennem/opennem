@@ -87,6 +87,9 @@ async def webhook_sanity_update(webhook_secret: str, request: Request) -> str:
 
     try:
         await parse_sanity_webhook_request(request_json)
+    except TimeoutError as e:
+        logger.warning(f"Sanity webhook timeout: {e}")
+        raise HTTPException(status_code=503, detail="Service temporarily unavailable") from e
     except Exception as e:
         logger.error(f"Error parsing sanity webhook: {e}")
         raise HTTPException(status_code=500, detail="Server Error") from e
