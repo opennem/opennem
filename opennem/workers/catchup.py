@@ -129,8 +129,8 @@ async def run_catchup_check(max_gap_minutes: int = 30) -> None:
 
     # Alert about the gap
     gap_msg = (
-        f"[{settings.env.upper()}] Data gap detected - Last seen: {last_seen.replace(tzinfo=None, microsecond=None)},",
-        f" Current time: {datetime_now.replace(tzinfo=None, microsecond=None)}",
+        f"[{settings.env.upper()}] Data gap detected - Last seen: {last_seen.replace(tzinfo=None, microsecond=0)},",
+        f" Current time: {datetime_now.replace(tzinfo=None, microsecond=0)}",
     )
     logger.warning(gap_msg)
 
