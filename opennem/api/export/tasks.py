@@ -199,9 +199,9 @@ async def export_energy(
             )
 
             if not stat_set:
-                logger.error(
+                logger.warning(
                     f"No result from energy_fueltech_daily for {energy_stat.network} "
-                    "{energy_stat.period} {energy_stat.network_region}"
+                    f"{energy_stat.period} {energy_stat.network_region}"
                 )
                 continue
 
