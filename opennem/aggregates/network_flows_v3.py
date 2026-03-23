@@ -146,18 +146,22 @@ def load_energy_and_emissions_for_intervals(
             interval,
             network_id,
             network_region,
-            sum(generated) as generated,
-            sum(energy) as energy,
-            sum(emissions) as emissions,
-            if(sum(energy) > 0, sum(emissions) / sum(energy), 0) as emissions_intensity
-        FROM unit_intervals FINAL
-        WHERE
-            interval >= toDateTime('{start_str}')
-            AND interval <= toDateTime('{end_str}')
-            AND network_id = '{network.code}'
-            AND fueltech_id NOT IN ('battery_charging')
+            sum(gen) as generated,
+            sum(en) as energy,
+            sum(em) as emissions,
+            if(sum(en) > 0, sum(em) / sum(en), 0) as emissions_intensity
+        FROM (
+            SELECT interval, network_id, network_region,
+                   generated as gen, energy as en, emissions as em
+            FROM unit_intervals FINAL
+            WHERE
+                interval >= toDateTime('{start_str}')
+                AND interval <= toDateTime('{end_str}')
+                AND network_id = '{network.code}'
+                AND fueltech_id NOT IN ('battery_charging')
+                AND generated > 0
+        )
         GROUP BY 1, 2, 3
-        HAVING generated > 0
         ORDER BY 1 ASC
     """
 
