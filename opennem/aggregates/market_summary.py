@@ -544,36 +544,35 @@ def _prepare_market_summary_data(
     # Compute and merge flow columns if flows_v4 is enabled
     from opennem import settings
 
+    _null_flow_cols = [
+        pl.lit(None).cast(pl.Float64).alias("energy_imports"),
+        pl.lit(None).cast(pl.Float64).alias("energy_exports"),
+        pl.lit(None).cast(pl.Float64).alias("emissions_imports"),
+        pl.lit(None).cast(pl.Float64).alias("emissions_exports"),
+        pl.lit(None).cast(pl.Float64).alias("market_value_imports"),
+        pl.lit(None).cast(pl.Float64).alias("market_value_exports"),
+    ]
+
     if settings.flows_v4:
         intervals = result_df["interval"].to_list()
         if intervals:
             start = min(intervals)
             end = max(intervals)
-            flow_df = _compute_flows_for_range(start, end)
-            if flow_df is not None and not flow_df.is_empty():
-                result_df = result_df.join(
-                    flow_df,
-                    on=["interval", "network_region"],
-                    how="left",
-                )
-            else:
-                result_df = result_df.with_columns(
-                    pl.lit(None).cast(pl.Float64).alias("energy_imports"),
-                    pl.lit(None).cast(pl.Float64).alias("energy_exports"),
-                    pl.lit(None).cast(pl.Float64).alias("emissions_imports"),
-                    pl.lit(None).cast(pl.Float64).alias("emissions_exports"),
-                    pl.lit(None).cast(pl.Float64).alias("market_value_imports"),
-                    pl.lit(None).cast(pl.Float64).alias("market_value_exports"),
-                )
+            try:
+                flow_df = _compute_flows_for_range(start, end)
+                if flow_df is not None and not flow_df.is_empty():
+                    result_df = result_df.join(
+                        flow_df,
+                        on=["interval", "network_region"],
+                        how="left",
+                    )
+                else:
+                    result_df = result_df.with_columns(_null_flow_cols)
+            except Exception as e:
+                logger.error(f"Flow computation failed ({start} to {end}): {e} — inserting NULLs")
+                result_df = result_df.with_columns(_null_flow_cols)
     else:
-        result_df = result_df.with_columns(
-            pl.lit(None).cast(pl.Float64).alias("energy_imports"),
-            pl.lit(None).cast(pl.Float64).alias("energy_exports"),
-            pl.lit(None).cast(pl.Float64).alias("emissions_imports"),
-            pl.lit(None).cast(pl.Float64).alias("emissions_exports"),
-            pl.lit(None).cast(pl.Float64).alias("market_value_imports"),
-            pl.lit(None).cast(pl.Float64).alias("market_value_exports"),
-        )
+        result_df = result_df.with_columns(_null_flow_cols)
 
     # Re-select with flow columns
     result_df = result_df.select(

@@ -56,13 +56,25 @@ logger = logging.getLogger("opennem.export.tasks")
 
 
 async def _get_interconnector_flows(time_series, network_region_code, **kwargs):
-    """Dispatch to v2 or v4 flow export based on flows_v4 feature flag."""
+    """Get interconnector flows from CH (v4) or PG (v2) based on feature flag.
+
+    When flows_v4 is enabled, errors are logged but don't propagate — the export
+    continues without flow series rather than failing entirely.
+    """
     from opennem import settings
 
     if settings.flows_v4:
-        return await energy_interconnector_flows_and_emissions_v4(
-            time_series=time_series, network_region_code=network_region_code, **kwargs
-        )
+        try:
+            result = await energy_interconnector_flows_and_emissions_v4(
+                time_series=time_series, network_region_code=network_region_code, **kwargs
+            )
+            if result and result.data:
+                return result
+            logger.warning(f"flows_v4 returned empty for {network_region_code}")
+        except Exception as e:
+            logger.error(f"flows_v4 failed for {network_region_code}: {e}")
+        return None
+
     return await energy_interconnector_flows_and_emissions_v2(
         time_series=time_series, network_region_code=network_region_code, **kwargs
     )
