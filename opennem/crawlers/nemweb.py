@@ -109,20 +109,25 @@ async def run_nemweb_aemo_crawl(
     if latest:
         time_interval = get_time_interval_for_crawler(crawler)
 
-        missing_intervals = await get_crawler_missing_intervals(
-            crawler_name=crawler.name, days=backfill_days, interval=time_interval
-        )
+        try:
+            missing_intervals = await get_crawler_missing_intervals(
+                crawler_name=crawler.name, days=backfill_days, interval=time_interval
+            )
+        except Exception as e:
+            logger.warning(f"Failed to get missing intervals for {crawler.name}, fetching latest entries: {e}")
+            missing_intervals = None
 
-        logger.debug(f"Have {len(missing_intervals)} missing intervals for {crawler.name} since {time_interval}")
+        if missing_intervals is not None:
+            logger.debug(f"Have {len(missing_intervals)} missing intervals for {crawler.name} since {time_interval}")
 
-        if not missing_intervals:
-            logger.info("Nothing to do - no missing intervals")
+            if not missing_intervals:
+                logger.info("Nothing to do - no missing intervals")
 
-        entries_to_fetch = dirlisting.get_files_aemo_intervals(missing_intervals)
+            entries_to_fetch = dirlisting.get_files_aemo_intervals(missing_intervals)
 
-        if not entries_to_fetch:
-            logger.info("Nothing to do - no entries to fetch after applying missing intervals")
-            return ControllerReturn(inserted_records=0, processed_records=0, total_records=0)
+            if not entries_to_fetch:
+                logger.info("Nothing to do - no entries to fetch after applying missing intervals")
+                return ControllerReturn(inserted_records=0, processed_records=0, total_records=0)
 
     if not entries_to_fetch:
         logger.info("Nothing to do - no entries to fetch")
