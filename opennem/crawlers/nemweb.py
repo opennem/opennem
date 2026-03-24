@@ -109,9 +109,12 @@ async def run_nemweb_aemo_crawl(
     if latest:
         time_interval = get_time_interval_for_crawler(crawler)
 
+        # use a short window for live checks to avoid massive queries
+        live_check_days = min(backfill_days, 14)
+
         try:
             missing_intervals = await get_crawler_missing_intervals(
-                crawler_name=crawler.name, days=backfill_days, interval=time_interval
+                crawler_name=crawler.name, days=live_check_days, interval=time_interval
             )
         except Exception as e:
             logger.warning(f"Failed to get missing intervals for {crawler.name}, fetching latest entries: {e}")
