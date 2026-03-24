@@ -70,9 +70,12 @@ async def _get_interconnector_flows(time_series, network_region_code, **kwargs):
             )
             if result and result.data:
                 return result
-            logger.warning(f"flows_v4 returned empty for {network_region_code}")
+            logger.warning("flows_v4 returned empty", extra={"network_region": network_region_code})
         except Exception as e:
-            logger.error(f"flows_v4 failed for {network_region_code}: {e}")
+            logger.error(
+                "flows_v4 export query failed",
+                extra={"network_region": network_region_code, "error_detail": str(e)},
+            )
         return None
 
     return await energy_interconnector_flows_and_emissions_v2(

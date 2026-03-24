@@ -606,14 +606,15 @@ async def energy_interconnector_flows_and_emissions_v4(
     date_range = time_series.get_range()
 
     # Map TimeInterval.trunc to CH truncation function
+    # Cast to DateTime to avoid Date/DateTime type mismatch in WHERE clauses
     _ch_trunc_map = {
         "5min": "toStartOfFiveMinute(interval)",
         "hour": "toStartOfHour(interval)",
         "day": "toStartOfDay(interval)",
-        "week": "toStartOfWeek(interval)",
-        "month": "toStartOfMonth(interval)",
-        "quarter": "toStartOfQuarter(interval)",
-        "year": "toStartOfYear(interval)",
+        "week": "toDateTime(toStartOfWeek(interval))",
+        "month": "toDateTime(toStartOfMonth(interval))",
+        "quarter": "toDateTime(toStartOfQuarter(interval))",
+        "year": "toDateTime(toStartOfYear(interval))",
     }
     time_fn = _ch_trunc_map.get(date_range.interval.trunc, "interval")
 
