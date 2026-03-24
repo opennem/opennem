@@ -25,6 +25,7 @@ from opennem.queries.power import (
 from opennem.queries.price import get_network_price_demand_query_analytics
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkSchema
 from opennem.schema.stats import StatTypes
+from opennem.utils.dates import fmt_clickhouse_dt
 
 _valid_region = re.compile(r"^\w{1,4}\d?$")
 
@@ -616,8 +617,8 @@ async def energy_interconnector_flows_and_emissions_v4(
         FROM market_summary FINAL
         WHERE network_id = '{time_series.network.code}'
             AND network_region = '{network_region_code}'
-            AND interval >= '{date_range.start}'
-            AND interval < '{date_range.end}'
+            AND interval >= '{fmt_clickhouse_dt(date_range.start)}'
+            AND interval < '{fmt_clickhouse_dt(date_range.end)}'
         GROUP BY 1, 2
         ORDER BY 1 DESC
     """

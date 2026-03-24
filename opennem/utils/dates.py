@@ -21,6 +21,18 @@ BRISBANE_TZ = ZoneInfo("Australia/Brisbane")
 
 logger = logging.getLogger(__name__)
 
+
+def fmt_clickhouse_dt(dt: datetime | date | object) -> str:
+    """Format a datetime for ClickHouse queries, stripping timezone info.
+
+    ClickHouse DateTime64(3) columns can't parse tz-offset strings like
+    '2026-01-01 00:00:00+10:00'. This helper returns a naive string.
+    """
+    if hasattr(dt, "strftime"):
+        return dt.strftime("%Y-%m-%d %H:%M:%S")
+    return str(dt).split("+")[0]
+
+
 # Date formats
 # See: https://docs.python.org/3.8/library/datetime.html#strftime-and-strptime-behavior
 DATE_FORMATS = [

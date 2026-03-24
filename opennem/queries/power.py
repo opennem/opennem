@@ -8,15 +8,9 @@ from sqlalchemy import TextClause, text
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.queries.utils import list_to_case
 from opennem.schema.network import NetworkAPVI, NetworkAU, NetworkSchema, NetworkWEM
+from opennem.utils.dates import fmt_clickhouse_dt
 
 logger = logging.getLogger("opennem.queries.power")
-
-
-def _fmt_ch(dt: object) -> str:
-    """Format datetime for ClickHouse, stripping timezone."""
-    if hasattr(dt, "strftime"):
-        return dt.strftime("%Y-%m-%d %H:%M:%S")
-    return str(dt).split("+")[0]
 
 
 def get_fueltech_power_query_clickhouse(
@@ -62,8 +56,8 @@ def get_fueltech_power_query_clickhouse(
             networks_query.remove(NetworkAPVI)
 
     region_filter = f" AND network_region='{network_region}'" if network_region else ""
-    start_str = _fmt_ch(time_series_range.start)
-    end_str = _fmt_ch(time_series_range.end)
+    start_str = fmt_clickhouse_dt(time_series_range.start)
+    end_str = fmt_clickhouse_dt(time_series_range.end)
 
     return f"""
     SELECT
