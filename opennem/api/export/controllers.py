@@ -598,22 +598,37 @@ async def energy_interconnector_flows_and_emissions_v4(
     time_series: OpennemExportSeries, network_region_code: str, include_emission_factor: bool = True
 ) -> OpennemDataSet | None:
     """v4: reads flow data from CH market_summary instead of PG at_network_flows."""
+
     ch_client = get_clickhouse_client()
     unit_energy = get_unit("energy_giga")
     unit_emissions = get_unit("emissions")
 
     date_range = time_series.get_range()
 
+    # Map TimeInterval.trunc to CH truncation function
+    _ch_trunc_map = {
+        "5min": "toStartOfFiveMinute(interval)",
+        "hour": "toStartOfHour(interval)",
+        "day": "toStartOfDay(interval)",
+        "week": "toStartOfWeek(interval)",
+        "month": "toStartOfMonth(interval)",
+        "quarter": "toStartOfQuarter(interval)",
+        "year": "toStartOfYear(interval)",
+    }
+    time_fn = _ch_trunc_map.get(date_range.interval.trunc, "interval")
+
     query = f"""
         SELECT
-            interval,
+            {time_fn} as interval,
             network_region,
             coalesce(sum(energy_imports), 0) / 1000 as imports_energy,
             coalesce(sum(energy_exports), 0) / 1000 as exports_energy,
             coalesce(sum(emissions_imports), 0) as emissions_imports,
             coalesce(sum(emissions_exports), 0) as emissions_exports,
             coalesce(sum(market_value_imports), 0) as market_value_imports,
-            coalesce(sum(market_value_exports), 0) as market_value_exports
+            coalesce(sum(market_value_exports), 0) as market_value_exports,
+            if(abs(sum(energy_imports)) > 0, sum(emissions_imports) / abs(sum(energy_imports)), 0) as imports_emission_factor,
+            if(sum(energy_exports) > 0, sum(emissions_exports) / sum(energy_exports), 0) as exports_emission_factor
         FROM market_summary FINAL
         WHERE network_id = '{time_series.network.code}'
             AND network_region = '{network_region_code}'
@@ -635,6 +650,8 @@ async def energy_interconnector_flows_and_emissions_v4(
     export_emissions = [DataQueryResult(interval=i[0], group_by="exports", result=i[5]) for i in row]
     import_mv = [DataQueryResult(interval=i[0], group_by="imports", result=i[6]) for i in row]
     export_mv = [DataQueryResult(interval=i[0], group_by="exports", result=i[7]) for i in row]
+    import_emission_factor = [DataQueryResult(interval=i[0], group_by="imports", result=i[8]) for i in row]
+    export_emission_factor = [DataQueryResult(interval=i[0], group_by="exports", result=i[9]) for i in row]
 
     result = stats_factory(
         imports,
@@ -698,5 +715,28 @@ async def energy_interconnector_flows_and_emissions_v4(
         localize=False,
     )
     result.append_set(result_export_mv)
+
+    if include_emission_factor:
+        result_import_ef = stats_factory(
+            import_emission_factor,
+            network=time_series.network,
+            interval=time_series.interval,
+            units=get_unit("emissions_factor"),
+            region=network_region_code,
+            fueltech_group=True,
+            localize=False,
+        )
+        result.append_set(result_import_ef)
+
+        result_export_ef = stats_factory(
+            export_emission_factor,
+            network=time_series.network,
+            interval=time_series.interval,
+            units=get_unit("emissions_factor"),
+            region=network_region_code,
+            fueltech_group=True,
+            localize=False,
+        )
+        result.append_set(result_export_ef)
 
     return result

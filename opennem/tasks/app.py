@@ -117,10 +117,12 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
-        # Refresh ClickHouse materialized views every 6 hours
+        # Refresh ClickHouse daily/monthly tables every 2 hours
+        # (these are plain tables, not auto-populating MVs, so backfill is the
+        # only way data enters them)
         cron(
             task_refresh_clickhouse_materialized_views,
-            hour={1, 7, 13, 19},
+            hour=set(range(0, 24, 2)),
             minute=30,
             second=0,
             timeout=None,

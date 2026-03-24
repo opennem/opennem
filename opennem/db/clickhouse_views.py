@@ -25,40 +25,33 @@ class MaterializedView:
     backfill_query: str
 
 
+# Daily/monthly tables use CREATE TABLE (not MATERIALIZED VIEW) to prevent
+# auto-population with partial aggregates.  Only the scheduled backfill
+# task populates these — see task_refresh_clickhouse_materialized_views.
 UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
     name="unit_intervals_daily_mv",
     timestamp_column="date",
     schema="""
-        CREATE MATERIALIZED VIEW unit_intervals_daily_mv
-        ENGINE = ReplacingMergeTree(version)
+        CREATE TABLE IF NOT EXISTS unit_intervals_daily_mv (
+            date Date,
+            network_id String,
+            network_region String,
+            facility_code String,
+            unit_code String,
+            fueltech_id String,
+            fueltech_group_id String,
+            renewable Bool,
+            status_id String,
+            generated Float64,
+            energy Float64,
+            energy_storage_sum Float64,
+            energy_storage_count UInt64,
+            emissions Float64,
+            market_value Float64,
+            interval_count UInt64,
+            version UInt64
+        ) ENGINE = ReplacingMergeTree(version)
         ORDER BY (date, network_id, network_region, facility_code, unit_code, fueltech_id, fueltech_group_id)
-        AS SELECT
-            toDate(interval) as date,
-            network_id,
-            network_region,
-            facility_code,
-            unit_code,
-            fueltech_id,
-            fueltech_group_id,
-            any(renewable) as renewable,
-            any(status_id) as status_id,
-            sum(generated) as generated,
-            sum(energy) as energy,
-            sum(coalesce(energy_storage, 0)) as energy_storage_sum,
-            countIf(energy_storage IS NOT NULL) as energy_storage_count,
-            sum(emissions) as emissions,
-            sum(market_value) as market_value,
-            count() as interval_count,
-            toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
-        FROM unit_intervals
-        GROUP BY
-            date,
-            network_id,
-            network_region,
-            facility_code,
-            unit_code,
-            fueltech_id,
-            fueltech_group_id
     """,
     backfill_query="""
         INSERT INTO unit_intervals_daily_mv
@@ -151,31 +144,23 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
     name="fueltech_intervals_daily_mv",
     timestamp_column="date",
     schema="""
-        CREATE MATERIALIZED VIEW fueltech_intervals_daily_mv
-        ENGINE = ReplacingMergeTree(version)
+        CREATE TABLE IF NOT EXISTS fueltech_intervals_daily_mv (
+            date Date,
+            network_id String,
+            network_region String,
+            fueltech_id String,
+            fueltech_group_id String,
+            generated Float64,
+            energy Float64,
+            energy_storage_sum Float64,
+            energy_storage_count UInt64,
+            emissions Float64,
+            market_value Float64,
+            unit_count UInt64,
+            interval_count UInt64,
+            version UInt64
+        ) ENGINE = ReplacingMergeTree(version)
         ORDER BY (date, network_id, network_region, fueltech_id, fueltech_group_id)
-        AS SELECT
-            toDate(interval) as date,
-            network_id,
-            network_region,
-            fueltech_id,
-            fueltech_group_id,
-            sum(generated) as generated,
-            sum(energy) as energy,
-            sum(coalesce(energy_storage, 0)) as energy_storage_sum,
-            countIf(energy_storage IS NOT NULL) as energy_storage_count,
-            sum(emissions) as emissions,
-            sum(market_value) as market_value,
-            count() as unit_count,
-            count(distinct interval) as interval_count,
-            toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
-        FROM unit_intervals
-        GROUP BY
-            date,
-            network_id,
-            network_region,
-            fueltech_id,
-            fueltech_group_id
     """,
     backfill_query="""
         INSERT INTO fueltech_intervals_daily_mv
@@ -252,26 +237,22 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
     name="renewable_intervals_daily_mv",
     timestamp_column="date",
     schema="""
-        CREATE MATERIALIZED VIEW renewable_intervals_daily_mv
-        ENGINE = ReplacingMergeTree(version)
+        CREATE TABLE IF NOT EXISTS renewable_intervals_daily_mv (
+            date Date,
+            network_id String,
+            network_region String,
+            renewable Bool,
+            generated Float64,
+            energy Float64,
+            energy_storage_sum Float64,
+            energy_storage_count UInt64,
+            emissions Float64,
+            market_value Float64,
+            unit_count UInt64,
+            interval_count UInt64,
+            version UInt64
+        ) ENGINE = ReplacingMergeTree(version)
         ORDER BY (date, network_id, network_region, renewable)
-        AS SELECT
-            toDate(interval) as date,
-            network_id,
-            network_region,
-            renewable,
-            sum(generated) as generated,
-            sum(energy) as energy,
-            sum(coalesce(energy_storage, 0)) as energy_storage_sum,
-            countIf(energy_storage IS NOT NULL) as energy_storage_count,
-            sum(emissions) as emissions,
-            sum(market_value) as market_value,
-            count() as unit_count,
-            count(distinct interval) as interval_count,
-            toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
-        FROM unit_intervals
-        WHERE fueltech_id not in ('pumps')
-        GROUP BY date, network_id, network_region, renewable
     """,
     backfill_query="""
         INSERT INTO renewable_intervals_daily_mv
@@ -300,45 +281,39 @@ MARKET_SUMMARY_DAILY_VIEW = MaterializedView(
     name="market_summary_daily_mv",
     timestamp_column="date",
     schema="""
-        CREATE MATERIALIZED VIEW market_summary_daily_mv
-        ENGINE = ReplacingMergeTree(version)
+        CREATE TABLE IF NOT EXISTS market_summary_daily_mv (
+            date Date,
+            network_id String,
+            network_region String,
+            price_sum Float64,
+            price_count UInt64,
+            demand_sum Float64,
+            demand_total_sum Float64,
+            demand_gross_sum Float64,
+            generation_renewable_sum Float64,
+            demand_energy_daily Float64,
+            demand_total_energy_daily Float64,
+            demand_gross_energy_daily Float64,
+            generation_renewable_energy_daily Float64,
+            demand_market_value_daily Float64,
+            demand_total_market_value_daily Float64,
+            demand_gross_market_value_daily Float64,
+            curtailment_solar_total_daily Float64,
+            curtailment_wind_total_daily Float64,
+            curtailment_total_daily Float64,
+            curtailment_energy_solar_total_daily Float64,
+            curtailment_energy_wind_total_daily Float64,
+            curtailment_energy_total_daily Float64,
+            energy_imports_daily Float64,
+            energy_exports_daily Float64,
+            emissions_imports_daily Float64,
+            emissions_exports_daily Float64,
+            market_value_imports_daily Float64,
+            market_value_exports_daily Float64,
+            interval_count UInt64,
+            version UInt64
+        ) ENGINE = ReplacingMergeTree(version)
         ORDER BY (date, network_id, network_region)
-        AS SELECT
-            toDate(interval) as date,
-            network_id,
-            network_region,
-            sum(price) as price_sum,
-            countIf(price IS NOT NULL) as price_count,
-            sum(demand) as demand_sum,
-            sum(demand_total) as demand_total_sum,
-            sum(demand_gross) as demand_gross_sum,
-            sum(generation_renewable) as generation_renewable_sum,
-            sum(demand_energy) as demand_energy_daily,
-            sum(demand_total_energy) as demand_total_energy_daily,
-            sum(demand_gross_energy) as demand_gross_energy_daily,
-            sum(generation_renewable_energy) as generation_renewable_energy_daily,
-            sum(demand_market_value) as demand_market_value_daily,
-            sum(demand_total_market_value) as demand_total_market_value_daily,
-            sum(demand_gross_market_value) as demand_gross_market_value_daily,
-            sum(curtailment_solar_total) as curtailment_solar_total_daily,
-            sum(curtailment_wind_total) as curtailment_wind_total_daily,
-            sum(curtailment_total) as curtailment_total_daily,
-            sum(curtailment_energy_solar_total) as curtailment_energy_solar_total_daily,
-            sum(curtailment_energy_wind_total) as curtailment_energy_wind_total_daily,
-            sum(curtailment_energy_total) as curtailment_energy_total_daily,
-            sum(energy_imports) as energy_imports_daily,
-            sum(energy_exports) as energy_exports_daily,
-            sum(emissions_imports) as emissions_imports_daily,
-            sum(emissions_exports) as emissions_exports_daily,
-            sum(market_value_imports) as market_value_imports_daily,
-            sum(market_value_exports) as market_value_exports_daily,
-            count() as interval_count,
-            toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
-        FROM market_summary
-        GROUP BY
-            date,
-            network_id,
-            network_region
     """,
     backfill_query="""
         INSERT INTO market_summary_daily_mv
@@ -386,45 +361,39 @@ MARKET_SUMMARY_MONTHLY_VIEW = MaterializedView(
     name="market_summary_monthly_mv",
     timestamp_column="month",
     schema="""
-        CREATE MATERIALIZED VIEW market_summary_monthly_mv
-        ENGINE = ReplacingMergeTree(version)
+        CREATE TABLE IF NOT EXISTS market_summary_monthly_mv (
+            month Date,
+            network_id String,
+            network_region String,
+            price_sum Float64,
+            price_count UInt64,
+            demand_sum Float64,
+            demand_total_sum Float64,
+            demand_gross_sum Float64,
+            generation_renewable_sum Float64,
+            demand_energy_monthly Float64,
+            demand_total_energy_monthly Float64,
+            demand_gross_energy_monthly Float64,
+            generation_renewable_energy_monthly Float64,
+            demand_market_value_monthly Float64,
+            demand_total_market_value_monthly Float64,
+            demand_gross_market_value_monthly Float64,
+            curtailment_solar_total_monthly Float64,
+            curtailment_wind_total_monthly Float64,
+            curtailment_total_monthly Float64,
+            curtailment_energy_solar_total_monthly Float64,
+            curtailment_energy_wind_total_monthly Float64,
+            curtailment_energy_total_monthly Float64,
+            energy_imports_monthly Float64,
+            energy_exports_monthly Float64,
+            emissions_imports_monthly Float64,
+            emissions_exports_monthly Float64,
+            market_value_imports_monthly Float64,
+            market_value_exports_monthly Float64,
+            interval_count UInt64,
+            version UInt64
+        ) ENGINE = ReplacingMergeTree(version)
         ORDER BY (month, network_id, network_region)
-        AS SELECT
-            toStartOfMonth(interval) as month,
-            network_id,
-            network_region,
-            sum(price) as price_sum,
-            countIf(price IS NOT NULL) as price_count,
-            sum(demand) as demand_sum,
-            sum(demand_total) as demand_total_sum,
-            sum(demand_gross) as demand_gross_sum,
-            sum(generation_renewable) as generation_renewable_sum,
-            sum(demand_energy) as demand_energy_monthly,
-            sum(demand_total_energy) as demand_total_energy_monthly,
-            sum(demand_gross_energy) as demand_gross_energy_monthly,
-            sum(generation_renewable_energy) as generation_renewable_energy_monthly,
-            sum(demand_market_value) as demand_market_value_monthly,
-            sum(demand_total_market_value) as demand_total_market_value_monthly,
-            sum(demand_gross_market_value) as demand_gross_market_value_monthly,
-            sum(curtailment_solar_total) as curtailment_solar_total_monthly,
-            sum(curtailment_wind_total) as curtailment_wind_total_monthly,
-            sum(curtailment_total) as curtailment_total_monthly,
-            sum(curtailment_energy_solar_total) as curtailment_energy_solar_total_monthly,
-            sum(curtailment_energy_wind_total) as curtailment_energy_wind_total_monthly,
-            sum(curtailment_energy_total) as curtailment_energy_total_monthly,
-            sum(energy_imports) as energy_imports_monthly,
-            sum(energy_exports) as energy_exports_monthly,
-            sum(emissions_imports) as emissions_imports_monthly,
-            sum(emissions_exports) as emissions_exports_monthly,
-            sum(market_value_imports) as market_value_imports_monthly,
-            sum(market_value_exports) as market_value_exports_monthly,
-            count() as interval_count,
-            toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
-        FROM market_summary
-        GROUP BY
-            month,
-            network_id,
-            network_region
     """,
     backfill_query="""
         INSERT INTO market_summary_monthly_mv

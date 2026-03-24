@@ -8,6 +8,8 @@ materialized views in ClickHouse.
 import logging
 from datetime import datetime, timedelta
 
+from clickhouse_driver import Client
+
 from opennem.db.clickhouse import get_clickhouse_client, table_exists
 from opennem.db.clickhouse_views import (
     CLICKHOUSE_MATERIALIZED_VIEWS,
@@ -17,10 +19,20 @@ from opennem.db.clickhouse_views import (
 logger = logging.getLogger("opennem.db.clickhouse_materialized_views")
 
 
+def _is_materialized_view(client: Client, name: str) -> bool:
+    """Check if a ClickHouse object is a MATERIALIZED VIEW (vs a plain TABLE)."""
+    result = client.execute(
+        "SELECT engine FROM system.tables WHERE database = currentDatabase() AND name = %(name)s",
+        {"name": name},
+    )
+    return bool(result and "MaterializedView" in str(result[0][0]))
+
+
 def ensure_materialized_views_exist(views: list[MaterializedView] | None = None) -> None:
     """
-    Ensure that materialized views exist in ClickHouse.
-    Creates them if they don't exist.
+    Ensure that materialized views / tables exist in ClickHouse.
+    Creates them if they don't exist.  If the schema changed from
+    MATERIALIZED VIEW to TABLE (or vice-versa), drops and recreates.
 
     Args:
         views: List of MaterializedView objects to ensure exist.
@@ -32,11 +44,26 @@ def ensure_materialized_views_exist(views: list[MaterializedView] | None = None)
         views = list(CLICKHOUSE_MATERIALIZED_VIEWS.values())
 
     for view in views:
-        if not table_exists(client, view.name):
+        wants_table = "CREATE TABLE" in view.schema.upper()
+        exists = table_exists(client, view.name)
+
+        if exists:
+            is_mv = _is_materialized_view(client, view.name)
+            # Migrate MV → TABLE (or TABLE → MV) if the schema type changed
+            if wants_table and is_mv:
+                logger.info(f"Migrating {view.name} from MATERIALIZED VIEW to TABLE")
+                client.execute(f"DROP TABLE IF EXISTS {view.name}")
+                exists = False
+            elif not wants_table and not is_mv:
+                logger.info(f"Migrating {view.name} from TABLE to MATERIALIZED VIEW")
+                client.execute(f"DROP TABLE IF EXISTS {view.name}")
+                exists = False
+
+        if not exists:
             client.execute(view.schema)
-            logger.info(f"Created materialized view: {view.name}")
+            logger.info(f"Created: {view.name}")
         else:
-            logger.debug(f"Materialized view already exists: {view.name}")
+            logger.debug(f"Already exists: {view.name}")
 
 
 def refresh_materialized_views(views: list[MaterializedView | str] | None = None, drop_existing: bool = False) -> None:
@@ -99,11 +126,9 @@ def backfill_materialized_view(
     if end_date is not None:
         end_date = end_date.replace(hour=23, minute=59, second=59, microsecond=0)
 
-    # Determine source table from the view schema
-    source_table = _get_source_table_from_view(view)
-
-    # Get date range if not provided
+    # Get date range if not provided — needs the source table name
     if start_date is None or end_date is None:
+        source_table = _get_source_table_from_view(view)
         try:
             result = client.execute(f"""
                 SELECT
@@ -268,15 +293,18 @@ def _get_source_table_from_view(view: MaterializedView) -> str:
     Returns:
         str: Name of the source table
     """
-    # Simple extraction - looks for FROM clause in the schema
-    # This assumes the source table is the first FROM in the SELECT statement
-    schema_lower = view.schema.lower()
-    from_index = schema_lower.find(" from ")
-    if from_index == -1:
-        raise ValueError(f"Could not find FROM clause in view schema for {view.name}")
+    # Extract source table from schema (MV) or backfill_query (plain TABLE)
+    # Looks for the first FROM clause in a SELECT statement
+    for sql in (view.schema, view.backfill_query):
+        sql_lower = sql.lower()
+        from_index = sql_lower.find(" from ")
+        if from_index != -1:
+            break
+    else:
+        raise ValueError(f"Could not find FROM clause in schema or backfill_query for {view.name}")
 
     # Extract table name after FROM
-    after_from = view.schema[from_index + 6 :].strip()
+    after_from = sql[from_index + 6 :].strip()
 
     # Handle FINAL modifier
     if after_from.lower().startswith("("):
