@@ -51,7 +51,8 @@ from opennem.tasks.tasks import (
     task_nem_per_day_check,
     task_nem_rooftop_crawl,
     task_optimize_clickhouse_tables,
-    task_refresh_clickhouse_materialized_views,
+    task_refresh_clickhouse_mv_fast,
+    task_refresh_clickhouse_mv_full,
     task_refresh_from_cms,
     task_send_cms_updates_slack_report,
     task_update_facility_first_seen,
@@ -117,17 +118,10 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
-        # Refresh ClickHouse daily/monthly tables every 2 hours
-        # (these are plain tables, not auto-populating MVs, so backfill is the
-        # only way data enters them)
-        cron(
-            task_refresh_clickhouse_materialized_views,
-            hour=set(range(0, 24, 2)),
-            minute=30,
-            second=0,
-            timeout=None,
-            unique=True,
-        ),
+        # Fast MV refresh: 2-day backfill every 5 min (no OPTIMIZE)
+        cron(task_refresh_clickhouse_mv_fast, minute=set(range(0, 60, 5)), second=10, timeout=None, unique=True),
+        # Full MV refresh: 7-day backfill + OPTIMIZE every 6h
+        cron(task_refresh_clickhouse_mv_full, hour={1, 7, 13, 19}, minute=30, second=0, timeout=None, unique=True),
         # NEM Rooftop
         cron(
             task_nem_rooftop_crawl,

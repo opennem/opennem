@@ -8,8 +8,6 @@ materialized views in ClickHouse.
 import logging
 from datetime import datetime, timedelta
 
-from clickhouse_driver import Client
-
 from opennem.db.clickhouse import get_clickhouse_client, table_exists
 from opennem.db.clickhouse_views import (
     CLICKHOUSE_MATERIALIZED_VIEWS,
@@ -19,43 +17,28 @@ from opennem.db.clickhouse_views import (
 logger = logging.getLogger("opennem.db.clickhouse_materialized_views")
 
 
-def _is_materialized_view(client: Client, name: str) -> bool:
-    """Check if a ClickHouse object is a MATERIALIZED VIEW (vs a plain TABLE)."""
-    result = client.execute(
-        "SELECT engine FROM system.tables WHERE database = currentDatabase() AND name = %(name)s",
-        {"name": name},
-    )
-    return bool(result and "MaterializedView" in str(result[0][0]))
-
-
 def ensure_materialized_views_exist(views: list[MaterializedView] | None = None) -> None:
-    """
-    Ensure that materialized views / tables exist in ClickHouse.
-    Creates them if they don't exist.  If the schema changed from
-    MATERIALIZED VIEW to TABLE (or vice-versa), drops and recreates.
-
-    Args:
-        views: List of MaterializedView objects to ensure exist.
-               If None, ensures all views in CLICKHOUSE_MATERIALIZED_VIEWS exist.
-    """
+    """Ensure MVs exist. Drops and recreates if the engine type changed
+    (e.g. TABLE → MATERIALIZED VIEW after a schema migration)."""
     client = get_clickhouse_client()
 
     if views is None:
         views = list(CLICKHOUSE_MATERIALIZED_VIEWS.values())
 
     for view in views:
-        wants_table = "CREATE TABLE" in view.schema.upper()
         exists = table_exists(client, view.name)
 
         if exists:
-            is_mv = _is_materialized_view(client, view.name)
-            # Migrate MV → TABLE (or TABLE → MV) if the schema type changed
-            if wants_table and is_mv:
-                logger.info(f"Migrating {view.name} from MATERIALIZED VIEW to TABLE")
-                client.execute(f"DROP TABLE IF EXISTS {view.name}")
-                exists = False
-            elif not wants_table and not is_mv:
-                logger.info(f"Migrating {view.name} from TABLE to MATERIALIZED VIEW")
+            # Check if engine type matches schema (TABLE vs MV)
+            result = client.execute(
+                "SELECT engine FROM system.tables WHERE database = currentDatabase() AND name = %(name)s",
+                {"name": view.name},
+            )
+            is_mv = bool(result and "MaterializedView" in str(result[0][0]))
+            wants_mv = "CREATE MATERIALIZED VIEW" in view.schema.upper()
+
+            if is_mv != wants_mv:
+                logger.info(f"Recreating {view.name} (engine type changed)")
                 client.execute(f"DROP TABLE IF EXISTS {view.name}")
                 exists = False
 
@@ -429,19 +412,8 @@ def refresh_all_materialized_views(
     end_date = now.replace(hour=23, minute=59, second=59, microsecond=0)
     start_date = (now - timedelta(days=days)).replace(hour=0, minute=0, second=0, microsecond=0)
 
-    logger.info(f"Refreshing materialized views from {start_date.date()} to {end_date.date()}")
+    logger.info(f"Refreshing materialized views: {start_date.date()} to {end_date.date()} ({days}d, optimize={optimize})")
 
-    # Print current stats
-    print("\n=== Current MV Stats ===")
-    stats = get_materialized_view_stats(views)
-    for name, s in stats.items():
-        if s.get("exists"):
-            print(f"  {name}: {s['record_count']:,} records, {s['min_date']} to {s['max_date']}")
-        else:
-            print(f"  {name}: does not exist")
-
-    # Backfill
-    print(f"\n=== Backfilling {days} days ===")
     results = backfill_materialized_views(
         views=views,
         start_date=start_date,
@@ -449,26 +421,14 @@ def refresh_all_materialized_views(
         refresh_views=False,
     )
 
-    for name, count in results.items():
-        print(f"  {name}: {count:,} records")
-
-    # Optimize tables to merge duplicates
     if optimize:
-        print("\n=== Optimizing tables ===")
         view_names = views or list(CLICKHOUSE_MATERIALIZED_VIEWS.keys())
         for name in view_names:
             try:
-                print(f"  Optimizing {name}...")
                 client.execute(f"OPTIMIZE TABLE {name} FINAL")
+                logger.info(f"Optimized {name}")
             except Exception as e:
                 logger.error(f"Failed to optimize {name}: {e}")
-
-    # Print final stats
-    print("\n=== Final MV Stats ===")
-    stats = get_materialized_view_stats(views)
-    for name, s in stats.items():
-        if s.get("exists"):
-            print(f"  {name}: {s['record_count']:,} records, {s['min_date']} to {s['max_date']}")
 
     return results
 
