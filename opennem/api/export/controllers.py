@@ -619,22 +619,33 @@ async def energy_interconnector_flows_and_emissions_v4(
 
     query = f"""
         SELECT
-            {time_fn} as interval,
+            interval,
             network_region,
-            coalesce(sum(energy_imports), 0) / 1000 as imports_energy,
-            coalesce(sum(energy_exports), 0) / 1000 as exports_energy,
-            coalesce(sum(emissions_imports), 0) as emissions_imports,
-            coalesce(sum(emissions_exports), 0) as emissions_exports,
-            coalesce(sum(market_value_imports), 0) as market_value_imports,
-            coalesce(sum(market_value_exports), 0) as market_value_exports,
-            if(abs(sum(energy_imports)) > 0, sum(emissions_imports) / abs(sum(energy_imports)), 0) as imports_emission_factor,
-            if(sum(energy_exports) > 0, sum(emissions_exports) / sum(energy_exports), 0) as exports_emission_factor
-        FROM market_summary FINAL
-        WHERE network_id = '{time_series.network.code}'
-            AND network_region = '{network_region_code}'
-            AND interval >= '{fmt_clickhouse_dt(date_range.start)}'
-            AND interval < '{fmt_clickhouse_dt(date_range.end)}'
-        GROUP BY 1, 2
+            imports_energy,
+            exports_energy,
+            total_emissions_imports,
+            total_emissions_exports,
+            total_mv_imports,
+            total_mv_exports,
+            if(abs(imports_energy) > 0, total_emissions_imports / abs(imports_energy * 1000), 0) as imports_emission_factor,
+            if(exports_energy > 0, total_emissions_exports / (exports_energy * 1000), 0) as exports_emission_factor
+        FROM (
+            SELECT
+                {time_fn} as interval,
+                network_region,
+                coalesce(sum(energy_imports), 0) / 1000 as imports_energy,
+                coalesce(sum(energy_exports), 0) / 1000 as exports_energy,
+                coalesce(sum(emissions_imports), 0) as total_emissions_imports,
+                coalesce(sum(emissions_exports), 0) as total_emissions_exports,
+                coalesce(sum(market_value_imports), 0) as total_mv_imports,
+                coalesce(sum(market_value_exports), 0) as total_mv_exports
+            FROM market_summary FINAL
+            WHERE network_id = '{time_series.network.code}'
+                AND network_region = '{network_region_code}'
+                AND interval >= '{fmt_clickhouse_dt(date_range.start)}'
+                AND interval < '{fmt_clickhouse_dt(date_range.end)}'
+            GROUP BY 1, 2
+        )
         ORDER BY 1 DESC
     """
 
