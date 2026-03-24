@@ -588,3 +588,114 @@ async def energy_interconnector_flows_and_emissions_v2(
         result.append_set(result_export_emission_factor)
 
     return result
+
+
+# --- v4 flow export functions (read from CH market_summary) ---
+
+
+async def energy_interconnector_flows_and_emissions_v4(
+    time_series: OpennemExportSeries, network_region_code: str, include_emission_factor: bool = True
+) -> OpennemDataSet | None:
+    """v4: reads flow data from CH market_summary instead of PG at_network_flows."""
+    ch_client = get_clickhouse_client()
+    unit_energy = get_unit("energy_giga")
+    unit_emissions = get_unit("emissions")
+
+    date_range = time_series.get_range()
+
+    query = f"""
+        SELECT
+            interval,
+            network_region,
+            coalesce(sum(energy_imports), 0) / 1000 as imports_energy,
+            coalesce(sum(energy_exports), 0) / 1000 as exports_energy,
+            coalesce(sum(emissions_imports), 0) as emissions_imports,
+            coalesce(sum(emissions_exports), 0) as emissions_exports,
+            coalesce(sum(market_value_imports), 0) as market_value_imports,
+            coalesce(sum(market_value_exports), 0) as market_value_exports
+        FROM market_summary FINAL
+        WHERE network_id = '{time_series.network.code}'
+            AND network_region = '{network_region_code}'
+            AND interval >= '{date_range.start}'
+            AND interval < '{date_range.end}'
+        GROUP BY 1, 2
+        ORDER BY 1 DESC
+    """
+
+    row = ch_client.execute(query)
+
+    if not row:
+        logger.error(f"No v4 flow results for {time_series.network} {network_region_code}")
+        return None
+
+    imports = [DataQueryResult(interval=i[0], group_by="imports", result=i[2]) for i in row]
+    exports = [DataQueryResult(interval=i[0], group_by="exports", result=i[3]) for i in row]
+    import_emissions = [DataQueryResult(interval=i[0], group_by="imports", result=i[4]) for i in row]
+    export_emissions = [DataQueryResult(interval=i[0], group_by="exports", result=i[5]) for i in row]
+    import_mv = [DataQueryResult(interval=i[0], group_by="imports", result=i[6]) for i in row]
+    export_mv = [DataQueryResult(interval=i[0], group_by="exports", result=i[7]) for i in row]
+
+    result = stats_factory(
+        imports,
+        network=time_series.network,
+        interval=time_series.interval,
+        units=unit_energy,
+        region=network_region_code,
+        fueltech_group=True,
+    )
+
+    result_exports = stats_factory(
+        exports,
+        network=time_series.network,
+        interval=time_series.interval,
+        units=unit_energy,
+        region=network_region_code,
+        fueltech_group=True,
+    )
+    result.append_set(result_exports)
+
+    result_import_emissions = stats_factory(
+        import_emissions,
+        network=time_series.network,
+        interval=time_series.interval,
+        units=unit_emissions,
+        region=network_region_code,
+        fueltech_group=True,
+        localize=False,
+    )
+    result.append_set(result_import_emissions)
+
+    result_export_emissions = stats_factory(
+        export_emissions,
+        network=time_series.network,
+        interval=time_series.interval,
+        units=unit_emissions,
+        region=network_region_code,
+        fueltech_group=True,
+        localize=False,
+    )
+    result.append_set(result_export_emissions)
+
+    result_import_mv = stats_factory(
+        import_mv,
+        network=time_series.network,
+        interval=time_series.interval,
+        units=get_unit("market_value"),
+        region=network_region_code,
+        fueltech_group=True,
+        localize=False,
+    )
+    result.append_set(result_import_mv)
+
+    result_export_mv = stats_factory(
+        export_mv,
+        network=time_series.network,
+        interval=time_series.interval,
+        units=get_unit("market_value"),
+        region=network_region_code,
+        fueltech_group=True,
+        localize=False,
+    )
+    result.append_set(result_export_mv)
+
+    return result

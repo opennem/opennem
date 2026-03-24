@@ -326,6 +326,12 @@ MARKET_SUMMARY_DAILY_VIEW = MaterializedView(
             sum(curtailment_energy_solar_total) as curtailment_energy_solar_total_daily,
             sum(curtailment_energy_wind_total) as curtailment_energy_wind_total_daily,
             sum(curtailment_energy_total) as curtailment_energy_total_daily,
+            sum(energy_imports) as energy_imports_daily,
+            sum(energy_exports) as energy_exports_daily,
+            sum(emissions_imports) as emissions_imports_daily,
+            sum(emissions_exports) as emissions_exports_daily,
+            sum(market_value_imports) as market_value_imports_daily,
+            sum(market_value_exports) as market_value_exports_daily,
             count() as interval_count,
             toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
         FROM market_summary
@@ -359,6 +365,12 @@ MARKET_SUMMARY_DAILY_VIEW = MaterializedView(
             sum(curtailment_energy_solar_total) as curtailment_energy_solar_total_daily,
             sum(curtailment_energy_wind_total) as curtailment_energy_wind_total_daily,
             sum(curtailment_energy_total) as curtailment_energy_total_daily,
+            sum(energy_imports) as energy_imports_daily,
+            sum(energy_exports) as energy_exports_daily,
+            sum(emissions_imports) as emissions_imports_daily,
+            sum(emissions_exports) as emissions_exports_daily,
+            sum(market_value_imports) as market_value_imports_daily,
+            sum(market_value_exports) as market_value_exports_daily,
             count() as interval_count,
             toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
         FROM market_summary FINAL
@@ -400,6 +412,12 @@ MARKET_SUMMARY_MONTHLY_VIEW = MaterializedView(
             sum(curtailment_energy_solar_total) as curtailment_energy_solar_total_monthly,
             sum(curtailment_energy_wind_total) as curtailment_energy_wind_total_monthly,
             sum(curtailment_energy_total) as curtailment_energy_total_monthly,
+            sum(energy_imports) as energy_imports_monthly,
+            sum(energy_exports) as energy_exports_monthly,
+            sum(emissions_imports) as emissions_imports_monthly,
+            sum(emissions_exports) as emissions_exports_monthly,
+            sum(market_value_imports) as market_value_imports_monthly,
+            sum(market_value_exports) as market_value_exports_monthly,
             count() as interval_count,
             toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
         FROM market_summary
@@ -433,6 +451,12 @@ MARKET_SUMMARY_MONTHLY_VIEW = MaterializedView(
             sum(curtailment_energy_solar_total) as curtailment_energy_solar_total_monthly,
             sum(curtailment_energy_wind_total) as curtailment_energy_wind_total_monthly,
             sum(curtailment_energy_total) as curtailment_energy_total_monthly,
+            sum(energy_imports) as energy_imports_monthly,
+            sum(energy_exports) as energy_exports_monthly,
+            sum(emissions_imports) as emissions_imports_monthly,
+            sum(emissions_exports) as emissions_exports_monthly,
+            sum(market_value_imports) as market_value_imports_monthly,
+            sum(market_value_exports) as market_value_exports_monthly,
             count() as interval_count,
             toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
         FROM market_summary FINAL

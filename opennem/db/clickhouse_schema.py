@@ -33,6 +33,12 @@ MARKET_SUMMARY_TABLE_SCHEMA = """CREATE TABLE IF NOT EXISTS market_summary (
     curtailment_energy_solar_total Nullable(Float64),
     curtailment_energy_wind_total Nullable(Float64),
     curtailment_energy_total Nullable(Float64),
+    energy_imports Nullable(Float64),
+    energy_exports Nullable(Float64),
+    emissions_imports Nullable(Float64),
+    emissions_exports Nullable(Float64),
+    market_value_imports Nullable(Float64),
+    market_value_exports Nullable(Float64),
     version UInt64
 ) ENGINE = ReplacingMergeTree(version)
 PRIMARY KEY (interval, network_id, network_region)
@@ -63,6 +69,39 @@ PRIMARY KEY (interval, network_id, network_region, facility_code, unit_code)
 ORDER BY (interval, network_id, network_region, facility_code, unit_code)
 PARTITION BY toYYYYMM(interval)
 SETTINGS index_granularity = 8192, allow_experimental_replacing_merge_with_cleanup=1"""
+
+
+# Schema migrations for existing tables.
+# Each migration is (column_name, column_type, table_name).
+# Applied idempotently — skips if column already exists.
+MARKET_SUMMARY_FLOW_COLUMNS = [
+    ("energy_imports", "Nullable(Float64)", "market_summary"),
+    ("energy_exports", "Nullable(Float64)", "market_summary"),
+    ("emissions_imports", "Nullable(Float64)", "market_summary"),
+    ("emissions_exports", "Nullable(Float64)", "market_summary"),
+    ("market_value_imports", "Nullable(Float64)", "market_summary"),
+    ("market_value_exports", "Nullable(Float64)", "market_summary"),
+]
+
+
+def migrate_market_summary_flows() -> None:
+    """Add flow columns to existing market_summary table.
+
+    Safe to run multiple times — checks for column existence first.
+    Run this on prod deployment when enabling flows_v4.
+    """
+    client = get_clickhouse_client()
+
+    # Get existing columns
+    existing = {row[0] for row in client.execute("DESCRIBE TABLE market_summary")}
+
+    for col_name, col_type, table in MARKET_SUMMARY_FLOW_COLUMNS:
+        if col_name not in existing:
+            alter = f"ALTER TABLE {table} ADD COLUMN {col_name} {col_type}"
+            client.execute(alter)
+            logger.info(f"Added column {col_name} to {table}")
+        else:
+            logger.debug(f"Column {col_name} already exists in {table}")
 
 
 async def optimize_clickhouse_tables(table_names: list[str] | None = None) -> None:

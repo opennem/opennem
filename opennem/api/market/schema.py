@@ -24,6 +24,10 @@ class MarketMetric(StrEnum):
     CURTAILMENT_SOLAR_UTILITY_ENERGY = "curtailment_solar_utility_energy"
     CURTAILMENT_WIND = "curtailment_wind"
     CURTAILMENT_WIND_ENERGY = "curtailment_wind_energy"
+    FLOW_IMPORTS = "flow_imports"
+    FLOW_EXPORTS = "flow_exports"
+    FLOW_IMPORTS_ENERGY = "flow_imports_energy"
+    FLOW_EXPORTS_ENERGY = "flow_exports_energy"
 
     @property
     def unit(self) -> str:
@@ -38,6 +42,10 @@ class MarketMetric(StrEnum):
             "curtailment_solar_utility_energy": "MWh",
             "curtailment_wind": "MW",
             "curtailment_wind_energy": "MWh",
+            "flow_imports": "MW",
+            "flow_exports": "MW",
+            "flow_imports_energy": "MWh",
+            "flow_exports_energy": "MWh",
         }
         return units[self.value]
 

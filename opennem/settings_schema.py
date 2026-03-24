@@ -139,6 +139,7 @@ class OpennemSettings(BaseSettings):
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
     show_emissions_in_power_outputs: bool = True  # show emissions in power outputs
     show_emission_factors_in_power_outputs: bool = True  # show emissions in power outputs
+    flows_v4: bool = False  # enable v4 flow solver (dynamic topology, stores in CH market_summary)
     # clerk API key
     clerk_secret_key: str | None = None
     api_jwks_url: str = "https://clerk.dev/.well-known/jwks.json"

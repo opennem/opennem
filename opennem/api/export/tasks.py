@@ -20,6 +20,7 @@ from opennem.api.export.controllers import (
     curtailment_network_region_daily,
     demand_network_region_daily,
     energy_interconnector_flows_and_emissions_v2,
+    energy_interconnector_flows_and_emissions_v4,
     gov_stats_cpi,
     power_flows_network_week,
     power_week,
@@ -52,6 +53,19 @@ from opennem.utils.dates import get_last_complete_day_for_network, get_today_nem
 from opennem.utils.version import get_version
 
 logger = logging.getLogger("opennem.export.tasks")
+
+
+async def _get_interconnector_flows(time_series, network_region_code, **kwargs):
+    """Dispatch to v2 or v4 flow export based on flows_v4 feature flag."""
+    from opennem import settings
+
+    if settings.flows_v4:
+        return await energy_interconnector_flows_and_emissions_v4(
+            time_series=time_series, network_region_code=network_region_code, **kwargs
+        )
+    return await energy_interconnector_flows_and_emissions_v2(
+        time_series=time_series, network_region_code=network_region_code, **kwargs
+    )
 
 
 async def export_power(
@@ -222,7 +236,7 @@ async def export_energy(
 
             # network flows
             if energy_stat.network.has_interconnectors and energy_stat.network_region:
-                interconnector_flows = await energy_interconnector_flows_and_emissions_v2(
+                interconnector_flows = await _get_interconnector_flows(
                     time_series=time_series,
                     network_region_code=energy_stat.network_region_query or energy_stat.network_region,
                 )
@@ -271,7 +285,7 @@ async def export_energy(
                 stat_set.append_set(curtailment_energy)
 
             if energy_stat.network.has_interconnectors and energy_stat.network_region:
-                interconnector_flows = await energy_interconnector_flows_and_emissions_v2(
+                interconnector_flows = await _get_interconnector_flows(
                     time_series=time_series,
                     network_region_code=energy_stat.network_region_query or energy_stat.network_region,
                 )
@@ -359,7 +373,7 @@ async def export_all_monthly(networks: list[NetworkSchema] | None = None, networ
                 stat_set.append_set(demand_energy_and_value)
 
                 if network.has_interconnectors:
-                    interconnector_flows = await energy_interconnector_flows_and_emissions_v2(
+                    interconnector_flows = await _get_interconnector_flows(
                         time_series=time_series,
                         network_region_code=str(network_region.code),
                     )
@@ -439,7 +453,7 @@ async def export_all_daily(networks: list[NetworkSchema] | None = None, network_
                 # Hard coded to NEM only atm but we'll put has_interconnectors
                 # in the metadata to automate all this
                 if network == NetworkNEM:
-                    interconnector_flows = await energy_interconnector_flows_and_emissions_v2(
+                    interconnector_flows = await _get_interconnector_flows(
                         time_series=time_series,
                         network_region_code=str(network_region.code),
                     )

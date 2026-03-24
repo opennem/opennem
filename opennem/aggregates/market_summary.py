@@ -25,6 +25,7 @@ from opennem.db.clickhouse_materialized_views import (
 )
 from opennem.db.clickhouse_schema import (
     MARKET_SUMMARY_TABLE_SCHEMA,
+    migrate_market_summary_flows,
     optimize_clickhouse_tables,
 )
 from opennem.db.clickhouse_views import (
@@ -33,6 +34,9 @@ from opennem.db.clickhouse_views import (
 )
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_last_completed_interval_for_network
+
+# Flow solver imports (lazy — only used when flows_v4 is enabled)
+_flow_solver_loaded = False
 
 logger = logging.getLogger("opennem.aggregates.market_summary")
 
@@ -537,19 +541,191 @@ def _prepare_market_summary_data(
         ]
     )
 
+    # Compute and merge flow columns if flows_v4 is enabled
+    from opennem import settings
+
+    if settings.flows_v4:
+        intervals = result_df["interval"].to_list()
+        if intervals:
+            start = min(intervals)
+            end = max(intervals)
+            flow_df = _compute_flows_for_range(start, end)
+            if flow_df is not None and not flow_df.is_empty():
+                result_df = result_df.join(
+                    flow_df,
+                    on=["interval", "network_region"],
+                    how="left",
+                )
+            else:
+                result_df = result_df.with_columns(
+                    pl.lit(None).cast(pl.Float64).alias("energy_imports"),
+                    pl.lit(None).cast(pl.Float64).alias("energy_exports"),
+                    pl.lit(None).cast(pl.Float64).alias("emissions_imports"),
+                    pl.lit(None).cast(pl.Float64).alias("emissions_exports"),
+                    pl.lit(None).cast(pl.Float64).alias("market_value_imports"),
+                    pl.lit(None).cast(pl.Float64).alias("market_value_exports"),
+                )
+    else:
+        result_df = result_df.with_columns(
+            pl.lit(None).cast(pl.Float64).alias("energy_imports"),
+            pl.lit(None).cast(pl.Float64).alias("energy_exports"),
+            pl.lit(None).cast(pl.Float64).alias("emissions_imports"),
+            pl.lit(None).cast(pl.Float64).alias("emissions_exports"),
+            pl.lit(None).cast(pl.Float64).alias("market_value_imports"),
+            pl.lit(None).cast(pl.Float64).alias("market_value_exports"),
+        )
+
+    # Re-select with flow columns
+    result_df = result_df.select(
+        [
+            "interval",
+            "network_id",
+            "network_region",
+            "price",
+            "demand",
+            "demand_total",
+            "demand_gross",
+            "generation_renewable",
+            "demand_energy",
+            "demand_total_energy",
+            "demand_gross_energy",
+            "generation_renewable_energy",
+            "demand_market_value",
+            "demand_total_market_value",
+            "demand_gross_market_value",
+            "curtailment_solar_total",
+            "curtailment_wind_total",
+            "curtailment_total",
+            "curtailment_energy_solar_total",
+            "curtailment_energy_wind_total",
+            "curtailment_energy_total",
+            "energy_imports",
+            "energy_exports",
+            "emissions_imports",
+            "emissions_exports",
+            "market_value_imports",
+            "market_value_exports",
+            "version",
+        ]
+    )
+
     # Convert back to list of tuples for ClickHouse insertion
     return result_df.rows()
+
+
+def _compute_flows_for_range(start_time: datetime, end_time: datetime) -> pl.DataFrame | None:
+    """Compute flow columns for an interval range.
+
+    Loads interconnector SCADA from PG and emissions intensity from CH,
+    then runs the v4 flow solver.
+
+    Returns DataFrame with: interval, network_region, energy_imports, energy_exports,
+    emissions_imports, emissions_exports, market_value_imports, market_value_exports
+    """
+    from opennem.core.flow_solver_v4 import solve_flows_v4
+    from opennem.core.interconnector_topology import get_network_topology
+    from opennem.db import db_connect_sync
+
+    topology = get_network_topology("NEM")
+
+    # 1. Load interconnector SCADA from PG
+    engine = db_connect_sync()
+    start_str = start_time.strftime("%Y-%m-%d %H:%M:%S") if isinstance(start_time, datetime) else str(start_time)
+    end_str = end_time.strftime("%Y-%m-%d %H:%M:%S") if isinstance(end_time, datetime) else str(end_time)
+
+    ic_query = f"""
+        SELECT
+            fs.interval,
+            u.interconnector_region_from,
+            u.interconnector_region_to,
+            coalesce(sum(fs.generated) / 12, 0) as energy
+        FROM facility_scada fs
+        JOIN units u ON fs.facility_code = u.code
+        JOIN facilities f ON u.station_id = f.id
+        WHERE fs.interval >= '{start_str}'
+            AND fs.interval <= '{end_str}'
+            AND u.interconnector = true
+            AND f.network_id = 'NEM'
+        GROUP BY 1, 2, 3
+        ORDER BY 1
+    """
+
+    import pandas as pd
+
+    ic_pd = pd.read_sql(ic_query, con=engine)
+    engine.dispose()
+
+    if ic_pd.empty:
+        logger.debug(f"No interconnector data for {start_str} to {end_str}")
+        return None
+
+    interconnector_df = pl.from_pandas(ic_pd).with_columns(pl.col("interval").cast(pl.Datetime("us")))
+
+    # 2. Load emissions intensity from CH
+    client = get_clickhouse_client()
+    em_query = f"""
+        SELECT
+            interval,
+            network_region,
+            total_energy,
+            total_emissions,
+            if(total_energy > 0, total_emissions / total_energy, 0) as emissions_intensity
+        FROM (
+            SELECT
+                interval,
+                network_region,
+                sum(energy) as total_energy,
+                sum(emissions) as total_emissions
+            FROM unit_intervals FINAL
+            WHERE interval >= toDateTime('{start_str}')
+                AND interval <= toDateTime('{end_str}')
+                AND network_id = 'NEM'
+                AND fueltech_id NOT IN ('battery_charging')
+                AND generated > 0
+            GROUP BY 1, 2
+        )
+        ORDER BY 1
+    """
+    em_rows = client.execute(em_query)
+
+    if not em_rows:
+        logger.debug(f"No emissions data for {start_str} to {end_str}")
+        return None
+
+    region_df = pl.DataFrame(
+        em_rows,
+        schema=["interval", "network_region", "energy", "emissions", "emissions_intensity"],
+        orient="row",
+    ).with_columns(pl.col("interval").cast(pl.Datetime("us")))
+
+    # 3. Solve flows
+    flow_result = solve_flows_v4(topology, interconnector_df, region_df)
+
+    if flow_result.is_empty():
+        return None
+
+    # Add market_value columns (placeholder — needs price data)
+    flow_result = flow_result.with_columns(
+        pl.lit(0.0).alias("market_value_imports"),
+        pl.lit(0.0).alias("market_value_exports"),
+    )
+
+    return flow_result
 
 
 def _ensure_clickhouse_schema() -> None:
     """
     Ensure ClickHouse schema exists by creating tables and views if needed.
+    Also applies pending migrations (e.g. flow columns).
     """
     client = get_clickhouse_client()
 
     if not table_exists(client, "market_summary"):
         create_table_if_not_exists(client, "market_summary", MARKET_SUMMARY_TABLE_SCHEMA)
         logger.info("Created market_summary table")
+
+    # Apply flow column migration (idempotent)
+    migrate_market_summary_flows()
 
     # Use the generic function to ensure materialized views exist
     ensure_materialized_views_exist(_MARKET_SUMMARY_MATERIALIZED_VIEWS)
@@ -614,7 +790,10 @@ async def process_market_summary_backlog(
                     demand_gross_energy, generation_renewable_energy, demand_market_value,
                     demand_total_market_value, demand_gross_market_value, curtailment_solar_total,
                     curtailment_wind_total, curtailment_total, curtailment_energy_solar_total,
-                    curtailment_energy_wind_total, curtailment_energy_total, version
+                    curtailment_energy_wind_total, curtailment_energy_total,
+                    energy_imports, energy_exports, emissions_imports,
+                    emissions_exports, market_value_imports, market_value_exports,
+                    version
                 )
                 VALUES
                 """,
@@ -676,7 +855,10 @@ async def run_market_summary_aggregate_to_now() -> int:
             demand_gross_energy, generation_renewable_energy, demand_market_value,
             demand_total_market_value, demand_gross_market_value, curtailment_solar_total,
             curtailment_wind_total, curtailment_total, curtailment_energy_solar_total,
-            curtailment_energy_wind_total, curtailment_energy_total, version
+            curtailment_energy_wind_total, curtailment_energy_total,
+            energy_imports, energy_exports, emissions_imports,
+            emissions_exports, market_value_imports, market_value_exports,
+            version
         )
         VALUES
         """,
@@ -710,7 +892,10 @@ async def run_market_summary_aggregate_for_last_intervals(num_intervals: int) ->
             demand_gross_energy, generation_renewable_energy, demand_market_value,
             demand_total_market_value, demand_gross_market_value, curtailment_solar_total,
             curtailment_wind_total, curtailment_total, curtailment_energy_solar_total,
-            curtailment_energy_wind_total, curtailment_energy_total, version
+            curtailment_energy_wind_total, curtailment_energy_total,
+            energy_imports, energy_exports, emissions_imports,
+            emissions_exports, market_value_imports, market_value_exports,
+            version
         )
         VALUES
         """,
