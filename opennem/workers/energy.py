@@ -46,7 +46,7 @@ async def _calculate_energy_for_interval(session: AsyncSession, start_time: date
             ) AS prev_generated
         FROM facility_scada
         WHERE
-            interval BETWEEN :start_time - interval '5 minutes' AND :end_time
+            interval BETWEEN :lag_start AND :end_time
             AND network_id not in ('WEM', 'WEMDE', 'AEMO_ROOFTOP_BACKFILL')
         )
     UPDATE facility_scada fs
@@ -63,7 +63,8 @@ async def _calculate_energy_for_interval(session: AsyncSession, start_time: date
       AND rs.prev_generated IS NOT NULL
     """)
 
-    result = await session.execute(query, {"start_time": start_time, "end_time": end_time})
+    lag_start = start_time - timedelta(minutes=5)
+    result = await session.execute(query, {"start_time": start_time, "end_time": end_time, "lag_start": lag_start})
     await session.commit()
     return result.rowcount  # type: ignore
 
