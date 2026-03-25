@@ -71,7 +71,7 @@ class OpennemSettings(BaseSettings):
     # sentry DSN for error reporting
     sentry_url: str | None = None
 
-    # Slack notifications
+    # Slack notifications (incoming webhooks — one-way)
     slack_notifications: bool = True
     slack_hook_new_facilities: str | None = None
     slack_hook_monitoring: str | None = None
@@ -80,6 +80,15 @@ class OpennemSettings(BaseSettings):
     slack_hook_aemo_market_notices: str | None = None
     slack_hook_records: str | None = None
     slack_admin_alert: list[str] | None = ["nik"]
+
+    # Slack App (for interactive buttons — weekly summary approval)
+    slack_bot_token: str | None = None
+    slack_signing_secret: str | None = None
+    slack_weekly_summary_channel: str | None = None
+
+    # LinkedIn API
+    linkedin_access_token: str | None = None
+    linkedin_organization_id: str | None = None
 
     # R2 settings
     s3_access_key_id: str | None = Field(None, description="The access key ID for the S3 bucket")
