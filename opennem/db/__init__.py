@@ -152,9 +152,7 @@ async def get_read_session() -> AsyncGenerator[AsyncSession]:
 async def get_write_session() -> AsyncGenerator[AsyncSession]:
     async with SessionLocalAsync() as session:
         try:
-            async with session.begin():
-                yield session
-            # The commit will be done automatically when exiting the 'begin' context
+            yield session
         except Exception:
             await session.rollback()
             raise

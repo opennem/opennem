@@ -685,6 +685,7 @@ async def run_milestone_analysis_backlog(
     if refresh:
         async with get_write_session() as session:
             await session.execute(text("delete from milestones"))
+            await session.commit()
         logger.info("Milestones table deleted")
 
     milestone_records = await run_milestone_analysis(start_date=start_date, end_date=end_date, debug=debug)

@@ -7,6 +7,7 @@ All content sources (weekly summary, recordreactor, manual) flow through here.
 import io
 import logging
 from datetime import datetime
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import select
@@ -36,11 +37,22 @@ async def create_social_post(
 
     This is the main entry point for all content sources.
     """
+    # Upload image to Cloudflare if provided — store the URL for later publishing
+    image_url = req.image_url
+    if image and not image_url:
+        try:
+            from opennem.clients.cfimage import save_image_to_cloudflare
+
+            cfimage = await save_image_to_cloudflare(io.BytesIO(image))
+            image_url = cfimage.url
+        except Exception as e:
+            logger.warning(f"Cloudflare image upload failed, image will be passed directly: {e}")
+
     async with get_write_session() as session:
         post = SocialPost(
             post_type=req.post_type,
             text_content=req.text_content,
-            image_url=req.image_url,
+            image_url=image_url,
             status=SocialPostStatus.PENDING_APPROVAL,
             source_type=req.source_type,
             source_id=req.source_id,
@@ -59,8 +71,9 @@ async def create_social_post(
 
         await session.flush()
         post_id = post.id
+        await session.commit()
 
-    # Upload image and post to Slack for approval
+    # Post to Slack for approval (pass raw image bytes for Slack file upload preview)
     channel = settings.slack_weekly_summary_channel
     if channel and not req.auto_approve:
         slack_channel_id, slack_message_ts = await send_approval_request(post_id, req.text_content, image)
@@ -155,13 +168,30 @@ async def publish_social_post(post_id: UUID) -> None:
         except Exception as e:
             logger.warning(f"Failed to download image from {image_url}: {e}")
 
-    # Publish to each platform
-    platform_publishers = {
-        Platform.TWITTER: lambda txt, img: post_tweet_with_image(txt, io.BytesIO(img)) if img else None,
-        Platform.BLUESKY: lambda txt, img: (
-            post_bluesky_with_image(txt, io.BytesIO(img), alt_text="Open Electricity") if img else None
-        ),
-        Platform.LINKEDIN: lambda txt, img: post_linkedin(txt, io.BytesIO(img) if img else None),
+    # Platform-specific publish functions — handle missing images gracefully
+    async def _publish_twitter(txt: str, img: bytes | None) -> None:
+        if img:
+            await post_tweet_with_image(txt, io.BytesIO(img))
+        else:
+            from opennem.clients.twitter import post_tweet
+
+            await post_tweet(txt)
+
+    async def _publish_bluesky(txt: str, img: bytes | None) -> None:
+        if img:
+            await post_bluesky_with_image(txt, io.BytesIO(img), alt_text="Open Electricity")
+        else:
+            from opennem.clients.bluesky import post_bluesky
+
+            await post_bluesky(txt)
+
+    async def _publish_linkedin(txt: str, img: bytes | None) -> None:
+        await post_linkedin(txt, io.BytesIO(img) if img else None)
+
+    platform_publishers: dict[str, Any] = {
+        Platform.TWITTER: _publish_twitter,
+        Platform.BLUESKY: _publish_bluesky,
+        Platform.LINKEDIN: _publish_linkedin,
     }
 
     any_failed = False
@@ -233,6 +263,7 @@ async def retry_social_post(post_id: UUID) -> None:
         post = await session.get(SocialPost, post_id)
         if post:
             post.status = SocialPostStatus.APPROVED
+        await session.commit()
 
     await publish_social_post(post_id)
 
