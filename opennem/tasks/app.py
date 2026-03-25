@@ -59,6 +59,7 @@ from opennem.tasks.tasks import (
     task_update_facility_seen_range,
     task_update_max_generation_for_units,
     task_update_milestones,
+    task_weekly_summary,
     task_wem_day_crawl,
 )
 from opennem.utils.host import get_hostname
@@ -312,6 +313,16 @@ class WorkerSettings:
             minute=0,
             second=0,
             weekday={0, 1, 2, 3, 4},  # Monday through Friday only
+            timeout=None,
+            unique=True,
+        ),
+        # Weekly summary report — Monday 7am AEST, posts to Slack for approval
+        cron(
+            task_weekly_summary,
+            weekday={0},  # Monday
+            hour=7,
+            minute=0,
+            second=0,
             timeout=None,
             unique=True,
         ),

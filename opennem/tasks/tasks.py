@@ -43,6 +43,7 @@ from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
 from opennem.workers.generation_max import update_max_generation_for_units
 from opennem.workers.system import clean_tmp_dir
+from opennem.workers.weekly_summary import run_weekly_summary
 
 logger = logging.getLogger("opennem.pipelines.nem")
 
@@ -298,6 +299,15 @@ async def task_refresh_clickhouse_mv_full(ctx: dict) -> None:
     from opennem.db.clickhouse_materialized_views import refresh_all_materialized_views
 
     refresh_all_materialized_views(days=7, optimize=True)
+
+
+async def task_weekly_summary(ctx: dict) -> None:
+    """Generate weekly summary for NEM and WEM, post to Slack for approval.
+
+    Runs Monday 7am AEST.
+    """
+    await run_weekly_summary(network=NetworkNEM)
+    await run_weekly_summary(network=NetworkWEM)
 
 
 if __name__ == "__main__":
