@@ -521,3 +521,70 @@ class AEMOMarketNotice(Base):
     issue_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False)
     external_reference: Mapped[str | None] = mapped_column(Text, nullable=True)
     reason: Mapped[str] = mapped_column(Text, nullable=False)
+
+
+class SocialPost(Base):
+    __tablename__ = "social_posts"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+
+    # Content
+    post_type: Mapped[str] = mapped_column(String, nullable=False)  # weekly_summary, milestone, manual
+    text_content: Mapped[str] = mapped_column(Text, nullable=False)
+    image_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    # Status
+    status: Mapped[str] = mapped_column(String, nullable=False, default="draft")
+
+    # Source reference
+    source_type: Mapped[str | None] = mapped_column(String, nullable=True)
+    source_id: Mapped[str | None] = mapped_column(String, nullable=True)
+
+    # Slack tracking
+    slack_channel_id: Mapped[str | None] = mapped_column(String, nullable=True)
+    slack_message_ts: Mapped[str | None] = mapped_column(String, nullable=True)
+    approved_by: Mapped[str | None] = mapped_column(String, nullable=True)
+    rejected_by: Mapped[str | None] = mapped_column(String, nullable=True)
+
+    # Metadata
+    network_id: Mapped[str | None] = mapped_column(Text, nullable=True)
+    metadata_: Mapped[dict] = mapped_column("metadata", JSONB, nullable=False, default=dict, server_default=text("'{}'::jsonb"))
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
+    approved_at: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True), nullable=True)
+    published_at: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True), nullable=True)
+
+    # Relationships
+    platforms = relationship("SocialPostPlatform", back_populates="post", cascade="all, delete-orphan")
+
+    __table_args__ = (
+        Index("idx_social_posts_status", "status"),
+        Index("idx_social_posts_created_at", "created_at"),
+        Index("idx_social_posts_source", "source_type", "source_id"),
+    )
+
+
+class SocialPostPlatform(Base):
+    __tablename__ = "social_post_platforms"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    post_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("social_posts.id", ondelete="CASCADE"), nullable=False
+    )
+
+    platform: Mapped[str] = mapped_column(String, nullable=False)  # twitter, bluesky, linkedin
+    status: Mapped[str] = mapped_column(String, nullable=False, default="pending")
+
+    permalink: Mapped[str | None] = mapped_column(Text, nullable=True)
+    platform_post_id: Mapped[str | None] = mapped_column(String, nullable=True)
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    published_at: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
+
+    # Relationships
+    post = relationship("SocialPost", back_populates="platforms")
+
+    __table_args__ = (UniqueConstraint("post_id", "platform", name="uq_social_post_platform"),)

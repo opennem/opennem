@@ -33,6 +33,7 @@ from opennem.api.plans.router import router as plans_router
 from opennem.api.pollution.router import router as pollution_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
 from opennem.api.security import authenticated_user
+from opennem.api.social.router import router as social_router
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
 from opennem.api.webhooks.router import router as webhooks_router
@@ -242,6 +243,7 @@ app.include_router(webhooks_router, tags=["Webhooks"], prefix="/webhooks", inclu
 app.include_router(data_router, tags=["Data"], prefix="/data")
 app.include_router(market_router, tags=["Market"], prefix="/market")
 app.include_router(plans_router, tags=["Plans"], prefix="/plans")
+app.include_router(social_router, tags=["Social"], prefix="/social")
 
 # new v4 routes
 try:

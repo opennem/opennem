@@ -5,7 +5,6 @@ published to Twitter/X, Bluesky, and LinkedIn.
 """
 
 import io
-import json
 import logging
 from datetime import datetime, timedelta
 from operator import attrgetter
@@ -14,11 +13,6 @@ from pathlib import Path
 from opennem import settings
 from opennem.api.data.schema import DataMetric
 from opennem.api.queries import QueryType, get_timeseries_query
-from opennem.clients.bluesky import post_bluesky_with_image
-from opennem.clients.cfimage import CloudflareImageResponse, save_image_to_cloudflare
-from opennem.clients.linkedin import post_linkedin
-from opennem.clients.slack_app import build_weekly_summary_approval_blocks, post_message_with_blocks, upload_image_to_slack
-from opennem.clients.twitter import post_tweet_with_image
 from opennem.core.fueltech_group import get_fueltech_group
 from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
 from opennem.core.metric import Metric
@@ -639,112 +633,39 @@ async def get_weekly_summary(network: NetworkSchema, week_start: datetime | None
 
 
 async def run_weekly_summary(network: NetworkSchema, week_start: datetime | None = None) -> WeeklySummary:
-    """Generate weekly summary, create chart, upload, and post to Slack for approval."""
+    """Generate weekly summary, render image, and submit to social pipeline for approval."""
+    from opennem.social.pipeline import create_social_post
+    from opennem.social.schema import CreateSocialPostRequest, SocialPostType
+
     ws = await get_weekly_summary(network, week_start)
 
-    # Generate chart
+    # Generate chart image
     chart_buf = plot_weekly_fueltech_summary(ws)
-
-    # Upload chart image — try Cloudflare for public URL, fall back to Slack file upload
-    try:
-        chart_buf.seek(0)
-        cfimage: CloudflareImageResponse = await save_image_to_cloudflare(io.BytesIO(chart_buf.read()))
-        ws.chart_url = cfimage.url
-    except Exception as e:
-        logger.warning(f"Cloudflare image upload failed: {e}")
-
-    if settings.dry_run:
-        logger.info(f"[DRY RUN] Weekly summary for {network.code}")
-        return ws
-
-    # Post to Slack: image + approve/reject buttons
-    channel = settings.slack_weekly_summary_channel
-    if not channel:
-        logger.warning("slack_weekly_summary_channel not configured, skipping Slack post")
-        return ws
-
-    # Upload chart image to Slack as a file
     chart_buf.seek(0)
-    await upload_image_to_slack(
-        channel=channel,
-        image=chart_buf.read(),
-        filename=f"weekly_summary_{ws.network}_{ws.week_number}.png",
-        title=f"Weekly Summary — {ws.network} — Week {ws.week_number}",
-    )
+    chart_bytes = chart_buf.read()
 
-    # Post approval buttons (no text summary — image carries the detail)
-    callback_value = json.dumps({"network": network.code, "week_start": ws.week_start.isoformat()})
-    blocks = build_weekly_summary_approval_blocks(
-        summary_text=f"*{ws.network} Week {ws.week_number}* — ready for approval",
-        image_url=ws.chart_url,  # only set if CF succeeded (public URL)
-        image_alt=f"Weekly fueltech mix for {network.code}",
-        callback_value=callback_value,
-    )
-
-    await post_message_with_blocks(
-        channel=channel,
-        blocks=blocks,
-        text=f"Weekly summary for {network.code} — Week {ws.week_number} ready for approval",
-    )
-
-    logger.info(f"Posted weekly summary for {network.code} to Slack for approval")
-    return ws
-
-
-async def publish_weekly_summary(
-    network: NetworkSchema,
-    week_start: datetime | None = None,
-    response_url: str | None = None,
-) -> None:
-    """Publish approved weekly summary to social platforms.
-
-    Called either from Slack interaction handler or CLI.
-    """
-    from opennem.clients.slack_app import respond_to_interaction
-
-    ws = await get_weekly_summary(network, week_start)
-
-    # Generate chart + social text
-    chart_buf = plot_weekly_fueltech_summary(ws)
+    # Render social text
     social_text = serve_template("weekly_summary_social.md", ws=ws)
 
     if settings.dry_run:
-        logger.info(f"[DRY RUN] Would publish to socials:\n{social_text}")
-        return
+        logger.info(f"[DRY RUN] Weekly summary for {network.code}:\n{social_text}")
+        return ws
 
-    # Post to each platform — continue on individual failures
-    errors = []
+    # Submit to social pipeline — handles Slack approval + publishing
+    await create_social_post(
+        CreateSocialPostRequest(
+            post_type=SocialPostType.WEEKLY_SUMMARY,
+            text_content=social_text,
+            source_type="weekly_summary",
+            source_id=f"{network.code}_week_{ws.week_number}",
+            network_id=network.code,
+            metadata={"week_number": ws.week_number, "week_start": ws.week_start.isoformat()},
+        ),
+        image=chart_bytes,
+    )
 
-    try:
-        chart_buf.seek(0)
-        await post_tweet_with_image(social_text, io.BytesIO(chart_buf.read()))
-        logger.info("Posted to Twitter/X")
-    except Exception as e:
-        logger.error(f"Twitter post failed: {e}")
-        errors.append(f"Twitter: {e}")
-
-    try:
-        chart_buf.seek(0)
-        await post_bluesky_with_image(social_text, io.BytesIO(chart_buf.read()), alt_text=f"Weekly energy mix for {ws.network}")
-        logger.info("Posted to Bluesky")
-    except Exception as e:
-        logger.error(f"Bluesky post failed: {e}")
-        errors.append(f"Bluesky: {e}")
-
-    try:
-        chart_buf.seek(0)
-        await post_linkedin(social_text, io.BytesIO(chart_buf.read()))
-        logger.info("Posted to LinkedIn")
-    except Exception as e:
-        logger.error(f"LinkedIn post failed: {e}")
-        errors.append(f"LinkedIn: {e}")
-
-    # Update Slack message if we came from an interaction
-    if response_url:
-        if errors:
-            await respond_to_interaction(response_url, f"Published with errors: {', '.join(errors)}")
-        else:
-            await respond_to_interaction(response_url, "Published to Twitter/X, Bluesky, and LinkedIn")
+    logger.info(f"Submitted weekly summary for {network.code} to social pipeline")
+    return ws
 
 
 # --- CLI ---
@@ -755,7 +676,7 @@ if __name__ == "__main__":
     import asyncio
 
     parser = argparse.ArgumentParser(description="Weekly summary report")
-    parser.add_argument("--publish", action="store_true", help="Publish to social platforms (bypass Slack approval)")
+    parser.add_argument("--auto-approve", action="store_true", help="Skip Slack approval, publish directly")
     parser.add_argument("--network", default="NEM", choices=["NEM", "WEM"], help="Network to summarize")
     parser.add_argument("--dry-run", action="store_true", help="Don't actually post anywhere")
     args = parser.parse_args()
@@ -765,7 +686,4 @@ if __name__ == "__main__":
     if args.dry_run:
         settings.dry_run = True
 
-    if args.publish:
-        asyncio.run(publish_weekly_summary(network=network))
-    else:
-        asyncio.run(run_weekly_summary(network=network))
+    asyncio.run(run_weekly_summary(network=network))

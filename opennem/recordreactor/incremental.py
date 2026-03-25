@@ -287,6 +287,33 @@ async def run_incremental_milestone_check(
             message=message,
         )
 
+    # Submit significant milestones to social media pipeline
+    if significant_records:
+        try:
+            from opennem.social.content import render_milestone_social_text
+            from opennem.social.pipeline import create_social_post
+            from opennem.social.schema import CreateSocialPostRequest, SocialPostType
+
+            for record in significant_records[:5]:
+                text = render_milestone_social_text(record)
+                await create_social_post(
+                    CreateSocialPostRequest(
+                        post_type=SocialPostType.MILESTONE,
+                        text_content=text,
+                        source_type="recordreactor",
+                        source_id=str(record.instance_id),
+                        network_id=record.network_id,
+                        metadata={
+                            "fueltech_id": record.fueltech_id,
+                            "significance": record.significance,
+                            "aggregate": record.aggregate,
+                            "record_id": record.record_id,
+                        },
+                    ),
+                )
+        except Exception as e:
+            logger.error(f"Failed to submit milestones to social pipeline: {e}")
+
     if all_new_records:
         logger.info(f"Incremental check complete: {len(all_new_records)} new records ({len(significant_records)} significant)")
     else:

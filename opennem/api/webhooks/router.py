@@ -1,8 +1,8 @@
 import asyncio
 import json
 import logging
-from datetime import datetime
 from typing import Literal
+from uuid import UUID
 
 from fastapi import APIRouter, Request
 from fastapi.responses import Response
@@ -12,9 +12,8 @@ from starlette.exceptions import HTTPException
 
 from opennem import settings
 from opennem.clients.slack import slack_message
-from opennem.clients.slack_app import respond_to_interaction, verify_slack_signature
+from opennem.clients.slack_app import verify_slack_signature
 from opennem.controllers.sanity import parse_sanity_webhook_request
-from opennem.schema.network import NetworkNEM, NetworkWEM
 
 logger = logging.getLogger("opennem.api.webhooks.router")
 
@@ -170,7 +169,7 @@ async def webhook_clerk_update(webhook_secret: str, request: Request) -> str:
     include_in_schema=False,
 )
 async def slack_interaction(request: Request) -> Response:
-    """Slack interaction webhook — handles weekly summary Approve/Reject buttons.
+    """Slack interaction webhook — handles social post Approve/Reject buttons.
 
     Slack sends form-encoded payload when a user clicks a Block Kit button.
     Must respond 200 within 3 seconds; heavy work runs async.
@@ -187,36 +186,24 @@ async def slack_interaction(request: Request) -> Response:
 
     action = payload.get("actions", [{}])[0]
     action_id = action.get("action_id", "")
-    callback_value = action.get("value", "{}")
+    callback_value = action.get("value", "")
     user = payload.get("user", {}).get("username", "unknown")
-    response_url = payload.get("response_url")
 
+    # callback_value is the social post UUID
     try:
-        cb = json.loads(callback_value)
-        network_code = cb.get("network", "NEM")
-        week_start_str = cb.get("week_start")
-    except json.JSONDecodeError:
-        network_code = "NEM"
-        week_start_str = None
+        post_id = UUID(callback_value)
+    except (ValueError, TypeError):
+        logger.error(f"Invalid callback value (not a UUID): {callback_value}")
+        return Response(status_code=200)
 
-    network = NetworkNEM if network_code == "NEM" else NetworkWEM
-    week_start = datetime.fromisoformat(week_start_str) if week_start_str else None
+    from opennem.social.pipeline import approve_social_post, reject_social_post
 
     if action_id == "weekly_approve":
-        logger.info(f"Weekly summary approved by {user} for {network_code}")
-
-        # Acknowledge immediately, publish async
-        if response_url:
-            asyncio.create_task(respond_to_interaction(response_url, f"Approved by @{user} — publishing..."))
-
-        # Fire-and-forget publish
-        from opennem.workers.weekly_summary import publish_weekly_summary
-
-        asyncio.create_task(publish_weekly_summary(network=network, week_start=week_start, response_url=response_url))
+        logger.info(f"Social post {post_id} approved by {user}")
+        asyncio.create_task(approve_social_post(post_id, approved_by=user))
 
     elif action_id == "weekly_reject":
-        logger.info(f"Weekly summary rejected by {user} for {network_code}")
-        if response_url:
-            asyncio.create_task(respond_to_interaction(response_url, f"Rejected by @{user}"))
+        logger.info(f"Social post {post_id} rejected by {user}")
+        asyncio.create_task(reject_social_post(post_id, rejected_by=user))
 
     return Response(status_code=200)
