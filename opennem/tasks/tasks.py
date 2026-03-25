@@ -79,7 +79,9 @@ async def task_nem_per_day_check(ctx) -> None:
     if not dispatch_actuals or not dispatch_actuals.inserted_records:
         raise Retry(defer=ctx["job_try"] * 15)
 
-    await process_energy_last_intervals(num_intervals=24 * 3)
+    # Next-day dispatch resets energy_quality_flag via upsert, so reprocess
+    # energy for the last 48h to cover the dispatch window
+    await process_energy_last_intervals(num_intervals=12 * 48)
 
 
 async def task_nem_rooftop_crawl(ctx) -> None:

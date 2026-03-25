@@ -494,7 +494,9 @@ async def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
     )
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy", "energy_storage"])
+    cr.inserted_records = await bulkinsert_mms_items(
+        FacilityScada, records, ["generated", "energy", "energy_storage", "energy_quality_flag"]
+    )
     cr.server_latest = max([i["interval"] for i in records if i["interval"]])
 
     return cr
