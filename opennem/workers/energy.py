@@ -46,10 +46,8 @@ async def _calculate_energy_for_interval(session: AsyncSession, start_time: date
             ) AS prev_generated
         FROM facility_scada
         WHERE
-            interval BETWEEN :start_time AND :end_time
-            AND energy_quality_flag < 2
+            interval BETWEEN :start_time - interval '5 minutes' AND :end_time
             AND network_id not in ('WEM', 'WEMDE', 'AEMO_ROOFTOP_BACKFILL')
-
         )
     UPDATE facility_scada fs
     SET
@@ -61,7 +59,7 @@ async def _calculate_energy_for_interval(session: AsyncSession, start_time: date
       AND fs.facility_code = rs.facility_code
       AND fs.interval = rs.interval
       AND fs.interval BETWEEN :start_time AND :end_time
-      -- Only update where we have both current and previous values
+      AND fs.energy_quality_flag < 2
       AND rs.prev_generated IS NOT NULL
     """)
 
