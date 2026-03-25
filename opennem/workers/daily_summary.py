@@ -199,7 +199,9 @@ async def run_daily_fueltech_summary(network: NetworkSchema) -> None:
     if settings.dry_run:
         return None
 
-    if await slack_message(message=summary_text, image_url=cfimage.url, image_alt="Daily Summary"):
+    if await slack_message(
+        webhook_url=settings.slack_hook_monitoring, message=summary_text, image_url=cfimage.url, image_alt="Daily Summary"
+    ):
         logger.info("Sent slack message")
     else:
         logger.error("Could not send slack message for daily fueltech summary")
