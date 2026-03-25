@@ -71,7 +71,7 @@ def get_fueltech_power_query_clickhouse(
         {date_column} >= toDateTime('{start_str}')
         AND {date_column} <= toDateTime('{end_str}')
         AND ({network_query})
-        AND fueltech_id NOT IN ('solar_rooftop')
+        AND fueltech_id NOT IN ('solar_rooftop', 'battery')
         {region_filter}
     GROUP BY interval, fueltech_code
     ORDER BY interval DESC, fueltech_code
