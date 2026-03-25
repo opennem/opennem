@@ -34,7 +34,6 @@ from opennem.exporter.facilities import export_facilities_static
 
 # from opennem.exporter.historic import export_historic_intervals
 from opennem.pipelines.export import run_export_power_latest_for_network
-from opennem.recordreactor.backlog import run_milestone_analysis_backlog
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_today_opennem
 from opennem.workers.catchup import catchup_aggregates, catchup_last_days, run_catchup_check
@@ -255,15 +254,31 @@ async def task_catchup_aggregates(ctx) -> None:
 
 async def task_update_milestones(ctx: dict) -> None:
     """
-    Task to update milestone records from the last recorded milestone to now.
+    Incremental milestone check — runs every 5 min.
 
-    This task runs hourly to find and record any new milestone records that have occurred
-    since the last update.
+    Loads current state, queries latest completed periods from ClickHouse,
+    compares against current records, and INSERTs only new records.
     """
     if not settings.run_milestones:
         return
 
-    await run_milestone_analysis_backlog(refresh=True)
+    from opennem.recordreactor.incremental import run_incremental_milestone_check
+
+    await run_incremental_milestone_check(alert_slack=True)
+
+
+async def task_milestone_reconciliation(ctx: dict) -> None:
+    """
+    Monthly full reconciliation — fills any gaps from incremental detection.
+
+    Runs backlog analysis over the last 2 years without deleting existing records.
+    """
+    if not settings.run_milestones:
+        return
+
+    from opennem.recordreactor.backlog import run_milestone_reconciliation
+
+    await run_milestone_reconciliation()
 
 
 async def task_check_unsplit_batteries(ctx: dict) -> None:

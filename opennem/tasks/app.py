@@ -47,6 +47,7 @@ from opennem.tasks.tasks import (
     task_export_facility_geojson,
     task_export_flows,
     task_facility_first_seen_check,
+    task_milestone_reconciliation,
     task_nem_interval_check,
     task_nem_per_day_check,
     task_nem_rooftop_crawl,
@@ -101,11 +102,20 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
-        # Milestone Updates
+        # Incremental milestone detection — every 5 min
         cron(
             task_update_milestones,
-            minute={5},  # Run at 5 minutes past every hour
-            hour=set(range(0, 24, 6)),  # run every 6 hours
+            minute=set(range(0, 60, 5)),
+            second=30,
+            timeout=300,
+            unique=True,
+        ),
+        # Monthly milestone reconciliation — 1st of month 3am AEST
+        cron(
+            task_milestone_reconciliation,
+            day=1,
+            hour=3,
+            minute=0,
             second=0,
             timeout=None,
             unique=True,

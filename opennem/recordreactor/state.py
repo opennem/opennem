@@ -106,6 +106,27 @@ async def refresh_current_milestone_state() -> dict[str, MilestoneRecordOutputSc
     return _CURRENT_MILESTONE_STATE
 
 
+def update_milestone_state(record_id: str, milestone: MilestoneRecordOutputSchema) -> None:
+    """Update a single entry in the cached state after detecting a new record.
+
+    This avoids a full DB reload after each new record is inserted.
+    """
+    global _CURRENT_MILESTONE_STATE
+
+    if _CURRENT_MILESTONE_STATE is None:
+        logger.warning("Cannot update state — cache not initialized")
+        return
+
+    _CURRENT_MILESTONE_STATE[record_id] = milestone
+
+
+def invalidate_milestone_state() -> None:
+    """Clear the cached state, forcing a full DB reload on next access."""
+    global _CURRENT_MILESTONE_STATE
+    _CURRENT_MILESTONE_STATE = None
+    logger.info("Milestone state cache invalidated")
+
+
 if __name__ == "__main__":
     import asyncio
 

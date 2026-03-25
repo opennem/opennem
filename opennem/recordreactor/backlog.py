@@ -728,6 +728,24 @@ async def run_update_milestone_analysis_to_now() -> None:
         logger.info("Milestone update analysis complete")
 
 
+async def run_milestone_reconciliation(lookback_years: int = 2) -> None:
+    """Monthly reconciliation: run full backlog analysis over a recent window
+    and INSERT any records that the incremental checker may have missed.
+
+    This never deletes existing records — it only fills gaps.
+    """
+    from dateutil.relativedelta import relativedelta
+
+    end_date = get_last_completed_interval_for_network(NetworkNEM)
+    start_date = end_date - relativedelta(years=lookback_years)
+
+    logger.info(f"Running milestone reconciliation from {start_date} to {end_date}")
+
+    milestone_records = await run_milestone_analysis(start_date=start_date, end_date=end_date)
+
+    logger.info(f"Reconciliation complete: {len(milestone_records)} records checked/inserted")
+
+
 if __name__ == "__main__":
     # Run test for last year of data
     import asyncio
