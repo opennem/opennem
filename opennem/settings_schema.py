@@ -71,6 +71,10 @@ class OpennemSettings(BaseSettings):
     # sentry DSN for error reporting
     sentry_url: str | None = None
 
+    # axiom observability
+    axiom_token: str | None = None
+    axiom_dataset: str | None = None
+
     # Slack notifications (incoming webhooks — one-way)
     slack_notifications: bool = True
     slack_hook_new_facilities: str | None = None
