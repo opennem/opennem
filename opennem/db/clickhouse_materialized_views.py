@@ -112,11 +112,12 @@ def backfill_materialized_view(
     # Get date range if not provided — needs the source table name
     if start_date is None or end_date is None:
         source_table = _get_source_table_from_view(view)
+        source_ts_col = view.effective_source_timestamp_column
         try:
             result = client.execute(f"""
                 SELECT
-                    min({view.timestamp_column}) as min_date,
-                    max({view.timestamp_column}) as max_date
+                    min({source_ts_col}) as min_date,
+                    max({source_ts_col}) as max_date
                 FROM {source_table}
             """)
 

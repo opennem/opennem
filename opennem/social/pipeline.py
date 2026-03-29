@@ -60,6 +60,7 @@ async def create_social_post(
             metadata_=req.metadata,
         )
         session.add(post)
+        await session.flush()
 
         for platform in req.platforms:
             plat = SocialPostPlatform(

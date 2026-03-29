@@ -31,6 +31,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from uuid_utils import uuid7
 
 from opennem.schema.core import BaseConfig
 
@@ -526,7 +527,7 @@ class AEMOMarketNotice(Base):
 class SocialPost(Base):
     __tablename__ = "social_posts"
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid7)
 
     # Content
     post_type: Mapped[str] = mapped_column(String, nullable=False)  # weekly_summary, milestone, manual
@@ -569,7 +570,7 @@ class SocialPost(Base):
 class SocialPostPlatform(Base):
     __tablename__ = "social_post_platforms"
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid7)
     post_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("social_posts.id", ondelete="CASCADE"), nullable=False
     )
