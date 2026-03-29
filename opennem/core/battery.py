@@ -201,30 +201,6 @@ async def process_battery_history(facility_code: str | None = None, clear_old_re
         """
     )
 
-    query_load_aggregate_template = text(
-        """
-        WITH source AS (
-            SELECT interval, network_id, facility_code, unit_code, fueltech_code, network_region, status_id,
-                   abs(generated) as generated, abs(energy) as energy, emissions, emissions_intensity, market_value
-            FROM at_facility_intervals
-            WHERE unit_code = :old_facility_code AND generated < 0
-        )
-        INSERT INTO at_facility_intervals (
-            interval, network_id, facility_code, unit_code, fueltech_code, network_region, status_id,
-            generated, energy, emissions, emissions_intensity, market_value
-        )
-        SELECT s.interval, s.network_id, s.facility_code, :new_facility_code, s.fueltech_code, s.network_region, s.status_id,
-               s.generated, s.energy, s.emissions, s.emissions_intensity, s.market_value
-        FROM source s
-        ON CONFLICT (interval, network_id, facility_code, unit_code) DO UPDATE
-        SET generated = EXCLUDED.generated,
-            energy = EXCLUDED.energy,
-            emissions = EXCLUDED.emissions,
-            emissions_intensity = EXCLUDED.emissions_intensity,
-            market_value = EXCLUDED.market_value
-        """
-    )
-
     query_generator = text(
         """
         WITH source AS (
@@ -239,30 +215,6 @@ async def process_battery_history(facility_code: str | None = None, clear_old_re
         SET generated = EXCLUDED.generated,
             energy = EXCLUDED.energy,
             energy_quality_flag = EXCLUDED.energy_quality_flag
-        """
-    )
-
-    query_aggregate_generator = text(
-        """
-        WITH source AS (
-            SELECT interval, network_id, facility_code, unit_code, fueltech_code, network_region, status_id,
-                   generated, energy, emissions, emissions_intensity, market_value
-            FROM at_facility_intervals
-            WHERE unit_code = :old_facility_code AND generated >= 0
-        )
-        INSERT INTO at_facility_intervals (
-            interval, network_id, facility_code, unit_code, fueltech_code, network_region, status_id,
-            generated, energy, emissions, emissions_intensity, market_value
-        )
-        SELECT s.interval, s.network_id, s.facility_code, :new_facility_code, s.fueltech_code, s.network_region, s.status_id,
-               s.generated, s.energy, s.emissions, s.emissions_intensity, s.market_value
-        FROM source s
-        ON CONFLICT (interval, network_id, facility_code, unit_code) DO UPDATE
-        SET generated = EXCLUDED.generated,
-            energy = EXCLUDED.energy,
-            emissions = EXCLUDED.emissions,
-            emissions_intensity = EXCLUDED.emissions_intensity,
-            market_value = EXCLUDED.market_value
         """
     )
 
@@ -291,14 +243,12 @@ async def process_battery_history(facility_code: str | None = None, clear_old_re
                 # Handle charging records (create charge records for negative generation)
                 params = {"new_facility_code": unit.charge_unit, "old_facility_code": unit.unit}
                 await session.execute(query_load_template, params)
-                await session.execute(query_load_aggregate_template, params)
 
                 logger.info(f"Created {unit.charge_unit} records for {unit.unit} charging intervals")
 
                 # Handle discharging records (create discharge records for positive generation)
                 params = {"new_facility_code": unit.discharge_unit, "old_facility_code": unit.unit}
                 await session.execute(query_generator, params)
-                await session.execute(query_aggregate_generator, params)
 
                 logger.info(f"Created {unit.discharge_unit} records for {unit.unit} discharging intervals")
 

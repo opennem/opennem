@@ -54,12 +54,7 @@ def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int
             query_cache_size=1200,
             echo=settings.db_debug,
             future=True,
-            pool_size=30,
-            max_overflow=20,
-            pool_recycle=1800,
-            pool_timeout=timeout,
-            pool_pre_ping=True,
-            pool_use_lifo=True,
+            poolclass=NullPool,
         )
 
         return _engine
@@ -152,9 +147,7 @@ async def get_read_session() -> AsyncGenerator[AsyncSession]:
 async def get_write_session() -> AsyncGenerator[AsyncSession]:
     async with SessionLocalAsync() as session:
         try:
-            async with session.begin():
-                yield session
-            # The commit will be done automatically when exiting the 'begin' context
+            yield session
         except Exception:
             await session.rollback()
             raise

@@ -151,7 +151,7 @@ async def import_cpi_data(csv_path: Path):
         )
 
         await session.execute(stmt)
-        # Commit is handled by the context manager
+        await session.commit()
 
     logger.info(f"Successfully imported {len(records)} CPI records")
     return len(records)

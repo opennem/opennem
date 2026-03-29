@@ -18,25 +18,35 @@ logger = logging.getLogger("opennem.db.clickhouse_materialized_views")
 
 
 def ensure_materialized_views_exist(views: list[MaterializedView] | None = None) -> None:
-    """
-    Ensure that materialized views exist in ClickHouse.
-    Creates them if they don't exist.
-
-    Args:
-        views: List of MaterializedView objects to ensure exist.
-               If None, ensures all views in CLICKHOUSE_MATERIALIZED_VIEWS exist.
-    """
+    """Ensure MVs exist. Drops and recreates if the engine type changed
+    (e.g. TABLE → MATERIALIZED VIEW after a schema migration)."""
     client = get_clickhouse_client()
 
     if views is None:
         views = list(CLICKHOUSE_MATERIALIZED_VIEWS.values())
 
     for view in views:
-        if not table_exists(client, view.name):
+        exists = table_exists(client, view.name)
+
+        if exists:
+            # Check if engine type matches schema (TABLE vs MV)
+            result = client.execute(
+                "SELECT engine FROM system.tables WHERE database = currentDatabase() AND name = %(name)s",
+                {"name": view.name},
+            )
+            is_mv = bool(result and "MaterializedView" in str(result[0][0]))
+            wants_mv = "CREATE MATERIALIZED VIEW" in view.schema.upper()
+
+            if is_mv != wants_mv:
+                logger.info(f"Recreating {view.name} (engine type changed)")
+                client.execute(f"DROP TABLE IF EXISTS {view.name}")
+                exists = False
+
+        if not exists:
             client.execute(view.schema)
-            logger.info(f"Created materialized view: {view.name}")
+            logger.info(f"Created: {view.name}")
         else:
-            logger.debug(f"Materialized view already exists: {view.name}")
+            logger.debug(f"Already exists: {view.name}")
 
 
 def refresh_materialized_views(views: list[MaterializedView | str] | None = None, drop_existing: bool = False) -> None:
@@ -99,11 +109,9 @@ def backfill_materialized_view(
     if end_date is not None:
         end_date = end_date.replace(hour=23, minute=59, second=59, microsecond=0)
 
-    # Determine source table from the view schema
-    source_table = _get_source_table_from_view(view)
-
-    # Get date range if not provided
+    # Get date range if not provided — needs the source table name
     if start_date is None or end_date is None:
+        source_table = _get_source_table_from_view(view)
         try:
             result = client.execute(f"""
                 SELECT
@@ -145,6 +153,14 @@ def backfill_materialized_view(
             logger.info(f"Backfilling {view.name} from {current_date} to {chunk_end}")
 
             try:
+                # For monthly views, align date ranges to month boundaries
+                # since timestamp_column stores toStartOfMonth() values
+                if view.timestamp_column == "month":
+                    range_start = current_date.replace(day=1).date()
+                else:
+                    range_start = current_date.date()
+                range_end = chunk_end.date()
+
                 # DELETE existing data for this date range to prevent double-counting
                 # This is required for SummingMergeTree which adds values during merges
                 delete_query = f"""
@@ -152,8 +168,8 @@ def backfill_materialized_view(
                     WHERE {view.timestamp_column} >= %(start)s
                     AND {view.timestamp_column} <= %(end)s
                 """
-                client.execute(delete_query, {"start": current_date.date(), "end": chunk_end.date()})
-                logger.debug(f"Deleted existing data from {view.name} for {current_date.date()} to {chunk_end.date()}")
+                client.execute(delete_query, {"start": range_start, "end": range_end})
+                logger.debug(f"Deleted existing data from {view.name} for {range_start} to {range_end}")
 
                 # INSERT new data
                 client.execute(
@@ -167,16 +183,13 @@ def backfill_materialized_view(
                         f"SELECT count() FROM {view.name} WHERE {view.timestamp_column} >= %(start)s "
                         f"AND {view.timestamp_column} <= %(end)s"
                     ),
-                    {"start": current_date.date(), "end": chunk_end.date()},
+                    {"start": range_start, "end": range_end},
                 )
                 row_count = verify[0][0] if verify else 0
                 if row_count == 0:
-                    logger.error(
-                        f"CRITICAL: Backfill {view.name} inserted 0 rows "
-                        f"for {current_date.date()} to {chunk_end.date()} — data gap!"
-                    )
+                    logger.error(f"CRITICAL: Backfill {view.name} inserted 0 rows for {range_start} to {range_end} — data gap!")
                 else:
-                    logger.info(f"Backfill {view.name}: {row_count} rows for {current_date.date()} to {chunk_end.date()}")
+                    logger.info(f"Backfill {view.name}: {row_count} rows for {range_start} to {range_end}")
             except Exception as e:
                 logger.error(f"Failed to backfill {view.name} for period {current_date} to {chunk_end}: {e}")
                 # Continue with next chunk instead of failing completely
@@ -263,15 +276,18 @@ def _get_source_table_from_view(view: MaterializedView) -> str:
     Returns:
         str: Name of the source table
     """
-    # Simple extraction - looks for FROM clause in the schema
-    # This assumes the source table is the first FROM in the SELECT statement
-    schema_lower = view.schema.lower()
-    from_index = schema_lower.find(" from ")
-    if from_index == -1:
-        raise ValueError(f"Could not find FROM clause in view schema for {view.name}")
+    # Extract source table from schema (MV) or backfill_query (plain TABLE)
+    # Looks for the first FROM clause in a SELECT statement
+    for sql in (view.schema, view.backfill_query):
+        sql_lower = sql.lower()
+        from_index = sql_lower.find(" from ")
+        if from_index != -1:
+            break
+    else:
+        raise ValueError(f"Could not find FROM clause in schema or backfill_query for {view.name}")
 
     # Extract table name after FROM
-    after_from = view.schema[from_index + 6 :].strip()
+    after_from = sql[from_index + 6 :].strip()
 
     # Handle FINAL modifier
     if after_from.lower().startswith("("):
@@ -396,19 +412,8 @@ def refresh_all_materialized_views(
     end_date = now.replace(hour=23, minute=59, second=59, microsecond=0)
     start_date = (now - timedelta(days=days)).replace(hour=0, minute=0, second=0, microsecond=0)
 
-    logger.info(f"Refreshing materialized views from {start_date.date()} to {end_date.date()}")
+    logger.info(f"Refreshing materialized views: {start_date.date()} to {end_date.date()} ({days}d, optimize={optimize})")
 
-    # Print current stats
-    print("\n=== Current MV Stats ===")
-    stats = get_materialized_view_stats(views)
-    for name, s in stats.items():
-        if s.get("exists"):
-            print(f"  {name}: {s['record_count']:,} records, {s['min_date']} to {s['max_date']}")
-        else:
-            print(f"  {name}: does not exist")
-
-    # Backfill
-    print(f"\n=== Backfilling {days} days ===")
     results = backfill_materialized_views(
         views=views,
         start_date=start_date,
@@ -416,26 +421,14 @@ def refresh_all_materialized_views(
         refresh_views=False,
     )
 
-    for name, count in results.items():
-        print(f"  {name}: {count:,} records")
-
-    # Optimize tables to merge duplicates
     if optimize:
-        print("\n=== Optimizing tables ===")
         view_names = views or list(CLICKHOUSE_MATERIALIZED_VIEWS.keys())
         for name in view_names:
             try:
-                print(f"  Optimizing {name}...")
                 client.execute(f"OPTIMIZE TABLE {name} FINAL")
+                logger.info(f"Optimized {name}")
             except Exception as e:
                 logger.error(f"Failed to optimize {name}: {e}")
-
-    # Print final stats
-    print("\n=== Final MV Stats ===")
-    stats = get_materialized_view_stats(views)
-    for name, s in stats.items():
-        if s.get("exists"):
-            print(f"  {name}: {s['record_count']:,} records, {s['min_date']} to {s['max_date']}")
 
     return results
 

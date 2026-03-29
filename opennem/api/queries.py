@@ -114,6 +114,10 @@ QUERY_CONFIGS = {
             Metric.CURTAILMENT_SOLAR_UTILITY_ENERGY: "curtailment_energy_solar_total",
             Metric.CURTAILMENT_WIND_ENERGY: "curtailment_energy_wind_total",
             Metric.RENEWABLE_PROPORTION: "round(if(sum(demand_gross) > 0, (sum(generation_renewable) / sum(demand_gross)) * 100, 0), 2)",  # noqa: E501
+            Metric.FLOW_IMPORTS: "energy_imports * 12",  # MWh to MW
+            Metric.FLOW_EXPORTS: "energy_exports * 12",
+            Metric.FLOW_IMPORTS_ENERGY: "energy_imports",
+            Metric.FLOW_EXPORTS_ENERGY: "energy_exports",
         },
         metric_agg_functions={
             Metric.PRICE: "avg",
@@ -130,6 +134,10 @@ QUERY_CONFIGS = {
             Metric.CURTAILMENT_SOLAR_UTILITY_ENERGY: "sum",
             Metric.CURTAILMENT_WIND_ENERGY: "sum",
             Metric.RENEWABLE_PROPORTION: "",
+            Metric.FLOW_IMPORTS: "sum",
+            Metric.FLOW_EXPORTS: "sum",
+            Metric.FLOW_IMPORTS_ENERGY: "sum",
+            Metric.FLOW_EXPORTS_ENERGY: "sum",
         },
         daily_metric_columns={
             Metric.PRICE: "sum(price_sum) / nullIf(sum(price_count), 0)",
@@ -146,6 +154,10 @@ QUERY_CONFIGS = {
             Metric.CURTAILMENT_SOLAR_UTILITY_ENERGY: "curtailment_energy_solar_total_daily",
             Metric.CURTAILMENT_WIND_ENERGY: "curtailment_energy_wind_total_daily",
             Metric.RENEWABLE_PROPORTION: "round(if(sum(demand_gross_sum) > 0, (sum(generation_renewable_sum) / sum(demand_gross_sum)) * 100, 0), 2)",  # noqa: E501
+            Metric.FLOW_IMPORTS: "energy_imports_daily * 12",
+            Metric.FLOW_EXPORTS: "energy_exports_daily * 12",
+            Metric.FLOW_IMPORTS_ENERGY: "energy_imports_daily",
+            Metric.FLOW_EXPORTS_ENERGY: "energy_exports_daily",
         },
         daily_metric_agg_functions={
             Metric.PRICE: "",
@@ -162,6 +174,10 @@ QUERY_CONFIGS = {
             Metric.CURTAILMENT_SOLAR_UTILITY_ENERGY: "sum",
             Metric.CURTAILMENT_WIND_ENERGY: "sum",
             Metric.RENEWABLE_PROPORTION: "",
+            Metric.FLOW_IMPORTS: "sum",
+            Metric.FLOW_EXPORTS: "sum",
+            Metric.FLOW_IMPORTS_ENERGY: "sum",
+            Metric.FLOW_EXPORTS_ENERGY: "sum",
         },
     ),
     QueryType.DATA: QueryConfig(

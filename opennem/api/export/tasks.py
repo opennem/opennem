@@ -15,12 +15,12 @@ from zoneinfo import ZoneInfo
 
 from sqlalchemy import select
 
-from opennem import settings
 from opennem.api.export.controllers import (
     NoResults,
     curtailment_network_region_daily,
     demand_network_region_daily,
     energy_interconnector_flows_and_emissions_v2,
+    energy_interconnector_flows_and_emissions_v4,
     gov_stats_cpi,
     power_flows_network_week,
     power_week,
@@ -30,7 +30,7 @@ from opennem.api.export.utils import write_output
 from opennem.api.stats.controllers import get_scada_range, get_scada_range_optimized
 from opennem.api.stats.schema import OpennemDataSet, ScadaDateRange
 from opennem.api.time import human_to_interval, human_to_period
-from opennem.controllers.energy import energy_fueltech_daily_v3, energy_fueltech_daily_v4
+from opennem.controllers.energy import energy_fueltech_daily
 from opennem.controllers.output.flows import power_flows_per_interval
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.controllers.output.weather import run_weather_daily_v3
@@ -53,6 +53,34 @@ from opennem.utils.dates import get_last_complete_day_for_network, get_today_nem
 from opennem.utils.version import get_version
 
 logger = logging.getLogger("opennem.export.tasks")
+
+
+async def _get_interconnector_flows(time_series, network_region_code, **kwargs):
+    """Get interconnector flows from CH (v4) or PG (v2) based on feature flag.
+
+    When flows_v4 is enabled, errors are logged but don't propagate — the export
+    continues without flow series rather than failing entirely.
+    """
+    from opennem import settings
+
+    if settings.flows_v4:
+        try:
+            result = await energy_interconnector_flows_and_emissions_v4(
+                time_series=time_series, network_region_code=network_region_code, **kwargs
+            )
+            if result and result.data:
+                return result
+            logger.warning("flows_v4 returned empty", extra={"network_region": network_region_code})
+        except Exception as e:
+            logger.error(
+                "flows_v4 export query failed",
+                extra={"network_region": network_region_code, "error_detail": str(e)},
+            )
+        return None
+
+    return await energy_interconnector_flows_and_emissions_v2(
+        time_series=time_series, network_region_code=network_region_code, **kwargs
+    )
 
 
 async def export_power(
@@ -193,25 +221,16 @@ async def export_energy(
                 logger.debug(f"Skipping since we only want latest and this is not the current year {energy_stat.year}")
                 continue
 
-            # Use v4 (ClickHouse) if feature flag is enabled, otherwise v3 (PostgreSQL)
-            if settings.use_analytics_outputs:
-                logger.info(f"Using ClickHouse analytics for energy export: {energy_stat.network.code} {energy_stat.year}")
-                stat_set = await energy_fueltech_daily_v4(
-                    network=energy_stat.network,
-                    time_series=time_series,
-                    network_region_code=energy_stat.network_region_query or energy_stat.network_region,
-                )
-            else:
-                stat_set = await energy_fueltech_daily_v3(
-                    network=energy_stat.network,
-                    time_series=time_series,
-                    network_region_code=energy_stat.network_region_query or energy_stat.network_region,
-                )
+            stat_set = await energy_fueltech_daily(
+                network=energy_stat.network,
+                time_series=time_series,
+                network_region_code=energy_stat.network_region_query or energy_stat.network_region,
+            )
 
             if not stat_set:
-                logger.error(
+                logger.warning(
                     f"No result from energy_fueltech_daily for {energy_stat.network} "
-                    "{energy_stat.period} {energy_stat.network_region}"
+                    f"{energy_stat.period} {energy_stat.network_region}"
                 )
                 continue
 
@@ -232,7 +251,7 @@ async def export_energy(
 
             # network flows
             if energy_stat.network.has_interconnectors and energy_stat.network_region:
-                interconnector_flows = await energy_interconnector_flows_and_emissions_v2(
+                interconnector_flows = await _get_interconnector_flows(
                     time_series=time_series,
                     network_region_code=energy_stat.network_region_query or energy_stat.network_region,
                 )
@@ -260,21 +279,11 @@ async def export_energy(
             time_series.year = None
             time_series.interval = human_to_interval("1M")
 
-            # Use v4 (ClickHouse) if feature flag is enabled, otherwise v3 (PostgreSQL)
-            if settings.use_analytics_outputs:
-                logger.info(f"Using ClickHouse analytics for energy export (all): {energy_stat.network.code}")
-                stat_set = await energy_fueltech_daily_v4(
-                    network=energy_stat.network,
-                    time_series=time_series,
-                    network_region_code=energy_stat.network_region_query or energy_stat.network_region,
-                )
-            else:
-                stat_set = await energy_fueltech_daily_v3(
-                    network=energy_stat.network,
-                    time_series=time_series,
-                    # networks_query=energy_stat.networks,
-                    network_region_code=energy_stat.network_region_query or energy_stat.network_region,
-                )
+            stat_set = await energy_fueltech_daily(
+                network=energy_stat.network,
+                time_series=time_series,
+                network_region_code=energy_stat.network_region_query or energy_stat.network_region,
+            )
 
             if not stat_set:
                 continue
@@ -291,7 +300,7 @@ async def export_energy(
                 stat_set.append_set(curtailment_energy)
 
             if energy_stat.network.has_interconnectors and energy_stat.network_region:
-                interconnector_flows = await energy_interconnector_flows_and_emissions_v2(
+                interconnector_flows = await _get_interconnector_flows(
                     time_series=time_series,
                     network_region_code=energy_stat.network_region_query or energy_stat.network_region,
                 )
@@ -363,21 +372,11 @@ async def export_all_monthly(networks: list[NetworkSchema] | None = None, networ
                     period=human_to_period("all"),
                 )
 
-                # Use v4 (ClickHouse) if feature flag is enabled, otherwise v3 (PostgreSQL)
-                if settings.use_analytics_outputs:
-                    logger.info(f"Using ClickHouse analytics for monthly export: {network.code} {network_region.code}")
-                    stat_set = await energy_fueltech_daily_v4(
-                        network=network,
-                        time_series=time_series,
-                        network_region_code=str(network_region.code),
-                    )
-                else:
-                    stat_set = await energy_fueltech_daily_v3(
-                        network=network,
-                        time_series=time_series,
-                        # networks_query=networks,
-                        network_region_code=str(network_region.code),
-                    )
+                stat_set = await energy_fueltech_daily(
+                    network=network,
+                    time_series=time_series,
+                    network_region_code=str(network_region.code),
+                )
 
                 if not stat_set:
                     logger.error(f"Could not get a monthly stat set for {network.code} and {network_region.code}")
@@ -389,7 +388,7 @@ async def export_all_monthly(networks: list[NetworkSchema] | None = None, networ
                 stat_set.append_set(demand_energy_and_value)
 
                 if network.has_interconnectors:
-                    interconnector_flows = await energy_interconnector_flows_and_emissions_v2(
+                    interconnector_flows = await _get_interconnector_flows(
                         time_series=time_series,
                         network_region_code=str(network_region.code),
                     )
@@ -452,21 +451,11 @@ async def export_all_daily(networks: list[NetworkSchema] | None = None, network_
                     period=human_to_period("all"),
                 )
 
-                # Use v4 (ClickHouse) if feature flag is enabled, otherwise v3 (PostgreSQL)
-                if settings.use_analytics_outputs:
-                    logger.info(f"Using ClickHouse analytics for monthly export: {network.code} {network_region.code}")
-                    stat_set = await energy_fueltech_daily_v4(
-                        network=network,
-                        time_series=time_series,
-                        network_region_code=str(network_region.code),
-                    )
-                else:
-                    stat_set = await energy_fueltech_daily_v3(
-                        network=network,
-                        time_series=time_series,
-                        # networks_query=networks,
-                        network_region_code=str(network_region.code),
-                    )
+                stat_set = await energy_fueltech_daily(
+                    network=network,
+                    time_series=time_series,
+                    network_region_code=str(network_region.code),
+                )
 
                 if not stat_set:
                     continue
@@ -479,7 +468,7 @@ async def export_all_daily(networks: list[NetworkSchema] | None = None, network_
                 # Hard coded to NEM only atm but we'll put has_interconnectors
                 # in the metadata to automate all this
                 if network == NetworkNEM:
-                    interconnector_flows = await energy_interconnector_flows_and_emissions_v2(
+                    interconnector_flows = await _get_interconnector_flows(
                         time_series=time_series,
                         network_region_code=str(network_region.code),
                     )

@@ -416,39 +416,8 @@ class FacilityScada(Base):
     energy_quality_flag: Mapped[int] = mapped_column(SmallInteger, nullable=False, default=0)
 
     __table_args__ = (
-        # 1. Primary Index for Time Bucketing
-        Index(
-            "idx_facility_scada_interval_bucket",
-            interval,
-            network_id,
-            facility_code,
-            is_forecast,
-            postgresql_using="btree",
-        ),
-        # 2. Partial Index for Forecast Filter
-        Index(
-            "idx_facility_scada_non_forecast",
-            interval,
-            facility_code,
-            generated,
-            energy,
-            postgresql_where=text("is_forecast = false"),
-            postgresql_using="btree",
-        ),
-        # 3. Index for Grouping
-        Index("idx_facility_scada_grouping", network_id, facility_code, energy, postgresql_using="btree"),
-        # Existing indexes kept for compatibility
         Index("idx_facility_scada_facility_code_interval", facility_code, interval.desc()),
-        Index("idx_facility_scada_network_id", network_id),
         Index("idx_facility_scada_interval_facility_code", interval, facility_code),
-        Index(
-            "idx_facility_scada_lookup",
-            interval,
-            facility_code,
-            is_forecast,
-            postgresql_where=text("is_forecast = false"),
-            postgresql_using="btree",
-        ),
     )
 
     def __str__(self) -> str:
@@ -489,17 +458,6 @@ class BalancingSummary(Base):
         ),
         # 1. Primary Index optimized for time bucket operations and filtering
         Index("idx_balancing_time_lookup", interval, network_id, network_region, is_forecast, postgresql_using="btree"),
-        # 2. Partial index for non-forecast records with price
-        # This helps with the LOCF operation on price
-        Index(
-            "idx_balancing_price_lookup",
-            interval,
-            network_id,
-            network_region,
-            price,
-            postgresql_where=text("is_forecast = false AND price IS NOT NULL"),
-            postgresql_using="btree",
-        ),
         # 3. Index for region-based querying
         Index("idx_balancing_region_time", network_region, interval, is_forecast, postgresql_using="btree"),
     )
@@ -522,36 +480,7 @@ class AggregateNetworkFlows(Base):
 
     network = relationship("Network")
 
-    __table_args__ = (
-        Index("idx_at_network_flows_network_id_trading_interval", "network_id", "interval", postgresql_using="btree"),
-        Index("idx_at_network_flows_trading_interval_facility_code", "interval", "network_id", "network_region"),
-    )
-
-
-class AggregateNetworkDemand(Base):
-    __tablename__ = "at_network_demand"
-
-    trading_day = Column(TIMESTAMP(timezone=True), primary_key=True, nullable=False)
-    network_id = Column(
-        Text, ForeignKey("network.code", name="fk_at_facility_daily_network_code"), primary_key=True, nullable=False
-    )
-    network_region = Column(Text, primary_key=True)
-    demand_energy = Column(Numeric, nullable=True)
-    demand_market_value = Column(Numeric, nullable=True)
-
-    network = relationship("Network")
-
-    __table_args__ = (
-        Index("idx_at_network_demand_network_id_trading_interval", network_id, trading_day, postgresql_using="btree"),
-        Index("idx_at_network_demand_trading_interval_network_region", trading_day, network_id, network_region),
-        Index(
-            "idx_at_network_demand_query_optimization",
-            network_id,
-            network_region,
-            trading_day,
-            postgresql_include=["demand_energy", "demand_market_value"],
-        ),
-    )
+    __table_args__: tuple = ()
 
 
 class Milestones(Base):
@@ -594,68 +523,68 @@ class AEMOMarketNotice(Base):
     reason: Mapped[str] = mapped_column(Text, nullable=False)
 
 
-class FacilityAggregate(Base):
-    """Stores aggregated facility data with pricing and emissions calculations"""
+class SocialPost(Base):
+    __tablename__ = "social_posts"
 
-    __tablename__ = "at_facility_intervals"
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
-    # Primary key columns
-    interval: Mapped[datetime] = mapped_column(DateTime(timezone=False), primary_key=True, nullable=False)
-    network_id: Mapped[str] = mapped_column(
-        Text, ForeignKey("network.code", name="fk_facility_aggregates_network_code"), primary_key=True, nullable=False, index=True
-    )
-    facility_code: Mapped[str] = mapped_column(Text, primary_key=True, nullable=False, index=True)
-    unit_code: Mapped[str] = mapped_column(Text, primary_key=True, nullable=False, index=True)
+    # Content
+    post_type: Mapped[str] = mapped_column(String, nullable=False)  # weekly_summary, milestone, manual
+    text_content: Mapped[str] = mapped_column(Text, nullable=False)
+    image_url: Mapped[str | None] = mapped_column(Text, nullable=True)
 
-    # Data columns
-    fueltech_code: Mapped[str | None] = mapped_column(Text, nullable=False)
-    network_region: Mapped[str] = mapped_column(Text, nullable=False)
-    status_id: Mapped[str | None] = mapped_column(Text, nullable=True)
-    generated: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
-    energy: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
-    emissions: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
-    emissions_intensity: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
-    market_value: Mapped[float | None] = mapped_column(Numeric(precision=20, scale=6), nullable=True)
+    # Status
+    status: Mapped[str] = mapped_column(String, nullable=False, default="draft")
+
+    # Source reference
+    source_type: Mapped[str | None] = mapped_column(String, nullable=True)
+    source_id: Mapped[str | None] = mapped_column(String, nullable=True)
+
+    # Slack tracking
+    slack_channel_id: Mapped[str | None] = mapped_column(String, nullable=True)
+    slack_message_ts: Mapped[str | None] = mapped_column(String, nullable=True)
+    approved_by: Mapped[str | None] = mapped_column(String, nullable=True)
+    rejected_by: Mapped[str | None] = mapped_column(String, nullable=True)
 
     # Metadata
-    last_updated: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("now()"))
+    network_id: Mapped[str | None] = mapped_column(Text, nullable=True)
+    metadata_: Mapped[dict] = mapped_column("metadata", JSONB, nullable=False, default=dict, server_default=text("'{}'::jsonb"))
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
+    approved_at: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True), nullable=True)
+    published_at: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True), nullable=True)
+
+    # Relationships
+    platforms = relationship("SocialPostPlatform", back_populates="post", cascade="all, delete-orphan")
 
     __table_args__ = (
-        Index("at_facility_intervals_interval_idx", interval.desc()),
-        Index("idx_at_facility_intervals_interval_network", interval.desc(), network_id),
-        Index("idx_at_facility_intervals_facility_interval", facility_code, interval.desc()),
-        Index("idx_at_facility_intervals_network_region", network_region),
-        Index(
-            "idx_facility_intervals_monthly_agg",
-            network_id,
-            interval,
-            fueltech_code,
-            postgresql_where=text(
-                "network_id = ANY (ARRAY['NEM'::text, 'AEMO_ROOFTOP'::text, 'OPENNEM_ROOFTOP_BACKFILL'::text])"
-            ),
-            postgresql_include=["energy", "market_value", "emissions"],
-        ),
-        Index(
-            "idx_facility_intervals_region_monthly_agg",
-            network_id,
-            network_region,
-            interval,
-            fueltech_code,
-            postgresql_where=text(
-                "network_id = ANY (ARRAY['NEM'::text, 'AEMO_ROOFTOP'::text, 'OPENNEM_ROOFTOP_BACKFILL'::text])"
-            ),
-            postgresql_include=["energy", "market_value", "emissions"],
-        ),
-        # Index for time bucket operations
-        Index(
-            "idx_at_facility_intervals_time_facility",
-            interval.desc(),
-            facility_code,
-        ),
-        # Index for unit code grouping
-        Index(
-            "idx_at_facility_intervals_unit_time",
-            unit_code,
-            interval.desc(),
-        ),
+        Index("idx_social_posts_status", "status"),
+        Index("idx_social_posts_created_at", "created_at"),
+        Index("idx_social_posts_source", "source_type", "source_id"),
     )
+
+
+class SocialPostPlatform(Base):
+    __tablename__ = "social_post_platforms"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    post_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("social_posts.id", ondelete="CASCADE"), nullable=False
+    )
+
+    platform: Mapped[str] = mapped_column(String, nullable=False)  # twitter, bluesky, linkedin
+    status: Mapped[str] = mapped_column(String, nullable=False, default="pending")
+
+    permalink: Mapped[str | None] = mapped_column(Text, nullable=True)
+    platform_post_id: Mapped[str | None] = mapped_column(String, nullable=True)
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    published_at: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
+
+    # Relationships
+    post = relationship("SocialPost", back_populates="platforms")
+
+    __table_args__ = (UniqueConstraint("post_id", "platform", name="uq_social_post_platform"),)

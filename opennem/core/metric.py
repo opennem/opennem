@@ -50,6 +50,10 @@ class Metric(StrEnum):
     RENEWABLE_PROPORTION = "renewable_proportion"
     POLLUTION = "pollution"
     STORAGE_BATTERY = "storage_battery"
+    FLOW_IMPORTS = "flow_imports"
+    FLOW_EXPORTS = "flow_exports"
+    FLOW_IMPORTS_ENERGY = "flow_imports_energy"
+    FLOW_EXPORTS_ENERGY = "flow_exports_energy"
 
 
 @dataclass
@@ -208,6 +212,34 @@ METRIC_METADATA = {
         description="Battery storage level",
         column_name="energy_storage",
         default_agg="avg",
+        precision=3,
+    ),
+    Metric.FLOW_IMPORTS: MetricMetadata(
+        unit="MW",
+        description="Interconnector power imports",
+        column_name="energy_imports",
+        default_agg="sum",
+        precision=3,
+    ),
+    Metric.FLOW_EXPORTS: MetricMetadata(
+        unit="MW",
+        description="Interconnector power exports",
+        column_name="energy_exports",
+        default_agg="sum",
+        precision=3,
+    ),
+    Metric.FLOW_IMPORTS_ENERGY: MetricMetadata(
+        unit="MWh",
+        description="Interconnector energy imports",
+        column_name="energy_imports",
+        default_agg="sum",
+        precision=3,
+    ),
+    Metric.FLOW_EXPORTS_ENERGY: MetricMetadata(
+        unit="MWh",
+        description="Interconnector energy exports",
+        column_name="energy_exports",
+        default_agg="sum",
         precision=3,
     ),
 }

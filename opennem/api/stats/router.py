@@ -20,17 +20,24 @@ from opennem.core.time_interval import Interval
 from opennem.core.units import get_unit
 from opennem.db import db_connect, get_read_session
 from opennem.db.models.opennem import Facility
-from opennem.queries.emissions import get_emission_factor_region_query
-from opennem.queries.energy import get_energy_facility_query
-from opennem.queries.price import get_network_region_price_query
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.schema.time import TimePeriod
 from opennem.users.schema import OpenNEMRoles, OpenNEMUser
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem
 
 from .controllers import get_scada_range, get_scada_range_optimized, stats_factory
-from .queries import power_facility_query
 from .schema import DataQueryResult, OpennemDataSet
+
+
+def _deprecated_endpoint(*_args, **_kwargs):
+    raise HTTPException(status_code=410, detail="Endpoint removed — use v4 API")
+
+
+# Stubs for removed PG query functions (endpoints are admin-only, hidden)
+power_facility_query = _deprecated_endpoint
+get_energy_facility_query = _deprecated_endpoint
+get_emission_factor_region_query = _deprecated_endpoint
+get_network_region_price_query = _deprecated_endpoint
 
 logger = logging.getLogger(__name__)
 

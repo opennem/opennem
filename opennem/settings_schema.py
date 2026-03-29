@@ -71,7 +71,11 @@ class OpennemSettings(BaseSettings):
     # sentry DSN for error reporting
     sentry_url: str | None = None
 
-    # Slack notifications
+    # axiom observability
+    axiom_token: str | None = None
+    axiom_dataset: str | None = None
+
+    # Slack notifications (incoming webhooks — one-way)
     slack_notifications: bool = True
     slack_hook_new_facilities: str | None = None
     slack_hook_monitoring: str | None = None
@@ -80,6 +84,15 @@ class OpennemSettings(BaseSettings):
     slack_hook_aemo_market_notices: str | None = None
     slack_hook_records: str | None = None
     slack_admin_alert: list[str] | None = ["nik"]
+
+    # Slack App (for interactive buttons — weekly summary approval)
+    slack_bot_token: str | None = None
+    slack_signing_secret: str | None = None
+    slack_weekly_summary_channel: str | None = None
+
+    # LinkedIn API
+    linkedin_access_token: str | None = None
+    linkedin_organization_id: str | None = None
 
     # R2 settings
     s3_access_key_id: str | None = Field(None, description="The access key ID for the S3 bucket")
@@ -139,11 +152,7 @@ class OpennemSettings(BaseSettings):
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
     show_emissions_in_power_outputs: bool = True  # show emissions in power outputs
     show_emission_factors_in_power_outputs: bool = True  # show emissions in power outputs
-    use_analytics_outputs: bool = False  # use ClickHouse analytics for energy outputs instead of PostgreSQL
-    demand_from_market_summary: bool = (
-        False  # use ClickHouse market_summary for demand data instead of PostgreSQL at_network_demand
-    )
-
+    flows_v4: bool = False  # enable v4 flow solver (dynamic topology, stores in CH market_summary)
     # clerk API key
     clerk_secret_key: str | None = None
     api_jwks_url: str = "https://clerk.dev/.well-known/jwks.json"

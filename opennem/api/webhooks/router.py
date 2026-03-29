@@ -1,13 +1,18 @@
+import asyncio
+import json
 import logging
 from typing import Literal
+from uuid import UUID
 
 from fastapi import APIRouter, Request
+from fastapi.responses import Response
 from fastapi_versionizer.versionizer import api_version
 from pydantic import BaseModel, EmailStr
 from starlette.exceptions import HTTPException
 
 from opennem import settings
 from opennem.clients.slack import slack_message
+from opennem.clients.slack_app import verify_slack_signature
 from opennem.controllers.sanity import parse_sanity_webhook_request
 
 logger = logging.getLogger("opennem.api.webhooks.router")
@@ -87,6 +92,9 @@ async def webhook_sanity_update(webhook_secret: str, request: Request) -> str:
 
     try:
         await parse_sanity_webhook_request(request_json)
+    except TimeoutError as e:
+        logger.warning(f"Sanity webhook timeout: {e}")
+        raise HTTPException(status_code=503, detail="Service temporarily unavailable") from e
     except Exception as e:
         logger.error(f"Error parsing sanity webhook: {e}")
         raise HTTPException(status_code=500, detail="Server Error") from e
@@ -154,3 +162,48 @@ async def webhook_clerk_update(webhook_secret: str, request: Request) -> str:
         )
 
     return "OK"
+
+
+@router.post(
+    "/slack/interactive",
+    include_in_schema=False,
+)
+async def slack_interaction(request: Request) -> Response:
+    """Slack interaction webhook — handles social post Approve/Reject buttons.
+
+    Slack sends form-encoded payload when a user clicks a Block Kit button.
+    Must respond 200 within 3 seconds; heavy work runs async.
+    """
+    await verify_slack_signature(request)
+
+    # Slack sends application/x-www-form-urlencoded with a "payload" field
+    form = await request.form()
+    try:
+        payload = json.loads(form["payload"])
+    except (KeyError, json.JSONDecodeError) as e:
+        logger.error(f"Invalid Slack interaction payload: {e}")
+        raise HTTPException(status_code=400, detail="Invalid payload") from e
+
+    action = payload.get("actions", [{}])[0]
+    action_id = action.get("action_id", "")
+    callback_value = action.get("value", "")
+    user = payload.get("user", {}).get("username", "unknown")
+
+    # callback_value is the social post UUID
+    try:
+        post_id = UUID(callback_value)
+    except (ValueError, TypeError):
+        logger.error(f"Invalid callback value (not a UUID): {callback_value}")
+        return Response(status_code=200)
+
+    from opennem.social.pipeline import approve_social_post, reject_social_post
+
+    if action_id == "weekly_approve":
+        logger.info(f"Social post {post_id} approved by {user}")
+        asyncio.create_task(approve_social_post(post_id, approved_by=user))
+
+    elif action_id == "weekly_reject":
+        logger.info(f"Social post {post_id} rejected by {user}")
+        asyncio.create_task(reject_social_post(post_id, rejected_by=user))
+
+    return Response(status_code=200)

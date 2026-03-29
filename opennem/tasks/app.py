@@ -47,18 +47,20 @@ from opennem.tasks.tasks import (
     task_export_facility_geojson,
     task_export_flows,
     task_facility_first_seen_check,
+    task_milestone_reconciliation,
     task_nem_interval_check,
     task_nem_per_day_check,
     task_nem_rooftop_crawl,
     task_optimize_clickhouse_tables,
-    task_refresh_clickhouse_materialized_views,
+    task_refresh_clickhouse_mv_fast,
+    task_refresh_clickhouse_mv_full,
     task_refresh_from_cms,
-    task_run_aggregates_demand_network_days,
     task_send_cms_updates_slack_report,
     task_update_facility_first_seen,
     task_update_facility_seen_range,
     task_update_max_generation_for_units,
     task_update_milestones,
+    task_weekly_summary,
     task_wem_day_crawl,
 )
 from opennem.utils.host import get_hostname
@@ -100,11 +102,20 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
-        # Milestone Updates
+        # Incremental milestone detection — every 5 min
         cron(
             task_update_milestones,
-            minute={5},  # Run at 5 minutes past every hour
-            hour=set(range(0, 24, 6)),  # run every 6 hours
+            minute=set(range(0, 60, 5)),
+            second=30,
+            timeout=300,
+            unique=True,
+        ),
+        # Monthly milestone reconciliation — 1st of month 3am AEST
+        cron(
+            task_milestone_reconciliation,
+            day=1,
+            hour=3,
+            minute=0,
             second=0,
             timeout=None,
             unique=True,
@@ -118,15 +129,10 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
-        # Refresh ClickHouse materialized views every 6 hours
-        cron(
-            task_refresh_clickhouse_materialized_views,
-            hour={1, 7, 13, 19},
-            minute=30,
-            second=0,
-            timeout=None,
-            unique=True,
-        ),
+        # Fast MV refresh: 2-day backfill every 5 min (no OPTIMIZE)
+        cron(task_refresh_clickhouse_mv_fast, minute=set(range(0, 60, 5)), second=10, timeout=None, unique=True),
+        # Full MV refresh: 7-day backfill + OPTIMIZE every 6h
+        cron(task_refresh_clickhouse_mv_full, hour={1, 7, 13, 19}, minute=30, second=0, timeout=None, unique=True),
         # NEM Rooftop
         cron(
             task_nem_rooftop_crawl,
@@ -195,14 +201,6 @@ class WorkerSettings:
         #     timeout=None,
         #     unique=True,
         # ),
-        # demand aggregates
-        cron(
-            task_run_aggregates_demand_network_days,
-            minute=27,
-            second=0,
-            timeout=None,
-            unique=True,
-        ),
         # export flows and electricitymap
         cron(
             task_export_flows,
@@ -325,6 +323,16 @@ class WorkerSettings:
             minute=0,
             second=0,
             weekday={0, 1, 2, 3, 4},  # Monday through Friday only
+            timeout=None,
+            unique=True,
+        ),
+        # Weekly summary report — Monday 7am AEST, posts to Slack for approval
+        cron(
+            task_weekly_summary,
+            weekday={0},  # Monday
+            hour=7,
+            minute=0,
+            second=0,
             timeout=None,
             unique=True,
         ),

@@ -3,6 +3,7 @@ OpenElectricity Twitter client
 """
 
 import asyncio
+import io
 import logging
 
 import tweepy
@@ -24,6 +25,21 @@ async def post_tweet(message: str) -> None:
     """Post a tweet"""
 
     await twitter_client.create_tweet(text=message)
+
+
+async def post_tweet_with_image(message: str, image: io.BytesIO, filename: str = "summary.png") -> None:
+    """Post a tweet with an image attachment."""
+    auth = tweepy.OAuth1UserHandler(
+        settings.twitter_api_key,
+        settings.twitter_api_key_secret,
+        settings.twitter_access_token,
+        settings.twitter_access_token_secret,
+    )
+    api = tweepy.API(auth)
+
+    image.seek(0)
+    media = await asyncio.to_thread(api.media_upload, filename=filename, file=image)
+    await twitter_client.create_tweet(text=message, media_ids=[media.media_id])
 
 
 if __name__ == "__main__":

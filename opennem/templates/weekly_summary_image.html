@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1080px;
+    height: 1350px;
+    background: #FDFAF4;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #222;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  .container {
+    padding: 56px 56px 44px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+  }
+
+  .logo { height: 26px; opacity: 0.9; }
+
+  .week-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    color: #888;
+    letter-spacing: 0.02em;
+  }
+
+  .title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 40px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #222;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+    color: #888;
+    margin-bottom: 40px;
+  }
+
+  /* Stats grid */
+  .stats-grid {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #E5E5E4;
+    padding: 20px 22px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 34px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #222;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-unit {
+    font-size: 16px;
+    font-weight: 400;
+    color: #888;
+  }
+
+  .stat-wow {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    margin-top: 6px;
+  }
+
+  /* Section titles */
+  .section-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #222;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+
+  /* Fueltech table */
+  .fueltech-table {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 32px;
+  }
+
+  .fueltech-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 2px solid #E5E5E4;
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .fueltech-row {
+    display: flex;
+    align-items: center;
+    padding: 13px 0;
+    border-bottom: 1px solid #F0EFEC;
+    font-size: 16px;
+  }
+
+  .fueltech-row:last-child { border-bottom: none; }
+
+  .ft-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+
+  .ft-name { flex: 1; color: #444; }
+
+  .ft-energy {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    color: #222;
+    width: 120px;
+    text-align: right;
+  }
+
+  .ft-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    color: #888;
+    width: 80px;
+    text-align: right;
+  }
+
+  .ft-wow {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    width: 100px;
+    text-align: right;
+  }
+
+  .fh-name { flex: 1; padding-left: 22px; }
+  .fh-energy { width: 120px; text-align: right; }
+  .fh-pct { width: 80px; text-align: right; }
+  .fh-wow { width: 100px; text-align: right; }
+
+  .wow-up { color: #16a34a; }
+  .wow-down { color: #dc2626; }
+  .wow-flat { color: #aaa; }
+
+  /* Milestone cards */
+  .milestones-grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  .milestones-grid.count-1 { grid-template-columns: 1fr 1fr; }
+  .milestones-grid.count-1 .milestone-card:first-child { grid-column: 1; }
+  .milestones-grid.count-2 { grid-template-columns: 1fr 1fr; }
+  .milestones-grid.count-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .milestones-grid.count-4 { grid-template-columns: 1fr 1fr; }
+  .milestones-grid.count-5 { grid-template-columns: 1fr 1fr 1fr; }
+
+  .milestone-card {
+    background: #fff;
+    border: 1px solid #E5E5E4;
+    border-radius: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .mc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .mc-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .mc-icon svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .mc-region {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: #888;
+    letter-spacing: 0.03em;
+  }
+
+  .mc-desc {
+    font-size: 15px;
+    color: #333;
+    line-height: 1.35;
+    margin-bottom: auto;
+    min-height: 42px;
+  }
+
+  .mc-divider {
+    height: 1px;
+    background: #F0EFEC;
+    margin: 14px 0 12px;
+  }
+
+  .mc-footer {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .mc-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #222;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mc-unit {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: #888;
+    font-weight: 400;
+  }
+
+  .mc-sub {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .mc-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: #aaa;
+  }
+
+  .mc-change {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+  }
+
+  .footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid #E5E5E4;
+  }
+
+  .footer-url {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: #888;
+  }
+
+  .footer-brand {
+    font-size: 13px;
+    color: #C74523;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <img class="logo" src="${logo_url}" alt="Open Electricity" />
+    <span class="week-label">WEEK ${week_number} · ${year}</span>
+  </div>
+
+  <div class="title">Weekly Energy Summary</div>
+  <div class="subtitle">${network} · ${week_range}</div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Generation</div>
+      <div class="stat-value">${total_energy}<span class="stat-unit"> GWh</span></div>
+      <div class="stat-wow ${te_wow_class}">${te_wow_str}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Renewables</div>
+      <div class="stat-value">${renewable_pct}<span class="stat-unit">%</span></div>
+      <div class="stat-wow ${rp_wow_class}">${rp_wow_str}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Avg Price</div>
+      <div class="stat-value">$${avg_price}<span class="stat-unit">/MWh</span></div>
+      <div class="stat-wow ${ap_wow_class}">${ap_wow_str}</div>
+    </div>
+  </div>
+
+  <div class="section-label">Generation Mix</div>
+  <div class="fueltech-table">
+    <div class="fueltech-header">
+      <div class="fh-name">Fuel</div>
+      <div class="fh-energy">Energy</div>
+      <div class="fh-pct">Share</div>
+      <div class="fh-wow">WoW</div>
+    </div>
+    % for r in records:
+    <div class="fueltech-row">
+      <div class="ft-color" style="background: ${r.fueltech_color};"></div>
+      <div class="ft-name">${r.fueltech_label}</div>
+      <div class="ft-energy">${r.energy_str} GWh</div>
+      <div class="ft-pct">${r.pct_str}%</div>
+      <div class="ft-wow ${r.wow_class}">${r.wow_str}</div>
+    </div>
+    % endfor
+  </div>
+
+  % if milestones:
+  <div class="section-label">Records &amp; Milestones</div>
+  <div class="milestones-grid count-${len(milestones)}">
+    % for m in milestones:
+    <div class="milestone-card">
+      <div class="mc-header">
+        <div class="mc-icon">${m.icon_svg}</div>
+        <div class="mc-region">${m.region}</div>
+      </div>
+      <div class="mc-desc">${m.description}</div>
+      <div class="mc-divider"></div>
+      <div class="mc-footer">
+        <span class="mc-value">${m.value_str}</span>
+        % if m.unit_str:
+        <span class="mc-unit">${m.unit_str}</span>
+        % endif
+      </div>
+      <div class="mc-sub">
+        <span class="mc-date">${m.date_str}</span>
+        % if m.change_str:
+        <span class="mc-change ${m.change_class}">${m.change_str}</span>
+        % endif
+      </div>
+    </div>
+    % endfor
+  </div>
+  % endif
+
+  <div class="footer">
+    <span class="footer-url">openelectricity.org.au</span>
+    <span class="footer-brand">Open Electricity</span>
+  </div>
+
+</div>
+</body>
+</html>
