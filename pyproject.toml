@@ -72,6 +72,7 @@ dependencies = [
     "psycopg[binary]>=3.2.12",
     "html2image>=2.0.7",
     "axiom-py>=0.4.0",
+    "uuid-utils>=0.14.1",
 ]
 
 [dependency-groups]
