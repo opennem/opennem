@@ -8,7 +8,7 @@ from fastapi_versionizer.versionizer import api_version
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from opennem.api.security import api_protected
+from opennem.api.keys import api_protected
 from opennem.db import get_read_session
 from opennem.db.models.opennem import SocialPost
 from opennem.social.pipeline import (
