@@ -17,12 +17,20 @@ class MaterializedView:
         name: The name of the materialized view
         schema: The SQL schema definition for the view
         backfill_query: The SQL query used to populate/backfill the view
+        source_timestamp_column: Column name in the source table used for date range queries.
+            Defaults to timestamp_column. Override when the MV's timestamp_column (e.g. "month")
+            doesn't exist in the source table (e.g. source has "interval" not "month").
     """
 
     name: str
     timestamp_column: str
     schema: str
     backfill_query: str
+    source_timestamp_column: str | None = None
+
+    @property
+    def effective_source_timestamp_column(self) -> str:
+        return self.source_timestamp_column or self.timestamp_column
 
 
 UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
@@ -385,6 +393,7 @@ MARKET_SUMMARY_DAILY_VIEW = MaterializedView(
 MARKET_SUMMARY_MONTHLY_VIEW = MaterializedView(
     name="market_summary_monthly_mv",
     timestamp_column="month",
+    source_timestamp_column="interval",
     schema="""
         CREATE MATERIALIZED VIEW market_summary_monthly_mv
         ENGINE = ReplacingMergeTree(version)
