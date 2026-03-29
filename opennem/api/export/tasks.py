@@ -221,6 +221,10 @@ async def export_energy(
                 logger.debug(f"Skipping since we only want latest and this is not the current year {energy_stat.year}")
                 continue
 
+            # Skip years before the network has data
+            if date_range_network.data_first_seen and energy_stat.year < date_range_network.data_first_seen.year:
+                continue
+
             stat_set = await energy_fueltech_daily(
                 network=energy_stat.network,
                 time_series=time_series,
