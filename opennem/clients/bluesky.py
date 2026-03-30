@@ -1,5 +1,9 @@
 """
 OpenNEM Bluesky Client
+
+Supports two accounts:
+- Main (bluesky_handle) — weekly summaries, general posts
+- Records (bluesky_records_handle) — milestone/record posts
 """
 
 import asyncio
@@ -13,21 +17,25 @@ from opennem import settings
 logger = logging.getLogger("opennem.clients.bluesky")
 
 
-async def post_bluesky(text: str) -> None:
-    """Posts a message text to Bluesky.
+def _get_credentials(account: str = "main") -> tuple[str | None, str | None]:
+    """Get Bluesky credentials for the specified account."""
+    if account == "records":
+        return settings.bluesky_records_handle, settings.bluesky_records_password
+    return settings.bluesky_handle, settings.bluesky_password
 
-    Args:
-        text: The message text to post.
-    """
-    if not settings.bluesky_handle or not settings.bluesky_password:
-        logger.error("Bluesky handle or password not configured in settings. Skipping post.")
+
+async def post_bluesky(text: str, account: str = "main") -> None:
+    """Posts a message text to Bluesky."""
+    handle, password = _get_credentials(account)
+    if not handle or not password:
+        logger.error(f"Bluesky {account} account not configured. Skipping post.")
         return
 
     client = AsyncClient()
 
     try:
-        await client.login(settings.bluesky_handle, settings.bluesky_password)
-        logger.info(f"Logged into Bluesky as {settings.bluesky_handle}")
+        await client.login(handle, password)
+        logger.info(f"Logged into Bluesky as {handle}")
 
         await client.send_post(text=text)
         logger.info("Successfully posted to Bluesky")
@@ -37,17 +45,18 @@ async def post_bluesky(text: str) -> None:
         raise
 
 
-async def post_bluesky_with_image(text: str, image: io.BytesIO, alt_text: str = "") -> None:
+async def post_bluesky_with_image(text: str, image: io.BytesIO, alt_text: str = "", account: str = "main") -> None:
     """Posts a message with an image to Bluesky."""
-    if not settings.bluesky_handle or not settings.bluesky_password:
-        logger.error("Bluesky handle or password not configured in settings. Skipping post.")
+    handle, password = _get_credentials(account)
+    if not handle or not password:
+        logger.error(f"Bluesky {account} account not configured. Skipping post.")
         return
 
     client = AsyncClient()
 
     try:
-        await client.login(settings.bluesky_handle, settings.bluesky_password)
-        logger.info(f"Logged into Bluesky as {settings.bluesky_handle}")
+        await client.login(handle, password)
+        logger.info(f"Logged into Bluesky as {handle}")
 
         image.seek(0)
         image_data = image.read()
@@ -67,7 +76,6 @@ async def post_bluesky_with_image(text: str, image: io.BytesIO, alt_text: str = 
 
 
 if __name__ == "__main__":
-    # Example usage for testing
     test_message = "Testing OpenNEM Bluesky integration. Hello World!"
     print(f'Attempting to post to Bluesky: "{test_message}"')
     asyncio.run(post_bluesky(test_message))
