@@ -59,7 +59,7 @@ ENV FASTAPI_ENV=production
 # Copy uv binary for runtime (needed for "uv run" commands)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Install runtime dependencies and build tools (needed for Python 3.14 packages)
+# Install runtime dependencies, build tools, and chromium for html2image
 RUN apt-get update \
   && apt-get install --no-install-recommends -y \
     ca-certificates \
@@ -67,7 +67,11 @@ RUN apt-get update \
     gcc \
     g++ \
     python3-dev \
+    chromium \
   && rm -rf /var/lib/apt/lists/*
+
+ENV CHROME_BIN=/usr/bin/chromium
+ENV CHROMIUM_FLAGS="--no-sandbox --headless --disable-gpu"
 
 # Create non-root user for security
 RUN groupadd -r appuser && useradd -r -g appuser appuser
