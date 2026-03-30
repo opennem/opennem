@@ -6,6 +6,7 @@ across different metrics, networks, periods and grouping configurations.
 """
 
 import logging
+import uuid
 from dataclasses import dataclass
 from datetime import datetime
 from textwrap import dedent
@@ -565,6 +566,17 @@ def _analyzed_record_to_milestone_schema(
         milestone_primary_keys.append(primary_keys)
 
         milestone_records.append(milestone_schema)
+
+    # Rebuild previous_instance_id chain in Python after filtering.
+    # The ClickHouse lagInFrame(instance_id) links to the previous bucket's UUID,
+    # not the previous *record's* UUID, because filtering happens after the window function.
+    # Group by record_id (computed field) and link each record to the previous one.
+    chain: dict[str, uuid.UUID] = {}  # record_id -> last instance_id
+    for record in milestone_records:
+        rid = record.record_id
+        record.previous_instance_id = chain.get(rid)
+        if record.instance_id:
+            chain[rid] = record.instance_id
 
     return milestone_records
 
