@@ -740,11 +740,13 @@ async def run_unit_intervals_aggregate_to_now() -> int:
     """
     client = get_clickhouse_client()
 
-    # get the MIN of MAX intervals per network to ensure we don't miss any lagging networks (e.g. AEMO_ROOFTOP)
+    # get the MIN of MAX intervals per network — only scan last 2 days to avoid
+    # blocking the event loop with FINAL on the full table (749M+ records)
     result = client.execute("""
         SELECT MIN(max_interval) FROM (
             SELECT network_id, MAX(interval) as max_interval
             FROM unit_intervals FINAL
+            WHERE interval > now() - INTERVAL 2 DAY
             GROUP BY network_id
         )
     """)
@@ -757,7 +759,7 @@ async def run_unit_intervals_aggregate_to_now() -> int:
         logger.info("No new data to process")
         return 0
 
-    if date_from - date_to > timedelta(days=1):
+    if date_to - date_from > timedelta(days=1):
         logger.info("Date range is greater than 1 day, skipping")
         return 0
 
