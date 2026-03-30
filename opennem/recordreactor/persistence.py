@@ -114,23 +114,7 @@ async def check_and_persist_milestones_chunked(milestones: list[MilestoneRecordS
     async with get_write_session() as session:
         for chunk in _chunks(milestone_records, CHUNK_SIZE):
             stmt = pg_insert(Milestones.__table__).values(chunk)
-            stmt = stmt.on_conflict_do_update(
-                constraint="excl_milestone_record_id_interval",
-                set_={
-                    "aggregate": stmt.excluded.aggregate,
-                    "metric": stmt.excluded.metric,
-                    "period": stmt.excluded.period,
-                    "significance": stmt.excluded.significance,
-                    "value": stmt.excluded.value,
-                    "value_unit": stmt.excluded.value_unit,
-                    "pct_change": stmt.excluded.pct_change,
-                    "network_id": stmt.excluded.network_id,
-                    "description": stmt.excluded.description,
-                    "previous_instance_id": stmt.excluded.previous_instance_id,
-                    "network_region": stmt.excluded.network_region,
-                    "fueltech_id": stmt.excluded.fueltech_id,
-                },
-            )
+            stmt = stmt.on_conflict_do_nothing(constraint="excl_milestone_record_id_interval")
             try:
                 # Process records in chunks
 
