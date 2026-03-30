@@ -312,10 +312,10 @@ async def task_refresh_clickhouse_mv_fast(ctx: dict) -> None:
 
 
 async def task_refresh_clickhouse_mv_full(ctx: dict) -> None:
-    """7-day backfill + OPTIMIZE every 6h — cleanup pass."""
+    """7-day backfill every 6h — wider backfill window for consistency."""
     from opennem.db.clickhouse_materialized_views import refresh_all_materialized_views
 
-    refresh_all_materialized_views(days=7, optimize=True)
+    refresh_all_materialized_views(days=7, optimize=False)
 
 
 async def task_weekly_summary(ctx: dict) -> None:
