@@ -298,12 +298,13 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
-        # hourly aggregate backfill to fill gaps from timing race conditions
+        # 2-hourly aggregate backfill to fill gaps from timing race conditions
         cron(
             task_catchup_aggregates,
+            hour=set(range(0, 24, 2)),
             minute=45,
             second=0,
-            timeout=None,
+            timeout=600,
             unique=True,
         ),
         # Check for unsplit batteries

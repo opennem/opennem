@@ -19,7 +19,6 @@ from opennem.api.export.controllers import (
     NoResults,
     curtailment_network_region_daily,
     demand_network_region_daily,
-    energy_interconnector_flows_and_emissions_v2,
     energy_interconnector_flows_and_emissions_v4,
     gov_stats_cpi,
     power_flows_network_week,
@@ -56,31 +55,24 @@ logger = logging.getLogger("opennem.export.tasks")
 
 
 async def _get_interconnector_flows(time_series, network_region_code, **kwargs):
-    """Get interconnector flows from CH (v4) or PG (v2) based on feature flag.
+    """Get interconnector flows from ClickHouse market_summary (v4).
 
-    When flows_v4 is enabled, errors are logged but don't propagate — the export
-    continues without flow series rather than failing entirely.
+    Errors are logged but don't propagate — the export continues without
+    flow series rather than failing entirely.
     """
-    from opennem import settings
-
-    if settings.flows_v4:
-        try:
-            result = await energy_interconnector_flows_and_emissions_v4(
-                time_series=time_series, network_region_code=network_region_code, **kwargs
-            )
-            if result and result.data:
-                return result
-            logger.warning("flows_v4 returned empty", extra={"network_region": network_region_code})
-        except Exception as e:
-            logger.error(
-                "flows_v4 export query failed",
-                extra={"network_region": network_region_code, "error_detail": str(e)},
-            )
-        return None
-
-    return await energy_interconnector_flows_and_emissions_v2(
-        time_series=time_series, network_region_code=network_region_code, **kwargs
-    )
+    try:
+        result = await energy_interconnector_flows_and_emissions_v4(
+            time_series=time_series, network_region_code=network_region_code, **kwargs
+        )
+        if result and result.data:
+            return result
+        logger.warning("flows returned empty", extra={"network_region": network_region_code})
+    except Exception as e:
+        logger.error(
+            "flows export query failed",
+            extra={"network_region": network_region_code, "error_detail": str(e)},
+        )
+    return None
 
 
 async def export_power(

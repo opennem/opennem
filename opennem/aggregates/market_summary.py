@@ -541,9 +541,7 @@ def _prepare_market_summary_data(
         ]
     )
 
-    # Compute and merge flow columns if flows_v4 is enabled
-    from opennem import settings
-
+    # Compute and merge flow columns (v4 flow solver)
     _null_flow_cols = [
         pl.lit(None).cast(pl.Float64).alias("energy_imports"),
         pl.lit(None).cast(pl.Float64).alias("energy_exports"),
@@ -553,24 +551,23 @@ def _prepare_market_summary_data(
         pl.lit(None).cast(pl.Float64).alias("market_value_exports"),
     ]
 
-    if settings.flows_v4:
-        intervals = result_df["interval"].to_list()
-        if intervals:
-            start = min(intervals)
-            end = max(intervals)
-            try:
-                flow_df = _compute_flows_for_range(start, end)
-                if flow_df is not None and not flow_df.is_empty():
-                    result_df = result_df.join(
-                        flow_df,
-                        on=["interval", "network_region"],
-                        how="left",
-                    )
-                else:
-                    result_df = result_df.with_columns(_null_flow_cols)
-            except Exception as e:
-                logger.error(f"Flow computation failed ({start} to {end}): {e} — inserting NULLs")
+    intervals = result_df["interval"].to_list()
+    if intervals:
+        start = min(intervals)
+        end = max(intervals)
+        try:
+            flow_df = _compute_flows_for_range(start, end)
+            if flow_df is not None and not flow_df.is_empty():
+                result_df = result_df.join(
+                    flow_df,
+                    on=["interval", "network_region"],
+                    how="left",
+                )
+            else:
                 result_df = result_df.with_columns(_null_flow_cols)
+        except Exception as e:
+            logger.error(f"Flow computation failed ({start} to {end}): {e} — inserting NULLs")
+            result_df = result_df.with_columns(_null_flow_cols)
     else:
         result_df = result_df.with_columns(_null_flow_cols)
 
@@ -616,7 +613,7 @@ def _compute_flows_for_range(start_time: datetime, end_time: datetime) -> pl.Dat
     """Compute flow columns for an interval range.
 
     Loads interconnector SCADA from PG and emissions intensity from CH,
-    then runs the v4 flow solver.
+    then runs the v4 flow solver. All sync I/O — callers should wrap in asyncio.to_thread.
 
     Returns DataFrame with: interval, network_region, energy_imports, energy_exports,
     emissions_imports, emissions_exports, market_value_imports, market_value_exports
@@ -652,7 +649,6 @@ def _compute_flows_for_range(start_time: datetime, end_time: datetime) -> pl.Dat
     import pandas as pd
 
     ic_pd = pd.read_sql(ic_query, con=engine)
-    engine.dispose()
 
     if ic_pd.empty:
         logger.debug(f"No interconnector data for {start_str} to {end_str}")
@@ -808,12 +804,13 @@ async def run_market_summary_aggregate_to_now() -> int:
     """ """
     client = get_clickhouse_client()
 
-    # get the max interval from market_summary using FINAL modifier
-    result = client.execute("SELECT MAX(interval) FROM market_summary FINAL")
+    # get the max interval — scope to last 7 days to avoid full-table FINAL scan
+    # falls back to unscoped query if table has a >7 day gap
+    result = client.execute("SELECT MAX(interval) FROM market_summary FINAL WHERE interval > now() - INTERVAL 7 DAY")
     result_rows = list(result)  # type: ignore
 
     if not result_rows or not result_rows[0] or result_rows[0][0] is None:
-        logger.info("No market summary max interval found")
+        logger.info("No recent market summary data (last 7 days), skipping incremental")
         return 0
 
     max_interval = result_rows[0][0]  # type: ignore
@@ -903,12 +900,10 @@ async def run_market_summary_aggregate_for_last_intervals(num_intervals: int) ->
 
     logger.info(f"Processed {len(prepared_data)} records from {start_date} to {end_date}")
 
-    await optimize_clickhouse_tables(table_names=["market_summary"])
-
     return len(prepared_data)
 
 
-async def run_market_summary_aggregate_for_last_days(days: int) -> int:
+async def run_market_summary_aggregate_for_last_days(days: float) -> int:
     """
     Run the market summary aggregation for the last days.
     """
@@ -918,9 +913,7 @@ async def run_market_summary_aggregate_for_last_days(days: int) -> int:
     async with get_write_session() as session:
         await process_market_summary_backlog(session=session, start_date=start_date, end_date=end_date)
 
-    await optimize_clickhouse_tables(table_names=["market_summary"])
-
-    return 0  # Return 0 to indicate successful completion
+    return 0
 
 
 async def run_market_summary_backlog() -> None:

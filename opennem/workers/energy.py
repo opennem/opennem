@@ -135,7 +135,7 @@ async def _process_date_range(
     Process a date range in chunks.
     """
     if max_workers is None:
-        max_workers = multiprocessing.cpu_count()
+        max_workers = min(4, multiprocessing.cpu_count())
 
     chunks = _chunk_date_range(date_start, date_end, chunk_size)
 
