@@ -673,6 +673,7 @@ async def process_unit_intervals_backlog_streaming(
     client = get_clickhouse_client()
     _ensure_clickhouse_schema()
     total_processed = 0
+    failed_chunks: list[tuple[datetime, datetime, str]] = []
 
     logger.info(
         f"Processing unit intervals (streaming) from {current_start} to {end_date} "
@@ -713,8 +714,7 @@ async def process_unit_intervals_backlog_streaming(
                     logger.debug(f"Processed batch: {len(prepared_data)} records")
         except Exception as e:
             logger.error(f"Error processing chunk {current_start} to {chunk_end}: {e}")
-            # Continue with next chunk rather than failing completely
-            pass
+            failed_chunks.append((current_start, chunk_end, str(e)))
 
         if chunk_processed > 0:
             logger.info(f"Processed {chunk_processed} records from {current_start} to {chunk_end}")
@@ -728,6 +728,11 @@ async def process_unit_intervals_backlog_streaming(
         gc.collect()
 
     logger.info(f"Total processed: {total_processed} records")
+
+    if failed_chunks:
+        logger.error(f"Failed {len(failed_chunks)} chunks: {[(str(s), str(e)) for s, e, _ in failed_chunks]}")
+        raise RuntimeError(f"unit_intervals backlog: {len(failed_chunks)} chunks failed")
+
     return total_processed
 
 

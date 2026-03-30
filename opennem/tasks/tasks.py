@@ -7,7 +7,6 @@ from arq import Retry
 
 from opennem import settings
 from opennem.aggregates.market_summary import run_market_summary_aggregate_to_now
-from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.aggregates.unit_intervals import run_unit_intervals_aggregate_to_now
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy
 from opennem.cms.importer import update_database_facilities_from_cms
@@ -58,12 +57,9 @@ async def task_nem_interval_check(ctx) -> None:
     # update energy
     await process_energy_last_intervals(num_intervals=12 * 3)
 
-    # update aggregates
+    # update aggregates (flows computed inline via market_summary when flows_v4=True)
     await run_market_summary_aggregate_to_now()
     await run_unit_intervals_aggregate_to_now()
-
-    # run flows
-    run_flows_for_last_days(days=1, network=NetworkNEM)
 
     await asyncio.gather(
         run_export_power_latest_for_network(network=NetworkNEM), run_export_power_latest_for_network(network=NetworkAU)
@@ -125,11 +121,6 @@ async def task_bom_capitals_crawl(ctx) -> None:
 async def task_run_energy_calculation(ctx) -> None:
     """Runs the energy calculation for the last 2 hours"""
     await process_energy_last_intervals(num_intervals=4)
-
-
-async def task_run_flows_for_last_days(ctx) -> None:
-    """Runs the flows for the last 2 days"""
-    run_flows_for_last_days(days=2, network=NetworkNEM)
 
 
 async def task_facility_first_seen_check(ctx) -> None:
@@ -244,12 +235,12 @@ async def task_catchup_days(ctx) -> None:
 
 
 async def task_catchup_aggregates(ctx) -> None:
-    """Backfill ClickHouse aggregates (market_summary and unit_intervals) for last 7 days.
+    """Backfill ClickHouse aggregates (market_summary and unit_intervals) for last 12h.
 
-    Runs hourly to fill gaps caused by timing race conditions where the scheduled
+    Runs every 2h to fill gaps caused by timing race conditions where the scheduled
     aggregate runs before PostgreSQL has the crawled data.
     """
-    await catchup_aggregates(days=7)
+    await catchup_aggregates(days=0.5)
 
 
 async def task_update_milestones(ctx: dict) -> None:
@@ -308,14 +299,14 @@ async def task_refresh_clickhouse_mv_fast(ctx: dict) -> None:
     """2-day backfill every 5 min — keeps current day accurate."""
     from opennem.db.clickhouse_materialized_views import refresh_all_materialized_views
 
-    refresh_all_materialized_views(days=2, optimize=False)
+    await asyncio.to_thread(refresh_all_materialized_views, days=2, optimize=False)
 
 
 async def task_refresh_clickhouse_mv_full(ctx: dict) -> None:
     """7-day backfill every 6h — wider backfill window for consistency."""
     from opennem.db.clickhouse_materialized_views import refresh_all_materialized_views
 
-    refresh_all_materialized_views(days=7, optimize=False)
+    await asyncio.to_thread(refresh_all_materialized_views, days=7, optimize=False)
 
 
 async def task_weekly_summary(ctx: dict) -> None:

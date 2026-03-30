@@ -6,7 +6,7 @@ All content sources (weekly summary, recordreactor, manual) flow through here.
 
 import io
 import logging
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 from uuid import UUID
 
@@ -29,15 +29,16 @@ from opennem.social.slack import post_publish_results_to_slack, send_approval_re
 logger = logging.getLogger("opennem.social.pipeline")
 
 
+def _utcnow() -> datetime:
+    return datetime.now(UTC)
+
+
 async def create_social_post(
     req: CreateSocialPostRequest,
     image: bytes | None = None,
 ) -> SocialPostResponse:
-    """Create a social post, send to Slack for approval.
-
-    This is the main entry point for all content sources.
-    """
-    # Upload image to Cloudflare if provided — store the URL for later publishing
+    """Create a social post, send to Slack for approval."""
+    # Upload image to Cloudflare if provided
     image_url = req.image_url
     if image and not image_url:
         try:
@@ -48,6 +49,17 @@ async def create_social_post(
         except Exception as e:
             logger.warning(f"Cloudflare image upload failed, image will be passed directly: {e}")
 
+    # Check for duplicate by source_id
+    if req.source_id:
+        async with get_read_session() as session:
+            result = await session.execute(
+                select(SocialPost.id).where(SocialPost.source_type == req.source_type, SocialPost.source_id == req.source_id)
+            )
+            existing_id = result.scalar_one_or_none()
+            if existing_id:
+                logger.info(f"Duplicate social post for {req.source_type}:{req.source_id}, skipping")
+                return await get_social_post(existing_id)
+
     async with get_write_session() as session:
         post = SocialPost(
             post_type=req.post_type,
@@ -57,7 +69,7 @@ async def create_social_post(
             source_type=req.source_type,
             source_id=req.source_id,
             network_id=req.network_id,
-            metadata_=req.metadata,
+            metadata_=req.metadata or {},
         )
         session.add(post)
         await session.flush()
@@ -74,7 +86,7 @@ async def create_social_post(
         post_id = post.id
         await session.commit()
 
-    # Post to Slack for approval (pass raw image bytes for Slack file upload preview)
+    # Post to Slack for approval
     channel = settings.slack_weekly_summary_channel
     if channel and not req.auto_approve:
         slack_channel_id, slack_message_ts = await send_approval_request(post_id, req.text_content, image)
@@ -85,8 +97,8 @@ async def create_social_post(
                 if post:
                     post.slack_channel_id = slack_channel_id
                     post.slack_message_ts = slack_message_ts
+                await session.commit()
 
-    # Auto-approve if requested (for testing or agent-driven posts)
     if req.auto_approve:
         await approve_social_post(post_id, approved_by="auto")
 
@@ -107,12 +119,10 @@ async def approve_social_post(post_id: UUID, approved_by: str) -> None:
 
         post.status = SocialPostStatus.APPROVED
         post.approved_by = approved_by
-        post.approved_at = datetime.now()
+        post.approved_at = _utcnow()
+        await session.commit()
 
-    # Update Slack
     await update_post_status_in_slack(post_id, f"Approved by @{approved_by} — publishing...")
-
-    # Publish immediately (in production, could enqueue via ARQ)
     await publish_social_post(post_id)
 
 
@@ -126,15 +136,16 @@ async def reject_social_post(post_id: UUID, rejected_by: str) -> None:
 
         post.status = SocialPostStatus.REJECTED
         post.rejected_by = rejected_by
+        await session.commit()
 
     await update_post_status_in_slack(post_id, f"Rejected by @{rejected_by}")
 
 
 async def publish_social_post(post_id: UUID) -> None:
     """Publish to all pending platforms, update statuses, notify Slack."""
-    from opennem.clients.bluesky import post_bluesky_with_image
+    from opennem.clients.bluesky import post_bluesky, post_bluesky_with_image
     from opennem.clients.linkedin import post_linkedin
-    from opennem.clients.twitter import post_tweet_with_image
+    from opennem.clients.twitter import post_tweet, post_tweet_with_image
 
     # Load post + platforms
     async with get_read_session() as session:
@@ -155,6 +166,7 @@ async def publish_social_post(post_id: UUID) -> None:
         post = await session.get(SocialPost, post_id)
         if post:
             post.status = SocialPostStatus.PUBLISHING
+        await session.commit()
 
     # Download image if we have a URL
     image_bytes: bytes | None = None
@@ -169,21 +181,17 @@ async def publish_social_post(post_id: UUID) -> None:
         except Exception as e:
             logger.warning(f"Failed to download image from {image_url}: {e}")
 
-    # Platform-specific publish functions — handle missing images gracefully
+    # Platform-specific publish functions
     async def _publish_twitter(txt: str, img: bytes | None) -> None:
         if img:
             await post_tweet_with_image(txt, io.BytesIO(img))
         else:
-            from opennem.clients.twitter import post_tweet
-
             await post_tweet(txt)
 
     async def _publish_bluesky(txt: str, img: bytes | None) -> None:
         if img:
             await post_bluesky_with_image(txt, io.BytesIO(img), alt_text="Open Electricity")
         else:
-            from opennem.clients.bluesky import post_bluesky
-
             await post_bluesky(txt)
 
     async def _publish_linkedin(txt: str, img: bytes | None) -> None:
@@ -195,8 +203,9 @@ async def publish_social_post(post_id: UUID) -> None:
         Platform.LINKEDIN: _publish_linkedin,
     }
 
-    any_failed = False
-    all_results: list[tuple[str, str, str | None]] = []  # (platform, status, permalink)
+    published_count = 0
+    failed_count = 0
+    all_results: list[tuple[str, str, str | None]] = []
 
     for plat in platforms:
         if plat.status != PlatformStatus.PENDING:
@@ -207,11 +216,12 @@ async def publish_social_post(post_id: UUID) -> None:
             logger.warning(f"No publisher for platform {plat.platform}")
             continue
 
-        # Update platform status to publishing
+        # Set platform status to publishing
         async with get_write_session() as session:
             p = await session.get(SocialPostPlatform, plat.id)
             if p:
                 p.status = PlatformStatus.PUBLISHING
+            await session.commit()
 
         try:
             await publisher(text, image_bytes)
@@ -219,9 +229,10 @@ async def publish_social_post(post_id: UUID) -> None:
                 p = await session.get(SocialPostPlatform, plat.id)
                 if p:
                     p.status = PlatformStatus.PUBLISHED
-                    p.published_at = datetime.now()
-                    # TODO: extract permalink from platform response
+                    p.published_at = _utcnow()
+                await session.commit()
             all_results.append((plat.platform, "published", None))
+            published_count += 1
             logger.info(f"Published to {plat.platform}")
         except Exception as e:
             logger.error(f"Failed to publish to {plat.platform}: {e}")
@@ -230,20 +241,24 @@ async def publish_social_post(post_id: UUID) -> None:
                 if p:
                     p.status = PlatformStatus.FAILED
                     p.error_message = str(e)[:500]
+                await session.commit()
             all_results.append((plat.platform, "failed", str(e)))
-            any_failed = True
+            failed_count += 1
 
     # Update overall post status
     async with get_write_session() as session:
         post = await session.get(SocialPost, post_id)
         if post:
-            if any_failed:
+            if failed_count > 0 and published_count > 0:
+                post.status = SocialPostStatus.PUBLISHED  # partial success still counts
+                post.published_at = _utcnow()
+            elif failed_count > 0:
                 post.status = SocialPostStatus.FAILED
             else:
                 post.status = SocialPostStatus.PUBLISHED
-                post.published_at = datetime.now()
+                post.published_at = _utcnow()
+        await session.commit()
 
-    # Notify Slack with results
     await post_publish_results_to_slack(post_id, all_results)
 
 

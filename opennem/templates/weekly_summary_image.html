@@ -9,7 +9,7 @@
 
   body {
     width: 1080px;
-    height: 1350px;
+    min-height: 100px;
     background: #FDFAF4;
     font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     color: #222;
@@ -19,7 +19,6 @@
 
   .container {
     padding: 56px 56px 44px;
-    height: 100%;
     display: flex;
     flex-direction: column;
   }
@@ -43,7 +42,7 @@
   .title {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 40px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: -0.02em;
     color: #222;
     margin-bottom: 4px;
@@ -77,10 +76,17 @@
     margin-bottom: 8px;
   }
 
+  .stat-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
   .stat-value {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 34px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: -0.02em;
     color: #222;
     font-variant-numeric: tabular-nums;
@@ -94,85 +100,107 @@
 
   .stat-wow {
     font-family: 'DM Mono', monospace;
-    font-size: 14px;
-    margin-top: 6px;
+    font-size: 15px;
   }
 
   /* Section titles */
   .section-label {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 22px;
+    font-weight: 700;
     color: #222;
     letter-spacing: -0.01em;
     margin-bottom: 12px;
   }
 
-  /* Fueltech table */
-  .fueltech-table {
+  /* Fueltech rows with bar chart */
+  .fueltech-list {
     display: flex;
     flex-direction: column;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
   }
 
-  .fueltech-header {
+  .ft-row {
     display: flex;
     align-items: center;
-    padding: 10px 0;
-    border-bottom: 2px solid #E5E5E4;
-    font-size: 12px;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .fueltech-row {
-    display: flex;
-    align-items: center;
-    padding: 13px 0;
+    height: 60px;
     border-bottom: 1px solid #F0EFEC;
-    font-size: 16px;
   }
 
-  .fueltech-row:last-child { border-bottom: none; }
+  .ft-row:first-child {
+    border-top: 1px solid #F0EFEC;
+  }
 
-  .ft-color {
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    margin-right: 12px;
+  .ft-label {
+    display: flex;
+    align-items: center;
+    width: 220px;
+    flex-shrink: 0;
+    gap: 12px;
+  }
+
+  .ft-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
     flex-shrink: 0;
   }
 
-  .ft-name { flex: 1; color: #444; }
+  .ft-name {
+    font-size: 17px;
+    font-weight: 500;
+    color: #333;
+  }
+
+  .ft-bar-area {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-right: 16px;
+  }
+
+  .ft-bar {
+    height: 36px;
+    min-width: 3px;
+    border-radius: 2px;
+  }
+
+  .ft-stats {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
 
   .ft-energy {
     font-family: 'DM Mono', monospace;
-    font-size: 15px;
+    font-size: 16px;
+    font-weight: 500;
     color: #222;
-    width: 120px;
+    width: 110px;
     text-align: right;
+  }
+
+  .ft-energy-unit {
+    color: #999;
+    font-size: 14px;
+    font-weight: 400;
   }
 
   .ft-pct {
     font-family: 'DM Mono', monospace;
-    font-size: 15px;
+    font-size: 16px;
     color: #888;
-    width: 80px;
+    width: 70px;
     text-align: right;
   }
 
   .ft-wow {
     font-family: 'DM Mono', monospace;
-    font-size: 14px;
-    width: 100px;
+    font-size: 15px;
+    width: 80px;
     text-align: right;
   }
-
-  .fh-name { flex: 1; padding-left: 22px; }
-  .fh-energy { width: 120px; text-align: right; }
-  .fh-pct { width: 80px; text-align: right; }
-  .fh-wow { width: 100px; text-align: right; }
 
   .wow-up { color: #16a34a; }
   .wow-down { color: #dc2626; }
@@ -181,109 +209,97 @@
   /* Milestone cards */
   .milestones-grid {
     display: grid;
-    gap: 12px;
+    gap: 10px;
+    grid-template-columns: 1fr 1fr 1fr;
   }
 
-  .milestones-grid.count-1 { grid-template-columns: 1fr 1fr; }
-  .milestones-grid.count-1 .milestone-card:first-child { grid-column: 1; }
+  .milestones-grid.count-1 { grid-template-columns: 1fr; max-width: 50%; }
   .milestones-grid.count-2 { grid-template-columns: 1fr 1fr; }
-  .milestones-grid.count-3 { grid-template-columns: 1fr 1fr 1fr; }
-  .milestones-grid.count-4 { grid-template-columns: 1fr 1fr; }
-  .milestones-grid.count-5 { grid-template-columns: 1fr 1fr 1fr; }
 
   .milestone-card {
     background: #fff;
     border: 1px solid #E5E5E4;
-    border-radius: 0;
-    padding: 20px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 0;
   }
 
   .mc-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
   }
 
   .mc-icon {
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     overflow: hidden;
-    flex-shrink: 0;
   }
 
-  .mc-icon svg {
-    width: 36px;
-    height: 36px;
-  }
+  .mc-icon svg { width: 30px; height: 30px; }
 
   .mc-region {
     font-family: 'DM Mono', monospace;
     font-size: 13px;
     color: #888;
-    letter-spacing: 0.03em;
   }
 
   .mc-desc {
     font-size: 15px;
+    font-weight: 500;
     color: #333;
     line-height: 1.35;
     margin-bottom: auto;
-    min-height: 42px;
+    min-height: 40px;
   }
 
   .mc-divider {
     height: 1px;
     background: #F0EFEC;
-    margin: 14px 0 12px;
+    margin: 10px 0 8px;
   }
 
   .mc-footer {
     display: flex;
     align-items: baseline;
-    gap: 8px;
+    gap: 6px;
   }
 
   .mc-value {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 600;
-    letter-spacing: -0.02em;
     color: #222;
-    font-variant-numeric: tabular-nums;
   }
 
   .mc-unit {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
+    font-size: 13px;
     color: #888;
-    font-weight: 400;
   }
 
   .mc-sub {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: 4px;
+    margin-top: 3px;
   }
 
   .mc-date {
     font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    color: #aaa;
+    font-size: 14px;
+    color: #777;
   }
 
   .mc-change {
     font-family: 'DM Mono', monospace;
-    font-size: 12px;
+    font-size: 13px;
   }
 
+  /* Footer */
   .footer {
-    margin-top: auto;
+    margin-top: 32px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -291,16 +307,20 @@
     border-top: 1px solid #E5E5E4;
   }
 
-  .footer-url {
-    font-family: 'DM Mono', monospace;
+  .footer-source {
     font-size: 14px;
     color: #888;
   }
 
   .footer-brand {
-    font-size: 13px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #222;
+  }
+
+  .footer-brand-accent {
     color: #C74523;
-    font-weight: 500;
   }
 </style>
 </head>
@@ -312,42 +332,51 @@
     <span class="week-label">WEEK ${week_number} · ${year}</span>
   </div>
 
-  <div class="title">Weekly Energy Summary</div>
-  <div class="subtitle">${network} · ${week_range}</div>
+  <div class="title">${network} weekly energy summary</div>
+  <div class="subtitle">${week_range}</div>
 
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-label">Total Generation</div>
-      <div class="stat-value">${total_energy}<span class="stat-unit"> GWh</span></div>
-      <div class="stat-wow ${te_wow_class}">${te_wow_str}</div>
+      <div class="stat-row">
+        <span class="stat-value">${total_energy}</span>
+        <span class="stat-unit">GWh</span>
+        <span class="stat-wow ${te_wow_class}">${te_wow_str}</span>
+      </div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Renewables</div>
-      <div class="stat-value">${renewable_pct}<span class="stat-unit">%</span></div>
-      <div class="stat-wow ${rp_wow_class}">${rp_wow_str}</div>
+      <div class="stat-row">
+        <span class="stat-value">${renewable_pct}%</span>
+        <span class="stat-wow ${rp_wow_class}">${rp_wow_str}</span>
+      </div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Avg Price</div>
-      <div class="stat-value">$${avg_price}<span class="stat-unit">/MWh</span></div>
-      <div class="stat-wow ${ap_wow_class}">${ap_wow_str}</div>
+      <div class="stat-row">
+        <span class="stat-value">$${avg_price}</span>
+        <span class="stat-unit">/MWh</span>
+        <span class="stat-wow ${ap_wow_class}">${ap_wow_str}</span>
+      </div>
     </div>
   </div>
 
   <div class="section-label">Generation Mix</div>
-  <div class="fueltech-table">
-    <div class="fueltech-header">
-      <div class="fh-name">Fuel</div>
-      <div class="fh-energy">Energy</div>
-      <div class="fh-pct">Share</div>
-      <div class="fh-wow">WoW</div>
-    </div>
+  <div class="fueltech-list">
     % for r in records:
-    <div class="fueltech-row">
-      <div class="ft-color" style="background: ${r.fueltech_color};"></div>
-      <div class="ft-name">${r.fueltech_label}</div>
-      <div class="ft-energy">${r.energy_str} GWh</div>
-      <div class="ft-pct">${r.pct_str}%</div>
-      <div class="ft-wow ${r.wow_class}">${r.wow_str}</div>
+    <div class="ft-row">
+      <div class="ft-label">
+        <div class="ft-dot" style="background: ${r.fueltech_color};"></div>
+        <div class="ft-name">${r.fueltech_label}</div>
+      </div>
+      <div class="ft-bar-area">
+        <div class="ft-bar" style="width: ${r.bar_pct}%; background: ${r.fueltech_color};"></div>
+      </div>
+      <div class="ft-stats">
+        <div class="ft-energy">${r.energy_str} <span class="ft-energy-unit">GWh</span></div>
+        <div class="ft-pct">${r.pct_str}%</div>
+        <div class="ft-wow ${r.wow_class}">${r.wow_str}</div>
+      </div>
     </div>
     % endfor
   </div>
@@ -381,8 +410,8 @@
   % endif
 
   <div class="footer">
-    <span class="footer-url">openelectricity.org.au</span>
-    <span class="footer-brand">Open Electricity</span>
+    <span class="footer-source">Source: AEMO / Open Electricity</span>
+    <span class="footer-brand">Open Electricity <span class="footer-brand-accent">~</span></span>
   </div>
 
 </div>

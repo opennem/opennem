@@ -11,13 +11,8 @@ from operator import attrgetter
 from pathlib import Path
 
 from opennem import settings
-from opennem.api.data.schema import DataMetric
-from opennem.api.queries import QueryType, get_timeseries_query
 from opennem.core.fueltech_group import get_fueltech_group
-from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
-from opennem.core.metric import Metric
 from opennem.core.templates import serve_template
-from opennem.core.time_interval import Interval
 from opennem.db import get_read_session
 from opennem.db.clickhouse import execute_async, get_clickhouse_client
 from opennem.schema.core import BaseConfig
@@ -158,16 +153,36 @@ async def _fetch_fueltech_energy(
     week_start: datetime,
     week_end: datetime,
 ) -> list[tuple]:
-    """Fetch energy + market_value by fueltech_group for a date range from ClickHouse."""
-    query, params, _columns = get_timeseries_query(
-        query_type=QueryType.DATA,
-        network=network,
-        metrics=[DataMetric.ENERGY, DataMetric.MARKET_VALUE],
-        interval=Interval.WEEK,
-        date_start=week_start,
-        date_end=week_end,
-        secondary_groupings=[SecondaryGrouping.FUELTECH_GROUP],
-    )
+    """Fetch energy + market_value by fueltech_group for a date range from ClickHouse.
+
+    Uses a direct query instead of Interval.WEEK to avoid ClickHouse's toStartOfWeek
+    misaligning our Mon-Sun week boundaries (CH defaults to Sunday-start weeks).
+    """
+    network_codes = network.get_network_codes()
+    # Remove backfill network if present
+    if "OPENNEM_ROOFTOP_BACKFILL" in network_codes:
+        network_codes.remove("OPENNEM_ROOFTOP_BACKFILL")
+
+    query = """
+        SELECT
+            toDate(%(week_start)s) as interval,
+            %(network_code)s as network,
+            fueltech_group_id,
+            round(sum(energy), 6) as energy,
+            round(sum(market_value), 6) as market_value
+        FROM unit_intervals_daily_mv FINAL
+        WHERE date >= %(week_start)s AND date <= %(week_end)s
+            AND network_id IN %(network_ids)s
+        GROUP BY fueltech_group_id
+        ORDER BY energy DESC
+    """
+
+    params = {
+        "week_start": week_start.date() if hasattr(week_start, "date") else week_start,
+        "week_end": week_end.date() if hasattr(week_end, "date") else week_end,
+        "network_code": network.code,
+        "network_ids": network_codes,
+    }
 
     client = get_clickhouse_client()
     return await execute_async(client, query, params)
@@ -178,16 +193,31 @@ async def _fetch_price_by_region(
     week_start: datetime,
     week_end: datetime,
 ) -> list[tuple]:
-    """Fetch demand energy + avg price per region from ClickHouse."""
-    query, params, _columns = get_timeseries_query(
-        query_type=QueryType.MARKET,
-        network=network,
-        metrics=[Metric.DEMAND_ENERGY, Metric.PRICE],
-        interval=Interval.WEEK,
-        date_start=week_start,
-        date_end=week_end,
-        primary_grouping=PrimaryGrouping.NETWORK_REGION,
-    )
+    """Fetch demand energy + avg price per region from ClickHouse.
+
+    Uses direct query to avoid toStartOfWeek misalignment.
+    """
+    query = """
+        SELECT
+            toDate(%(week_start)s) as interval,
+            %(network_code)s as network,
+            network_region,
+            round(sum(demand_energy_daily), 4) as demand_energy,
+            round(sum(price_sum) / nullIf(sum(price_count), 0), 6) as price
+        FROM market_summary_daily_mv
+        WHERE date >= %(week_start)s AND date <= %(week_end)s
+            AND network_id IN %(network_ids)s
+        GROUP BY network_region
+        ORDER BY demand_energy DESC
+    """
+
+    network_codes = network.get_network_codes()
+    params = {
+        "week_start": week_start.date() if hasattr(week_start, "date") else week_start,
+        "week_end": week_end.date() if hasattr(week_end, "date") else week_end,
+        "network_code": network.code,
+        "network_ids": network_codes,
+    }
 
     client = get_clickhouse_client()
     return await execute_async(client, query, params)
@@ -201,11 +231,12 @@ async def _fetch_milestones(
     """Fetch significant milestones from PG for the week."""
     from opennem.api.milestones.queries import get_milestone_records
 
-    # Step down significance until we find at least 4 milestones
+    # Step down significance until we find at least 3 milestones
+    # Exclude demand lows (not interesting for social) but keep price lows + all highs
     records: list[dict] = []
     async with get_read_session() as session:
-        for min_sig in (9, 8, 7):
-            records, _total = await get_milestone_records(
+        for min_sig in (9, 8):
+            all_records, _total = await get_milestone_records(
                 session=session,
                 date_start=week_start,
                 date_end=week_end,
@@ -213,7 +244,8 @@ async def _fetch_milestones(
                 record_filter=[network.code],
                 limit=20,
             )
-            if len(records) >= 4:
+            records = [r for r in all_records if not (r.get("aggregate") == "low" and r.get("fueltech_id") == "demand")]
+            if len(records) >= 3:
                 break
 
     return [
@@ -340,7 +372,7 @@ def _build_price_results(rows: list[tuple], network: NetworkSchema) -> list[Week
 
 # Social media portrait: 1080x1350 (4:5 ratio — Instagram, Twitter, LinkedIn)
 IMAGE_WIDTH = 1080
-IMAGE_HEIGHT = 1350
+IMAGE_MAX_HEIGHT = 1600  # render tall, then crop to content
 
 
 def _get_logo_url() -> str:
@@ -423,17 +455,21 @@ def _format_wow(change: float | None) -> tuple[str, str]:
     return "wow-flat", ""
 
 
-def _prepare_record_display(r: WeeklySummaryResult) -> dict:
+def _prepare_record_display(r: WeeklySummaryResult, max_energy: float) -> dict:
     """Prepare a record for HTML template display."""
     wow_class, wow_str = _format_wow(r.wow_change)
+
+    # Bar width as percentage of the largest fueltech (so Coal = 100%)
+    bar_pct = (r.energy_gwh / max_energy * 100) if max_energy > 0 else 0
 
     return {
         "fueltech_label": r.fueltech_label,
         "fueltech_color": r.fueltech_color,
-        "energy_str": f"{r.energy_gwh:,.0f}",
+        "energy_str": f"{max(r.energy_gwh, 0):,.0f}",
         "pct_str": f"{r.demand_proportion:.1f}",
         "wow_class": wow_class,
         "wow_str": wow_str,
+        "bar_pct": f"{bar_pct:.1f}",
     }
 
 
@@ -518,8 +554,10 @@ def plot_weekly_fueltech_summary(ws: WeeklySummary) -> io.BytesIO:
     """Render branded HTML summary and screenshot to PNG via headless Chrome."""
     from html2image import Html2Image
 
-    display_records = [_prepare_record_display(r) for r in ws.records[:8]]
-    top_milestones = sorted(ws.milestones, key=lambda m: m.significance, reverse=True)[:5]
+    top_records = [r for r in ws.records if r.energy_gwh >= 1][:8]
+    max_energy = max((r.energy_gwh for r in top_records), default=1)
+    display_records = [_prepare_record_display(r, max_energy) for r in top_records]
+    top_milestones = sorted(ws.milestones, key=lambda m: m.significance, reverse=True)[:3]
     display_milestones = [_prepare_milestone_display(m) for m in top_milestones]
 
     week_range = f"{ws.week_start.strftime('%-d %b')} – {ws.week_end.strftime('%-d %b %Y')}"
@@ -568,13 +606,35 @@ def plot_weekly_fueltech_summary(ws: WeeklySummary) -> io.BytesIO:
     output_dir = "/tmp"
     output_file = f"weekly_summary_{ws.network}_{ws.week_number}.png"
 
-    hti = Html2Image(output_path=output_dir, size=(IMAGE_WIDTH, IMAGE_HEIGHT))
+    hti = Html2Image(output_path=output_dir, size=(IMAGE_WIDTH, IMAGE_MAX_HEIGHT))
     hti.screenshot(html_str=html, save_as=output_file)
 
     output_path = Path(output_dir) / output_file
-    buf = io.BytesIO(output_path.read_bytes())
-    output_path.unlink(missing_ok=True)
 
+    # Crop to content — remove empty space at bottom
+    from PIL import Image
+
+    with Image.open(output_path) as img:
+        # Find the last row that isn't the background color (#FDFAF4 ≈ 253,250,244)
+        pixels = img.load()
+        bottom = img.height
+        for y in range(img.height - 1, 0, -1):
+            row_has_content = False
+            for x in range(0, img.width, 20):  # sample every 20px for speed
+                r, g, b = pixels[x, y][:3]
+                if not (r > 248 and g > 245 and b > 238):  # not background
+                    row_has_content = True
+                    break
+            if row_has_content:
+                bottom = min(y + 60, img.height)  # 60px padding below content
+                break
+
+        cropped = img.crop((0, 0, img.width, bottom))
+        buf = io.BytesIO()
+        cropped.save(buf, format="PNG")
+        buf.seek(0)
+
+    output_path.unlink(missing_ok=True)
     return buf
 
 
@@ -633,7 +693,10 @@ async def get_weekly_summary(network: NetworkSchema, week_start: datetime | None
 
 
 async def run_weekly_summary(network: NetworkSchema, week_start: datetime | None = None) -> WeeklySummary:
-    """Generate weekly summary, render image, and submit to social pipeline for approval."""
+    """Generate weekly summary, render image, and submit to social pipeline for approval.
+
+    Only submits to the social pipeline on production to avoid duplicate posts.
+    """
     from opennem.social.pipeline import create_social_post
     from opennem.social.schema import CreateSocialPostRequest, SocialPostType
 
@@ -649,6 +712,10 @@ async def run_weekly_summary(network: NetworkSchema, week_start: datetime | None
 
     if settings.dry_run:
         logger.info(f"[DRY RUN] Weekly summary for {network.code}:\n{social_text}")
+        return ws
+
+    if not settings.is_prod:
+        logger.info(f"Skipping social pipeline submission for {network.code} (not production)")
         return ws
 
     # Submit to social pipeline — handles Slack approval + publishing

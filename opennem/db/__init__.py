@@ -101,7 +101,13 @@ def db_connect_sync() -> Engine:
 
     db_connect_uri = str(settings.db_url).replace("+asyncpg", "+psycopg")
 
-    _engine_sync = create_engine(db_connect_uri, echo=settings.db_debug)
+    _engine_sync = create_engine(
+        db_connect_uri,
+        echo=settings.db_debug,
+        pool_size=5,
+        max_overflow=5,
+        pool_pre_ping=True,
+    )
 
     return _engine_sync
 

@@ -865,6 +865,12 @@ async def power_station_v4(
     client: Any = Depends(get_clickhouse_dependency),
     user: authenticated_user = None,
 ) -> OpennemDataSet:
+    """Get power output for a station. Deprecated: use /v4/data/facilities/ instead.
+
+    .. deprecated::
+        This endpoint is scheduled for removal. Migrate to
+        ``GET /v4/data/facilities/{network_code}?facility_code={code}&metrics=power``.
+    """
     network = get_api_network_from_code(network_code)
     date_start, date_end = _period_to_date_range(period, network)
 
@@ -926,6 +932,12 @@ async def energy_station_v4(
     client: Any = Depends(get_clickhouse_dependency),
     user: authenticated_user = None,
 ) -> OpennemDataSet:
+    """Get energy, emissions, and market value for a station. Deprecated: use /v4/data/facilities/ instead.
+
+    .. deprecated::
+        This endpoint is scheduled for removal. Migrate to
+        ``GET /v4/data/facilities/{network_code}?facility_code={code}&metrics=energy&metrics=emissions&metrics=market_value``.
+    """
     network = get_api_network_from_code(network_code)
     date_start, date_end = _period_to_date_range(period, network)
 

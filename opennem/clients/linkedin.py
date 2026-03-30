@@ -111,7 +111,8 @@ async def post_linkedin(text: str, image: io.BytesIO | None = None) -> None:
     )
 
     if resp.status_code not in (200, 201):
-        logger.error(f"LinkedIn post failed: {resp.status_code}: {resp.text}")
-        return
+        msg = f"LinkedIn post failed: {resp.status_code}: {resp.text}"
+        logger.error(msg)
+        raise RuntimeError(msg)
 
     logger.info("Successfully posted to LinkedIn")

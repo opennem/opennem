@@ -15,7 +15,6 @@ from sqlalchemy import text
 
 from opennem import settings
 from opennem.aggregates.market_summary import process_market_summary_backlog, run_market_summary_aggregate_for_last_days
-from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
 from opennem.aggregates.unit_intervals import process_unit_intervals_backlog, run_unit_intervals_aggregate_for_last_days
 from opennem.api.export.tasks import export_power
 from opennem.clients.slack import slack_message
@@ -309,7 +308,6 @@ async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None,
     await process_energy_last_days(days=days)
     await run_unit_intervals_aggregate_for_last_days(days=days)
     await run_market_summary_aggregate_for_last_days(days=days)
-    run_flows_for_last_days(days=days, network=NetworkNEM)
 
     # run exports
     CURRENT_YEAR = datetime.now(ZoneInfo("Australia/Brisbane")).year
@@ -364,12 +362,11 @@ async def catchup_date(target_date: datetime) -> None:
         await process_unit_intervals_backlog(session=session, start_date=day_start, end_date=day_end)
     async with get_read_session() as session:
         await process_market_summary_backlog(session=session, start_date=day_start, end_date=day_end)
-    run_flows_for_last_days(days=2, network=NetworkNEM)
 
     # MV backfill
     from opennem.db.clickhouse_materialized_views import backfill_materialized_views
 
-    backfill_materialized_views(start_date=day_start, end_date=day_end, refresh_views=False)
+    await asyncio.to_thread(backfill_materialized_views, start_date=day_start, end_date=day_end, refresh_views=False)
 
     # exports
     year = day_start.year
@@ -382,7 +379,7 @@ async def catchup_date(target_date: datetime) -> None:
     logger.info(f"Catchup for {day_start.date()}: complete")
 
 
-async def catchup_aggregates(days: int = 7) -> None:
+async def catchup_aggregates(days: float = 0.5) -> None:
     """
     Backfill ClickHouse aggregates (market_summary and unit_intervals) for the last N days.
 

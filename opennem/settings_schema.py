@@ -136,15 +136,25 @@ class OpennemSettings(BaseSettings):
     cloudflare_account_id: str | None = None
     cloudflare_api_key: str | None = None
 
-    # twitter
-    twitter_access_token: str | None = None
-    twitter_access_token_secret: str | None = None
+    # twitter — main account (@OpenNem, weekly summaries, general posts)
     twitter_api_key: str | None = None
     twitter_api_key_secret: str | None = None
+    twitter_access_token: str | None = None
+    twitter_access_token_secret: str | None = None
 
-    # bluesky
+    # twitter — records account (milestone/record posts)
+    twitter_records_api_key: str | None = None
+    twitter_records_api_key_secret: str | None = None
+    twitter_records_access_token: str | None = None
+    twitter_records_access_token_secret: str | None = None
+
+    # bluesky — main account (weekly summaries, general posts)
     bluesky_handle: str | None = None
     bluesky_password: str | None = None
+
+    # bluesky — records account (milestone/record posts)
+    bluesky_records_handle: str | None = None
+    bluesky_records_password: str | None = None
 
     # feature flags
     run_milestones: bool = True  # do we enable the milestones
@@ -152,7 +162,7 @@ class OpennemSettings(BaseSettings):
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
     show_emissions_in_power_outputs: bool = True  # show emissions in power outputs
     show_emission_factors_in_power_outputs: bool = True  # show emissions in power outputs
-    flows_v4: bool = False  # enable v4 flow solver (dynamic topology, stores in CH market_summary)
+    flows_v4: bool = True  # v4 flow solver — always on, no feature flag needed
     # clerk API key
     clerk_secret_key: str | None = None
     api_jwks_url: str = "https://clerk.dev/.well-known/jwks.json"
