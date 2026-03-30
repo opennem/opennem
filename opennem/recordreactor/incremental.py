@@ -30,7 +30,7 @@ from opennem.recordreactor.schema import (
     MilestoneRecordSchema,
     MilestoneType,
 )
-from opennem.recordreactor.state import get_current_milestone_state, update_milestone_state
+from opennem.recordreactor.state import refresh_current_milestone_state, update_milestone_state
 from opennem.recordreactor.unit import get_milestone_unit
 from opennem.recordreactor.utils import check_milestone_is_new
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
@@ -210,21 +210,57 @@ def _map_row_to_records(
     return records
 
 
+async def _backfill_gap_if_needed() -> None:
+    """Check if there's a gap between last milestone and now. If > 1 day, run backlog to fill it.
+
+    This handles scenarios where the system was down for days — the incremental checker
+    only looks at the latest period, so it would miss records from the gap. The backlog
+    uses window functions and correctly detects every record-breaking day in the range.
+    """
+    from sqlalchemy import func, select
+
+    from opennem.db import get_read_session
+    from opennem.db.models.opennem import Milestones
+    from opennem.recordreactor.backlog import run_milestone_analysis
+
+    async with get_read_session() as session:
+        result = await session.execute(select(func.max(Milestones.interval)))
+        last_milestone = result.scalar()
+
+    if not last_milestone:
+        logger.warning("No milestones found — run full backlog first")
+        return
+
+    now = get_last_completed_interval_for_network(NetworkNEM)
+    gap = now - last_milestone
+    gap_hours = gap.total_seconds() / 3600
+
+    if gap_hours > 24:
+        logger.info(f"Milestone gap detected: {gap_hours:.0f}h ({last_milestone} to {now}). Running backlog to fill.")
+        await run_milestone_analysis(start_date=last_milestone, end_date=now)
+        logger.info("Gap backfill complete")
+
+
 async def run_incremental_milestone_check(
     networks: list[NetworkSchema] | None = None,
     alert_slack: bool = True,
 ) -> list[MilestoneRecordOutputSchema]:
     """Run incremental milestone detection.
 
-    1. Load current state (latest high/low per record_id)
-    2. Determine which periods have just completed
-    3. Query ClickHouse for aggregated values
-    4. Compare against current records
-    5. INSERT new records
-    6. Alert on significance >= 9
+    1. Check for gaps > 1 day and backfill if needed
+    2. Load current state (latest high/low per record_id)
+    3. Determine which periods have just completed
+    4. Query ClickHouse for aggregated values
+    5. Compare against current records
+    6. INSERT new records
+    7. Alert on significance >= 9
     """
+    # Fill any gap from downtime before doing the incremental check
+    await _backfill_gap_if_needed()
+
     client = get_clickhouse_client()
-    current_state = await get_current_milestone_state()
+    # Always reload state from DB to avoid stale reads after reconciliation/admin writes
+    current_state = await refresh_current_milestone_state()
     all_new_records: list[MilestoneRecordOutputSchema] = []
 
     for network in networks or _DEFAULT_NETWORKS:
