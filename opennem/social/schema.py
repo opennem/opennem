@@ -4,6 +4,8 @@ from datetime import datetime
 from enum import StrEnum
 from uuid import UUID
 
+from pydantic import Field
+
 from opennem.schema.core import BaseConfig
 
 
@@ -47,8 +49,8 @@ class CreateSocialPostRequest(BaseConfig):
     source_type: str | None = None
     source_id: str | None = None
     network_id: str | None = None
-    metadata: dict = {}
-    platforms: list[Platform] = ALL_PLATFORMS
+    metadata: dict = Field(default_factory=dict)
+    platforms: list[Platform] = Field(default_factory=lambda: list(ALL_PLATFORMS))
     auto_approve: bool = False
 
 
