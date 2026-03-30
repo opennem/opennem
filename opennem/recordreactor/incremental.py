@@ -30,7 +30,7 @@ from opennem.recordreactor.schema import (
     MilestoneRecordSchema,
     MilestoneType,
 )
-from opennem.recordreactor.state import get_current_milestone_state, update_milestone_state
+from opennem.recordreactor.state import refresh_current_milestone_state, update_milestone_state
 from opennem.recordreactor.unit import get_milestone_unit
 from opennem.recordreactor.utils import check_milestone_is_new
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
@@ -224,7 +224,8 @@ async def run_incremental_milestone_check(
     6. Alert on significance >= 9
     """
     client = get_clickhouse_client()
-    current_state = await get_current_milestone_state()
+    # Always reload state from DB to avoid stale reads after reconciliation/admin writes
+    current_state = await refresh_current_milestone_state()
     all_new_records: list[MilestoneRecordOutputSchema] = []
 
     for network in networks or _DEFAULT_NETWORKS:
