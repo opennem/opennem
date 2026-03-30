@@ -9,7 +9,7 @@ Replaces the full-regeneration approach in backlog.py for scheduled runs.
 
 import logging
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from opennem import settings
 from opennem.clients.slack import slack_message
@@ -228,7 +228,9 @@ async def run_incremental_milestone_check(
     all_new_records: list[MilestoneRecordOutputSchema] = []
 
     for network in networks or _DEFAULT_NETWORKS:
-        now = get_last_completed_interval_for_network(network)
+        # get_last_completed_interval_for_network returns the start of the current interval
+        # (e.g. 10:05 at 10:07) — subtract one interval to get the last truly completed one
+        now = get_last_completed_interval_for_network(network) - timedelta(minutes=network.interval_size)
         completed_periods = get_completed_periods(now, network)
 
         logger.info(f"Checking {network.code}: {len(completed_periods)} periods at {now}")
