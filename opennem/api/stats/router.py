@@ -1,26 +1,41 @@
 import logging
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+from typing import Annotated, Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import RedirectResponse
 from fastapi_versionizer import api_version
 from sqlalchemy import select
 from starlette import status
 
 from opennem import settings
-from opennem.api.data.utils import get_max_interval_days
+from opennem.api.data.utils import get_max_interval_days, validate_date_range
 from opennem.api.export.controllers import power_week
 from opennem.api.export.queries import interconnector_flow_network_regions_query
 from opennem.api.keys import ApiAuthorization, api_protected
+from opennem.api.queries import QueryType, get_timeseries_query
+from opennem.api.security import authenticated_user
 from opennem.api.time import human_to_interval, human_to_period, valid_database_interval
+from opennem.api.timeseries import build_timeseries_response, format_timeseries_response
+from opennem.api.utils import get_api_network_from_code
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
+from opennem.core.grouping import PrimaryGrouping
+from opennem.core.metric import Metric
 from opennem.core.networks import network_from_network_code
 from opennem.core.time_interval import Interval
 from opennem.core.units import get_unit
 from opennem.db import db_connect, get_read_session
+from opennem.db.clickhouse import execute_async, get_clickhouse_dependency
 from opennem.db.models.opennem import Facility
-from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkNEM, NetworkWEM
+from opennem.schema.network import (
+    NetworkAEMORooftop,
+    NetworkAEMORooftopBackfill,
+    NetworkAPVI,
+    NetworkNEM,
+    NetworkSchema,
+    NetworkWEM,
+)
 from opennem.schema.time import TimePeriod
 from opennem.users.schema import OpenNEMRoles, OpenNEMUser
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem
@@ -40,6 +55,26 @@ get_emission_factor_region_query = _deprecated_endpoint
 get_network_region_price_query = _deprecated_endpoint
 
 logger = logging.getLogger(__name__)
+
+# Map legacy interval strings to the Interval enum
+_HUMAN_TO_INTERVAL: dict[str, Interval] = {
+    "5m": Interval.INTERVAL,
+    "15m": Interval.INTERVAL,
+    "30m": Interval.HOUR,
+    "1h": Interval.HOUR,
+    "1d": Interval.DAY,
+    "1M": Interval.MONTH,
+    "1Y": Interval.YEAR,
+}
+
+
+def _period_to_date_range(period_human: str, network: NetworkSchema) -> tuple[datetime, datetime]:
+    """Convert a legacy period string (e.g. '7d', '1Y') to (date_start, date_end)."""
+    period_obj = human_to_period(period_human)
+    date_end = get_last_completed_interval_for_network(network=network, tz_aware=False)
+    date_start = date_end - timedelta(minutes=period_obj.period)
+    return date_start, date_end
+
 
 router = APIRouter()
 
@@ -798,3 +833,130 @@ async def price_network_endpoint(
         )
 
     return result
+
+
+# ---------------------------------------------------------------------------
+# v4 station stats — ClickHouse backed, deprecated in favour of /v4/data/facilities
+# ---------------------------------------------------------------------------
+
+_DEPRECATION_POWER = (
+    "This endpoint will be removed. Use GET /v4/data/facilities/{network_code}?facility_code={code}&metrics=power instead."
+)
+_DEPRECATION_ENERGY = (
+    "This endpoint will be removed. Use GET /v4/data/facilities/{network_code}"
+    "?facility_code={code}&metrics=energy&metrics=emissions&metrics=market_value instead."
+)
+
+
+@api_version(4)
+@router.get(
+    "/power/station/{network_code}/{facility_code:path}",
+    name="Power by Station (v4, deprecated)",
+    description="Get power output for a station. Deprecated: use /v4/data/facilities/ instead.",
+)
+async def power_station_v4(
+    network_code: str,
+    facility_code: str,
+    period: Annotated[str, Query(description="Period e.g. 7d, 1M, 1Y")] = "7d",
+    interval_human: Annotated[str | None, Query(alias="interval", description="Interval e.g. 5m, 1h, 1d")] = None,
+    client: Any = Depends(get_clickhouse_dependency),
+    user: authenticated_user = None,
+) -> dict:
+    network = get_api_network_from_code(network_code)
+    date_start, date_end = _period_to_date_range(period, network)
+
+    interval = _HUMAN_TO_INTERVAL.get(interval_human, Interval.INTERVAL) if interval_human else Interval.INTERVAL
+
+    date_start, date_end = validate_date_range(
+        network=network, user=user, interval=interval, date_start=date_start, date_end=date_end
+    )
+
+    metrics = [Metric.POWER]
+
+    query, params, column_names = get_timeseries_query(
+        query_type=QueryType.FACILITY,
+        network=network,
+        metrics=metrics,
+        interval=interval,
+        date_start=date_start,
+        date_end=date_end,
+        facility_code=[facility_code],
+    )
+
+    results = await execute_async(client, query, params)
+
+    if not results:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No data for station")
+
+    result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
+
+    timeseries_list = format_timeseries_response(
+        network=network.code,
+        metrics=metrics,
+        interval=interval,
+        primary_grouping=PrimaryGrouping.NETWORK,
+        secondary_groupings=None,
+        results=result_dicts,
+        facility_code=[facility_code],
+    )
+
+    response = build_timeseries_response(timeseries_list)
+    response["deprecation"] = _DEPRECATION_POWER
+    return response
+
+
+@api_version(4)
+@router.get(
+    "/energy/station/{network_code}/{facility_code:path}",
+    name="Energy by Station (v4, deprecated)",
+    description="Get energy, emissions, and market value for a station. Deprecated: use /v4/data/facilities/ instead.",
+)
+async def energy_station_v4(
+    network_code: str,
+    facility_code: str,
+    period: Annotated[str, Query(description="Period e.g. 7d, 1M, 1Y")] = "1Y",
+    interval_param: Annotated[str | None, Query(alias="interval", description="Interval e.g. 1d, 1M")] = None,
+    client: Any = Depends(get_clickhouse_dependency),
+    user: authenticated_user = None,
+) -> dict:
+    network = get_api_network_from_code(network_code)
+    date_start, date_end = _period_to_date_range(period, network)
+
+    interval = _HUMAN_TO_INTERVAL.get(interval_param, Interval.DAY) if interval_param else Interval.DAY
+
+    date_start, date_end = validate_date_range(
+        network=network, user=user, interval=interval, date_start=date_start, date_end=date_end
+    )
+
+    metrics = [Metric.ENERGY, Metric.EMISSIONS, Metric.MARKET_VALUE]
+
+    query, params, column_names = get_timeseries_query(
+        query_type=QueryType.FACILITY,
+        network=network,
+        metrics=metrics,
+        interval=interval,
+        date_start=date_start,
+        date_end=date_end,
+        facility_code=[facility_code],
+    )
+
+    results = await execute_async(client, query, params)
+
+    if not results:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No data for station")
+
+    result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
+
+    timeseries_list = format_timeseries_response(
+        network=network.code,
+        metrics=metrics,
+        interval=interval,
+        primary_grouping=PrimaryGrouping.NETWORK,
+        secondary_groupings=None,
+        results=result_dicts,
+        facility_code=[facility_code],
+    )
+
+    response = build_timeseries_response(timeseries_list)
+    response["deprecation"] = _DEPRECATION_ENERGY
+    return response

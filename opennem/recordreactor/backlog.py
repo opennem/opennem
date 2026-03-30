@@ -239,11 +239,12 @@ def _analyze_milestone_records(
     # Determine aggregation function and value column name
     agg_function = "SUM"
 
-    # interval count value
-    interval_count = "max(interval_count)"
-
-    # if period == MilestonePeriod.interval:
-    interval_count = "1"
+    # interval count: use actual count for day+ periods (needed for LOW record threshold validation)
+    # interval period always has count=1 since each row is a single interval
+    if period == MilestonePeriod.interval:
+        interval_count = "1"
+    else:
+        interval_count = "count()"
 
     if milestone_type == MilestoneType.power:
         metric_column = "generated"
@@ -673,20 +674,33 @@ async def run_milestone_analysis(
 
 
 async def run_milestone_analysis_backlog(
-    refresh: bool = False, debug: bool = False, alert_slack: bool = False, alert_twitter: bool = False
+    refresh: bool = False,
+    debug: bool = False,
+    alert_slack: bool = False,
+    alert_twitter: bool = False,
+    confirm_delete: bool = False,
 ):
     """
-    Runs in year chunks
+    Full backlog analysis using window functions over all historical data.
+
+    This is an admin-only operation for initial seeding or rebuilding the milestones table.
+    It should NOT be called from scheduled tasks — use incremental detection instead.
+
+    Args:
+        refresh: If True, deletes all milestones before re-generating. Requires confirm_delete=True.
+        confirm_delete: Safety guard — must be True alongside refresh to actually delete.
     """
     end_date = get_last_completed_interval_for_network(NetworkNEM)
     start_date = NetworkNEM.data_first_seen.replace(tzinfo=None)
-    # start_date = end_date - timedelta(days=90)
 
     if refresh:
+        if not confirm_delete:
+            logger.critical("refresh=True requires confirm_delete=True — aborting to prevent accidental data loss")
+            raise ValueError("refresh=True requires confirm_delete=True to prevent accidental data loss")
         async with get_write_session() as session:
             await session.execute(text("delete from milestones"))
             await session.commit()
-        logger.info("Milestones table deleted")
+        logger.warning("Milestones table deleted (refresh=True, confirm_delete=True)")
 
     milestone_records = await run_milestone_analysis(start_date=start_date, end_date=end_date, debug=debug)
 
