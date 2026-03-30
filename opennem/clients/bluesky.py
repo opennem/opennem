@@ -34,14 +34,7 @@ async def post_bluesky(text: str) -> None:
 
     except Exception as e:
         logger.error(f"Failed to post to Bluesky: {e}")
-    finally:
-        # Ensure the session is closed even if errors occur
-        if client.me:
-            # Check if login was successful before trying to close
-            # await client.close() # Closing logic might depend on library version/implementation details
-            # As of atproto 0.0.39, explicit close might not be necessary or available like this
-            # The session might be managed implicitly by the client's lifecycle or context managers if used
-            pass
+        raise
 
 
 async def post_bluesky_with_image(text: str, image: io.BytesIO, alt_text: str = "") -> None:
@@ -70,6 +63,7 @@ async def post_bluesky_with_image(text: str, image: io.BytesIO, alt_text: str = 
 
     except Exception as e:
         logger.error(f"Failed to post to Bluesky with image: {e}")
+        raise
 
 
 if __name__ == "__main__":
