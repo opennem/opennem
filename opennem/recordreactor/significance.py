@@ -61,7 +61,7 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
             else:
                 return 9  # @NOTE temporary
 
-        if milestone.fueltech in ["fossil", "coal", "gas"] and milestone.aggregate == MilestoneAggregate.low:
+        if milestone.fueltech in ["fossils", "coal", "gas"] and milestone.aggregate == MilestoneAggregate.low:
             if milestone.network_region is None:
                 return 10
             else:
