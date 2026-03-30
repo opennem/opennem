@@ -16,11 +16,9 @@ from opennem.api.keys import ApiAuthorization, api_protected
 from opennem.api.queries import QueryType, get_timeseries_query
 from opennem.api.security import authenticated_user
 from opennem.api.time import human_to_interval, human_to_period, valid_database_interval
-from opennem.api.timeseries import build_timeseries_response, format_timeseries_response
 from opennem.api.utils import get_api_network_from_code
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
-from opennem.core.grouping import PrimaryGrouping
 from opennem.core.metric import Metric
 from opennem.core.networks import network_from_network_code
 from opennem.core.time_interval import Interval
@@ -836,23 +834,28 @@ async def price_network_endpoint(
 
 
 # ---------------------------------------------------------------------------
-# v4 station stats — ClickHouse backed, deprecated in favour of /v4/data/facilities
+# v4 station stats — ClickHouse backed, legacy format, deprecated
 # ---------------------------------------------------------------------------
 
-_DEPRECATION_POWER = (
-    "This endpoint will be removed. Use GET /v4/data/facilities/{network_code}?facility_code={code}&metrics=power instead."
-)
-_DEPRECATION_ENERGY = (
-    "This endpoint will be removed. Use GET /v4/data/facilities/{network_code}"
-    "?facility_code={code}&metrics=energy&metrics=emissions&metrics=market_value instead."
-)
+_DEPRECATION_MSG = "This endpoint will be removed. Use /v4/data/facilities/ instead."
+
+# Map Interval enum → legacy TimeInterval human string
+_INTERVAL_TO_HUMAN: dict[Interval, str] = {
+    Interval.INTERVAL: "5m",
+    Interval.HOUR: "1h",
+    Interval.DAY: "1d",
+    Interval.WEEK: "1w",
+    Interval.MONTH: "1M",
+    Interval.YEAR: "1Y",
+}
 
 
 @api_version(4)
 @router.get(
     "/power/station/{network_code}/{facility_code:path}",
     name="Power by Station (v4, deprecated)",
-    description="Get power output for a station. Deprecated: use /v4/data/facilities/ instead.",
+    response_model=OpennemDataSet,
+    response_model_exclude_unset=False,
 )
 async def power_station_v4(
     network_code: str,
@@ -861,7 +864,7 @@ async def power_station_v4(
     interval_human: Annotated[str | None, Query(alias="interval", description="Interval e.g. 5m, 1h, 1d")] = None,
     client: Any = Depends(get_clickhouse_dependency),
     user: authenticated_user = None,
-) -> dict:
+) -> OpennemDataSet:
     network = get_api_network_from_code(network_code)
     date_start, date_end = _period_to_date_range(period, network)
 
@@ -871,12 +874,10 @@ async def power_station_v4(
         network=network, user=user, interval=interval, date_start=date_start, date_end=date_end
     )
 
-    metrics = [Metric.POWER]
-
     query, params, column_names = get_timeseries_query(
         query_type=QueryType.FACILITY,
         network=network,
-        metrics=metrics,
+        metrics=[Metric.POWER],
         interval=interval,
         date_start=date_start,
         date_end=date_end,
@@ -888,28 +889,34 @@ async def power_station_v4(
     if not results:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No data for station")
 
-    result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
+    rows = [dict(zip(column_names, row, strict=True)) for row in results]
 
-    timeseries_list = format_timeseries_response(
-        network=network.code,
-        metrics=metrics,
-        interval=interval,
-        primary_grouping=PrimaryGrouping.NETWORK,
-        secondary_groupings=None,
-        results=result_dicts,
-        facility_code=[facility_code],
+    stats = [DataQueryResult(interval=r["interval"], group_by=r["unit_code"], result=r["power"]) for r in rows]
+
+    interval_obj = human_to_interval(_INTERVAL_TO_HUMAN.get(interval, interval.value))
+
+    result = stats_factory(
+        stats,
+        code=facility_code,
+        network=network,
+        interval=interval_obj,
+        include_group_code=True,
+        units=get_unit("power"),
     )
 
-    response = build_timeseries_response(timeseries_list)
-    response["deprecation"] = _DEPRECATION_POWER
-    return response
+    if not result:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No results found")
+
+    result.messages = [_DEPRECATION_MSG]
+    return result
 
 
 @api_version(4)
 @router.get(
     "/energy/station/{network_code}/{facility_code:path}",
     name="Energy by Station (v4, deprecated)",
-    description="Get energy, emissions, and market value for a station. Deprecated: use /v4/data/facilities/ instead.",
+    response_model=OpennemDataSet,
+    response_model_exclude_unset=False,
 )
 async def energy_station_v4(
     network_code: str,
@@ -918,7 +925,7 @@ async def energy_station_v4(
     interval_param: Annotated[str | None, Query(alias="interval", description="Interval e.g. 1d, 1M")] = None,
     client: Any = Depends(get_clickhouse_dependency),
     user: authenticated_user = None,
-) -> dict:
+) -> OpennemDataSet:
     network = get_api_network_from_code(network_code)
     date_start, date_end = _period_to_date_range(period, network)
 
@@ -928,12 +935,10 @@ async def energy_station_v4(
         network=network, user=user, interval=interval, date_start=date_start, date_end=date_end
     )
 
-    metrics = [Metric.ENERGY, Metric.EMISSIONS, Metric.MARKET_VALUE]
-
     query, params, column_names = get_timeseries_query(
         query_type=QueryType.FACILITY,
         network=network,
-        metrics=metrics,
+        metrics=[Metric.ENERGY, Metric.EMISSIONS, Metric.MARKET_VALUE],
         interval=interval,
         date_start=date_start,
         date_end=date_end,
@@ -945,18 +950,47 @@ async def energy_station_v4(
     if not results:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No data for station")
 
-    result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
+    rows = [dict(zip(column_names, row, strict=True)) for row in results]
 
-    timeseries_list = format_timeseries_response(
-        network=network.code,
-        metrics=metrics,
-        interval=interval,
-        primary_grouping=PrimaryGrouping.NETWORK,
-        secondary_groupings=None,
-        results=result_dicts,
-        facility_code=[facility_code],
+    interval_obj = human_to_interval(_INTERVAL_TO_HUMAN.get(interval, interval.value))
+
+    results_energy = [DataQueryResult(interval=r["interval"], group_by=r["unit_code"], result=r["energy"]) for r in rows]
+    results_emissions = [DataQueryResult(interval=r["interval"], group_by=r["unit_code"], result=r["emissions"]) for r in rows]
+    results_market_value = [
+        DataQueryResult(interval=r["interval"], group_by=r["unit_code"], result=r["market_value"]) for r in rows
+    ]
+
+    result = stats_factory(
+        stats=results_energy,
+        units=get_unit("energy"),
+        network=network,
+        interval=interval_obj,
+        code=facility_code,
+        include_group_code=True,
     )
 
-    response = build_timeseries_response(timeseries_list)
-    response["deprecation"] = _DEPRECATION_ENERGY
-    return response
+    if not result:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No results found")
+
+    stats_market_value = stats_factory(
+        stats=results_market_value,
+        units=get_unit("market_value"),
+        network=network,
+        interval=interval_obj,
+        code=facility_code,
+        include_group_code=True,
+    )
+    result.append_set(stats_market_value)
+
+    stats_emissions = stats_factory(
+        stats=results_emissions,
+        units=get_unit("emissions"),
+        network=network,
+        interval=interval_obj,
+        code=facility_code,
+        include_group_code=True,
+    )
+    result.append_set(stats_emissions)
+
+    result.messages = [_DEPRECATION_MSG]
+    return result
