@@ -1,16 +1,12 @@
 <%
 renew_pct = '{:.1f}'.format(ws.renewable_proportion)
 total = '{:,.0f}'.format(ws.total_energy_gwh)
-top = ws.records[0] if ws.records else None
+week_range = ws.week_start.strftime('%-d %b') + ' - ' + ws.week_end.strftime('%-d %b %Y')
 %>\
-${ws.network} Week ${ws.week_number} energy summary: ${total} GWh generated, ${renew_pct}% from renewables.\
-% if top:
- ${top.fueltech_label} led at ${'{:.0f}'.format(top.demand_proportion)}% of the mix.\
-% endif
-
+Open Electricity weekly summary for ${ws.network} (${week_range}). Renewables proportion at ${renew_pct}% on ${total} GWh of total generation.
 % if ws.milestones:
 
-${ws.milestones[0].description or ws.milestones[0].record_id}\
+${ws.milestones[0].description or ws.milestones[0].record_id}
 % endif
 
-openelectricity.org.au
+https://explore.openelectricity.org.au/energy/${ws.network.lower()}/
