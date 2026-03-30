@@ -244,7 +244,7 @@ async def _fetch_milestones(
                 record_filter=[network.code],
                 limit=20,
             )
-            records = [r for r in all_records if not (r.get("aggregate") == "low" and r.get("metric") == "demand")]
+            records = [r for r in all_records if not (r.get("aggregate") == "low" and r.get("fueltech_id") == "demand")]
             if len(records) >= 3:
                 break
 
@@ -372,7 +372,7 @@ def _build_price_results(rows: list[tuple], network: NetworkSchema) -> list[Week
 
 # Social media portrait: 1080x1350 (4:5 ratio — Instagram, Twitter, LinkedIn)
 IMAGE_WIDTH = 1080
-IMAGE_HEIGHT = 1350
+IMAGE_MAX_HEIGHT = 1600  # render tall, then crop to content
 
 
 def _get_logo_url() -> str:
@@ -554,7 +554,7 @@ def plot_weekly_fueltech_summary(ws: WeeklySummary) -> io.BytesIO:
     """Render branded HTML summary and screenshot to PNG via headless Chrome."""
     from html2image import Html2Image
 
-    top_records = ws.records[:8]
+    top_records = [r for r in ws.records if r.energy_gwh >= 1][:8]
     max_energy = max((r.energy_gwh for r in top_records), default=1)
     display_records = [_prepare_record_display(r, max_energy) for r in top_records]
     top_milestones = sorted(ws.milestones, key=lambda m: m.significance, reverse=True)[:3]
@@ -606,13 +606,35 @@ def plot_weekly_fueltech_summary(ws: WeeklySummary) -> io.BytesIO:
     output_dir = "/tmp"
     output_file = f"weekly_summary_{ws.network}_{ws.week_number}.png"
 
-    hti = Html2Image(output_path=output_dir, size=(IMAGE_WIDTH, IMAGE_HEIGHT))
+    hti = Html2Image(output_path=output_dir, size=(IMAGE_WIDTH, IMAGE_MAX_HEIGHT))
     hti.screenshot(html_str=html, save_as=output_file)
 
     output_path = Path(output_dir) / output_file
-    buf = io.BytesIO(output_path.read_bytes())
-    output_path.unlink(missing_ok=True)
 
+    # Crop to content — remove empty space at bottom
+    from PIL import Image
+
+    with Image.open(output_path) as img:
+        # Find the last row that isn't the background color (#FDFAF4 ≈ 253,250,244)
+        pixels = img.load()
+        bottom = img.height
+        for y in range(img.height - 1, 0, -1):
+            row_has_content = False
+            for x in range(0, img.width, 20):  # sample every 20px for speed
+                r, g, b = pixels[x, y][:3]
+                if not (r > 248 and g > 245 and b > 238):  # not background
+                    row_has_content = True
+                    break
+            if row_has_content:
+                bottom = min(y + 60, img.height)  # 60px padding below content
+                break
+
+        cropped = img.crop((0, 0, img.width, bottom))
+        buf = io.BytesIO()
+        cropped.save(buf, format="PNG")
+        buf.seek(0)
+
+    output_path.unlink(missing_ok=True)
     return buf
 
 
