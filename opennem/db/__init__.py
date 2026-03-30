@@ -54,7 +54,11 @@ def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int
             query_cache_size=1200,
             echo=settings.db_debug,
             future=True,
-            poolclass=NullPool,
+            pool_size=20,
+            max_overflow=15,
+            pool_recycle=1800,
+            pool_timeout=timeout,
+            pool_pre_ping=True,
         )
 
         return _engine
