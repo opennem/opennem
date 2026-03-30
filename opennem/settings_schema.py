@@ -136,15 +136,25 @@ class OpennemSettings(BaseSettings):
     cloudflare_account_id: str | None = None
     cloudflare_api_key: str | None = None
 
-    # twitter
-    twitter_access_token: str | None = None
-    twitter_access_token_secret: str | None = None
+    # twitter — main account (@OpenNem, weekly summaries, general posts)
     twitter_api_key: str | None = None
     twitter_api_key_secret: str | None = None
+    twitter_access_token: str | None = None
+    twitter_access_token_secret: str | None = None
 
-    # bluesky
+    # twitter — records account (milestone/record posts)
+    twitter_records_api_key: str | None = None
+    twitter_records_api_key_secret: str | None = None
+    twitter_records_access_token: str | None = None
+    twitter_records_access_token_secret: str | None = None
+
+    # bluesky — main account (weekly summaries, general posts)
     bluesky_handle: str | None = None
     bluesky_password: str | None = None
+
+    # bluesky — records account (milestone/record posts)
+    bluesky_records_handle: str | None = None
+    bluesky_records_password: str | None = None
 
     # feature flags
     run_milestones: bool = True  # do we enable the milestones
