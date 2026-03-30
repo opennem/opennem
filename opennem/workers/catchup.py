@@ -14,9 +14,9 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import text
 
 from opennem import settings
-from opennem.aggregates.market_summary import run_market_summary_aggregate_for_last_days
+from opennem.aggregates.market_summary import process_market_summary_backlog, run_market_summary_aggregate_for_last_days
 from opennem.aggregates.network_flows_v3 import run_flows_for_last_days
-from opennem.aggregates.unit_intervals import run_unit_intervals_aggregate_for_last_days
+from opennem.aggregates.unit_intervals import process_unit_intervals_backlog, run_unit_intervals_aggregate_for_last_days
 from opennem.api.export.tasks import export_power
 from opennem.clients.slack import slack_message
 from opennem.controllers.export import run_export_all, run_export_energy_for_year
@@ -39,6 +39,7 @@ from opennem.crawlers.wemde import ALL_WEM_CRAWLERS, run_all_wem_crawlers
 from opennem.db import get_read_session
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.workers.energy import (
+    _process_date_range,
     process_energy_last_days,
     process_energy_last_intervals,
 )
@@ -319,6 +320,66 @@ async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None,
         run_export_energy_for_year(year=CURRENT_YEAR - 1),
         run_export_all(),
     )
+
+
+async def catchup_date(target_date: datetime) -> None:
+    """Re-crawl, recalculate energy, and re-aggregate for a specific date.
+
+    Args:
+        target_date: The date to re-process (time component ignored, uses full day AEST)
+    """
+    # AEST day boundaries
+    day_start = target_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    day_end = target_date.replace(hour=23, minute=59, second=59, microsecond=0)
+
+    logger.info(f"Catchup for {day_start.date()}: crawling")
+
+    crawlers: list[CrawlerDefinition] = list(ALL_NEMWEB_CRAWLERS) + list(ALL_WEM_CRAWLERS)
+    semaphore = asyncio.Semaphore(2)
+
+    async def _crawl_limited(crawler: CrawlerDefinition, **kwargs) -> ControllerReturn | None:
+        async with semaphore:
+            try:
+                return await run_crawl(crawler, **kwargs)
+            except Exception as e:
+                logger.error(f"catchup_date crawler {crawler.name} failed: {e}")
+                return None
+
+    crawl_tasks = []
+    for crawler in crawlers:
+        limit = _get_limit_for_crawler(crawler, days=1)
+        crawl_tasks.append(_crawl_limited(crawler, latest=False, limit=limit, reverse=True))
+
+    results: list[ControllerReturn | None] = await asyncio.gather(*crawl_tasks)
+    total = sum(r.total_records for r in results if r)
+    logger.info(f"Catchup for {day_start.date()}: crawled {total} records")
+
+    # energy
+    logger.info(f"Catchup for {day_start.date()}: processing energy")
+    await _process_date_range(date_start=day_start, date_end=day_end)
+
+    # aggregates
+    logger.info(f"Catchup for {day_start.date()}: aggregating")
+    async with get_read_session() as session:
+        await process_unit_intervals_backlog(session=session, start_date=day_start, end_date=day_end)
+    async with get_read_session() as session:
+        await process_market_summary_backlog(session=session, start_date=day_start, end_date=day_end)
+    run_flows_for_last_days(days=2, network=NetworkNEM)
+
+    # MV backfill
+    from opennem.db.clickhouse_materialized_views import backfill_materialized_views
+
+    backfill_materialized_views(start_date=day_start, end_date=day_end, refresh_views=False)
+
+    # exports
+    year = day_start.year
+    await asyncio.gather(
+        export_power(),
+        run_export_energy_for_year(year=year),
+        run_export_all(),
+    )
+
+    logger.info(f"Catchup for {day_start.date()}: complete")
 
 
 async def catchup_aggregates(days: int = 7) -> None:
