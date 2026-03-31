@@ -7,7 +7,7 @@ resolution-markers = [
 ]
 
 [options]
-exclude-newer = "2026-03-28T09:43:14.826433Z"
+exclude-newer = "2026-03-28T09:57:52.684273Z"
 exclude-newer-span = "P3D"
 
 [[package]]
@@ -1729,7 +1729,7 @@ wheels = [
 
 [[package]]
 name = "opennem"
-version = "4.5.0.dev27"
+version = "4.5.0.dev28"
 source = { editable = "." }
 dependencies = [
     { name = "aioboto3" },
