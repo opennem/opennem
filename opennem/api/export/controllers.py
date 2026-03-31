@@ -344,20 +344,16 @@ async def power_week(
 
     # Truncate all series to the core generation boundary.
     # Core gen fueltechs (wind, gas, solar_utility, etc.) define the chart edge —
-    # demand, price, rooftop, and curtailment must not extend past them.
-    _core_gen_exclude = {"solar_rooftop", "imports", "exports", "battery_charging", "pumps"}
-    core_gen_lasts = [
-        s.history.last
-        for s in result.data
-        if s.fuel_tech and s.fuel_tech not in _core_gen_exclude and s.data_type == "power" and s.history
-    ]
+    # everything else (demand, price, rooftop, imports, exports, curtailment)
+    # must not extend past them.
+    _non_gen = {"solar_rooftop", "imports", "exports", "battery_charging", "pumps", None}
+    core_gen_lasts = [s.history.last for s in result.data if s.fuel_tech not in _non_gen and s.data_type == "power" and s.history]
 
     if core_gen_lasts:
         gen_boundary = max(core_gen_lasts)
         for s in result.data:
             if s.history and s.history.last > gen_boundary:
                 interval_delta = s.history.get_interval()
-                # count how many slots to trim
                 excess = int((s.history.last - gen_boundary) / interval_delta)
                 if excess > 0:
                     s.history.data = s.history.data[: len(s.history.data) - excess]
