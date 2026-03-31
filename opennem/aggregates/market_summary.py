@@ -555,18 +555,15 @@ def _prepare_market_summary_data(
     if intervals:
         start = min(intervals)
         end = max(intervals)
-        try:
-            flow_df = _compute_flows_for_range(start, end)
-            if flow_df is not None and not flow_df.is_empty():
-                result_df = result_df.join(
-                    flow_df,
-                    on=["interval", "network_region"],
-                    how="left",
-                )
-            else:
-                result_df = result_df.with_columns(_null_flow_cols)
-        except Exception as e:
-            logger.error(f"Flow computation failed ({start} to {end}): {e} — inserting NULLs")
+        flow_df = _compute_flows_for_range(start, end)
+        if flow_df is not None and not flow_df.is_empty():
+            result_df = result_df.join(
+                flow_df,
+                on=["interval", "network_region"],
+                how="left",
+            )
+        else:
+            logger.warning(f"No flow data for {start} to {end}")
             result_df = result_df.with_columns(_null_flow_cols)
     else:
         result_df = result_df.with_columns(_null_flow_cols)
@@ -623,6 +620,7 @@ def _compute_flows_for_range(start_time: datetime, end_time: datetime) -> pl.Dat
     from opennem.db import db_connect_sync
 
     topology = get_network_topology("NEM")
+    logger.info(f"Computing flows for {start_time} to {end_time}")
 
     # 1. Load interconnector SCADA from PG
     engine = db_connect_sync()
