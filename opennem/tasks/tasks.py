@@ -50,19 +50,22 @@ logger = logging.getLogger("opennem.pipelines.nem")
 
 async def task_nem_interval_check(ctx) -> None:
     """This task runs per interval and checks for new data"""
-    _ = await run_crawl(AEMONemwebDispatchIS, latest=True)
-    _ = await run_crawl(AEMONNemwebDispatchScada, latest=True)
-    _ = await run_crawl(AEMONemwebTradingIS, latest=True)
-
-    # update energy
-    await process_energy_last_intervals(num_intervals=12 * 3)
-
-    # update aggregates (flows computed inline via market_summary when flows_v4=True)
-    await run_market_summary_aggregate_to_now()
-    await run_unit_intervals_aggregate_to_now()
-
+    # crawl all 3 sources in parallel
     await asyncio.gather(
-        run_export_power_latest_for_network(network=NetworkNEM), run_export_power_latest_for_network(network=NetworkAU)
+        run_crawl(AEMONemwebDispatchIS, latest=True),
+        run_crawl(AEMONNemwebDispatchScada, latest=True),
+        run_crawl(AEMONemwebTradingIS, latest=True),
+    )
+
+    # energy + market_summary must complete before export
+    await process_energy_last_intervals(num_intervals=12)
+    await run_market_summary_aggregate_to_now()
+
+    # unit_intervals aggregate doesn't block exports — run concurrently
+    await asyncio.gather(
+        run_unit_intervals_aggregate_to_now(),
+        run_export_power_latest_for_network(network=NetworkNEM),
+        run_export_power_latest_for_network(network=NetworkAU),
     )
 
 

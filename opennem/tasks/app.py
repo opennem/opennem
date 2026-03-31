@@ -97,7 +97,7 @@ class WorkerSettings:
         cron(
             task_nem_interval_check,
             minute=set(range(0, 60, 5)),
-            second=50,
+            second=35,
             timeout=None,
             unique=True,
         ),
