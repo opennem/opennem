@@ -130,6 +130,11 @@ async def power_week(
         logger.error(f"No results from power week query with {time_series}")
         return None
 
+    # Core gen boundary — the max interval from fueltech generation.
+    # All other queries (rooftop, price, demand, curtailment) must not exceed this.
+    gen_boundary = max(i[0] for i in row)
+    time_series = time_series.model_copy(update={"end": gen_boundary})
+
     result = stats_factory(
         stats,
         # code=network_region_code or network.code,
@@ -341,34 +346,6 @@ async def power_week(
     )
 
     result.append_set(stats_curtailment_wind)
-
-    # Truncate all series to the core generation boundary.
-    # Core gen fueltechs (wind, gas, solar_utility, etc.) define the chart edge —
-    # everything else (demand, price, rooftop, imports, exports, curtailment)
-    # must not extend past them.
-    _non_gen = {
-        "solar_rooftop",
-        "imports",
-        "exports",
-        "battery_charging",
-        "battery_discharging",
-        "pumps",
-        "curtailment_solar_utility",
-        "curtailment_wind",
-        "curtailment_total",
-        None,
-    }
-    core_gen_lasts = [s.history.last for s in result.data if s.fuel_tech not in _non_gen and s.data_type == "power" and s.history]
-
-    if core_gen_lasts:
-        gen_boundary = max(core_gen_lasts)
-        for s in result.data:
-            if s.history and s.history.last > gen_boundary:
-                interval_delta = s.history.get_interval()
-                excess = int((s.history.last - gen_boundary) / interval_delta)
-                if excess > 0:
-                    s.history.data = s.history.data[: len(s.history.data) - excess]
-                    s.history.last = gen_boundary
 
     return result
 
