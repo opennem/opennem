@@ -22,22 +22,29 @@ async def power_flows_per_interval(
 
     query = f"""
     SELECT
-        toStartOfFiveMinutes(toDateTime(interval)) as interval,
-        network_region,
-        coalesce(sum(energy_imports) * 12, 0) as power_imports,
-        coalesce(sum(energy_exports) * 12, 0) as power_exports,
-        coalesce(sum(emissions_imports), 0) as emissions_imports,
-        coalesce(sum(emissions_exports), 0) as emissions_exports,
-        coalesce(sum(market_value_imports), 0) as mv_imports,
-        coalesce(sum(market_value_exports), 0) as mv_exports,
-        if(abs(sum(energy_imports)) > 0, sum(emissions_imports) / abs(sum(energy_imports)), 0) as ef_imports,
-        if(sum(energy_exports) > 0, sum(emissions_exports) / sum(energy_exports), 0) as ef_exports
-    FROM market_summary FINAL
-    WHERE network_id = '{time_series.network.code}'
-        AND network_region = '{network_region_code}'
-        AND toDateTime(interval) >= toDateTime('{fmt_clickhouse_dt(date_range.start)}')
-        AND toDateTime(interval) <= toDateTime('{fmt_clickhouse_dt(date_range.end)}')
-    GROUP BY 1, 2
+        interval, network_region,
+        power_imports, power_exports,
+        emissions_imports, emissions_exports,
+        mv_imports, mv_exports,
+        if(abs(power_imports) > 0, emissions_imports / abs(power_imports / 12), 0) as ef_imports,
+        if(power_exports > 0, emissions_exports / (power_exports / 12), 0) as ef_exports
+    FROM (
+        SELECT
+            toStartOfFiveMinutes(toDateTime(interval)) as interval,
+            network_region,
+            coalesce(sum(energy_imports) * 12, 0) as power_imports,
+            coalesce(sum(energy_exports) * 12, 0) as power_exports,
+            coalesce(sum(emissions_imports), 0) as emissions_imports,
+            coalesce(sum(emissions_exports), 0) as emissions_exports,
+            coalesce(sum(market_value_imports), 0) as mv_imports,
+            coalesce(sum(market_value_exports), 0) as mv_exports
+        FROM market_summary FINAL
+        WHERE network_id = '{time_series.network.code}'
+            AND network_region = '{network_region_code}'
+            AND toDateTime(interval) >= toDateTime('{fmt_clickhouse_dt(date_range.start)}')
+            AND toDateTime(interval) <= toDateTime('{fmt_clickhouse_dt(date_range.end)}')
+        GROUP BY 1, 2
+    )
     ORDER BY 1 DESC
     """
 

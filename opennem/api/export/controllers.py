@@ -107,7 +107,8 @@ async def power_week(
     time_series: OpennemExportSeries,
     network_region_code: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
-) -> OpennemDataSet | None:  # sourcery skip: use-fstring-for-formatting
+) -> tuple[OpennemDataSet | None, OpennemExportSeries]:
+    """Returns (dataset, time_series_capped) where time_series_capped has end set to core gen boundary."""
     engine = db_connect()
 
     if network_region_code and not re.match(_valid_region, network_region_code):
@@ -127,7 +128,7 @@ async def power_week(
 
     if not stats:
         logger.error(f"No results from power week query with {time_series}")
-        return None
+        return None, time_series
 
     # Core gen boundary — the max interval from fueltech generation.
     # All other queries (rooftop, price, demand, curtailment) must not exceed this.
@@ -147,7 +148,7 @@ async def power_week(
 
     if not result:
         logger.error(f"No results from power week status factory with {time_series}")
-        return None
+        return None, time_series
 
     # emissions
     emissions = [DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None) for i in row]
@@ -346,7 +347,7 @@ async def power_week(
 
     result.append_set(stats_curtailment_wind)
 
-    return result
+    return result, time_series
 
 
 async def demand_network_region_daily(
