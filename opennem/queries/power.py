@@ -56,8 +56,18 @@ def get_fueltech_power_query_clickhouse(
             networks_query.remove(NetworkAPVI)
 
     region_filter = f" AND network_region='{network_region}'" if network_region else ""
-    start_str = fmt_clickhouse_dt(time_series_range.start)
-    end_str = fmt_clickhouse_dt(time_series_range.end)
+
+    # CH stores intervals as AEST-naive (UTC+10). Convert tz-aware timestamps
+    # to AEST-naive so WEM (AWST +08:00) clips at the correct boundary.
+    def to_aest_naive(dt: datetime) -> datetime:
+        if dt.tzinfo:
+            utc_offset = dt.utcoffset().total_seconds()  # type: ignore
+            utc = dt.replace(tzinfo=None) - timedelta(seconds=utc_offset)
+            return utc + timedelta(hours=10)
+        return dt
+
+    start_str = fmt_clickhouse_dt(to_aest_naive(time_series_range.start))
+    end_str = fmt_clickhouse_dt(to_aest_naive(time_series_range.end))
 
     return f"""
     SELECT
