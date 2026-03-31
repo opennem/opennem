@@ -745,15 +745,13 @@ async def run_unit_intervals_aggregate_to_now() -> int:
     """
     client = get_clickhouse_client()
 
-    # get the MIN of MAX intervals per network — only scan last 2 days to avoid
-    # blocking the event loop with FINAL on the full table (749M+ records)
+    # Use NEM's max interval as the baseline — WEM lags ~24h and would block
+    # the incremental path if we used MIN across all networks
     result = client.execute("""
-        SELECT MIN(max_interval) FROM (
-            SELECT network_id, MAX(interval) as max_interval
-            FROM unit_intervals FINAL
-            WHERE interval > now() - INTERVAL 2 DAY
-            GROUP BY network_id
-        )
+        SELECT MAX(interval)
+        FROM unit_intervals FINAL
+        WHERE interval > now() - INTERVAL 2 DAY
+            AND network_id = 'NEM'
     """)
     min_max_interval = result[0][0]
 
