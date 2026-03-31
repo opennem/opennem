@@ -355,7 +355,7 @@ async def get_cms_facilities(facility_code: str | None = None, cms_id: str | Non
         res = await client.query(query)
 
     if not res or not isinstance(res, dict) or "result" not in res or not res["result"]:
-        logger.error("No facilities found")
+        logger.info("No facilities found")
         return []
 
     result_models = {}
