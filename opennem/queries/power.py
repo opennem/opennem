@@ -133,9 +133,10 @@ def get_rooftop_generation_combined_query(
     network_region: str | None = None,
 ) -> TextClause:
     """Combined rooftop actual+forecast, preferring actual over forecast."""
+    # Round down to 30-min boundary — never extend past core generation end
     minutes = date_end.minute
     if minutes % 30 != 0:
-        date_end = date_end + timedelta(minutes=30 - (minutes % 30))
+        date_end = date_end - timedelta(minutes=minutes % 30)
 
     networks = [i.code for i in network.subnetworks] if network.subnetworks else [network.code]
     if network == NetworkAU:
