@@ -346,7 +346,18 @@ async def power_week(
     # Core gen fueltechs (wind, gas, solar_utility, etc.) define the chart edge —
     # everything else (demand, price, rooftop, imports, exports, curtailment)
     # must not extend past them.
-    _non_gen = {"solar_rooftop", "imports", "exports", "battery_charging", "pumps", None}
+    _non_gen = {
+        "solar_rooftop",
+        "imports",
+        "exports",
+        "battery_charging",
+        "battery_discharging",
+        "pumps",
+        "curtailment_solar_utility",
+        "curtailment_wind",
+        "curtailment_total",
+        None,
+    }
     core_gen_lasts = [s.history.last for s in result.data if s.fuel_tech not in _non_gen and s.data_type == "power" and s.history]
 
     if core_gen_lasts:
