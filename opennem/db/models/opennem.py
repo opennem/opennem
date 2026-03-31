@@ -464,26 +464,6 @@ class BalancingSummary(Base):
     )
 
 
-class AggregateNetworkFlows(Base):
-    __tablename__ = "at_network_flows"
-
-    interval = Column(TIMESTAMP(timezone=False), index=True, primary_key=True, nullable=False)
-    network_id = Column(
-        Text, ForeignKey("network.code", name="fk_at_network_flows_network_code"), primary_key=True, index=True, nullable=False
-    )
-    network_region = Column(Text, index=True, primary_key=True, nullable=False)
-    energy_imports = Column(Numeric, nullable=True)
-    energy_exports = Column(Numeric, nullable=True)
-    market_value_imports = Column(Numeric, nullable=True)
-    market_value_exports = Column(Numeric, nullable=True)
-    emissions_imports = Column(Numeric, nullable=True)
-    emissions_exports = Column(Numeric, nullable=True)
-
-    network = relationship("Network")
-
-    __table_args__: tuple = ()
-
-
 class Milestones(Base):
     __tablename__ = "milestones"
 

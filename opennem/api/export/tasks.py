@@ -125,7 +125,7 @@ async def export_power(
             period=power_stat.period,
         )
 
-        stat_set = await power_week(
+        stat_set, time_series = await power_week(
             time_series=time_series,
             network_region_code=power_stat.network_region_query or power_stat.network_region or None,
             networks_query=power_stat.networks,

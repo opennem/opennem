@@ -16,7 +16,6 @@ from opennem.core.units import get_unit
 from opennem.db import db_connect, get_database_engine
 from opennem.db.clickhouse import get_clickhouse_client
 from opennem.queries.curtailment import get_network_curtailment_energy_query_analytics
-from opennem.queries.flows import get_network_flows_emissions_market_value_query
 from opennem.queries.power import (
     get_fueltech_power_query_clickhouse,
     get_rooftop_forecast_generation_query,
@@ -108,7 +107,8 @@ async def power_week(
     time_series: OpennemExportSeries,
     network_region_code: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
-) -> OpennemDataSet | None:  # sourcery skip: use-fstring-for-formatting
+) -> tuple[OpennemDataSet | None, OpennemExportSeries]:
+    """Returns (dataset, time_series_capped) where time_series_capped has end set to core gen boundary."""
     engine = db_connect()
 
     if network_region_code and not re.match(_valid_region, network_region_code):
@@ -128,7 +128,12 @@ async def power_week(
 
     if not stats:
         logger.error(f"No results from power week query with {time_series}")
-        return None
+        return None, time_series
+
+    # Core gen boundary — the max interval from fueltech generation.
+    # All other queries (rooftop, price, demand, curtailment) must not exceed this.
+    gen_boundary = max(i[0] for i in row)
+    time_series = time_series.model_copy(update={"end": gen_boundary})
 
     result = stats_factory(
         stats,
@@ -143,7 +148,7 @@ async def power_week(
 
     if not result:
         logger.error(f"No results from power week status factory with {time_series}")
-        return None
+        return None, time_series
 
     # emissions
     emissions = [DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None) for i in row]
@@ -342,7 +347,7 @@ async def power_week(
 
     result.append_set(stats_curtailment_wind)
 
-    return result
+    return result, time_series
 
 
 async def demand_network_region_daily(
@@ -458,140 +463,6 @@ async def curtailment_network_region_daily(
         stats.append_set(stats_curtailment_wind)
 
     return stats
-
-
-async def energy_interconnector_flows_and_emissions_v2(
-    time_series: OpennemExportSeries, network_region_code: str, include_emission_factor: bool = True
-) -> OpennemDataSet | None:
-    engine = get_database_engine()
-    unit_energy = get_unit("energy_giga")
-    unit_emissions = get_unit("emissions")
-
-    query = get_network_flows_emissions_market_value_query(time_series=time_series, network_region_code=network_region_code)
-
-    async with engine.begin() as conn:
-        logger.debug(query)
-        result = await conn.execute(query)
-        row = result.fetchall()
-
-    if not row:
-        logger.error(
-            f"No results from energy_interconnector_flows_and_emissions for {time_series.network} "
-            "{network_region_code} and {time_series.start} => {time_series.end}"
-        )
-        return None
-
-    imports = [DataQueryResult(interval=i[0], group_by="imports", result=i[3]) for i in row]
-    exports = [DataQueryResult(interval=i[0], group_by="exports", result=i[4]) for i in row]
-
-    import_emissions = [DataQueryResult(interval=i[0], group_by="imports", result=i[5]) for i in row]
-    export_emissions = [DataQueryResult(interval=i[0], group_by="exports", result=i[6]) for i in row]
-
-    import_mv = [DataQueryResult(interval=i[0], group_by="imports", result=i[7]) for i in row]
-    export_mv = [DataQueryResult(interval=i[0], group_by="exports", result=i[8]) for i in row]
-
-    result = stats_factory(
-        imports,
-        network=time_series.network,
-        interval=time_series.interval,
-        units=unit_energy,
-        region=network_region_code,
-        fueltech_group=True,
-    )
-
-    result_exports = stats_factory(
-        exports,
-        network=time_series.network,
-        interval=time_series.interval,
-        units=unit_energy,
-        region=network_region_code,
-        fueltech_group=True,
-    )
-
-    result.append_set(result_exports)
-
-    result_import_emissions = stats_factory(
-        import_emissions,
-        network=time_series.network,
-        interval=time_series.interval,
-        units=unit_emissions,
-        region=network_region_code,
-        fueltech_group=True,
-        localize=False,
-    )
-
-    result.append_set(result_import_emissions)
-
-    result_export_emissions = stats_factory(
-        export_emissions,
-        network=time_series.network,
-        interval=time_series.interval,
-        units=unit_emissions,
-        region=network_region_code,
-        fueltech_group=True,
-        localize=False,
-    )
-
-    result.append_set(result_export_emissions)
-
-    # market value for flows
-
-    result_import_mv = stats_factory(
-        import_mv,
-        network=time_series.network,
-        interval=time_series.interval,
-        units=get_unit("market_value"),
-        region=network_region_code,
-        fueltech_group=True,
-        localize=False,
-    )
-
-    result.append_set(result_import_mv)
-
-    result_export_mv = stats_factory(
-        export_mv,
-        network=time_series.network,
-        interval=time_series.interval,
-        units=get_unit("market_value"),
-        region=network_region_code,
-        fueltech_group=True,
-        localize=False,
-    )
-
-    result.append_set(result_export_mv)
-
-    if include_emission_factor:
-        import_emission_factor = [DataQueryResult(interval=i[0], group_by="imports", result=i[9]) for i in row]
-        export_emission_factor = [DataQueryResult(interval=i[0], group_by="exports", result=i[10]) for i in row]
-
-        result_import_emission_factor = stats_factory(
-            import_emission_factor,
-            network=time_series.network,
-            interval=time_series.interval,
-            units=get_unit("emissions_factor"),
-            region=network_region_code,
-            fueltech_group=True,
-            localize=False,
-        )
-
-        result.append_set(result_import_emission_factor)
-
-        result_export_emission_factor = stats_factory(
-            export_emission_factor,
-            network=time_series.network,
-            interval=time_series.interval,
-            units=get_unit("emissions_factor"),
-            region=network_region_code,
-            fueltech_group=True,
-            localize=False,
-        )
-
-        result.append_set(result_export_emission_factor)
-
-    return result
-
-
-# --- v4 flow export functions (read from CH market_summary) ---
 
 
 async def energy_interconnector_flows_and_emissions_v4(
