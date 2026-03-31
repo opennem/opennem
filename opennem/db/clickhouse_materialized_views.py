@@ -407,11 +407,13 @@ def refresh_all_materialized_views(
 
     client = get_clickhouse_client()
 
-    # Use start-of-day for start_date and end-of-day for end_date
-    # to ensure we capture full days, not partial days based on when the job runs
-    now = datetime.now()
-    end_date = now.replace(hour=23, minute=59, second=59, microsecond=0)
-    start_date = (now - timedelta(days=days)).replace(hour=0, minute=0, second=0, microsecond=0)
+    # CH stores AEST-naive timestamps — use AEST time for date range
+    # to ensure we capture today's data when worker runs in UTC
+    from zoneinfo import ZoneInfo
+
+    now_aest = datetime.now(ZoneInfo("Australia/Brisbane")).replace(tzinfo=None)
+    end_date = now_aest.replace(hour=23, minute=59, second=59, microsecond=0)
+    start_date = (now_aest - timedelta(days=days)).replace(hour=0, minute=0, second=0, microsecond=0)
 
     logger.info(f"Refreshing materialized views: {start_date.date()} to {end_date.date()} ({days}d, optimize={optimize})")
 
