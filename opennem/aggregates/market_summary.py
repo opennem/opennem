@@ -553,8 +553,8 @@ def _prepare_market_summary_data(
 
     intervals = result_df["interval"].to_list()
     if intervals:
-        start = min(intervals)
-        end = max(intervals)
+        start = min(intervals) - timedelta(minutes=5)
+        end = max(intervals) + timedelta(minutes=5)
         flow_df = _compute_flows_for_range(start, end)
         if flow_df is not None and not flow_df.is_empty():
             result_df = result_df.join(
