@@ -771,10 +771,10 @@ async def process_market_summary_backlog(
     while current_start < end_date:
         chunk_end = min(current_start + chunk_size, end_date)
 
-        # Get and process data for this chunk
+        # Get data for this chunk, then prepare outside session
         records = await _get_market_summary_data(session, current_start, chunk_end)
         if records:
-            prepared_data = await _prepare_market_summary_data(records)
+            prepared_data = await _prepare_market_summary_data(records)  # noqa: must be outside session ideally but chunk loop requires it
 
             # Batch insert into ClickHouse
             client.execute(
@@ -841,7 +841,9 @@ async def run_market_summary_aggregate_to_now() -> int:
     # run market summary from max_interval to now
     async with get_write_session() as session:
         records = await _get_market_summary_data(session, date_from, date_to)
-        prepared_data = await _prepare_market_summary_data(records)
+
+    # compute flows outside the write session to avoid connection pool contention
+    prepared_data = await _prepare_market_summary_data(records)
 
     client.execute(
         """
@@ -876,7 +878,8 @@ async def run_market_summary_aggregate_for_last_intervals(num_intervals: int) ->
 
     async with get_write_session() as session:
         records = await _get_market_summary_data(session, start_date, end_date)
-        prepared_data = await _prepare_market_summary_data(records)
+
+    prepared_data = await _prepare_market_summary_data(records)
 
     client = get_clickhouse_client()
 
