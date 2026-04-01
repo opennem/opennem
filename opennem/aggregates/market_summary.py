@@ -276,7 +276,7 @@ async def _get_market_summary_data(
     return [tuple(row) for row in result.fetchall()]  # type: ignore
 
 
-def _prepare_market_summary_data(
+async def _prepare_market_summary_data(
     records: Sequence[
         tuple[
             datetime,
@@ -555,7 +555,7 @@ def _prepare_market_summary_data(
     if intervals:
         start = min(intervals) - timedelta(minutes=5)
         end = max(intervals) + timedelta(minutes=5)
-        flow_df = _compute_flows_for_range(start, end)
+        flow_df = await _compute_flows_for_range(start, end)
         if flow_df is not None and not flow_df.is_empty():
             result_df = result_df.join(
                 flow_df,
@@ -606,28 +606,27 @@ def _prepare_market_summary_data(
     return result_df.rows()
 
 
-def _compute_flows_for_range(start_time: datetime, end_time: datetime) -> pl.DataFrame | None:
+async def _compute_flows_for_range(start_time: datetime, end_time: datetime) -> pl.DataFrame | None:
     """Compute flow columns for an interval range.
 
-    Loads interconnector SCADA from PG and emissions intensity from CH,
-    then runs the v4 flow solver. All sync I/O — callers should wrap in asyncio.to_thread.
+    Loads interconnector SCADA from PG (async) and emissions intensity from CH,
+    then runs the v4 flow solver.
 
     Returns DataFrame with: interval, network_region, energy_imports, energy_exports,
     emissions_imports, emissions_exports, market_value_imports, market_value_exports
     """
     from opennem.core.flow_solver_v4 import solve_flows_v4
     from opennem.core.interconnector_topology import get_network_topology
-    from opennem.db import db_connect_sync
+    from opennem.db import get_read_session
 
     topology = get_network_topology("NEM")
     logger.info(f"Computing flows for {start_time} to {end_time}")
 
-    # 1. Load interconnector SCADA from PG
-    engine = db_connect_sync()
+    # 1. Load interconnector SCADA from PG (async)
     start_str = start_time.strftime("%Y-%m-%d %H:%M:%S") if isinstance(start_time, datetime) else str(start_time)
     end_str = end_time.strftime("%Y-%m-%d %H:%M:%S") if isinstance(end_time, datetime) else str(end_time)
 
-    ic_query = f"""
+    ic_query = text(f"""
         SELECT
             fs.interval,
             u.interconnector_region_from,
@@ -642,17 +641,21 @@ def _compute_flows_for_range(start_time: datetime, end_time: datetime) -> pl.Dat
             AND f.network_id = 'NEM'
         GROUP BY 1, 2, 3
         ORDER BY 1
-    """
+    """)
 
-    import pandas as pd
+    async with get_read_session() as session:
+        result = await session.execute(ic_query)
+        rows = result.fetchall()
 
-    ic_pd = pd.read_sql(ic_query, con=engine)
-
-    if ic_pd.empty:
+    if not rows:
         logger.debug(f"No interconnector data for {start_str} to {end_str}")
         return None
 
-    interconnector_df = pl.from_pandas(ic_pd).with_columns(pl.col("interval").cast(pl.Datetime("us")))
+    interconnector_df = pl.DataFrame(
+        rows,
+        schema=["interval", "interconnector_region_from", "interconnector_region_to", "energy"],
+        orient="row",
+    ).with_columns(pl.col("interval").cast(pl.Datetime("us")))
 
     # 2. Load emissions intensity from CH
     client = get_clickhouse_client()
@@ -771,7 +774,7 @@ async def process_market_summary_backlog(
         # Get and process data for this chunk
         records = await _get_market_summary_data(session, current_start, chunk_end)
         if records:
-            prepared_data = _prepare_market_summary_data(records)
+            prepared_data = await _prepare_market_summary_data(records)
 
             # Batch insert into ClickHouse
             client.execute(
@@ -838,7 +841,7 @@ async def run_market_summary_aggregate_to_now() -> int:
     # run market summary from max_interval to now
     async with get_write_session() as session:
         records = await _get_market_summary_data(session, date_from, date_to)
-        prepared_data = _prepare_market_summary_data(records)
+        prepared_data = await _prepare_market_summary_data(records)
 
     client.execute(
         """
@@ -873,7 +876,7 @@ async def run_market_summary_aggregate_for_last_intervals(num_intervals: int) ->
 
     async with get_write_session() as session:
         records = await _get_market_summary_data(session, start_date, end_date)
-        prepared_data = _prepare_market_summary_data(records)
+        prepared_data = await _prepare_market_summary_data(records)
 
     client = get_clickhouse_client()
 
