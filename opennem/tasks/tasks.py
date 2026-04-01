@@ -6,7 +6,7 @@ import logging
 from arq import Retry
 
 from opennem import settings
-from opennem.aggregates.market_summary import run_market_summary_aggregate_to_now
+from opennem.aggregates.market_summary import run_market_summary_aggregate_for_last_intervals
 from opennem.aggregates.unit_intervals import run_unit_intervals_aggregate_to_now
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy
 from opennem.cms.importer import update_database_facilities_from_cms
@@ -57,9 +57,9 @@ async def task_nem_interval_check(ctx) -> None:
         run_crawl(AEMONemwebTradingIS, latest=True),
     )
 
-    # energy + market_summary must complete before export
+    # energy + market_summary — use last_intervals to always recompute with flows
     await process_energy_last_intervals(num_intervals=12)
-    await run_market_summary_aggregate_to_now()
+    await run_market_summary_aggregate_for_last_intervals(num_intervals=12)
 
     # unit_intervals aggregate doesn't block exports — run concurrently
     await asyncio.gather(
