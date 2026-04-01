@@ -93,12 +93,12 @@ class WorkerSettings:
     # queue_name = "opennem"
     on_startup = startup
     cron_jobs = [
-        # NEM Interval Check
+        # NEM Interval Check — fires early, polls AEMO with backoff until data arrives
         cron(
             task_nem_interval_check,
             minute=set(range(0, 60, 5)),
-            second=35,
-            timeout=None,
+            second=10,
+            timeout=180,
             unique=True,
         ),
         # Incremental milestone detection — every 5 min, runs at :55 (after aggregate refresh at :10/:50)

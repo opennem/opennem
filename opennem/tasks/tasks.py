@@ -49,11 +49,21 @@ logger = logging.getLogger("opennem.pipelines.nem")
 
 
 async def task_nem_interval_check(ctx) -> None:
-    """This task runs per interval and checks for new data"""
-    # crawl all 3 sources in parallel
+    """Poll AEMO until new dispatch_scada data arrives, then run full pipeline."""
+    backoff = [5, 10, 15, 20, 20, 20, 20]
+    scada_result = None
+
+    for attempt, wait in enumerate(backoff):
+        scada_result = await run_crawl(AEMONNemwebDispatchScada, latest=True)
+        if scada_result and scada_result.inserted_records > 0:
+            logger.info(f"SCADA data received on poll attempt {attempt + 1}")
+            break
+        logger.info(f"Poll attempt {attempt + 1}: no new SCADA data, waiting {wait}s")
+        await asyncio.sleep(wait)
+
+    # crawl remaining sources in parallel
     await asyncio.gather(
         run_crawl(AEMONemwebDispatchIS, latest=True),
-        run_crawl(AEMONNemwebDispatchScada, latest=True),
         run_crawl(AEMONemwebTradingIS, latest=True),
     )
 
