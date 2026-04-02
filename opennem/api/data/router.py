@@ -102,7 +102,7 @@ async def get_network_data(
 
     if not results:
         raise HTTPException(
-            status_code=416,
+            status_code=404,
             detail=f"No data available for network {network_code} in the specified time range",
         )
 
@@ -126,14 +126,17 @@ async def get_network_data(
 async def get_facility_data(
     network_code: str,
     metrics: Annotated[list[Metric], Query(description="The metrics to get data for", example="energy")],
+    user: authenticated_user,
     interval: Annotated[Interval, Query(description="The time interval to aggregate data by", example="1h")] = Interval.INTERVAL,
     facility_code: Annotated[
         list[str] | None, Query(description="The facility code to get data for", example="AEMO_DISCOS_01")
     ] = None,
+    unit_code: Annotated[
+        list[str] | None, Query(description="The unit code to get data for", example="INVESTEC_COLLGAR_WF1")
+    ] = None,
     date_start: Annotated[datetime | None, Query(description="Start time for the query", example="2024-01-01T00:00:00")] = None,
     date_end: Annotated[datetime | None, Query(description="End time for the query", example="2024-01-02T00:00:00")] = None,
     client: Any = Depends(get_clickhouse_dependency),
-    user: authenticated_user = None,
 ) -> dict:
     """Get time series data for a specific facility, grouped by unit."""
     network = get_api_network_from_code(network_code)
@@ -144,7 +147,10 @@ async def get_facility_data(
     )
 
     if facility_code and len(facility_code) > 30:
-        raise HTTPException(status_code=400, detail="Facility code must be less than 30 characters")
+        raise HTTPException(status_code=400, detail="Facility code list must have fewer than 30 entries")
+
+    if unit_code and len(unit_code) > 30:
+        raise HTTPException(status_code=400, detail="Unit code list must have fewer than 30 entries")
 
     query, params, column_names = get_timeseries_query(
         query_type=QueryType.FACILITY,
@@ -154,6 +160,7 @@ async def get_facility_data(
         date_start=date_start,
         date_end=date_end,
         facility_code=facility_code,
+        unit_code=unit_code,
     )
 
     try:
@@ -163,9 +170,12 @@ async def get_facility_data(
         raise HTTPException(status_code=500, detail="Error executing query") from e
 
     if not results:
+        filter_desc = f"facility={facility_code}" if facility_code else ""
+        if unit_code:
+            filter_desc += f"{', ' if filter_desc else ''}unit={unit_code}"
         raise HTTPException(
-            status_code=416,
-            detail=f"No data available for facility {facility_code} in the specified time range",
+            status_code=404,
+            detail=f"No data available for {filter_desc or 'the specified filters'} in the specified time range",
         )
 
     result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]

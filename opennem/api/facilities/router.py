@@ -245,7 +245,7 @@ async def get_facilities(
                 )
                 filtered_facilities.append(facility_response)
 
-        # Return 416 if no facilities match the filters
+        # Return 404 if no facilities match the filters
         if not filtered_facilities:
             filter_desc = ", ".join(
                 filter_str
@@ -260,7 +260,7 @@ async def get_facilities(
                 if filter_str is not None
             )
             raise HTTPException(
-                status_code=416,
+                status_code=404,
                 detail=f"No facilities found matching filters: {filter_desc}",
             )
 
