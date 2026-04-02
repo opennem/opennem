@@ -237,7 +237,9 @@ async def _backfill_gap_if_needed() -> None:
 
     if gap_hours > 24:
         logger.info(f"Milestone gap detected: {gap_hours:.0f}h ({last_milestone} to {now}). Running backlog to fill.")
-        await run_milestone_analysis(start_date=last_milestone, end_date=now)
+        # Align to start of day so day-period queries get complete days
+        start_date = last_milestone.replace(hour=0, minute=0, second=0, microsecond=0)
+        await run_milestone_analysis(start_date=start_date, end_date=now)
         logger.info("Gap backfill complete")
 
 

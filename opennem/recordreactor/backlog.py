@@ -245,7 +245,7 @@ def _analyze_milestone_records(
     if period == MilestonePeriod.interval:
         interval_count = "1"
     else:
-        interval_count = "count()"
+        interval_count = f"count(distinct {time_col})"
 
     if milestone_type == MilestoneType.power:
         metric_column = "generated"
