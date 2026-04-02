@@ -101,7 +101,7 @@ async def get_network_data(
 
     if not results:
         raise HTTPException(
-            status_code=416,
+            status_code=404,
             detail=f"No market data available for network {network_code} in the specified time range",
         )
 

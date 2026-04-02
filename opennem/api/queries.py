@@ -246,6 +246,7 @@ def get_timeseries_query(
     secondary_groupings: list[SecondaryGrouping] | None = None,
     # filters
     facility_code: list[str] | None = None,
+    unit_code: list[str] | None = None,
     network_region: str | None = None,
     fueltech: list[str] | None = None,
     fueltech_group: list[str] | None = None,
@@ -327,7 +328,6 @@ def get_timeseries_query(
     if query_type == QueryType.FACILITY:
         group_cols.extend(["facility_code", "unit_code"])
         group_cols_names.extend(["facility_code", "unit_code"])
-        params["facility_code"] = facility_code
     elif primary_grouping == PrimaryGrouping.NETWORK_REGION:
         group_cols.append("network_region")
         group_cols_names.append("network_region")
@@ -355,6 +355,10 @@ def get_timeseries_query(
     if facility_code:
         where_clauses.append("facility_code in %(facility_code)s")
         params["facility_code"] = facility_code
+
+    if unit_code:
+        where_clauses.append("unit_code in %(unit_code)s")
+        params["unit_code"] = unit_code
 
     if network_region:
         where_clauses.append("network_region = %(network_region)s")

@@ -90,7 +90,7 @@ async def get_facility_pollution(
 
         if not facilities:
             raise HTTPException(
-                status_code=416,
+                status_code=404,
                 detail=f"No facilities found with NPI tracking for codes: {facility_code}"
                 if facility_code
                 else "No facilities found with NPI tracking",
@@ -143,7 +143,7 @@ async def get_facility_pollution(
         pollution_data = pollution_result.all()
 
         if not pollution_data:
-            raise HTTPException(status_code=416, detail="No pollution data available for the specified facilities and time range")
+            raise HTTPException(status_code=404, detail="No pollution data available for the specified facilities and time range")
 
         # Group data by pollutant
         pollutant_groups = defaultdict(lambda: defaultdict(list))
