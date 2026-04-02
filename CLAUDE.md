@@ -108,6 +108,44 @@ The application uses environment variables for configuration. These are loaded a
 - Use httpx for all HTTP requests by loading it from `opennem.utils.http`
 - Use sqlalchemy for database operations
 
+### Critical Pipeline Rules
+
+**ClickHouse FINAL queries:**
+- NEVER use `SELECT ... FROM table FINAL` without a WHERE clause scoping to recent data
+- `unit_intervals` has 749M+ rows — full-table FINAL blocks the asyncio event loop for 30+ seconds, killing the ARQ worker
+- Always scope: `WHERE interval > now() - INTERVAL 2 DAY` (or similar)
+
+**Async vs sync in worker tasks:**
+- `db_connect_sync()` (psycopg) DOES NOT work from the DO worker pod — use async `get_read_session()` / `get_write_session()` instead
+- Never use `pd.read_sql()` in worker code — use async session + polars
+- Wrap any remaining sync CH/PG calls in `asyncio.to_thread()`
+
+**Session contention:**
+- Never open a `get_read_session()` inside an existing `get_write_session()` — with pool_size=5, this can deadlock
+- Fetch data inside the session, then process/compute OUTSIDE the session context
+
+**Static export boundaries:**
+- All series in power exports must end at the last core generation interval (wind, gas, coal, solar_utility, hydro)
+- `power_week()` caps `time_series.end` at the fueltech query's max interval and returns it for downstream queries
+- Demand, price, rooftop, imports, exports, curtailment must NEVER extend past core gen
+
+**MV refresh timezone:**
+- `refresh_all_materialized_views()` must use AEST time (`Australia/Brisbane`), not UTC
+- CH stores AEST-naive timestamps — UTC-based date ranges miss today's data when it's morning AEST
+
+**WEM 24h lag:**
+- WEM data publishes daily, ~24h behind. Never use `MIN(MAX(interval))` across all networks as a baseline — WEM will block NEM processing
+- Use NEM's max interval directly for incremental aggregation
+
+**Market summary flow computation:**
+- Use `run_market_summary_aggregate_for_last_intervals(num_intervals=12)` in `task_nem_interval_check`, NOT `run_market_summary_aggregate_to_now()`
+- `to_now` skips if rows exist (even without flow data). `last_intervals` always recomputes, ensuring flows are written via ReplacingMergeTree upsert
+
+**DO app spec safety:**
+- When updating app spec via `doctl apps update --spec`, ALWAYS verify instance sizes haven't changed
+- Worker needs `apps-s-2vcpu-4gb` minimum — 512MB causes OOM kills
+- The spec dump includes sizes and re-pushing can accidentally downgrade them
+
 ### Git Workflow
 - **NEVER commit or merge into the `production` branch** - always use `main` branch for development
 - The `production` branch is for releases only
