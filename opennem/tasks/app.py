@@ -98,7 +98,7 @@ class WorkerSettings:
             task_nem_interval_check,
             minute=set(range(0, 60, 5)),
             second=10,
-            timeout=180,
+            timeout=270,
             unique=True,
         ),
         # Incremental milestone detection — every 5 min, runs at :55 (after aggregate refresh at :10/:50)

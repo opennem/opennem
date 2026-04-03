@@ -61,11 +61,9 @@ async def task_nem_interval_check(ctx) -> None:
         logger.info(f"Poll attempt {attempt + 1}: no new SCADA data, waiting {wait}s")
         await asyncio.sleep(wait)
 
-    # crawl remaining sources in parallel
-    await asyncio.gather(
-        run_crawl(AEMONemwebDispatchIS, latest=True),
-        run_crawl(AEMONemwebTradingIS, latest=True),
-    )
+    # Run sequentially — both write to balancing_summary and concurrent upserts deadlock
+    await run_crawl(AEMONemwebDispatchIS, latest=True)
+    await run_crawl(AEMONemwebTradingIS, latest=True)
 
     # energy + market_summary — use last_intervals to always recompute with flows
     await process_energy_last_intervals(num_intervals=12)
