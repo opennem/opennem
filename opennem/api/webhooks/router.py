@@ -8,6 +8,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import Response
 from fastapi_versionizer.versionizer import api_version
 from pydantic import BaseModel, EmailStr
+from sqlalchemy.exc import IntegrityError
 from starlette.exceptions import HTTPException
 
 from opennem import settings
@@ -95,6 +96,8 @@ async def webhook_sanity_update(webhook_secret: str, request: Request) -> str:
     except TimeoutError as e:
         logger.warning(f"Sanity webhook timeout: {e}")
         raise HTTPException(status_code=503, detail="Service temporarily unavailable") from e
+    except IntegrityError as e:
+        logger.warning(f"Sanity webhook skipped — DB constraint conflict (duplicate code?): {e}")
     except Exception as e:
         logger.error(f"Error parsing sanity webhook: {e}")
         raise HTTPException(status_code=500, detail="Server Error") from e
