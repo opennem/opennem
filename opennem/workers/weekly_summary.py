@@ -380,7 +380,10 @@ def _get_logo_url() -> str:
     logo_path = Path(__file__).parent.parent.parent.parent / "platform" / "public" / "logo" / "open-electricity.png"
     if logo_path.exists():
         return logo_path.as_uri()
-    return ""
+
+    # Embedded fallback for environments without the platform directory (e.g. worker pod)
+    logo_b64 = (Path(__file__).parent.parent / "static" / "open-electricity-logo.b64").read_text().strip()
+    return f"data:image/png;base64,{logo_b64}"
 
 
 def _generate_pie_svg(records: list[WeeklySummaryResult], size: int = 380) -> str:
