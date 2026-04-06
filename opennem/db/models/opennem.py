@@ -31,9 +31,15 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from uuid_utils import uuid7
+from uuid_utils import uuid7 as _uuid7_raw
 
-from opennem.schema.core import BaseConfig
+
+def uuid7() -> uuid.UUID:
+    """Wrap uuid_utils.uuid7 to return stdlib uuid.UUID for asyncpg compatibility."""
+    return uuid.UUID(bytes=_uuid7_raw().bytes)
+
+
+from opennem.schema.core import BaseConfig  # noqa: E402
 
 Base = declarative_base()
 metadata = Base.metadata
