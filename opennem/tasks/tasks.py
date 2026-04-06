@@ -2,12 +2,13 @@
 
 import asyncio
 import logging
+from datetime import timedelta
 
 from arq import Retry
 
 from opennem import settings
 from opennem.aggregates.market_summary import run_market_summary_aggregate_for_last_intervals
-from opennem.aggregates.unit_intervals import run_unit_intervals_aggregate_to_now
+from opennem.aggregates.unit_intervals import process_unit_intervals_backlog, run_unit_intervals_aggregate_to_now
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy
 from opennem.cms.importer import update_database_facilities_from_cms
 from opennem.cms.updates import send_cms_updates_slack_report
@@ -28,13 +29,14 @@ from opennem.crawlers.nemweb import (
     AEMONNemwebDispatchScada,
 )
 from opennem.crawlers.wemde import run_all_wem_crawlers
+from opennem.db import get_write_session
 from opennem.db.clickhouse_schema import optimize_clickhouse_tables
 from opennem.exporter.facilities import export_facilities_static
 
 # from opennem.exporter.historic import export_historic_intervals
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
-from opennem.utils.dates import get_today_opennem
+from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
 from opennem.workers.catchup import catchup_aggregates, catchup_last_days, run_catchup_check
 from opennem.workers.energy import process_energy_last_intervals
 from opennem.workers.facility_data_seen import update_facility_seen_range
@@ -112,6 +114,18 @@ async def task_update_max_generation_for_units(ctx) -> None:
 async def task_wem_day_crawl(ctx) -> None:
     """This task runs per interval and checks for new data"""
     await run_all_wem_crawlers(latest=True, limit=3)
+
+    # Aggregate WEM data from PG → CH (WEM lags ~24h, not covered by NEM incremental path)
+    end_date = get_last_completed_interval_for_network(network=NetworkNEM)
+    start_date = end_date - timedelta(days=2)
+    async with get_write_session() as session:
+        await process_unit_intervals_backlog(
+            session=session,
+            start_date=start_date,
+            end_date=end_date,
+            network=NetworkWEM,
+        )
+
     await run_export_power_latest_for_network(network=NetworkWEM)
     await run_export_energy_for_year(network=NetworkWEM)
 
