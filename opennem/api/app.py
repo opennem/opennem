@@ -40,7 +40,7 @@ from opennem.api.webhooks.router import router as webhooks_router
 from opennem.core.metric import METRIC_METADATA
 from opennem.core.time import INTERVALS, PERIODS
 from opennem.core.units import UNITS
-from opennem.db import get_read_session
+from opennem.db import get_read_session, get_scoped_read_session
 from opennem.db.models.opennem import FuelTech, Network, NetworkRegion
 from opennem.schema.opennem import FueltechSchema, OpennemErrorSchema
 from opennem.schema.time import TimeInterval, TimePeriod
@@ -324,7 +324,7 @@ async def get_networks() -> list[APINetworkSchema]:
     description="Get network regions",
 )
 async def get_network_regions(
-    session: AsyncSession = Depends(get_read_session),
+    session: AsyncSession = Depends(get_scoped_read_session),
     network_code: str = Query(..., description="Network code"),
 ) -> list[APINetworkRegion]:
     network_id = network_code.upper()
@@ -353,7 +353,7 @@ async def get_network_regions(
     description="Get all fueltechs",
 )
 async def fueltechs(
-    session: AsyncSession = Depends(get_read_session),
+    session: AsyncSession = Depends(get_scoped_read_session),
 ) -> list[FueltechSchema]:
     fueltechs = await session.execute(select(FuelTech))
     fueltechs = fueltechs.scalars().all()

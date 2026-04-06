@@ -157,8 +157,7 @@ async def run_nemweb_aemo_crawl(
                     controller_return.inserted_records += task_result.inserted_records
                     controller_return.processed_records += task_result.processed_records
                     controller_return.total_records += task_result.total_records
-                else:
-                    logger.error(f"No task result for {entry.link}")
+                # None means process_nemweb_entry already logged the parse error with correct URL
 
             tasks = []
 
