@@ -33,6 +33,8 @@ MARKET_SUMMARY_TABLE_SCHEMA = """CREATE TABLE IF NOT EXISTS market_summary (
     curtailment_energy_solar_total Nullable(Float64),
     curtailment_energy_wind_total Nullable(Float64),
     curtailment_energy_total Nullable(Float64),
+    generation_renewable_with_storage Nullable(Float64),
+    generation_renewable_with_storage_energy Nullable(Float64),
     energy_imports Nullable(Float64),
     energy_exports Nullable(Float64),
     emissions_imports Nullable(Float64),
@@ -74,6 +76,11 @@ SETTINGS index_granularity = 8192, allow_experimental_replacing_merge_with_clean
 # Schema migrations for existing tables.
 # Each migration is (column_name, column_type, table_name).
 # Applied idempotently — skips if column already exists.
+MARKET_SUMMARY_STORAGE_COLUMNS = [
+    ("generation_renewable_with_storage", "Nullable(Float64)", "market_summary"),
+    ("generation_renewable_with_storage_energy", "Nullable(Float64)", "market_summary"),
+]
+
 MARKET_SUMMARY_FLOW_COLUMNS = [
     ("energy_imports", "Nullable(Float64)", "market_summary"),
     ("energy_exports", "Nullable(Float64)", "market_summary"),
@@ -82,6 +89,23 @@ MARKET_SUMMARY_FLOW_COLUMNS = [
     ("market_value_imports", "Nullable(Float64)", "market_summary"),
     ("market_value_exports", "Nullable(Float64)", "market_summary"),
 ]
+
+
+def migrate_market_summary_storage() -> None:
+    """Add storage-adjusted renewable columns to existing market_summary table.
+
+    Safe to run multiple times — checks for column existence first.
+    """
+    client = get_clickhouse_client()
+    existing = {row[0] for row in client.execute("DESCRIBE TABLE market_summary")}
+
+    for col_name, col_type, table in MARKET_SUMMARY_STORAGE_COLUMNS:
+        if col_name not in existing:
+            alter = f"ALTER TABLE {table} ADD COLUMN {col_name} {col_type}"
+            client.execute(alter)
+            logger.info(f"Added column {col_name} to {table}")
+        else:
+            logger.debug(f"Column {col_name} already exists in {table}")
 
 
 def migrate_market_summary_flows() -> None:

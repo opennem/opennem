@@ -117,17 +117,24 @@ async def _get_market_summary_data(
         GROUP BY 1, 2, 3
     ),
     renewable_data AS (
-        -- Get all renewable generation (excluding rooftop which is handled separately)
+        -- Renewable generation including battery discharge and pumps, excluding TUMUT3
+        -- (TUMUT3 is a hybrid hydro+storage facility handled separately as storage_generation)
         SELECT
             time_bucket_gapfill('5 minutes', fs.interval, :start_time_window, :end_time) as interval,
             f.network_id,
             f.network_region,
             interpolate(sum(CASE
                 WHEN u.fueltech_id IN ('bioenergy_biogas', 'bioenergy_biomass', 'hydro',
-                                       'solar_utility', 'wind')
+                                       'solar_utility', 'wind', 'battery_discharging', 'pumps')
+                     AND u.code NOT IN ('TUMUT3', 'SNOWYP')
                 THEN fs.generated
                 ELSE 0
-            END)) as renewable_generation
+            END)) as renewable_generation,
+            interpolate(sum(CASE
+                WHEN u.code IN ('TUMUT3', 'SNOWYP')
+                THEN fs.generated
+                ELSE 0
+            END)) as storage_generation
         FROM facility_scada fs
         JOIN units u ON fs.facility_code = u.code
         JOIN facilities f ON u.station_id = f.id
@@ -188,6 +195,7 @@ async def _get_market_summary_data(
             END as demand_total,
             COALESCE(rd.rooftop_solar, 0) as rooftop_solar,
             COALESCE(rn.renewable_generation, 0) as renewable_generation,
+            COALESCE(rn.storage_generation, 0) as storage_generation,
             gd.curtailment_solar_total,
             gd.curtailment_wind_total
         FROM gapfilled_data gd
@@ -228,6 +236,11 @@ async def _get_market_summary_data(
                 PARTITION BY network_id, network_region
                 ORDER BY interval
             ) as prev_renewable_generation,
+            storage_generation,
+            LAG(storage_generation) OVER (
+                PARTITION BY network_id, network_region
+                ORDER BY interval
+            ) as prev_storage_generation,
             curtailment_solar_total,
             curtailment_wind_total,
             LAG(curtailment_solar_total) OVER (
@@ -254,6 +267,8 @@ async def _get_market_summary_data(
         prev_rooftop_solar,
         renewable_generation,
         prev_renewable_generation,
+        storage_generation,
+        prev_storage_generation,
         curtailment_solar_total,
         curtailment_wind_total,
         prev_curtailment_solar_total,
@@ -352,6 +367,8 @@ async def _prepare_market_summary_data(
             "prev_rooftop_solar": pl.Float64,
             "renewable_generation": pl.Float64,
             "prev_renewable_generation": pl.Float64,
+            "storage_generation": pl.Float64,
+            "prev_storage_generation": pl.Float64,
             "curtailment_solar_total": pl.Float64,
             "curtailment_wind_total": pl.Float64,
             "prev_curtailment_solar_total": pl.Float64,
@@ -371,6 +388,8 @@ async def _prepare_market_summary_data(
             pl.col("prev_rooftop_solar").fill_null(0),
             pl.col("renewable_generation").fill_null(0),
             pl.col("prev_renewable_generation").fill_null(0),
+            pl.col("storage_generation").fill_null(0),
+            pl.col("prev_storage_generation").fill_null(0),
             pl.col("curtailment_solar_total").fill_null(0),
             pl.col("curtailment_wind_total").fill_null(0),
             pl.col("prev_curtailment_solar_total").fill_null(0),
@@ -392,6 +411,16 @@ async def _prepare_market_summary_data(
         [
             (pl.col("renewable_generation") + pl.col("rooftop_solar")).round(4).alias("generation_renewable"),
             (pl.col("prev_renewable_generation") + pl.col("prev_rooftop_solar")).round(4).alias("prev_generation_renewable"),
+        ]
+    )
+
+    # Calculate generation_renewable_with_storage (generation_renewable + TUMUT3 units)
+    df = df.with_columns(
+        [
+            (pl.col("generation_renewable") + pl.col("storage_generation")).round(4).alias("generation_renewable_with_storage"),
+            (pl.col("prev_generation_renewable") + pl.col("prev_storage_generation"))
+            .round(4)
+            .alias("prev_generation_renewable_with_storage"),
         ]
     )
 
@@ -463,6 +492,20 @@ async def _prepare_market_summary_data(
                     / 1000  # Convert from kWh to MWh
                 ).round(4)
             ).alias("generation_renewable_energy"),
+            (
+                (
+                    (pl.col("generation_renewable_with_storage") + pl.col("prev_generation_renewable_with_storage"))
+                    / 2
+                    / pl.when(pl.col("network_id").is_in(list(intervals_map.keys())))
+                    .then(
+                        pl.col("network_id").map_elements(
+                            lambda x: intervals_map.get(x, default_intervals), return_dtype=pl.Float64
+                        )
+                    )
+                    .otherwise(default_intervals)
+                    / 1000  # Convert from kWh to MWh
+                ).round(4)
+            ).alias("generation_renewable_with_storage_energy"),
             (
                 (
                     (pl.col("curtailment_solar_total") + pl.col("prev_curtailment_solar_total"))
@@ -537,6 +580,8 @@ async def _prepare_market_summary_data(
             "curtailment_energy_solar_total",
             "curtailment_energy_wind_total",
             "curtailment_energy_total",
+            "generation_renewable_with_storage",
+            "generation_renewable_with_storage_energy",
             "version",
         ]
     )
@@ -592,6 +637,8 @@ async def _prepare_market_summary_data(
             "curtailment_energy_solar_total",
             "curtailment_energy_wind_total",
             "curtailment_energy_total",
+            "generation_renewable_with_storage",
+            "generation_renewable_with_storage_energy",
             "energy_imports",
             "energy_exports",
             "emissions_imports",
@@ -787,6 +834,7 @@ async def process_market_summary_backlog(
                     demand_total_market_value, demand_gross_market_value, curtailment_solar_total,
                     curtailment_wind_total, curtailment_total, curtailment_energy_solar_total,
                     curtailment_energy_wind_total, curtailment_energy_total,
+                    generation_renewable_with_storage, generation_renewable_with_storage_energy,
                     energy_imports, energy_exports, emissions_imports,
                     emissions_exports, market_value_imports, market_value_exports,
                     version
@@ -855,6 +903,7 @@ async def run_market_summary_aggregate_to_now() -> int:
             demand_total_market_value, demand_gross_market_value, curtailment_solar_total,
             curtailment_wind_total, curtailment_total, curtailment_energy_solar_total,
             curtailment_energy_wind_total, curtailment_energy_total,
+            generation_renewable_with_storage, generation_renewable_with_storage_energy,
             energy_imports, energy_exports, emissions_imports,
             emissions_exports, market_value_imports, market_value_exports,
             version
@@ -893,6 +942,7 @@ async def run_market_summary_aggregate_for_last_intervals(num_intervals: int) ->
             demand_total_market_value, demand_gross_market_value, curtailment_solar_total,
             curtailment_wind_total, curtailment_total, curtailment_energy_solar_total,
             curtailment_energy_wind_total, curtailment_energy_total,
+            generation_renewable_with_storage, generation_renewable_with_storage_energy,
             energy_imports, energy_exports, emissions_imports,
             emissions_exports, market_value_imports, market_value_exports,
             version
