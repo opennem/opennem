@@ -60,12 +60,53 @@ type DataMetric = "power" | "energy" | "emissions" | "market_value"
 Metrics available for market data:
 
 ```typescript
-type MarketMetric = "price" | "demand" | "demand_energy"
+type MarketMetric =
+  | "price"
+  | "demand"
+  | "demand_energy"
+  | "demand_gross"
+  | "demand_gross_energy"
+  | "generation_renewable"
+  | "generation_renewable_energy"
+  | "generation_renewable_with_storage"
+  | "generation_renewable_with_storage_energy"
+  | "renewable_proportion"
+  | "renewable_with_storage_proportion"
+  | "curtailment"
+  | "curtailment_energy"
+  | "curtailment_solar_utility"
+  | "curtailment_solar_utility_energy"
+  | "curtailment_wind"
+  | "curtailment_wind_energy"
+  | "flow_imports"
+  | "flow_exports"
+  | "flow_imports_energy"
+  | "flow_exports_energy"
 ```
 
+**Price and Demand:**
 - `price`: Market price ($/MWh)
-- `demand`: Instantaneous demand (MW)
-- `demand_energy`: Energy demand (MWh)
+- `demand`: Operational demand (MW)
+- `demand_energy`: Operational demand energy (MWh)
+- `demand_gross`: Gross demand including rooftop solar (MW)
+- `demand_gross_energy`: Gross demand energy including rooftop solar (MWh)
+
+**Renewable Generation:**
+- `generation_renewable`: Renewable generation including battery discharge and pumps, excluding TUMUT3 (MW)
+- `generation_renewable_energy`: Renewable energy (MWh)
+- `generation_renewable_with_storage`: Renewable generation including TUMUT3 hybrid hydro+storage (MW)
+- `generation_renewable_with_storage_energy`: Renewable energy including TUMUT3 (MWh)
+- `renewable_proportion`: Renewable share of gross demand (%)
+- `renewable_with_storage_proportion`: Renewable+storage share of gross demand (%)
+
+**Curtailment:**
+- `curtailment` / `curtailment_energy`: Total curtailment (MW / MWh)
+- `curtailment_solar_utility` / `curtailment_solar_utility_energy`: Solar curtailment (MW / MWh)
+- `curtailment_wind` / `curtailment_wind_energy`: Wind curtailment (MW / MWh)
+
+**Interconnector Flows:**
+- `flow_imports` / `flow_imports_energy`: Region imports (MW / MWh)
+- `flow_exports` / `flow_exports_energy`: Region exports (MW / MWh)
 
 ## Grouping Types
 
