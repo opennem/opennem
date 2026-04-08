@@ -10,30 +10,30 @@ Open Electricity provides several metrics for measuring renewable energy generat
 
 **Metric:** `generation_renewable` (MW) / `generation_renewable_energy` (MWh)
 
-Renewable generation is the sum of all generation from renewable fuel technology types, plus battery discharge and pumped hydro generation (excluding TUMUT3):
+Renewable generation is the sum of all generation from renewable fuel technology types, plus battery discharge and pumped hydro generation. Hybrid hydro-with-storage facilities are excluded from this metric.
 
 - Bioenergy (biogas, biomass)
-- Hydro (excluding TUMUT3)
+- Hydro (excluding hydro with storage facilities)
 - Solar (utility-scale)
 - Solar (rooftop) — added separately from the AEMO rooftop network
 - Wind
 - Battery discharging
-- Pumps (excluding TUMUT3/SNOWYP)
+- Pumps (excluding hydro with storage facilities)
 
-### Why TUMUT3 is excluded
+### Hydro with Storage Exclusion
 
-TUMUT3 is a hybrid hydro and pumped storage facility in the Snowy Mountains. Its hydro generation includes both natural water inflow and water that has been pumped back uphill using grid electricity. Since we cannot separate these two sources at the metering level, TUMUT3 is excluded from base renewable generation and included only in the storage-adjusted metric below.
+Some facilities are hybrid hydro and pumped storage — their generation includes both natural water inflow and water that has been pumped back uphill using grid electricity. Since we cannot separate these two sources at the metering level, hydro with storage facilities are excluded from base renewable generation and included only in the storage-adjusted metric below.
 
-A future `hydro_and_storage` fuel technology type will properly classify facilities like TUMUT3.
+The `hydro_and_storage` fuel technology type classifies these facilities.
 
 ## Renewable Generation with Storage
 
 **Metric:** `generation_renewable_with_storage` (MW) / `generation_renewable_with_storage_energy` (MWh)
 
-This metric includes everything in renewable generation plus TUMUT3 (both the hydro generation unit and the SNOWYP pump unit). It represents the total renewable output including hybrid hydro-storage facilities.
+This metric includes everything in renewable generation plus hydro with storage facilities. It represents the total renewable output including hybrid hydro-storage generation.
 
 $$
-\text{generation\_renewable\_with\_storage} = \text{generation\_renewable} + \text{TUMUT3 generation} + \text{SNOWYP generation}
+\text{generation\_renewable\_with\_storage} = \text{generation\_renewable} + \text{hydro with storage generation}
 $$
 
 ## Renewable Proportion
@@ -71,7 +71,7 @@ AEMO publishes two renewable share figures in their Quarterly Energy Dynamics re
 | Renewable energy share (including storage) | `renewable_with_storage_proportion` |
 | Storage-adjusted renewable energy share | `renewable_proportion` (closest equivalent) |
 
-Our `renewable_proportion` differs from AEMO's storage-adjusted metric in that we include battery discharge and non-TUMUT3 pumped hydro in the renewable numerator, while AEMO excludes all storage from their adjusted figure. Our approach counts battery and pumped hydro discharge as renewable since the stored energy originated from the grid's renewable mix.
+Our `renewable_proportion` differs from AEMO's storage-adjusted metric in that we include battery discharge and non-hybrid pumped hydro in the renewable numerator, while AEMO excludes all storage from their adjusted figure. Our approach counts battery and pumped hydro discharge as renewable since the stored energy originated from the grid's renewable mix.
 
 ## Available API Metrics
 
@@ -79,7 +79,7 @@ Our `renewable_proportion` differs from AEMO's storage-adjusted metric in that w
 |---|---|---|
 | `generation_renewable` | MW | Renewable power generation |
 | `generation_renewable_energy` | MWh | Renewable energy generation |
-| `generation_renewable_with_storage` | MW | Renewable power including TUMUT3 |
-| `generation_renewable_with_storage_energy` | MWh | Renewable energy including TUMUT3 |
+| `generation_renewable_with_storage` | MW | Renewable power including hydro with storage |
+| `generation_renewable_with_storage_energy` | MWh | Renewable energy including hydro with storage |
 | `renewable_proportion` | % | Renewable share of gross demand |
 | `renewable_with_storage_proportion` | % | Renewable+storage share of gross demand |
