@@ -6,7 +6,7 @@ published to Twitter/X, Bluesky, and LinkedIn.
 
 import io
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from operator import attrgetter
 from pathlib import Path
 
@@ -121,12 +121,18 @@ class WeeklySummary(BaseConfig):
 # --- Date helpers ---
 
 
+_AEST = timezone(timedelta(hours=10))
+
+
 def _get_week_boundaries(week_start: datetime | None = None) -> tuple[datetime, datetime]:
     """Get Monday 00:00 to Sunday 23:59 for a week.
 
     If week_start is None, returns the most recent *complete* week
     (the week that ended last Sunday). If week_start is provided,
     returns that week (week_start must be a Monday).
+
+    AEST-aware: the cron fires Mon 07:00 AEST (Sun 21:00 UTC). Using naive
+    UTC here would land on Sunday and compute the wrong week.
     """
     if week_start is not None:
         # Use the explicit week_start (must be a Monday)
@@ -134,8 +140,8 @@ def _get_week_boundaries(week_start: datetime | None = None) -> tuple[datetime, 
         we = ws + timedelta(days=7) - timedelta(seconds=1)
         return ws, we
 
-    # Default: most recent complete week (ended last Sunday)
-    now = datetime.now()
+    # Default: most recent complete week (ended last Sunday) in AEST
+    now = datetime.now(_AEST).replace(tzinfo=None)
     days_since_monday = now.weekday()
     this_monday = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=days_since_monday)
 
@@ -721,7 +727,8 @@ async def run_weekly_summary(network: NetworkSchema, week_start: datetime | None
         logger.info(f"Skipping social pipeline submission for {network.code} (not production)")
         return ws
 
-    # Submit to social pipeline — handles Slack approval + publishing
+    # Submit to social pipeline — handles Slack approval + publishing.
+    # create_social_post already logs "Duplicate … skipping" or equivalent.
     await create_social_post(
         CreateSocialPostRequest(
             post_type=SocialPostType.WEEKLY_SUMMARY,
@@ -734,7 +741,6 @@ async def run_weekly_summary(network: NetworkSchema, week_start: datetime | None
         image=chart_bytes,
     )
 
-    logger.info(f"Submitted weekly summary for {network.code} to social pipeline")
     return ws
 
 
