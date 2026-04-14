@@ -577,7 +577,18 @@ def plot_weekly_fueltech_summary(ws: WeeklySummary) -> io.BytesIO:
     top_records = [r for r in ws.records if r.energy_gwh >= 1][:8]
     max_energy = max((r.energy_gwh for r in top_records), default=1)
     display_records = [_prepare_record_display(r, max_energy) for r in top_records]
-    top_milestones = sorted(ws.milestones, key=lambda m: m.significance, reverse=True)[:3]
+    # Dedupe by (fueltech_id, metric, aggregate) so we don't show two "battery
+    # charging high" records; keep the highest significance of each type.
+    seen_types: set[tuple[str | None, str | None, str | None]] = set()
+    top_milestones: list[WeeklyMilestone] = []
+    for m in sorted(ws.milestones, key=lambda m: m.significance, reverse=True):
+        key = (m.fueltech_id, m.metric, m.aggregate)
+        if key in seen_types:
+            continue
+        seen_types.add(key)
+        top_milestones.append(m)
+        if len(top_milestones) == 3:
+            break
     display_milestones = [_prepare_milestone_display(m) for m in top_milestones]
 
     week_range = f"{ws.week_start.strftime('%-d %b')} – {ws.week_end.strftime('%-d %b %Y')}"
