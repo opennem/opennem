@@ -232,13 +232,15 @@
   }
 
   .mc-icon {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .mc-icon svg { width: 30px; height: 30px; }
+  .mc-icon svg { width: 20px; height: 20px; }
 
   .mc-region {
     font-family: 'DM Mono', monospace;
@@ -387,7 +389,7 @@
     % for m in milestones:
     <div class="milestone-card">
       <div class="mc-header">
-        <div class="mc-icon">${m.icon_svg}</div>
+        <div class="mc-icon" style="background-color: ${m.ft_color}; color: ${m.icon_color};">${m.icon_svg}</div>
         <div class="mc-region">${m.region}</div>
       </div>
       <div class="mc-desc">${m.description}</div>

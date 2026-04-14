@@ -1,112 +1,24 @@
 """Inline SVG icon paths for fueltech groups.
 
-Extracted from openelectricity/src/lib/icons/fuel-techs/*Sm.svelte.
-These use currentColor for stroke/fill so they inherit from parent text color.
+SVG files in `opennem/static/fueltech_icons/` are extracted from
+openelectricity/src/lib/icons/fuel-techs/*Sm.svelte. They use
+currentColor for stroke/fill so they inherit from the parent `color`
+attribute (set by `_get_fueltech_icon_svg` in weekly_summary.py).
 """
 
-# fmt: off
-FUELTECH_ICON_PATHS: dict[str, str] = {
-    "coal": (
-        '<path d="M3.83 14.39L2.4 11.69L4.79 8.78L7.92 14.37L3.83 14.39Z"/>'
-        '<path fill-rule="evenodd" clip-rule="evenodd" '
-        'd="M11.11 3.95L14.63 7.25L13.04 11.5L14.02 11.72L15.8 6.97L11.45 2.9'
-        'L4.18 3.85L3.72 7.71L7.58 14.89L11.49 14.87L9.79 14.86L9.96 13.87'
-        'L8.18 13.88L4.75 7.52L5.08 4.75L11.11 3.95Z" '
-        'fill="currentColor" stroke-width="0"/>'
-        '<path d="M10.38 14.36L10.88 11.51L14.21 12.28L13.76 14.38L10.38 14.36Z"/>'
-    ),
-    "solar": (
-        '<circle cx="8.8" cy="8.8" r="2.5"/>'
-        '<path fill="currentColor" stroke="none" '
-        'd="M15.3 9.3c.28 0 .5-.22.5-.5s-.22-.5-.5-.5v1Zm-2.5 0h2.5v-1h-2.5v1Z"/>'
-        '<path fill="currentColor" stroke="none" '
-        'd="M8.3 15.3c0 .28.22.5.5.5s.5-.22.5-.5h-1Zm0-2.5v2.5h1v-2.5h-1Z"/>'
-        '<path fill="currentColor" stroke="none" '
-        'd="M9.3 2.3c0-.28-.22-.5-.5-.5s-.5.22-.5.5h1Zm-1 0v2.5h1V2.3h-1Z"/>'
-        '<path fill="currentColor" stroke="none" '
-        'd="M2.3 8.3c-.28 0-.5.22-.5.5s.22.5.5.5v-1Zm2.5 0H2.3v1h2.5v-1Z"/>'
-    ),
-    "wind": (
-        '<path d="M2.8 9.3s10.48 0 10.49 0c.84-.02 1.51-.69 1.51-1.5 0-.83-.7-1.5-1.56-1.5" '
-        'stroke-linecap="round"/>'
-        '<path d="M3.8 6.3s5.48 0 5.49 0c.84-.02 1.51-.69 1.51-1.5 0-.83-.7-1.5-1.56-1.5" '
-        'stroke-linecap="round"/>'
-        '<path d="M5.8 12.3s3.01 0 3.02 0c.64 0 .98.46.98 1 0 .55-.26 1-1.01 1" '
-        'stroke-linecap="round"/>'
-    ),
-    "hydro": (
-        '<path d="M13.3 11.34c0 2.14-1.96 3.97-4.5 3.97s-4.5-1.83-4.5-3.97'
-        'c0-1.94 1.01-4.23 2.16-6.07.57-.91 1.15-1.69 1.64-2.23'
-        '.24-.27.45-.48.61-.61.04-.03.07-.06.1-.08.03.02.06.05.1.08'
-        '.16.13.37.34.61.61.48.54 1.07 1.31 1.64 2.22 1.15 1.83 2.16 4.12 2.16 6.08Z"/>'
-        '<path d="M11.33 11.3c-.39-2.65-1.02-3.78-2.03-5.33" stroke-linecap="round"/>'
-    ),
-    "gas": (
-        '<path d="M6.86 9.27s0 0 0 0ZM9.41 3.46c.59-.53 1.35-.92 2.34-1.03'
-        '-.2 1.27-.19 2.24-.02 3.02.2.92.59 1.54 1.01 2.06'
-        '.14.17.28.34.42.5l.18.2c.19.22.36.43.5.66'
-        '.27.44.47.98.47 1.83-.03 2.57-2.22 4.7-5 4.7'
-        '-2.79 0-5-2.13-5-4.69 0-1.34.17-2.55.47-3.61'
-        '.11.28.23.58.36.88.22.52.45 1.05.66 1.43'
-        '.1.19.21.37.33.5.05.06.15.16.28.21'
-        '.07.03.18.06.3.05.13-.02.24-.07.32-.15'
-        '.1-.09.13-.2.14-.22l.02-.09c.01-.04.01-.08.02-.1'
-        '.01-.04.01-.08.01-.11.01-.07.02-.16.03-.27l.01-.01'
-        'c.02-.22.04-.52.09-.88.09-.72.26-1.64.59-2.56'
-        '.33-.92.82-1.8 1.53-2.44Z"/>'
-        '<path d="M10.23 9.47c-.05-.05-.11-.09-.16-.13'
-        '.16.57.24 1.27.02 2.01-.11.36-.33.6-.56.77'
-        '-.16.12-.35.23-.5.31l-.11.06c-.18.1-.27.17-.32.24'
-        '-.04.05-.08.13-.06.32.06.47.4 1.01.93 1.43'
-        '.52.42 1.12.64 1.56.58.41-.05.77-.34 1.02-.82'
-        '.25-.49.36-1.1.29-1.65-.03-.27-.11-.61-.33-1.06'
-        '-.33-.66-1.07-1.43-1.79-2.05Z"/>'
-    ),
-    "battery_discharging": (
-        '<rect x="14.76" y="8.7" width="1" height="2.52" rx=".5" '
-        'fill="currentColor" stroke-width="0" transform="rotate(45 14.76 8.7)"/>'
-        '<rect width="1" height="2.52" rx=".5" fill="currentColor" stroke-width="0" '
-        'transform="matrix(.71 -.71 -.71 -.71 14.76 10.1)"/>'
-        '<rect x="14.8" y="8.9" width="1" height="6" rx=".5" '
-        'fill="currentColor" stroke-width="0" transform="rotate(90 14.8 8.9)"/>'
-        '<path d="M12.3 6.9V3.4c0-.55-.45-1-1-1H5.3c-.55 0-1 .45-1 1V14.4'
-        'c0 .55.45 1 1 1H11.3c.55 0 1-.45 1-1V11.9" stroke-linecap="round"/>'
-        '<rect x="7.8" y="3.9" width="1" height="3" rx=".5" fill="currentColor" stroke-width="0"/>'
-        '<rect x="9.8" y="4.9" width="1" height="3" rx=".5" fill="currentColor" '
-        'stroke-width="0" transform="rotate(90 9.8 4.9)"/>'
-        '<rect x="9.8" y="12.9" width="1" height="3" rx=".5" fill="currentColor" '
-        'stroke-width="0" transform="rotate(90 9.8 12.9)"/>'
-    ),
-    "bioenergy": (
-        '<path d="M15.27 2.74c.1.95.17 3.78-1.71 8.14-.72 1.46-1.62 2.39-2.56 2.96'
-        '-.94.57-1.96.79-2.95.79-2.01 0-3.87-.92-4.63-1.62'
-        '-.73-.66-1.29-2-1.32-3.55-.04-1.53.43-3.18 1.65-4.45'
-        '.64-.64 1.56-1.12 2.64-1.48 1.08-.36 2.29-.57 3.47-.7'
-        ' 2.33-.25 4.53-.14 5.4-.08Z"/>'
-        '<path d="M2.61 14.78s1.86-4.28 4.49-7.05'
-        'C9.87 4.81 14.99 2.96 14.99 2.96" stroke-linecap="round"/>'
-    ),
-    "distillate": (
-        '<path fill-rule="evenodd" clip-rule="evenodd" '
-        'd="M3.81 4.03H3.8v1V13.2v.81.2h.03c.26.94 2.39 1.68 4.97 1.68'
-        ' 2.59 0 4.71-.74 4.97-1.68h.03v-.2-.8V5.03v-1h-.01'
-        'c-.06.4-.42.77-.99 1.07v8.85c-.02.02-.06.07-.14.12'
-        '-.17.12-.44.26-.82.39-.76.26-1.83.43-3.04.43'
-        '-1.21 0-2.27-.17-3.04-.43-.38-.13-.65-.27-.82-.39'
-        '-.08-.06-.12-.1-.14-.12V5.1c-.57-.3-.93-.67-.99-1.07Z" '
-        'stroke-width="0" fill="currentColor"/>'
-        '<path d="M13.3 6.3c0 .53-2.67 1.12-4.52 1.12-1.84 0-4.48-.59-4.48-1.12" '
-        'stroke-linecap="square"/>'
-        '<path d="M13.3 12.3c0 .53-2.67 1.12-4.52 1.12-1.84 0-4.48-.59-4.48-1.12" '
-        'stroke-linecap="square"/>'
-        '<path d="M13.3 3.9c0 .09-.05.23-.24.41-.19.18-.49.37-.91.54'
-        '-.83.33-2.01.55-3.35.55-1.33 0-2.52-.22-3.35-.55'
-        '-.42-.17-.73-.36-.91-.54-.19-.18-.24-.32-.24-.41'
-        ' 0-.09.05-.24.24-.42.19-.18.49-.37.91-.54'
-        '.83-.33 2.02-.55 3.35-.55 1.33 0 2.52.22 3.35.55'
-        '.42.17.73.36.91.54.19.18.24.32.24.42Z"/>'
-    ),
-}
-# fmt: on
+import re
+from pathlib import Path
+
+_ICON_DIR = Path(__file__).parent / "fueltech_icons"
+
+
+def _load_inner_svg(svg_path: Path) -> str:
+    """Read an SVG file and return just the contents between <svg>...</svg>."""
+    content = svg_path.read_text()
+    match = re.search(r"<svg[^>]*>(.*)</svg>", content, re.DOTALL)
+    return match.group(1).strip() if match else content
+
+
+FUELTECH_ICON_PATHS: dict[str, str] = {svg_path.stem: _load_inner_svg(svg_path) for svg_path in sorted(_ICON_DIR.glob("*.svg"))}
 
 FALLBACK_ICON = '<circle cx="8.5" cy="8.5" r="4" fill="currentColor" stroke="none"/>'
