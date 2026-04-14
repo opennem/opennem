@@ -65,35 +65,31 @@ Open Electricity provides capacity information through multiple interfaces:
 
 ### Facility Pages
 
-Individual facility pages display detailed capacity information. For example, the Bayswater Power Station page shows registered capacity in its capacity chart:
+Individual facility pages display detailed capacity information. For example, the Bayswater Power Station page shows the unit's capacity in its capacity chart:
 
 [View Bayswater Power Station](https://explore.openelectricity.org.au/facility/au/NEM/BAYSW/?range=3d&interval=30m)
 
 <Frame>
-  <img src="/images/capacity_bayswater.png" alt="Bayswater Power Station capacity display showing registered capacity over time" />
+  <img src="/images/capacity_bayswater.png" alt="Bayswater Power Station capacity display over time" />
 </Frame>
 
 The facility page displays:
-- Current registered capacity for each generation unit
+- Current maximum capacity for each generation unit
 - Unit-level details including fuel technology
 - Operational status and performance metrics
 - Capacity factors for each unit
 
-Note that the charts display **registered capacity** rather than maximum capacity, providing the standard operational capacity for analysis.
+Open Electricity displays **maximum capacity** on facility pages and in capacity charts. This is the value AEMO uses for bid validation and reflects the actual upper bound on a unit's output, rather than the nameplate figure registered at market entry. The registered value remains available through the API.
 
 This is better demonstrated when viewing battery facilities, such as the Waratah Super Battery in New South Wales.
 
 [View Waratah Super Battery](https://explore.openelectricity.org.au/facility/au/NEM/WTAHB/?range=3d&interval=30m)
 
 <Frame>
-  <img src="/images/capacity_waratah.png" alt="Waratah Super Battery capacity display showing registered capacity over time" />
+  <img src="/images/capacity_waratah.png" alt="Waratah Super Battery capacity display over time" />
 </Frame>
 
-The generation does not come near the registered capacity of the unit, but likely does approach the maximum capacity.
-
-<Note>
-In a future version Open Electricity will display both maximum and registered capacity for all units.
-</Note>
+Generation tracks closely against the unit's maximum capacity.
 
 
 ### Capacity Charts
@@ -107,10 +103,12 @@ Open Electricity's capacity charts provide comprehensive views of capacity acros
 </Frame>
 
 These advanced charts offer:
-- Historical capacity trends by fuel technology
+- Historical maximum-capacity trends by fuel technology
 - Combined view of both NEM and WEM markets
 - Interactive filtering and time range selection
 - Breakdown by renewable and non-renewable sources
+
+As with the facility pages, the aggregated fleet values are summed from each unit's **maximum capacity**.
 
 Advanced charting features allow you to view capacity history by fueltech over time in proportion view, change view, and more.
 
@@ -124,7 +122,7 @@ Advanced charting features allow you to view capacity history by fueltech over t
 For programmatic access, capacity data is available through the Open Electricity API at the facilities endpoint. The API provides:
 - Real-time capacity information
 - Historical capacity data
-- Both registered and available capacity values
+- Both registered and maximum capacity values (web UI uses maximum)
 - Detailed unit-level information
 
 ## Capacity Factors

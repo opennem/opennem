@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "willow",
+  "theme": "mint",
   "name": "Open Electricity Documentation",
   "colors": {
     "primary": "#8b3119",
@@ -15,10 +15,7 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": [
-              "introduction",
-              "community"
-            ]
+            "pages": ["introduction", "community"]
           },
           {
             "group": "Guides",
@@ -42,10 +39,7 @@
           },
           {
             "group": "Platform",
-            "pages": [
-              "platform/introduction",
-              "changelog"
-            ]
+            "pages": ["platform/introduction", "changelog"]
           }
         ]
       },
@@ -66,21 +60,15 @@
               },
               {
                 "group": "Market Data",
-                "pages": [
-                  "api-reference/market/get-network-data"
-                ]
+                "pages": ["api-reference/market/get-network-data"]
               },
               {
                 "group": "Facilities",
-                "pages": [
-                  "api-reference/facilities/get-facilities"
-                ]
+                "pages": ["api-reference/facilities/get-facilities"]
               },
               {
                 "group": "User",
-                "pages": [
-                  "api-reference/user/get-user-me"
-                ]
+                "pages": ["api-reference/user/get-user-me"]
               }
             ]
           }
@@ -120,9 +108,7 @@
         "groups": [
           {
             "group": "How-To Guides",
-            "pages": [
-              "howto/getting-started"
-            ]
+            "pages": ["howto/getting-started"]
           }
         ]
       },
