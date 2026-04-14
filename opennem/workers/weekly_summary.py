@@ -379,6 +379,7 @@ def _build_price_results(rows: list[tuple], network: NetworkSchema) -> list[Week
 # Social media portrait: 1080x1350 (4:5 ratio — Instagram, Twitter, LinkedIn)
 IMAGE_WIDTH = 1080
 IMAGE_MAX_HEIGHT = 1600  # render tall, then crop to content
+IMAGE_DPI_SCALE = 2  # render at 2x device pixels so Twitter/LinkedIn zoom is crisp
 
 
 def _get_logo_url() -> str:
@@ -637,7 +638,11 @@ def plot_weekly_fueltech_summary(ws: WeeklySummary) -> io.BytesIO:
     output_dir = "/tmp"
     output_file = f"weekly_summary_{ws.network}_{ws.week_number}.png"
 
-    hti = Html2Image(output_path=output_dir, size=(IMAGE_WIDTH, IMAGE_MAX_HEIGHT))
+    hti = Html2Image(
+        output_path=output_dir,
+        size=(IMAGE_WIDTH, IMAGE_MAX_HEIGHT),
+        custom_flags=[f"--force-device-scale-factor={IMAGE_DPI_SCALE}"],
+    )
     hti.screenshot(html_str=html, save_as=output_file)
 
     output_path = Path(output_dir) / output_file
@@ -646,18 +651,21 @@ def plot_weekly_fueltech_summary(ws: WeeklySummary) -> io.BytesIO:
     from PIL import Image
 
     with Image.open(output_path) as img:
-        # Find the last row that isn't the background color (#FDFAF4 ≈ 253,250,244)
+        # Sampling + padding scale with the DPI factor so the crop looks identical
+        # at any scale factor.
+        sample_step = 20 * IMAGE_DPI_SCALE
+        bottom_padding = 60 * IMAGE_DPI_SCALE
         pixels = img.load()
         bottom = img.height
         for y in range(img.height - 1, 0, -1):
             row_has_content = False
-            for x in range(0, img.width, 20):  # sample every 20px for speed
+            for x in range(0, img.width, sample_step):
                 r, g, b = pixels[x, y][:3]
                 if not (r > 248 and g > 245 and b > 238):  # not background
                     row_has_content = True
                     break
             if row_has_content:
-                bottom = min(y + 60, img.height)  # 60px padding below content
+                bottom = min(y + bottom_padding, img.height)
                 break
 
         cropped = img.crop((0, 0, img.width, bottom))
