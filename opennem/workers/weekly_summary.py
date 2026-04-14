@@ -438,18 +438,27 @@ def _generate_pie_svg(records: list[WeeklySummaryResult], size: int = 380) -> st
     return f'<svg viewBox="0 0 {size} {size}" xmlns="http://www.w3.org/2000/svg">{"".join(paths)}</svg>'
 
 
-def _get_fueltech_icon_svg(fueltech_id: str | None, color: str) -> str:
-    """Get inline SVG for a fueltech icon in a colored circle, matching openelectricity style."""
-    icon_paths = FUELTECH_ICON_PATHS.get(fueltech_id or "", FALLBACK_ICON)
-    # Solar uses black icon on yellow bg, everything else uses white
-    icon_color = "#222" if fueltech_id == "solar" else "#fff"
+def _get_icon_color(fueltech_id: str | None) -> str:
+    """Solar sits on yellow → black icon; everything else uses white."""
+    return "#222" if fueltech_id and fueltech_id.startswith("solar") else "#fff"
 
+
+def _get_fueltech_icon_svg(fueltech_id: str | None) -> str:
+    """Return the 17x17 icon SVG for a fueltech with `currentColor` substituted
+    to the icon's hex color directly.
+
+    Chromium headless (via html2image) doesn't always cascade CSS `color:` into
+    SVG `currentColor`, so we hard-substitute at render time and set the stroke
+    on the outer <svg> element.
+    """
+    icon_paths = FUELTECH_ICON_PATHS.get(fueltech_id or "", FALLBACK_ICON)
+    icon_color = _get_icon_color(fueltech_id)
+    icon_paths = icon_paths.replace("currentColor", icon_color)
     return (
-        f'<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">'
-        f'<circle cx="16" cy="16" r="16" fill="{color}"/>'
-        f'<g transform="translate(7.5, 7.5)" stroke="{icon_color}" fill="none">'
+        f'<svg width="17" height="17" viewBox="0 0 17 17" '
+        f'xmlns="http://www.w3.org/2000/svg" fill="none" stroke="{icon_color}">'
         f"{icon_paths}"
-        f"</g></svg>"
+        "</svg>"
     )
 
 
@@ -531,8 +540,9 @@ def _prepare_milestone_display(m: WeeklyMilestone) -> dict:
         except Exception:
             pass
 
-    # Build icon SVG
-    icon_svg = _get_fueltech_icon_svg(m.fueltech_id, ft_color)
+    # Build icon SVG (colors applied via CSS on the wrapper in the template)
+    icon_svg = _get_fueltech_icon_svg(m.fueltech_id)
+    icon_color = _get_icon_color(m.fueltech_id)
 
     # Region label (strip trailing "1" from NEM regions like NSW1 → NSW)
     region = ""
@@ -553,6 +563,7 @@ def _prepare_milestone_display(m: WeeklyMilestone) -> dict:
         "change_str": change_str,
         "change_class": change_class,
         "ft_color": ft_color,
+        "icon_color": icon_color,
         "icon_svg": icon_svg,
         "region": region,
         "period": (m.period or "").capitalize(),
