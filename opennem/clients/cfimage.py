@@ -32,12 +32,19 @@ async def save_image_to_cloudflare(image: bytes | BytesIO) -> CloudflareImageRes
     if not settings.cloudflare_api_key or not settings.cloudflare_account_id:
         raise CloudflareImageException("API not configured with account id and key")
 
+    import rnet
+
+    image_bytes = image.getvalue() if isinstance(image, BytesIO) else image
+
     async with http_factory(proxy=False, mimic_browser=False) as http:
         headers = {"Authorization": f"Bearer {settings.cloudflare_api_key}"}
 
         cfimage_url = CF_URL.format(account_id=settings.cloudflare_account_id)
 
-        response = await http.post(cfimage_url, headers=headers, files={"file": image})
+        # rnet requires multipart= (not httpx's files=), leftover bug from the
+        # httpx→rnet migration in bc4ac04d.
+        multipart = rnet.Multipart(rnet.Part(name="file", value=image_bytes, filename="image.png", mime="image/png"))
+        response = await http.post(cfimage_url, headers=headers, multipart=multipart)
 
         response.raise_for_status()
 
