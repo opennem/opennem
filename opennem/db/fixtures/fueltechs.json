@@ -78,6 +78,12 @@
         "fueltech_group_id": "hydro"
     },
     {
+        "code": "hydro_and_storage",
+        "label": "Hydro and Storage",
+        "renewable": true,
+        "fueltech_group_id": "hydro"
+    },
+    {
         "code": "pumps",
         "label": "Pumps",
         "renewable": false,

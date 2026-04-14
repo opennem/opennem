@@ -50,6 +50,9 @@ class Metric(StrEnum):
     RENEWABLE_PROPORTION = "renewable_proportion"
     POLLUTION = "pollution"
     STORAGE_BATTERY = "storage_battery"
+    GENERATION_RENEWABLE_WITH_STORAGE = "generation_renewable_with_storage"
+    GENERATION_RENEWABLE_WITH_STORAGE_ENERGY = "generation_renewable_with_storage_energy"
+    RENEWABLE_WITH_STORAGE_PROPORTION = "renewable_with_storage_proportion"
     FLOW_IMPORTS = "flow_imports"
     FLOW_EXPORTS = "flow_exports"
     FLOW_IMPORTS_ENERGY = "flow_imports_energy"
@@ -150,6 +153,27 @@ METRIC_METADATA = {
         column_name="generation_renewable_energy",
         default_agg="sum",
         precision=3,
+    ),
+    Metric.GENERATION_RENEWABLE_WITH_STORAGE: MetricMetadata(
+        unit="MW",
+        description="Total renewable generation including storage (battery discharge, pumps) and TUMUT3",
+        column_name="generation_renewable_with_storage",
+        default_agg="sum",
+        precision=3,
+    ),
+    Metric.GENERATION_RENEWABLE_WITH_STORAGE_ENERGY: MetricMetadata(
+        unit="MWh",
+        description="Total renewable energy including storage (battery discharge, pumps) and TUMUT3",
+        column_name="generation_renewable_with_storage_energy",
+        default_agg="sum",
+        precision=3,
+    ),
+    Metric.RENEWABLE_WITH_STORAGE_PROPORTION: MetricMetadata(
+        unit="%",
+        description="Percentage of renewable energy including storage",
+        column_name="renewable_with_storage_proportion",
+        default_agg="avg",
+        precision=2,
     ),
     Metric.EMISSIONS: MetricMetadata(
         unit="t",

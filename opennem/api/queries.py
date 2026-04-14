@@ -107,6 +107,8 @@ QUERY_CONFIGS = {
             Metric.DEMAND_GROSS_ENERGY: "demand_gross_energy",
             Metric.GENERATION_RENEWABLE: "generation_renewable",
             Metric.GENERATION_RENEWABLE_ENERGY: "generation_renewable_energy",
+            Metric.GENERATION_RENEWABLE_WITH_STORAGE: "generation_renewable_with_storage",
+            Metric.GENERATION_RENEWABLE_WITH_STORAGE_ENERGY: "generation_renewable_with_storage_energy",
             Metric.CURTAILMENT: "curtailment_total",
             Metric.CURTAILMENT_ENERGY: "curtailment_energy_total",
             Metric.CURTAILMENT_SOLAR_UTILITY: "curtailment_solar_total",
@@ -114,6 +116,7 @@ QUERY_CONFIGS = {
             Metric.CURTAILMENT_SOLAR_UTILITY_ENERGY: "curtailment_energy_solar_total",
             Metric.CURTAILMENT_WIND_ENERGY: "curtailment_energy_wind_total",
             Metric.RENEWABLE_PROPORTION: "round(if(sum(demand_gross) > 0, (sum(generation_renewable) / sum(demand_gross)) * 100, 0), 2)",  # noqa: E501
+            Metric.RENEWABLE_WITH_STORAGE_PROPORTION: "round(if(sum(demand_gross) > 0, (sum(generation_renewable_with_storage) / sum(demand_gross)) * 100, 0), 2)",  # noqa: E501
             Metric.FLOW_IMPORTS: "energy_imports * 12",  # MWh to MW
             Metric.FLOW_EXPORTS: "energy_exports * 12",
             Metric.FLOW_IMPORTS_ENERGY: "energy_imports",
@@ -127,6 +130,8 @@ QUERY_CONFIGS = {
             Metric.DEMAND_GROSS_ENERGY: "sum",
             Metric.GENERATION_RENEWABLE: "sum",
             Metric.GENERATION_RENEWABLE_ENERGY: "sum",
+            Metric.GENERATION_RENEWABLE_WITH_STORAGE: "sum",
+            Metric.GENERATION_RENEWABLE_WITH_STORAGE_ENERGY: "sum",
             Metric.CURTAILMENT: "sum",
             Metric.CURTAILMENT_ENERGY: "sum",
             Metric.CURTAILMENT_SOLAR_UTILITY: "sum",
@@ -134,6 +139,7 @@ QUERY_CONFIGS = {
             Metric.CURTAILMENT_SOLAR_UTILITY_ENERGY: "sum",
             Metric.CURTAILMENT_WIND_ENERGY: "sum",
             Metric.RENEWABLE_PROPORTION: "",
+            Metric.RENEWABLE_WITH_STORAGE_PROPORTION: "",
             Metric.FLOW_IMPORTS: "sum",
             Metric.FLOW_EXPORTS: "sum",
             Metric.FLOW_IMPORTS_ENERGY: "sum",
@@ -147,6 +153,8 @@ QUERY_CONFIGS = {
             Metric.DEMAND_GROSS_ENERGY: "demand_gross_energy_daily",
             Metric.GENERATION_RENEWABLE: "generation_renewable_sum",
             Metric.GENERATION_RENEWABLE_ENERGY: "generation_renewable_energy_daily",
+            Metric.GENERATION_RENEWABLE_WITH_STORAGE: "generation_renewable_with_storage_sum",
+            Metric.GENERATION_RENEWABLE_WITH_STORAGE_ENERGY: "generation_renewable_with_storage_energy_daily",
             Metric.CURTAILMENT: "curtailment_total_daily",
             Metric.CURTAILMENT_ENERGY: "curtailment_energy_total_daily",
             Metric.CURTAILMENT_SOLAR_UTILITY: "curtailment_solar_total_daily",
@@ -154,6 +162,7 @@ QUERY_CONFIGS = {
             Metric.CURTAILMENT_SOLAR_UTILITY_ENERGY: "curtailment_energy_solar_total_daily",
             Metric.CURTAILMENT_WIND_ENERGY: "curtailment_energy_wind_total_daily",
             Metric.RENEWABLE_PROPORTION: "round(if(sum(demand_gross_sum) > 0, (sum(generation_renewable_sum) / sum(demand_gross_sum)) * 100, 0), 2)",  # noqa: E501
+            Metric.RENEWABLE_WITH_STORAGE_PROPORTION: "round(if(sum(demand_gross_sum) > 0, (sum(generation_renewable_with_storage_sum) / sum(demand_gross_sum)) * 100, 0), 2)",  # noqa: E501
             Metric.FLOW_IMPORTS: "energy_imports_daily * 12",
             Metric.FLOW_EXPORTS: "energy_exports_daily * 12",
             Metric.FLOW_IMPORTS_ENERGY: "energy_imports_daily",
@@ -167,6 +176,8 @@ QUERY_CONFIGS = {
             Metric.DEMAND_GROSS_ENERGY: "sum",
             Metric.GENERATION_RENEWABLE: "sum",
             Metric.GENERATION_RENEWABLE_ENERGY: "sum",
+            Metric.GENERATION_RENEWABLE_WITH_STORAGE: "sum",
+            Metric.GENERATION_RENEWABLE_WITH_STORAGE_ENERGY: "sum",
             Metric.CURTAILMENT: "sum",
             Metric.CURTAILMENT_ENERGY: "sum",
             Metric.CURTAILMENT_SOLAR_UTILITY: "sum",
@@ -174,6 +185,7 @@ QUERY_CONFIGS = {
             Metric.CURTAILMENT_SOLAR_UTILITY_ENERGY: "sum",
             Metric.CURTAILMENT_WIND_ENERGY: "sum",
             Metric.RENEWABLE_PROPORTION: "",
+            Metric.RENEWABLE_WITH_STORAGE_PROPORTION: "",
             Metric.FLOW_IMPORTS: "sum",
             Metric.FLOW_EXPORTS: "sum",
             Metric.FLOW_IMPORTS_ENERGY: "sum",

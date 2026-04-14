@@ -38,22 +38,27 @@ async def create_social_post(
     image: bytes | None = None,
 ) -> SocialPostResponse:
     """Create a social post, send to Slack for approval."""
-    # Upload image to Cloudflare if provided
+    # Upload image to Cloudflare if provided. The CF-hosted URL is required
+    # for downstream Twitter/Bluesky/LinkedIn publishing, so raise and halt
+    # the pipeline on failure — ARQ will retry and Sentry will capture.
     image_url = req.image_url
     if image and not image_url:
-        try:
-            from opennem.clients.cfimage import save_image_to_cloudflare
+        from opennem.clients.cfimage import save_image_to_cloudflare
 
-            cfimage = await save_image_to_cloudflare(io.BytesIO(image))
-            image_url = cfimage.url
-        except Exception as e:
-            logger.warning(f"Cloudflare image upload failed, image will be passed directly: {e}")
+        cfimage = await save_image_to_cloudflare(io.BytesIO(image))
+        image_url = cfimage.url
 
-    # Check for duplicate by source_id
+    # Check for duplicate by source_id. Only rows that actually reached Slack
+    # (slack_message_ts IS NOT NULL) count — orphaned rows from crashed prior
+    # attempts would otherwise block re-submission forever.
     if req.source_id:
         async with get_read_session() as session:
             result = await session.execute(
-                select(SocialPost.id).where(SocialPost.source_type == req.source_type, SocialPost.source_id == req.source_id)
+                select(SocialPost.id).where(
+                    SocialPost.source_type == req.source_type,
+                    SocialPost.source_id == req.source_id,
+                    SocialPost.slack_message_ts.is_not(None),
+                )
             )
             existing_id = result.scalar_one_or_none()
             if existing_id:

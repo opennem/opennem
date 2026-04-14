@@ -105,8 +105,18 @@ def get_market(
 
 **Price and Demand:**
 - `MarketMetric.PRICE` - Electricity spot price ($/MWh)
-- `MarketMetric.DEMAND` - Electricity demand (MW)
-- `MarketMetric.DEMAND_ENERGY` - Electricity demand energy (MWh)
+- `MarketMetric.DEMAND` - Operational demand (MW)
+- `MarketMetric.DEMAND_ENERGY` - Operational demand energy (MWh)
+- `MarketMetric.DEMAND_GROSS` - Gross demand including rooftop solar (MW)
+- `MarketMetric.DEMAND_GROSS_ENERGY` - Gross demand energy including rooftop solar (MWh)
+
+**Renewable Generation:**
+- `MarketMetric.GENERATION_RENEWABLE` - Renewable generation including battery discharge and pumps, excluding TUMUT3 (MW)
+- `MarketMetric.GENERATION_RENEWABLE_ENERGY` - Renewable energy (MWh)
+- `MarketMetric.GENERATION_RENEWABLE_WITH_STORAGE` - Renewable generation including TUMUT3 hybrid hydro+storage (MW)
+- `MarketMetric.GENERATION_RENEWABLE_WITH_STORAGE_ENERGY` - Renewable energy including TUMUT3 (MWh)
+- `MarketMetric.RENEWABLE_PROPORTION` - Renewable share of gross demand (%)
+- `MarketMetric.RENEWABLE_WITH_STORAGE_PROPORTION` - Renewable+storage share of gross demand (%)
 
 **Curtailment Power (MW):**
 - `MarketMetric.CURTAILMENT` - Total curtailment across all renewables
@@ -117,6 +127,10 @@ def get_market(
 - `MarketMetric.CURTAILMENT_ENERGY` - Total curtailed energy
 - `MarketMetric.CURTAILMENT_SOLAR_UTILITY_ENERGY` - Utility solar energy curtailed
 - `MarketMetric.CURTAILMENT_WIND_ENERGY` - Wind energy curtailed
+
+**Interconnector Flows:**
+- `MarketMetric.FLOW_IMPORTS` / `MarketMetric.FLOW_IMPORTS_ENERGY` - Region imports (MW / MWh)
+- `MarketMetric.FLOW_EXPORTS` / `MarketMetric.FLOW_EXPORTS_ENERGY` - Region exports (MW / MWh)
 
 ### Examples
 

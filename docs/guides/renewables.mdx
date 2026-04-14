@@ -1,0 +1,85 @@
+---
+title: Renewable Energy Metrics
+icon: "leaf"
+sidebarTitle: Renewables
+---
+
+Open Electricity provides several metrics for measuring renewable energy generation, including storage-adjusted variants that account for battery and pumped hydro contributions.
+
+## Renewable Generation
+
+**Metric:** `generation_renewable` (MW) / `generation_renewable_energy` (MWh)
+
+Renewable generation is the sum of all generation from renewable fuel technology types, plus battery discharge and pumped hydro generation. Hybrid hydro-with-storage facilities are excluded from this metric.
+
+- Bioenergy (biogas, biomass)
+- Hydro (excluding hydro with storage facilities)
+- Solar (utility-scale)
+- Solar (rooftop) — added separately from the AEMO rooftop network
+- Wind
+- Battery discharging
+- Pumps (excluding hydro with storage facilities)
+
+### Hydro with Storage Exclusion
+
+Some facilities are hybrid hydro and pumped storage — their generation includes both natural water inflow and water that has been pumped back uphill using grid electricity. Since we cannot separate these two sources at the metering level, hydro with storage facilities are excluded from base renewable generation and included only in the storage-adjusted metric below.
+
+The `hydro_and_storage` fuel technology type classifies these facilities.
+
+## Renewable Generation with Storage
+
+**Metric:** `generation_renewable_with_storage` (MW) / `generation_renewable_with_storage_energy` (MWh)
+
+This metric includes everything in renewable generation plus hydro with storage facilities. It represents the total renewable output including hybrid hydro-storage generation.
+
+$$
+\text{generation\_renewable\_with\_storage} = \text{generation\_renewable} + \text{hydro with storage generation}
+$$
+
+## Renewable Proportion
+
+**Metric:** `renewable_proportion` (%)
+
+The percentage of gross demand met by renewable generation:
+
+$$
+\text{renewable\_proportion} = \frac{\text{generation\_renewable}}{\text{demand\_gross}} \times 100
+$$
+
+Where `demand_gross` = operational demand + rooftop solar generation.
+
+## Renewable with Storage Proportion
+
+**Metric:** `renewable_with_storage_proportion` (%)
+
+The percentage of gross demand met by renewable generation including storage:
+
+$$
+\text{renewable\_with\_storage\_proportion} = \frac{\text{generation\_renewable\_with\_storage}}{\text{demand\_gross}} \times 100
+$$
+
+## Energy Calculation
+
+All energy metrics (MWh) are derived from power readings (MW) using trapezoidal integration. See the [Energy guide](/guides/energy) for the calculation methodology.
+
+## Comparison with AEMO
+
+AEMO publishes two renewable share figures in their Quarterly Energy Dynamics reports:
+
+| AEMO metric | Open Electricity equivalent |
+|---|---|
+| Renewable energy share (including storage) | `renewable_with_storage_proportion` |
+| Storage-adjusted renewable energy share | `renewable_proportion` (closest equivalent) |
+
+Our `renewable_proportion` differs from AEMO's storage-adjusted metric in that we include battery discharge and non-hybrid pumped hydro in the renewable numerator, while AEMO excludes all storage from their adjusted figure. Our approach counts battery and pumped hydro discharge as renewable since the stored energy originated from the grid's renewable mix.
+
+## Available API Metrics
+
+| Metric | Unit | Description |
+|---|---|---|
+| `generation_renewable` | MW | Renewable power generation |
+| `generation_renewable_energy` | MWh | Renewable energy generation |
+| `generation_renewable_with_storage` | MW | Renewable power including hydro with storage |
+| `generation_renewable_with_storage_energy` | MWh | Renewable energy including hydro with storage |
+| `renewable_proportion` | % | Renewable share of gross demand |
+| `renewable_with_storage_proportion` | % | Renewable+storage share of gross demand |
