@@ -38,15 +38,16 @@ async def create_social_post(
     image: bytes | None = None,
 ) -> SocialPostResponse:
     """Create a social post, send to Slack for approval."""
-    # Upload image to Cloudflare if provided. The CF-hosted URL is required
-    # for downstream Twitter/Bluesky/LinkedIn publishing, so raise and halt
-    # the pipeline on failure — ARQ will retry and Sentry will capture.
+    # Upload image to Cloudflare if provided. Store the `hires` variant URL —
+    # the default `public` variant scales down to 1366px and re-encodes as
+    # JPEG, which tanks quality on Twitter. `hires` preserves the full PNG.
+    # Raise on failure so ARQ retries + Sentry captures.
     image_url = req.image_url
     if image and not image_url:
         from opennem.clients.cfimage import save_image_to_cloudflare
 
         cfimage = await save_image_to_cloudflare(io.BytesIO(image))
-        image_url = cfimage.url
+        image_url = cfimage.hires_url
 
     # Check for duplicate by source_id. Only rows that actually reached Slack
     # (slack_message_ts IS NOT NULL) count — orphaned rows from crashed prior
