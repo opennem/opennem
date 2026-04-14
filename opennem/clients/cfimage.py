@@ -23,9 +23,23 @@ class CloudflareImageResponse(BaseModel):
     uploaded: datetime
     variants: list[str]
 
+    def variant_url(self, name: str) -> str | None:
+        """Return the variant URL whose last path segment matches `name`."""
+        for v in self.variants:
+            if v.rstrip("/").rsplit("/", 1)[-1] == name:
+                return v
+        return None
+
     @property
     def url(self) -> str | None:
-        return self.variants.pop() if self.variants else None
+        """Default display variant — prefer `public` if present, else last."""
+        return self.variant_url("public") or (self.variants[-1] if self.variants else None)
+
+    @property
+    def hires_url(self) -> str | None:
+        """Lossless variant for social media publishing — preserves full
+        resolution and PNG format. Falls back to display url if missing."""
+        return self.variant_url("hires") or self.url
 
 
 async def save_image_to_cloudflare(image: bytes | BytesIO) -> CloudflareImageResponse:
