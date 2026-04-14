@@ -123,6 +123,8 @@ async def post_publish_results_to_slack(
                 lines.append(f"*{platform}*: {detail}")
             else:
                 lines.append(f"*{platform}*: published")
+        elif status == "skipped":
+            lines.append(f"*{platform}*: skipped — {detail or 'not configured'}")
         else:
             lines.append(f"*{platform}*: failed — {detail or 'unknown error'}")
 
@@ -142,6 +144,12 @@ async def post_publish_results_to_slack(
         )
 
     # Also update the original message
-    all_published = all(s == "published" for _, s, _ in results)
-    summary = "Published to all platforms" if all_published else "Publishing completed with errors"
+    had_failure = any(s == "failed" for _, s, _ in results)
+    had_skip = any(s == "skipped" for _, s, _ in results)
+    if had_failure:
+        summary = "Publishing completed with errors"
+    elif had_skip:
+        summary = "Published (some platforms skipped)"
+    else:
+        summary = "Published to all platforms"
     await update_post_status_in_slack(post_id, summary)
