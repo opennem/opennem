@@ -13,6 +13,10 @@ LINKEDIN_API_BASE = "https://api.linkedin.com"
 _http_client = http_factory(proxy=False, mimic_browser=False)
 
 
+class LinkedInNotConfiguredError(RuntimeError):
+    """LinkedIn credentials missing — caller should mark platform as skipped, not failed."""
+
+
 def _get_headers() -> dict[str, str]:
     """Get auth headers for LinkedIn API."""
     return {
@@ -71,8 +75,9 @@ async def post_linkedin(text: str, image: io.BytesIO | None = None) -> None:
         image: Optional image as BytesIO
     """
     if not settings.linkedin_access_token or not settings.linkedin_organization_id:
-        logger.error("LinkedIn credentials not configured. Skipping post.")
-        return
+        # TODO: revert to logger.error + critical-path behaviour once LINKEDIN_ACCESS_TOKEN is set in prod
+        logger.warning("LinkedIn credentials not configured. Skipping post.")
+        raise LinkedInNotConfiguredError("LinkedIn credentials not configured")
 
     org_urn = f"urn:li:organization:{settings.linkedin_organization_id}"
 
