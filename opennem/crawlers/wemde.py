@@ -3,10 +3,11 @@
 import inspect
 import logging
 from datetime import datetime
+from typing import Any
 
 from opennem.clients.wemde import wemde_parse_facilityscada, wemde_parse_trading_price
 from opennem.controllers.nem import ControllerReturn
-from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_meta, crawler_set_meta
+from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_meta, crawler_set_meta_many
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
 from opennem.core.parsers.aemo.filenames import AEMODataBucketSize
 from opennem.core.parsers.dirlisting import get_dirlisting
@@ -123,13 +124,17 @@ async def run_wemde_crawl(
 
     logger.debug(f"Latest interval: {latest_interval} for {crawler.name} and {len(data)} records")
 
+    meta_updates: dict[CrawlStatTypes, Any] = {
+        CrawlStatTypes.last_crawled: get_today_opennem(),
+    }
+
     if latest_interval:
-        await crawler_set_meta(crawler.name, CrawlStatTypes.latest_interval, latest_interval)
+        meta_updates[CrawlStatTypes.latest_interval] = latest_interval
 
     if latest_aemo_interval_date:
-        await crawler_set_meta(crawler.name, CrawlStatTypes.server_latest, latest_aemo_interval_date)
+        meta_updates[CrawlStatTypes.server_latest] = latest_aemo_interval_date
 
-    await crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, get_today_opennem())
+    await crawler_set_meta_many(crawler.name, meta_updates)
 
     cr = ControllerReturn(
         last_modified=get_today_opennem(),

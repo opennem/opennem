@@ -9,7 +9,7 @@ from pydantic import ValidationError
 
 from opennem import settings
 from opennem.controllers.schema import ControllerReturn
-from opennem.core.crawlers.meta import CrawlStatTypes, crawler_set_meta, crawlers_get_all_meta
+from opennem.core.crawlers.meta import CrawlStatTypes, crawler_set_meta, crawler_set_meta_many, crawlers_get_all_meta
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSet
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
 from opennem.crawlers.apvi import (
@@ -162,8 +162,11 @@ async def run_crawl(
     # now in opennem time which is Australia/Sydney
     now_opennem_time = get_today_opennem()
 
-    await crawler_set_meta(crawler.name, CrawlStatTypes.version, crawler.version)
-    await crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, now_opennem_time)
+    # pre-crawl: only stamp version (last_crawled moves to post-success)
+    try:
+        await crawler_set_meta(crawler.name, CrawlStatTypes.version, crawler.version)
+    except Exception as e:
+        logger.warning(f"Failed to set pre-crawl meta for {crawler.name}: {e}")
 
     cr: ControllerReturn | None = None
 
@@ -197,23 +200,28 @@ async def run_crawl(
     if not cr:
         raise Exception(f"Crawl controller error no ControllerReturn for {crawler.name}") from None
 
-    # run here
-    has_errors = False
-
     logger.info(f"{crawler.name} Inserted {cr.inserted_records} of {cr.total_records} records")
 
     if cr.errors > 0:
-        has_errors = True
         logger.error(f"Crawl controller error for {crawler.name}: {cr.error_detail}")
         raise Exception("Crawl controller error") from None
 
-    if not has_errors:
+    # post-success: batch all metadata into a single session + commit
+    meta_updates: dict[CrawlStatTypes, Any] = {
+        CrawlStatTypes.last_crawled: now_opennem_time,
+    }
+
+    if cr.server_latest:
+        meta_updates[CrawlStatTypes.latest_processed] = cr.server_latest
+        meta_updates[CrawlStatTypes.server_latest] = cr.server_latest
+
+    try:
+        await crawler_set_meta_many(crawler.name, meta_updates)
         if cr.server_latest:
-            await crawler_set_meta(crawler.name, CrawlStatTypes.latest_processed, cr.server_latest)
-            await crawler_set_meta(crawler.name, CrawlStatTypes.server_latest, cr.server_latest)
-            logger.info(f"Set last_processed to {crawler.last_processed} and server_latest to {cr.server_latest}")
-        else:
-            logger.debug(f"{crawler.name} has no server_latest return")
+            logger.info(f"Set last_crawled, last_processed and server_latest to {cr.server_latest}")
+    except Exception as e:
+        # data was already persisted — don't fail the crawl over a metadata commit
+        logger.error(f"Failed to set post-crawl meta for {crawler.name}: {e}")
 
     return cr
 

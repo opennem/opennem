@@ -62,9 +62,11 @@ async def store_apvi_forecastset(forecast_set: APVIForecastSet) -> ControllerRet
             await session.commit()
             cr.inserted_records = len(records_to_store)
         except Exception as e:
-            logger.error(f"Error: {e}")
+            await session.rollback()
+            logger.error(f"store_apvi_forecastset failed: {e}")
             cr.errors = len(records_to_store)
             cr.error_detail.append(str(e))
+            raise
 
     return cr
 
