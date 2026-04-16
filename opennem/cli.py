@@ -16,6 +16,7 @@ from rich.console import Console
 
 from opennem import settings
 from opennem.core.crawlers.cli import crawl_app
+from opennem.db.clickhouse.migrations.cli import ch_app
 from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures, load_fueltechs
 from opennem.exporter.inspect import inspect_opennem_json
 from opennem.importer.db import import_all_facilities
@@ -35,6 +36,7 @@ app.add_typer(import_app, name="import")
 app.add_typer(export_app, name="export")
 app.add_typer(task_app, name="task")
 app.add_typer(crawl_app, name="crawl")
+app.add_typer(ch_app, name="ch")
 
 # Setup logging
 logger = logging.getLogger("opennem.cli")

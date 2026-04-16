@@ -6,9 +6,9 @@ This module contains the table schemas for ClickHouse tables used in OpenNEM.
 
 import logging
 
-from opennem.db.clickhouse import get_clickhouse_client
+from opennem.db.clickhouse.client import get_clickhouse_client
 
-logger = logging.getLogger("opennem.db.clickhouse_schema")
+logger = logging.getLogger("opennem.db.clickhouse.schema")
 
 # Market Summary table schema
 MARKET_SUMMARY_TABLE_SCHEMA = """CREATE TABLE IF NOT EXISTS market_summary (
@@ -71,61 +71,6 @@ PRIMARY KEY (interval, network_id, network_region, facility_code, unit_code)
 ORDER BY (interval, network_id, network_region, facility_code, unit_code)
 PARTITION BY toYYYYMM(interval)
 SETTINGS index_granularity = 8192, allow_experimental_replacing_merge_with_cleanup=1"""
-
-
-# Schema migrations for existing tables.
-# Each migration is (column_name, column_type, table_name).
-# Applied idempotently — skips if column already exists.
-MARKET_SUMMARY_STORAGE_COLUMNS = [
-    ("generation_renewable_with_storage", "Nullable(Float64)", "market_summary"),
-    ("generation_renewable_with_storage_energy", "Nullable(Float64)", "market_summary"),
-]
-
-MARKET_SUMMARY_FLOW_COLUMNS = [
-    ("energy_imports", "Nullable(Float64)", "market_summary"),
-    ("energy_exports", "Nullable(Float64)", "market_summary"),
-    ("emissions_imports", "Nullable(Float64)", "market_summary"),
-    ("emissions_exports", "Nullable(Float64)", "market_summary"),
-    ("market_value_imports", "Nullable(Float64)", "market_summary"),
-    ("market_value_exports", "Nullable(Float64)", "market_summary"),
-]
-
-
-def migrate_market_summary_storage() -> None:
-    """Add storage-adjusted renewable columns to existing market_summary table.
-
-    Safe to run multiple times — checks for column existence first.
-    """
-    client = get_clickhouse_client()
-    existing = {row[0] for row in client.execute("DESCRIBE TABLE market_summary")}
-
-    for col_name, col_type, table in MARKET_SUMMARY_STORAGE_COLUMNS:
-        if col_name not in existing:
-            alter = f"ALTER TABLE {table} ADD COLUMN {col_name} {col_type}"
-            client.execute(alter)
-            logger.info(f"Added column {col_name} to {table}")
-        else:
-            logger.debug(f"Column {col_name} already exists in {table}")
-
-
-def migrate_market_summary_flows() -> None:
-    """Add flow columns to existing market_summary table.
-
-    Safe to run multiple times — checks for column existence first.
-    Run this on prod deployment when enabling flows_v4.
-    """
-    client = get_clickhouse_client()
-
-    # Get existing columns
-    existing = {row[0] for row in client.execute("DESCRIBE TABLE market_summary")}
-
-    for col_name, col_type, table in MARKET_SUMMARY_FLOW_COLUMNS:
-        if col_name not in existing:
-            alter = f"ALTER TABLE {table} ADD COLUMN {col_name} {col_type}"
-            client.execute(alter)
-            logger.info(f"Added column {col_name} to {table}")
-        else:
-            logger.debug(f"Column {col_name} already exists in {table}")
 
 
 async def optimize_clickhouse_tables(table_names: list[str] | None = None) -> None:

@@ -8,13 +8,13 @@ materialized views in ClickHouse.
 import logging
 from datetime import datetime, timedelta
 
-from opennem.db.clickhouse import get_clickhouse_client, table_exists
-from opennem.db.clickhouse_views import (
+from opennem.db.clickhouse.client import get_clickhouse_client, table_exists
+from opennem.db.clickhouse.views import (
     CLICKHOUSE_MATERIALIZED_VIEWS,
     MaterializedView,
 )
 
-logger = logging.getLogger("opennem.db.clickhouse_materialized_views")
+logger = logging.getLogger("opennem.db.clickhouse.materialized_views")
 
 
 def ensure_materialized_views_exist(views: list[MaterializedView] | None = None) -> None:
@@ -397,10 +397,10 @@ def refresh_all_materialized_views(
 
     Usage:
         # From CLI:
-        uv run python -m opennem.db.clickhouse_materialized_views --days 30
+        uv run python -m opennem.db.clickhouse.materialized_views --days 30
 
         # From Python:
-        from opennem.db.clickhouse_materialized_views import refresh_all_materialized_views
+        from opennem.db.clickhouse.materialized_views import refresh_all_materialized_views
         refresh_all_materialized_views(days=30)
     """
     from datetime import datetime, timedelta

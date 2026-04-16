@@ -307,6 +307,7 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
 MARKET_SUMMARY_DAILY_VIEW = MaterializedView(
     name="market_summary_daily_mv",
     timestamp_column="date",
+    source_timestamp_column="interval",
     schema="""
         CREATE MATERIALIZED VIEW market_summary_daily_mv
         ENGINE = ReplacingMergeTree(version)

@@ -107,17 +107,8 @@ async def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> str | date
 
 
 async def crawler_set_meta(crawler_name: str, key: CrawlStatTypes, value: Any) -> None:
-    """Set a crawler metadata stat type by name"""
+    """Set a crawler metadata stat type by name — single session, no nesting"""
     async with SessionLocal() as session:
-        if key == CrawlStatTypes.server_latest:
-            current_value = await crawler_get_meta(crawler_name, key)
-
-            try:
-                if current_value and current_value >= value:
-                    return None
-            except TypeError:
-                logger.error(f"Error comparing {current_value} ({type(current_value)}) and {value} ({type(value)})")
-
         stmt = select(CrawlMeta).filter_by(spider_name=crawler_name)
         result = await session.execute(stmt)
         spider_meta = result.scalar_one_or_none()
@@ -128,12 +119,60 @@ async def crawler_set_meta(crawler_name: str, key: CrawlStatTypes, value: Any) -
         if isinstance(value, datetime):
             value = value.isoformat()
 
+        # check server_latest monotonicity within the same session (no nested session)
+        if key == CrawlStatTypes.server_latest and spider_meta.data:
+            current_raw = spider_meta.data.get(key.value)
+            if current_raw:
+                try:
+                    if datetime.fromisoformat(current_raw) >= datetime.fromisoformat(value):
+                        return None
+                except (TypeError, ValueError):
+                    logger.error(f"Error comparing server_latest: {current_raw} vs {value}")
+
         spider_meta.data[key.value] = value
 
         logger.debug(f"Spider {crawler_name} meta: Set {key.value} to {value}")
 
         session.add(spider_meta)
         await session.commit()
+
+
+async def crawler_set_meta_many(crawler_name: str, updates: dict[CrawlStatTypes, Any]) -> None:
+    """Batch-set multiple crawler metadata keys in a single session + commit"""
+    if not updates:
+        return
+
+    async with SessionLocal() as session:
+        stmt = select(CrawlMeta).filter_by(spider_name=crawler_name)
+        result = await session.execute(stmt)
+        spider_meta = result.scalar_one_or_none()
+
+        if not spider_meta:
+            spider_meta = CrawlMeta(spider_name=crawler_name, data={})
+
+        if not spider_meta.data:
+            spider_meta.data = {}
+
+        for key, value in updates.items():
+            if isinstance(value, datetime):
+                value = value.isoformat()
+
+            # check server_latest monotonicity
+            if key == CrawlStatTypes.server_latest:
+                current_raw = spider_meta.data.get(key.value)
+                if current_raw:
+                    try:
+                        if datetime.fromisoformat(current_raw) >= datetime.fromisoformat(value):
+                            continue
+                    except (TypeError, ValueError):
+                        logger.error(f"Error comparing server_latest: {current_raw} vs {value}")
+
+            spider_meta.data[key.value] = value
+
+        session.add(spider_meta)
+        await session.commit()
+
+        logger.debug(f"Spider {crawler_name} meta: batch set {list(updates.keys())}")
 
 
 if __name__ == "__main__":

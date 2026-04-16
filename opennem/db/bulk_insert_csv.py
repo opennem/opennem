@@ -118,7 +118,11 @@ def build_insert_query(
 async def get_pool() -> Pool:
     global pool
     if pool is None:
-        pool = await asyncpg.create_pool(dsn=settings.db_url.replace("+asyncpg", ""))
+        pool = await asyncpg.create_pool(
+            dsn=settings.db_url.replace("+asyncpg", ""),
+            min_size=1,
+            max_size=3,
+        )
     return pool
 
 

@@ -30,7 +30,7 @@ from opennem.crawlers.nemweb import (
 )
 from opennem.crawlers.wemde import run_all_wem_crawlers
 from opennem.db import get_write_session
-from opennem.db.clickhouse_schema import optimize_clickhouse_tables
+from opennem.db.clickhouse.schema import optimize_clickhouse_tables
 from opennem.exporter.facilities import export_facilities_static
 
 # from opennem.exporter.historic import export_historic_intervals
@@ -322,14 +322,14 @@ async def task_optimize_clickhouse_tables(ctx: dict) -> None:
 
 async def task_refresh_clickhouse_mv_fast(ctx: dict) -> None:
     """2-day backfill every 5 min — keeps current day accurate."""
-    from opennem.db.clickhouse_materialized_views import refresh_all_materialized_views
+    from opennem.db.clickhouse.materialized_views import refresh_all_materialized_views
 
     await asyncio.to_thread(refresh_all_materialized_views, days=2, optimize=False)
 
 
 async def task_refresh_clickhouse_mv_full(ctx: dict) -> None:
     """7-day backfill every 6h — wider backfill window for consistency."""
-    from opennem.db.clickhouse_materialized_views import refresh_all_materialized_views
+    from opennem.db.clickhouse.materialized_views import refresh_all_materialized_views
 
     await asyncio.to_thread(refresh_all_materialized_views, days=7, optimize=False)
 

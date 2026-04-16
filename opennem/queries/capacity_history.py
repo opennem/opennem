@@ -51,13 +51,13 @@ async def get_capacity_history(
             f.network_id,
             f.network_region,
             u.fueltech_id,
-            SUM(u.capacity_registered) AS total_capacity
+            SUM(u.capacity_maximum) AS total_capacity
         FROM monthly_buckets mb
         CROSS JOIN units u
         INNER JOIN facilities f ON u.station_id = f.id
         WHERE
             u.fueltech_id IS NOT NULL
-            AND u.capacity_registered IS NOT NULL
+            AND u.capacity_maximum IS NOT NULL
             AND u.commencement_date IS NOT NULL
             AND f.network_id IN ('NEM', 'WEM')
             AND u.fueltech_id NOT IN ('battery', 'solar_rooftop')

@@ -150,7 +150,7 @@ async def reject_social_post(post_id: UUID, rejected_by: str) -> None:
 async def publish_social_post(post_id: UUID) -> None:
     """Publish to all pending platforms, update statuses, notify Slack."""
     from opennem.clients.bluesky import post_bluesky, post_bluesky_with_image
-    from opennem.clients.linkedin import post_linkedin
+    from opennem.clients.linkedin import LinkedInNotConfiguredError, post_linkedin
     from opennem.clients.twitter import post_tweet, post_tweet_with_image
 
     # Load post + platforms
@@ -211,6 +211,7 @@ async def publish_social_post(post_id: UUID) -> None:
 
     published_count = 0
     failed_count = 0
+    skipped_count = 0
     all_results: list[tuple[str, str, str | None]] = []
 
     for plat in platforms:
@@ -240,6 +241,16 @@ async def publish_social_post(post_id: UUID) -> None:
             all_results.append((plat.platform, "published", None))
             published_count += 1
             logger.info(f"Published to {plat.platform}")
+        except LinkedInNotConfiguredError as e:
+            async with get_write_session() as session:
+                p = await session.get(SocialPostPlatform, plat.id)
+                if p:
+                    p.status = PlatformStatus.SKIPPED
+                    p.error_message = str(e)[:500]
+                await session.commit()
+            all_results.append((plat.platform, "skipped", "credentials not configured"))
+            skipped_count += 1
+            logger.info(f"Skipped {plat.platform}: not configured")
         except Exception as e:
             logger.error(f"Failed to publish to {plat.platform}: {e}")
             async with get_write_session() as session:
@@ -260,9 +271,12 @@ async def publish_social_post(post_id: UUID) -> None:
                 post.published_at = _utcnow()
             elif failed_count > 0:
                 post.status = SocialPostStatus.FAILED
-            else:
+            elif published_count > 0:
                 post.status = SocialPostStatus.PUBLISHED
                 post.published_at = _utcnow()
+            else:
+                # only skips, no real publishes
+                post.status = SocialPostStatus.FAILED
         await session.commit()
 
     await post_publish_results_to_slack(post_id, all_results)

@@ -22,12 +22,12 @@ from opennem.db.clickhouse import (
     get_clickhouse_client,
     table_exists,
 )
-from opennem.db.clickhouse_materialized_views import (
+from opennem.db.clickhouse.materialized_views import (
     backfill_materialized_views,
     ensure_materialized_views_exist,
 )
-from opennem.db.clickhouse_schema import UNIT_INTERVALS_TABLE_SCHEMA, optimize_clickhouse_tables
-from opennem.db.clickhouse_views import (
+from opennem.db.clickhouse.schema import UNIT_INTERVALS_TABLE_SCHEMA, optimize_clickhouse_tables
+from opennem.db.clickhouse.views import (
     FUELTECH_INTERVALS_DAILY_VIEW,
     FUELTECH_INTERVALS_VIEW,
     RENEWABLE_INTERVALS_DAILY_VIEW,

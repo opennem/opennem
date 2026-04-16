@@ -88,6 +88,19 @@ async def startup(ctx: dict) -> None:
     await redis.flushdb()
     logger.info("Redis queue flushed on startup")
 
+    # Check for pending ClickHouse migrations
+    try:
+        from opennem.db.clickhouse import get_clickhouse_client
+        from opennem.db.clickhouse.migrations import MigrationRunner
+
+        runner = MigrationRunner(get_clickhouse_client())
+        pending = runner.pending()
+        if pending:
+            names = ", ".join(m.name for m in pending)
+            logger.warning(f"ClickHouse has {len(pending)} pending migration(s): {names}. Run `opennem ch up`.")
+    except Exception as e:
+        logger.warning(f"Could not check CH migrations: {e}")
+
 
 class WorkerSettings:
     # queue_name = "opennem"
