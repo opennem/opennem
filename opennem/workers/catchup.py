@@ -364,7 +364,7 @@ async def catchup_date(target_date: datetime) -> None:
         await process_market_summary_backlog(session=session, start_date=day_start, end_date=day_end)
 
     # MV backfill
-    from opennem.db.clickhouse_materialized_views import backfill_materialized_views
+    from opennem.db.clickhouse.materialized_views import backfill_materialized_views
 
     await asyncio.to_thread(backfill_materialized_views, start_date=day_start, end_date=day_end, refresh_views=False)
 

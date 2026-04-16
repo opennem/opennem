@@ -14,21 +14,10 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem.db import get_write_session
-from opennem.db.clickhouse import (
-    create_table_if_not_exists,
-    get_clickhouse_client,
-    table_exists,
-)
-from opennem.db.clickhouse_materialized_views import (
-    backfill_materialized_views,
-    ensure_materialized_views_exist,
-)
-from opennem.db.clickhouse_schema import (
-    MARKET_SUMMARY_TABLE_SCHEMA,
-    migrate_market_summary_flows,
-    optimize_clickhouse_tables,
-)
-from opennem.db.clickhouse_views import (
+from opennem.db.clickhouse import get_clickhouse_client
+from opennem.db.clickhouse.materialized_views import backfill_materialized_views
+from opennem.db.clickhouse.schema import optimize_clickhouse_tables
+from opennem.db.clickhouse.views import (
     MARKET_SUMMARY_DAILY_VIEW,
     MARKET_SUMMARY_MONTHLY_VIEW,
 )
@@ -758,20 +747,18 @@ async def _compute_flows_for_range(start_time: datetime, end_time: datetime) -> 
 
 def _ensure_clickhouse_schema() -> None:
     """
-    Ensure ClickHouse schema exists by creating tables and views if needed.
-    Also applies pending migrations (e.g. flow columns).
+    Ensure ClickHouse schema and migrations are up to date.
+    Applies any pending migrations automatically.
     """
+    from opennem.db.clickhouse.migrations import MigrationRunner
+
     client = get_clickhouse_client()
-
-    if not table_exists(client, "market_summary"):
-        create_table_if_not_exists(client, "market_summary", MARKET_SUMMARY_TABLE_SCHEMA)
-        logger.info("Created market_summary table")
-
-    # Apply flow column migration (idempotent)
-    migrate_market_summary_flows()
-
-    # Use the generic function to ensure materialized views exist
-    ensure_materialized_views_exist(_MARKET_SUMMARY_MATERIALIZED_VIEWS)
+    runner = MigrationRunner(client)
+    pending = runner.pending()
+    if pending:
+        names = ", ".join(m.name for m in pending)
+        logger.info(f"Applying {len(pending)} pending CH migration(s): {names}")
+        runner.up()
 
 
 def _refresh_clickhouse_schema() -> None:
