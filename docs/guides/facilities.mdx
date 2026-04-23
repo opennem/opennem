@@ -118,10 +118,22 @@ Note: The serialized date fields provide human-friendly date formats that respec
 
 Generation units are tracked through various operational states:
 
-- **Operating** — Currently generating electricity
-- **Commissioning** — Being tested and prepared for operation
-- **Committed** — Approved and contracted but not yet operating
-- **Retired** — Permanently closed and no longer generating
+- **Committed** — The facility has reached FID or started construction
+- **Commissioning** — The facility has recorded generation and is yet to generate at 90% of its maximum capacity
+- **Operating** — The facility has generated 90% of its maximum capacity and is currently generating
+- **Retired** — Permanently closed and no longer generating
+
+These definitions are unique to Open Electricity. The commissioning process can be broken down further into a series of tests conducted with AEMO and it is possible for facilities to be considered "operating" under Open Electricity's definition whilst still progressing through these commissioning steps. The commissioning process for each facility is not comprehensively documented and made public by AEMO, hence the difference in our definitions. For more information on AEMO's process, visit [here](https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/participate-in-the-market/network-connections/connections-scorecard).
+
+There are facilities that may behave unusually despite being considered operating by Open Electricity. Consider the Eraring BESS. The battery reached 90% of maximum capacity in September 2025, but only completed AEMO's commissioning process in [December 2025](https://www.originenergy.com.au/about/who-we-are/what-we-do/generation/eraring-projects/battery/).  We can see very low generation in October and November as the battery is not operating as a commissioned facility despite it meeting the Open Electricity threshold.
+
+![[Eraring BESS commissioning.png]]
+On the other hand, there are facilities that will operate in a reasonable manner and contribute considerably to the grid despite not being commissioning by AEMO's definition. Consider the Gangarri Solar Farm. The facility officially reached full output according to AEMO in [Q1 2025](https://www.aemo.com.au/-/media/files/electricity/nem/network_connections/connections-scorecard/2025/march-2025.pdf?rev=fba164b227c848abafe9cfa0176658a3&sc_lang=en), though it had generated at considerable rates for years prior. In fact, in October 2023, it had generated more electricity than during any month in 2025. 
+
+![[Gangarri Solar Commissioning.png]]
+
+As such, the 90% of maximum capacity is a useful threshold to give an indication of the amount of capacity available to the grid, capacity factor calculations and similar uses. The commissioning status given by Open Electricity is indicative and users may find alternative definitions better suit their purposes.
+
 
 ## API Access
 
