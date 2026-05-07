@@ -9,9 +9,8 @@ from enum import StrEnum
 
 from pydantic import computed_field, model_validator
 
-from opennem.api.schema import APIV4ResponseSchema
 from opennem.api.utils import get_api_network_from_code
-from opennem.core.metric import get_metric_metadata
+from opennem.core.metric import Metric, get_metric_metadata
 from opennem.core.time_interval import Interval
 from opennem.schema.core import BaseConfig
 from opennem.schema.field_types import SignificantFigures8
@@ -99,7 +98,7 @@ class NetworkTimeSeries(BaseConfig):
 
     @computed_field
     @property
-    def network_timezone_offset(self) -> int:
+    def network_timezone_offset(self) -> str:
         """
         Get the timezone offset for the network.
         """
@@ -109,11 +108,5 @@ class NetworkTimeSeries(BaseConfig):
     def set_unit_from_metric(self) -> "NetworkTimeSeries":
         """Set the unit based on the primary metric if not explicitly provided."""
         if not self.unit:
-            self.unit = get_metric_metadata(self.metric).unit
+            self.unit = get_metric_metadata(Metric(self.metric.value)).unit
         return self
-
-
-class NetworkTimeSeriesResponse(APIV4ResponseSchema):
-    """API v4 response for network time series data."""
-
-    data: NetworkTimeSeries | None = None

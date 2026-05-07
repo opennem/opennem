@@ -338,7 +338,13 @@ async def get_network_regions(
 
     logger.debug(network_regions)
 
-    response = [APINetworkRegion(code=i.code, timezone=i.timezone) for i in network_regions]
+    response = [
+        APINetworkRegion(
+            code=str(i.code),
+            timezone=str(i.timezone) if i.timezone is not None else None,
+        )
+        for i in network_regions
+    ]
 
     return response
 
@@ -365,9 +371,9 @@ async def fueltechs(
     try:
         models = [
             FueltechSchema(
-                code=i.code,
-                label=i.label,
-                renewable=i.renewable,
+                code=str(i.code),
+                label=str(i.label) if i.label is not None else None,
+                renewable=bool(i.renewable) if i.renewable is not None else None,
             )
             for i in fueltechs
         ]

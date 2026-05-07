@@ -172,12 +172,12 @@ def _build_label_key_and_labels(
 
 def format_timeseries_response(
     network: str,
-    metrics: list[MetricType],
+    metrics: Sequence[MetricType],
     interval: Interval,
     primary_grouping: PrimaryGrouping,
     secondary_groupings: Sequence[SecondaryGrouping] | None,
     results: Sequence[dict[str, Any]],
-    facility_code: str | None = None,
+    facility_code: str | list[str] | None = None,
 ) -> list[dict[str, Any]]:
     """
     Format time series query results into plain dicts ready for orjson serialization.

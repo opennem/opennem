@@ -89,7 +89,7 @@ async def get_network_data(
         Query(description="Primary grouping dimension applied to results.", examples=["network_region"]),
     ] = PrimaryGrouping.NETWORK,
     client: Any = Depends(get_clickhouse_dependency),
-    user: authenticated_user = None,
+    user: authenticated_user | None = None,
 ) -> dict:
     """Get market data for a network."""
     network = get_api_network_from_code(network_code)

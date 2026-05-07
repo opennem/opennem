@@ -79,7 +79,8 @@ class OpenNEMUser(BaseModel):
 
 
 class OpennemUserResponse(APIV4ResponseSchema):
-    data: OpenNEMUser = Field(..., description="Internal user record (admin-only fields included).")
+    # Override `data` to a concrete type — standard Pydantic v2 pattern; pyright LSP rule trips on default-removal.
+    data: OpenNEMUser = Field(..., description="Internal user record (admin-only fields included).")  # pyright: ignore[reportGeneralTypeIssues, reportIncompatibleVariableOverride]
 
 
 class OpenNEMUserMe(BaseModel):
@@ -125,7 +126,8 @@ class OpenNEMUserMe(BaseModel):
 
 
 class OpenNEMUserMeResponse(APIV4ResponseSchema):
-    data: OpenNEMUserMe = Field(..., description="Authenticated user's profile, plan, roles, rate-limit, and credit balance.")
+    # Override `data` to a concrete type — standard Pydantic v2 pattern; pyright LSP rule trips on default-removal.
+    data: OpenNEMUserMe = Field(..., description="Authenticated user's profile, plan, roles, rate-limit, and credit balance.")  # pyright: ignore[reportGeneralTypeIssues, reportIncompatibleVariableOverride]
 
 
 def to_user_me(user: OpenNEMUser) -> OpenNEMUserMe:

@@ -86,7 +86,7 @@ async def get_network_data(
         Query(description="Optional secondary grouping dimension.", examples=["fueltech_group"]),
     ] = None,
     client: Any = Depends(get_clickhouse_dependency),
-    user: authenticated_user = None,
+    user: authenticated_user | None = None,
 ) -> dict:
     """Get time series data for a network."""
     network = get_api_network_from_code(network_code)

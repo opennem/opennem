@@ -6,6 +6,7 @@ for both market and data endpoints.
 """
 
 import logging
+from collections.abc import Sequence
 from datetime import datetime
 from enum import StrEnum
 
@@ -250,7 +251,7 @@ QUERY_CONFIGS = {
 def get_timeseries_query(
     query_type: QueryType,
     network: NetworkSchema,
-    metrics: list[MetricType],
+    metrics: Sequence[MetricType],
     interval: Interval,
     date_start: datetime,
     date_end: datetime,

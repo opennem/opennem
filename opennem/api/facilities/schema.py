@@ -260,9 +260,11 @@ class FacilityResponseSchema(BaseModel):
         # Create context with network_id for units
         context = {"network_id": self.network_id}
 
-        # Update each unit's context with the network_id
+        # Update each unit's context with the network_id.
+        # `context` is not part of Pydantic's ConfigDict TypedDict, but is read
+        # by the unit's after-validator via self.model_config.get("context", {}).
         for unit in self.units:
-            unit.model_config["context"] = context
+            unit.model_config["context"] = context  # type: ignore[typeddict-unknown-key]
 
         return self
 
