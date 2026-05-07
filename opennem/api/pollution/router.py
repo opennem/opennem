@@ -13,7 +13,7 @@ from fastapi import APIRouter, HTTPException, Query
 from fastapi_versionizer import api_version
 from sqlalchemy import select
 
-from opennem.api.schema import APIV4ResponseSchema
+from opennem.api.schema import APIV4ResponseSchema, std_error_responses
 from opennem.api.security import authenticated_user
 from opennem.api.timeseries import TimeSeries, TimeSeriesResult
 from opennem.core.metric import Metric
@@ -36,8 +36,9 @@ logger = logging.getLogger("opennem.api.pollution")
 @api_version(4)
 @router.get(
     "/facilities",
-    response_model=APIV4ResponseSchema,
+    response_model=APIV4ResponseSchema[list[TimeSeries]],
     response_model_exclude_none=True,
+    responses=std_error_responses(),
     tags=["Pollution"],
     description="Get pollution data for facilities with NPI tracking",
 )
@@ -60,7 +61,7 @@ async def get_facility_pollution(
         datetime | None, Query(description="Start time for the query", examples=["1998-01-01T00:00:00"])
     ] = None,
     date_end: Annotated[datetime | None, Query(description="End time for the query", examples=["2024-12-31T00:00:00"])] = None,
-) -> APIV4ResponseSchema:
+) -> APIV4ResponseSchema[list[TimeSeries]]:
     """
     Get pollution data for facilities that have NPI tracking.
 

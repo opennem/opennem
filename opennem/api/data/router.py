@@ -7,12 +7,13 @@ import time
 from datetime import datetime
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from fastapi_cache.decorator import cache
 from fastapi_versionizer import api_version
 
 from opennem.api.data.utils import validate_date_range
 from opennem.api.queries import QueryType, get_timeseries_query
+from opennem.api.schema import std_error_responses
 from opennem.api.security import authenticated_user
 from opennem.api.timeseries import build_timeseries_response, format_timeseries_response
 from opennem.api.utils import get_api_network_from_code, validate_metrics
@@ -34,22 +35,55 @@ _SUPPORTED_METRICS = [
 
 
 @api_version(4)
-@router.get("/network/{network_code}")
+@router.get("/network/{network_code}", responses=std_error_responses())
 @cache(expire=60 * 5)
 async def get_network_data(
-    network_code: str,
-    metrics: Annotated[list[Metric], Query(description="The metrics to get data for", example="energy")],
-    interval: Annotated[Interval, Query(description="The time interval to aggregate data by", example="1h")] = Interval.INTERVAL,
-    date_start: Annotated[datetime | None, Query(description="Start time for the query", example="2024-01-01T00:00:00")] = None,
-    date_end: Annotated[datetime | None, Query(description="End time for the query", example="2024-01-02T00:00:00")] = None,
-    network_region: Annotated[str | None, Query(description="Network region to get data for", example="NSW1")] = None,
-    fueltech: Annotated[list[str] | None, Query(description="Fueltechs to get data for", example="coal_black")] = None,
-    fueltech_group: Annotated[list[str] | None, Query(description="Fueltech groups to get data for", example="coal")] = None,
+    network_code: Annotated[
+        str,
+        Path(description="Network identifier — see `/networks` for valid codes.", examples=["NEM"]),
+    ],
+    metrics: Annotated[
+        list[Metric],
+        Query(
+            description="One or more metrics to return. Multi-value: `?metrics=energy&metrics=power`.",
+            examples=[["energy"]],
+            min_length=1,
+        ),
+    ],
+    interval: Annotated[
+        Interval,
+        Query(description="Bucket size for time-series aggregation.", examples=["1h"]),
+    ] = Interval.INTERVAL,
+    date_start: Annotated[
+        datetime | None,
+        Query(description="Inclusive start of the query window (network-local time).", examples=["2024-01-01T00:00:00"]),
+    ] = None,
+    date_end: Annotated[
+        datetime | None,
+        Query(description="Inclusive end of the query window (network-local time).", examples=["2024-01-02T00:00:00"]),
+    ] = None,
+    network_region: Annotated[
+        str | None,
+        Query(description="Restrict to a single network region (price zone).", examples=["NSW1"]),
+    ] = None,
+    fueltech: Annotated[
+        list[str] | None,
+        Query(
+            description="Restrict to one or more fueltechs (e.g. `coal_black`, `solar_utility`).",
+            examples=[["solar_utility"]],
+        ),
+    ] = None,
+    fueltech_group: Annotated[
+        list[str] | None,
+        Query(description="Restrict to one or more fueltech groups (e.g. `coal`, `renewable`).", examples=[["renewable"]]),
+    ] = None,
     primary_grouping: Annotated[
-        PrimaryGrouping, Query(description="Primary grouping to apply", example="network_region")
+        PrimaryGrouping,
+        Query(description="Primary grouping dimension applied to results.", examples=["network_region"]),
     ] = PrimaryGrouping.NETWORK,
     secondary_grouping: Annotated[
-        SecondaryGrouping | None, Query(description="Optional secondary grouping to apply", example="fueltech_group")
+        SecondaryGrouping | None,
+        Query(description="Optional secondary grouping dimension.", examples=["fueltech_group"]),
     ] = None,
     client: Any = Depends(get_clickhouse_dependency),
     user: authenticated_user = None,
@@ -121,21 +155,50 @@ async def get_network_data(
 
 
 @api_version(4)
-@router.get("/facilities/{network_code}")
+@router.get("/facilities/{network_code}", responses=std_error_responses())
 @cache(expire=60 * 5)
 async def get_facility_data(
-    network_code: str,
-    metrics: Annotated[list[Metric], Query(description="The metrics to get data for", example="energy")],
+    network_code: Annotated[
+        str,
+        Path(description="Network identifier — see `/networks` for valid codes.", examples=["NEM"]),
+    ],
+    metrics: Annotated[
+        list[Metric],
+        Query(
+            description="One or more metrics to return for the requested facilities.",
+            examples=[["energy"]],
+            min_length=1,
+        ),
+    ],
     user: authenticated_user,
-    interval: Annotated[Interval, Query(description="The time interval to aggregate data by", example="1h")] = Interval.INTERVAL,
+    interval: Annotated[
+        Interval,
+        Query(description="Bucket size for time-series aggregation.", examples=["1d"]),
+    ] = Interval.INTERVAL,
     facility_code: Annotated[
-        list[str] | None, Query(description="The facility code to get data for", example="AEMO_DISCOS_01")
+        list[str] | None,
+        Query(
+            description="Restrict to one or more facility codes (max 30). Multi-value: repeat the param.",
+            examples=[["BANGOWF"]],
+            max_length=30,
+        ),
     ] = None,
     unit_code: Annotated[
-        list[str] | None, Query(description="The unit code to get data for", example="INVESTEC_COLLGAR_WF1")
+        list[str] | None,
+        Query(
+            description="Restrict to one or more unit codes (max 30). Multi-value: repeat the param.",
+            examples=[["BANGOWF1"]],
+            max_length=30,
+        ),
     ] = None,
-    date_start: Annotated[datetime | None, Query(description="Start time for the query", example="2024-01-01T00:00:00")] = None,
-    date_end: Annotated[datetime | None, Query(description="End time for the query", example="2024-01-02T00:00:00")] = None,
+    date_start: Annotated[
+        datetime | None,
+        Query(description="Inclusive start of the query window (network-local time).", examples=["2024-01-01T00:00:00"]),
+    ] = None,
+    date_end: Annotated[
+        datetime | None,
+        Query(description="Inclusive end of the query window (network-local time).", examples=["2024-01-02T00:00:00"]),
+    ] = None,
     client: Any = Depends(get_clickhouse_dependency),
 ) -> dict:
     """Get time series data for a specific facility, grouped by unit."""

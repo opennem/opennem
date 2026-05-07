@@ -10,7 +10,7 @@ from collections.abc import Sequence
 from datetime import datetime
 from typing import Any
 
-from pydantic import ConfigDict, computed_field, model_validator
+from pydantic import ConfigDict, Field, computed_field, model_validator
 
 from opennem.api.utils import get_api_network_from_code
 from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
@@ -32,11 +32,29 @@ logger = logging.getLogger("opennem.api.timeseries")
 class TimeSeriesResult(BaseConfig):
     """A single time series result (Pydantic model for non-hot-path endpoints)."""
 
-    name: str
-    date_start: datetime
-    date_end: datetime
-    columns: dict[str, str | bool | int | list[float] | list[int]] = {}
-    data: list[tuple[datetime, float | None]]
+    name: str = Field(
+        description="Series identifier — typically `<metric>_<grouping_value>` (e.g. `energy_NSW1`, `price_total`).",
+        examples=["energy_NSW1"],
+    )
+    date_start: datetime = Field(
+        description="Inclusive start of the series window (network-local time).",
+        examples=["2024-09-01T00:00:00+10:00"],
+    )
+    date_end: datetime = Field(
+        description="Inclusive end of the series window (network-local time).",
+        examples=["2024-09-02T00:00:00+10:00"],
+    )
+    columns: dict[str, str | bool | int | list[float] | list[int]] = Field(
+        default_factory=dict,
+        description=(
+            "Labels describing this series — region, fueltech, renewable flag, etc. Keys depend on the requested groupings."
+        ),
+        examples=[{"region": "NSW1", "fueltech_group": "renewable"}],
+    )
+    data: list[tuple[datetime, float | None]] = Field(
+        description="Ordered list of `[timestamp, value]` pairs. `value` is `null` for intervals with no data.",
+        examples=[[["2024-09-01T00:00:00+10:00", 1234.56], ["2024-09-01T01:00:00+10:00", None]]],
+    )
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -55,16 +73,47 @@ class TimeSeriesResult(BaseConfig):
 class TimeSeries(BaseConfig):
     """Time series data container (Pydantic model for non-hot-path endpoints)."""
 
-    network_code: str
-    metric: Metric
-    unit: str = ""
-    interval: Interval
-    date_start: datetime
-    date_end: datetime
-    groupings: list[str] = []
-    results: list[TimeSeriesResult]
+    network_code: str = Field(
+        description="Network identifier — see `/networks` for valid codes.",
+        examples=["NEM"],
+    )
+    metric: Metric = Field(
+        description="The metric this series carries (`energy`, `power`, `price`, etc.).",
+        examples=["energy"],
+    )
+    unit: str = Field(
+        default="",
+        description="Unit of measurement for the metric (`MW`, `MWh`, `AUD/MWh`, …). Auto-derived from `metric` when omitted.",
+        examples=["MWh"],
+    )
+    interval: Interval = Field(
+        description="Bucket size used to aggregate the underlying samples.",
+        examples=["1h"],
+    )
+    date_start: datetime = Field(
+        description="Inclusive start of the requested window (network-local time).",
+        examples=["2024-09-01T00:00:00+10:00"],
+    )
+    date_end: datetime = Field(
+        description="Inclusive end of the requested window (network-local time).",
+        examples=["2024-09-02T00:00:00+10:00"],
+    )
+    groupings: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Ordered list of grouping dimensions applied "
+            "(e.g. `['network_region', 'fueltech_group']`). Empty when no grouping was requested."
+        ),
+        examples=[["network_region", "fueltech_group"]],
+    )
+    results: list[TimeSeriesResult] = Field(
+        description="One entry per unique grouping combination — each carries its own labels and data points.",
+    )
 
-    @computed_field
+    @computed_field(  # type: ignore[prop-decorator]
+        description="Network's fixed UTC offset as an ISO-8601 string (e.g. `+10:00` for NEM, `+08:00` for WEM).",
+        examples=["+10:00"],
+    )
     @property
     def network_timezone_offset(self) -> str:
         return get_api_network_from_code(self.network_code).get_offset_string()

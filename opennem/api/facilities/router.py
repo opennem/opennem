@@ -5,6 +5,7 @@ Handles facility and unit data queries and responses.
 """
 
 import logging
+from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query
 from fastapi_cache.decorator import cache
@@ -14,6 +15,7 @@ from sqlalchemy.orm import selectinload
 
 from opennem.api.facilities.schema import APIV4FacilityResponseSchema, FacilityResponseSchema, UnitResponseSchema
 from opennem.api.facilities.utils import unit_specificity_from_string
+from opennem.api.schema import std_error_responses
 from opennem.api.security import authenticated_user
 from opennem.db import get_read_session
 from opennem.db.models.opennem import Facility, FuelTech, Unit
@@ -26,22 +28,49 @@ logger = logging.getLogger("opennem.api.facilities")
 @api_version(major=4)
 @router.get(
     path="/",
+    response_model=APIV4FacilityResponseSchema,
     response_model_exclude_none=True,
     response_model_exclude_unset=False,
+    responses=std_error_responses(include_404=False),
     tags=["Facilities"],
     description="Get all facilities and their associated units",
 )
 @cache(expire=60 * 15)  # 15 minute cache on facility endpoints
 async def get_facilities(
     user: authenticated_user,
-    facility_code: list[str] | None = Query(None, description="Filter by facility code(s)"),
-    status_id: list[UnitStatusType] | None = Query(None, description="Filter by unit status(es)"),
-    fueltech_id: list[UnitFueltechType] | None = Query(None, description="Filter by unit fuel technology type(s)"),
-    fueltech_group_id: list[UnitFueltechGroupType] | None = Query(
-        None, description="Filter by unit fuel technology group type(s)"
-    ),
-    network_id: list[str] | None = Query(None, description="Filter by network code(s)"),
-    network_region: str | None = Query(None, description="Filter by network region"),
+    facility_code: Annotated[
+        list[str] | None,
+        Query(description="Filter to one or more facility codes (e.g. `BAYSW`).", examples=[["BAYSW"]]),
+    ] = None,
+    status_id: Annotated[
+        list[UnitStatusType] | None,
+        Query(
+            description="Filter by unit operational status. Multi-value: `?status_id=operating&status_id=committed`.",
+            examples=[["operating"]],
+        ),
+    ] = None,
+    fueltech_id: Annotated[
+        list[UnitFueltechType] | None,
+        Query(
+            description="Filter by unit fueltech (e.g. `coal_black`, `solar_utility`, `wind`).",
+            examples=[["solar_utility", "wind"]],
+        ),
+    ] = None,
+    fueltech_group_id: Annotated[
+        list[UnitFueltechGroupType] | None,
+        Query(
+            description="Filter by fueltech group (e.g. `coal`, `renewable`).",
+            examples=[["renewable"]],
+        ),
+    ] = None,
+    network_id: Annotated[
+        list[str] | None,
+        Query(description="Filter to one or more network codes — see `/networks`.", examples=[["NEM"]]),
+    ] = None,
+    network_region: Annotated[
+        str | None,
+        Query(description="Filter to a network region (price zone).", examples=["NSW1"]),
+    ] = None,
 ) -> APIV4FacilityResponseSchema:
     """
     Get all facilities and their associated units.
