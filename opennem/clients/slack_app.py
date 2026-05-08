@@ -164,6 +164,71 @@ async def upload_image_to_slack(channel: str, image: bytes, filename: str = "sum
             return None
 
 
+async def add_reaction(channel: str, timestamp: str, name: str) -> bool:
+    """Add an emoji reaction to a message. Failures are logged, never raised."""
+    if not settings.slack_bot_token:
+        return False
+    try:
+        resp = await _http_client.post(
+            f"{SLACK_API_BASE}/reactions.add",
+            headers={"Authorization": f"Bearer {settings.slack_bot_token}"},
+            json={"channel": channel, "timestamp": timestamp, "name": name},
+        )
+        data = resp.json()
+        if not data.get("ok") and data.get("error") != "already_reacted":
+            logger.warning(f"Slack reactions.add({name}) failed: {data.get('error')}")
+            return False
+        return True
+    except Exception as e:
+        logger.warning(f"Slack reactions.add({name}) raised: {e}")
+        return False
+
+
+async def remove_reaction(channel: str, timestamp: str, name: str) -> bool:
+    """Remove an emoji reaction from a message. Failures are logged, never raised."""
+    if not settings.slack_bot_token:
+        return False
+    try:
+        resp = await _http_client.post(
+            f"{SLACK_API_BASE}/reactions.remove",
+            headers={"Authorization": f"Bearer {settings.slack_bot_token}"},
+            json={"channel": channel, "timestamp": timestamp, "name": name},
+        )
+        data = resp.json()
+        if not data.get("ok") and data.get("error") != "no_reaction":
+            logger.warning(f"Slack reactions.remove({name}) failed: {data.get('error')}")
+            return False
+        return True
+    except Exception as e:
+        logger.warning(f"Slack reactions.remove({name}) raised: {e}")
+        return False
+
+
+async def post_thread_reply(channel: str, thread_ts: str, text: str) -> dict | None:
+    """Post a message as a reply in a Slack thread. Returns response dict or None on failure."""
+    if not settings.slack_bot_token:
+        return None
+    try:
+        resp = await _http_client.post(
+            f"{SLACK_API_BASE}/chat.postMessage",
+            headers={"Authorization": f"Bearer {settings.slack_bot_token}"},
+            json={
+                "channel": channel,
+                "thread_ts": thread_ts,
+                "text": text,
+                "blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": text}}],
+            },
+        )
+        data = resp.json()
+        if not data.get("ok"):
+            logger.warning(f"Slack thread reply failed: {data.get('error')}")
+            return None
+        return data
+    except Exception as e:
+        logger.warning(f"Slack thread reply raised: {e}")
+        return None
+
+
 async def respond_to_interaction(response_url: str, text: str, replace_original: bool = True) -> bool:
     """Respond to a Slack interaction via the response_url (valid for 30 min, up to 5 uses)."""
     resp = await _http_client.post(

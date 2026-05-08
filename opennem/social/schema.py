@@ -49,6 +49,7 @@ class CreateSocialPostRequest(BaseConfig):
     source_type: str | None = None
     source_id: str | None = None
     network_id: str | None = None
+    link_url: str | None = None  # if set, posted as a thread reply on Twitter/Bluesky
     metadata: dict = Field(default_factory=dict)
     platforms: list[Platform] = Field(default_factory=lambda: list(ALL_PLATFORMS))
     auto_approve: bool = False

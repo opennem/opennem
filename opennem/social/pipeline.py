@@ -24,7 +24,12 @@ from opennem.social.schema import (
     SocialPostResponse,
     SocialPostStatus,
 )
-from opennem.social.slack import post_publish_results_to_slack, send_approval_request, update_post_status_in_slack
+from opennem.social.slack import (
+    mark_publishing,
+    mark_rejected,
+    post_publish_results_to_slack,
+    send_approval_request,
+)
 
 logger = logging.getLogger("opennem.social.pipeline")
 
@@ -36,12 +41,11 @@ def _utcnow() -> datetime:
 async def create_social_post(
     req: CreateSocialPostRequest,
     image: bytes | None = None,
-) -> SocialPostResponse:
+) -> "SocialPostResponse | None":
     """Create a social post, send to Slack for approval."""
     # Upload image to Cloudflare if provided. Store the `hires` variant URL —
     # the default `public` variant scales down to 1366px and re-encodes as
     # JPEG, which tanks quality on Twitter. `hires` preserves the full PNG.
-    # Raise on failure so ARQ retries + Sentry captures.
     image_url = req.image_url
     if image and not image_url:
         from opennem.clients.cfimage import save_image_to_cloudflare
@@ -66,6 +70,11 @@ async def create_social_post(
                 logger.info(f"Duplicate social post for {req.source_type}:{req.source_id}, skipping")
                 return await get_social_post(existing_id)
 
+    # Persist link_url in metadata so we can read it back at publish time
+    metadata_dict: dict[str, Any] = dict(req.metadata or {})
+    if req.link_url:
+        metadata_dict["link_url"] = req.link_url
+
     async with get_write_session() as session:
         post = SocialPost(
             post_type=req.post_type,
@@ -75,7 +84,7 @@ async def create_social_post(
             source_type=req.source_type,
             source_id=req.source_id,
             network_id=req.network_id,
-            metadata_=req.metadata or {},
+            metadata_=metadata_dict,
         )
         session.add(post)
         await session.flush()
@@ -92,10 +101,10 @@ async def create_social_post(
         post_id = post.id
         await session.commit()
 
-    # Post to Slack for approval
+    # Post to Slack for approval — single Block Kit message with the image embedded
     channel = settings.slack_weekly_summary_channel
     if channel and not req.auto_approve:
-        slack_channel_id, slack_message_ts = await send_approval_request(post_id, req.text_content, image)
+        slack_channel_id, slack_message_ts = await send_approval_request(post_id, req.text_content, image_url=image_url)
 
         if slack_channel_id and slack_message_ts:
             async with get_write_session() as session:
@@ -128,7 +137,7 @@ async def approve_social_post(post_id: UUID, approved_by: str) -> None:
         post.approved_at = _utcnow()
         await session.commit()
 
-    await update_post_status_in_slack(post_id, f"Approved by @{approved_by} — publishing...")
+    await mark_publishing(post_id, approved_by)
     await publish_social_post(post_id)
 
 
@@ -144,14 +153,15 @@ async def reject_social_post(post_id: UUID, rejected_by: str) -> None:
         post.rejected_by = rejected_by
         await session.commit()
 
-    await update_post_status_in_slack(post_id, f"Rejected by @{rejected_by}")
+    await mark_rejected(post_id, rejected_by)
 
 
 async def publish_social_post(post_id: UUID) -> None:
-    """Publish to all pending platforms, update statuses, notify Slack."""
-    from opennem.clients.bluesky import post_bluesky, post_bluesky_with_image
+    """Publish to all pending platforms, persist permalinks, post URL replies on
+    Twitter/Bluesky for `link_url`, then notify Slack."""
+    from opennem.clients.bluesky import post_bluesky, post_bluesky_reply, post_bluesky_with_image
     from opennem.clients.linkedin import LinkedInNotConfiguredError, post_linkedin
-    from opennem.clients.twitter import post_tweet, post_tweet_with_image
+    from opennem.clients.twitter import post_tweet, post_tweet_reply, post_tweet_with_image
 
     # Load post + platforms
     async with get_read_session() as session:
@@ -166,6 +176,7 @@ async def publish_social_post(post_id: UUID) -> None:
         text = post.text_content
         image_url = post.image_url
         platforms = list(post.platforms)
+        link_url = (post.metadata_ or {}).get("link_url") if post.metadata_ else None
 
     # Set status to publishing
     async with get_write_session() as session:
@@ -187,21 +198,49 @@ async def publish_social_post(post_id: UUID) -> None:
         except Exception as e:
             logger.warning(f"Failed to download image from {image_url}: {e}")
 
-    # Platform-specific publish functions
-    async def _publish_twitter(txt: str, img: bytes | None) -> None:
+    # Each publisher returns {platform_post_id, permalink, ...} (or {} when not
+    # supported / not implemented). Failures raise.
+    #
+    # When `link_url` is set, the URL is contractually part of the post —
+    # Twitter/Bluesky main bodies have it stripped — so a failed reply must fail
+    # the platform publish. The main post is already up at that point; the FAILED
+    # row carries the permalink so an operator can manually post the reply or
+    # accept the linkless post. (A pipeline retry would duplicate the main post.)
+    async def _publish_twitter(txt: str, img: bytes | None) -> dict:
         if img:
-            await post_tweet_with_image(txt, io.BytesIO(img))
+            result = await post_tweet_with_image(txt, io.BytesIO(img))
         else:
-            await post_tweet(txt)
+            result = await post_tweet(txt)
+        if link_url and result and result.get("platform_post_id"):
+            try:
+                await post_tweet_reply(link_url, in_reply_to_tweet_id=result["platform_post_id"])
+            except Exception as e:
+                permalink = result.get("permalink") or "no permalink"
+                raise RuntimeError(f"Twitter main post {permalink} succeeded but URL thread reply failed: {e}") from e
+        return result or {}
 
-    async def _publish_bluesky(txt: str, img: bytes | None) -> None:
+    async def _publish_bluesky(txt: str, img: bytes | None) -> dict:
         if img:
-            await post_bluesky_with_image(txt, io.BytesIO(img), alt_text="Open Electricity")
+            result = await post_bluesky_with_image(txt, io.BytesIO(img), alt_text="Open Electricity")
         else:
-            await post_bluesky(txt)
+            result = await post_bluesky(txt)
+        if link_url and result and result.get("platform_post_id") and result.get("cid"):
+            try:
+                await post_bluesky_reply(
+                    link_url,
+                    parent_uri=result["platform_post_id"],
+                    parent_cid=result["cid"],
+                )
+            except Exception as e:
+                permalink = result.get("permalink") or "no permalink"
+                raise RuntimeError(f"Bluesky main post {permalink} succeeded but URL thread reply failed: {e}") from e
+        return result or {}
 
-    async def _publish_linkedin(txt: str, img: bytes | None) -> None:
-        await post_linkedin(txt, io.BytesIO(img) if img else None)
+    async def _publish_linkedin(txt: str, img: bytes | None) -> dict:
+        # LinkedIn doesn't penalise URLs; append inline if present
+        body = f"{txt}\n\n{link_url}" if link_url else txt
+        result = await post_linkedin(body, io.BytesIO(img) if img else None)
+        return result or {}
 
     platform_publishers: dict[str, Any] = {
         Platform.TWITTER: _publish_twitter,
@@ -231,16 +270,24 @@ async def publish_social_post(post_id: UUID) -> None:
             await session.commit()
 
         try:
-            await publisher(text, image_bytes)
+            result = await publisher(text, image_bytes)
+            permalink = result.get("permalink") if isinstance(result, dict) else None
+            platform_post_id = result.get("platform_post_id") if isinstance(result, dict) else None
+
             async with get_write_session() as session:
                 p = await session.get(SocialPostPlatform, plat.id)
                 if p:
                     p.status = PlatformStatus.PUBLISHED
                     p.published_at = _utcnow()
+                    if permalink:
+                        p.permalink = permalink
+                    if platform_post_id:
+                        p.platform_post_id = str(platform_post_id)
                 await session.commit()
-            all_results.append((plat.platform, "published", None))
+            # Slack thread reply uses the permalink if we have one, else "published"
+            all_results.append((plat.platform, "published", permalink))
             published_count += 1
-            logger.info(f"Published to {plat.platform}")
+            logger.info(f"Published to {plat.platform}: {permalink or 'no permalink'}")
         except LinkedInNotConfiguredError as e:
             async with get_write_session() as session:
                 p = await session.get(SocialPostPlatform, plat.id)
