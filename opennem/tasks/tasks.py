@@ -334,12 +334,20 @@ async def task_refresh_clickhouse_mv_full(ctx: dict) -> None:
     await asyncio.to_thread(refresh_all_materialized_views, days=7, optimize=False)
 
 
-async def task_weekly_summary(ctx: dict) -> None:
-    """Generate weekly summary for NEM and WEM, post to Slack for approval.
+async def task_weekly_summary_nem(ctx: dict) -> None:
+    """Generate NEM weekly summary, post to Slack for approval.
 
-    Runs Monday 7am AEST.
+    Runs Monday 07:00 AEST.
     """
     await run_weekly_summary(network=NetworkNEM)
+
+
+async def task_weekly_summary_wem(ctx: dict) -> None:
+    """Generate WEM weekly summary, post to Slack for approval.
+
+    Runs Tuesday 09:00 AEST — WEM data publishes ~24h behind NEM, so we wait an
+    extra day to ensure the prior Mon–Sun week is complete.
+    """
     await run_weekly_summary(network=NetworkWEM)
 
 
