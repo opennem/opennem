@@ -123,6 +123,12 @@ QUERY_CONFIGS = {
             Metric.FLOW_IMPORTS_ENERGY: "energy_imports",
             Metric.FLOW_EXPORTS_ENERGY: "energy_exports",
         },
+        # KNOWN BUG: MW metrics (demand, demand_gross, generation_renewable*, curtailment*,
+        # flow_imports/exports) are summed across intervals when they should be averaged — same
+        # class of bug as opennem#523, but switching to avg trips a ClickHouse analyzer
+        # limitation when the same SELECT also returns renewable_proportion (mixes avg(x) and
+        # sum(x) on the same column). Fix needs a CTE/subquery restructure of the query builder.
+        # Tracked separately.
         metric_agg_functions={
             Metric.PRICE: "avg",
             Metric.DEMAND: "sum",
@@ -147,7 +153,7 @@ QUERY_CONFIGS = {
             Metric.FLOW_EXPORTS_ENERGY: "sum",
         },
         daily_metric_columns={
-            Metric.PRICE: "sum(price_sum) / nullIf(sum(price_count), 0)",
+            Metric.PRICE: "round(sum(price_sum) / nullIf(sum(price_count), 0), 6)",
             Metric.DEMAND: "demand_sum",
             Metric.DEMAND_ENERGY: "demand_energy_daily",
             Metric.DEMAND_GROSS: "demand_gross_sum",
@@ -217,8 +223,8 @@ QUERY_CONFIGS = {
         # Daily MV stores generated as sum(generated) per day, so an interval-weighted average is
         # required to recover average power across day/week/month/etc.
         daily_metric_columns={
-            DataMetric.POWER: "sum(generated) / nullIf(sum(interval_count), 0)",
-            DataMetric.STORAGE_BATTERY: "sum(energy_storage_sum) / nullIf(sum(energy_storage_count), 0)",
+            DataMetric.POWER: "round(sum(generated) / nullIf(sum(interval_count), 0), 6)",
+            DataMetric.STORAGE_BATTERY: "round(sum(energy_storage_sum) / nullIf(sum(energy_storage_count), 0), 6)",
         },
         daily_metric_agg_functions={
             DataMetric.POWER: "",
@@ -245,8 +251,8 @@ QUERY_CONFIGS = {
             DataMetric.STORAGE_BATTERY: "avg",
         },
         daily_metric_columns={
-            DataMetric.POWER: "sum(generated) / nullIf(sum(interval_count), 0)",
-            DataMetric.STORAGE_BATTERY: "sum(energy_storage_sum) / nullIf(sum(energy_storage_count), 0)",
+            DataMetric.POWER: "round(sum(generated) / nullIf(sum(interval_count), 0), 6)",
+            DataMetric.STORAGE_BATTERY: "round(sum(energy_storage_sum) / nullIf(sum(energy_storage_count), 0), 6)",
         },
         daily_metric_agg_functions={
             DataMetric.POWER: "",
@@ -312,15 +318,15 @@ def get_timeseries_query(
         date_start = date_start.date()  # type: ignore
         date_end = date_end.date()  # type: ignore
 
+    # Pass IN-clause collections as tuples — clickhouse-driver renders lists as `IN [a, b]`
+    # (CH Array literal); tuples render as `IN (a, b)` which is the conventional SQL form and
+    # avoids analyzer edge cases.
+    network_codes = [c for c in network.get_network_codes() if c != "OPENNEM_ROOFTOP_BACKFILL"]
     params = {
-        "network": network.get_network_codes(),
+        "network": tuple(network_codes),
         "date_start": date_start,
         "date_end": date_end,
     }
-
-    if "OPENNEM_ROOFTOP_BACKFILL" in params["network"]:
-        # remove the network from the list
-        params["network"].remove("OPENNEM_ROOFTOP_BACKFILL")
 
     # logger.info(f"Querying {table_name} for {network.code} from {date_start} to {date_end}")
 
@@ -336,11 +342,15 @@ def get_timeseries_query(
             raise ValueError(f"No aggregation function defined for metric '{m.value}'")
         col = config.get_metric_column(m, table_name)
         agg = config.get_metric_agg(m, table_name)
-        # Round in ClickHouse to avoid per-float Python rounding overhead
+        # Round in ClickHouse to avoid per-float Python rounding overhead. When the column
+        # expression already aggregates (agg=""), emit it as-is — wrapping with an extra round()
+        # around a column that already contains round() can trigger a ClickHouse analyzer bug
+        # ("aggregate function found inside another aggregate") in queries that also reference
+        # the same source column under a different aggregate elsewhere in the SELECT.
         if agg:
             metric_selects.append(f"round({agg}({col}), 6) as {m.value.lower()}")
         else:
-            metric_selects.append(f"round({col}, 6) as {m.value.lower()}")
+            metric_selects.append(f"{col} as {m.value.lower()}")
 
     # Build grouping columns based on query type
     group_cols = [f"'{network.code}' as network"]
@@ -375,11 +385,11 @@ def get_timeseries_query(
 
     if facility_code:
         where_clauses.append("facility_code in %(facility_code)s")
-        params["facility_code"] = facility_code
+        params["facility_code"] = tuple(facility_code)
 
     if unit_code:
         where_clauses.append("unit_code in %(unit_code)s")
-        params["unit_code"] = unit_code
+        params["unit_code"] = tuple(unit_code)
 
     if network_region:
         where_clauses.append("network_region = %(network_region)s")
@@ -387,12 +397,16 @@ def get_timeseries_query(
 
     if fueltech:
         where_clauses.append("fueltech_id in %(fueltech)s")
-        params["fueltech"] = fueltech
+        params["fueltech"] = tuple(fueltech)
 
     if fueltech_group:
         where_clauses.append("fueltech_group_id in %(fueltech_group)s")
-        params["fueltech_group"] = fueltech_group
+        params["fueltech_group"] = tuple(fueltech_group)
 
+    # Group/order by alias names rather than positional references — the constant `'NEM' as network`
+    # column makes positional GROUP BY fragile under the new ClickHouse analyzer, especially when
+    # the SELECT mixes avg() and arithmetic sum() expressions (e.g. renewable_proportion).
+    group_by_names = ", ".join(group_cols_names)
     query = f"""
         SELECT
             {time_fn} as interval,
@@ -402,10 +416,10 @@ def get_timeseries_query(
         WHERE {" AND ".join(where_clauses)}
         GROUP BY
             interval,
-            {", ".join([str(i) for i in range(2, len(group_cols) + 2)])}
+            {group_by_names}
         ORDER BY
             interval DESC,
-            {", ".join([str(i) for i in range(2, len(group_cols) + 2)])}
+            {group_by_names}
     """
 
     # Build list of column names in order
