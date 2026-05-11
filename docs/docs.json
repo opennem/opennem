@@ -50,6 +50,7 @@
             "group": "API Reference",
             "pages": [
               "api-reference/overview",
+              "api-reference/metrics",
               "api-reference/data-limits",
               {
                 "group": "Generation Data",
