@@ -36,9 +36,17 @@ This page lists every metric returned by the API along with its unit, type, and 
 - **`energy`, `emissions`, `market_value`** sum across the queried daily rows directly.
 - **`storage_battery`** uses an interval-weighted average over the daily MV's `energy_storage_sum / energy_storage_count` columns.
 
-### Energy is sourced from AEMO scada, not derived inside Open Electricity
+### How 5-minute energy values are produced
 
-Each 5-minute `energy` value is computed at ingestion from the corresponding `generated` (MW) reading as `generated × (5 / 60)` and stored alongside the power reading. The API returns these stored values unchanged; it does not re-derive energy from power at query time.
+Each 5-minute `energy` value is computed by Open Electricity from the corresponding `generated` (MW) readings using the trapezoidal rule (area under the power curve):
+
+```
+energy_i (MWh) = (generated_i + generated_{i-1}) / 2 × Δt
+```
+
+where `Δt` is the interval length in hours (e.g. `5/60` for NEM 5-minute data). At crawl time a placeholder value of `generated × Δt` is written immediately so freshly-ingested intervals have a value, then the energy worker (`opennem/workers/energy.py`) replaces it with the trapezoidal calculation and stamps `energy_quality_flag = 2`. The API returns the post-worker value; it does not re-derive energy from power at query time.
+
+See the [Energy guide](/guides/energy) for the full derivation and worked example.
 
 ## Market data — `/v4/market/network/{network_code}`
 
