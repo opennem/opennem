@@ -205,17 +205,23 @@ QUERY_CONFIGS = {
             DataMetric.MARKET_VALUE: "market_value",
             DataMetric.STORAGE_BATTERY: "energy_storage",
         },
+        # POWER (MW) is an instantaneous rate -> avg.  ENERGY/EMISSIONS/MARKET_VALUE are per-interval
+        # quantities (MWh, tCO2, $) and remain sum.  See issue opennem#523.
         metric_agg_functions={
-            DataMetric.POWER: "sum",
+            DataMetric.POWER: "avg",
             DataMetric.ENERGY: "sum",
             DataMetric.EMISSIONS: "sum",
             DataMetric.MARKET_VALUE: "sum",
             DataMetric.STORAGE_BATTERY: "avg",
         },
+        # Daily MV stores generated as sum(generated) per day, so an interval-weighted average is
+        # required to recover average power across day/week/month/etc.
         daily_metric_columns={
+            DataMetric.POWER: "sum(generated) / nullIf(sum(interval_count), 0)",
             DataMetric.STORAGE_BATTERY: "sum(energy_storage_sum) / nullIf(sum(energy_storage_count), 0)",
         },
         daily_metric_agg_functions={
+            DataMetric.POWER: "",
             DataMetric.STORAGE_BATTERY: "",
         },
     ),
@@ -232,16 +238,18 @@ QUERY_CONFIGS = {
             DataMetric.STORAGE_BATTERY: "energy_storage",
         },
         metric_agg_functions={
-            DataMetric.POWER: "sum",
+            DataMetric.POWER: "avg",
             DataMetric.ENERGY: "sum",
             DataMetric.EMISSIONS: "sum",
             DataMetric.MARKET_VALUE: "sum",
             DataMetric.STORAGE_BATTERY: "avg",
         },
         daily_metric_columns={
+            DataMetric.POWER: "sum(generated) / nullIf(sum(interval_count), 0)",
             DataMetric.STORAGE_BATTERY: "sum(energy_storage_sum) / nullIf(sum(energy_storage_count), 0)",
         },
         daily_metric_agg_functions={
+            DataMetric.POWER: "",
             DataMetric.STORAGE_BATTERY: "",
         },
     ),
