@@ -1,10 +1,14 @@
 """Lock the per-interval aggregation for DataMetric.POWER.
 
-POWER (MW) is an instantaneous rate, so 5m -> 1h must average, and 5m/daily-MV ->
-1d+ must compute an interval-weighted average. ENERGY/EMISSIONS/MARKET_VALUE
-remain summed because they are per-interval cumulative quantities.
+POWER (MW) is an instantaneous rate, so the SQL must:
+  1. Sum across units within each raw 5-minute interval (inner CTE), giving
+     the per-interval network-aggregate power at each 5-min slice.
+  2. Average those per-interval values across the queried bucket (outer SELECT).
 
-Regression test for opennem#523.
+ENERGY/EMISSIONS/MARKET_VALUE remain summed at both stages because they are
+cumulative quantities.
+
+Regression tests for opennem#523 and opennem#525.
 """
 
 from datetime import datetime
@@ -18,8 +22,8 @@ from opennem.schema.network import NetworkNEM
 
 
 @pytest.mark.parametrize("query_type", [QueryType.DATA, QueryType.FACILITY])
-def test_power_hourly_uses_avg(query_type):
-    """1h power: avg(generated) on the base unit_intervals table."""
+def test_power_hourly_uses_avg_of_inner_sum(query_type):
+    """1h power: inner sums across units, outer averages across raw 5-min intervals."""
     sql, _, _ = get_timeseries_query(
         query_type=query_type,
         network=NetworkNEM,
@@ -29,38 +33,24 @@ def test_power_hourly_uses_avg(query_type):
         date_end=datetime(2025, 4, 22, 15, 0),
         unit_code=["WAUBRAWF"],
     )
-    assert "avg(generated)" in sql
-    assert "sum(generated)" not in sql
-    assert "sum(energy)" in sql  # energy is still summed
-    assert "FROM unit_intervals " in sql  # base table for hourly
+    # Inner pre-aggregates per raw 5-min
+    assert "sum(generated) AS generated_sum" in sql
+    assert "FROM unit_intervals FINAL" in sql
+    # Outer averages the per-interval sums
+    assert "round(avg(generated_sum), 6) AS power" in sql
+    # Energy still sums end-to-end
+    assert "sum(energy) AS energy_sum" in sql
+    assert "round(sum(energy_sum), 6) AS energy" in sql
 
 
 @pytest.mark.parametrize("query_type", [QueryType.DATA, QueryType.FACILITY])
-def test_power_daily_uses_interval_weighted_avg(query_type):
-    """1d power: sum(generated) / sum(interval_count) against the daily MV.
+@pytest.mark.parametrize("interval", [Interval.DAY, Interval.WEEK, Interval.MONTH, Interval.QUARTER, Interval.YEAR])
+def test_power_multi_bucket_uses_same_shape(query_type, interval):
+    """Day / week / month / quarter / year all use the same CTE structure as hourly.
 
-    The daily MV stores generated as sum(generated) per day. A weighted average by
-    interval_count gives the correct mean power over the queried range, including
-    partial first/last days.
+    The bucket function differs (toStartOfDay/Week/Month/etc) but the inner
+    pre-aggregation and outer avg() are identical to the hourly path.
     """
-    sql, _, _ = get_timeseries_query(
-        query_type=query_type,
-        network=NetworkNEM,
-        metrics=[DataMetric.POWER, DataMetric.ENERGY],
-        interval=Interval.DAY,
-        date_start=datetime(2025, 4, 22, 0, 0),
-        date_end=datetime(2025, 4, 23, 0, 0),
-        unit_code=["WAUBRAWF"],
-    )
-    assert "sum(generated) / nullIf(sum(interval_count), 0)" in sql
-    assert "FROM unit_intervals_daily_mv" in sql
-    assert "sum(energy)" in sql
-
-
-@pytest.mark.parametrize("query_type", [QueryType.DATA, QueryType.FACILITY])
-@pytest.mark.parametrize("interval", [Interval.WEEK, Interval.MONTH, Interval.QUARTER, Interval.YEAR])
-def test_power_multi_day_uses_interval_weighted_avg(query_type, interval):
-    """Week / month / quarter / year all aggregate from the daily MV with weighted avg."""
     sql, _, _ = get_timeseries_query(
         query_type=query_type,
         network=NetworkNEM,
@@ -69,5 +59,28 @@ def test_power_multi_day_uses_interval_weighted_avg(query_type, interval):
         date_start=datetime(2025, 1, 1, 0, 0),
         date_end=datetime(2025, 6, 1, 0, 0),
     )
-    assert "sum(generated) / nullIf(sum(interval_count), 0)" in sql
-    assert "FROM unit_intervals_daily_mv" in sql
+    assert "sum(generated) AS generated_sum" in sql
+    assert "FROM unit_intervals FINAL" in sql
+    assert "round(avg(generated_sum), 6) AS power" in sql
+    # Make sure we no longer fall back to the buggy daily MV path
+    assert "unit_intervals_daily_mv" not in sql
+
+
+def test_network_aggregate_power_collapses_units_in_inner():
+    """Network-aggregate POWER must not average across units — it sums them in the inner CTE.
+
+    Regression for the bug found by the e2e harness: pre-refactor the outer `avg(generated)`
+    averaged across both intervals and units, returning ~50 MW for NEM 1h (true value ~26500 MW).
+    """
+    sql, _, _ = get_timeseries_query(
+        query_type=QueryType.DATA,
+        network=NetworkNEM,
+        metrics=[DataMetric.POWER],
+        interval=Interval.HOUR,
+        date_start=datetime(2025, 4, 22, 14, 0),
+        date_end=datetime(2025, 4, 22, 15, 0),
+    )
+    # Inner sums across units → unit dimension collapses at the 5-min level
+    assert "sum(generated) AS generated_sum" in sql
+    # Outer averages the per-5min network totals → network-aggregate avg over the bucket
+    assert "round(avg(generated_sum), 6) AS power" in sql
