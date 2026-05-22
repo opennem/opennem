@@ -42,6 +42,49 @@ async def main():
 asyncio.run(main())
 ```
 
+## Proxies and Custom Certificates
+
+For corporate networks that route traffic through a proxy or intercept TLS, both `OEClient` and `AsyncOEClient` accept the following keyword-only options:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `proxy` | `str` | Proxy URL, e.g. `http://proxy.corp:8080`. Credentials may be embedded (`http://user:pass@host:port`). |
+| `proxy_auth` | `aiohttp.BasicAuth` | Proxy credentials, as an alternative to embedding them in `proxy`. |
+| `ssl_context` | `ssl.SSLContext` | A pre-built SSL context, e.g. for a corporate CA. |
+| `ca_cert` | `str` | Path to an additional CA certificate bundle. Added to the system trust store. |
+| `verify_ssl` | `bool` | Verify TLS certificates. Defaults to `True`; set to `False` to disable (not recommended). |
+| `trust_env` | `bool` | Read proxy settings and `.netrc` from the environment (`HTTP_PROXY` / `HTTPS_PROXY`). Defaults to `False`. |
+
+`ssl_context` and `ca_cert` are mutually exclusive, and neither can be combined with `verify_ssl=False`.
+
+**Route requests through a proxy:**
+```python
+from openelectricity import OEClient
+
+# Credentials embedded in the URL
+client = OEClient(proxy="http://user:pass@proxy.corp:8080")
+
+# Or supplied separately
+from aiohttp import BasicAuth
+
+client = OEClient(
+    proxy="http://proxy.corp:8080",
+    proxy_auth=BasicAuth("user", "pass"),
+)
+```
+
+**Pick up proxy settings from the environment:**
+```python
+# Uses the HTTP_PROXY / HTTPS_PROXY environment variables
+client = OEClient(trust_env=True)
+```
+
+**Trust a corporate CA certificate:**
+```python
+# For networks that intercept TLS with their own certificate authority
+client = OEClient(ca_cert="/etc/ssl/corp-ca.pem")
+```
+
 # Network Data
 
 Fetch network-level time series data for power, energy, emissions, and market value metrics.
