@@ -147,6 +147,10 @@ async def wemde_parse_dispatch(url: str) -> list[FacilityScadaSchema]:
     Uses the cleared `energy` market dispatch quantity (MW) per facility as the WEM
     generation signal. Dispatch solutions publish as 5-min files ~5 min behind real
     time — vs the facilityScada feed's ~24h lag. `quantity` is MW (negative = charging).
+
+    Only the binding interval (`primaryDispatchInterval`) is kept — `solutionData`
+    also carries ~2h of forward look-ahead dispatch, which is a projection, not an
+    actual, and would otherwise land in facility_scada as future-dated rows.
     """
 
     download_jsons = await _wemde_download_dataset(url)
@@ -161,7 +165,13 @@ async def wemde_parse_dispatch(url: str) -> list[FacilityScadaSchema]:
     battery_records: list[dict] = []
 
     for download_json in download_jsons:
+        primary_interval = download_json.get("primaryDispatchInterval")
+
         for interval_entry in download_json.get("solutionData", []):
+            # skip the forward look-ahead intervals — keep only the binding interval
+            if interval_entry.get("dispatchInterval") != primary_interval:
+                continue
+
             interval = datetime.fromisoformat(interval_entry["dispatchInterval"]).replace(tzinfo=None)
 
             energy_schedule = next(
