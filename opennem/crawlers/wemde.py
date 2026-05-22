@@ -211,9 +211,9 @@ AEMOWEMDEDispatch = CrawlerDefinition(
     contains_days=1,
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
-    # most-recent files only — each file carries a rolling ~2h window of intervals,
-    # so a few of them fully cover recent dispatch without re-downloading the folder
-    limit=3,
+    # most-recent files only — each file yields one binding interval, so 6 covers
+    # the last ~30 min of dispatch and tolerates a short crawler outage
+    limit=6,
     name="au.wemde.current.dispatch",
     url="https://data.wa.aemo.com.au/public/market-data/wemde/dispatchSolution/dispatchData/current/",
     network=NetworkWEM,
