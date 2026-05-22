@@ -55,8 +55,8 @@ def build_record_url(record_id: str, focus_ts_ms: int) -> str:
 
 CARD_WIDTH = 1200
 CARD_HEIGHT = 630
-SPARKLINE_VIEW_W = 1052  # 1200 - 2*60 padding - 2*24 inner padding
-SPARKLINE_VIEW_H = 110
+SPARKLINE_VIEW_W = 1088  # 1200 - 2*56 card padding
+SPARKLINE_VIEW_H = 290  # matches rendered container aspect so circle stays round
 
 
 def _icon_color(fueltech_id: str | None) -> str:
@@ -163,9 +163,10 @@ def _build_sparkline_svg(
         )
 
     values = [v for _, v in points]
-    vmin, vmax = min(values), max(values)
-    if vmax == vmin:
-        vmin = vmax - 1
+    vmin = 0.0
+    vmax = max(values)
+    if vmax <= 0:
+        vmax = 1.0
     # Padding inside the viewBox so the focus dot (r=8 + stroke 3) doesn't clip
     pad_y = 16
     pad_x_left = 6
@@ -191,13 +192,11 @@ def _build_sparkline_svg(
 
     return (
         f'<svg class="sparkline-svg" viewBox="0 0 {SPARKLINE_VIEW_W} {SPARKLINE_VIEW_H}" '
-        f'xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" overflow="visible">'
+        f'xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">'
         f'<path d="{area_d}" fill="{color}" fill-opacity="0.12" stroke="none"/>'
         f'<path d="{d}" fill="none" stroke="{color}" stroke-width="2.5" '
         f'stroke-linecap="round" stroke-linejoin="round"/>'
-        # Focus dot — drawn last, scaled by JS would not clip; use larger r to compensate for aspect-ratio squish
-        f'<circle cx="{fx:.1f}" cy="{fy:.1f}" r="6" fill="white" stroke="black" stroke-width="2.5" '
-        f'vector-effect="non-scaling-stroke"/>'
+        f'<circle cx="{fx:.1f}" cy="{fy:.1f}" r="6" fill="white" stroke="black" stroke-width="2.5"/>'
         f"</svg>"
     )
 
@@ -255,6 +254,7 @@ def render_milestone_card(
     html = serve_template(
         "record_card.html",
         title=title,
+        description=description or record_id,
         region=region,
         ft_color=ft_color,
         icon_color=icon_color,

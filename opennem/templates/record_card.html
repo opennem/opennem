@@ -8,17 +8,19 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --green:    #2EC42B;
-    --red:      #F25151;
+    /* Status */
+    --green:    #70D26E;
+    --red:      #FA6060;
 
+    /* Typography */
     --text-primary:   #000000;
     --text-secondary: #353535;
     --text-tertiary:  #6A6A6A;
 
-    --surface-bg:   #FAF9F6;
-    --tile-bg:      #FFFFFF;
-    --row-border:   #F1F0ED;
-    --record-bg:    #F4F2EB;
+    /* Surfaces */
+    --surface-bg:   #F1F0ED;
+    --tile-bg:      #FAF9F6;
+    --row-border:   #E5E3DE;
   }
 
   body {
@@ -33,44 +35,50 @@
 
   .card {
     height: 100%;
-    padding: 40px 56px 28px;
+    padding: 48px 56px 32px;
     display: flex;
     flex-direction: column;
+    gap: 24px;
   }
 
   /* ---- Header ---- */
   .header {
     display: flex;
-    gap: 28px;
-    align-items: flex-start;
-    margin-bottom: 22px;
+    gap: 24px;
+    align-items: stretch;
   }
+
   .header-left {
     flex: 1 1 0;
     min-width: 0;
     display: flex;
-    flex-direction: column;
-    gap: 18px;
-    padding-top: 4px;
+    align-items: center;
+    gap: 22px;
   }
   .ft-badge {
-    width: 64px;
-    height: 64px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
   }
-  .ft-badge svg { width: 32px; height: 32px; }
+  .ft-badge svg { width: 38px; height: 38px; }
 
+  .header-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
   .record-title {
     font-family: 'DM Sans', sans-serif;
-    font-size: 40px;
-    font-weight: 600;
-    line-height: 46px;
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 44px;
     letter-spacing: -0.01em;
-    color: var(--text-primary);
+    color: var(--text-secondary);
   }
   .record-region {
     font-family: 'DM Mono', monospace;
@@ -78,58 +86,44 @@
     font-weight: 400;
     color: var(--text-tertiary);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-top: 4px;
+    letter-spacing: 0.06em;
   }
 
   .header-right {
     flex-shrink: 0;
-    background: var(--record-bg);
-    border-radius: 12px;
-    padding: 18px 24px 16px;
+    background: var(--tile-bg);
+    border-radius: 8px;
+    padding: 20px 28px 18px;
     display: flex;
     flex-direction: column;
     gap: 4px;
-    min-width: 260px;
-    border: 1px solid var(--row-border);
+    min-width: 320px;
   }
   .record-set-label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 18px;
     font-weight: 500;
-    color: var(--text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-  .record-set-dot {
-    width: 14px;
-    height: 14px;
-    background: black;
-    border: 3px solid white;
-    border-radius: 50%;
-    box-shadow: 0 0 0 1px var(--text-tertiary);
+    line-height: 22px;
+    color: var(--text-primary);
   }
   .record-set-date {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 22px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin-top: 2px;
+    font-family: 'DM Mono', monospace;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    margin-bottom: 6px;
   }
   .record-value-row {
     display: flex;
     align-items: baseline;
-    gap: 10px;
-    margin-top: 6px;
+    gap: 12px;
+    margin-top: 4px;
   }
   .record-value {
     font-family: 'DM Mono', monospace;
-    font-size: 50px;
+    font-size: 48px;
     font-weight: 500;
-    line-height: 54px;
+    line-height: 52px;
     color: var(--text-primary);
     font-variant-numeric: tabular-nums;
   }
@@ -140,9 +134,9 @@
     color: var(--text-tertiary);
   }
   .record-change {
-    margin-top: 6px;
+    margin-top: 4px;
     font-family: 'DM Mono', monospace;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 500;
     display: inline-flex;
     align-items: center;
@@ -150,26 +144,32 @@
   }
   .record-change.up   { color: var(--green); }
   .record-change.down { color: var(--red); }
+  .record-change.flat { color: var(--text-tertiary); }
 
   /* ---- Sparkline ---- */
   .sparkline-wrap {
-    height: 180px;
+    flex: 1 1 auto;
     background: var(--tile-bg);
-    border-radius: 12px;
-    padding: 18px 24px 14px;
+    border-radius: 8px;
+    padding: 22px 28px 18px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    border: 1px solid var(--row-border);
+    gap: 10px;
+    min-height: 0;
   }
   .sparkline-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-family: 'DM Mono', monospace;
-    font-size: 14px;
+    font-size: 15px;
     color: var(--text-tertiary);
     flex-shrink: 0;
+  }
+  .sparkline-meta .period {
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.06em;
   }
   .sparkline-svg {
     flex: 1 1 auto;
@@ -177,34 +177,45 @@
     display: block;
   }
 
+  /* ---- Description ---- */
+  .record-description {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 30px;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+    padding: 0 4px;
+  }
+
   /* ---- Footer ---- */
   .footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 14px;
-    padding-top: 10px;
+    padding-top: 16px;
     border-top: 1px solid var(--row-border);
     flex-shrink: 0;
   }
   .footer-source {
     font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     color: var(--text-tertiary);
   }
   .footer-logo {
     display: flex;
     align-items: flex-end;
-    gap: 6px;
+    gap: 8px;
     color: var(--text-primary);
   }
   .footer-logo-text {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 22px;
+    font-size: 26px;
     font-weight: 700;
     letter-spacing: -0.01em;
+    line-height: 1;
   }
-  .footer-logo-mark { width: 16px; height: 8px; margin-bottom: 5px; }
+  .footer-logo-mark { width: 18px; height: 9px; margin-bottom: 5px; }
 </style>
 </head>
 <body>
@@ -216,7 +227,7 @@
       <div class="ft-badge" style="background-color: ${ft_color}; color: ${icon_color};">
         ${icon_svg}
       </div>
-      <div>
+      <div class="header-title-wrap">
         <div class="record-title">${title}</div>
         % if region:
         <div class="record-region">${region}</div>
@@ -225,10 +236,7 @@
     </div>
 
     <div class="header-right">
-      <div class="record-set-label">
-        <span class="record-set-dot"></span>
-        Record set
-      </div>
+      <div class="record-set-label">Record set</div>
       <div class="record-set-date">${set_date}</div>
       <div class="record-value-row">
         <span class="record-value">${value_str}</span>
@@ -246,10 +254,13 @@
   <div class="sparkline-wrap">
     <div class="sparkline-meta">
       <span>${history_label}</span>
-      <span>${period_label}</span>
+      <span class="period">${period_label}</span>
     </div>
     ${sparkline_svg}
   </div>
+
+  <!-- Description -->
+  <div class="record-description">${description}</div>
 
   <!-- Footer -->
   <div class="footer">

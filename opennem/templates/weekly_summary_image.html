@@ -13,12 +13,12 @@
     --wind:     #2C7629;
     --hydro:    #5EA0C0;
     --battery:  #3245C9;
-    --gas:      #F48E1B;
+    --gas:      #E15C34;
     --coal:     #25221C;
 
     /* Status */
-    --green:    #2EC42B;
-    --red:      #F25151;
+    --green:    #70D26E;
+    --red:      #FA6060;
 
     /* Typography */
     --text-primary:   #000000;
@@ -26,9 +26,8 @@
     --text-tertiary:  #6A6A6A;
 
     /* Surfaces */
-    --surface-bg:   #FAF9F6;
-    --tile-bg:      #FFFFFF;
-    --row-bg:       #FFFFFF;
+    --surface-bg:   #F1F0ED;
+    --tile-bg:      #FAF9F6;
     --row-border:   #F1F0ED;
   }
 
@@ -42,10 +41,10 @@
   }
 
   .card {
-    padding: 72px 56px 56px;
+    padding: 72px 48px 56px;
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 28px;
   }
 
   /* ---- Header ---- */
@@ -58,7 +57,7 @@
     flex: 1 0 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
   .header-title {
     font-family: 'DM Sans', sans-serif;
@@ -66,18 +65,18 @@
     font-weight: 700;
     line-height: 52px;
     letter-spacing: -0.01em;
-    color: var(--text-primary);
+    color: var(--text-secondary);
   }
   .header-date {
     font-family: 'DM Sans', sans-serif;
-    font-size: 22px;
+    font-size: 28px;
     font-weight: 400;
-    line-height: 28px;
+    line-height: 36px;
     color: var(--text-tertiary);
   }
   .header-map {
-    width: 110px;
-    height: 104px;
+    width: 108px;
+    height: 102px;
     flex-shrink: 0;
   }
   .header-map svg { width: 100%; height: 100%; display: block; }
@@ -93,86 +92,81 @@
     padding: 26px 28px 22px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 10px;
     flex: 1 0 0;
     min-width: 0;
   }
   .kpi-label {
     font-family: 'DM Sans', sans-serif;
-    font-size: 22px;
+    font-size: 26px;
     font-weight: 500;
-    line-height: 28px;
-    color: var(--text-secondary);
+    line-height: 32px;
+    color: var(--text-primary);
     white-space: nowrap;
-  }
-  .kpi-values {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
   }
   .kpi-primary {
     display: flex;
     align-items: baseline;
-    gap: 6px;
+    gap: 20px;
     white-space: nowrap;
+  }
+  .kpi-value-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
   }
   .kpi-value {
     font-family: 'DM Mono', monospace;
-    font-size: 40px;
+    font-size: 44px;
     font-weight: 500;
-    line-height: 44px;
+    line-height: 48px;
     color: var(--text-primary);
     font-variant-numeric: tabular-nums;
   }
   .kpi-unit {
     font-family: 'DM Mono', monospace;
-    font-size: 22px;
+    font-size: 26px;
     font-weight: 400;
-    line-height: 44px;
+    line-height: 48px;
     color: var(--text-tertiary);
   }
   .kpi-change {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 4px;
     font-family: 'DM Mono', monospace;
-    font-size: 22px;
+    font-size: 26px;
     font-weight: 500;
-    line-height: 28px;
+    line-height: 48px;
   }
-  .kpi-change.up   { color: var(--green); }
-  .kpi-change.down { color: var(--red); }
-  .kpi-change.flat { color: var(--text-tertiary); }
+  .kpi-change.wow-up   { color: var(--green); }
+  .kpi-change.wow-down { color: var(--red); }
+  .kpi-change.wow-flat { color: var(--text-tertiary); }
 
   /* ---- Source bar table ---- */
   .source-table {
-    background: var(--row-bg);
+    background: var(--tile-bg);
     border-radius: 8px;
     overflow: hidden;
   }
   .source-row {
     display: flex;
     align-items: center;
-    height: 86px;
+    height: 76px;
     gap: 28px;
-    padding: 0 28px 0 0;
-    border-bottom: 1px solid var(--row-border);
+    padding-right: 28px;
+    border-bottom: 1px solid var(--surface-bg);
   }
   .source-row:last-child { border-bottom: none; }
 
   .source-label {
-    width: 280px;
-    flex-shrink: 0;
+    flex: 1 1 0;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     padding-left: 28px;
-  }
-  .source-dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    flex-shrink: 0;
+    min-width: 0;
+    overflow: hidden;
   }
   .source-name {
     font-family: 'DM Sans', sans-serif;
@@ -180,39 +174,49 @@
     font-weight: 500;
     color: var(--text-primary);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .source-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    flex-shrink: 0;
   }
   .source-bar-area {
-    flex: 1;
+    width: 300px;
+    flex-shrink: 0;
+    align-self: stretch;
     display: flex;
-    align-items: center;
+    align-items: stretch;
+    justify-content: flex-end;
   }
   .source-bar {
-    height: 22px;
-    border-radius: 3px;
-    min-width: 8px;
+    align-self: stretch;
+    min-width: 6px;
   }
   .source-gwh {
     display: flex;
     align-items: baseline;
     justify-content: flex-end;
-    gap: 4px;
-    width: 170px;
+    gap: 6px;
+    width: 150px;
     flex-shrink: 0;
     font-family: 'DM Mono', monospace;
     font-variant-numeric: tabular-nums;
   }
   .source-gwh-val {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 500;
     color: var(--text-primary);
   }
   .source-gwh-unit {
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 400;
     color: var(--text-tertiary);
   }
   .source-share {
-    width: 90px;
+    width: 100px;
     flex-shrink: 0;
     text-align: right;
     font-family: 'DM Mono', monospace;
@@ -224,15 +228,18 @@
   .source-change {
     width: 100px;
     flex-shrink: 0;
-    text-align: right;
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 6px;
     font-family: 'DM Mono', monospace;
     font-size: 22px;
     font-weight: 500;
     font-variant-numeric: tabular-nums;
   }
-  .source-change.up   { color: var(--green); }
-  .source-change.down { color: var(--red); }
-  .source-change.flat { color: var(--text-tertiary); }
+  .source-change.wow-up   { color: var(--green); }
+  .source-change.wow-down { color: var(--red); }
+  .source-change.wow-flat { color: var(--text-tertiary); }
 
   /* ---- Milestones ---- */
   .milestones-section {
@@ -294,7 +301,7 @@
   }
   .mc-divider {
     height: 1px;
-    background: var(--row-border);
+    background: var(--surface-bg);
     margin: 12px 0 10px;
   }
   .mc-footer {
@@ -329,36 +336,38 @@
     font-family: 'DM Mono', monospace;
     font-size: 16px;
   }
-  .mc-change.up   { color: var(--green); }
-  .mc-change.down { color: var(--red); }
-  .mc-change.flat { color: var(--text-tertiary); }
+  .mc-change.wow-up   { color: var(--green); }
+  .mc-change.wow-down { color: var(--red); }
+  .mc-change.wow-flat { color: var(--text-tertiary); }
 
   /* ---- Footer ---- */
   .footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 18px;
-    border-top: 1px solid var(--row-border);
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid #E5E3DE;
   }
   .footer-source {
     font-family: 'DM Sans', sans-serif;
-    font-size: 16px;
+    font-size: 18px;
     color: var(--text-tertiary);
   }
   .footer-logo {
     display: flex;
     align-items: flex-end;
-    gap: 6px;
+    gap: 8px;
     color: var(--text-primary);
   }
   .footer-logo-text {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 26px;
+    font-size: 32px;
     font-weight: 700;
     letter-spacing: -0.01em;
+    line-height: 1;
   }
-  .footer-logo-mark { width: 18px; height: 9px; margin-bottom: 6px; }
+  .footer-logo-mark { width: 22px; height: 11px; margin-bottom: 5px; }
 </style>
 </head>
 <body>
@@ -376,32 +385,38 @@
   <!-- KPI tiles -->
   <div class="kpi-row">
     <div class="kpi-tile">
-      <div class="kpi-label">Tot. Generation</div>
-      <div class="kpi-values">
-        <div class="kpi-primary">
+      <div class="kpi-label">Total Generation</div>
+      <div class="kpi-primary">
+        <div class="kpi-value-wrap">
           <span class="kpi-value">${total_energy}</span>
           <span class="kpi-unit">GWh</span>
         </div>
-        <div class="kpi-change ${te_wow_class.replace('wow-', '')}">${te_wow_str}</div>
+        % if te_wow_str:
+        <div class="kpi-change ${te_wow_class}">${te_wow_str}</div>
+        % endif
       </div>
     </div>
     <div class="kpi-tile">
       <div class="kpi-label">Renewables</div>
-      <div class="kpi-values">
-        <div class="kpi-primary">
+      <div class="kpi-primary">
+        <div class="kpi-value-wrap">
           <span class="kpi-value">${renewable_pct}%</span>
         </div>
-        <div class="kpi-change ${rp_wow_class.replace('wow-', '')}">${rp_wow_str}</div>
+        % if rp_wow_str:
+        <div class="kpi-change ${rp_wow_class}">${rp_wow_str}</div>
+        % endif
       </div>
     </div>
     <div class="kpi-tile">
-      <div class="kpi-label">Avg. Price</div>
-      <div class="kpi-values">
-        <div class="kpi-primary">
+      <div class="kpi-label">Avg Price</div>
+      <div class="kpi-primary">
+        <div class="kpi-value-wrap">
           <span class="kpi-value">$${avg_price}</span>
           <span class="kpi-unit">/MWh</span>
         </div>
-        <div class="kpi-change ${ap_wow_class.replace('wow-', '')}">${ap_wow_str}</div>
+        % if ap_wow_str:
+        <div class="kpi-change ${ap_wow_class}">${ap_wow_str}</div>
+        % endif
       </div>
     </div>
   </div>
@@ -412,7 +427,7 @@
     <div class="source-row">
       <div class="source-label">
         <div class="source-dot" style="background: ${r.fueltech_color};"></div>
-        <div class="source-name">${r.fueltech_label}</div>
+        <div class="source-name">${r.fueltech_label.replace('Battery (Discharging)', 'Battery (D)').replace('Battery (Charging)', 'Battery (C)')}</div>
       </div>
       <div class="source-bar-area">
         <div class="source-bar" style="width: ${r.bar_pct}%; background: ${r.fueltech_color};"></div>
@@ -422,12 +437,12 @@
         <span class="source-gwh-unit">GWh</span>
       </div>
       <div class="source-share">${r.pct_str}%</div>
-      <div class="source-change ${r.wow_class.replace('wow-', '')}">${r.wow_str}</div>
+      <div class="source-change ${r.wow_class}">${r.wow_str}</div>
     </div>
     % endfor
   </div>
 
-  <!-- Milestones (kept from existing design, restyled) -->
+  <!-- Milestones (kept; restyled for new palette) -->
   % if milestones:
   <div class="milestones-section">
     <div class="section-label">Records &amp; milestones</div>
@@ -449,7 +464,7 @@
         <div class="mc-sub">
           <span class="mc-date">${m.date_str}</span>
           % if m.change_str:
-          <span class="mc-change ${m.change_class.replace('wow-', '')}">${m.change_str}</span>
+          <span class="mc-change ${m.change_class}">${m.change_str}</span>
           % endif
         </div>
       </div>
