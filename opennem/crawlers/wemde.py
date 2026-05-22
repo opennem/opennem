@@ -5,7 +5,7 @@ import logging
 from datetime import datetime
 from typing import Any
 
-from opennem.clients.wemde import wemde_parse_facilityscada, wemde_parse_trading_price
+from opennem.clients.wemde import wemde_parse_dispatch, wemde_parse_facilityscada, wemde_parse_trading_price
 from opennem.controllers.nem import ControllerReturn
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_meta, crawler_set_meta_many
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
@@ -106,6 +106,18 @@ async def run_wemde_crawl(
             logger.error(f"Error parsing data with {crawler.parser}: {e}")
             continue
 
+    # de-duplicate on the upsert key — overlapping dispatch files repeat intervals,
+    # which a single ON CONFLICT batch rejects. Entries are newest-first, so keeping
+    # the first occurrence keeps the freshest dispatch solution per interval.
+    deduped: dict[tuple, FacilityScadaSchema | BalancingSummarySchema] = {}
+    for record in data:
+        if isinstance(record, BalancingSummarySchema):
+            key = (record.interval, record.network_id, record.network_region, record.is_forecast)
+        else:
+            key = (record.interval, record.network_id, record.facility_code, record.is_forecast)
+        deduped.setdefault(key, record)
+    data = list(deduped.values())
+
     # persist data
     update_fields = ["generated", "energy"]
 
@@ -157,6 +169,7 @@ async def run_wemde_crawl_from_url(urls: list[str]) -> None:
 async def run_all_wem_crawlers(latest: bool = True, limit: int | None = None) -> None:
     for crawler in [
         AEMOWEMDEFacilityScada,
+        AEMOWEMDEDispatch,
         AEMOWEMDETradingReport,
         AEMOWEMDEFacilityScadaHistory,
         AEMOWEMDETradingReportHistory,
@@ -193,6 +206,21 @@ AEMOWEMDEFacilityScada = CrawlerDefinition(
     archive_version=AEMOWEMDEFacilityScadaHistory,
 )
 
+AEMOWEMDEDispatch = CrawlerDefinition(
+    bucket_size=AEMODataBucketSize.day,
+    contains_days=1,
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    # most-recent files only — each file carries a rolling ~2h window of intervals,
+    # so a few of them fully cover recent dispatch without re-downloading the folder
+    limit=3,
+    name="au.wemde.current.dispatch",
+    url="https://data.wa.aemo.com.au/public/market-data/wemde/dispatchSolution/dispatchData/current/",
+    network=NetworkWEM,
+    processor=run_wemde_crawl,
+    parser=wemde_parse_dispatch,
+)
+
 AEMOWEMDETradingReportHistory = CrawlerDefinition(
     bucket_size=AEMODataBucketSize.day,
     contains_days=365,
@@ -218,7 +246,7 @@ AEMOWEMDETradingReport = CrawlerDefinition(
     archive_version=AEMOWEMDETradingReportHistory,
 )
 
-ALL_WEM_CRAWLERS = [AEMOWEMDEFacilityScada, AEMOWEMDETradingReport, APVIRooftopMonthCrawler]
+ALL_WEM_CRAWLERS = [AEMOWEMDEFacilityScada, AEMOWEMDEDispatch, AEMOWEMDETradingReport, APVIRooftopMonthCrawler]
 
 
 if __name__ == "__main__":
