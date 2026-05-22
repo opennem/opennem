@@ -5,7 +5,7 @@
     "": {
       "name": "opennem-docs",
       "devDependencies": {
-        "tangly": "^0.0.12",
+        "tangly": "^0.1.0",
         "wrangler": "^4.87.0",
       },
     },
@@ -457,19 +457,19 @@
 
     "@tailwindcss/vite": ["@tailwindcss/vite@4.2.4", "", { "dependencies": { "@tailwindcss/node": "4.2.4", "@tailwindcss/oxide": "4.2.4", "tailwindcss": "4.2.4" }, "peerDependencies": { "vite": "^5.2.0 || ^6 || ^7 || ^8" } }, "sha512-pCvohwOCspk3ZFn6eJzrrX3g4n2JY73H6MmYC87XfGPyTty4YsCjYTMArRZm/zOI8dIt3+EcrLHAFPe5A4bgtw=="],
 
-    "@tanglydocs/schema": ["@tanglydocs/schema@0.0.12", "", { "dependencies": { "zod": "^4.3.6" } }, "sha512-urHBNbc2fg2cldfr6cz2Ai+JDmkrXuihfed+YGoxbhh3kTAELSxP87Tyx19rDegjPV0sRI+5ssBQU1BnDS6K0g=="],
+    "@tanglydocs/schema": ["@tanglydocs/schema@0.1.0", "", { "dependencies": { "zod": "^4.3.6" } }, "sha512-oMXHo5jhY70Uj3JBb/HUPlayaYejAl54LkK5vIcYi53cwqrU7ifY80gUWaLai6NThzdqFUKFqybwsQLXvNbQ8A=="],
 
-    "@tanglydocs/theme-geist": ["@tanglydocs/theme-geist@0.0.12", "", { "dependencies": { "@tanglydocs/theme-ui": "0.0.12", "tailwindcss": "^4.2.4" } }, "sha512-PKP6ehfy8KT6bAH1aXxZcl/n51Tb6iKxACH+CuelULy7rPOAUOEjn7NqoN7aykEhcFD9I60zb6qJ0EBksx4/fQ=="],
+    "@tanglydocs/theme-geist": ["@tanglydocs/theme-geist@0.1.0", "", { "dependencies": { "@tanglydocs/theme-ui": "0.1.0", "tailwindcss": "^4.2.4" } }, "sha512-Tveo0Yf/mMhORPpfzKIn2MFKY6vvH1eNXX3B4ayguxdbGb+uolMRjuXMzwsYv2cc8omgT0fPtg7sJ6saaIEmkw=="],
 
-    "@tanglydocs/theme-pip": ["@tanglydocs/theme-pip@0.0.12", "", { "dependencies": { "@tanglydocs/theme-ui": "0.0.12", "tailwindcss": "^4.2.4" } }, "sha512-HXqhTYVkGsEEjP6r/IomoBN0I8ehkHgP1MClEPtosBJFAGLUHEps3eyW8HHAFtubex8gstp411oPXm+gkjYtIA=="],
+    "@tanglydocs/theme-pip": ["@tanglydocs/theme-pip@0.1.0", "", { "dependencies": { "@tanglydocs/theme-ui": "0.1.0", "tailwindcss": "^4.2.4" } }, "sha512-mE2F1yxe+0ForJFxx31A/eiRcvArRXmtRZWjN1Yy5rNjSiEgj737iEfpC7ErqLgTp0e80XkVDsm6Ca0Ehq5otA=="],
 
-    "@tanglydocs/theme-pith": ["@tanglydocs/theme-pith@0.0.12", "", { "dependencies": { "@tanglydocs/theme-ui": "0.0.12", "tailwindcss": "^4.2.4" } }, "sha512-etWcooPPGBj839rur32bNhmBr5Wwj/E5b5BCReSOZQCA4McYi0g0vdFTaQB+CfmlEyHn2abpOmj9QCAYCfZsXg=="],
+    "@tanglydocs/theme-pith": ["@tanglydocs/theme-pith@0.1.0", "", { "dependencies": { "@tanglydocs/theme-ui": "0.1.0", "tailwindcss": "^4.2.4" } }, "sha512-uC3dqyzwReaWq0xB+mO2/AeuBwNicGVIwjHUOg0U4Aa5T0CpUYkPFKA0KXuhfPhrlNduxY2eSz0NlSR62tVHhw=="],
 
-    "@tanglydocs/theme-readable": ["@tanglydocs/theme-readable@0.0.12", "", { "dependencies": { "@tanglydocs/theme-ui": "0.0.12", "tailwindcss": "^4.2.4" } }, "sha512-BDR96jy1mX5M3ll9Uo++UghfZPU5fU6gsu7cFPbt8xTCncfrUxd9Ai2d3h1P2Tv1OSDL/poMDQssZ8rY3feecw=="],
+    "@tanglydocs/theme-readable": ["@tanglydocs/theme-readable@0.1.0", "", { "dependencies": { "@tanglydocs/theme-ui": "0.1.0", "tailwindcss": "^4.2.4" } }, "sha512-WBCU/nH+ycHyd0PI9Qm3cCQmGYxds0UFMWfRmHeJeTEWGRHfQ9qBtZAdjh3u3GvyqwjB8chinHfxOvMM6swG2w=="],
 
-    "@tanglydocs/theme-tang": ["@tanglydocs/theme-tang@0.0.12", "", { "dependencies": { "@tanglydocs/theme-ui": "0.0.12", "tailwindcss": "^4.2.4" } }, "sha512-N0nMRsl2RdSpi+j+9XWGeCkb8oqIC/mGJYmSwsYPZteL+bh8eIfuhzdFhtqLhYcsiUZfNDR4UdFEAiXM6MQRbQ=="],
+    "@tanglydocs/theme-tang": ["@tanglydocs/theme-tang@0.1.0", "", { "dependencies": { "@tanglydocs/theme-ui": "0.1.0", "tailwindcss": "^4.2.4" } }, "sha512-jYphBvAKmNYmy/bL0p9MiAhFqmbcWzMh9XivGjm3uwltikKyGbQkFG7xQQqKUf8/65dZdvAtUT9bmsHw8Zmk3w=="],
 
-    "@tanglydocs/theme-ui": ["@tanglydocs/theme-ui@0.0.12", "", { "dependencies": { "@astrojs/mdx": "^5.0.4", "@scalar/api-reference": "^1.53.1", "@tailwindcss/vite": "^4.2.4", "@tanglydocs/schema": "0.0.12", "astro": "^6.1.10", "hast-util-from-html": "^2.0.3", "hast-util-to-string": "^3.0.1", "hastscript": "^9.0.0", "katex": "^0.16.45", "lucide": "^1.12.0", "mermaid": "^11.14.0", "rehype": "^13.0.2", "rehype-sanitize": "^6.0.0", "rehype-stringify": "^10.0.1", "remark-gfm": "^4.0.1", "remark-parse": "^11.0.0", "remark-rehype": "^11.1.2", "tailwindcss": "^4.2.4", "tangly": "0.0.12", "unified": "^11.0.5", "unist-util-visit": "^5.0.0", "vfile": "^6.0.3" } }, "sha512-oVIaeeoZ12DsnLsAA1CVbyH16e4aEE11EchXA7nDEstcaDOTLszjvZ55b1zZC770hF4LpLL+OFulcf2JZ9iI3w=="],
+    "@tanglydocs/theme-ui": ["@tanglydocs/theme-ui@0.1.0", "", { "dependencies": { "@astrojs/mdx": "^5.0.4", "@scalar/api-reference": "^1.53.1", "@tailwindcss/vite": "^4.2.4", "@tanglydocs/schema": "0.1.0", "astro": "^6.1.10", "hast-util-from-html": "^2.0.3", "hast-util-to-string": "^3.0.1", "hastscript": "^9.0.0", "katex": "^0.16.45", "lucide": "^1.12.0", "mermaid": "^11.14.0", "rehype": "^13.0.2", "rehype-sanitize": "^6.0.0", "rehype-stringify": "^10.0.1", "remark-gfm": "^4.0.1", "remark-parse": "^11.0.0", "remark-rehype": "^11.1.2", "tailwindcss": "^4.2.4", "tangly": "0.1.0", "unified": "^11.0.5", "unist-util-visit": "^5.0.0", "vfile": "^6.0.3" } }, "sha512-keqp4faR7aIEn01RQ4g7mNwjchPw3dtwSiDEBbtcksZpEIvasfNQVr8ETekJilJPb8CzRDF9iuFvXfxETiW2DA=="],
 
     "@tanstack/virtual-core": ["@tanstack/virtual-core@3.14.0", "", {}, "sha512-JLANqGy/D6k4Ujmh8Tr25lGimuOXNiaVyXaCAZS0W+1390sADdGnyUdSWNIfd49gebtIxGMij4IktRVzrdr12Q=="],
 
@@ -1513,7 +1513,7 @@
 
     "tailwindcss": ["tailwindcss@4.2.4", "", {}, "sha512-HhKppgO81FQof5m6TEnuBWCZGgfRAWbaeOaGT00KOy/Pf/j6oUihdvBpA7ltCeAvZpFhW3j0PTclkxsd4IXYDA=="],
 
-    "tangly": ["tangly@0.0.12", "", { "dependencies": { "@astrojs/cloudflare": "^13.2.2", "@astrojs/mdx": "^5.0.4", "@astrojs/node": "^10.0.6", "@astrojs/vercel": "^10.0.6", "@clack/prompts": "^1.2.0", "@shikijs/rehype": "^4.0.2", "@shikijs/transformers": "^4.0.2", "@shikijs/twoslash": "^4.0.2", "@tailwindcss/vite": "^4.2.4", "@tanglydocs/schema": "0.0.12", "@tanglydocs/theme-geist": "0.0.12", "@tanglydocs/theme-pip": "0.0.12", "@tanglydocs/theme-pith": "0.0.12", "@tanglydocs/theme-readable": "0.0.12", "@tanglydocs/theme-tang": "0.0.12", "@tanglydocs/theme-ui": "0.0.12", "astro": "^6.1.10", "chokidar": "^5.0.0", "citty": "^0.2.2", "github-slugger": "^2.0.0", "gray-matter": "^4.0.3", "ignore": "^7", "katex": "^0.16.45", "pagefind": "^1.5.2", "piccolore": "^0.1.3", "picocolors": "^1.1.1", "rehype-autolink-headings": "^7.1.0", "rehype-katex": "^7.0.1", "rehype-slug": "^6.0.0", "rehype-stringify": "^10.0.1", "remark-gfm": "^4.0.1", "remark-math": "^6.0.0", "remark-parse": "^11.0.0", "remark-rehype": "^11.1.2", "shiki": "^4.0.2", "tailwindcss": "^4.2.4", "twoslash": "^0.3.8", "unified": "^11.0.5", "unist-util-visit": "^5.1.0", "unist-util-visit-parents": "^6.0.2", "zod": "^4.3.6" }, "peerDependencies": { "vite": "^7.3.2" }, "bin": { "tangly": "bin/tangly.js" } }, "sha512-BKe8lPF0ANwsk93OhR2al8x6ZwKhgs0p1e8rxeXpClHR1GIbuvvR0MjHyOw5emY+o5tPcZfiO6owzIn4NgD0XQ=="],
+    "tangly": ["tangly@0.1.0", "", { "dependencies": { "@astrojs/cloudflare": "^13.2.2", "@astrojs/mdx": "^5.0.4", "@astrojs/node": "^10.0.6", "@astrojs/vercel": "^10.0.6", "@clack/prompts": "^1.2.0", "@shikijs/rehype": "^4.0.2", "@shikijs/transformers": "^4.0.2", "@shikijs/twoslash": "^4.0.2", "@tailwindcss/vite": "^4.2.4", "@tanglydocs/schema": "0.1.0", "@tanglydocs/theme-geist": "0.1.0", "@tanglydocs/theme-pip": "0.1.0", "@tanglydocs/theme-pith": "0.1.0", "@tanglydocs/theme-readable": "0.1.0", "@tanglydocs/theme-tang": "0.1.0", "@tanglydocs/theme-ui": "0.1.0", "astro": "^6.1.10", "chokidar": "^5.0.0", "citty": "^0.2.2", "github-slugger": "^2.0.0", "gray-matter": "^4.0.3", "ignore": "^7", "katex": "^0.16.45", "pagefind": "^1.5.2", "piccolore": "^0.1.3", "picocolors": "^1.1.1", "rehype-autolink-headings": "^7.1.0", "rehype-katex": "^7.0.1", "rehype-slug": "^6.0.0", "rehype-stringify": "^10.0.1", "remark-gfm": "^4.0.1", "remark-math": "^6.0.0", "remark-parse": "^11.0.0", "remark-rehype": "^11.1.2", "shiki": "^4.0.2", "tailwindcss": "^4.2.4", "twoslash": "^0.3.8", "unified": "^11.0.5", "unist-util-visit": "^5.1.0", "unist-util-visit-parents": "^6.0.2", "zod": "^4.3.6" }, "peerDependencies": { "vite": "^7.3.2" }, "bin": { "tangly": "bin/tangly.js" } }, "sha512-L0Cdlj6kJ8lF4RH18yLRxhjlBScoQupQQJsJFUdVSh39dI6NcduNr4bJrKAU4ikSBKdhdPh7hhlpfEM98IHn1g=="],
 
     "tapable": ["tapable@2.3.3", "", {}, "sha512-uxc/zpqFg6x7C8vOE7lh6Lbda8eEL9zmVm/PLeTPBRhh1xCgdWaQ+J1CUieGpIfm2HdtsUpRv+HshiasBMcc6A=="],
 
