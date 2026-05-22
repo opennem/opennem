@@ -28,7 +28,7 @@ from opennem.crawlers.nemweb import (
     AEMONemwebTradingIS,
     AEMONNemwebDispatchScada,
 )
-from opennem.crawlers.wemde import run_all_wem_crawlers
+from opennem.crawlers.wemde import AEMOWEMDEDispatch, run_all_wem_crawlers, run_wemde_crawl
 from opennem.db import get_write_session
 from opennem.db.clickhouse.schema import optimize_clickhouse_tables
 from opennem.exporter.facilities import export_facilities_static
@@ -128,6 +128,28 @@ async def task_wem_day_crawl(ctx) -> None:
 
     await run_export_power_latest_for_network(network=NetworkWEM)
     await run_export_energy_for_year(network=NetworkWEM)
+
+
+async def task_wem_interval_check(ctx) -> None:
+    """Every 5 min: crawl the WEMDE dispatch feed and run the WEM aggregates.
+
+    Near-real-time WEM via the dispatch-solution feed (~5-10 min lag). The hourly
+    task_wem_day_crawl remains the full catch-up pass (all WEM crawlers, 2-day window).
+    """
+    await run_wemde_crawl(AEMOWEMDEDispatch, latest=True, limit=AEMOWEMDEDispatch.limit)
+
+    # aggregate WEM facility_scada -> CH unit_intervals over a recent window
+    end_date = get_last_completed_interval_for_network(network=NetworkNEM)
+    start_date = end_date - timedelta(hours=6)
+    async with get_write_session() as session:
+        await process_unit_intervals_backlog(
+            session=session,
+            start_date=start_date,
+            end_date=end_date,
+            network=NetworkWEM,
+        )
+
+    await run_export_power_latest_for_network(network=NetworkWEM)
 
 
 async def task_apvi_crawl(ctx) -> None:
