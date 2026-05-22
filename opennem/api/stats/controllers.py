@@ -79,6 +79,35 @@ def stats_factory(
 
         data_sorted = OrderedDict(sorted(data_grouped.items()))
 
+        # Gapfill: reindex onto a complete interval grid so history.data stays
+        # contiguous between start and last. Consumers reconstruct each point's
+        # time as start + i*interval, so missing intervals must be explicit
+        # nulls — absent rows misalign everything after a gap (issue #534).
+        # Fixed-duration intervals only; month/year stepping is not uniform.
+        grid_step = {
+            "5 minutes": timedelta(minutes=5),
+            "30 minutes": timedelta(minutes=30),
+            "1 hour": timedelta(hours=1),
+            "1 day": timedelta(days=1),
+        }.get(interval.interval_sql)
+
+        if grid_step and len(data_sorted) > 1:
+            grid_keys = list(data_sorted.keys())
+            filled: OrderedDict[datetime, Any] = OrderedDict()
+            cursor, grid_end = grid_keys[0], grid_keys[-1]
+            while cursor <= grid_end:
+                filled[cursor] = data_sorted.get(cursor)
+                cursor += grid_step
+
+            # only adopt the grid if it preserves every original interval —
+            # otherwise the source isn't aligned to the step and we'd drop data
+            if all(k in filled for k in grid_keys):
+                data_sorted = filled
+            else:
+                logger.warning(
+                    f"stats_factory: skipping gapfill for {group_code} — intervals not aligned to {interval.interval_sql} grid"
+                )
+
         data_value = list(data_sorted.values())
 
         # Skip null series
