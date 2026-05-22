@@ -62,6 +62,7 @@ from opennem.tasks.tasks import (
     task_weekly_summary_nem,
     task_weekly_summary_wem,
     task_wem_day_crawl,
+    task_wem_interval_check,
 )
 from opennem.utils.host import get_hostname
 from opennem.utils.sentry import setup_sentry
@@ -151,6 +152,14 @@ class WorkerSettings:
             minute={30},
             second=58,
             timeout=None,
+            unique=True,
+        ),
+        # WEM near-real-time dispatch feed + aggregates — every 5 min
+        cron(
+            task_wem_interval_check,
+            minute=set(range(0, 60, 5)),
+            second=50,
+            timeout=270,
             unique=True,
         ),
         # APVI Rooftop
