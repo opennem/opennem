@@ -50,6 +50,7 @@
             "group": "API Reference",
             "pages": [
               "api-reference/overview",
+              "api-reference/metrics",
               "api-reference/data-limits",
               {
                 "group": "Generation Data",
@@ -151,7 +152,8 @@
     "dark": "/images/oe_logo_full_white.png"
   },
   "api": {
-    "openapi": "https://api.openelectricity.org.au/v4/openapi.json"
+    "openapi": "https://api.openelectricity.org.au/v4/openapi.json",
+    "responseFallback": "#/components/schemas/APIV4ResponseSchema"
   },
   "navbar": {
     "links": [

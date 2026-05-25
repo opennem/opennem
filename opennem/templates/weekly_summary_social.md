@@ -8,5 +8,3 @@ Open Electricity weekly summary for ${ws.network} (${week_range}). Renewables pr
 
 ${ws.milestones[0].description or ws.milestones[0].record_id}
 % endif
-
-https://explore.openelectricity.org.au/energy/${ws.network.lower()}/

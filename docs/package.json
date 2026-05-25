@@ -3,13 +3,16 @@
   "version": "1.0.0",
   "description": "Open Electricity Documentation",
   "scripts": {
-    "dev": "mintlify dev",
-    "build": "mintlify build",
-    "preview": "mintlify preview",
-    "update": "mintlify update"
+    "dev": "tangly dev --port ${PORT:-9411} --no-open",
+    "build": "tangly build",
+    "preview": "tangly preview --port ${PORT:-9411}",
+    "check": "tangly check --strict",
+    "deploy:preview": "TANGLY_OPENAPI_URL=https://api.oedev.org/openapi.json tangly build && wrangler pages deploy ./dist --project-name openelectricity-docs --branch preview",
+    "deploy:prod": "tangly build && wrangler pages deploy ./dist --project-name openelectricity-docs --branch main"
   },
   "devDependencies": {
-    "mintlify": "latest"
+    "tangly": "^0.1.0",
+    "wrangler": "^4.87.0"
   },
   "engines": {
     "node": ">=19.0.0"

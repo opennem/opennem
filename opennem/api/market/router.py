@@ -7,12 +7,13 @@ import time
 from datetime import datetime
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from fastapi_cache.decorator import cache
 from fastapi_versionizer import api_version
 
 from opennem.api.data.utils import validate_date_range
 from opennem.api.queries import QueryType, get_timeseries_query
+from opennem.api.schema import std_error_responses
 from opennem.api.security import authenticated_user
 from opennem.api.timeseries import build_timeseries_response, format_timeseries_response
 from opennem.api.utils import get_api_network_from_code, validate_metrics
@@ -52,20 +53,43 @@ _SUPPORTED_METRICS = [
 
 
 @api_version(4)
-@router.get("/network/{network_code}")
+@router.get("/network/{network_code}", responses=std_error_responses())
 @cache(expire=60 * 5)
 async def get_network_data(
-    network_code: str,
-    metrics: Annotated[list[Metric], Query(description="The metrics to get data for", example="price")],
-    interval: Annotated[Interval, Query(description="The time interval to aggregate data by", example="1h")] = Interval.INTERVAL,
-    date_start: Annotated[datetime | None, Query(description="Start time for the query", example="2024-01-01T00:00:00")] = None,
-    date_end: Annotated[datetime | None, Query(description="End time for the query", example="2024-01-02T00:00:00")] = None,
-    network_region: Annotated[str | None, Query(description="Network region to get data for", example="NSW1")] = None,
+    network_code: Annotated[
+        str,
+        Path(description="Network identifier — see `/networks` for valid codes.", examples=["NEM"]),
+    ],
+    metrics: Annotated[
+        list[Metric],
+        Query(
+            description="One or more market metrics to return (`price`, `demand`, `curtailment`, …).",
+            examples=[["price", "demand"]],
+            min_length=1,
+        ),
+    ],
+    interval: Annotated[
+        Interval,
+        Query(description="Bucket size for time-series aggregation.", examples=["1h"]),
+    ] = Interval.INTERVAL,
+    date_start: Annotated[
+        datetime | None,
+        Query(description="Inclusive start of the query window (network-local time).", examples=["2024-01-01T00:00:00"]),
+    ] = None,
+    date_end: Annotated[
+        datetime | None,
+        Query(description="Inclusive end of the query window (network-local time).", examples=["2024-01-02T00:00:00"]),
+    ] = None,
+    network_region: Annotated[
+        str | None,
+        Query(description="Restrict to a single network region (price zone).", examples=["NSW1"]),
+    ] = None,
     primary_grouping: Annotated[
-        PrimaryGrouping, Query(description="Primary grouping to apply", example="network_region")
+        PrimaryGrouping,
+        Query(description="Primary grouping dimension applied to results.", examples=["network_region"]),
     ] = PrimaryGrouping.NETWORK,
     client: Any = Depends(get_clickhouse_dependency),
-    user: authenticated_user = None,
+    user: authenticated_user | None = None,
 ) -> dict:
     """Get market data for a network."""
     network = get_api_network_from_code(network_code)

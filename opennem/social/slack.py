@@ -1,7 +1,13 @@
 """Slack integration for the social media pipeline.
 
-Handles sending approval requests, updating post status,
-and posting publish results as thread replies.
+The approval message is a single Block Kit post with the image embedded —
+keeps the image visible after publish (no chat.update wiping it). Status
+transitions are signalled via emoji reactions on that message, plus a
+thread reply with platform permalinks once publishing finishes.
+
+All Slack notification calls are non-fatal: a Slack API hiccup must never
+fail the underlying social publish. Errors are logged + sent as Sentry
+breadcrumbs but never raised.
 """
 
 import logging
@@ -9,46 +15,46 @@ from uuid import UUID
 
 from opennem import settings
 from opennem.clients.slack_app import (
+    add_reaction,
     build_weekly_summary_approval_blocks,
     post_message_with_blocks,
-    upload_image_to_slack,
+    post_thread_reply,
+    remove_reaction,
 )
 from opennem.db import get_read_session
 from opennem.db.models.opennem import SocialPost
 
 logger = logging.getLogger("opennem.social.slack")
 
+# Reaction emoji used to signal post lifecycle
+EMOJI_PUBLISHING = "hourglass_flowing_sand"
+EMOJI_PUBLISHED = "white_check_mark"
+EMOJI_PARTIAL = "warning"
+EMOJI_FAILED = "x"
+EMOJI_REJECTED = "no_entry_sign"
+
 
 async def send_approval_request(
     post_id: UUID,
     text_content: str,
-    image: bytes | None = None,
+    image_url: str | None = None,
 ) -> tuple[str | None, str | None]:
-    """Post approval message to Slack with Approve/Reject buttons.
+    """Post a single Block Kit approval message containing the image preview
+    plus Approve/Reject buttons.
 
-    Returns (channel_id, message_ts) for later updates.
+    Returns (channel_id, message_ts) for downstream reactions/threading.
     """
     channel = settings.slack_weekly_summary_channel
     if not channel:
         logger.warning("slack_weekly_summary_channel not configured")
         return None, None
 
-    # Upload image if provided
-    if image:
-        await upload_image_to_slack(
-            channel=channel,
-            image=image,
-            filename=f"social_post_{post_id}.png",
-            title="Social media post preview",
-        )
-
-    # Build approval blocks — callback_value is the post UUID
     callback_value = str(post_id)
     truncated = text_content[:200] + "..." if len(text_content) > 200 else text_content
     blocks = build_weekly_summary_approval_blocks(
         summary_text=truncated,
-        image_url=None,  # image uploaded separately as file
-        image_alt="Social media post",
+        image_url=image_url,
+        image_alt="Social media post preview",
         callback_value=callback_value,
     )
 
@@ -60,96 +66,74 @@ async def send_approval_request(
 
     if result:
         return result.get("channel"), result.get("ts")
-
     return None, None
 
 
-async def update_post_status_in_slack(post_id: UUID, message: str) -> None:
-    """Update the original Slack approval message with a status update."""
-    import httpx
-
+async def mark_publishing(post_id: UUID, approved_by: str) -> None:
+    """Switch the approval message from pending → publishing: add hourglass
+    reaction and post a thread note announcing who approved it."""
     async with get_read_session() as session:
         post = await session.get(SocialPost, post_id)
         if not post or not post.slack_channel_id or not post.slack_message_ts:
             return
-
         channel = post.slack_channel_id
         ts = post.slack_message_ts
 
-    if not settings.slack_bot_token:
-        return
+    await add_reaction(channel, ts, EMOJI_PUBLISHING)
+    await post_thread_reply(channel, ts, f":hourglass_flowing_sand: Approved by @{approved_by} — publishing…")
 
-    # Update the original message text (remove buttons)
-    async with httpx.AsyncClient(timeout=10) as client:
-        await client.post(
-            "https://slack.com/api/chat.update",
-            headers={"Authorization": f"Bearer {settings.slack_bot_token}"},
-            json={
-                "channel": channel,
-                "ts": ts,
-                "text": message,
-                "blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": message}}],
-            },
-        )
+
+async def mark_rejected(post_id: UUID, rejected_by: str) -> None:
+    """Mark the approval message as rejected via reaction + thread note."""
+    async with get_read_session() as session:
+        post = await session.get(SocialPost, post_id)
+        if not post or not post.slack_channel_id or not post.slack_message_ts:
+            return
+        channel = post.slack_channel_id
+        ts = post.slack_message_ts
+
+    await add_reaction(channel, ts, EMOJI_REJECTED)
+    await post_thread_reply(channel, ts, f":no_entry_sign: Rejected by @{rejected_by}.")
 
 
 async def post_publish_results_to_slack(
     post_id: UUID,
     results: list[tuple[str, str, str | None]],
 ) -> None:
-    """Reply in the Slack thread with publish results and permalinks.
+    """Post platform permalinks as a thread reply and tag the original message
+    with success/partial/failure reactions.
 
     Args:
         post_id: Social post UUID
         results: List of (platform, status, permalink_or_error)
     """
-    import httpx
-
     async with get_read_session() as session:
         post = await session.get(SocialPost, post_id)
         if not post or not post.slack_channel_id or not post.slack_message_ts:
             return
-
         channel = post.slack_channel_id
-        thread_ts = post.slack_message_ts
+        ts = post.slack_message_ts
 
-    if not settings.slack_bot_token:
-        return
-
-    lines = []
+    lines: list[str] = []
     for platform, status, detail in results:
         if status == "published":
-            if detail:
-                lines.append(f"*{platform}*: {detail}")
-            else:
-                lines.append(f"*{platform}*: published")
+            lines.append(f"*{platform}*: {detail}" if detail else f"*{platform}*: published")
         elif status == "skipped":
             lines.append(f"*{platform}*: skipped — {detail or 'not configured'}")
         else:
             lines.append(f"*{platform}*: failed — {detail or 'unknown error'}")
 
-    text = "\n".join(lines)
+    await post_thread_reply(channel, ts, "\n".join(lines))
 
-    # Post as thread reply
-    async with httpx.AsyncClient(timeout=10) as client:
-        await client.post(
-            "https://slack.com/api/chat.postMessage",
-            headers={"Authorization": f"Bearer {settings.slack_bot_token}"},
-            json={
-                "channel": channel,
-                "thread_ts": thread_ts,
-                "text": text,
-                "blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": text}}],
-            },
-        )
-
-    # Also update the original message
     had_failure = any(s == "failed" for _, s, _ in results)
     had_skip = any(s == "skipped" for _, s, _ in results)
-    if had_failure:
-        summary = "Publishing completed with errors"
-    elif had_skip:
-        summary = "Published (some platforms skipped)"
+    had_published = any(s == "published" for _, s, _ in results)
+
+    # Drop the in-flight hourglass and add the terminal status reaction
+    await remove_reaction(channel, ts, EMOJI_PUBLISHING)
+    if had_failure and not had_published:
+        await add_reaction(channel, ts, EMOJI_FAILED)
+    elif had_failure or had_skip:
+        await add_reaction(channel, ts, EMOJI_PARTIAL)
     else:
-        summary = "Published to all platforms"
-    await update_post_status_in_slack(post_id, summary)
+        await add_reaction(channel, ts, EMOJI_PUBLISHED)

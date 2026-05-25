@@ -29,6 +29,7 @@ from opennem.api.facilities.router import router as facilities_router
 from opennem.api.feedback.router import router as feedback_router
 from opennem.api.market.router import router as market_router
 from opennem.api.milestones.router import milestones_router
+from opennem.api.openapi_extra import custom_openapi
 from opennem.api.plans.router import router as plans_router
 from opennem.api.pollution.router import router as pollution_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
@@ -337,7 +338,13 @@ async def get_network_regions(
 
     logger.debug(network_regions)
 
-    response = [APINetworkRegion(code=i.code, timezone=i.timezone) for i in network_regions]
+    response = [
+        APINetworkRegion(
+            code=str(i.code),
+            timezone=str(i.timezone) if i.timezone is not None else None,
+        )
+        for i in network_regions
+    ]
 
     return response
 
@@ -364,9 +371,9 @@ async def fueltechs(
     try:
         models = [
             FueltechSchema(
-                code=i.code,
-                label=i.label,
-                renewable=i.renewable,
+                code=str(i.code),
+                label=str(i.label) if i.label is not None else None,
+                renewable=bool(i.renewable) if i.renewable is not None else None,
             )
             for i in fueltechs
         ]
@@ -498,6 +505,10 @@ versions = Versionizer(
     sort_routes=True,
     # default_version="v{major}",
 ).versionize()
+
+# Inject `x-codeSamples` from opennem.api.code_samples after Versionizer
+# rebuilds the route table. Result is cached on app.openapi_schema.
+app.openapi = lambda: custom_openapi(app)
 
 
 def main():

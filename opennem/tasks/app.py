@@ -59,8 +59,10 @@ from opennem.tasks.tasks import (
     task_update_facility_seen_range,
     task_update_max_generation_for_units,
     task_update_milestones,
-    task_weekly_summary,
+    task_weekly_summary_nem,
+    task_weekly_summary_wem,
     task_wem_day_crawl,
+    task_wem_interval_check,
 )
 from opennem.utils.host import get_hostname
 from opennem.utils.sentry import setup_sentry
@@ -150,6 +152,14 @@ class WorkerSettings:
             minute={30},
             second=58,
             timeout=None,
+            unique=True,
+        ),
+        # WEM near-real-time dispatch feed + aggregates — every 5 min
+        cron(
+            task_wem_interval_check,
+            minute=set(range(0, 60, 5)),
+            second=50,
+            timeout=270,
             unique=True,
         ),
         # APVI Rooftop
@@ -330,11 +340,21 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
-        # Weekly summary report — Monday 7am AEST, posts to Slack for approval
+        # NEM weekly summary — Monday 7am AEST, posts to Slack for approval
         cron(
-            task_weekly_summary,
+            task_weekly_summary_nem,
             weekday={0},  # Monday
             hour=7,
+            minute=0,
+            second=0,
+            timeout=None,
+            unique=True,
+        ),
+        # WEM weekly summary — Tuesday 9am AEST (WEM data lags NEM by ~24h)
+        cron(
+            task_weekly_summary_wem,
+            weekday={1},  # Tuesday
+            hour=9,
             minute=0,
             second=0,
             timeout=None,

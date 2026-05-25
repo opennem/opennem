@@ -8,7 +8,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, model_serializer, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_serializer, model_validator
 
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.core.networks import network_from_network_code
@@ -17,7 +17,19 @@ from opennem.schema.unit import UnitDispatchType, UnitFueltechType, UnitStatusTy
 
 
 class UnitDateSpecificity(Enum):
-    """Date specificity enum"""
+    """Granularity of a unit-related date field.
+
+    Many facility lifecycle dates (commencement, closure, construction
+    start, project approval) are only known to a coarser granularity than
+    a specific calendar day. The matching `*_specificity` field signals
+    which components of the paired date are authoritative.
+
+    Attributes:
+        YEAR: Only the year is authoritative; month/day are placeholders.
+        MONTH: Year + month are authoritative; day is a placeholder.
+        QUARTER: Calendar quarter is authoritative.
+        DAY: Full calendar day is authoritative.
+    """
 
     YEAR = "year"
     MONTH = "month"
@@ -28,45 +40,124 @@ class UnitDateSpecificity(Enum):
 class UnitResponseSchema(BaseModel):
     """Unit response schema with selected fields"""
 
-    code: str
-    code_display: str | None = None
-    fueltech_id: UnitFueltechType
-    status_id: UnitStatusType
-    capacity_registered: RoundedFloat2 | None = None
-    capacity_maximum: RoundedFloat4 | None = None
-    capacity_storage: RoundedFloat4 | None = None
-    emissions_factor_co2: RoundedFloat4 | None = None
-    data_first_seen: datetime | None = None
-    data_last_seen: datetime | None = None
-    dispatch_type: UnitDispatchType | None = None
+    code: str = Field(
+        description="Unique unit identifier within the facility (e.g. `BAYSW1`).",
+        examples=["BAYSW1"],
+    )
+    code_display: str | None = Field(
+        default=None,
+        description="Display-friendly version of the unit code, when distinct from `code`.",
+        examples=["Bayswater 1"],
+    )
+    fueltech_id: UnitFueltechType = Field(
+        description="Fueltech classification (e.g. `coal_black`, `solar_utility`, `wind`, `battery_charging`).",
+        examples=["coal_black"],
+    )
+    status_id: UnitStatusType = Field(
+        description="Operational status (`operating`, `committed`, `retired`, …).",
+        examples=["operating"],
+    )
+    capacity_registered: RoundedFloat2 | None = Field(
+        default=None,
+        description="Registered nameplate capacity in MW.",
+        examples=[660.0],
+    )
+    capacity_maximum: RoundedFloat4 | None = Field(
+        default=None,
+        description="Demonstrated maximum capacity in MW.",
+        examples=[680.5],
+    )
+    capacity_storage: RoundedFloat4 | None = Field(
+        default=None,
+        description="Storage capacity in MWh (batteries / pumped hydro). `null` for non-storage units.",
+        examples=[150.0],
+    )
+    emissions_factor_co2: RoundedFloat4 | None = Field(
+        default=None,
+        description="CO2-equivalent emissions intensity in tCO2/MWh.",
+        examples=[0.95],
+    )
+    data_first_seen: datetime | None = Field(
+        default=None,
+        description="Earliest interval observed for this unit in OE's dispatch data (network-local time).",
+        examples=["2010-01-01T04:30:00+10:00"],
+    )
+    data_last_seen: datetime | None = Field(
+        default=None,
+        description="Most recent interval observed for this unit (network-local time).",
+        examples=["2024-09-01T14:30:00+10:00"],
+    )
+    dispatch_type: UnitDispatchType | None = Field(
+        default=None,
+        description="Dispatch type — generator, load, or bidirectional (e.g. battery).",
+        examples=["GENERATOR"],
+    )
 
     # unit date fields
-    commencement_date: datetime | None = None
-    commencement_date_specificity: UnitDateSpecificity | None = None
-    commencement_date_display: str | None = None
-    closure_date: datetime | None = None
-    closure_date_display: str | None = None
-    closure_date_specificity: UnitDateSpecificity | None = None
-    expected_operation_date: datetime | None = None
-    expected_operation_date_specificity: UnitDateSpecificity | None = None
-    expected_operation_date_display: str | None = None
-    expected_closure_date: datetime | None = None
-    expected_closure_date_display: str | None = None
-    expected_closure_date_specificity: UnitDateSpecificity | None = None
-    construction_start_date: datetime | None = None
-    construction_start_date_specificity: UnitDateSpecificity | None = None
-    construction_start_date_display: str | None = None
-    project_approval_date: datetime | None = None
-    project_approval_date_specificity: UnitDateSpecificity | None = None
-    project_approval_date_display: str | None = None
-    project_lodgement_date: datetime | None = None
+    commencement_date: datetime | None = Field(
+        default=None,
+        description="Date the unit first commenced operations.",
+        examples=["1985-12-15T00:00:00+10:00"],
+    )
+    commencement_date_specificity: UnitDateSpecificity | None = Field(
+        default=None,
+        description="Granularity of `commencement_date` — `year` means the day/month are not authoritative.",
+        examples=["year"],
+    )
+    commencement_date_display: str | None = Field(
+        default=None,
+        description="Human-readable rendering of `commencement_date` honoring its specificity.",
+        examples=["1985"],
+    )
+    closure_date: datetime | None = Field(default=None, description="Date the unit was retired.")
+    closure_date_display: str | None = Field(default=None, description="Human-readable rendering of `closure_date`.")
+    closure_date_specificity: UnitDateSpecificity | None = Field(default=None, description="Granularity of `closure_date`.")
+    expected_operation_date: datetime | None = Field(
+        default=None, description="Date the unit is expected to commence operations."
+    )
+    expected_operation_date_specificity: UnitDateSpecificity | None = Field(
+        default=None, description="Granularity of `expected_operation_date`."
+    )
+    expected_operation_date_display: str | None = Field(
+        default=None, description="Human-readable rendering of `expected_operation_date`."
+    )
+    expected_closure_date: datetime | None = Field(default=None, description="Date the unit is expected to retire.")
+    expected_closure_date_display: str | None = Field(
+        default=None, description="Human-readable rendering of `expected_closure_date`."
+    )
+    expected_closure_date_specificity: UnitDateSpecificity | None = Field(
+        default=None, description="Granularity of `expected_closure_date`."
+    )
+    construction_start_date: datetime | None = Field(default=None, description="Date construction commenced.")
+    construction_start_date_specificity: UnitDateSpecificity | None = Field(
+        default=None, description="Granularity of `construction_start_date`."
+    )
+    construction_start_date_display: str | None = Field(
+        default=None, description="Human-readable rendering of `construction_start_date`."
+    )
+    project_approval_date: datetime | None = Field(default=None, description="Date the project received planning approval.")
+    project_approval_date_specificity: UnitDateSpecificity | None = Field(
+        default=None, description="Granularity of `project_approval_date`."
+    )
+    project_approval_date_display: str | None = Field(
+        default=None, description="Human-readable rendering of `project_approval_date`."
+    )
+    project_lodgement_date: datetime | None = Field(default=None, description="Date the project was lodged for approval.")
 
     # max generation fields
-    max_generation: RoundedFloat4 | None = None
-    max_generation_interval: datetime | None = None
+    max_generation: RoundedFloat4 | None = Field(
+        default=None,
+        description="Highest single-interval generation observed for this unit, in MW.",
+        examples=[678.2],
+    )
+    max_generation_interval: datetime | None = Field(
+        default=None,
+        description="Interval at which `max_generation` was observed (network-local time).",
+        examples=["2023-01-18T16:30:00+10:00"],
+    )
 
-    created_at: datetime | None = None
-    updated_at: datetime | None = None
+    created_at: datetime | None = Field(default=None, description="When this unit record was first created in OE.")
+    updated_at: datetime | None = Field(default=None, description="When this unit record was last updated.")
 
     model_config = ConfigDict(from_attributes=True, defer_build=True)
 
@@ -107,20 +198,56 @@ class UnitResponseSchema(BaseModel):
 class FacilityResponseSchema(BaseModel):
     """Facility response schema with selected fields and associated units"""
 
-    code: str
-    code_display: str | None = None
-    name: str
-    network_id: str
-    network_region: str
-    description: str | None = None
-    npi_id: str | None = None
-    osm_way_id: str | None = None
-    location: dict | None = None  # Will contain lat/lng from PostGIS geometry
-    boundary: dict | None = None  # GeoJSON geometry (Polygon/MultiPolygon)
-    units: list[UnitResponseSchema]
+    code: str = Field(
+        description="Unique facility identifier across the OE platform (e.g. `BAYSW`).",
+        examples=["BAYSW"],
+    )
+    code_display: str | None = Field(
+        default=None,
+        description="Display-friendly version of `code`, when distinct.",
+        examples=["Bayswater Power Station"],
+    )
+    name: str = Field(
+        description="Facility name as published by the network operator.",
+        examples=["Bayswater Power Station"],
+    )
+    network_id: str = Field(
+        description="Network the facility participates in — see `/networks` for valid codes.",
+        examples=["NEM"],
+    )
+    network_region: str = Field(
+        description="Network region (price zone) the facility sits in.",
+        examples=["NSW1"],
+    )
+    description: str | None = Field(
+        default=None,
+        description="Free-form description of the facility.",
+    )
+    npi_id: str | None = Field(
+        default=None,
+        description="National Pollutant Inventory facility ID, when this facility reports to NPI.",
+        examples=["12345"],
+    )
+    osm_way_id: str | None = Field(
+        default=None,
+        description="OpenStreetMap way ID for the facility footprint.",
+        examples=["123456789"],
+    )
+    location: dict | None = Field(
+        default=None,
+        description="GeoJSON `Point` of the facility's nominal location (`lat`/`lng`).",
+        examples=[{"lat": -32.4, "lng": 150.95}],
+    )
+    boundary: dict | None = Field(
+        default=None,
+        description="GeoJSON `Polygon` or `MultiPolygon` of the facility footprint.",
+    )
+    units: list[UnitResponseSchema] = Field(
+        description="Generating / storage units belonging to this facility.",
+    )
 
-    updated_at: datetime | None = None
-    created_at: datetime | None = None
+    updated_at: datetime | None = Field(default=None, description="When this facility record was last updated.")
+    created_at: datetime | None = Field(default=None, description="When this facility record was first created in OE.")
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -133,15 +260,20 @@ class FacilityResponseSchema(BaseModel):
         # Create context with network_id for units
         context = {"network_id": self.network_id}
 
-        # Update each unit's context with the network_id
+        # Update each unit's context with the network_id.
+        # `context` is not part of Pydantic's ConfigDict TypedDict, but is read
+        # by the unit's after-validator via self.model_config.get("context", {}).
         for unit in self.units:
-            unit.model_config["context"] = context
+            unit.model_config["context"] = context  # type: ignore[typeddict-unknown-key]
 
         return self
 
 
 class APIV4FacilityResponseSchema(APIV4ResponseSchema):
-    data: list[FacilityResponseSchema] = []
+    data: list[FacilityResponseSchema] = Field(
+        default_factory=list,
+        description="Facilities matching the request, sorted by `code`.",
+    )
 
     @model_serializer(mode="wrap")
     def serialize_model(self, serializer, info):

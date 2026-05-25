@@ -393,6 +393,13 @@ def _get_logo_url() -> str:
     return f"data:image/png;base64,{logo_b64}"
 
 
+def _get_network_map_svg(network_code: str) -> str:
+    """Return inline SVG markup for the network's regional map."""
+    static_dir = Path(__file__).parent.parent / "static"
+    fname = "network_map_nem.svg" if network_code.upper() == "NEM" else "network_map_wem.svg"
+    return (static_dir / fname).read_text()
+
+
 def _generate_pie_svg(records: list[WeeklySummaryResult], size: int = 380) -> str:
     """Generate an SVG pie chart from fueltech records."""
     cx, cy, r = size // 2, size // 2, size // 2 - 10
@@ -617,6 +624,7 @@ def plot_weekly_fueltech_summary(ws: WeeklySummary) -> io.BytesIO:
     html = serve_template(
         "weekly_summary_image.html",
         logo_url=_get_logo_url(),
+        network_map_svg=_get_network_map_svg(ws.network),
         week_number=ws.week_number,
         year=ws.week_start.strftime("%Y"),
         network=ws.network,
@@ -750,7 +758,10 @@ async def run_weekly_summary(network: NetworkSchema, week_start: datetime | None
     social_text = serve_template("weekly_summary_social.md", ws=ws)
 
     if settings.dry_run:
+        preview_path = Path("/tmp") / f"weekly_summary_preview_{network.code}.png"
+        preview_path.write_bytes(chart_bytes)
         logger.info(f"[DRY RUN] Weekly summary for {network.code}:\n{social_text}")
+        logger.info(f"[DRY RUN] Preview image: {preview_path}")
         return ws
 
     if not settings.is_prod:
@@ -759,13 +770,15 @@ async def run_weekly_summary(network: NetworkSchema, week_start: datetime | None
 
     # Submit to social pipeline — handles Slack approval + publishing.
     # create_social_post already logs "Duplicate … skipping" or equivalent.
+    iso_year = ws.week_start.isocalendar().year
     await create_social_post(
         CreateSocialPostRequest(
             post_type=SocialPostType.WEEKLY_SUMMARY,
             text_content=social_text,
             source_type="weekly_summary",
-            source_id=f"{network.code}_week_{ws.week_number}",
+            source_id=f"{network.code}_week_{iso_year}_{ws.week_number:02d}",
             network_id=network.code,
+            link_url=f"https://explore.openelectricity.org.au/energy/{network.code.lower()}/",
             metadata={"week_number": ws.week_number, "week_start": ws.week_start.isoformat()},
         ),
         image=chart_bytes,

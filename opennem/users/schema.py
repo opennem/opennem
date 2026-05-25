@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 from enum import Enum
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 from opennem.api.schema import APIV4ResponseSchema
 from opennem.users.plans import OpenNEMPlan, PlanConfig, get_plan_config
@@ -14,9 +14,21 @@ class OpenNEMRoles(Enum):
 
 
 class OpenNEMUserRateLimit(BaseModel):
-    limit: int
-    remaining: int
-    reset: datetime | int
+    limit: int = Field(
+        description="Maximum requests allowed in the current rate-limit window.",
+        examples=[60],
+    )
+    remaining: int = Field(
+        description="Requests still available in the current window.",
+        examples=[42],
+    )
+    reset: datetime | int = Field(
+        description=(
+            "UTC timestamp when the rate-limit window resets. Accepts a unix-millis integer on input; "
+            "serialized as ISO-8601 datetime."
+        ),
+        examples=["2024-09-01T00:01:00Z"],
+    )
 
     # convert reset unix timestamp to datetime in UTC time
     @field_validator("reset", mode="before")
@@ -31,8 +43,16 @@ class OpenNEMUserRateLimit(BaseModel):
 
 
 class OpennemAPIRequestMeta(BaseModel):
-    remaining: int | None = None
-    reset: datetime | None = None
+    remaining: int | None = Field(
+        default=None,
+        description="API credits remaining for the current billing period.",
+        examples=[9876],
+    )
+    reset: datetime | None = Field(
+        default=None,
+        description="UTC timestamp when the credit balance refreshes.",
+        examples=["2024-10-01T00:00:00Z"],
+    )
 
 
 class OpenNEMUser(BaseModel):
@@ -59,24 +79,55 @@ class OpenNEMUser(BaseModel):
 
 
 class OpennemUserResponse(APIV4ResponseSchema):
-    data: OpenNEMUser
+    # Override `data` to a concrete type — standard Pydantic v2 pattern; pyright LSP rule trips on default-removal.
+    data: OpenNEMUser = Field(..., description="Internal user record (admin-only fields included).")  # pyright: ignore[reportGeneralTypeIssues, reportIncompatibleVariableOverride]
 
 
 class OpenNEMUserMe(BaseModel):
     """Public-facing user profile for /v4/me"""
 
-    id: str
-    full_name: str | None = None
-    email: str | None = None
-    plan: OpenNEMPlan = OpenNEMPlan.COMMUNITY
-    roles: list[OpenNEMRoles] = []
-    is_admin: bool | None = None
-    rate_limit: OpenNEMUserRateLimit | None = None
-    credits: OpennemAPIRequestMeta | None = None
+    id: str = Field(
+        description="Stable user identifier.",
+        examples=["user_2abcDEF12345"],
+    )
+    full_name: str | None = Field(
+        default=None,
+        description="User's full name as set in their profile.",
+        examples=["Ada Lovelace"],
+    )
+    email: str | None = Field(
+        default=None,
+        description="User's primary email address.",
+        examples=["ada@example.com"],
+    )
+    plan: OpenNEMPlan = Field(
+        OpenNEMPlan.COMMUNITY,
+        description="Subscription plan the user is on.",
+        examples=["COMMUNITY"],
+    )
+    roles: list[OpenNEMRoles] = Field(
+        default_factory=list,
+        description="Authorization roles attached to this user.",
+        examples=[["anonymous"]],
+    )
+    is_admin: bool | None = Field(
+        default=None,
+        description="`true` for admin users; absent otherwise.",
+        examples=[None],
+    )
+    rate_limit: OpenNEMUserRateLimit | None = Field(
+        default=None,
+        description="Current rate-limit window for this user's API key.",
+    )
+    credits: OpennemAPIRequestMeta | None = Field(
+        default=None,
+        description="API credit balance metadata.",
+    )
 
 
 class OpenNEMUserMeResponse(APIV4ResponseSchema):
-    data: OpenNEMUserMe
+    # Override `data` to a concrete type — standard Pydantic v2 pattern; pyright LSP rule trips on default-removal.
+    data: OpenNEMUserMe = Field(..., description="Authenticated user's profile, plan, roles, rate-limit, and credit balance.")  # pyright: ignore[reportGeneralTypeIssues, reportIncompatibleVariableOverride]
 
 
 def to_user_me(user: OpenNEMUser) -> OpenNEMUserMe:

@@ -67,12 +67,15 @@ async def _upload_image(image: io.BytesIO) -> str | None:
     return image_urn
 
 
-async def post_linkedin(text: str, image: io.BytesIO | None = None) -> None:
+async def post_linkedin(text: str, image: io.BytesIO | None = None) -> dict:
     """Post to LinkedIn organization page with optional image.
 
     Args:
         text: Post text content
         image: Optional image as BytesIO
+
+    Returns:
+        {"platform_post_id": ugc_post_id, "permalink": LinkedIn URL} on success.
     """
     if not settings.linkedin_access_token or not settings.linkedin_organization_id:
         # TODO: revert to logger.error + critical-path behaviour once LINKEDIN_ACCESS_TOKEN is set in prod
@@ -120,4 +123,15 @@ async def post_linkedin(text: str, image: io.BytesIO | None = None) -> None:
         logger.error(msg)
         raise RuntimeError(msg)
 
-    logger.info("Successfully posted to LinkedIn")
+    # LinkedIn returns the new post URN in the `x-restli-id` header
+    post_id = resp.headers.get("x-restli-id") or resp.headers.get("X-RestLi-Id")
+    permalink = None
+    if post_id and post_id.startswith("urn:li:share:"):
+        share_id = post_id.split(":")[-1]
+        permalink = f"https://www.linkedin.com/feed/update/urn:li:share:{share_id}/"
+    elif post_id and post_id.startswith("urn:li:ugcPost:"):
+        ugc_id = post_id.split(":")[-1]
+        permalink = f"https://www.linkedin.com/feed/update/urn:li:ugcPost:{ugc_id}/"
+
+    logger.info(f"Successfully posted to LinkedIn: {permalink or post_id or 'no id returned'}")
+    return {"platform_post_id": post_id, "permalink": permalink}

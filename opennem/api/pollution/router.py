@@ -13,7 +13,7 @@ from fastapi import APIRouter, HTTPException, Query
 from fastapi_versionizer import api_version
 from sqlalchemy import select
 
-from opennem.api.schema import APIV4ResponseSchema
+from opennem.api.schema import APIV4ResponseSchema, std_error_responses
 from opennem.api.security import authenticated_user
 from opennem.api.timeseries import TimeSeries, TimeSeriesResult
 from opennem.core.metric import Metric
@@ -36,8 +36,9 @@ logger = logging.getLogger("opennem.api.pollution")
 @api_version(4)
 @router.get(
     "/facilities",
-    response_model=APIV4ResponseSchema,
+    response_model=APIV4ResponseSchema[list[TimeSeries]],
     response_model_exclude_none=True,
+    responses=std_error_responses(),
     tags=["Pollution"],
     description="Get pollution data for facilities with NPI tracking",
 )
@@ -60,7 +61,7 @@ async def get_facility_pollution(
         datetime | None, Query(description="Start time for the query", examples=["1998-01-01T00:00:00"])
     ] = None,
     date_end: Annotated[datetime | None, Query(description="End time for the query", examples=["2024-12-31T00:00:00"])] = None,
-) -> APIV4ResponseSchema:
+) -> APIV4ResponseSchema[list[TimeSeries]]:
     """
     Get pollution data for facilities that have NPI tracking.
 
@@ -152,7 +153,7 @@ async def get_facility_pollution(
         npi_to_facility = {f.npi_id: f.code for f in facilities}
 
         for pollution, substance, _npi_facility in pollution_data:
-            facility_code = npi_to_facility.get(pollution.npi_facility_id, pollution.npi_facility_id)
+            row_facility_code = npi_to_facility.get(pollution.npi_facility_id, pollution.npi_facility_id)
 
             # Create datetime for the report year (use July 1st as middle of reporting year)
             timestamp = datetime(pollution.report_year, 7, 1)
@@ -161,7 +162,7 @@ async def get_facility_pollution(
             data_quality = pollution.data_quality or DataQuality.UNKNOWN.value
 
             # Add to pollutant group with value and quality
-            pollutant_groups[substance.code][facility_code].append(
+            pollutant_groups[substance.code][row_facility_code].append(
                 {"timestamp": timestamp, "value": pollution.pollution_value, "data_quality": data_quality}
             )
 
@@ -187,33 +188,35 @@ async def get_facility_pollution(
 
             # Create TimeSeriesResult for each facility
             results = []
-            for facility_code, data_points in facility_data.items():
+            for fc, data_points in facility_data.items():
+                fc_str = str(fc)
                 # Sort data points by date
                 data_points.sort(key=lambda x: x["timestamp"])
 
                 # Get facility name
-                facility_name = next((f.name for f in facilities if f.code == facility_code), facility_code)
+                facility_name = next((str(f.name) for f in facilities if f.code == fc), fc_str)
 
                 # Format data for TimeSeries (timestamp, value)
                 formatted_data = [(dp["timestamp"], dp["value"]) for dp in data_points]
 
                 # Get most common data quality for this series
-                quality_counts = {}
+                quality_counts: dict[str, int] = {}
                 for dp in data_points:
                     q = dp["data_quality"]
                     quality_counts[q] = quality_counts.get(q, 0) + 1
 
+                substance_code = str(substance.code)
                 result = TimeSeriesResult(
-                    name=facility_code,
+                    name=fc_str,
                     date_start=data_points[0]["timestamp"] if data_points else date_min,
                     date_end=data_points[-1]["timestamp"] if data_points else date_max,
                     columns={
                         "facility_name": facility_name,
-                        "pollutant_code": substance.code,
-                        "pollutant_label": get_pollutant_label(substance.code),
-                        "pollutant_name": substance.npi_name,  # Keep for backward compatibility
-                        "pollutant_category": substance.category,
-                        "cas_number": substance.cas_number or "",
+                        "pollutant_code": substance_code,
+                        "pollutant_label": get_pollutant_label(substance_code),
+                        "pollutant_name": str(substance.npi_name),  # Keep for backward compatibility
+                        "pollutant_category": str(substance.category),
+                        "cas_number": str(substance.cas_number) if substance.cas_number is not None else "",
                     },
                     data=formatted_data,
                 )

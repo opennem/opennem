@@ -3,10 +3,14 @@ node_modules/
 .pnp
 .pnp.js
 
-# Mintlify build outputs
+# Build outputs
 .mintlify/
 .next/
 out/
+dist/
+.tangly/
+.astro/
+.wrangler/
 
 # Debug
 npm-debug.log*

@@ -6,19 +6,46 @@ from enum import StrEnum
 
 
 class DataQuality(StrEnum):
-    """Data quality indicators for pollution measurements"""
+    """Data-quality indicators for NPI pollution measurements.
 
-    MEASURED = "measured"  # Direct measurement
-    CALCULATED = "calculated"  # Engineering calculations
-    ESTIMATED = "estimated"  # Estimation methods
-    EMISSION_FACTORS = "emission_factors"  # Using emission factors
-    MASS_BALANCE = "mass_balance"  # Mass balance calculations
-    APPROVED_ALTERNATIVE = "approved_alternative"  # EPA-approved alternative method
-    UNKNOWN = "unknown"  # Quality not specified
+    Each value names the methodology used to derive a reported pollutant
+    quantity, in descending order of confidence.
+
+    Attributes:
+        MEASURED: Direct measurement at the source.
+        CALCULATED: Derived from engineering calculations.
+        ESTIMATED: Estimated using published methods.
+        EMISSION_FACTORS: Computed via standard emission factors.
+        MASS_BALANCE: Inferred from mass-balance calculations.
+        APPROVED_ALTERNATIVE: Reported via an EPA-approved alternative method.
+        UNKNOWN: Methodology not specified by the reporting facility.
+    """
+
+    MEASURED = "measured"
+    CALCULATED = "calculated"
+    ESTIMATED = "estimated"
+    EMISSION_FACTORS = "emission_factors"
+    MASS_BALANCE = "mass_balance"
+    APPROVED_ALTERNATIVE = "approved_alternative"
+    UNKNOWN = "unknown"
 
 
 class PollutantCategory(StrEnum):
-    """Categories of pollutants tracked in NPI data"""
+    """High-level groupings of NPI-tracked pollutants.
+
+    Used to filter `/pollution/facilities` queries down to a class of
+    substances. When no filter is supplied the API defaults to
+    `air_pollutant`.
+
+    Attributes:
+        AIR_POLLUTANT: Combustion by-products and gases released to air
+            (NOx, SOx, CO, PM10, PM2.5, VOCs, ammonia, HCl).
+        WATER_POLLUTANT: Substances released to receiving waterways
+            (e.g. fluoride compounds).
+        HEAVY_METAL: Heavy-metal compounds (As, Cd, Cr, Cu, Hg, Ni, Pb, Zn).
+        ORGANIC: Organic compounds and complex hydrocarbons (benzene,
+            formaldehyde, PAH, dioxins).
+    """
 
     AIR_POLLUTANT = "air_pollutant"
     WATER_POLLUTANT = "water_pollutant"
@@ -32,37 +59,67 @@ class PollutantCategory(StrEnum):
 
 
 class PollutantCode(StrEnum):
-    """Pollutant substance codes used in the database"""
+    """National Pollutant Inventory (NPI) substance codes.
+
+    Each value identifies a specific substance the NPI tracks for reporting
+    facilities. Group membership is documented by `PollutantCategory`; use
+    `pollutant_category=` on `/pollution/facilities` to filter by group, or
+    `pollutant_code=` for a specific substance.
+
+    Attributes:
+        NOX: Oxides of nitrogen (NOx).
+        SO2: Sulfur dioxide (SO2).
+        CO: Carbon monoxide (CO).
+        PM10: Particulate matter ≤10 µm.
+        PM2_5: Fine particulate matter ≤2.5 µm.
+        VOC: Total volatile organic compounds.
+        AMMONIA: Ammonia (NH3).
+        HCL: Hydrochloric acid (HCl).
+        AS: Arsenic and compounds.
+        CD: Cadmium and compounds.
+        CR3: Chromium (III) compounds.
+        CR6: Chromium (VI) compounds.
+        CU: Copper and compounds.
+        HG: Mercury and compounds.
+        NI: Nickel and compounds.
+        PB: Lead and compounds.
+        ZN: Zinc and compounds.
+        BENZENE: Benzene.
+        FORMALDEHYDE: Formaldehyde.
+        PAH: Polycyclic aromatic hydrocarbons (B[a]P equivalent).
+        DIOXINS: Polychlorinated dioxins and furans (TEQ).
+        FLUORIDE: Fluoride compounds (water pollutant).
+    """
 
     # Air pollutants
-    NOX = "nox"  # Oxides of Nitrogen
-    SO2 = "so2"  # Sulfur dioxide
-    CO = "co"  # Carbon monoxide
-    PM10 = "pm10"  # Particulate Matter 10.0 um
-    PM2_5 = "pm2_5"  # Particulate Matter 2.5 um
-    VOC = "voc"  # Total Volatile Organic Compounds
-    AMMONIA = "ammonia"  # Ammonia
-    HCL = "hcl"  # Hydrochloric acid
+    NOX = "nox"
+    SO2 = "so2"
+    CO = "co"
+    PM10 = "pm10"
+    PM2_5 = "pm2_5"
+    VOC = "voc"
+    AMMONIA = "ammonia"
+    HCL = "hcl"
 
     # Heavy metals
-    AS = "as"  # Arsenic & compounds
-    CD = "cd"  # Cadmium & compounds
-    CR3 = "cr3"  # Chromium (III) compounds
-    CR6 = "cr6"  # Chromium (VI) compounds
-    CU = "cu"  # Copper & compounds
-    HG = "hg"  # Mercury & compounds
-    NI = "ni"  # Nickel & compounds
-    PB = "pb"  # Lead & compounds
-    ZN = "zn"  # Zinc & compounds
+    AS = "as"
+    CD = "cd"
+    CR3 = "cr3"
+    CR6 = "cr6"
+    CU = "cu"
+    HG = "hg"
+    NI = "ni"
+    PB = "pb"
+    ZN = "zn"
 
     # Organic compounds
-    BENZENE = "benzene"  # Benzene
-    FORMALDEHYDE = "formaldehyde"  # Formaldehyde
-    PAH = "pah"  # Polycyclic aromatic hydrocarbons
-    DIOXINS = "dioxins"  # Polychlorinated dioxins and furans
+    BENZENE = "benzene"
+    FORMALDEHYDE = "formaldehyde"
+    PAH = "pah"
+    DIOXINS = "dioxins"
 
     # Other
-    FLUORIDE = "fluoride"  # Fluoride compounds
+    FLUORIDE = "fluoride"
 
 
 # Mapping of pollutant codes to their categories

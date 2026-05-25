@@ -330,12 +330,55 @@ async def run_incremental_milestone_check(
     # Submit significant milestones to social media pipeline
     if significant_records:
         try:
-            from opennem.social.content import render_milestone_social_text
+            from sqlalchemy import and_, select
+
+            from opennem.db import get_read_session
+            from opennem.db.models.opennem import Milestones
+            from opennem.social.content import build_record_url, render_milestone_card, render_milestone_social_text
             from opennem.social.pipeline import create_social_post
             from opennem.social.schema import CreateSocialPostRequest, SocialPostType
 
             for record in significant_records[:5]:
                 text = render_milestone_social_text(record)
+
+                # Fetch the most recent 40 history records for the sparkline.
+                # Order desc + limit so the sparkline reflects the recent trend;
+                # then reverse so the renderer gets oldest-→-newest input.
+                async with get_read_session() as session:
+                    rows = (
+                        (
+                            await session.execute(
+                                select(Milestones)
+                                .where(and_(Milestones.record_id == record.record_id, Milestones.interval < record.interval))
+                                .order_by(Milestones.interval.desc())
+                                .limit(40)
+                            )
+                        )
+                        .scalars()
+                        .all()
+                    )
+                history = [(r.interval, float(r.value)) for r in reversed(rows)]
+
+                # Render card image (run in thread — html2image is sync + slow)
+                import asyncio as _asyncio
+
+                image_bytes = await _asyncio.to_thread(
+                    render_milestone_card,
+                    record_id=record.record_id,
+                    interval=record.interval,
+                    description=record.description,
+                    value=float(record.value),
+                    value_unit=record.value_unit or "",
+                    pct_change=float(record.pct_change) if record.pct_change is not None else None,
+                    period=record.period,
+                    network_region=record.network_region,
+                    fueltech_id=record.fueltech_id,
+                    history=history,
+                )
+
+                focus_ts_ms = int(record.interval.timestamp() * 1000)
+                link_url = build_record_url(record.record_id, focus_ts_ms)
+
                 await create_social_post(
                     CreateSocialPostRequest(
                         post_type=SocialPostType.MILESTONE,
@@ -343,6 +386,7 @@ async def run_incremental_milestone_check(
                         source_type="recordreactor",
                         source_id=str(record.instance_id),
                         network_id=record.network_id,
+                        link_url=link_url,
                         metadata={
                             "fueltech_id": record.fueltech_id,
                             "significance": record.significance,
@@ -350,6 +394,7 @@ async def run_incremental_milestone_check(
                             "record_id": record.record_id,
                         },
                     ),
+                    image=image_bytes,
                 )
         except Exception as e:
             logger.error(f"Failed to submit milestones to social pipeline: {e}")

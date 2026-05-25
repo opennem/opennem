@@ -141,6 +141,94 @@ async def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
     return models
 
 
+async def wemde_parse_dispatch(url: str) -> list[FacilityScadaSchema]:
+    """Parses a WEMDE dispatch solution file.
+
+    Uses the cleared `energy` market dispatch quantity (MW) per facility as the WEM
+    generation signal. Dispatch solutions publish as 5-min files ~5 min behind real
+    time — vs the facilityScada feed's ~24h lag. `quantity` is MW (negative = charging).
+
+    Only the binding interval (`primaryDispatchInterval`) is kept — `solutionData`
+    also carries ~2h of forward look-ahead dispatch, which is a projection, not an
+    actual, and would otherwise land in facility_scada as future-dated rows.
+    """
+
+    download_jsons = await _wemde_download_dataset(url)
+
+    # Get battery unit mappings
+    battery_unit_map = await get_battery_unit_map()
+
+    def _is_battery_unit(facility_code: str) -> bool:
+        return facility_code in battery_unit_map
+
+    original_records: list[dict] = []
+    battery_records: list[dict] = []
+
+    for download_json in download_jsons:
+        primary_interval = download_json.get("primaryDispatchInterval")
+
+        for interval_entry in download_json.get("solutionData", []):
+            # skip the forward look-ahead intervals — keep only the binding interval
+            if interval_entry.get("dispatchInterval") != primary_interval:
+                continue
+
+            interval = datetime.fromisoformat(interval_entry["dispatchInterval"]).replace(tzinfo=None)
+
+            energy_schedule = next(
+                (s for s in interval_entry.get("schedule", []) if s.get("marketService") == "energy"),
+                None,
+            )
+
+            if not energy_schedule:
+                continue
+
+            for facility in energy_schedule.get("facilitySchedule", []):
+                quantity = facility.get("quantity") or 0.0  # MW
+
+                record_data = {
+                    "network_id": "WEM",
+                    "interval": interval,
+                    "facility_code": facility.get("facilityCode"),
+                    "generated": quantity,
+                    "energy": quantity / 12,  # MWh in a 5-min interval
+                    "energy_quality_flag": 2,
+                }
+
+                original_records.append(record_data)
+
+                if _is_battery_unit(record_data["facility_code"]):
+                    battery_records.append(record_data)
+
+    # Create battery charge/discharge split records alongside the bidirectional records
+    all_records = original_records.copy()
+
+    for battery_record in battery_records:
+        battery_map = battery_unit_map[battery_record["facility_code"]]
+        generated = battery_record["generated"]
+
+        if generated < 0:
+            charge_record = battery_record.copy()
+            charge_record["facility_code"] = battery_map.charge_unit
+            charge_record["generated"] = abs(generated)
+            charge_record["energy"] = abs(battery_record["energy"])
+            all_records.append(charge_record)
+        else:
+            discharge_record = battery_record.copy()
+            discharge_record["facility_code"] = battery_map.discharge_unit
+            all_records.append(discharge_record)
+
+    models = []
+
+    for record_data in all_records:
+        try:
+            models.append(FacilityScadaSchema(**record_data))
+        except ValidationError as e:
+            logger.error(f"Validation error: {e}")
+            continue
+
+    return models
+
+
 async def wemde_parse_trading_price(url: str) -> list[BalancingSummarySchema]:
     """Parse WEMDE trading price"""
 

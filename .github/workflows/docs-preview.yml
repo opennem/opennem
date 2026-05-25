@@ -1,0 +1,63 @@
+name: Docs Preview
+
+on:
+  pull_request:
+    paths:
+      - 'docs/**'
+
+concurrency:
+  group: docs-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    name: Build and deploy docs preview
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install docs dependencies
+        working-directory: docs
+        run: bun install --frozen-lockfile
+
+      - name: Validate docs
+        working-directory: docs
+        run: bun run check
+
+      - name: Build docs
+        working-directory: docs
+        env:
+          TANGLY_OPENAPI_URL: https://api.oedev.org/openapi.json
+        run: bun run build
+
+      # Secrets are unavailable to PRs from forks; deploy only for same-repo PRs.
+      - name: Deploy preview to Cloudflare Pages
+        id: deploy
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: docs
+          command: >-
+            pages deploy dist
+            --project-name openelectricity-docs
+            --branch pr-${{ github.event.pull_request.number }}
+
+      - name: Comment preview URL on PR
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: docs-preview
+          message: |
+            ### Docs preview
+
+            This PR's docs are deployed at ${{ steps.deploy.outputs.pages-deployment-alias-url }}
+
+            Rebuilt on every push that touches `docs/`.

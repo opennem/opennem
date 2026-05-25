@@ -259,95 +259,100 @@ async def process_battery_history(facility_code: str | None = None, clear_old_re
             raise
 
 
-async def check_unsplit_batteries() -> list[str]:
-    """Check for any battery units that have intervals missing their corresponding charge/discharge records.
+UNSPLIT_CHECK_WINDOW = "24 hours"
+UNSPLIT_TOLERANCE_ROWS = 2  # boundary drift between bidirectional and split crawl batches
 
-    New logic: Since we now preserve original bidirectional records, we need to check that each
-    bidirectional battery interval has its corresponding split records:
-    - For negative generation intervals: corresponding charge unit record should exist
-    - For positive/zero generation intervals: corresponding discharge unit record should exist
+
+async def check_unsplit_batteries() -> list[str]:
+    """Flag bidirectional batteries whose split rows lag their bidirectional activity.
+
+    Per battery, in the same window, compare:
+      neg_rows (bidirectional intervals with generated < 0)  vs  charge_unit rows
+      pos_rows (bidirectional intervals with generated >= 0) vs  discharge_unit rows
+
+    Only flag when one side has bidirectional activity but the corresponding split
+    side has materially fewer rows. A battery that only charged (or only discharged)
+    in the window is NOT flagged — its zero-row split side is correct.
 
     Returns:
-        list[str]: List of battery unit codes that need splitting
+        list[str]: bidirectional unit codes whose splits are lagging
     """
     battery_unit_map = await get_battery_unit_map()
-    unsplit_units = []
 
-    logger.info(f"Checking {len(battery_unit_map)} battery units for unsplit intervals")
+    # Dedupe alias triples in the manual map so we don't double-flag the same physical battery
+    seen: set[tuple[str, str]] = set()
+    triples: list[tuple[str, str, str]] = []
+    for bmap in battery_unit_map.values():
+        key = (str(bmap.charge_unit), str(bmap.discharge_unit))
+        if key in seen:
+            continue
+        seen.add(key)
+        triples.append((str(bmap.unit), str(bmap.charge_unit), str(bmap.discharge_unit)))
+
+    logger.info(f"Checking {len(triples)} battery triples for split lag (window: {UNSPLIT_CHECK_WINDOW})")
+
+    bi_codes = [t[0] for t in triples]
+    chg_codes = [t[1] for t in triples]
+    dis_codes = [t[2] for t in triples]
+
+    bi_query = text(
+        f"""
+        SELECT
+            facility_code,
+            COUNT(*) FILTER (WHERE generated <  0) AS neg_rows,
+            COUNT(*) FILTER (WHERE generated >= 0) AS pos_rows
+        FROM facility_scada
+        WHERE facility_code = ANY(:codes)
+          AND interval >= NOW() - INTERVAL '{UNSPLIT_CHECK_WINDOW}'
+          AND is_forecast = FALSE
+        GROUP BY facility_code
+        """
+    )
+    split_query = text(
+        f"""
+        SELECT facility_code, COUNT(*) AS rows
+        FROM facility_scada
+        WHERE facility_code = ANY(:codes)
+          AND interval >= NOW() - INTERVAL '{UNSPLIT_CHECK_WINDOW}'
+          AND is_forecast = FALSE
+        GROUP BY facility_code
+        """
+    )
 
     async with get_read_session() as session:
-        # Build a query to check all batteries at once
-        bidirectional_units = list(battery_unit_map.keys())
+        bi_res = (await session.execute(bi_query, {"codes": bi_codes})).fetchall()
+        chg_res = (await session.execute(split_query, {"codes": chg_codes})).fetchall()
+        dis_res = (await session.execute(split_query, {"codes": dis_codes})).fetchall()
 
-        # Query to find bidirectional units that have recent data but missing split records
-        check_query = text("""
-            WITH recent_batteries AS (
-                SELECT DISTINCT facility_code
-                FROM facility_scada
-                WHERE facility_code = ANY(:units)
-                AND interval >= NOW() - INTERVAL '7 days'
-            ),
-            battery_intervals AS (
-                SELECT
-                    fs.facility_code AS bidirectional_unit,
-                    fs.interval,
-                    fs.generated,
-                    CASE
-                        WHEN fs.generated < 0 THEN 'charge'
-                        ELSE 'discharge'
-                    END AS split_type
-                FROM facility_scada fs
-                INNER JOIN recent_batteries rb ON fs.facility_code = rb.facility_code
-                WHERE fs.interval >= NOW() - INTERVAL '1 day'
-                LIMIT 1000
+    bi_counts: dict[str, tuple[int, int]] = {r[0]: (int(r[1]), int(r[2])) for r in bi_res}
+    chg_counts: dict[str, int] = {r[0]: int(r[1]) for r in chg_res}
+    dis_counts: dict[str, int] = {r[0]: int(r[1]) for r in dis_res}
+
+    unsplit_units: list[str] = []
+    tol = UNSPLIT_TOLERANCE_ROWS
+    for bi, chg, dis in triples:
+        bi_neg, bi_pos = bi_counts.get(bi, (0, 0))
+        if bi_neg == 0 and bi_pos == 0:
+            continue  # bidirectional had no activity in window — nothing to split
+        chg_rows = chg_counts.get(chg, 0)
+        dis_rows = dis_counts.get(dis, 0)
+        chg_lag = bi_neg > 0 and (bi_neg - chg_rows) > tol
+        dis_lag = bi_pos > 0 and (bi_pos - dis_rows) > tol
+        if chg_lag or dis_lag:
+            logger.info(
+                f"Battery {bi} split lag: bi_neg={bi_neg} vs chg={chg_rows} ({chg}), bi_pos={bi_pos} vs dis={dis_rows} ({dis})"
             )
-            SELECT DISTINCT bi.bidirectional_unit
-            FROM battery_intervals bi
-            WHERE bi.bidirectional_unit = ANY(:units)
-            GROUP BY bi.bidirectional_unit
-            HAVING COUNT(*) > 0
-        """)
-
-        result = await session.execute(check_query, {"units": bidirectional_units})
-        batteries_with_data = {row[0] for row in result.fetchall()}
-
-        logger.info(f"Found {len(batteries_with_data)} batteries with recent data")
-
-        # Now check each battery with data for missing split records
-        for bidirectional_unit in batteries_with_data:
-            battery_map = battery_unit_map[bidirectional_unit]
-
-            # Quick check: see if the split units have ANY recent data
-            split_check = text("""
-                SELECT
-                    (SELECT COUNT(*) FROM facility_scada
-                     WHERE facility_code = :charge_unit
-                     AND interval >= NOW() - INTERVAL '1 day'
-                     LIMIT 1) as charge_count,
-                    (SELECT COUNT(*) FROM facility_scada
-                     WHERE facility_code = :discharge_unit
-                     AND interval >= NOW() - INTERVAL '1 day'
-                     LIMIT 1) as discharge_count
-            """)
-
-            result = await session.execute(
-                split_check, {"charge_unit": battery_map.charge_unit, "discharge_unit": battery_map.discharge_unit}
-            )
-
-            row = result.fetchone()
-            if row and (row[0] == 0 or row[1] == 0):
-                logger.info(f"Battery {bidirectional_unit} missing split records (charge: {row[0]}, discharge: {row[1]})")
-                unsplit_units.append(bidirectional_unit)
+            unsplit_units.append(bi)
 
     if unsplit_units:
         msg = (
             f"[{settings.env.upper()}] Found {len(unsplit_units)} battery units with missing "
             f"split records: {', '.join(unsplit_units)}"
         )
-
         await slack_message(webhook_url=settings.slack_hook_new_facilities, tag_users=settings.slack_admin_alert, message=msg)
-
         logger.info(msg)
+    else:
+        logger.info("No batteries with split lag")
 
     return unsplit_units
 
