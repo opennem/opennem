@@ -207,7 +207,11 @@ AEMOWEMDEFacilityScada = CrawlerDefinition(
 )
 
 AEMOWEMDEDispatch = CrawlerDefinition(
-    bucket_size=AEMODataBucketSize.day,
+    # each file is one 5-min dispatch interval — bucket as `interval` so
+    # `_get_limit_for_crawler(days)` returns days*12*24 and catchup actually
+    # spans the gap window. With `day` it returned `days` files (~30 min),
+    # so any outage longer than a few minutes was unrecoverable. (#534-followup)
+    bucket_size=AEMODataBucketSize.interval,
     contains_days=1,
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
