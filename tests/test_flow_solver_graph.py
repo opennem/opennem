@@ -4,7 +4,7 @@ Unit tests for the graph-based flow solver.
 
 import unittest
 from datetime import datetime
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import pandas as pd
 
@@ -24,8 +24,14 @@ class TestGraphFlowSolver(unittest.TestCase):
             InterconnectorConfig(code="VIC1-TAS1", capacity_mw=500),
         ]
 
-        # Mock Memgraph connection
+        # Mock Memgraph connection. ``transaction()`` returns a context
+        # manager that yields the mock itself so callers can issue
+        # ``tx.execute(...)`` in tests.
         self.mock_memgraph = Mock()
+        tx_cm = MagicMock()
+        tx_cm.__enter__.return_value = self.mock_memgraph
+        tx_cm.__exit__.return_value = False
+        self.mock_memgraph.transaction.return_value = tx_cm
 
         # Test interval
         self.test_interval = datetime(2025, 1, 1, 12, 0, 0)

@@ -13,9 +13,15 @@ from datetime import datetime
 
 import pandas as pd
 
-from opennem.db.memgraph import get_memgraph_connection
+from opennem.db.memgraph import MemgraphConnection, get_memgraph_connection
 
 logger = logging.getLogger("opennem.core.flow_solver_graph")
+
+# Default search depth limits. Kept as module constants (rather than
+# function-arg defaults only) so callers and tests can override without
+# threading parameters through every method.
+DEFAULT_MAX_LOOP_LENGTH = 5
+DEFAULT_MAX_HOPS = 4
 
 
 @dataclass
@@ -76,27 +82,50 @@ class GraphFlowSolver:
         - net_emissions_t: float
     """
 
-    def __init__(self, interconnectors: list[InterconnectorConfig] | None = None):
+    def __init__(
+        self,
+        interconnectors: list[InterconnectorConfig] | None = None,
+        memgraph: MemgraphConnection | None = None,
+        max_loop_length: int = DEFAULT_MAX_LOOP_LENGTH,
+        max_hops: int = DEFAULT_MAX_HOPS,
+    ):
         """
-        Initialize the solver with optional interconnector configuration.
+        Initialize the solver.
 
         Args:
-            interconnectors: Optional list of interconnector configurations
+            interconnectors: Optional list of interconnector configurations.
+            memgraph: Memgraph connection to use; defaults to a fresh
+                instance from settings. Pass an explicit connection for
+                tests or to share one across solvers.
+            max_loop_length: Upper bound on the path length used when
+                detecting circular flows (Cypher ``*2..max_loop_length``).
+            max_hops: Upper bound on the path length used when tracing
+                multi-hop flows.
         """
         self.interconnectors = {ic.code: ic for ic in interconnectors} if interconnectors else {}
-        self.memgraph = get_memgraph_connection()
+        self.memgraph = memgraph if memgraph is not None else get_memgraph_connection()
+        # Coerce to int — these values are interpolated into Cypher because
+        # the *N..M syntax does not accept query parameters.
+        self.max_loop_length = int(max_loop_length)
+        self.max_hops = int(max_hops)
         self._init_indexes()
 
     def _init_indexes(self):
-        """Initialize Memgraph indexes for performance."""
-        try:
-            # Create indexes if they don't exist
-            self.memgraph.execute_and_commit("CREATE INDEX ON :Region(code)")
-            self.memgraph.execute_and_commit("CREATE INDEX ON :Region(interval)")
-            self.memgraph.execute_and_commit("CREATE INDEX ON :Region(code, interval)")
-        except Exception:
-            # Indexes may already exist
-            pass
+        """Initialize Memgraph indexes for performance.
+
+        Failures are non-fatal — the most common case is that the index
+        already exists — but the original exception is logged so genuine
+        connection / permission errors surface in debug builds.
+        """
+        for index_query in (
+            "CREATE INDEX ON :Region(code)",
+            "CREATE INDEX ON :Region(interval)",
+            "CREATE INDEX ON :Region(code, interval)",
+        ):
+            try:
+                self.memgraph.execute_and_commit(index_query)
+            except Exception as e:
+                logger.debug(f"Index creation skipped ({index_query}): {e}")
 
     def solve(self, interval: datetime, interconnector_flows: pd.DataFrame, regional_generation: pd.DataFrame) -> FlowSolution:
         """
@@ -134,12 +163,12 @@ class GraphFlowSolver:
         return solution
 
     def _build_graph(self, interval: datetime, flows: pd.DataFrame, regions: pd.DataFrame) -> dict:
-        """Build the flow graph in Memgraph."""
-        # Clear existing data for this interval
-        self.memgraph.execute_and_commit(
-            "MATCH (n:Region {interval: $interval}) DETACH DELETE n", {"interval": interval.isoformat()}
-        )
+        """Build the flow graph in Memgraph for ``interval``.
 
+        DELETE-then-CREATE runs in a single transaction so concurrent
+        readers never observe a half-empty graph and a partial failure
+        rolls back to the previous interval state.
+        """
         stats = {
             "interval": interval,
             "regions_count": len(regions),
@@ -148,83 +177,90 @@ class GraphFlowSolver:
             "total_emissions_t": regions["emissions_t"].sum(),
         }
 
-        # Create region nodes
-        for _, row in regions.iterrows():
-            self.memgraph.execute_and_commit(
-                """
-                CREATE (r:Region {
-                    code: $code,
-                    interval: $interval,
-                    generation_mwh: $generation,
-                    emissions_t: $emissions,
-                    emission_intensity: $intensity
-                })
-            """,
-                {
-                    "code": row["network_region"],
-                    "interval": interval.isoformat(),
-                    "generation": float(row["generation_mwh"]),
-                    "emissions": float(row["emissions_t"]),
-                    "intensity": float(row["emission_intensity"]),
-                },
+        with self.memgraph.transaction() as tx:
+            # Clear existing data for this interval
+            tx.execute(
+                "MATCH (n:Region {interval: $interval}) DETACH DELETE n",
+                {"interval": interval.isoformat()},
             )
 
-        # Create flow edges
-        for _, row in flows.iterrows():
-            ic_code = row["interconnector_code"]
-            flow_mw = row["flow_mw"]
-            flow_mwh = row["flow_mwh"]
+            # Create region nodes
+            for _, row in regions.iterrows():
+                tx.execute(
+                    """
+                    CREATE (r:Region {
+                        code: $code,
+                        interval: $interval,
+                        generation_mwh: $generation,
+                        emissions_t: $emissions,
+                        emission_intensity: $intensity
+                    })
+                    """,
+                    {
+                        "code": row["network_region"],
+                        "interval": interval.isoformat(),
+                        "generation": float(row["generation_mwh"]),
+                        "emissions": float(row["emissions_t"]),
+                        "intensity": float(row["emission_intensity"]),
+                    },
+                )
 
-            # Get regions from dataframe
-            if "network_region_from" not in row or "network_region_to" not in row:
-                logger.error(f"Missing network_region_from/to for interconnector {ic_code}")
-                continue
+            # Create flow edges
+            for _, row in flows.iterrows():
+                ic_code = row["interconnector_code"]
+                flow_mw = row["flow_mw"]
+                flow_mwh = row["flow_mwh"]
 
-            from_region = row["network_region_from"]
-            to_region = row["network_region_to"]
+                # Get regions from dataframe
+                if "network_region_from" not in row or "network_region_to" not in row:
+                    logger.error(f"Missing network_region_from/to for interconnector {ic_code}")
+                    continue
 
-            # Handle flow direction based on sign
-            if flow_mw < 0:
-                # Negative flow means reverse direction
-                from_region, to_region = to_region, from_region
-                flow_mw = abs(flow_mw)
-                flow_mwh = abs(flow_mwh)
+                from_region = row["network_region_from"]
+                to_region = row["network_region_to"]
 
-            # Get actual emissions from source region
-            source_emissions = regions[regions["network_region"] == from_region]
-            if not source_emissions.empty:
-                emission_intensity = source_emissions.iloc[0]["emission_intensity"]
-                flow_emissions = flow_mwh * emission_intensity
-            else:
-                # No emissions if source region not found
-                logger.warning(f"No emissions data for region {from_region}")
-                flow_emissions = 0
+                # Handle flow direction based on sign
+                if flow_mw < 0:
+                    # Negative flow means reverse direction
+                    from_region, to_region = to_region, from_region
+                    flow_mw = abs(flow_mw)
+                    flow_mwh = abs(flow_mwh)
 
-            delivered_mwh = flow_mwh
+                # Get actual emissions from source region
+                source_emissions = regions[regions["network_region"] == from_region]
+                if not source_emissions.empty:
+                    emission_intensity = source_emissions.iloc[0]["emission_intensity"]
+                    flow_emissions = flow_mwh * emission_intensity
+                else:
+                    # No emissions if source region not found
+                    logger.warning(f"No emissions data for region {from_region}")
+                    flow_emissions = 0
 
-            self.memgraph.execute_and_commit(
-                """
-                MATCH (from:Region {code: $from, interval: $interval})
-                MATCH (to:Region {code: $to, interval: $interval})
-                CREATE (from)-[:FLOWS_TO {
-                    interconnector: $interconnector,
-                    mw: $mw,
-                    mwh_gross: $mwh_gross,
-                    mwh_delivered: $mwh_delivered,
-                    emissions_t: $emissions
-                }]->(to)
-            """,
-                {
-                    "from": from_region,
-                    "to": to_region,
-                    "interval": interval.isoformat(),
-                    "interconnector": ic_code,
-                    "mw": abs(flow_mw),
-                    "mwh_gross": abs(flow_mwh),
-                    "mwh_delivered": delivered_mwh,
-                    "emissions": flow_emissions,
-                },
-            )
+                delivered_mwh = flow_mwh
+
+                tx.execute(
+                    """
+                    MATCH (from:Region {code: $from, interval: $interval})
+                    MATCH (to:Region {code: $to, interval: $interval})
+                    CREATE (from)-[:FLOWS_TO {
+                        interconnector: $interconnector,
+                        mw: $mw,
+                        mwh_gross: $mwh_gross,
+                        mwh_delivered: $mwh_delivered,
+                        emissions_t: $emissions
+                    }]->(to)
+                    """,
+                    {
+                        "from": from_region,
+                        "to": to_region,
+                        "interval": interval.isoformat(),
+                        "interconnector": ic_code,
+                        "mw": abs(flow_mw),
+                        "mwh_gross": abs(flow_mwh),
+                        "mwh_delivered": delivered_mwh,
+                        "emissions": flow_emissions,
+                    },
+                )
 
         logger.info(f"Built graph for {interval}: {stats}")
         return stats
@@ -293,11 +329,14 @@ class GraphFlowSolver:
 
         return pd.DataFrame(results)
 
-    def _detect_circular_flows(self, interval: datetime, max_loop_length: int = 5) -> list[dict]:
+    def _detect_circular_flows(self, interval: datetime, max_loop_length: int | None = None) -> list[dict]:
         """Detect circular flows (loops) in the network."""
+        # ``*2..N`` length bounds in Cypher must be literals, so we
+        # interpolate but coerce to int to guarantee safety.
+        loop_length = int(max_loop_length if max_loop_length is not None else self.max_loop_length)
         results = self.memgraph.execute(
             f"""
-            MATCH path = (start:Region {{interval: $interval}})-[:FLOWS_TO*2..{max_loop_length}]->(start)
+            MATCH path = (start:Region {{interval: $interval}})-[:FLOWS_TO*2..{loop_length}]->(start)
             WITH start, path, relationships(path) as flows
             WHERE all(f IN flows WHERE f.mwh_delivered > 0.01)
             RETURN DISTINCT
@@ -332,11 +371,12 @@ class GraphFlowSolver:
 
         return circular_flows
 
-    def _trace_multi_hop_flows(self, interval: datetime, max_hops: int = 4) -> list[dict]:
+    def _trace_multi_hop_flows(self, interval: datetime, max_hops: int | None = None) -> list[dict]:
         """Trace power flows that traverse multiple regions."""
+        hops = int(max_hops if max_hops is not None else self.max_hops)
         results = self.memgraph.execute(
             f"""
-            MATCH path = (source:Region {{interval: $interval}})-[:FLOWS_TO*2..{max_hops}]->
+            MATCH path = (source:Region {{interval: $interval}})-[:FLOWS_TO*2..{hops}]->
                         (dest:Region {{interval: $interval}})
             WHERE source.code <> dest.code
             WITH source, dest, path, relationships(path) as flows, nodes(path) as node_path
