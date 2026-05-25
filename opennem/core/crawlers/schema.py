@@ -66,6 +66,12 @@ class CrawlerDefinition(BaseConfig):
     processor: Callable
     parser: Callable | None = None
 
+    # Columns the bulk upsert should update for records this crawler produces.
+    # Used by the WEMDE crawler runner to route dispatch records to
+    # price_dispatch and trading records to price.
+    fs_update_fields: list[str] | None = None
+    bs_update_fields: list[str] | None = None
+
 
 class CrawlerSet(BaseConfig):
     """Defines a set of crawlers"""
