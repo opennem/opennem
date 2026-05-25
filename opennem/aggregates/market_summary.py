@@ -148,12 +148,18 @@ async def _get_market_summary_data(
         GROUP BY 1
     ),
     gapfilled_data AS (
-        -- Generate complete time series with gap filling for each region
+        -- Generate complete time series with gap filling for each region.
+        -- Price: prefer price_dispatch (5-min dispatch clearing price, populated
+        -- for WEM by the WEMDE dispatch crawler) and fall back to price (5-min
+        -- for NEM, 30-min trading interval for WEM). locf() carries the trading
+        -- price forward across the 5-min buckets within its 30-min interval —
+        -- semantically correct since the trading price IS the price for that
+        -- whole trading interval.
         SELECT
             time_bucket_gapfill('5 minutes', interval, :start_time_window, :end_time) as interval,
             network_id,
             network_region,
-            avg(CAST(price AS double precision)) as price,
+            locf(avg(CAST(COALESCE(price_dispatch, price) AS double precision))) as price,
             avg(CAST(demand AS double precision)) as demand,
             avg(CAST(demand_total AS double precision)) as demand_total,
             avg(ROUND((ss_solar_uigf - ss_solar_clearedmw)::numeric, 4)) as curtailment_solar_total,

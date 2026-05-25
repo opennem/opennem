@@ -118,15 +118,24 @@ async def run_wemde_crawl(
         deduped.setdefault(key, record)
     data = list(deduped.values())
 
-    # persist data
-    update_fields = ["generated", "energy"]
+    # persist — split by schema since FacilityScada and BalancingSummary go to
+    # different tables. The dispatch parser now emits both: facility scada (gen)
+    # plus a per-interval BalancingSummary carrying price_dispatch (5-min price).
+    fs_records = [r for r in data if isinstance(r, FacilityScadaSchema)]
+    bs_records = [r for r in data if isinstance(r, BalancingSummarySchema)]
 
-    if crawler.parser == wemde_parse_trading_price:
-        update_fields = ["price", "price_dispatch"]
+    if fs_records:
+        await persist_facility_scada_bulk(records=fs_records, update_fields=["generated", "energy"])
 
-    await persist_facility_scada_bulk(records=data, update_fields=update_fields)
+    if bs_records:
+        if crawler.parser == wemde_parse_trading_price:
+            bs_update_fields = ["price"]
+        else:
+            # dispatch parser produces price_dispatch (5-min); trading parser produces price (30-min)
+            bs_update_fields = ["price_dispatch"]
+        await persist_facility_scada_bulk(records=bs_records, update_fields=bs_update_fields)
 
-    logger.info(f"Persisted {len(data)} records")
+    logger.info(f"Persisted {len(fs_records)} facility_scada + {len(bs_records)} balancing_summary records")
 
     # track latest interal and update metadata
     recent_latest_interval = max([i.interval for i in data if i.interval])
