@@ -43,6 +43,10 @@ class OpennemSettings(BaseSettings):
         validation_alias=AliasChoices("REDIS_HOST_URL", "cache_url"),
     )
 
+    # Memgraph (graph DB used by flow_solver_graph)
+    memgraph_host: str = Field("localhost", validation_alias=AliasChoices("MEMGRAPH_HOST"))
+    memgraph_port: int = Field(7687, validation_alias=AliasChoices("MEMGRAPH_PORT"))
+
     # if we're doing a dry run
     dry_run: bool = False
 
