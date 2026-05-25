@@ -309,6 +309,15 @@ async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None,
     await run_unit_intervals_aggregate_for_last_days(days=days)
     await run_market_summary_aggregate_for_last_days(days=days)
 
+    # backfill MVs over the same window — auto-population leaves partial
+    # aggregates after a gap, so re-aggregating unit_intervals isn't enough
+    # to repopulate fueltech_intervals_mv et al on its own (#534-followup)
+    from opennem.db.clickhouse.materialized_views import backfill_materialized_views
+
+    mv_end = datetime.now(ZoneInfo("Australia/Brisbane")).replace(tzinfo=None, microsecond=0)
+    mv_start = mv_end - timedelta(days=days + 1)
+    await asyncio.to_thread(backfill_materialized_views, start_date=mv_start, end_date=mv_end, refresh_views=False)
+
     # run exports
     CURRENT_YEAR = datetime.now(ZoneInfo("Australia/Brisbane")).year
 
