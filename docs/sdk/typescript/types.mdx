@@ -36,7 +36,7 @@ type DataInterval = "5m" | "1h" | "1d" | "7d" | "1M" | "3M" | "season" | "1y" | 
 - `7d`: Weekly intervals
 - `1M`: Monthly intervals
 - `3M`: Quarterly intervals
-- `season`: Seasonal intervalsanal
+- `season`: Seasonal intervals
 - `1y`: Yearly intervals
 - `fy`: Financial year intervals
 
@@ -47,13 +47,23 @@ type DataInterval = "5m" | "1h" | "1d" | "7d" | "1M" | "3M" | "season" | "1y" | 
 Metrics available for network and facility data:
 
 ```typescript
-type DataMetric = "power" | "energy" | "emissions" | "market_value"
+type DataMetric =
+  | "power"
+  | "energy"
+  | "emissions"
+  | "market_value"
+  | "pollution"
+  | "renewable_proportion"
+  | "storage_battery"
 ```
 
 - `power`: Instantaneous power output (MW)
 - `energy`: Energy generated (MWh)
 - `emissions`: CO2 equivalent emissions (tCO2e)
 - `market_value`: Market value ($)
+- `pollution`: Pollutant emissions (kg) — used with the `/pollution/facilities` endpoint
+- `renewable_proportion`: Renewable share of generation (%)
+- `storage_battery`: Battery storage state of charge (MWh)
 
 ### MarketMetric
 
@@ -126,25 +136,100 @@ Secondary grouping options for data aggregation:
 type DataSecondaryGrouping =
   | "fueltech"
   | "fueltech_group"
+  | "status"
   | "renewable"
-  | "dispatch_type"
+```
+
+## Unit Types
+
+### UnitFueltechType
+
+Fuel technologies for a unit:
+
+```typescript
+type UnitFueltechType =
+  | "battery"
+  | "battery_charging"
+  | "battery_discharging"
+  | "bioenergy_biogas"
+  | "bioenergy_biomass"
+  | "coal_black"
+  | "coal_brown"
+  | "distillate"
+  | "gas_ccgt"
+  | "gas_ocgt"
+  | "gas_recip"
+  | "gas_steam"
+  | "gas_wcmg"
+  | "hydro"
+  | "hydro_and_storage"
+  | "pumps"
+  | "solar_rooftop"
+  | "solar_thermal"
+  | "solar_utility"
+  | "nuclear"
+  | "other"
+  | "solar"
+  | "wind"
+  | "wind_offshore"
+  | "imports"
+  | "exports"
+  | "interconnector"
+  | "aggregator_vpp"
+  | "aggregator_dr"
+```
+
+A matching `FuelTech` const is exported for autocomplete (`FuelTech.SOLAR_UTILITY`, etc.).
+
+### UnitFueltechGroupType
+
+```typescript
+type UnitFueltechGroupType =
+  | "coal"
+  | "gas"
+  | "wind"
+  | "solar"
+  | "battery"
+  | "battery_charging"
+  | "battery_discharging"
+  | "hydro"
+  | "distillate"
+  | "bioenergy"
+  | "pumps"
+  | "renewable"
+  | "fossil"
+  | "other"
+```
+
+A matching `FuelTechGroup` const is exported.
+
+### UnitStatusType
+
+```typescript
+type UnitStatusType = "committed" | "operating" | "retired"
+```
+
+A matching `UnitStatus` const is exported.
+
+### UnitDispatchType
+
+```typescript
+type UnitDispatchType =
+  | "GENERATOR"
+  | "LOAD"
+  | "BIDIRECTIONAL"
+  | "INTERCONNECTOR"
+```
+
+### UnitDateSpecificity
+
+How specific a unit-related date is:
+
+```typescript
+type UnitDateSpecificity = "year" | "month" | "quarter" | "day"
 ```
 
 ## Parameter Types
-
-### INetworkTimeSeriesParams
-
-Parameters for network data queries:
-
-```typescript
-interface INetworkTimeSeriesParams {
-  interval?: DataInterval
-  dateStart?: string
-  dateEnd?: string
-  primaryGrouping?: DataPrimaryGrouping
-  secondaryGrouping?: DataSecondaryGrouping
-}
-```
 
 ### IFacilityTimeSeriesParams
 
@@ -155,6 +240,7 @@ interface IFacilityTimeSeriesParams {
   interval?: DataInterval
   dateStart?: string
   dateEnd?: string
+  unitCodes?: string | string[]
 }
 ```
 
@@ -165,6 +251,19 @@ Parameters for market data queries:
 ```typescript
 interface IMarketTimeSeriesParams extends IFacilityTimeSeriesParams {
   primaryGrouping?: DataPrimaryGrouping
+  network_region?: string
+}
+```
+
+### INetworkTimeSeriesParams
+
+Parameters for network data queries:
+
+```typescript
+interface INetworkTimeSeriesParams extends IMarketTimeSeriesParams {
+  secondaryGrouping?: DataSecondaryGrouping[]
+  fueltech?: UnitFueltechType[]
+  fueltech_group?: UnitFueltechGroupType[]
 }
 ```
 
@@ -223,8 +322,50 @@ interface IFacility {
   network_id: string
   network_region: string
   description: string | null
+  npi_id: string | null
+  location: ILocation | null
   units: IUnit[]
+  created_at?: string | null
+  updated_at?: string | null
 }
+```
+
+### IFacilityPollutionParams
+
+Parameters for the `/pollution/facilities` endpoint:
+
+```typescript
+interface IFacilityPollutionParams {
+  facility_code?: string[]
+  pollutant_code?: PollutantCode[]
+  pollutant_category?: PollutantCategory[]
+  dateStart?: string
+  dateEnd?: string
+}
+```
+
+### PollutantCategory
+
+```typescript
+type PollutantCategory =
+  | "air_pollutant"
+  | "water_pollutant"
+  | "heavy_metal"
+  | "organic"
+```
+
+### PollutantCode
+
+```typescript
+type PollutantCode =
+  // Air pollutants
+  | "nox" | "so2" | "co" | "pm10" | "pm2_5" | "voc" | "ammonia" | "hcl"
+  // Heavy metals
+  | "as" | "cd" | "cr3" | "cr6" | "cu" | "hg" | "ni" | "pb" | "zn"
+  // Organic compounds
+  | "benzene" | "formaldehyde" | "pah" | "dioxins"
+  // Other
+  | "fluoride"
 ```
 
 ### IFacilityDataRow
@@ -280,10 +421,115 @@ class OpenElectricityError extends Error {
 
 ### NoDataFound
 
-Error type for when no data matches the query (416 status):
+Error type thrown when no data matches the query (HTTP 404):
 
 ```typescript
 class NoDataFound extends Error {
   constructor(message: string = "No data found")
 }
+```
+
+## API Response Types
+
+### IAPIResponse
+
+Standard envelope returned by the API:
+
+```typescript
+interface IAPIResponse<T> {
+  version?: string
+  created_at?: string
+  success: boolean
+  error: string | null
+  data: T
+  total_records?: number
+}
+```
+
+`version` and `created_at` are optional — the `/me` endpoint may omit them.
+
+### IValidationErrorDetail
+
+Structured validation error details surfaced on `OpenElectricityError.details`:
+
+```typescript
+interface IValidationErrorDetail {
+  error?: string
+  supported_metrics?: string[]
+  requested_metrics?: string[]
+  invalid_metrics?: string[]
+  hint?: string
+  [key: string]: unknown
+}
+```
+
+### IMetricsResponse
+
+Response shape from `getAvailableMetrics()`:
+
+```typescript
+interface IMetricMetadata {
+  name: string
+  unit: string
+  description: string
+  default_aggregation: string
+  precision: number
+}
+
+interface IMetricsResponse {
+  metrics: Record<string, IMetricMetadata>
+  total: number
+  endpoints: {
+    market: string[]
+    data: string[]
+  }
+}
+```
+
+## User Types
+
+### IUser
+
+```typescript
+interface IUser {
+  id: string
+  full_name: string
+  email: string
+  owner_id: string
+  plan: UserPlan
+  meta: IUserMeta
+  rate_limit?: number
+  unkey_meta?: Record<string, unknown>
+  roles?: OpenNEMRolesType[]
+}
+
+interface IUserMeta {
+  remaining: number
+}
+```
+
+### UserPlan
+
+```typescript
+type UserPlan = "COMMUNITY" | "BASIC" | "PRO" | "ENTERPRISE"
+```
+
+### OpenNEMRolesType
+
+```typescript
+type OpenNEMRolesType =
+  | "admin"
+  | "pro"
+  | "academic"
+  | "user"
+  | "anonymous"
+```
+
+A matching `OpenNEMRoles` const is also exported for autocomplete:
+
+```typescript
+import { OpenNEMRoles } from "openelectricity"
+
+OpenNEMRoles.ADMIN  // "admin"
+OpenNEMRoles.PRO    // "pro"
 ```
