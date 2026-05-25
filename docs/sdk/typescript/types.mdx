@@ -61,7 +61,7 @@ type DataMetric =
 - `energy`: Energy generated (MWh)
 - `emissions`: CO2 equivalent emissions (tCO2e)
 - `market_value`: Market value ($)
-- `pollution`: Pollutant emissions (kg) — used with the `/pollution/facilities` endpoint
+- `pollution`: Pollutant emissions (kg), used with the `/pollution/facilities` endpoint
 - `renewable_proportion`: Renewable share of generation (%)
 - `storage_battery`: Battery storage state of charge (MWh)
 
@@ -446,7 +446,7 @@ interface IAPIResponse<T> {
 }
 ```
 
-`version` and `created_at` are optional — the `/me` endpoint may omit them.
+`version` and `created_at` are optional. The `/me` endpoint may omit them.
 
 ### IValidationErrorDetail
 
