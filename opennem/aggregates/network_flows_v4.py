@@ -12,6 +12,7 @@ import logging
 from datetime import datetime, timedelta
 
 import pandas as pd
+from sqlalchemy import text
 
 from opennem.core.flow_solver_graph import FlowSolution, GraphFlowSolver, InterconnectorConfig
 from opennem.db import db_connect_sync
@@ -40,18 +41,20 @@ class NetworkFlowsV4:
 
     def _load_interconnector_config(self) -> list[InterconnectorConfig]:
         """Load interconnector configuration from database."""
-        query = f"""
+        query = text(
+            """
             SELECT DISTINCT
                 u.code as interconnector_code,
                 u.capacity_registered as capacity_mw
             FROM units u
             JOIN facilities f ON u.station_id = f.id
             WHERE u.interconnector = true
-            AND f.network_id = '{self.network.code}'
+            AND f.network_id = :network_id
             ORDER BY u.code
-        """
+            """
+        )
 
-        df = pd.read_sql(query, self.postgres_engine)
+        df = pd.read_sql(query, self.postgres_engine, params={"network_id": self.network.code})
 
         interconnectors = []
         for _, row in df.iterrows():
@@ -72,7 +75,8 @@ class NetworkFlowsV4:
         - flow_mw: float (signed, negative indicates reverse flow)
         - flow_mwh: float (always positive, calculated from generated/12)
         """
-        query = f"""
+        query = text(
+            """
             SELECT
                 fs.interval,
                 u.code as interconnector_code,
@@ -83,15 +87,24 @@ class NetworkFlowsV4:
             FROM facility_scada fs
             JOIN units u ON fs.facility_code = u.code
             JOIN facilities f ON u.station_id = f.id
-            WHERE fs.interval >= '{start_interval}'
-            AND fs.interval <= '{end_interval}'
+            WHERE fs.interval >= :start_interval
+            AND fs.interval <= :end_interval
             AND u.interconnector = true
-            AND f.network_id = '{self.network.code}'
+            AND f.network_id = :network_id
             AND fs.generated IS NOT NULL
             ORDER BY fs.interval, u.code
-        """
+            """
+        )
 
-        df = pd.read_sql(query, self.postgres_engine)
+        df = pd.read_sql(
+            query,
+            self.postgres_engine,
+            params={
+                "start_interval": start_interval,
+                "end_interval": end_interval,
+                "network_id": self.network.code,
+            },
+        )
         logger.info(f"Loaded {len(df)} interconnector flow records")
         return df
 
