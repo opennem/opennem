@@ -158,15 +158,19 @@ async def _get_market_summary_data(
         -- trading_price and dispatch_price tables); locf would fabricate
         -- values across legitimate source gaps and preferring price_dispatch
         -- could silently mask settled-price corrections.
+        --
+        -- TimescaleDB requires `locf()` to be a top-level aggregate call —
+        -- it cannot be nested inside CASE/COALESCE. So we compute both the
+        -- WEM-style (locf+coalesce) and NEM-style (plain avg) price columns
+        -- here and let the outer combined_data CTE pick the right one per
+        -- network_id. Within a single group, network_id is constant, so the
+        -- unused column is harmless overhead.
         SELECT
             time_bucket_gapfill('5 minutes', interval, :start_time_window, :end_time) as interval,
             network_id,
             network_region,
-            CASE
-                WHEN network_id = 'WEM'
-                    THEN locf(avg(CAST(COALESCE(price_dispatch, price) AS double precision)))
-                ELSE avg(CAST(price AS double precision))
-            END as price,
+            locf(avg(CAST(COALESCE(price_dispatch, price) AS double precision))) as price_wem,
+            avg(CAST(price AS double precision)) as price_nem,
             avg(CAST(demand AS double precision)) as demand,
             avg(CAST(demand_total AS double precision)) as demand_total,
             avg(ROUND((ss_solar_uigf - ss_solar_clearedmw)::numeric, 4)) as curtailment_solar_total,
@@ -184,7 +188,12 @@ async def _get_market_summary_data(
             COALESCE(gd.interval, rd.interval, rn.interval) as interval,
             COALESCE(gd.network_id, rd.network_id, rn.network_id) as network_id,
             COALESCE(gd.network_region, rd.network_region, rn.network_region) as network_region,
-            gd.price,
+            -- pick the gapfilled_data price column appropriate for this network
+            CASE
+                WHEN COALESCE(gd.network_id, rd.network_id, rn.network_id) = 'WEM'
+                THEN gd.price_wem
+                ELSE gd.price_nem
+            END as price,
             CASE
                 WHEN COALESCE(gd.network_id, rd.network_id, rn.network_id) = 'WEM'
                 THEN COALESCE(gd.demand, wg.total_generation)
