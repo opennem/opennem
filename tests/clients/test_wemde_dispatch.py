@@ -99,3 +99,27 @@ async def test_wemde_dispatch_no_price_field(monkeypatch):
 
     assert any(isinstance(r, FacilityScadaSchema) for r in records)
     assert not any(isinstance(r, BalancingSummarySchema) for r in records)
+
+
+@pytest.mark.asyncio
+async def test_wemde_dispatch_malformed_price_keeps_generation(monkeypatch):
+    """Non-numeric prices.energy must not discard the file's FS records."""
+
+    async def _fake_dl(_url: str) -> list[dict]:
+        # energy price is a non-numeric string — float() will raise ValueError.
+        # The parser must swallow this, emit no BS row, and still return the
+        # FacilityScada records for the binding interval.
+        return [_make_dispatch_json(energy_price="not-a-number")]
+
+    async def _fake_battery_map():
+        return {}
+
+    monkeypatch.setattr(wemde, "_wemde_download_dataset", _fake_dl)
+    monkeypatch.setattr(wemde, "get_battery_unit_map", _fake_battery_map)
+
+    records = await wemde.wemde_parse_dispatch("ignored")
+
+    fs = [r for r in records if isinstance(r, FacilityScadaSchema)]
+    bs = [r for r in records if isinstance(r, BalancingSummarySchema)]
+    assert len(fs) == 2  # both facility schedule entries preserved
+    assert bs == []
