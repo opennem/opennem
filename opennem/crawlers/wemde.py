@@ -118,15 +118,25 @@ async def run_wemde_crawl(
         deduped.setdefault(key, record)
     data = list(deduped.values())
 
-    # persist data
-    update_fields = ["generated", "energy"]
+    # persist — split by schema since FacilityScada and BalancingSummary go to
+    # different tables. The dispatch parser now emits both: facility scada (gen)
+    # plus a per-interval BalancingSummary carrying price_dispatch (5-min price).
+    # Update-field sets are declared on the CrawlerDefinition so this runner
+    # stays parser-agnostic — dispatch crawlers set bs_update_fields=["price_dispatch"]
+    # and trading-price crawlers set ["price"].
+    fs_records = [r for r in data if isinstance(r, FacilityScadaSchema)]
+    bs_records = [r for r in data if isinstance(r, BalancingSummarySchema)]
 
-    if crawler.parser == wemde_parse_trading_price:
-        update_fields = ["price", "price_dispatch"]
+    if fs_records:
+        fs_update_fields = crawler.fs_update_fields or ["generated", "energy"]
+        await persist_facility_scada_bulk(records=fs_records, update_fields=fs_update_fields)
 
-    await persist_facility_scada_bulk(records=data, update_fields=update_fields)
+    if bs_records:
+        if not crawler.bs_update_fields:
+            raise Exception(f"Crawler {crawler.name} produced BalancingSummary records but has no bs_update_fields configured")
+        await persist_facility_scada_bulk(records=bs_records, update_fields=crawler.bs_update_fields)
 
-    logger.info(f"Persisted {len(data)} records")
+    logger.info(f"Persisted {len(fs_records)} facility_scada + {len(bs_records)} balancing_summary records")
 
     # track latest interal and update metadata
     recent_latest_interval = max([i.interval for i in data if i.interval])
@@ -223,6 +233,8 @@ AEMOWEMDEDispatch = CrawlerDefinition(
     network=NetworkWEM,
     processor=run_wemde_crawl,
     parser=wemde_parse_dispatch,
+    # dispatch yields 5-min energy clearing price → price_dispatch (5-min column)
+    bs_update_fields=["price_dispatch"],
 )
 
 AEMOWEMDETradingReportHistory = CrawlerDefinition(
@@ -235,6 +247,8 @@ AEMOWEMDETradingReportHistory = CrawlerDefinition(
     network=NetworkWEM,
     processor=run_wemde_crawl,
     parser=wemde_parse_trading_price,
+    # trading prices land in the 30-min `price` column
+    bs_update_fields=["price"],
 )
 
 AEMOWEMDETradingReport = CrawlerDefinition(
@@ -248,6 +262,7 @@ AEMOWEMDETradingReport = CrawlerDefinition(
     processor=run_wemde_crawl,
     parser=wemde_parse_trading_price,
     archive_version=AEMOWEMDETradingReportHistory,
+    bs_update_fields=["price"],
 )
 
 ALL_WEM_CRAWLERS = [AEMOWEMDEFacilityScada, AEMOWEMDEDispatch, AEMOWEMDETradingReport, APVIRooftopMonthCrawler]

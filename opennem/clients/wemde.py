@@ -141,12 +141,17 @@ async def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
     return models
 
 
-async def wemde_parse_dispatch(url: str) -> list[FacilityScadaSchema]:
+async def wemde_parse_dispatch(url: str) -> list[FacilityScadaSchema | BalancingSummarySchema]:
     """Parses a WEMDE dispatch solution file.
 
     Uses the cleared `energy` market dispatch quantity (MW) per facility as the WEM
     generation signal. Dispatch solutions publish as 5-min files ~5 min behind real
     time — vs the facilityScada feed's ~24h lag. `quantity` is MW (negative = charging).
+
+    Also emits one BalancingSummarySchema per binding interval carrying the 5-min
+    dispatch energy clearing price (`prices.energy`) as `price_dispatch`. WEM trading
+    prices (`balancing_summary.price`) are settled at 30-min cadence — `price_dispatch`
+    gives the 5-min-resolution view downstream consumers need.
 
     Only the binding interval (`primaryDispatchInterval`) is kept — `solutionData`
     also carries ~2h of forward look-ahead dispatch, which is a projection, not an
@@ -163,6 +168,7 @@ async def wemde_parse_dispatch(url: str) -> list[FacilityScadaSchema]:
 
     original_records: list[dict] = []
     battery_records: list[dict] = []
+    price_models: list[BalancingSummarySchema] = []
 
     for download_json in download_jsons:
         primary_interval = download_json.get("primaryDispatchInterval")
@@ -173,6 +179,24 @@ async def wemde_parse_dispatch(url: str) -> list[FacilityScadaSchema]:
                 continue
 
             interval = datetime.fromisoformat(interval_entry["dispatchInterval"]).replace(tzinfo=None)
+
+            # 5-min dispatch energy price (binding interval only). Catch float()
+            # errors too — a non-numeric prices.energy would otherwise escape
+            # this try/except and reach the per-file catch in run_wemde_crawl,
+            # which would discard the file's FacilityScada records as well.
+            energy_price = (interval_entry.get("prices") or {}).get("energy")
+            if energy_price is not None:
+                try:
+                    price_models.append(
+                        BalancingSummarySchema(
+                            network_id="WEM",
+                            network_region="WEM",
+                            interval=interval,
+                            price_dispatch=float(energy_price),
+                        )
+                    )
+                except (ValidationError, ValueError, TypeError) as e:
+                    logger.error(f"Error parsing dispatch price {energy_price!r} for {interval}: {e}")
 
             energy_schedule = next(
                 (s for s in interval_entry.get("schedule", []) if s.get("marketService") == "energy"),
@@ -217,7 +241,7 @@ async def wemde_parse_dispatch(url: str) -> list[FacilityScadaSchema]:
             discharge_record["facility_code"] = battery_map.discharge_unit
             all_records.append(discharge_record)
 
-    models = []
+    models: list[FacilityScadaSchema | BalancingSummarySchema] = []
 
     for record_data in all_records:
         try:
@@ -225,6 +249,8 @@ async def wemde_parse_dispatch(url: str) -> list[FacilityScadaSchema]:
         except ValidationError as e:
             logger.error(f"Validation error: {e}")
             continue
+
+    models.extend(price_models)
 
     return models
 
