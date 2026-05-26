@@ -25,6 +25,26 @@ The Open Electricity API enforces maximum date range limits for data queries to 
 | Seasonal (`season`) | 1830 days (~5 years) | Seasonal aggregated data |
 | Yearly (`year`) | 3700 days (~10 years) | Yearly aggregated data |
 
+## Historical Data Window
+
+In addition to the per-request interval ranges above, your plan determines how far back in time you can query.
+
+| Plan | Historical window |
+|------|-------------------|
+| Community | 2 years |
+| Academic | Full history |
+| Enterprise | Full history |
+
+Requests whose `date_start` falls outside your plan's window return a 400 with a detail message:
+
+```json
+{
+  "detail": "Date start is too far in the past. Your plan allows data from the last 730 days."
+}
+```
+
+If you need access to data older than 2 years, upgrade your plan or [contact us](https://platform.openelectricity.org.au).
+
 ## Error Response
 
 When a date range exceeds the maximum allowed for an interval, the API returns a 400 error:
@@ -54,14 +74,17 @@ const client = new OpenElectricityClient({
   apiKey: process.env.OPENELECTRICITY_API_KEY
 });
 
-// Get power generation data for NEM network
+// Get power generation data for the last 30 days
+const end = new Date()
+const start = new Date(end.getTime() - 30 * 24 * 60 * 60 * 1000)
+
 const response = await client.getNetworkData(
   'NEM',
   ['power'],
   {
     interval: 'hour',
-    dateStart: '2024-01-01',
-    dateEnd: '2024-01-30'
+    dateStart: start.toISOString().split('T')[0],
+    dateEnd: end.toISOString().split('T')[0],
   }
 );
 
@@ -71,17 +94,20 @@ console.log(`Retrieved ${response.datatable.rows.length} data points`);
 ```python example.py
 from openelectricity import OEClient
 from openelectricity.types import NetworkCode, DataMetric, DataInterval
-from datetime import datetime
+from datetime import datetime, timedelta
 
 client = OEClient()  # Uses OPENELECTRICITY_API_KEY env var
 
-# Get power generation data for NEM network
+# Get power generation data for the last 30 days
+end = datetime.now()
+start = end - timedelta(days=30)
+
 response = client.get_network_data(
     network_code=NetworkCode.NEM,
     metrics=[DataMetric.POWER],
     interval=DataInterval.HOUR,
-    date_start=datetime(2024, 1, 1),
-    date_end=datetime(2024, 1, 30)
+    date_start=start,
+    date_end=end,
 )
 
 print(f"Retrieved {len(response.data)} data points")
@@ -148,8 +174,8 @@ async function fetchDataInChunks(
 }
 
 // Usage: Fetch 60 days of hourly data
-const startDate = new Date('2024-01-01');
-const endDate = new Date('2024-03-01');
+const endDate = new Date();
+const startDate = new Date(endDate.getTime() - 60 * 24 * 60 * 60 * 1000);
 const data = await fetchDataInChunks(startDate, endDate, 'hour', 30);
 console.log(`Retrieved ${data.length} total data points`);
 ```
@@ -214,10 +240,8 @@ def fetch_data_in_chunks(
     return all_data
 
 # Usage: Fetch 60 days of hourly data
-from datetime import datetime
-
-start_date = datetime(2024, 1, 1)
-end_date = datetime(2024, 3, 1)
+end_date = datetime.now()
+start_date = end_date - timedelta(days=60)
 
 data = fetch_data_in_chunks(
     start_date,
