@@ -180,7 +180,10 @@ async def wemde_parse_dispatch(url: str) -> list[FacilityScadaSchema | Balancing
 
             interval = datetime.fromisoformat(interval_entry["dispatchInterval"]).replace(tzinfo=None)
 
-            # 5-min dispatch energy price (binding interval only)
+            # 5-min dispatch energy price (binding interval only). Catch float()
+            # errors too — a non-numeric prices.energy would otherwise escape
+            # this try/except and reach the per-file catch in run_wemde_crawl,
+            # which would discard the file's FacilityScada records as well.
             energy_price = (interval_entry.get("prices") or {}).get("energy")
             if energy_price is not None:
                 try:
@@ -192,8 +195,8 @@ async def wemde_parse_dispatch(url: str) -> list[FacilityScadaSchema | Balancing
                             price_dispatch=float(energy_price),
                         )
                     )
-                except ValidationError as e:
-                    logger.error(f"Validation error parsing dispatch price for {interval}: {e}")
+                except (ValidationError, ValueError, TypeError) as e:
+                    logger.error(f"Error parsing dispatch price {energy_price!r} for {interval}: {e}")
 
             energy_schedule = next(
                 (s for s in interval_entry.get("schedule", []) if s.get("marketService") == "energy"),
