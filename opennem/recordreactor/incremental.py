@@ -194,7 +194,7 @@ def _map_row_to_records(
         prev = current_state.get(record_id)
 
         if prev is not None:
-            if not check_milestone_is_new(candidate, prev):
+            if not check_milestone_is_new(candidate, prev, debounce_intervals=settings.milestone_interval_debounce_intervals):
                 continue
             # Set previous_instance_id for chain linking
             candidate.previous_instance_id = prev.instance_id
