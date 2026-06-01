@@ -154,12 +154,20 @@ def backfill_materialized_view(
             logger.info(f"Backfilling {view.name} from {current_date} to {chunk_end}")
 
             try:
-                # For monthly views, align date ranges to month boundaries
-                # since timestamp_column stores toStartOfMonth() values
+                # For monthly views, align date ranges to month boundaries since
+                # timestamp_column stores toStartOfMonth() values. Both the DELETE
+                # and the re-aggregation window must start at the month boundary:
+                # the backfill_query does toStartOfMonth(interval), so a narrow
+                # (eg 7-day) window would re-insert a partial month over the full
+                # one the DELETE just removed — the market_summary_monthly_mv rot
+                # behind the demand/price all-vs-1y mismatch.
                 if view.timestamp_column == "month":
-                    range_start = current_date.replace(day=1).date()
+                    month_start = current_date.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+                    range_start = month_start.date()
+                    insert_start = month_start
                 else:
                     range_start = current_date.date()
+                    insert_start = current_date
                 range_end = chunk_end.date()
 
                 # DELETE existing data for this date range to prevent double-counting
@@ -175,7 +183,7 @@ def backfill_materialized_view(
                 # INSERT new data
                 client.execute(
                     view.backfill_query,
-                    {"start": current_date, "end": chunk_end},
+                    {"start": insert_start, "end": chunk_end},
                 )
 
                 # Verify data was inserted — silent failures here cause data gaps
