@@ -51,13 +51,21 @@ def get_milestone_type_label(milestone_type: MilestoneType) -> str:
         return milestone_type.value.capitalize()
 
 
-def check_milestone_is_new(milestone: MilestoneRecordSchema, milestone_previous: MilestoneRecordOutputSchema) -> bool:
+def check_milestone_is_new(
+    milestone: MilestoneRecordSchema,
+    milestone_previous: MilestoneRecordOutputSchema,
+    debounce_intervals: int = 0,
+) -> bool:
     """
     Checks if the given milestone is new or has changed
 
     Args:
         milestone (MilestoneRecord): The milestone record
-        milestone_state (dict[str, MilestoneRecord]): The milestone state
+        milestone_previous (MilestoneRecordOutputSchema): The previous (most recent kept) record
+        debounce_intervals (int): For interval-period records only, suppress a new record if it
+            breaks the previous one fewer than this many intervals later. Prevents a burst of
+            records (and Slack/social notifications) as a value ramps up/down across consecutive
+            intervals (e.g. battery charging). 0 (default) disables debouncing.
 
     Returns:
         bool: True if the milestone is new, False if it has changed
@@ -79,7 +87,24 @@ def check_milestone_is_new(milestone: MilestoneRecordSchema, milestone_previous:
 
     # Only create new records if the rounded values are different AND the comparison operator passes
     # The operator should compare the rounded values, not the original values
-    return _op(rounded_current, rounded_previous)
+    if not _op(rounded_current, rounded_previous):
+        return False
+
+    # Debounce interval-period records: a ramping value (battery charging in particular) breaks
+    # its own record every interval on the way up/down, firing a record + notification each time.
+    # Only treat it as new once it has been at least `debounce_intervals` intervals since the
+    # previous kept record. Day+ periods are spaced far further apart than any sane window so they
+    # never trip this.
+    if debounce_intervals > 0 and milestone.period == MilestonePeriod.interval:
+        gap_minutes = (milestone.interval - milestone_previous.interval).total_seconds() / 60
+        if gap_minutes < debounce_intervals * milestone.network.interval_size:
+            logger.debug(
+                f"Debouncing {milestone.record_id} at {milestone.interval}: "
+                f"{gap_minutes:.0f}m since previous record < {debounce_intervals}-interval window"
+            )
+            return False
+
+    return True
 
 
 def get_milestone_fueltech_label(fueltech: MilestoneFueltechGrouping) -> str:

@@ -1,5 +1,6 @@
 import logging
 from datetime import date, datetime, timedelta
+from functools import partial
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -38,8 +39,14 @@ from opennem.schema.time import TimePeriod
 from opennem.users.schema import OpenNEMRoles, OpenNEMUser
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem
 
-from .controllers import get_scada_range, get_scada_range_optimized, stats_factory
+from .controllers import get_scada_range, get_scada_range_optimized
+from .controllers import stats_factory as _stats_factory
 from .schema import DataQueryResult, OpennemDataSet
+
+# The live API returns sparse x,y series — a missing month/year is expected and
+# consumers handle the nulls — so it opts out of the static-export calendar
+# gapfill that keeps file exports aligned (issue #548).
+stats_factory = partial(_stats_factory, fill_monthly_gaps=False)
 
 
 def _deprecated_endpoint(*_args, **_kwargs):
