@@ -29,6 +29,7 @@ class PlanConfig(BaseModel):
     bucket_limits: dict[str, int]
     period_limit_days: int
     historical_data: str
+    license: str
     features: list[str]
     visible: bool = True
     cta: str | None = None
@@ -72,8 +73,9 @@ PLAN_CONFIGS: dict[OpenNEMPlan, PlanConfig] = {
         burst_rate_limit="2/s",
         key_limit=1,
         bucket_limits={k.value: v for k, v in BUCKET_LIMITS_USER.items()},
-        period_limit_days=367,
-        historical_data="1 year",
+        period_limit_days=730,
+        historical_data="2 years",
+        license="Non-commercial use",
         features=["Community support"],
         visible=True,
         cta="upgrade",
@@ -82,13 +84,14 @@ PLAN_CONFIGS: dict[OpenNEMPlan, PlanConfig] = {
         code=OpenNEMPlan.PRO,
         name="Pro",
         description="For professionals and power users",
-        price="$49/mo",
+        price="Free",
         daily_credits=PRO_CREDITS,
         burst_rate_limit="5/s",
         key_limit=10,
         bucket_limits={k.value: v for k, v in BUCKET_LIMITS_ADMIN.items()},
         period_limit_days=-1,
         historical_data="Full",
+        license="Non-commercial use",
         features=["Priority email support"],
         visible=False,  # not ready yet
     ),
@@ -103,6 +106,7 @@ PLAN_CONFIGS: dict[OpenNEMPlan, PlanConfig] = {
         bucket_limits={k.value: v for k, v in BUCKET_LIMITS_ADMIN.items()},
         period_limit_days=-1,
         historical_data="Full",
+        license="Non-commercial use",
         features=["Community support"],
         visible=True,
         cta="academic",
@@ -118,6 +122,7 @@ PLAN_CONFIGS: dict[OpenNEMPlan, PlanConfig] = {
         bucket_limits={k.value: v for k, v in BUCKET_LIMITS_ADMIN.items()},
         period_limit_days=-1,
         historical_data="Full",
+        license="Commercial use",
         features=["Priority email support"],
         visible=True,
         cta="contact",
