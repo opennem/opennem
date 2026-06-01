@@ -5,6 +5,7 @@ from textwrap import dedent
 from typing import Any
 
 from datetime_truncate import truncate as date_trunc
+from dateutil.relativedelta import relativedelta
 from sqlalchemy import text as sql
 
 from opennem import settings
@@ -48,9 +49,14 @@ def stats_factory(
     cast_nulls: bool | None = True,
     include_code: bool = True,
     exclude_nulls: bool = True,
+    fill_monthly_gaps: bool = True,
 ) -> OpennemDataSet:
     """
     Takes a list of data query results and returns OpennemDataSets
+
+    :param fill_monthly_gaps: reindex 1M/1Y series onto a complete calendar grid
+        (nulls for missing periods) so static file exports stay aligned. Off for
+        the live API, which returns sparse x,y where missing periods are expected.
 
     @TODO optional groupby field
     @TODO multiple groupings / slight refactor
@@ -83,13 +89,22 @@ def stats_factory(
         # contiguous between start and last. Consumers reconstruct each point's
         # time as start + i*interval, so missing intervals must be explicit
         # nulls — absent rows misalign everything after a gap (issue #534).
-        # Fixed-duration intervals only; month/year stepping is not uniform.
-        grid_step = {
+        grid_step: timedelta | relativedelta | None = {
             "5 minutes": timedelta(minutes=5),
             "30 minutes": timedelta(minutes=30),
             "1 hour": timedelta(hours=1),
             "1 day": timedelta(days=1),
         }.get(interval.interval_sql)
+
+        # Calendar intervals (month/year) step non-uniformly so they need
+        # relativedelta. Only gridded for static file exports — the live API
+        # returns sparse x,y pairs where a missing month/year is expected, so it
+        # opts out via fill_monthly_gaps=False (issue #548).
+        if grid_step is None and fill_monthly_gaps:
+            grid_step = {
+                "1 month": relativedelta(months=1),
+                "1 year": relativedelta(years=1),
+            }.get(interval.interval_sql)
 
         if grid_step and len(data_sorted) > 1:
             grid_keys = list(data_sorted.keys())
