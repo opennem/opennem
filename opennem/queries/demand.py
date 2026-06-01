@@ -37,15 +37,21 @@ def network_demand_clickhouse_query(
             ORDER BY date DESC
         """
     elif use_monthly_mv:
+        # Aggregate months from the daily MV rather than reading
+        # market_summary_monthly_mv: that MV auto-populates per-batch so it
+        # holds partial-month aggregates (eg NSW1 May-2026 demand 373 GWh vs the
+        # true 5859), whereas the daily MV is backfilled + matches the base
+        # table. Sum the correct daily rows up to a month instead.
         __query = """
-            SELECT month AS interval, network_id, {network_region_select}
-                round(demand_total_energy_monthly, 4) as demand_energy,
-                round(demand_total_market_value_monthly * 1000, 4) as demand_market_value
-            FROM market_summary_monthly_mv
-            WHERE month >= toStartOfMonth(toDate('{date_min}'))
-                AND month <= toStartOfMonth(toDate('{date_max}'))
+            SELECT toStartOfMonth(date) AS interval, network_id, {network_region_select}
+                round(sum(demand_total_energy_daily), 4) as demand_energy,
+                round(sum(demand_total_market_value_daily) * 1000, 4) as demand_market_value
+            FROM market_summary_daily_mv FINAL
+            WHERE date >= toStartOfMonth(toDate('{date_min}'))
+                AND date <= toDate('{date_max}')
                 AND network_id IN ({network_ids}) {network_region_filter}
-            ORDER BY month DESC
+            GROUP BY interval, network_id {network_region_group}
+            ORDER BY interval DESC
         """
     else:
         __query = """
