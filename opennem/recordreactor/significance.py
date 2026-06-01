@@ -46,6 +46,14 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
     # *.demand.[power.interval|energy.day].high
     # *.renewables.proportion.[interval|day|7d].high
 
+    # battery charging stays below the alert threshold (9) for every period/metric
+    # so it remains in the records feed but never fires social/slack notifications.
+    # discharging is the interesting event and keeps its 10/9 below.
+    if milestone.fueltech == "battery_charging":
+        if milestone.aggregate == MilestoneAggregate.high:
+            return 8 if milestone.network_region is None else 7
+        return 1
+
     if milestone.metric in [MilestoneType.power, MilestoneType.energy] and milestone.period in [
         MilestonePeriod.interval,
         MilestonePeriod.day,
@@ -53,7 +61,7 @@ def calculate_milestone_significance(milestone: MilestoneRecordSchema) -> int:
         MilestonePeriod.year,
     ]:
         if (
-            milestone.fueltech in ["solar", "wind", "renewables", "battery_discharging", "battery_charging"]
+            milestone.fueltech in ["solar", "wind", "renewables", "battery_discharging"]
             and milestone.aggregate == MilestoneAggregate.high
         ):
             if milestone.network_region is None:
