@@ -17,6 +17,7 @@ import pytest
 
 from opennem.api.data.schema import DataMetric
 from opennem.api.queries import QueryType, get_timeseries_query
+from opennem.core.grouping import SecondaryGrouping
 from opennem.core.time_interval import Interval
 from opennem.schema.network import NetworkNEM
 
@@ -84,3 +85,34 @@ def test_network_aggregate_power_collapses_units_in_inner():
     assert "sum(generated) AS generated_sum" in sql
     # Outer averages the per-5min network totals → network-aggregate avg over the bucket
     assert "round(avg(generated_sum), 6) AS power" in sql
+
+
+@pytest.mark.parametrize(
+    ("grouping", "col"),
+    [
+        (SecondaryGrouping.FUELTECH, "fueltech_id"),
+        (SecondaryGrouping.FUELTECH_GROUP, "fueltech_group_id"),
+        (SecondaryGrouping.STATUS, "status_id"),
+        (SecondaryGrouping.RENEWABLE, "renewable"),
+    ],
+)
+def test_secondary_grouping_emits_column(grouping, col):
+    """Every SecondaryGrouping must wire its source column into the query + column_names.
+
+    Regression for opennem#539: secondary_grouping=status 500'd because the STATUS
+    branch was missing from the query builder and the timeseries label dicts, so
+    status_id was never grouped/selected and label-building raised KeyError.
+    """
+    sql, _, column_names = get_timeseries_query(
+        query_type=QueryType.DATA,
+        network=NetworkNEM,
+        metrics=[DataMetric.ENERGY],
+        interval=Interval.DAY,
+        date_start=datetime(2026, 5, 22, 0, 0),
+        date_end=datetime(2026, 5, 23, 0, 0),
+        secondary_groupings=[grouping],
+    )
+    # source column is grouped/selected in the SQL
+    assert col in sql
+    # output column name is present for callers to zip with row tuples
+    assert grouping.value in column_names
