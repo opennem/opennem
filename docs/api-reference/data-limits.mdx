@@ -25,6 +25,27 @@ The Open Electricity API enforces maximum date range limits for data queries to 
 | Seasonal (`season`) | 1830 days (~5 years) | Seasonal aggregated data |
 | Yearly (`year`) | 3700 days (~10 years) | Yearly aggregated data |
 
+## Historical Data Access
+
+How far back you can query (`date_start`) depends on your plan:
+
+| Plan | Historical window |
+|------|-------------------|
+| Community (default) | Last 2 years |
+| Academic | Full history (from 1999) |
+| Enterprise | Full history (from 1999) |
+
+Requests with a `date_start` earlier than your plan's window return a `400` error. Academic and Enterprise plans can access the complete dataset back to 1999. Anonymous requests are treated as Community.
+
+## Data Licensing
+
+| Plan | Usage |
+|------|-------|
+| Community / Academic | Non-commercial use |
+| Enterprise | Commercial use |
+
+Commercial use of the data requires an Enterprise plan. Community and Academic access is licensed for non-commercial use only. [Get in touch](/community) about commercial licensing.
+
 ## Error Response
 
 When a date range exceeds the maximum allowed for an interval, the API returns a 400 error:

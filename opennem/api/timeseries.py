@@ -133,6 +133,7 @@ _GROUPING_COL = {
     SecondaryGrouping.RENEWABLE: "renewable",
     SecondaryGrouping.FUELTECH: "fueltech",
     SecondaryGrouping.FUELTECH_GROUP: "fueltech_group",
+    SecondaryGrouping.STATUS: "status",
 }
 
 # Grouping enum value → labels dict key (same for most, but explicit)
@@ -140,6 +141,7 @@ _GROUPING_LABEL = {
     SecondaryGrouping.RENEWABLE: "renewable",
     SecondaryGrouping.FUELTECH: "fueltech",
     SecondaryGrouping.FUELTECH_GROUP: "fueltech_group",
+    SecondaryGrouping.STATUS: "status",
 }
 
 

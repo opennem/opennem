@@ -6,6 +6,114 @@ icon: 'calendar'
 
 Stay up to date with the latest features, improvements, and bug fixes in Open Electricity.
 
+<Update label="v4.5.2" description="June 3, 2026" tags={["API", "Data"]}>
+
+## Data & Pipeline
+
+- **Monthly demand accuracy** - Corrected May demand and gas figures: monthly demand is now aggregated from the daily materialized view instead of a stale monthly view, with a month-aligned backfill window ([#548](https://github.com/opennem/opennem/issues/548))
+- **Calendar gap-fill** - Monthly and yearly series are now gap-filled onto the calendar grid, keeping market-value and weather coverage aligned ([#548](https://github.com/opennem/opennem/issues/548), [#549](https://github.com/opennem/opennem/issues/549))
+
+## Bug Fixes
+
+- **Status grouping** - Fixed `secondary_grouping=status` returning a 500 on `/v4/data/network/`; data can now be grouped by facility status (operating, committed, retired) like the other secondary groupings ([#539](https://github.com/opennem/opennem/issues/539), [#550](https://github.com/opennem/opennem/pull/550))
+
+</Update>
+
+<Update label="v4.5.1" description="June 1, 2026" tags={["API", "Data", "SDK", "WEM", "Platform"]}>
+
+## Major Features
+
+- **Real-time WEM data** - Western Australia generation and 5-minute dispatch pricing are now near-real-time via the new WEMDE dispatch-solution feed, replacing the previous ~24-hour lag ([#527](https://github.com/opennem/opennem/issues/527), [#530](https://github.com/opennem/opennem/pull/530), [#533](https://github.com/opennem/opennem/pull/533), [#538](https://github.com/opennem/opennem/pull/538))
+
+## Plans & Data Access
+
+- **Extended historical access for Community** - Community plans can now query the last 2 years of data (previously 1 year). Academic and Enterprise plans retain full history back to 1999.
+- **Data licensing clarified** - Plan comparisons now state usage terms: Community and Academic are licensed for non-commercial use; commercial use requires an Enterprise plan.
+
+See [Data Limits](/api-reference/data-limits) for the full breakdown.
+
+## API Improvements
+
+- **Accurate power aggregation** - Power (MW) is now averaged across intervals instead of summed, fixing inflated figures at every grouping level ([#523](https://github.com/opennem/opennem/issues/523), [#525](https://github.com/opennem/opennem/issues/525))
+- **OpenAPI spec** - Enriched with a generic response envelope, field metadata, and per-language code samples
+- **Capacity history** - Now sums `capacity_maximum` with a fallback to registered capacity, fixing NULL WEM coal, gas and wind capacity ([#528](https://github.com/opennem/opennem/issues/528))
+
+## Data & Pipeline
+
+- **Gap-filled series** - Chart series are reindexed onto the interval grid so upstream data gaps no longer misalign timestamps ([#534](https://github.com/opennem/opennem/issues/534), [#535](https://github.com/opennem/opennem/issues/535))
+
+## Bug Fixes
+
+- **WEM price aggregation** - Confined to WEM with a hardened parser; `locf()` interpolation split into separate WEM and NEM columns ([#541](https://github.com/opennem/opennem/issues/541), [#542](https://github.com/opennem/opennem/issues/542))
+
+## Notifications
+
+- **Record debouncing** - Interval milestone records are debounced to stop notification bursts, and battery-charging significance was lowered below the alert threshold to stop charging-driven alert floods
+
+## SDK Releases
+
+### [Python client](https://github.com/opennem/openelectricity-python) — `openelectricity` 0.11.2
+
+- Proxy and custom TLS/certificate support on sync and async clients
+- New renewable-with-storage and gross-demand market metrics
+- Notebook-safe sync client that works inside an existing event loop (Jupyter / IPython)
+- Restored Python 3.10+ support; `unit_code` and `network_region` parity across sync and async
+
+### [TypeScript client](https://github.com/opennem/openelectricity-typescript) — `openelectricity` 0.9.1
+
+- Full type parity with the Python SDK, adding the `renewable_proportion` metric and `status` secondary grouping
+- Stronger error handling (403/404/500 surface as typed errors) and `DataTable` group-by and filter correctness fixes
+
+</Update>
+
+<Update label="v4.5.0" description="April 20, 2026" tags={["API", "Data", "SDK", "Infrastructure", "Major Release"]}>
+
+The 4.5.0 release moves the analytics pipeline to ClickHouse, rewrites interconnector flow tracing, and introduces a unified plan system for platform.
+
+## Major Features
+
+- **Flow Tracing v4** - Rewritten interconnector flow solver with a dynamic, ClickHouse-backed topology model that handles circular flows and per-flow emissions, exposed through the API and the homepage ([#470](https://github.com/opennem/opennem/issues/470))
+- **Automated weekly & monthly summaries** - Generation and record summaries are now published automatically to X, Bluesky and LinkedIn behind a Slack approval workflow ([#64](https://github.com/opennem/opennem/issues/64))
+- **Renewable-with-storage metrics** - New market metrics that account for storage when computing renewable proportion
+
+## API Improvements
+
+- **ClickHouse-backed stats** - v4 station and facility stats endpoints restored and served from ClickHouse
+- **Facility endpoint** - Added a `unit_code` filter, required authentication, and corrected no-data responses to 404 (previously 416)
+- **Cleaner `/v4/me`** - Trimmed response and removed the dead `with_clerk` parameter from the OpenAPI spec
+
+## Data & Pipeline
+
+- **Postgres to ClickHouse** - The analytics and export pipeline (power, energy, demand, flows) was migrated to ClickHouse and the legacy Postgres aggregation pipeline retired
+- **WEM demand** - Derived from facility SCADA generation, since the public WEM feed provides price only
+- **Crawler improvements** - AEMO sources moved to polling with backoff and parallelized crawls, with gap-aware catchup that skips redundant work
+- **Materialized views** - Completeness-versioned daily and monthly views with full-day backfill and AEST-aligned refresh windows
+
+## Bug Fixes
+
+- **API key authentication** - New API keys no longer return 401 across all endpoints ([#487](https://github.com/opennem/opennem/issues/487))
+- **Double-counting** - ClickHouse `FINAL` scoping corrected to stop duplicate-row double-counting in market and price queries
+- **Energy calculation** - Corrected the trapezoidal integration window and quality-flag handling; batteries excluded from generation queries
+- **Export boundaries** - All series are truncated at the core generation boundary so demand, price and rooftop never extend past it
+- **RecordReactor** - Moved to incremental milestone detection with automatic backfill of gaps
+
+## SDK Releases
+
+### [Python client](https://github.com/opennem/openelectricity-python) — `openelectricity` 0.10.1
+
+- `unit_code` parameter on `get_facility_data`
+- Flow market metrics; `fueltech` and `status` parameters now accept plain strings
+- New bidirectional battery example
+
+### [TypeScript client](https://github.com/opennem/openelectricity-typescript) — `openelectricity` 0.8.1
+
+- `unitCodes` parameter on `getFacilityData`
+- Flow and renewable-with-storage market metrics, plus the `hydro_and_storage` fueltech
+- `getFacilities` now throws `NoDataFound` on 404 (previously mishandled)
+
+
+</Update>
+
 <Update label="v4.4.0" description="January 8, 2026" tags={["Platform", "Infrastructure", "API", "Data"]}>
 
 ## Major Features
