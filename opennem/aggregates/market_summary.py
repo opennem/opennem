@@ -159,8 +159,18 @@ async def _get_market_summary_data(
         -- For modern 5-min price data locf is a near no-op. WEM additionally
         -- prefers price_dispatch (5-min WEMDE clearing price) over the 30-min
         -- trading price; NEM keeps trading `price` only, so settled-price
-        -- corrections aren't masked by dispatch values. Matches the same
-        -- locf(avg(price)) fill used in unit_intervals.py.
+        -- corrections aren't masked by dispatch values.
+        --
+        -- `treat_null_as_missing => true` is REQUIRED: pre-2009 NEM
+        -- balancing_summary has real 5-min rows (demand populated) with a NULL
+        -- price between the half-hourly trading points (00 and 30 min marks).
+        -- These are NOT gapfill-created gaps, so plain locf() (which only fills
+        -- gaps it created) leaves them NULL. treat_null_as_missing tells locf to
+        -- carry forward across in-data NULLs too. (unit_intervals.py sidesteps
+        -- this by pre-filtering price IS NOT NULL before the gapfill; here price
+        -- shares a CTE with demand/curtailment so we can't filter the rows away.
+        -- NB: avoid ':' followed by digits anywhere in this text() — SQLAlchemy
+        -- parses it as a bind param even inside SQL comments.)
         --
         -- TimescaleDB requires `locf()` to be a top-level aggregate call —
         -- it cannot be nested inside CASE/COALESCE. So we compute both the
@@ -172,8 +182,8 @@ async def _get_market_summary_data(
             time_bucket_gapfill('5 minutes', interval, :start_time_window, :end_time) as interval,
             network_id,
             network_region,
-            locf(avg(CAST(COALESCE(price_dispatch, price) AS double precision))) as price_wem,
-            locf(avg(CAST(price AS double precision))) as price_nem,
+            locf(avg(CAST(COALESCE(price_dispatch, price) AS double precision)), treat_null_as_missing => true) as price_wem,
+            locf(avg(CAST(price AS double precision)), treat_null_as_missing => true) as price_nem,
             avg(CAST(demand AS double precision)) as demand,
             avg(CAST(demand_total AS double precision)) as demand_total,
             avg(ROUND((ss_solar_uigf - ss_solar_clearedmw)::numeric, 4)) as curtailment_solar_total,
