@@ -6,6 +6,14 @@ icon: 'calendar'
 
 Stay up to date with the latest features, improvements, and bug fixes in Open Electricity.
 
+<Update label="v4.5.2" description="June 3, 2026" tags={["API"]}>
+
+## Bug Fixes
+
+- **Status grouping** - Fixed `secondary_grouping=status` returning a 500 on `/v4/data/network/`; data can now be grouped by facility status (operating, committed, retired) like the other secondary groupings ([#539](https://github.com/opennem/opennem/issues/539), [#550](https://github.com/opennem/opennem/pull/550))
+
+</Update>
+
 <Update label="v4.5.1" description="June 1, 2026" tags={["API", "Data", "SDK", "WEM", "Platform"]}>
 
 ## Major Features
@@ -33,7 +41,6 @@ See [Data Limits](/api-reference/data-limits) for the full breakdown.
 
 ## Bug Fixes
 
-- **Status grouping** - Fixed `secondary_grouping=status` returning a 500 on `/v4/data/network/` ([#539](https://github.com/opennem/opennem/issues/539), [#550](https://github.com/opennem/opennem/pull/550))
 - **WEM price aggregation** - Confined to WEM with a hardened parser; `locf()` interpolation split into separate WEM and NEM columns ([#541](https://github.com/opennem/opennem/issues/541), [#542](https://github.com/opennem/opennem/issues/542))
 
 ## Notifications
