@@ -269,6 +269,10 @@ def get_timeseries_query(
                 inner_extra_groups.append("fueltech_group_id")
                 outer_extra_groups.append("fueltech_group_id")
                 secondary_select_aliases.append("fueltech_group_id AS fueltech_group")
+            elif sg == SecondaryGrouping.STATUS:
+                inner_extra_groups.append("status_id")
+                outer_extra_groups.append("status_id")
+                secondary_select_aliases.append("status_id AS status")
 
     # Time column on the base table is `interval` for both unit_intervals and market_summary.
     time_col = "interval"
@@ -322,6 +326,8 @@ def get_timeseries_query(
             aliased_outer_groups.append("fueltech_id AS fueltech")
         elif col == "fueltech_group_id":
             aliased_outer_groups.append("fueltech_group_id AS fueltech_group")
+        elif col == "status_id":
+            aliased_outer_groups.append("status_id AS status")
         else:
             aliased_outer_groups.append(col)
     outer_select_groups = [f"'{network.code}' AS network", *aliased_outer_groups]
@@ -360,6 +366,8 @@ def get_timeseries_query(
                 column_names.append("fueltech")
             elif sg == SecondaryGrouping.FUELTECH_GROUP:
                 column_names.append("fueltech_group")
+            elif sg == SecondaryGrouping.STATUS:
+                column_names.append("status")
     column_names.extend(m.value.lower() for m in metrics)
 
     return sql, params, column_names
