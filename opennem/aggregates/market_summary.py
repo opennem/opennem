@@ -149,19 +149,22 @@ async def _get_market_summary_data(
     ),
     gapfilled_data AS (
         -- Generate complete time series with gap filling for each region.
-        -- Price: for WEM, prefer price_dispatch (5-min dispatch clearing price
-        -- from the WEMDE dispatch crawler), fall back to price (30-min trading
-        -- interval), and locf() across the 5-min buckets within each trading
-        -- interval — semantically correct since the trading price IS the price
-        -- for that whole 30-min interval. For NEM, keep avg(price): both
-        -- price and price_dispatch are already 5-min cadence (populated by the
-        -- trading_price and dispatch_price tables); locf would fabricate
-        -- values across legitimate source gaps and preferring price_dispatch
-        -- could silently mask settled-price corrections.
+        -- Price: both networks locf() the trading price across the 5-min
+        -- gapfill buckets — semantically correct since the trading price IS
+        -- the price for its whole interval. This matters for the historical
+        -- 30-min trading cadence: NEM price was 30-min before 2009-07 (and WEM
+        -- still is), so plain avg() leaves price NULL on 10 of every 12 buckets
+        -- while demand is populated 5-min — collapsing demand_market_value to
+        -- ~1/6 (the #309 VWP bug). locf carries the price forward to fill them.
+        -- For modern 5-min price data locf is a near no-op. WEM additionally
+        -- prefers price_dispatch (5-min WEMDE clearing price) over the 30-min
+        -- trading price; NEM keeps trading `price` only, so settled-price
+        -- corrections aren't masked by dispatch values. Matches the same
+        -- locf(avg(price)) fill used in unit_intervals.py.
         --
         -- TimescaleDB requires `locf()` to be a top-level aggregate call —
         -- it cannot be nested inside CASE/COALESCE. So we compute both the
-        -- WEM-style (locf+coalesce) and NEM-style (plain avg) price columns
+        -- WEM-style (locf+coalesce) and NEM-style (locf+price) price columns
         -- here and let the outer combined_data CTE pick the right one per
         -- network_id. Within a single group, network_id is constant, so the
         -- unused column is harmless overhead.
@@ -170,7 +173,7 @@ async def _get_market_summary_data(
             network_id,
             network_region,
             locf(avg(CAST(COALESCE(price_dispatch, price) AS double precision))) as price_wem,
-            avg(CAST(price AS double precision)) as price_nem,
+            locf(avg(CAST(price AS double precision))) as price_nem,
             avg(CAST(demand AS double precision)) as demand,
             avg(CAST(demand_total AS double precision)) as demand_total,
             avg(ROUND((ss_solar_uigf - ss_solar_clearedmw)::numeric, 4)) as curtailment_solar_total,
