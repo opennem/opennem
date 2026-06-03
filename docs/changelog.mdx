@@ -6,7 +6,12 @@ icon: 'calendar'
 
 Stay up to date with the latest features, improvements, and bug fixes in Open Electricity.
 
-<Update label="v4.5.2" description="June 3, 2026" tags={["API"]}>
+<Update label="v4.5.2" description="June 3, 2026" tags={["API", "Data"]}>
+
+## Data & Pipeline
+
+- **Monthly demand accuracy** - Corrected May demand and gas figures: monthly demand is now aggregated from the daily materialized view instead of a stale monthly view, with a month-aligned backfill window ([#548](https://github.com/opennem/opennem/issues/548))
+- **Calendar gap-fill** - Monthly and yearly series are now gap-filled onto the calendar grid, keeping market-value and weather coverage aligned ([#548](https://github.com/opennem/opennem/issues/548), [#549](https://github.com/opennem/opennem/issues/549))
 
 ## Bug Fixes
 
@@ -36,8 +41,6 @@ See [Data Limits](/api-reference/data-limits) for the full breakdown.
 ## Data & Pipeline
 
 - **Gap-filled series** - Chart series are reindexed onto the interval grid so upstream data gaps no longer misalign timestamps ([#534](https://github.com/opennem/opennem/issues/534), [#535](https://github.com/opennem/opennem/issues/535))
-- **Monthly demand accuracy** - May demand and gas figures corrected: monthly demand is now aggregated from the daily materialized view instead of a stale monthly view, with a month-aligned backfill window ([#548](https://github.com/opennem/opennem/issues/548))
-- **Calendar gap-fill** - Monthly and yearly series are now gap-filled onto the calendar grid, keeping market-value and weather coverage aligned ([#548](https://github.com/opennem/opennem/issues/548), [#549](https://github.com/opennem/opennem/issues/549))
 
 ## Bug Fixes
 
