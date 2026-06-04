@@ -75,8 +75,16 @@ _HUMAN_TO_INTERVAL: dict[str, Interval] = {
 
 def _period_to_date_range(period_human: str, network: NetworkSchema) -> tuple[datetime, datetime]:
     """Convert a legacy period string (e.g. '7d', '1Y') to (date_start, date_end)."""
-    period_obj = human_to_period(period_human)
     date_end = get_last_completed_interval_for_network(network=network, tz_aware=False)
+
+    # "all" = from the network's first data, not a fixed offset. periods.json "all" was
+    # 10_512_000 min = 20y (missing a zero vs its "200 years" label), clipping deep history (#543).
+    if period_human.strip() == "all" and network.data_first_seen:
+        # validate_date_range wants naive network-local time
+        date_start = network.data_first_seen.astimezone(network.get_fixed_offset()).replace(tzinfo=None)
+        return date_start, date_end
+
+    period_obj = human_to_period(period_human)
     date_start = date_end - timedelta(minutes=period_obj.period)
     return date_start, date_end
 

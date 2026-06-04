@@ -51,10 +51,12 @@ BUCKET_LIMITS_ADMIN: dict[Interval, int] = {
     Interval.HOUR: 365,
     Interval.DAY: 3650,
     Interval.WEEK: 3650,
-    Interval.MONTH: 10000,
-    Interval.QUARTER: 10000,
-    Interval.SEASON: 10000,
-    Interval.YEAR: 10000,
+    # coarse aggregations are cheap (low row count) — allow full history + headroom
+    # so period=all (network start ~1999, already >10000 days) isn't rejected (#543)
+    Interval.MONTH: 36500,
+    Interval.QUARTER: 36500,
+    Interval.SEASON: 36500,
+    Interval.YEAR: 36500,
 }
 
 # Concrete plan values
