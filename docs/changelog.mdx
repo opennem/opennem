@@ -11,11 +11,11 @@ Stay up to date with the latest features, improvements, and bug fixes in Open El
 ## Bug Fixes
 
 - **Full facility history** - Facility energy and power endpoints with `period=all` now return complete history from the network's first data (1999 for the NEM) instead of silently clipping to the most recent ~20 years ([#543](https://github.com/opennem/opennem/issues/543))
-- **Pre-2009 demand market value** - Corrected NEM demand-weighted price before July 2009: the half-hourly trading price is now carried forward across the 5-minute buckets (`locf`), fixing demand market value that was understated by roughly 6x during the 30-minute price era ([#309](https://github.com/opennem/opennem/issues/309))
+- **Pre-2009 demand-weighted price** - Hardened the pre-July-2009 NEM price calculation so the 30-minute trading price is carried forward across the 5-minute buckets (`locf`), keeping FY05–FY09 demand market value aligned with AER published figures ([#309](https://github.com/opennem/opennem/issues/309))
 
 ## Documentation
 
-- **New docs platform** - Documentation has moved from Mintlify to [Tangly](https://docs.openelectricity.org.au), a self-hosted open-source docs framework that renders the existing docs project unmodified, with a direct branch-to-environment deploy pipeline
+- **New docs platform** - Our [docs](https://docs.openelectricity.org.au) have moved from Mintlify to [Tangly](https://tangly.dev), a self-hosted open-source docs framework that renders the existing project unmodified, with a direct branch-to-environment deploy pipeline
 
 </Update>
 
