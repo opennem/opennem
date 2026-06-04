@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "tang",
   "name": "Open Electricity Documentation",
   "colors": {
     "primary": "#8b3119",

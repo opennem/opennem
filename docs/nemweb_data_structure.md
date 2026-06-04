@@ -1,3 +1,7 @@
+---
+draft: true
+---
+
 # NEMWEB Data Structure
 
 *Generated: 2025-08-18 09:20:52*
