@@ -7,8 +7,8 @@
     "build": "tangly build",
     "preview": "tangly preview --port ${PORT:-9411}",
     "check": "tangly check --strict",
-    "deploy:preview": "TANGLY_OPENAPI_URL=https://api.oedev.org/openapi.json tangly build && wrangler pages deploy ./dist --project-name openelectricity-docs --branch preview",
-    "deploy:prod": "tangly build && wrangler pages deploy ./dist --project-name openelectricity-docs --branch main"
+    "deploy:dev": "TANGLY_OPENAPI_URL=https://api.oedev.org/openapi.json tangly build && wrangler pages deploy ./dist --project-name openelectricity-docs --branch main",
+    "deploy:prod": "tangly build && wrangler pages deploy ./dist --project-name openelectricity-docs-prod --branch production"
   },
   "devDependencies": {
     "tangly": "^0.1.0",
