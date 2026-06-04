@@ -106,14 +106,14 @@ def get_network_data(
 **Example:**
 ```python
 from openelectricity.types import DataMetric
-from datetime import datetime
+from datetime import datetime, timedelta
 
 response = client.get_network_data(
     network_code="NEM",
     metrics=[DataMetric.POWER, DataMetric.ENERGY],
     interval="1h",
-    date_start=datetime(2024, 1, 1),
-    date_end=datetime(2024, 1, 2),
+    date_start=datetime.now() - timedelta(days=1),
+    date_end=datetime.now(),
     primary_grouping="network_region",
     secondary_grouping="fueltech"
 )
@@ -225,8 +225,8 @@ response = client.get_market(
         MarketMetric.CURTAILMENT_ENERGY
     ],
     interval="1d",
-    date_start=datetime(2024, 1, 1),
-    date_end=datetime(2024, 1, 31),
+    date_start=datetime.now() - timedelta(days=30),
+    date_end=datetime.now(),
     primary_grouping="network_region"
 )
 
@@ -306,8 +306,8 @@ response = client.get_facility_data(
     facility_codes=["BAYSW1", "ERARING"],
     metrics=[DataMetric.POWER, DataMetric.EMISSIONS],
     interval="1h",
-    date_start=datetime(2024, 1, 1),
-    date_end=datetime(2024, 1, 2)
+    date_start=datetime.now() - timedelta(days=1),
+    date_end=datetime.now(),
 )
 ```
 
@@ -363,8 +363,8 @@ response = client.get_market(
     network_code="NEM",
     metrics=[MarketMetric.PRICE, MarketMetric.DEMAND],
     interval="1h",
-    date_start=datetime(2024, 1, 1),
-    date_end=datetime(2024, 1, 2),
+    date_start=datetime.now() - timedelta(days=1),
+    date_end=datetime.now(),
     primary_grouping="network_region"
 )
 
