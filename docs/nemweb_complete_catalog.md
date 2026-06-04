@@ -1,3 +1,7 @@
+---
+draft: true
+---
+
 # NEMWEB Complete Data Catalog
 
 *Generated: 2025-08-18 09:29:25*

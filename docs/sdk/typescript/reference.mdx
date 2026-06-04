@@ -38,8 +38,11 @@ async getNetworkData(
   - `interval`: Time interval (e.g., "5m", "1h", "1d")
   - `dateStart`: Start date (timezone-naive)
   - `dateEnd`: End date (timezone-naive)
-  - `primaryGrouping`: Primary grouping field
-  - `secondaryGrouping`: Secondary grouping field
+  - `primaryGrouping`: Primary grouping field (`"network"` or `"network_region"`)
+  - `secondaryGrouping`: Array of secondary grouping fields (`"fueltech"`, `"fueltech_group"`, `"status"`, `"renewable"`)
+  - `network_region`: Filter to a specific region (e.g., `"NSW1"`)
+  - `fueltech`: Array of `UnitFueltechType` to filter by
+  - `fueltech_group`: Array of `UnitFueltechGroupType` to filter by
 
 **Example:**
 ```typescript
@@ -48,7 +51,7 @@ const { datatable } = await client.getNetworkData("NEM", ["energy"], {
   dateStart: "2024-01-01T00:00:00",
   dateEnd: "2024-01-02T00:00:00",
   primaryGrouping: "network_region",
-  secondaryGrouping: "fueltech"
+  secondaryGrouping: ["fueltech"]
 })
 ```
 
@@ -73,7 +76,10 @@ async getFacilityData(
 - `networkCode`: The network containing the facilities
 - `facilityCodes`: Single facility code or array of codes
 - `metrics`: Array of metrics to fetch
-- `params`: Optional parameters (similar to getNetworkData)
+- `params`: Optional parameters:
+  - `interval`: Time interval
+  - `dateStart` / `dateEnd`: Timezone-naive dates in network time
+  - `unitCodes`: Single unit code or array, narrows to specific units within the facilities
 
 **Example:**
 ```typescript
@@ -108,10 +114,15 @@ async getMarket(
 **Parameters:**
 - `networkCode`: The market to fetch data for
 - `metrics`: Array of market metrics including:
-  - Price and demand: `"price"`, `"demand"`, `"demand_energy"`
+  - Price and demand: `"price"`, `"demand"`, `"demand_energy"`, `"demand_gross"`, `"demand_gross_energy"`
+  - Renewable generation: `"generation_renewable"`, `"generation_renewable_with_storage"`, `"renewable_proportion"`, `"renewable_with_storage_proportion"` (and their `_energy` variants)
   - Curtailment power (MW): `"curtailment"`, `"curtailment_solar_utility"`, `"curtailment_wind"`
   - Curtailment energy (MWh): `"curtailment_energy"`, `"curtailment_solar_utility_energy"`, `"curtailment_wind_energy"`
-- `params`: Optional parameters (similar to getNetworkData)
+  - Flows: `"flow_imports"`, `"flow_exports"` (and their `_energy` variants)
+- `params`: Optional parameters:
+  - `interval`, `dateStart`, `dateEnd`
+  - `primaryGrouping`: `"network"` or `"network_region"`
+  - `network_region`: Filter to a specific region (e.g., `"NSW1"`)
 
 **Example - Price and Demand:**
 ```typescript
@@ -178,9 +189,61 @@ async getFacilities(
 ```typescript
 const { table } = await client.getFacilities({
   status_id: ["operating"],
-  fueltech_id: ["solar", "wind"],
+  fueltech_id: ["solar_utility", "wind"],
   network_id: "NEM"
 })
+```
+
+# Pollution Data
+
+## getFacilityPollution
+
+Fetches the endpoint at `/v4/pollution/facilities`.
+
+Get time-series pollution data from the National Pollutant Inventory for facilities with NPI tracking.
+
+```typescript
+async getFacilityPollution(
+  params?: IFacilityPollutionParams
+): Promise<ITimeSeriesResponse>
+```
+
+**Parameters:**
+- `params`: Optional filters:
+  - `facility_code`: Array of facility codes
+  - `pollutant_code`: Array of `PollutantCode` values (`"nox"`, `"so2"`, `"co"`, etc.)
+  - `pollutant_category`: Array of `PollutantCategory` values (`"air_pollutant"`, `"heavy_metal"`, etc.)
+  - `dateStart` / `dateEnd`: Timezone-naive dates
+
+When the response contains no rows, `datatable` is `undefined`.
+
+**Example:**
+```typescript
+const { response, datatable } = await client.getFacilityPollution({
+  facility_code: ["ERARING"],
+  pollutant_code: ["nox", "so2"],
+})
+```
+
+# Metrics Discovery
+
+## getAvailableMetrics
+
+Fetches the endpoint at `/v4/metrics`.
+
+Discover which metrics the API supports along with their units, descriptions, default aggregations, and which endpoints they are valid for.
+
+```typescript
+async getAvailableMetrics(): Promise<IMetricsResponse>
+```
+
+Errors are surfaced as `OpenElectricityError` (404 → `NoDataFound`, 403 → permission-denied).
+
+**Example:**
+```typescript
+const { metrics, endpoints } = await client.getAvailableMetrics()
+console.log(endpoints.data)        // metrics valid on /data
+console.log(metrics.power.unit)    // "MW"
 ```
 
 # User Information
@@ -199,4 +262,7 @@ async getCurrentUser(): Promise<IAPIResponse<IUser>>
 **Example:**
 ```typescript
 const { data: user } = await client.getCurrentUser()
+console.log(user.plan)       // "COMMUNITY" | "BASIC" | "PRO" | "ENTERPRISE"
+console.log(user.roles)      // optional OpenNEMRolesType[]
+console.log(user.rate_limit) // optional number
 ```

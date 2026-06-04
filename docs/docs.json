@@ -1,6 +1,6 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "$schema": "https://tangly.dev/schema/docs.json",
+  "theme": "tang",
   "name": "Open Electricity Documentation",
   "colors": {
     "primary": "#8b3119",
@@ -153,21 +153,15 @@
   },
   "api": {
     "openapi": "https://api.openelectricity.org.au/v4/openapi.json",
-    "responseFallback": "#/components/schemas/APIV4ResponseSchema"
+    "baseUrl": "https://api.openelectricity.org.au",
+    "auth": { "method": "bearer" },
+    "responseFallback": "#/components/schemas/APIV4ResponseSchema_list_TimeSeries__"
   },
   "navbar": {
     "links": [
       {
         "label": "Tracker",
         "href": "https://explore.openelectricity.org.au"
-      },
-      {
-        "label": "GitHub",
-        "href": "https://github.com/opennem/opennem"
-      },
-      {
-        "label": "Blog",
-        "href": "https://openelectricity.org.au/analysis"
       }
     ],
     "primary": {

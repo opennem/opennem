@@ -6,6 +6,19 @@ icon: 'calendar'
 
 Stay up to date with the latest features, improvements, and bug fixes in Open Electricity.
 
+<Update label="v4.5.3" description="June 4, 2026" tags={["API", "Data", "Docs"]}>
+
+## Bug Fixes
+
+- **Full facility history** - Facility energy and power endpoints with `period=all` now return complete history from the network's first data (1999 for the NEM) instead of silently clipping to the most recent ~20 years ([#543](https://github.com/opennem/opennem/issues/543))
+- **Pre-2009 demand market value** - Corrected NEM demand-weighted price before July 2009: the half-hourly trading price is now carried forward across the 5-minute buckets (`locf`), fixing demand market value that was understated by roughly 6x during the 30-minute price era ([#309](https://github.com/opennem/opennem/issues/309))
+
+## Documentation
+
+- **New docs platform** - Documentation has moved from Mintlify to [Tangly](https://docs.openelectricity.org.au), a self-hosted open-source docs framework that renders the existing docs project unmodified, with a direct branch-to-environment deploy pipeline
+
+</Update>
+
 <Update label="v4.5.2" description="June 3, 2026" tags={["API", "Data"]}>
 
 ## Data & Pipeline
@@ -54,15 +67,15 @@ See [Data Limits](/api-reference/data-limits) for the full breakdown.
 
 ### [Python client](https://github.com/opennem/openelectricity-python) — `openelectricity` 0.11.2
 
-- Proxy and custom TLS/certificate support on sync and async clients
-- New renewable-with-storage and gross-demand market metrics
-- Notebook-safe sync client that works inside an existing event loop (Jupyter / IPython)
-- Restored Python 3.10+ support; `unit_code` and `network_region` parity across sync and async
+- Proxy and custom TLS/certificate support on sync and async clients ([#22](https://github.com/opennem/openelectricity-python/issues/22), [#29](https://github.com/opennem/openelectricity-python/pull/29))
+- New renewable-with-storage and gross-demand market metrics ([#31](https://github.com/opennem/openelectricity-python/pull/31))
+- Notebook-safe sync client that works inside an existing event loop (Jupyter / IPython) ([#16](https://github.com/opennem/openelectricity-python/issues/16), [#32](https://github.com/opennem/openelectricity-python/pull/32))
+- Restored Python 3.10+ support ([#28](https://github.com/opennem/openelectricity-python/issues/28)); `unit_code` ([#27](https://github.com/opennem/openelectricity-python/pull/27)) and `network_region` ([#35](https://github.com/opennem/openelectricity-python/pull/35)) parity across sync and async
 
 ### [TypeScript client](https://github.com/opennem/openelectricity-typescript) — `openelectricity` 0.9.1
 
-- Full type parity with the Python SDK, adding the `renewable_proportion` metric and `status` secondary grouping
-- Stronger error handling (403/404/500 surface as typed errors) and `DataTable` group-by and filter correctness fixes
+- Full type parity with the Python SDK, adding the `renewable_proportion` metric and `status` secondary grouping ([#12](https://github.com/opennem/openelectricity-typescript/pull/12))
+- Stronger error handling (403/404/500 surface as typed errors) ([#18](https://github.com/opennem/openelectricity-typescript/pull/18)) and `DataTable` group-by and filter correctness fixes ([#15](https://github.com/opennem/openelectricity-typescript/pull/15), [#19](https://github.com/opennem/openelectricity-typescript/pull/19))
 
 </Update>
 

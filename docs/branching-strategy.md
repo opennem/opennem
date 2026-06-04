@@ -1,3 +1,7 @@
+---
+draft: true
+---
+
 # Git Branching Strategy
 
 ## Current Branch Structure (as of 2025-08-29)
