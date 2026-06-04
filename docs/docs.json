@@ -1,5 +1,5 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
+  "$schema": "https://tangly.dev/schema/docs.json",
   "theme": "tang",
   "name": "Open Electricity Documentation",
   "colors": {
