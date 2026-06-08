@@ -2,6 +2,7 @@
   "$schema": "https://tangly.dev/schema/docs.json",
   "theme": "tang",
   "name": "Open Electricity Documentation",
+  "siteUrl": "https://docs.openelectricity.org.au",
   "colors": {
     "primary": "#8b3119",
     "light": "#9b3f23",
