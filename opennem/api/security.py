@@ -28,6 +28,9 @@ clerk_client = Clerk(bearer_auth=settings.clerk_secret_key)
 
 # Bearer token scheme
 api_token_scheme = HTTPBearer()
+# Optional bearer scheme: does not 401 on a missing credential so anonymous
+# requests can be served (at COMMUNITY limits) by optional-auth endpoints.
+api_token_scheme_optional = HTTPBearer(auto_error=False)
 
 # Default internal user for development
 _OPENNEM_INTERNAL_USER = OpenNEMUser(
@@ -69,19 +72,23 @@ def _resolve_admin(private_metadata: dict | None) -> bool:
     return False
 
 
-async def get_current_user(
-    authorization: Annotated[HTTPAuthorizationCredentials, Depends(api_token_scheme)],
-) -> OpenNEMUser:
-    """FastAPI dependency: validate API key, resolve plan + roles from Clerk."""
-    try:
-        key = authorization.credentials
+async def _resolve_user_from_key(key: str) -> OpenNEMUser:
+    """Resolve an OpenNEMUser from a raw API key.
 
+    Always raises HTTPException(401) on failure — invalid/short key, unknown key,
+    missing Clerk user, or an unexpected Unkey/Clerk error. Callers (required and
+    optional auth) share these semantics, so the error handling lives here only.
+    """
+    try:
         if not key or len(key) < 10:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key")
 
-        # Dev key bypass
-        if key == settings.api_dev_key:
-            return _OPENNEM_INTERNAL_USER
+        # Dev/internal key bypass → enterprise admin, full access, no Unkey/Clerk.
+        # api_dev_key is per-environment; api_internal_key is the shared internal key
+        # recognised across every environment (dev + prod). Return a copy so the
+        # shared module-level singleton can never be mutated across requests.
+        if key == settings.api_dev_key or (settings.api_internal_key and key == settings.api_internal_key):
+            return _OPENNEM_INTERNAL_USER.model_copy(deep=True)
 
         # Validate with Unkey
         user = await unkey_validate(api_key=key)
@@ -123,6 +130,32 @@ async def get_current_user(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication failed") from e
 
 
+async def get_current_user(
+    authorization: Annotated[HTTPAuthorizationCredentials, Depends(api_token_scheme)],
+) -> OpenNEMUser:
+    """FastAPI dependency: validate API key, resolve plan + roles from Clerk."""
+    return await _resolve_user_from_key(authorization.credentials)
+
+
+async def get_optional_user(
+    authorization: Annotated[HTTPAuthorizationCredentials | None, Depends(api_token_scheme_optional)],
+) -> OpenNEMUser | None:
+    """FastAPI dependency for optional auth.
+
+    Returns ``None`` for anonymous requests (no credential) so the endpoint can
+    serve them at COMMUNITY limits; resolves and validates the key otherwise so
+    a valid key (including the internal/enterprise key) grants its full access.
+    A presented-but-invalid key still 401s.
+
+    NOTE: do NOT express optional auth as ``authenticated_user | None = None`` on
+    the endpoint — FastAPI silently drops the nested Depends, so the credential is
+    never read and every request is treated as anonymous. Use this dependency.
+    """
+    if authorization is None:
+        return None
+    return await _resolve_user_from_key(authorization.credentials)
+
+
 def check_roles(required_roles: list[OpenNEMRoles]):
     """Creates a dependency that checks if user has any of the required roles."""
 
@@ -136,4 +169,5 @@ def check_roles(required_roles: list[OpenNEMRoles]):
 
 # Common auth dependencies
 authenticated_user = Annotated[OpenNEMUser, Depends(get_current_user)]
+optional_user = Annotated[OpenNEMUser | None, Depends(get_optional_user)]
 admin_user = Annotated[OpenNEMUser, Depends(check_roles([OpenNEMRoles.admin]))]
