@@ -159,11 +159,17 @@ async def get_crawler_missing_intervals(
     stmt = sql(
         f"""
         with intervals as (
+            -- Anchor the grid on the crawler's own interval boundary. nemweb_latest_interval()
+            -- is a 5-min dispatch time (eg 08:25), so for 30-min/hourly crawlers (rooftop) an
+            -- un-binned grid lands on :25/:55 and never equals the :00/:30 crawl_history rows —
+            -- every interval then reads as "missing" and the crawler thrashes on a phantom
+            -- 14-day backfill every run. time_bucket() floors the anchor to :00/:30 (no-op for
+            -- the already-aligned 5-min crawlers).
             select
                 interval
             from generate_series(
-                nemweb_latest_interval() - interval '{days} days',
-                nemweb_latest_interval(),
+                time_bucket(interval '{interval.interval_sql}', nemweb_latest_interval()) - interval '{days} days',
+                time_bucket(interval '{interval.interval_sql}', nemweb_latest_interval()),
                 interval '{interval.interval_sql}'
             ) AS interval
         )
