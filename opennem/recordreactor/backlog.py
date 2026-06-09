@@ -276,7 +276,15 @@ def _analyze_milestone_records(
         if period != MilestonePeriod.interval:
             interval_count = 10000000000  # @note hack until we do bounds on renew propoertion
 
-        metric_column = "round(if(sum(demand_gross) > 0, (sum(generation_renewable) / sum(demand_gross)) * 100, 0), 2)"
+        # Bound the proportion at 200% — values above come from a near-zero demand_gross
+        # denominator (data artifact, GH #558) and return -1 so the `total_value > 0` filters
+        # below drop them rather than registering bogus 50,000% records. Legit >100%
+        # net-exporter intervals still pass.
+        metric_column = (
+            "round(if(sum(demand_gross) > 0 "
+            "AND (sum(generation_renewable) / sum(demand_gross)) * 100 <= 200, "
+            "(sum(generation_renewable) / sum(demand_gross)) * 100, -1), 2)"
+        )
         agg_function = ""
 
     if not metric_column:
@@ -316,6 +324,13 @@ def _analyze_milestone_records(
 
     if milestone_type in [MilestoneType.price, MilestoneType.demand]:
         date_cutoffs = "and time_bucket >= toDateTime('2009-07-01')"
+
+    # Renewable proportion: pre-2007 NEM demand data is too sparse (near-zero demand_gross
+    # denominators -> artifact proportions) and pre-2015 has no rooftop + is DST-shifted, so
+    # cap the records at 2007-06 (GH #558). 2007-2015 records are imperfect but bounded by the
+    # 200% clamp; pre-2007 is excluded entirely.
+    if milestone_type in [MilestoneType.proportion]:
+        date_cutoffs = "and time_bucket >= toDateTime('2007-06-01')"
 
     total_value_query = f"{agg_function}({metric_column})" if agg_function else metric_column
 

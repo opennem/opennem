@@ -185,7 +185,15 @@ _METRIC_REGISTRY: list[MetricDefinition] = [
         groupings=MARKET_GROUPINGS,
         source_table=TABLE_MARKET_SUMMARY,
         time_col="interval",
-        value_column="round(if(sum(demand_gross) > 0, (sum(generation_renewable) / sum(demand_gross)) * 100, 0), 2)",
+        # Bound the proportion: a renewable % above 200 is a data artifact from a near-zero
+        # demand_gross denominator (see GH #558) — return -1 so the
+        # `total_value > 0` filters in the max/min record CTEs drop it instead of registering a
+        # bogus 50,000% record. Legit values (incl. >100% net-exporter intervals) pass through.
+        value_column=(
+            "round(if(sum(demand_gross) > 0 "
+            "AND (sum(generation_renewable) / sum(demand_gross)) * 100 <= 200, "
+            "(sum(generation_renewable) / sum(demand_gross)) * 100, -1), 2)"
+        ),
         agg_function="",  # pre-computed expression
         min_value=0,
         round_to=2,

@@ -329,59 +329,63 @@ async def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn
             }
         )
 
+        cr.processed_records += 1
+
         # curtailment data needs to be shifted forward 5 minutes. See issue 455
         # https://github.com/opennem/opennem/issues/455
-        curtailment_records_to_store.append(
-            {
-                "network_id": "NEM",
-                "network_region": record["regionid"],
-                "interval": interval_next,
-                "ss_solar_uigf": record["ss_solar_uigf"],
-                "ss_solar_clearedmw": record["ss_solar_clearedmw"],
-                "ss_wind_uigf": record["ss_wind_uigf"],
-                "ss_wind_clearedmw": record["ss_wind_clearedmw"],
-            }
-        )
-
-        cr.processed_records += 2
-
-    async with get_write_session() as session:
-        try:
-            stmt = insert(BalancingSummary).values(records_to_store)
-            stmt = stmt.on_conflict_do_update(
-                index_elements=["interval", "network_id", "network_region", "is_forecast"],
-                set_={
-                    "net_interchange": stmt.excluded.net_interchange,
-                    "demand_total": stmt.excluded.demand_total,
-                    "demand": stmt.excluded.demand,
-                },
+        # The ss_*_uigf/clearedmw curtailment fields were only added to AEMO's
+        # DISPATCHREGIONSUM from ~2020; older MMS archive files lack them entirely, so
+        # guard before reading (KeyError otherwise) and just skip curtailment for those.
+        curtailment_fields = ("ss_solar_uigf", "ss_solar_clearedmw", "ss_wind_uigf", "ss_wind_clearedmw")
+        if all(f in record for f in curtailment_fields):
+            curtailment_records_to_store.append(
+                {
+                    "network_id": "NEM",
+                    "network_region": record["regionid"],
+                    "interval": interval_next,
+                    "ss_solar_uigf": record["ss_solar_uigf"],
+                    "ss_solar_clearedmw": record["ss_solar_clearedmw"],
+                    "ss_wind_uigf": record["ss_wind_uigf"],
+                    "ss_wind_clearedmw": record["ss_wind_clearedmw"],
+                }
             )
+            cr.processed_records += 1
 
-            await session.execute(stmt)
+    # Chunk the upserts — asyncpg caps a single statement at 32767 bind params, so a
+    # whole-month MMS file (tens of thousands of rows) must be split. chunk_size=1000
+    # keeps params well under the limit (matches process_nem_price).
+    chunk_size = 1000
 
-            stmt = insert(BalancingSummary).values(curtailment_records_to_store)
-            stmt = stmt.on_conflict_do_update(
-                index_elements=["interval", "network_id", "network_region", "is_forecast"],
-                set_={
-                    "ss_solar_uigf": stmt.excluded.ss_solar_uigf,
-                    "ss_solar_clearedmw": stmt.excluded.ss_solar_clearedmw,
-                    "ss_wind_uigf": stmt.excluded.ss_wind_uigf,
-                    "ss_wind_clearedmw": stmt.excluded.ss_wind_clearedmw,
-                },
-            )
+    async def _upsert_regionsum(records: list[dict[str, Any]], set_cols: list[str]) -> None:
+        for i in range(0, len(records), chunk_size):
+            chunk = records[i : i + chunk_size]
+            if not chunk:
+                continue
+            async with get_write_session() as session:
+                try:
+                    stmt = insert(BalancingSummary).values(chunk)
+                    stmt = stmt.on_conflict_do_update(
+                        index_elements=["interval", "network_id", "network_region", "is_forecast"],
+                        set_={c: getattr(stmt.excluded, c) for c in set_cols},
+                    )
+                    await session.execute(stmt)
+                    await session.commit()
+                    cr.inserted_records += len(chunk)
+                except Exception as e:
+                    logger.error(f"Error inserting dispatch regionsum chunk {i // chunk_size + 1}")
+                    logger.error(e)
+                    cr.errors += len(chunk)
+                    await session.rollback()
+                finally:
+                    await session.close()
 
-            await session.execute(stmt)
-            await session.commit()
+    await _upsert_regionsum(records_to_store, ["net_interchange", "demand_total", "demand"])
+    await _upsert_regionsum(
+        curtailment_records_to_store,
+        ["ss_solar_uigf", "ss_solar_clearedmw", "ss_wind_uigf", "ss_wind_clearedmw"],
+    )
 
-            cr.inserted_records = cr.processed_records
-            cr.server_latest = max([r["interval"] for r in records_to_store]) if records_to_store else None
-        except Exception as e:
-            logger.error("Error inserting dispatch regionsum records")
-            logger.error(e)
-            cr.errors = cr.processed_records
-            await session.rollback()
-        finally:
-            await session.close()
+    cr.server_latest = max([r["interval"] for r in records_to_store]) if records_to_store else None
 
     return cr
 

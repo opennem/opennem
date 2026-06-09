@@ -89,10 +89,17 @@ async def _get_market_summary_data(
         AND is_forecast = false
     ),
     rooftop_data AS (
-        -- Get rooftop solar generation aggregated by region with gap filling
+        -- Rooftop solar generation by region, gap-filled to the 5-min grid.
+        -- Rooftop lives under dedicated networks, NOT 'NEM': AEMO_ROOFTOP (2016-08->now)
+        -- and OPENNEM_ROOFTOP_BACKFILL (2015-03..2016-07). Those two are time-disjoint so
+        -- summing per region/interval is safe (no double-count). The previous filter
+        -- `f.network_id IN (regions)` (regions only ever = NEM/WEM, built from
+        -- balancing_summary) excluded ALL rooftop, so demand_gross and generation_renewable
+        -- silently omitted rooftop for all of history (GH #558). We map rooftop to parent
+        -- network 'NEM' so it joins the NEM market rows by region.
         SELECT
             time_bucket_gapfill('5 minutes', fs.interval, :start_time_window, :end_time) as interval,
-            f.network_id,
+            'NEM' as network_id,
             f.network_region,
             interpolate(avg(fs.generated)) as rooftop_solar
         FROM facility_scada fs
@@ -101,9 +108,9 @@ async def _get_market_summary_data(
         WHERE fs.interval BETWEEN :start_time_window AND :end_time
             AND u.fueltech_id = 'solar_rooftop'
             AND fs.is_forecast = false
-            AND f.network_id IN (SELECT network_id FROM regions)
+            AND f.network_id IN ('AEMO_ROOFTOP', 'OPENNEM_ROOFTOP_BACKFILL')
             AND f.network_region IN (SELECT network_region FROM regions)
-        GROUP BY 1, 2, 3
+        GROUP BY 1, f.network_region
     ),
     renewable_data AS (
         -- Renewable generation including battery discharge and pumps, excluding TUMUT3
