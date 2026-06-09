@@ -73,61 +73,68 @@ def _resolve_admin(private_metadata: dict | None) -> bool:
 
 
 async def _resolve_user_from_key(key: str) -> OpenNEMUser:
-    """Resolve an OpenNEMUser from a raw API key. Raises HTTPException on failure."""
-    if not key or len(key) < 10:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key")
+    """Resolve an OpenNEMUser from a raw API key.
 
-    # Dev/internal key bypass → enterprise admin, full access, no Unkey/Clerk.
-    # api_dev_key is per-environment; api_internal_key is the shared internal key
-    # recognised across every environment (dev + prod).
-    if key == settings.api_dev_key or (settings.api_internal_key and key == settings.api_internal_key):
-        return _OPENNEM_INTERNAL_USER
+    Always raises HTTPException(401) on failure — invalid/short key, unknown key,
+    missing Clerk user, or an unexpected Unkey/Clerk error. Callers (required and
+    optional auth) share these semantics, so the error handling lives here only.
+    """
+    try:
+        if not key or len(key) < 10:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key")
 
-    # Validate with Unkey
-    user = await unkey_validate(api_key=key)
+        # Dev/internal key bypass → enterprise admin, full access, no Unkey/Clerk.
+        # api_dev_key is per-environment; api_internal_key is the shared internal key
+        # recognised across every environment (dev + prod). Return a copy so the
+        # shared module-level singleton can never be mutated across requests.
+        if key == settings.api_dev_key or (settings.api_internal_key and key == settings.api_internal_key):
+            return _OPENNEM_INTERNAL_USER.model_copy(deep=True)
 
-    if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key")
+        # Validate with Unkey
+        user = await unkey_validate(api_key=key)
 
-    # Enrich with Clerk user data
-    if not user.owner_id:
-        logger.info(f"No owner_id for user {user.id}, skipping Clerk enrichment")
-        # Resolve plan from unkey meta if available
-        user.plan = _resolve_plan(None, user.unkey_meta)
+        if not user:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key")
+
+        # Enrich with Clerk user data
+        if not user.owner_id:
+            logger.info(f"No owner_id for user {user.id}, skipping Clerk enrichment")
+            # Resolve plan from unkey meta if available
+            user.plan = _resolve_plan(None, user.unkey_meta)
+            return user
+
+        clerk_user = await clerk_client.users.get_async(user_id=user.owner_id)
+
+        if not clerk_user:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+
+        user.full_name = f"{clerk_user.first_name} {clerk_user.last_name}"
+        user.email = clerk_user.email_addresses[0].email_address
+
+        private_meta = clerk_user.private_metadata if clerk_user.private_metadata else None
+
+        # Resolve plan from Clerk, with Unkey meta fallback
+        user.plan = _resolve_plan(private_meta, user.unkey_meta)
+
+        # Resolve admin from Clerk privateMetadata.role
+        if _resolve_admin(private_meta):
+            if OpenNEMRoles.admin not in user.roles:
+                user.roles.append(OpenNEMRoles.admin)
+
         return user
 
-    clerk_user = await clerk_client.users.get_async(user_id=user.owner_id)
-
-    if not clerk_user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
-
-    user.full_name = f"{clerk_user.first_name} {clerk_user.last_name}"
-    user.email = clerk_user.email_addresses[0].email_address
-
-    private_meta = clerk_user.private_metadata if clerk_user.private_metadata else None
-
-    # Resolve plan from Clerk, with Unkey meta fallback
-    user.plan = _resolve_plan(private_meta, user.unkey_meta)
-
-    # Resolve admin from Clerk privateMetadata.role
-    if _resolve_admin(private_meta):
-        if OpenNEMRoles.admin not in user.roles:
-            user.roles.append(OpenNEMRoles.admin)
-
-    return user
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.warning(f"Authentication error: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication failed") from e
 
 
 async def get_current_user(
     authorization: Annotated[HTTPAuthorizationCredentials, Depends(api_token_scheme)],
 ) -> OpenNEMUser:
     """FastAPI dependency: validate API key, resolve plan + roles from Clerk."""
-    try:
-        return await _resolve_user_from_key(authorization.credentials)
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.warning(f"Authentication error: {str(e)}")
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication failed") from e
+    return await _resolve_user_from_key(authorization.credentials)
 
 
 async def get_optional_user(
@@ -146,13 +153,7 @@ async def get_optional_user(
     """
     if authorization is None:
         return None
-    try:
-        return await _resolve_user_from_key(authorization.credentials)
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.warning(f"Authentication error: {str(e)}")
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication failed") from e
+    return await _resolve_user_from_key(authorization.credentials)
 
 
 def check_roles(required_roles: list[OpenNEMRoles]):

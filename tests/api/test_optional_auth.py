@@ -67,6 +67,28 @@ def test_per_env_dev_key_also_resolves_enterprise_admin(client: TestClient) -> N
     assert body["admin"] is True
 
 
+@pytest.mark.asyncio
+async def test_internal_key_resolution_is_isolated_per_request() -> None:
+    """The bypass must return a fresh copy, not the shared module-level singleton,
+    so mutating one resolved user can't leak into the next request."""
+    monkeypatch = pytest.MonkeyPatch()
+    monkeypatch.setattr(security.settings, "api_internal_key", _INTERNAL_KEY)
+    try:
+        u1 = await security._resolve_user_from_key(_INTERNAL_KEY)
+        u2 = await security._resolve_user_from_key(_INTERNAL_KEY)
+        assert u1 is not u2
+        assert u1.roles is not u2.roles  # roles is a mutable list — must not be shared
+        u1.roles.append(OpenNEMRoles.admin)
+        u1.plan = OpenNEMPlan.COMMUNITY
+        # the singleton and a subsequent resolution are unaffected
+        assert security._OPENNEM_INTERNAL_USER.plan == OpenNEMPlan.ENTERPRISE
+        u3 = await security._resolve_user_from_key(_INTERNAL_KEY)
+        assert u3.plan == OpenNEMPlan.ENTERPRISE
+        assert u3.roles.count(OpenNEMRoles.admin) == 1
+    finally:
+        monkeypatch.undo()
+
+
 def test_invalid_key_is_rejected(client: TestClient) -> None:
     """A presented-but-invalid key must 401 (not silently fall back to anon)."""
     with patch.object(security, "unkey_validate", AsyncMock(return_value=None)):
