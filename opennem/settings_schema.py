@@ -65,6 +65,11 @@ class OpennemSettings(BaseSettings):
     # API Dev key
     api_dev_key: str | None = None
 
+    # Internal/enterprise key: recognised in every environment (dev + prod) and
+    # granted full enterprise+admin access, bypassing Unkey/Clerk and data limits.
+    # Distinct from api_dev_key (which is per-env) so one internal key works everywhere.
+    api_internal_key: str | None = None
+
     # webhooks
     webhook_secret: str | None = None
 

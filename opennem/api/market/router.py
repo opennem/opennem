@@ -14,7 +14,7 @@ from fastapi_versionizer import api_version
 from opennem.api.data.utils import validate_date_range
 from opennem.api.queries import QueryType, get_timeseries_query
 from opennem.api.schema import std_error_responses
-from opennem.api.security import authenticated_user
+from opennem.api.security import optional_user
 from opennem.api.timeseries import build_timeseries_response, format_timeseries_response
 from opennem.api.utils import get_api_network_from_code, validate_metrics
 from opennem.core.grouping import PrimaryGrouping
@@ -89,7 +89,7 @@ async def get_network_data(
         Query(description="Primary grouping dimension applied to results.", examples=["network_region"]),
     ] = PrimaryGrouping.NETWORK,
     client: Any = Depends(get_clickhouse_dependency),
-    user: authenticated_user | None = None,
+    user: optional_user = None,
 ) -> dict:
     """Get market data for a network."""
     network = get_api_network_from_code(network_code)
