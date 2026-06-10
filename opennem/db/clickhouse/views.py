@@ -213,6 +213,9 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
     """,
 )
 
+# Renewable MVs clamp negative generated/energy to 0: negative scada values are unit
+# auxiliary loads (unit powered while not generating), not negative generation, and must
+# not subtract from renewable totals (records/milestones + renewable proportion).
 RENEWABLE_INTERVALS_VIEW = MaterializedView(
     name="renewable_intervals_mv",
     timestamp_column="interval",
@@ -225,8 +228,8 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
             network_id,
             network_region,
             renewable,
-            sum(generated) as generated,
-            sum(energy) as energy,
+            sum(greatest(generated, 0)) as generated,
+            sum(greatest(energy, 0)) as energy,
             avg(energy_storage) as energy_storage,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
@@ -243,8 +246,8 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
             network_id,
             network_region,
             renewable,
-            sum(generated) as generated,
-            sum(energy) as energy,
+            sum(greatest(generated, 0)) as generated,
+            sum(greatest(energy, 0)) as energy,
             avg(energy_storage) as energy_storage,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
@@ -268,8 +271,8 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             network_id,
             network_region,
             renewable,
-            sum(generated) as generated,
-            sum(energy) as energy,
+            sum(greatest(generated, 0)) as generated,
+            sum(greatest(energy, 0)) as energy,
             sum(coalesce(energy_storage, 0)) as energy_storage_sum,
             countIf(energy_storage IS NOT NULL) as energy_storage_count,
             sum(emissions) as emissions,
@@ -288,8 +291,8 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             network_id,
             network_region,
             renewable,
-            sum(generated) as generated,
-            sum(energy) as energy,
+            sum(greatest(generated, 0)) as generated,
+            sum(greatest(energy, 0)) as energy,
             sum(coalesce(energy_storage, 0)) as energy_storage_sum,
             countIf(energy_storage IS NOT NULL) as energy_storage_count,
             sum(emissions) as emissions,

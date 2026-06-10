@@ -115,6 +115,8 @@ async def _get_market_summary_data(
     renewable_data AS (
         -- Renewable generation including battery discharge and pumps, excluding TUMUT3
         -- (TUMUT3 is a hybrid hydro+storage facility handled separately as storage_generation)
+        -- Negative scada values are unit auxiliary loads (unit powered but not generating),
+        -- not negative generation — clamp to 0 so they don't subtract from renewable totals (GH issue)
         SELECT
             time_bucket_gapfill('5 minutes', fs.interval, :start_time_window, :end_time) as interval,
             f.network_id,
@@ -123,12 +125,12 @@ async def _get_market_summary_data(
                 WHEN u.fueltech_id IN ('bioenergy_biogas', 'bioenergy_biomass', 'hydro',
                                        'solar_utility', 'wind', 'battery_discharging', 'pumps')
                      AND u.code NOT IN ('TUMUT3', 'SNOWYP')
-                THEN fs.generated
+                THEN greatest(fs.generated, 0)
                 ELSE 0
             END)) as renewable_generation,
             interpolate(sum(CASE
                 WHEN u.code IN ('TUMUT3', 'SNOWYP')
-                THEN fs.generated
+                THEN greatest(fs.generated, 0)
                 ELSE 0
             END)) as storage_generation
         FROM facility_scada fs
