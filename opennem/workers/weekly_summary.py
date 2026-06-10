@@ -165,9 +165,6 @@ async def _fetch_fueltech_energy(
     misaligning our Mon-Sun week boundaries (CH defaults to Sunday-start weeks).
     """
     network_codes = network.get_network_codes()
-    # Remove backfill network if present
-    if "OPENNEM_ROOFTOP_BACKFILL" in network_codes:
-        network_codes.remove("OPENNEM_ROOFTOP_BACKFILL")
 
     query = """
         SELECT
