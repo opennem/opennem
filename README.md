@@ -1,6 +1,6 @@
 # OpenElectricity: Australian Energy Market Data Platform
 
-![logo](https://platform.openelectricity.org.au/oe_logo_full.png)
+![logo](https://docs.openelectricity.org.au/images/oe_logo_full_black.png)
 
 The OpenElectricity project (formerly OpenNEM) aims to make the wealth of public Australian energy data more accessible to a wider audience.
 
