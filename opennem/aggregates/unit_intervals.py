@@ -249,7 +249,6 @@ async def _get_unit_interval_data(
     WHERE
         cd.interval >= :start_time
         AND cd.interval < :end_time
-        and cd.network_id not in ('OPENNEM_ROOFTOP_BACKFILL')
     ORDER BY 1,2,3,4,5
     """)
 
@@ -444,7 +443,6 @@ async def _stream_unit_interval_data(
     WHERE
         cd.interval >= :start_time
         AND cd.interval < :end_time
-        and cd.network_id not in ('OPENNEM_ROOFTOP_BACKFILL')
     """
 
     params = {"start_time": start_time_naive, "end_time": end_time_naive}

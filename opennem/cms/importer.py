@@ -396,9 +396,12 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 unit_db.capacity_maximum = round(unit.capacity_maximum, 4) if unit.capacity_maximum else None
                 record_updated = True
 
-            # CMS field is storage_capacity, database field is capacity_storage
-            if hasattr(unit, "storage_capacity") and unit.storage_capacity is not None:
-                unit_db.capacity_storage = round(unit.storage_capacity, 4) if unit.storage_capacity else None
+            # CMS field is storage_capacity, database field is capacity_storage.
+            # CMS is authoritative: clear the database value when unset in the CMS,
+            # otherwise stale values persist after removal (#560)
+            cms_capacity_storage = round(unit.storage_capacity, 4) if getattr(unit, "storage_capacity", None) else None
+            if unit_db.capacity_storage != cms_capacity_storage:
+                unit_db.capacity_storage = cms_capacity_storage
                 record_updated = True
 
             if hasattr(unit, "emission_factor_source") and unit.emission_factor_source is not None:

@@ -278,7 +278,7 @@ def get_timeseries_query(
     time_col = "interval"
 
     # ---- params ----
-    network_codes = [c for c in network.get_network_codes() if c != "OPENNEM_ROOFTOP_BACKFILL"]
+    network_codes = network.get_network_codes()
     params: dict = {
         "network": tuple(network_codes),
         "date_start": date_start.replace(tzinfo=None) if isinstance(date_start, datetime) else date_start,

@@ -194,6 +194,13 @@ async def get_apvi_rooftop_data(day: date | None = None) -> APVIForecastSet | No
             logger.warn(f"State {state} not found in POSTCODE_STATE_PREFIXES: {postcode_prefix[:1]}")
             continue
 
+        # older payloads (2015-2016) have performance entries with no matching capacity
+        # entry — without capacity the percentage can't be converted to MW, so skip
+        prefix_capacity = postcode_capacity.get(postcode_prefix)
+        if prefix_capacity is None:
+            logger.warning(f"No capacity for postcode prefix {postcode_prefix}, skipping")
+            continue
+
         if state not in grouped_records:
             grouped_records[state] = {}
 
@@ -201,7 +208,7 @@ async def get_apvi_rooftop_data(day: date | None = None) -> APVIForecastSet | No
             if interval not in grouped_records[state]:
                 grouped_records[state][interval] = 0
 
-            grouped_records[state][interval] += value / 100 * postcode_capacity[postcode_prefix]
+            grouped_records[state][interval] += value / 100 * prefix_capacity
 
     for state, record in grouped_records.items():
         for interval, value in record.items():
