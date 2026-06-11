@@ -18,6 +18,7 @@ Developers can register for an API key at [platform.openelectricity.org.au](http
 ## Documentation
 
  - [Documentation Website](https://docs.openelectricity.org.au/)
+ - [Changelog](https://docs.openelectricity.org.au/changelog/)
  - [API Reference](https://docs.openelectricity.org.au/api-reference/overview)
  - [SDKs](https://docs.openelectricity.org.au/sdk/overview)
 
