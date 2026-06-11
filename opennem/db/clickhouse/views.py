@@ -36,6 +36,7 @@ class MaterializedView:
 UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
     name="unit_intervals_daily_mv",
     timestamp_column="date",
+    source_timestamp_column="interval",
     schema="""
         CREATE MATERIALIZED VIEW unit_intervals_daily_mv
         ENGINE = ReplacingMergeTree(version)
@@ -158,6 +159,7 @@ FUELTECH_INTERVALS_VIEW = MaterializedView(
 FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
     name="fueltech_intervals_daily_mv",
     timestamp_column="date",
+    source_timestamp_column="interval",
     schema="""
         CREATE MATERIALIZED VIEW fueltech_intervals_daily_mv
         ENGINE = ReplacingMergeTree(version)
@@ -262,6 +264,7 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
 RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
     name="renewable_intervals_daily_mv",
     timestamp_column="date",
+    source_timestamp_column="interval",
     schema="""
         CREATE MATERIALIZED VIEW renewable_intervals_daily_mv
         ENGINE = ReplacingMergeTree(version)
