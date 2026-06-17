@@ -30,6 +30,7 @@ from typing import TypeVar
 from portabletext_html import PortableTextRenderer
 from pydantic import ValidationError
 from sanity import SanityAsyncClient
+from sanity.exceptions import SanityConnectionError, SanityRateLimitError, SanityServerError, SanityTimeoutError
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from opennem import settings
@@ -255,10 +256,24 @@ def _validate_unique_codes(facilities: list[FacilitySchema]) -> list[FacilitySch
     return filtered_facilities
 
 
+# Transient CMS errors worth retrying. The sanity client raises its own exception types
+# (not our wrappers) on network/cdn blips, so they must be in the retry predicate or a
+# single connect timeout aborts the whole sync. Non-transient sanity errors (auth,
+# not-found, validation) are intentionally excluded so we fail fast on those.
+_CMS_RETRYABLE_ERRORS = (
+    CMSQueryError,
+    ValidationError,
+    SanityTimeoutError,
+    SanityConnectionError,
+    SanityServerError,
+    SanityRateLimitError,
+)
+
+
 @retry(
     stop=stop_after_attempt(3),
     wait=wait_exponential(multiplier=1, min=4, max=10),
-    retry=retry_if_exception_type((CMSQueryError, ValidationError)),
+    retry=retry_if_exception_type(_CMS_RETRYABLE_ERRORS),
     reraise=True,
 )
 async def get_cms_facilities(facility_code: str | None = None, cms_id: str | None = None) -> list[FacilitySchema]:
