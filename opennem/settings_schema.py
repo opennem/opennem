@@ -38,6 +38,23 @@ class OpennemSettings(BaseSettings):
         description="ClickHouse connection URL in format clickhouse:// schema url",
     )
 
+    # Per-query ClickHouse limits applied on the serving path (execute_async) so a single
+    # expensive API query cannot exhaust server memory and trip the server-wide overcommit
+    # tracker (Code 241), which would kill unrelated concurrent queries. Backfills use the
+    # sync client directly and are unaffected. Set to 0 to disable a given limit.
+    clickhouse_query_max_memory_usage: int = Field(
+        8_589_934_592,  # 8 GiB
+        description="ClickHouse max_memory_usage (bytes) for serving-path queries. 0 = unset.",
+    )
+    clickhouse_query_max_bytes_before_external_group_by: int = Field(
+        4_294_967_296,  # 4 GiB — roughly half of max_memory_usage so GROUP BY spills to disk
+        description="ClickHouse max_bytes_before_external_group_by (bytes) for serving-path queries. 0 = unset.",
+    )
+    clickhouse_query_max_execution_time: int = Field(
+        90,
+        description="ClickHouse max_execution_time (seconds) for serving-path queries. 0 = unset.",
+    )
+
     redis_url: RedisDsn = Field(
         RedisDsn("redis://127.0.0.1"),
         validation_alias=AliasChoices("REDIS_HOST_URL", "cache_url"),
