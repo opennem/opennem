@@ -31,7 +31,7 @@ from opennem.clients.slack import slack_message
 from opennem.cms.queries import get_cms_facilities
 from opennem.cms.utils import strip_synthetic_prefix
 from opennem.core.networks import network_from_network_code
-from opennem.db import get_read_session, get_write_session
+from opennem.db import get_read_session, get_write_session, retry_on_deadlock
 from opennem.db.models.opennem import Facility, Unit
 from opennem.schema.facility import FacilitySchema
 from opennem.workers.facility_data_seen import update_facility_seen_range
@@ -73,6 +73,7 @@ async def get_database_facilities() -> list[Facility]:
     return facilities
 
 
+@retry_on_deadlock
 async def create_or_update_database_facility(facility: FacilitySchema, send_slack: bool = True, dry_run: bool = False) -> bool:
     """Create new database facilities from the CMS or update existing ones.
 
@@ -626,11 +627,18 @@ async def update_database_facilities_from_cms(
     # Track statistics and created facility codes
     created_count = 0
     updated_count = 0
+    error_count = 0
     created_facility_codes = []
 
-    # Process each facility
+    # Process each facility. Isolate per-facility failures so one bad/contended facility
+    # (e.g. a deadlock that survives retries) doesn't abort the sync for everything after it.
     for facility in sanity_facilities:
-        was_created = await create_or_update_database_facility(facility, send_slack=send_slack, dry_run=dry_run)
+        try:
+            was_created = await create_or_update_database_facility(facility, send_slack=send_slack, dry_run=dry_run)
+        except Exception as e:
+            error_count += 1
+            logger.error(f"Failed to sync facility {facility.code} from CMS: {e}")
+            continue
         if was_created:
             created_count += 1
             created_facility_codes.append(facility.code)
@@ -641,7 +649,9 @@ async def update_database_facilities_from_cms(
     if dry_run:
         logger.info(f"Dry run complete: Would create {created_count} facilities, update {updated_count} facilities")
     else:
-        logger.info(f"Sync complete: {created_count} facilities created, {updated_count} facilities updated")
+        logger.info(
+            f"Sync complete: {created_count} facilities created, {updated_count} facilities updated, {error_count} failed"
+        )
 
     # Update facility seen range for new facilities if any were created
     if created_count > 0 and not dry_run:

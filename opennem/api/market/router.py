@@ -12,6 +12,7 @@ from fastapi_cache.decorator import cache
 from fastapi_versionizer import api_version
 
 from opennem.api.data.utils import validate_date_range
+from opennem.api.intervals import cap_date_end_to_settled_interval
 from opennem.api.queries import QueryType, get_timeseries_query
 from opennem.api.schema import std_error_responses
 from opennem.api.security import optional_user
@@ -98,12 +99,20 @@ async def get_network_data(
     if network_region:
         primary_grouping = PrimaryGrouping.NETWORK_REGION
 
+    live_query = date_end is None
+
     date_start, date_end = validate_date_range(
         network=network, user=user, interval=interval, date_start=date_start, date_end=date_end
     )
 
     if date_start > date_end:
         raise HTTPException(status_code=400, detail="Date start must be before date end")
+
+    # Live request: don't serve the provisional bleeding-edge interval (#575).
+    if live_query:
+        date_end = await cap_date_end_to_settled_interval(
+            client=client, network=network, query_type=QueryType.MARKET, date_end=date_end
+        )
 
     query, params, column_names = get_timeseries_query(
         query_type=QueryType.MARKET,

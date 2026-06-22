@@ -177,13 +177,18 @@ MARKET_METRIC_PLANS: dict[Metric, MetricPlan] = {
         outer="round(sum(energy_exports_sum_inner), 6)",
     ),
     # Proportions: sum the underlying components across the bucket, then divide.
+    # NULL (not 0) when demand_gross is absent for the bucket. The freshest/settling
+    # interval can be served before demand_gross lands (generation_renewable and
+    # demand_gross arrive on different paths), and a literal-0 fallback produced a
+    # spurious 0% that "healed" on the next poll (#575). NULL serialises to `null`,
+    # signalling "not yet available" rather than a non-physical 0%.
     Metric.RENEWABLE_PROPORTION: MetricPlan(
         inner={"gr_sum_inner": "sum(generation_renewable)", "dg_sum_inner": "sum(demand_gross)"},
-        outer="round(if(sum(dg_sum_inner) > 0, (sum(gr_sum_inner) / sum(dg_sum_inner)) * 100, 0), 2)",
+        outer="if(sum(dg_sum_inner) > 0, round((sum(gr_sum_inner) / sum(dg_sum_inner)) * 100, 2), NULL)",
     ),
     Metric.RENEWABLE_WITH_STORAGE_PROPORTION: MetricPlan(
         inner={"grws_sum_inner": "sum(generation_renewable_with_storage)", "dg_sum_inner": "sum(demand_gross)"},
-        outer="round(if(sum(dg_sum_inner) > 0, (sum(grws_sum_inner) / sum(dg_sum_inner)) * 100, 0), 2)",
+        outer="if(sum(dg_sum_inner) > 0, round((sum(grws_sum_inner) / sum(dg_sum_inner)) * 100, 2), NULL)",
     ),
 }
 
