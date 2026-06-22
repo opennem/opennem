@@ -22,12 +22,19 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import aioboto3
+from botocore.config import Config
 from botocore.exceptions import ClientError
 from humanize import naturalsize, naturaltime
 
 from opennem import settings
 
 logger = logging.getLogger("opennem.storage_bucket")
+
+# Retry config for the R2/S3 client. The default (legacy) retry mode retries few
+# conditions and gives up quickly, so transient `InternalError` (s3 500) responses from
+# R2 surface as failed uploads and abort exports. "standard" mode retries 5xx /
+# throttling / InternalError with exponential backoff.
+_S3_RETRY_CONFIG = Config(retries={"max_attempts": 10, "mode": "standard"})
 
 
 @dataclass
@@ -112,6 +119,7 @@ class CloudflareR2Uploader:
             aws_access_key_id=self.access_key_id,
             aws_secret_access_key=self.secret_access_key,
             region_name=self.region,
+            config=_S3_RETRY_CONFIG,
         )
 
     async def upload_file(
