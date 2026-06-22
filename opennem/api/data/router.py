@@ -12,6 +12,7 @@ from fastapi_cache.decorator import cache
 from fastapi_versionizer import api_version
 
 from opennem.api.data.utils import validate_date_range
+from opennem.api.intervals import cap_date_end_to_settled_interval
 from opennem.api.queries import QueryType, get_timeseries_query
 from opennem.api.schema import std_error_responses
 from opennem.api.security import authenticated_user, optional_user
@@ -92,12 +93,20 @@ async def get_network_data(
     network = get_api_network_from_code(network_code)
     validate_metrics(metrics, _SUPPORTED_METRICS)
 
+    live_query = date_end is None
+
     date_start, date_end = validate_date_range(
         network=network, user=user, interval=interval, date_start=date_start, date_end=date_end
     )
 
     if date_start > date_end:
         raise HTTPException(status_code=400, detail="Date start must be before date end")
+
+    # Live request: don't serve the provisional bleeding-edge interval (#575).
+    if live_query:
+        date_end = await cap_date_end_to_settled_interval(
+            client=client, network=network, query_type=QueryType.DATA, date_end=date_end
+        )
 
     secondary_groupings = [secondary_grouping] if secondary_grouping else None
 
@@ -205,9 +214,17 @@ async def get_facility_data(
     network = get_api_network_from_code(network_code)
     validate_metrics(metrics, _SUPPORTED_METRICS)
 
+    live_query = date_end is None
+
     date_start, date_end = validate_date_range(
         network=network, user=user, interval=interval, date_start=date_start, date_end=date_end
     )
+
+    # Live request: don't serve the provisional bleeding-edge interval (#575).
+    if live_query:
+        date_end = await cap_date_end_to_settled_interval(
+            client=client, network=network, query_type=QueryType.FACILITY, date_end=date_end
+        )
 
     if facility_code and len(facility_code) > 30:
         raise HTTPException(status_code=400, detail="Facility code list must have fewer than 30 entries")
