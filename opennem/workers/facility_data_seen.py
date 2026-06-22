@@ -13,7 +13,7 @@ from textwrap import dedent
 
 from sqlalchemy import TextClause, text
 
-from opennem.db import db_connect
+from opennem.db import db_connect, retry_on_deadlock
 from opennem.queries.utils import duid_to_case
 from opennem.utils.dates import get_today_opennem
 
@@ -64,6 +64,7 @@ def get_update_seen_query(
 
 
 # @profile_task(send_slack=True)
+@retry_on_deadlock
 async def update_facility_seen_range(
     include_first_seen: bool = False,
     facility_codes: list[str] | None = None,

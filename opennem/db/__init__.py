@@ -13,10 +13,12 @@ from contextlib import asynccontextmanager
 
 import deprecation
 from asyncpg.connection import Connection as AsyncConnection
+from asyncpg.exceptions import DeadlockDetectedError
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.pool import NullPool
+from tenacity import retry, retry_if_exception, stop_after_attempt, wait_random_exponential
 
 from opennem import settings
 from opennem.utils.version import get_version
@@ -24,6 +26,38 @@ from opennem.utils.version import get_version
 DeclarativeBase = declarative_base()
 
 logger = logging.getLogger("opennem.db")
+
+# Postgres deadlock SQLSTATE — see https://www.postgresql.org/docs/current/errcodes-appendix.html
+_PG_DEADLOCK_SQLSTATE = "40P01"
+
+
+def is_deadlock_error(exc: BaseException) -> bool:
+    """True if exc, or anything in its cause chain, is a Postgres deadlock (SQLSTATE 40P01).
+
+    Deadlocks surface either as a raw ``asyncpg.DeadlockDetectedError`` or wrapped in a
+    SQLAlchemy ``DBAPIError`` (e.g. when raised during an autoflush), so we walk the chain
+    rather than matching a single exception type.
+    """
+    seen: set[int] = set()
+    cur: BaseException | None = exc
+    while cur is not None and id(cur) not in seen:
+        seen.add(id(cur))
+        if isinstance(cur, DeadlockDetectedError):
+            return True
+        if getattr(cur, "sqlstate", None) == _PG_DEADLOCK_SQLSTATE or getattr(cur, "pgcode", None) == _PG_DEADLOCK_SQLSTATE:
+            return True
+        cur = cur.__cause__ or getattr(cur, "orig", None)
+    return False
+
+
+# Decorator: retry an async write on Postgres deadlock with jittered exponential backoff.
+# The wrapped callable must own its session/transaction so each attempt starts clean.
+retry_on_deadlock = retry(
+    retry=retry_if_exception(is_deadlock_error),
+    stop=stop_after_attempt(4),
+    wait=wait_random_exponential(multiplier=0.2, max=5),
+    reraise=True,
+)
 
 _engine = None
 _engine_sync = None
