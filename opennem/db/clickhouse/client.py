@@ -23,6 +23,27 @@ logger = logging.getLogger("opennem.db.clickhouse")
 _local = threading.local()
 
 
+def _serving_query_settings() -> dict[str, int]:
+    """
+    Per-query ClickHouse limits for the serving path (execute_async).
+
+    Without these a single wide aggregation can grow its GROUP BY hash table until
+    the whole server runs out of memory, at which point the server-wide overcommit
+    tracker kills an arbitrary query (Code 241). Capping per query makes a runaway
+    query fail cleanly on its own and lets large-but-legit GROUP BYs spill to disk.
+
+    A value of 0 in settings disables that individual limit.
+    """
+    out: dict[str, int] = {}
+    if settings.clickhouse_query_max_memory_usage:
+        out["max_memory_usage"] = settings.clickhouse_query_max_memory_usage
+    if settings.clickhouse_query_max_bytes_before_external_group_by:
+        out["max_bytes_before_external_group_by"] = settings.clickhouse_query_max_bytes_before_external_group_by
+    if settings.clickhouse_query_max_execution_time:
+        out["max_execution_time"] = settings.clickhouse_query_max_execution_time
+    return out
+
+
 def _make_client(timeout: int = 10) -> Client:
     return Client(
         host=settings.clickhouse_url.host,
@@ -52,11 +73,16 @@ async def execute_async(client: Client, query: str, params: dict | None = None, 
     Run a blocking clickhouse-driver execute() in a thread so the
     asyncio event loop is not blocked.  Each thread in the pool gets
     its own Client via thread-local storage.
+
+    Conservative per-query resource limits (see ``_serving_query_settings``) are applied
+    by default so one expensive serving query cannot OOM the shared server. Callers can
+    override individual limits by passing ``settings={...}`` (caller keys win per-key).
     """
+    merged_settings = {**_serving_query_settings(), **(kwargs.pop("settings", None) or {})}
 
     def _run() -> Any:
         tl_client = get_clickhouse_client()
-        return tl_client.execute(query, params, **kwargs)
+        return tl_client.execute(query, params, settings=merged_settings, **kwargs)
 
     return await asyncio.to_thread(_run)
 
