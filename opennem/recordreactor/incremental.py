@@ -40,6 +40,10 @@ logger = logging.getLogger("opennem.recordreactor.incremental")
 
 _DEFAULT_NETWORKS = [NetworkNEM, NetworkWEM]
 
+# Cap social submissions per run so a day-boundary burst doesn't flood the approval
+# queue. Most significant first; anything dropped is logged (not silent).
+_MAX_SOCIAL_POSTS_PER_RUN = 10
+
 _DEFAULT_PERIODS = [
     MilestonePeriod.interval,
     MilestonePeriod.day,
@@ -329,16 +333,28 @@ async def run_incremental_milestone_check(
 
     # Submit significant milestones to social media pipeline
     if significant_records:
-        try:
-            from sqlalchemy import and_, select
+        import asyncio as _asyncio
 
-            from opennem.db import get_read_session
-            from opennem.db.models.opennem import Milestones
-            from opennem.social.content import build_record_url, render_milestone_card, render_milestone_social_text
-            from opennem.social.pipeline import create_social_post
-            from opennem.social.schema import CreateSocialPostRequest, SocialPostType
+        from sqlalchemy import and_, select
 
-            for record in significant_records[:5]:
+        from opennem.db import get_read_session
+        from opennem.db.models.opennem import Milestones
+        from opennem.social.content import build_record_url, render_milestone_card, render_milestone_social_text
+        from opennem.social.pipeline import create_social_post
+        from opennem.social.schema import CreateSocialPostRequest, SocialPostType
+
+        # Most significant first; cap the per-run burst and log anything dropped.
+        ordered = sorted(significant_records, key=lambda r: r.significance, reverse=True)
+        to_post = ordered[:_MAX_SOCIAL_POSTS_PER_RUN]
+        if len(ordered) > _MAX_SOCIAL_POSTS_PER_RUN:
+            logger.warning(
+                f"Capping social submissions at {_MAX_SOCIAL_POSTS_PER_RUN}; "
+                f"dropping {len(ordered) - _MAX_SOCIAL_POSTS_PER_RUN} lower-significance records"
+            )
+
+        for record in to_post:
+            # Isolate each record so one render/upload failure doesn't drop the batch.
+            try:
                 text = render_milestone_social_text(record)
 
                 # Fetch the most recent 40 history records for the sparkline.
@@ -360,8 +376,6 @@ async def run_incremental_milestone_check(
                 history = [(r.interval, float(r.value)) for r in reversed(rows)]
 
                 # Render card image (run in thread — html2image is sync + slow)
-                import asyncio as _asyncio
-
                 image_bytes = await _asyncio.to_thread(
                     render_milestone_card,
                     record_id=record.record_id,
@@ -396,8 +410,8 @@ async def run_incremental_milestone_check(
                     ),
                     image=image_bytes,
                 )
-        except Exception as e:
-            logger.error(f"Failed to submit milestones to social pipeline: {e}")
+            except Exception as e:
+                logger.error(f"Failed to submit milestone {record.record_id} to social pipeline: {e}")
 
     if all_new_records:
         logger.info(f"Incremental check complete: {len(all_new_records)} new records ({len(significant_records)} significant)")
