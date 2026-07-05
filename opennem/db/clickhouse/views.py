@@ -218,6 +218,13 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
 # Renewable MVs clamp negative generated/energy to 0: negative scada values are unit
 # auxiliary loads (unit powered while not generating), not negative generation, and must
 # not subtract from renewable totals (records/milestones + renewable proportion).
+#
+# Storage/load fueltechs (pumps + battery charging/discharging/bidirectional) are excluded
+# entirely: these MVs split generation into renewable (=1) vs fossils (=0) for the
+# renewables/fossils milestone records, and storage is neither. Batteries are renewable=0,
+# so without this exclusion their (clamp-inflated) charge+discharge energy lands in the
+# "fossils" bucket — as WA's battery fleet grew in 2025-2026 this inflated the WA fossil
+# records ~30% above true coal+gas+distillate generation (GH #585).
 RENEWABLE_INTERVALS_VIEW = MaterializedView(
     name="renewable_intervals_mv",
     timestamp_column="interval",
@@ -238,7 +245,7 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
             count() as unit_count,
             max(version) as version
         FROM unit_intervals
-        WHERE fueltech_id not in ('pumps')
+        WHERE fueltech_id not in ('pumps', 'battery', 'battery_charging', 'battery_discharging')
         GROUP BY interval, network_id, network_region, renewable
     """,
     backfill_query="""
@@ -256,7 +263,8 @@ RENEWABLE_INTERVALS_VIEW = MaterializedView(
             count() as unit_count,
             max(version) as version
         FROM unit_intervals FINAL
-        WHERE fueltech_id not in ('pumps') and interval >= %(start)s AND interval <= %(end)s
+        WHERE fueltech_id not in ('pumps', 'battery', 'battery_charging', 'battery_discharging')
+          and interval >= %(start)s AND interval <= %(end)s
         GROUP BY interval, network_id, network_region, renewable
     """,
 )
@@ -284,7 +292,7 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             count(distinct interval) as interval_count,
             toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
         FROM unit_intervals
-        WHERE fueltech_id not in ('pumps')
+        WHERE fueltech_id not in ('pumps', 'battery', 'battery_charging', 'battery_discharging')
         GROUP BY date, network_id, network_region, renewable
     """,
     backfill_query="""
@@ -304,7 +312,8 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             count(distinct interval) as interval_count,
             toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
         FROM unit_intervals FINAL
-        WHERE fueltech_id not in ('pumps') and interval >= %(start)s AND interval <= %(end)s
+        WHERE fueltech_id not in ('pumps', 'battery', 'battery_charging', 'battery_discharging')
+          and interval >= %(start)s AND interval <= %(end)s
         GROUP BY date, network_id, network_region, renewable
     """,
 )
