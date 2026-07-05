@@ -91,6 +91,11 @@ def get_fueltech_power_query_clickhouse(
 # --- Rooftop queries — stay on PostgreSQL facility_scada ---
 
 
+def _floor_to_30min(dt: datetime) -> datetime:
+    """Floor a datetime down to the previous 30-minute boundary."""
+    return dt.replace(minute=dt.minute - dt.minute % 30, second=0, microsecond=0)
+
+
 def get_rooftop_forecast_generation_query(
     network: NetworkSchema,
     date_start: datetime,
@@ -105,6 +110,14 @@ def get_rooftop_forecast_generation_query(
     network_query = f"and fs.network_id in ({list_to_case(networks)})"
     region_q = f"and f.network_region = '{network_region}'" if network_region else ""
     bucket = "30min" if network == NetworkAU else "5min"
+
+    # AEMO rooftop forecast is on a 30-min grid. When gapfilling to a 5-min grid,
+    # interpolate() cannot extrapolate before the first anchor or after the last,
+    # so a window bound that lands off the 30-min grid (eg range.end at :45) leaves
+    # the leading/trailing 5-min buckets null. Snap both bounds down to the 30-min
+    # grid so gapfill always has an anchor at each edge (#580).
+    date_start = _floor_to_30min(date_start)
+    date_end = _floor_to_30min(date_end)
 
     return text(f"""
         select
