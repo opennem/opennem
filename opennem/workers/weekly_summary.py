@@ -579,6 +579,8 @@ def plot_weekly_fueltech_summary(ws: WeeklySummary) -> io.BytesIO:
     """Render branded HTML summary and screenshot to PNG via headless Chrome."""
     from html2image import Html2Image
 
+    from opennem.social.content import CHROMIUM_RENDER_FLAGS
+
     top_records = [r for r in ws.records if r.energy_gwh >= 1][:8]
     max_energy = max((r.energy_gwh for r in top_records), default=1)
     display_records = [_prepare_record_display(r, max_energy) for r in top_records]
@@ -646,11 +648,16 @@ def plot_weekly_fueltech_summary(ws: WeeklySummary) -> io.BytesIO:
     hti = Html2Image(
         output_path=output_dir,
         size=(IMAGE_WIDTH, IMAGE_MAX_HEIGHT),
-        custom_flags=[f"--force-device-scale-factor={IMAGE_DPI_SCALE}"],
+        custom_flags=[*CHROMIUM_RENDER_FLAGS, f"--force-device-scale-factor={IMAGE_DPI_SCALE}"],
     )
     hti.screenshot(html_str=html, save_as=output_file)
 
     output_path = Path(output_dir) / output_file
+    # chromium failures are silent (no check=True in html2image) — surface them here.
+    if not output_path.exists():
+        raise RuntimeError(
+            f"chromium failed to render weekly summary {ws.network} wk{ws.week_number} (no output at {output_path})"
+        )
 
     # Crop to content — remove empty space at bottom
     from PIL import Image

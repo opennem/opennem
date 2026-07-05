@@ -53,6 +53,20 @@ def build_record_url(record_id: str, focus_ts_ms: int) -> str:
 
 # ---------- Image card ----------
 
+# Chromium flags for html2image rendering inside the (non-root) production container.
+# html2image REPLACES its own default flags when custom_flags is passed and never
+# injects --no-sandbox, so without these chromium can fail to launch as appuser in
+# the DO container and no PNG is written. Keep html2image's defaults
+# (--hide-scrollbars / --default-background-color) and add the container flags.
+# Append a per-call --force-device-scale-factor where needed.
+CHROMIUM_RENDER_FLAGS = [
+    "--no-sandbox",
+    "--disable-dev-shm-usage",
+    "--disable-gpu",
+    "--hide-scrollbars",
+    "--default-background-color=00000000",
+]
+
 CARD_WIDTH = 1200
 CARD_HEIGHT = 630
 SPARKLINE_VIEW_W = 1088  # 1200 - 2*56 card padding
@@ -274,11 +288,15 @@ def render_milestone_card(
     hti = Html2Image(
         output_path=output_dir,
         size=(CARD_WIDTH, CARD_HEIGHT),
-        custom_flags=["--force-device-scale-factor=2"],
+        custom_flags=[*CHROMIUM_RENDER_FLAGS, "--force-device-scale-factor=2"],
     )
     hti.screenshot(html_str=html, save_as=output_file)
 
     output_path = Path(output_dir) / output_file
+    # chromium failures are silent (no check=True in html2image) — surface them here
+    # with a clear error rather than a downstream FileNotFoundError.
+    if not output_path.exists():
+        raise RuntimeError(f"chromium failed to render milestone card {record_id} (no output at {output_path})")
     data = output_path.read_bytes()
     output_path.unlink(missing_ok=True)
 
