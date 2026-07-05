@@ -87,6 +87,26 @@ async def execute_async(client: Client, query: str, params: dict | None = None, 
     return await asyncio.to_thread(_run)
 
 
+async def insert_async(query: str, data: Any = None, timeout: int = 10) -> Any:
+    """Run a blocking clickhouse-driver write (INSERT / DDL) in a thread so the
+    asyncio event loop keeps servicing async connections.
+
+    This is the aggregation/write-path counterpart to ``execute_async``. It does NOT
+    apply the serving-path resource limits (see ``_serving_query_settings``) — those cap
+    read queries that share the server with API traffic, and would wrongly bound bulk
+    inserts. Uses a thread-local Client so concurrent writes are thread-safe.
+
+    Blocking these calls on the event loop starves asyncpg connections that are checked
+    out from the pool, which drops them mid-transaction and leaks the session (issue #572).
+    """
+
+    def _run() -> Any:
+        tl_client = get_clickhouse_client(timeout)
+        return tl_client.execute(query, data)
+
+    return await asyncio.to_thread(_run)
+
+
 @asynccontextmanager
 async def get_clickhouse_context() -> AsyncGenerator[Client, None]:
     """

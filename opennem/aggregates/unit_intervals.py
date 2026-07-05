@@ -5,6 +5,7 @@ This module handles the aggregation of unit interval data from PostgreSQL to Cli
 It calculates energy values, emissions, and market values for each unit and stores them in ClickHouse.
 """
 
+import asyncio
 import gc
 import logging
 import resource
@@ -19,7 +20,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from opennem.db import get_write_session
 from opennem.db.clickhouse import (
     create_table_if_not_exists,
+    execute_async,
     get_clickhouse_client,
+    insert_async,
     table_exists,
 )
 from opennem.db.clickhouse.materialized_views import (
@@ -609,8 +612,9 @@ async def process_unit_intervals_backlog(
         chunk_size: Size of each processing chunk
     """
     current_start = start_date
-    client = get_clickhouse_client()
-    _ensure_clickhouse_schema()
+    # Schema-ensure and inserts hit the blocking sync CH driver. This runs while `session`
+    # holds a checked-out asyncpg connection, so keep them off the event loop (#572).
+    await asyncio.to_thread(_ensure_clickhouse_schema)
 
     logger.info(f"Processing unit intervals from {current_start} to {end_date} for network {network.code if network else 'all'}")
 
@@ -623,8 +627,8 @@ async def process_unit_intervals_backlog(
         if records:
             prepared_data = _prepare_unit_interval_data(records)
 
-            # Batch insert into ClickHouse
-            client.execute(
+            # Batch insert into ClickHouse (off-loop — see note above)
+            await insert_async(
                 """
                 INSERT INTO unit_intervals
                 (
@@ -744,13 +748,17 @@ async def run_unit_intervals_aggregate_to_now() -> int:
     client = get_clickhouse_client()
 
     # Use NEM's max interval as the baseline — WEM lags ~24h and would block
-    # the incremental path if we used MIN across all networks
-    result = client.execute("""
+    # the incremental path if we used MIN across all networks.
+    # Off-loop: this runs concurrently (asyncio.gather) with the power exports (#572).
+    result = await execute_async(
+        client,
+        """
         SELECT MAX(interval)
         FROM unit_intervals FINAL
         WHERE interval > now() - INTERVAL 2 DAY
             AND network_id = 'NEM'
-    """)
+    """,
+    )
     min_max_interval = result[0][0]
 
     date_from = min_max_interval + timedelta(minutes=5)
@@ -769,7 +777,7 @@ async def run_unit_intervals_aggregate_to_now() -> int:
         records = await _get_unit_interval_data(session, date_from, date_to)
         prepared_data = _prepare_unit_interval_data(records)
 
-    client.execute(
+    await insert_async(
         """
         INSERT INTO unit_intervals
         (

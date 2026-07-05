@@ -11,6 +11,7 @@ from opennem.db.clickhouse.client import (
     get_clickhouse_client,
     get_clickhouse_context,
     get_clickhouse_dependency,
+    insert_async,
     table_exists,
 )
 
@@ -21,5 +22,6 @@ __all__ = [
     "get_clickhouse_client",
     "get_clickhouse_context",
     "get_clickhouse_dependency",
+    "insert_async",
     "table_exists",
 ]
