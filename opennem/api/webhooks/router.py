@@ -8,6 +8,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import Response
 from fastapi_versionizer.versionizer import api_version
 from pydantic import BaseModel, EmailStr
+from sanity.exceptions import SanityConnectionError, SanityRateLimitError, SanityServerError, SanityTimeoutError
 from sqlalchemy.exc import IntegrityError
 from starlette.exceptions import HTTPException
 
@@ -98,6 +99,10 @@ async def webhook_sanity_update(webhook_secret: str, request: Request) -> str:
         raise HTTPException(status_code=503, detail="Service temporarily unavailable") from e
     except IntegrityError as e:
         logger.warning(f"Sanity webhook skipped — DB constraint conflict (duplicate code?): {e}")
+    except (SanityTimeoutError, SanityConnectionError, SanityServerError, SanityRateLimitError) as e:
+        # already retried inside get_cms_facilities — this means the CMS CDN is still down
+        logger.warning(f"Sanity webhook skipped — CMS temporarily unavailable: {e}")
+        raise HTTPException(status_code=503, detail="Service temporarily unavailable") from e
     except Exception as e:
         logger.error(f"Error parsing sanity webhook: {e}")
         raise HTTPException(status_code=500, detail="Server Error") from e
