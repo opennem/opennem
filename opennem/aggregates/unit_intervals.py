@@ -42,6 +42,13 @@ from opennem.utils.dates import get_last_completed_interval_for_network
 
 logger = logging.getLogger("opennem.aggregates.unit_intervals")
 
+# Rooftop solar (AEMO_ROOFTOP) publishes on a 30-minute cadence and lags the 5-min
+# core-generation feed. To carry it forward onto the 5-min grid up to the core-gen
+# edge (#579) we scan back one+ rooftop interval so locf has a seed at the window
+# start, and limit the carry-forward to a single 30-min block past the last real
+# reading so we never fabricate a whole missing interval.
+_ROOFTOP_LOOKBACK = timedelta(minutes=35)
+
 
 def _monitor_memory_usage() -> float:
     """Monitor and log memory usage, trigger GC if needed.
@@ -125,30 +132,68 @@ async def _get_unit_interval_data(
         GROUP BY 1, 2, 3
     ),
     filled_solar_data AS (
+        -- Rooftop solar is a 30-min feed that lags the 5-min core-generation feed.
+        -- We partition it onto the 5-min grid and carry the last real reading
+        -- forward (locf) up to the core-gen edge (:end_time) so it doesn't drop out
+        -- early and inflect downstream emissions / renewable_proportion (#579).
+        -- Bounds:
+        --   * scan back :solar_start_time (one+ 30-min interval before the window)
+        --     so locf has a seed at :start_time even when the last real reading
+        --     predates the window;
+        --   * min_real_interval drops leading gap buckets before the first real
+        --     reading (pre-existing behaviour);
+        --   * max_real_interval + 25 min limits the carry-forward to a single 30-min
+        --     block so we never fabricate a whole missing interval. When rooftop lags
+        --     a full block (core edge = last_real + 30 min) the single freshest bucket
+        --     is intentionally left absent rather than invented; the API serves
+        --     NULL-not-0 at that settling edge (#575/#577) so it doesn't inflect.
         SELECT
-            time_bucket_gapfill('5 minutes', fs.interval) as interval,
-            fs.network_id,
-            f.network_region,
-            f.code as facility_code,
-            u.code as unit_code,
-            u.status_id,
-            u.fueltech_id,
-            'solar' as fueltech_group_id,
-            TRUE as renewable,
-            locf(coalesce(round(sum(fs.generated), 4), 0)) as generated,
-            locf(coalesce(round(sum(fs.energy) / (12 / (60 / n.interval_size)), 4), 0)) as energy
-        FROM
-            facility_scada fs
-        JOIN units u ON fs.facility_code = u.code
-        JOIN facilities f ON u.station_id = f.id
-        JOIN network n on fs.network_id = n.code
-        WHERE
-            fs.is_forecast IS FALSE
-            AND u.fueltech_id in ('solar_rooftop')
-            AND fs.interval >= :start_time
-            AND fs.interval <= :end_time
-            {network_where_clause}
-        GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, n.interval_size
+            interval,
+            network_id,
+            network_region,
+            facility_code,
+            unit_code,
+            status_id,
+            fueltech_id,
+            fueltech_group_id,
+            renewable,
+            generated,
+            energy
+        FROM (
+            SELECT
+                *,
+                min(real_interval) OVER (PARTITION BY unit_code) as min_real_interval,
+                max(real_interval) OVER (PARTITION BY unit_code) as max_real_interval
+            FROM (
+                SELECT
+                    time_bucket_gapfill('5 minutes', fs.interval, :solar_start_time, :end_time) as interval,
+                    fs.network_id,
+                    f.network_region,
+                    f.code as facility_code,
+                    u.code as unit_code,
+                    u.status_id,
+                    u.fueltech_id,
+                    'solar' as fueltech_group_id,
+                    TRUE as renewable,
+                    locf(coalesce(round(sum(fs.generated), 4), 0)) as generated,
+                    locf(coalesce(round(sum(fs.energy) / (12 / (60 / n.interval_size)), 4), 0)) as energy,
+                    max(fs.interval) as real_interval
+                FROM
+                    facility_scada fs
+                JOIN units u ON fs.facility_code = u.code
+                JOIN facilities f ON u.station_id = f.id
+                JOIN network n on fs.network_id = n.code
+                WHERE
+                    fs.is_forecast IS FALSE
+                    AND u.fueltech_id in ('solar_rooftop')
+                    AND fs.interval >= :solar_start_time
+                    AND fs.interval <= :end_time
+                    {network_where_clause}
+                GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, n.interval_size
+            ) solar_gapfilled
+        ) solar_bounded
+        WHERE interval >= min_real_interval
+            AND interval <= max_real_interval + interval '25 minutes'
     ),
     facility_data as (
         SELECT
@@ -255,7 +300,14 @@ async def _get_unit_interval_data(
     ORDER BY 1,2,3,4,5
     """)
 
-    result = await session.execute(query, {"start_time": start_time_naive, "end_time": end_time_naive})
+    result = await session.execute(
+        query,
+        {
+            "start_time": start_time_naive,
+            "end_time": end_time_naive,
+            "solar_start_time": start_time_naive - _ROOFTOP_LOOKBACK,
+        },
+    )
     return result.fetchall()
 
 
@@ -319,30 +371,68 @@ async def _stream_unit_interval_data(
         GROUP BY 1, 2, 3
     ),
     filled_solar_data AS (
+        -- Rooftop solar is a 30-min feed that lags the 5-min core-generation feed.
+        -- We partition it onto the 5-min grid and carry the last real reading
+        -- forward (locf) up to the core-gen edge (:end_time) so it doesn't drop out
+        -- early and inflect downstream emissions / renewable_proportion (#579).
+        -- Bounds:
+        --   * scan back :solar_start_time (one+ 30-min interval before the window)
+        --     so locf has a seed at :start_time even when the last real reading
+        --     predates the window;
+        --   * min_real_interval drops leading gap buckets before the first real
+        --     reading (pre-existing behaviour);
+        --   * max_real_interval + 25 min limits the carry-forward to a single 30-min
+        --     block so we never fabricate a whole missing interval. When rooftop lags
+        --     a full block (core edge = last_real + 30 min) the single freshest bucket
+        --     is intentionally left absent rather than invented; the API serves
+        --     NULL-not-0 at that settling edge (#575/#577) so it doesn't inflect.
         SELECT
-            time_bucket_gapfill('5 minutes', fs.interval) as interval,
-            fs.network_id,
-            f.network_region,
-            f.code as facility_code,
-            u.code as unit_code,
-            u.status_id,
-            u.fueltech_id,
-            'solar' as fueltech_group_id,
-            TRUE as renewable,
-            locf(coalesce(round(sum(fs.generated), 4), 0)) as generated,
-            locf(coalesce(round(sum(fs.energy) / (12 / (60 / n.interval_size)), 4), 0)) as energy
-        FROM
-            facility_scada fs
-        JOIN units u ON fs.facility_code = u.code
-        JOIN facilities f ON u.station_id = f.id
-        JOIN network n on fs.network_id = n.code
-        WHERE
-            fs.is_forecast IS FALSE
-            AND u.fueltech_id in ('solar_rooftop')
-            AND fs.interval >= :start_time
-            AND fs.interval <= :end_time
-            {network_where_clause}
-        GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, n.interval_size
+            interval,
+            network_id,
+            network_region,
+            facility_code,
+            unit_code,
+            status_id,
+            fueltech_id,
+            fueltech_group_id,
+            renewable,
+            generated,
+            energy
+        FROM (
+            SELECT
+                *,
+                min(real_interval) OVER (PARTITION BY unit_code) as min_real_interval,
+                max(real_interval) OVER (PARTITION BY unit_code) as max_real_interval
+            FROM (
+                SELECT
+                    time_bucket_gapfill('5 minutes', fs.interval, :solar_start_time, :end_time) as interval,
+                    fs.network_id,
+                    f.network_region,
+                    f.code as facility_code,
+                    u.code as unit_code,
+                    u.status_id,
+                    u.fueltech_id,
+                    'solar' as fueltech_group_id,
+                    TRUE as renewable,
+                    locf(coalesce(round(sum(fs.generated), 4), 0)) as generated,
+                    locf(coalesce(round(sum(fs.energy) / (12 / (60 / n.interval_size)), 4), 0)) as energy,
+                    max(fs.interval) as real_interval
+                FROM
+                    facility_scada fs
+                JOIN units u ON fs.facility_code = u.code
+                JOIN facilities f ON u.station_id = f.id
+                JOIN network n on fs.network_id = n.code
+                WHERE
+                    fs.is_forecast IS FALSE
+                    AND u.fueltech_id in ('solar_rooftop')
+                    AND fs.interval >= :solar_start_time
+                    AND fs.interval <= :end_time
+                    {network_where_clause}
+                GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, n.interval_size
+            ) solar_gapfilled
+        ) solar_bounded
+        WHERE interval >= min_real_interval
+            AND interval <= max_real_interval + interval '25 minutes'
     ),
     facility_data as (
         SELECT
@@ -448,7 +538,11 @@ async def _stream_unit_interval_data(
         AND cd.interval < :end_time
     """
 
-    params = {"start_time": start_time_naive, "end_time": end_time_naive}
+    params = {
+        "start_time": start_time_naive,
+        "end_time": end_time_naive,
+        "solar_start_time": start_time_naive - _ROOFTOP_LOOKBACK,
+    }
 
     # Use server-side cursor for more efficient streaming
     order_clause = "ORDER BY cd.interval, cd.network_id, cd.network_region, cd.facility_code, cd.unit_code"
