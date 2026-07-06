@@ -68,9 +68,12 @@ def test_rooftop_forecast_query_snaps_window_to_30min() -> None:
             date_end=datetime(2026, 6, 26, 8, 45, 0),
         )
     )
+    # internal gapfill anchor window floored to the 30-min grid
     assert "2026-06-25 08:30:00" in query
     assert "2026-06-26 08:30:00" in query
-    assert "08:45:00" not in query
+    # output clipped back to the requested start so the series doesn't extend
+    # earlier than the requested window (#580 review)
+    assert "interval >= '2026-06-25 08:45:00'" in query
 
 
 def test_rooftop_combined_query_snaps_start_to_30min() -> None:
@@ -84,6 +87,8 @@ def test_rooftop_combined_query_snaps_start_to_30min() -> None:
             date_end=datetime(2026, 6, 25, 9, 50, 0),
         )
     )
-    # start snapped down 09:50 -> 09:30, end also floored 09:50 -> 09:30
+    # start snapped down 09:50 -> 09:30 for the internal gapfill anchor window
     assert "2026-06-18 09:30:00" in query
-    assert "09:50:00" not in query
+    # output clipped back to the requested start so rooftop doesn't extend
+    # earlier than the core generation series (#580 review)
+    assert "interval >= '2026-06-18 09:50:00'" in query
