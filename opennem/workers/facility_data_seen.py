@@ -51,7 +51,7 @@ def get_update_seen_query(
     """
 
     fs = "" if include_first_seen else "--"
-    facility_codes_query = f"and f.code in ({duid_to_case(facility_codes)})" if facility_codes else ""
+    facility_codes_query = f"and fs.facility_code in ({duid_to_case(facility_codes)})" if facility_codes else ""
 
     trading_interval_window = ""
 
