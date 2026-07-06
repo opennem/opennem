@@ -14,7 +14,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem.db import get_write_session
-from opennem.db.clickhouse import get_clickhouse_client
+from opennem.db.clickhouse import execute_async, get_clickhouse_client, insert_async
 from opennem.db.clickhouse.materialized_views import backfill_materialized_views
 from opennem.db.clickhouse.schema import optimize_clickhouse_tables
 from opennem.db.clickhouse.views import (
@@ -762,7 +762,7 @@ async def _compute_flows_for_range(start_time: datetime, end_time: datetime) -> 
         )
         ORDER BY 1
     """
-    em_rows = client.execute(em_query)
+    em_rows = await execute_async(client, em_query)
 
     if not em_rows:
         logger.debug(f"No emissions data for {start_str} to {end_str}")
@@ -961,9 +961,7 @@ async def run_market_summary_aggregate_for_last_intervals(num_intervals: int) ->
 
     prepared_data = await _prepare_market_summary_data(records)
 
-    client = get_clickhouse_client()
-
-    client.execute(
+    await insert_async(
         """
         INSERT INTO market_summary
         (

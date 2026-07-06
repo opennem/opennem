@@ -1,5 +1,9 @@
 """Tests for the ClickHouse serving-path query settings applied by execute_async."""
 
+import asyncio
+import threading
+import time
+
 import pytest
 
 from opennem import settings
@@ -56,3 +60,50 @@ async def test_limits_can_be_disabled(fake_client: _FakeClient, monkeypatch: pyt
     await ch_client.execute_async(fake_client, "SELECT 1")
 
     assert fake_client.calls[-1]["kwargs"]["settings"] == {}
+
+
+@pytest.mark.asyncio
+async def test_insert_async_passes_data_without_serving_settings(fake_client: _FakeClient) -> None:
+    """Write path must forward the row data and NOT apply serving-path resource limits."""
+    rows = [(1, "a"), (2, "b")]
+
+    await ch_client.insert_async("INSERT INTO t VALUES", rows)
+
+    call = fake_client.calls[-1]
+    assert call["params"] == rows
+    # no settings kwarg (serving limits) on the write path
+    assert "settings" not in call["kwargs"]
+
+
+@pytest.mark.asyncio
+async def test_insert_async_runs_off_event_loop(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The blocking driver call must run in a worker thread so the loop stays responsive.
+
+    Regression guard for #572: blocking the event loop starves asyncpg connections that
+    are checked out from the pool and leaks them.
+    """
+    loop_thread = threading.get_ident()
+    exec_thread: list[int] = []
+
+    class _BlockingClient:
+        def execute(self, query, data=None, **kwargs):  # noqa: ANN001, ANN003
+            exec_thread.append(threading.get_ident())
+            time.sleep(0.2)
+            return []
+
+    monkeypatch.setattr(ch_client, "get_clickhouse_client", lambda *a, **k: _BlockingClient())
+
+    ticks = 0
+
+    async def _ticker() -> None:
+        nonlocal ticks
+        for _ in range(10):
+            await asyncio.sleep(0.02)
+            ticks += 1
+
+    await asyncio.gather(ch_client.insert_async("INSERT INTO t VALUES", [(1,)]), _ticker())
+
+    # the concurrent coroutine kept running during the 0.2s blocking insert
+    assert ticks == 10
+    # and the blocking call did not run on the event loop thread
+    assert exec_thread and exec_thread[0] != loop_thread
