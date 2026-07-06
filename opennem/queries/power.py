@@ -151,6 +151,12 @@ def get_rooftop_generation_combined_query(
     if minutes % 30 != 0:
         date_end = date_end - timedelta(minutes=minutes % 30)
 
+    # Snap the start down to the 30-min grid too. Rooftop actuals are 30-min;
+    # gapfilling to 5-min with interpolate() can't extrapolate before the first
+    # anchor, so an off-grid start (eg range.start at :50) leaves the leading
+    # 5-min buckets null at the oldest edge of every export (#580).
+    date_start = _floor_to_30min(date_start)
+
     networks = [i.code for i in network.subnetworks] if network.subnetworks else [network.code]
     if network == NetworkAU:
         networks.extend(["AEMO_ROOFTOP", "AEMO_ROOFTOP_BACKFILL", "APVI"])

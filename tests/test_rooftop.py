@@ -3,7 +3,11 @@ from datetime import datetime
 import pytest
 
 from opennem.importer.rooftop import rooftop_remap_regionids
-from opennem.queries.power import _floor_to_30min, get_rooftop_forecast_generation_query
+from opennem.queries.power import (
+    _floor_to_30min,
+    get_rooftop_forecast_generation_query,
+    get_rooftop_generation_combined_query,
+)
 from opennem.schema.network import NetworkNEM
 
 
@@ -67,3 +71,19 @@ def test_rooftop_forecast_query_snaps_window_to_30min() -> None:
     assert "2026-06-25 08:30:00" in query
     assert "2026-06-26 08:30:00" in query
     assert "08:45:00" not in query
+
+
+def test_rooftop_combined_query_snaps_start_to_30min() -> None:
+    """Combined generation window start must snap to the 30-min grid so the
+    5-min gapfill/interpolate has a leading anchor — otherwise an off-grid
+    range.start leaves the oldest 5-min buckets null (#580)."""
+    query = str(
+        get_rooftop_generation_combined_query(
+            network=NetworkNEM,
+            date_start=datetime(2026, 6, 18, 9, 50, 0),
+            date_end=datetime(2026, 6, 25, 9, 50, 0),
+        )
+    )
+    # start snapped down 09:50 -> 09:30, end also floored 09:50 -> 09:30
+    assert "2026-06-18 09:30:00" in query
+    assert "09:50:00" not in query
