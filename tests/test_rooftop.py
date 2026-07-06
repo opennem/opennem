@@ -1,6 +1,14 @@
+from datetime import datetime
+
 import pytest
 
 from opennem.importer.rooftop import rooftop_remap_regionids
+from opennem.queries.power import (
+    _floor_to_30min,
+    get_rooftop_forecast_generation_query,
+    get_rooftop_generation_combined_query,
+)
+from opennem.schema.network import NetworkNEM
 
 
 @pytest.mark.parametrize(
@@ -33,3 +41,54 @@ def test_remap_region_code(region_code: str, region_code_expected: str) -> None:
 def test_rooftop_remap_regionids(rooftop_record: dict, rooftop_record_expected: dict) -> None:
     rooftop_record_remapped = rooftop_remap_regionids(rooftop_record)
     assert rooftop_record_remapped == rooftop_record_expected
+
+
+@pytest.mark.parametrize(
+    "dt,expected",
+    [
+        (datetime(2026, 6, 25, 8, 45, 0), datetime(2026, 6, 25, 8, 30, 0)),
+        (datetime(2026, 6, 25, 8, 30, 0), datetime(2026, 6, 25, 8, 30, 0)),
+        (datetime(2026, 6, 25, 8, 0, 0), datetime(2026, 6, 25, 8, 0, 0)),
+        (datetime(2026, 6, 25, 8, 29, 59, 500000), datetime(2026, 6, 25, 8, 0, 0)),
+        (datetime(2026, 6, 25, 8, 59, 0), datetime(2026, 6, 25, 8, 30, 0)),
+    ],
+)
+def test_floor_to_30min(dt: datetime, expected: datetime) -> None:
+    assert _floor_to_30min(dt) == expected
+
+
+def test_rooftop_forecast_query_snaps_window_to_30min() -> None:
+    """Forecast window bounds must snap to the 30-min AEMO rooftop grid so the
+    5-min gapfill/interpolate has an anchor at each edge (no leading/trailing
+    nulls — #580)."""
+    query = str(
+        get_rooftop_forecast_generation_query(
+            network=NetworkNEM,
+            date_start=datetime(2026, 6, 25, 8, 45, 0),
+            date_end=datetime(2026, 6, 26, 8, 45, 0),
+        )
+    )
+    # internal gapfill anchor window floored to the 30-min grid
+    assert "2026-06-25 08:30:00" in query
+    assert "2026-06-26 08:30:00" in query
+    # output clipped back to the requested start so the series doesn't extend
+    # earlier than the requested window (#580 review)
+    assert "interval >= '2026-06-25 08:45:00'" in query
+
+
+def test_rooftop_combined_query_snaps_start_to_30min() -> None:
+    """Combined generation window start must snap to the 30-min grid so the
+    5-min gapfill/interpolate has a leading anchor — otherwise an off-grid
+    range.start leaves the oldest 5-min buckets null (#580)."""
+    query = str(
+        get_rooftop_generation_combined_query(
+            network=NetworkNEM,
+            date_start=datetime(2026, 6, 18, 9, 50, 0),
+            date_end=datetime(2026, 6, 25, 9, 50, 0),
+        )
+    )
+    # start snapped down 09:50 -> 09:30 for the internal gapfill anchor window
+    assert "2026-06-18 09:30:00" in query
+    # output clipped back to the requested start so rooftop doesn't extend
+    # earlier than the core generation series (#580 review)
+    assert "interval >= '2026-06-18 09:50:00'" in query
