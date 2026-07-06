@@ -3,12 +3,22 @@
 import logging
 from shutil import rmtree
 
+from rnet.exceptions import TimeoutError as RnetTimeoutError
+
 from opennem.controllers.nem import store_aemo_tableset
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.parsers.aemo.mms import AEMOTableSet, parse_aemo_file
 from opennem.utils.archive import download_and_unzip
 
 logger = logging.getLogger("opennem.core.parsers.aemo.nemweb")
+
+
+def _log_download_error(url: str, error: Exception) -> None:
+    """Nemweb download timeouts are transient and expected on large files - don't page on them"""
+    if isinstance(error, RnetTimeoutError):
+        logger.warning(f"Timed out downloading and unzipping {url}: {error}")
+    else:
+        logger.error(f"Error downloading and unzipping {url}: {error}")
 
 
 async def parse_aemo_url_optimized(
@@ -21,7 +31,7 @@ async def parse_aemo_url_optimized(
     try:
         download_path = await download_and_unzip(url)
     except Exception as e:
-        logger.error(f"Error downloading and unzipping {url}: {e}")
+        _log_download_error(url, e)
         return cr
 
     download_path_files = [f for f in download_path.iterdir() if f.is_file()]
@@ -73,7 +83,7 @@ async def parse_aemo_url_optimized_bulk(
     try:
         download_path = await download_and_unzip(url)
     except Exception as e:
-        logger.error(f"Error downloading and unzipping {url}: {e}")
+        _log_download_error(url, e)
         return cr
 
     download_path_files = [f for f in download_path.iterdir() if f.is_file()]
