@@ -10,7 +10,14 @@ from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("openne.core.parsers.aemo_filename")
 
+# legacy scheme: PUBLIC_DVD_DISPATCHREGIONSUM_202408010000.zip
 __aemo_filename_re = re.compile(r"(?P<filename>[a-zA-Z\_]+)_(?P<date>\d{6,14})_?(?P<interval>\d{8,16})?\.(zip|csv)")
+
+# new archive scheme (aemo, from 2024-08): PUBLIC_ARCHIVE#DISPATCHREGIONSUM#FILE01#202408010000.zip
+# the '#' separators may appear url-encoded as %23 in hrefs
+__aemo_filename_archive_re = re.compile(
+    r"(?P<filename>[a-zA-Z0-9\_#%]+?)(?:#|%23)(?P<date>\d{8,14})(?:_(?P<interval>\d{8,16}))?\.(zip|csv)"
+)
 
 
 class AEMODataBucketSize(enum.Enum):
@@ -63,7 +70,9 @@ def parse_aemo_filename_datetimes(dtimestr: str, network: NetworkSchema | None =
 def parse_aemo_filename(filename: str) -> AEMOMMSFilename:
     """Takes an AEMO filename and parses it into it's components"""
 
-    filename_components = re.search(__aemo_filename_re, filename.strip())
+    filename_components = re.search(__aemo_filename_re, filename.strip()) or re.search(
+        __aemo_filename_archive_re, filename.strip()
+    )
 
     if not filename_components:
         raise Exception(f"Could not parse filename {filename}")
