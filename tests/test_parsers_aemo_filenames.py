@@ -66,9 +66,47 @@ def test_parse_aemo_filename_datetimes(dtstring: str, expected: datetime) -> Non
                 "interval": "20211002",
             },
         ),
+        # new aemo archive scheme (2024-08+): PUBLIC_ARCHIVE#<TABLE>#FILE01#<date>.zip
+        (
+            "PUBLIC_ARCHIVE#DISPATCHREGIONSUM#FILE01#202408010000.zip",
+            {
+                "filename": "PUBLIC_ARCHIVE#DISPATCHREGIONSUM#FILE01",
+                "date": datetime.fromisoformat("2024-08-01T00:00:00"),
+                "interval": None,
+            },
+        ),
+        # same scheme with the '#' url-encoded as %23
+        (
+            "PUBLIC_ARCHIVE%23DISPATCHPRICE%23FILE01%23202408010000.zip",
+            {
+                "filename": "PUBLIC_ARCHIVE%23DISPATCHPRICE%23FILE01",
+                "date": datetime.fromisoformat("2024-08-01T00:00:00"),
+                "interval": None,
+            },
+        ),
     ],
 )
 def test_parse_aemo_filename(filename: str, components: AEMOMMSFilename) -> None:
     comp_result = parse_aemo_filename(filename)
     components_model = AEMOMMSFilename(**components)  # type: ignore
     assert comp_result == components_model, "Components match"
+
+
+@pytest.mark.parametrize(
+    ["filename", "matches"],
+    [
+        ("PUBLIC_DVD_DISPATCHREGIONSUM_202408010000.zip", True),
+        ("PUBLIC_ARCHIVE#DISPATCHREGIONSUM#FILE01#202408010000.zip", True),
+        ("PUBLIC_ARCHIVE%23DISPATCHREGIONSUM%23FILE01%23202408010000.zip", True),
+        ("PUBLIC_DVD_TRADINGREGIONSUM_202408010000.zip", False),
+        ("PUBLIC_ARCHIVE#TRADINGREGIONSUM#FILE01#202408010000.zip", False),
+    ],
+)
+def test_mms_filename_filter(filename: str, matches: bool) -> None:
+    """the mms filename filter matches a table across both aemo archive naming schemes"""
+    import re
+
+    from opennem.crawlers.mms import mms_filename_filter
+
+    pattern = mms_filename_filter("DISPATCHREGIONSUM")
+    assert bool(re.match(pattern, filename)) is matches

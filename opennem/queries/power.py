@@ -91,6 +91,11 @@ def get_fueltech_power_query_clickhouse(
 # --- Rooftop queries — stay on PostgreSQL facility_scada ---
 
 
+def _floor_to_30min(dt: datetime) -> datetime:
+    """Floor a datetime down to the previous 30-minute boundary."""
+    return dt.replace(minute=dt.minute - dt.minute % 30, second=0, microsecond=0)
+
+
 def get_rooftop_forecast_generation_query(
     network: NetworkSchema,
     date_start: datetime,
@@ -106,22 +111,37 @@ def get_rooftop_forecast_generation_query(
     region_q = f"and f.network_region = '{network_region}'" if network_region else ""
     bucket = "30min" if network == NetworkAU else "5min"
 
+    # AEMO rooftop forecast is on a 30-min grid. When gapfilling to a 5-min grid,
+    # interpolate() cannot extrapolate before the first anchor or after the last,
+    # so a window bound that lands off the 30-min grid (eg range.end at :45) leaves
+    # the leading/trailing 5-min buckets null. Snap both bounds down to the 30-min
+    # grid so gapfill always has an anchor at each edge (#580).
+    # Floor only the internal gapfill anchor window so interpolate() has an anchor
+    # at each edge, then clip the output back to the requested start so the forecast
+    # series doesn't extend earlier than the window the caller asked for (#580 review).
+    output_start = date_start
+    date_start = _floor_to_30min(date_start)
+    date_end = _floor_to_30min(date_end)
+
     return text(f"""
-        select
-            time_bucket_gapfill('{bucket}', fs.interval) as interval,
-            u.fueltech_id,
-            interpolate(coalesce(sum(fs.generated), 0)) as generated,
-            interpolate(coalesce(sum(fs.energy), 0)) as energy
-        from facility_scada fs
-        join units u on fs.facility_code = u.code
-        join facilities f on f.id = u.station_id
-        where
-            (fs.network_id in ('AEMO_ROOFTOP', 'AEMO_ROOFTOP_BACKFILL')
-             or (fs.network_id = 'APVI' and f.network_region = 'WEM'))
-            and fs.interval between '{date_start}' and '{date_end}'
-            and fs.is_forecast = true
-            {network_query} {region_q}
-        group by 1, 2
+        select * from (
+            select
+                time_bucket_gapfill('{bucket}', fs.interval) as interval,
+                u.fueltech_id,
+                interpolate(coalesce(sum(fs.generated), 0)) as generated,
+                interpolate(coalesce(sum(fs.energy), 0)) as energy
+            from facility_scada fs
+            join units u on fs.facility_code = u.code
+            join facilities f on f.id = u.station_id
+            where
+                (fs.network_id in ('AEMO_ROOFTOP', 'AEMO_ROOFTOP_BACKFILL')
+                 or (fs.network_id = 'APVI' and f.network_region = 'WEM'))
+                and fs.interval between '{date_start}' and '{date_end}'
+                and fs.is_forecast = true
+                {network_query} {region_q}
+            group by 1, 2
+        ) gapfilled
+        where interval >= '{output_start}'
         order by 1 desc, 2;
     """)
 
@@ -137,6 +157,16 @@ def get_rooftop_generation_combined_query(
     minutes = date_end.minute
     if minutes % 30 != 0:
         date_end = date_end - timedelta(minutes=minutes % 30)
+
+    # Snap the start down to the 30-min grid too. Rooftop actuals are 30-min;
+    # gapfilling to 5-min with interpolate() can't extrapolate before the first
+    # anchor, so an off-grid start (eg range.start at :50) leaves the leading
+    # 5-min buckets null at the oldest edge of every export (#580). We floor only
+    # the internal anchor window and clip the output back to the requested start
+    # (output_start) so the rooftop series doesn't extend earlier than the core
+    # generation series (#580 review).
+    output_start = date_start
+    date_start = _floor_to_30min(date_start)
 
     networks = [i.code for i in network.subnetworks] if network.subnetworks else [network.code]
     if network == NetworkAU:
@@ -170,14 +200,17 @@ def get_rooftop_generation_combined_query(
                  ELSE null END as is_forecast
         FROM rooftop_data GROUP BY 1, 2, 3
     )
-    SELECT time_bucket_gapfill('{bucket}', interval) as interval,
-        'solar_rooftop' as fueltech_id,
-        interpolate(sum(generated)) as generated,
-        interpolate(sum(energy)) as energy,
-        bool_or(is_forecast) as is_forecast
-    FROM combined_data
-    WHERE interval between '{date_start}' and '{date_end}'
-        and {network_query} {region_q}
-    GROUP BY 1, 2
+    SELECT * FROM (
+        SELECT time_bucket_gapfill('{bucket}', interval) as interval,
+            'solar_rooftop' as fueltech_id,
+            interpolate(sum(generated)) as generated,
+            interpolate(sum(energy)) as energy,
+            bool_or(is_forecast) as is_forecast
+        FROM combined_data
+        WHERE interval between '{date_start}' and '{date_end}'
+            and {network_query} {region_q}
+        GROUP BY 1, 2
+    ) gapfilled
+    WHERE interval >= '{output_start}'
     ORDER BY interval DESC;
     """)

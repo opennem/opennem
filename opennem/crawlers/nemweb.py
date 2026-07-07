@@ -2,7 +2,7 @@
 
 import asyncio
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from opennem.controllers.nem import ControllerReturn, store_aemo_tableset
 from opennem.core.crawlers.history import CrawlHistoryEntry, get_crawler_missing_intervals, set_crawler_history
@@ -16,6 +16,33 @@ from opennem.schema.date_range import CrawlDateRange
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
 
 logger = logging.getLogger("opennem.crawler.nemweb")
+
+# once a listed file 404s and its interval is older than this, it has rolled off CURRENT
+# for good and will 404 forever - stop treating it as a live-crawler error and let the
+# ARCHIVE/catchup crawler (separate crawler_name) own backfilling it
+ENTRY_ROLLOFF_AGE = timedelta(days=3)
+
+
+async def _handle_fetch_error(crawler: CrawlerDefinition, entry: DirlistingEntry, error: Exception) -> None:
+    """Logs a failed fetch of a listed entry, aging out rolled-off files so they stop retrying forever"""
+    if "404" not in str(error):
+        logger.error(f"Error parsing {entry.link}: {error}")
+        return
+
+    logger.warning(f"Fetch 404 for {entry.link}: {error}")
+
+    entry_date = entry.aemo_interval_date.date if entry.aemo_interval_date else None
+
+    if not entry_date or datetime.now() - entry_date <= ENTRY_ROLLOFF_AGE:
+        # still within the live window - this crawler's next run may find it back, keep retrying
+        return
+
+    # the file is long gone from CURRENT - record a zero-result history entry under this
+    # crawler's name so get_crawler_missing_intervals stops re-queuing it here every run
+    try:
+        await set_crawler_history(crawler_name=crawler.name, histories=[CrawlHistoryEntry(interval=entry_date, records=0)])
+    except Exception as e:
+        logger.error(f"Error recording age-out history for {entry.link}: {e}")
 
 
 async def process_nemweb_entry(crawler: CrawlerDefinition, entry: DirlistingEntry, max_date: datetime) -> ControllerReturn:
@@ -33,7 +60,7 @@ async def process_nemweb_entry(crawler: CrawlerDefinition, entry: DirlistingEntr
                 ts = await parse_aemo_url(entry.link)
                 controller_return = await store_aemo_tableset(ts)
             except Exception as e:
-                logger.error(f"Error parsing {entry.link}: {e}")
+                await _handle_fetch_error(crawler=crawler, entry=entry, error=e)
                 return None
     except Exception as e:
         logger.error(f"Processing error: {e}")
@@ -43,7 +70,7 @@ async def process_nemweb_entry(crawler: CrawlerDefinition, entry: DirlistingEntr
 
     # don't update crawl time if it fails
     if not controller_return.inserted_records:
-        logger.error(f"No records inserted for {entry.link}")
+        logger.warning(f"No records inserted for {entry.link}")
         return controller_return
 
     if not controller_return.last_modified or max_date > controller_return.last_modified:

@@ -37,6 +37,14 @@ def get_mms_archive_url(year: int, month: int) -> str:
     return MMS_ARCHIVE_URL_FORMAT.format(year=year, month=month)
 
 
+def mms_filename_filter(table_name: str) -> str:
+    """Build a filename filter matching an MMS table across both AEMO archive naming schemes:
+    legacy PUBLIC_DVD_<TABLE>_<date>.zip and the new (2024-08+) PUBLIC_ARCHIVE#<TABLE>#FILE01#<date>.zip.
+    The '#' separator may appear url-encoded as %23 in hrefs."""
+    sep = r"(?:_|#|%23)"
+    return rf".*{sep}{table_name}{sep}.*"
+
+
 async def run_aemo_mms_crawl(
     crawler: CrawlerDefinition,
     run_fill: bool = True,
@@ -146,7 +154,7 @@ AEMOMMSDispatchInterconnector = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
     name="au.mms.interconnector_res",
-    filename_filter=".*_DISPATCHINTERCONNECTORRES_.*",
+    filename_filter=mms_filename_filter("DISPATCHINTERCONNECTORRES"),
     network=NetworkNEM,
     bucket_size=AEMODataBucketSize.month,
     # limit=1,
@@ -158,7 +166,7 @@ AEMOMMSDispatchPrice = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
     name="au.mms.dispatch_price",
-    filename_filter=".*_DISPATCHPRICE_.*",
+    filename_filter=mms_filename_filter("DISPATCHPRICE"),
     network=NetworkNEM,
     bucket_size=AEMODataBucketSize.month,
     processor=run_aemo_mms_crawl,
@@ -169,7 +177,7 @@ AEMOMMSDispatchRegionsum = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
     name="au.mms.dispatch_regionsum",
-    filename_filter=".*_DISPATCHREGIONSUM_.*",
+    filename_filter=mms_filename_filter("DISPATCHREGIONSUM"),
     network=NetworkNEM,
     bucket_size=AEMODataBucketSize.month,
     processor=run_aemo_mms_crawl,
@@ -180,7 +188,7 @@ AEMOMMSTradingPrice = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
     name="au.mms.trading_price",
-    filename_filter=".*_TRADINGPRICE_.*",
+    filename_filter=mms_filename_filter("TRADINGPRICE"),
     network=NetworkNEM,
     bucket_size=AEMODataBucketSize.month,
     processor=run_aemo_mms_crawl,
@@ -191,7 +199,7 @@ AEMOMMSTradingRegionsum = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
     name="au.mms.trading_regionsum",
-    filename_filter=".*_TRADINGREGIONSUM_.*",
+    filename_filter=mms_filename_filter("TRADINGREGIONSUM"),
     network=NetworkNEM,
     bucket_size=AEMODataBucketSize.month,
     processor=run_aemo_mms_crawl,
@@ -202,7 +210,7 @@ AEMOMMSDispatchScada = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
     name="au.mms.dispatch_scada",
-    filename_filter=".*_DISPATCH_UNIT_SCADA.*",
+    filename_filter=mms_filename_filter("DISPATCH_UNIT_SCADA"),
     network=NetworkNEM,
     bucket_size=AEMODataBucketSize.month,
     processor=run_aemo_mms_crawl,
@@ -213,7 +221,7 @@ AEMOMMSMeterDataGenDuid = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
     name="au.mms.meterdata_gen_duid",
-    filename_filter=".*_METERDATA_GEN_DUID_.*",
+    filename_filter=mms_filename_filter("METERDATA_GEN_DUID"),
     network=NetworkNEM,
     bucket_size=AEMODataBucketSize.month,
     processor=run_aemo_mms_crawl,

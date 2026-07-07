@@ -14,7 +14,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from opennem.db import get_write_session
-from opennem.db.clickhouse import get_clickhouse_client
+from opennem.db.clickhouse import execute_async, get_clickhouse_client, insert_async
 from opennem.db.clickhouse.materialized_views import backfill_materialized_views
 from opennem.db.clickhouse.schema import optimize_clickhouse_tables
 from opennem.db.clickhouse.views import (
@@ -97,20 +97,50 @@ async def _get_market_summary_data(
         -- balancing_summary) excluded ALL rooftop, so demand_gross and generation_renewable
         -- silently omitted rooftop for all of history (GH #558). We map rooftop to parent
         -- network 'NEM' so it joins the NEM market rows by region.
-        SELECT
-            time_bucket_gapfill('5 minutes', fs.interval, :start_time_window, :end_time) as interval,
-            'NEM' as network_id,
-            f.network_region,
-            interpolate(avg(fs.generated)) as rooftop_solar
-        FROM facility_scada fs
-        JOIN units u ON fs.facility_code = u.code
-        JOIN facilities f ON u.station_id = f.id
-        WHERE fs.interval BETWEEN :start_time_window AND :end_time
-            AND u.fueltech_id = 'solar_rooftop'
-            AND fs.is_forecast = false
-            AND f.network_id IN ('AEMO_ROOFTOP', 'OPENNEM_ROOFTOP_BACKFILL')
-            AND f.network_region IN (SELECT network_region FROM regions)
-        GROUP BY 1, f.network_region
+        --
+        -- Rooftop is a 30-min feed and lags the 5-min core-generation / demand feed.
+        -- The interior of the series is interpolated between the half-hourly points as
+        -- before. But interpolate() has no future anchor past the last real reading, so
+        -- the trailing edge collapsed to NULL (-> 0 via COALESCE below) while demand and
+        -- core generation kept moving forward, inflecting demand_gross and
+        -- renewable_proportion (#579). For that trailing edge we instead carry the last
+        -- real value forward (locf) up to one 30-min block (+25 min) so rooftop reaches
+        -- the core-gen edge without fabricating a whole missing interval. When rooftop
+        -- lags a full block the single freshest bucket is intentionally left at 0
+        -- rather than invented; the API serves NULL-not-0 at that settling edge
+        -- (#575/#577) so it doesn't inflect. The :start_time_window lookback (1h) seeds
+        -- both accessors before :start_time.
+        SELECT interval, network_id, network_region, rooftop_solar
+        FROM (
+            SELECT
+                interval,
+                'NEM' as network_id,
+                network_region,
+                CASE
+                    WHEN rooftop_interp IS NOT NULL THEN rooftop_interp
+                    WHEN interval <= max(real_interval) OVER (PARTITION BY network_region)
+                                     + interval '25 minutes'
+                        THEN rooftop_locf
+                    ELSE NULL
+                END as rooftop_solar
+            FROM (
+                SELECT
+                    time_bucket_gapfill('5 minutes', fs.interval, :start_time_window, :end_time) as interval,
+                    f.network_region,
+                    interpolate(avg(fs.generated)) as rooftop_interp,
+                    locf(avg(fs.generated)) as rooftop_locf,
+                    max(fs.interval) as real_interval
+                FROM facility_scada fs
+                JOIN units u ON fs.facility_code = u.code
+                JOIN facilities f ON u.station_id = f.id
+                WHERE fs.interval BETWEEN :start_time_window AND :end_time
+                    AND u.fueltech_id = 'solar_rooftop'
+                    AND fs.is_forecast = false
+                    AND f.network_id IN ('AEMO_ROOFTOP', 'OPENNEM_ROOFTOP_BACKFILL')
+                    AND f.network_region IN (SELECT network_region FROM regions)
+                GROUP BY 1, f.network_region
+            ) rooftop_gapfilled
+        ) rooftop_bounded
     ),
     renewable_data AS (
         -- Renewable generation including battery discharge and pumps, excluding TUMUT3
@@ -762,7 +792,7 @@ async def _compute_flows_for_range(start_time: datetime, end_time: datetime) -> 
         )
         ORDER BY 1
     """
-    em_rows = client.execute(em_query)
+    em_rows = await execute_async(client, em_query)
 
     if not em_rows:
         logger.debug(f"No emissions data for {start_str} to {end_str}")
@@ -961,9 +991,7 @@ async def run_market_summary_aggregate_for_last_intervals(num_intervals: int) ->
 
     prepared_data = await _prepare_market_summary_data(records)
 
-    client = get_clickhouse_client()
-
-    client.execute(
+    await insert_async(
         """
         INSERT INTO market_summary
         (

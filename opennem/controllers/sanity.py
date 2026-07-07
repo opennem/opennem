@@ -20,6 +20,9 @@ async def get_facility_cms_id_by_unit_cms_id(cms_id: str) -> str | None:
 
     This is used in the sanity webhook when a unit is updated. We need the parent facility
     code so we can run the job to sync it.
+
+    Returns None if no facility is found — this is expected when the webhook fires for a
+    unit that isn't linked to a facility in our DB yet (e.g. a new/draft unit in the CMS).
     """
     async with get_read_session() as session:
         query = select(Facility).join(Unit, Facility.id == Unit.station_id).where(Unit.cms_id == cms_id)
@@ -27,7 +30,7 @@ async def get_facility_cms_id_by_unit_cms_id(cms_id: str) -> str | None:
         record = result.scalars().one_or_none()
         if record:
             return record.cms_id
-        raise Exception(f"No facility found for unit cms_id: {cms_id}")
+        return None
 
 
 async def parse_sanity_webhook_request(request: dict) -> None:
@@ -51,6 +54,9 @@ async def parse_sanity_webhook_request(request: dict) -> None:
         await update_database_facilities_from_cms(cms_id=cms_id, send_slack=False)
     elif record_type == "unit":
         facility_cms_id = await get_facility_cms_id_by_unit_cms_id(cms_id)
+        if facility_cms_id is None:
+            logger.warning(f"No facility found for unit cms_id: {cms_id} — skipping sanity sync")
+            return
         await update_database_facilities_from_cms(cms_id=facility_cms_id, send_slack=False)
     else:
         logger.warning(f"Unhandled record type: {record_type}")
