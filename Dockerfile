@@ -73,8 +73,10 @@ RUN apt-get update \
 ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROMIUM_FLAGS="--no-sandbox --headless --disable-gpu"
 
-# Create non-root user for security
-RUN groupadd -r appuser && useradd -r -g appuser appuser
+# Create non-root user for security.
+# -m is required: chromium >= 150 derives its crashpad database path from $HOME,
+# and aborts on startup ("--database is required", exit 133) when it doesn't exist.
+RUN groupadd -r appuser && useradd -r -m -g appuser appuser
 
 # Copy venv from builder
 COPY --from=builder $PYSETUP_PATH $PYSETUP_PATH
