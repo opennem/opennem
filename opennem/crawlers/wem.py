@@ -15,36 +15,36 @@ from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, Cra
 logger = logging.getLogger("opennem.crawlers.wem")
 
 
-def run_wem_balancing_crawl(
+async def run_wem_balancing_crawl(
     crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False, **kwargs
 ) -> ControllerReturn:
-    balancing_set = get_wem_balancing_summary()
+    balancing_set = await get_wem_balancing_summary()
     cr = store_wem_balancingsummary_set(balancing_set)
     return cr
 
 
-def run_wem_facility_scada_crawl(
+async def run_wem_facility_scada_crawl(
     crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False, **kwargs
 ) -> ControllerReturn:
-    generated_set = get_wem_facility_intervals()
-    cr = store_wem_facility_intervals(generated_set)
+    generated_set = await get_wem_facility_intervals()
+    cr = await store_wem_facility_intervals(generated_set)
     return cr
 
 
-def run_wem_live_balancing_crawl(
+async def run_wem_live_balancing_crawl(
     crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False, **kwargs
 ) -> ControllerReturn:
-    balancing_set = get_wem_live_balancing_summary()
+    balancing_set = await get_wem_live_balancing_summary()
     cr = store_wem_balancingsummary_set(balancing_set)
     return cr
 
 
-def run_wem_live_facility_scada_crawl(
+async def run_wem_live_facility_scada_crawl(
     crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False, **kwargs
 ) -> ControllerReturn:
     from_interval = crawler.server_latest or None
-    generated_set = get_wem_live_facility_intervals(from_interval=from_interval, trim_intervals=True)
-    cr = store_wem_facility_intervals(generated_set)
+    generated_set = await get_wem_live_facility_intervals(from_interval=from_interval, trim_intervals=True)
+    cr = await store_wem_facility_intervals(generated_set)
     return cr
 
 
