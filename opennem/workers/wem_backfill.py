@@ -30,8 +30,10 @@ logger = logging.getLogger("opennem.workers.wem_backfill")
 # First month present in the AEMO facility-scada archive
 WEM_ARCHIVE_FIRST_MONTH = datetime(2006, 9, 1)
 
-# The WEMDE cutover. The legacy archive stops being the source of truth here.
-WEM_ARCHIVE_LAST_MONTH = datetime(2023, 10, 1)
+# Last month for which the legacy archive is the source of truth. WEMDE starts
+# 2023-10-01, so October 2023 onward belongs to opennem.crawlers.wemde and must not be
+# ingested through the 30-minute legacy path.
+WEM_ARCHIVE_LAST_MONTH = datetime(2023, 9, 1)
 
 # Last month affected by the missing EOI Quantity column, and so the default end of the
 # backfill. Everything after this already has generation from the published MW column.
@@ -74,13 +76,19 @@ async def run_wem_facility_scada_backfill(
 
     months = _month_range(date_start, date_end)
 
+    if not months:
+        logger.warning(f"No months to backfill: date_start {date_start:%Y-%m} is after date_end {date_end:%Y-%m}")
+        return 0
+
     logger.info(f"Backfilling WEM facility scada for {len(months)} months: {months[0]:%Y-%m} to {months[-1]:%Y-%m}")
 
     total_records = 0
 
     for month in months:
         try:
-            interval_set = await get_wem_facility_intervals(from_date=month)
+            # fallback_to_recent would silently substitute a recent month for a missing
+            # one, which for a backfill means ingesting the wrong period entirely
+            interval_set = await get_wem_facility_intervals(from_date=month, fallback_to_recent=False)
         except WEMFileNotFoundException:
             logger.warning(f"{month:%Y-%m}: no archive file, skipping")
             continue

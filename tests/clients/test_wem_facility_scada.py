@@ -7,8 +7,11 @@ Covers the two eras the archive spans (see #598):
   * from 2013-12-17 both columns are published
 """
 
+from datetime import datetime, timedelta
+
 from opennem.clients.wem import (
     WEM_LEGACY_INTERVAL_SIZE_MINUTES,
+    WEMBalancingSummaryInterval,
     WEMGenerationInterval,
     _detect_interval_size_minutes,
     parse_wem_facility_intervals,
@@ -105,6 +108,54 @@ class TestIntervalSizeDetection:
 
     def test_falls_back_when_only_one_interval(self):
         assert _detect_interval_size_minutes([]) == WEM_LEGACY_INTERVAL_SIZE_MINUTES
+
+    def test_outlier_gap_does_not_win(self):
+        # one stray timestamp 1 minute off must not make the whole file look 1-minute,
+        # which would apply a 60x factor to every record
+        base = datetime(2010, 1, 1, 8, 0)
+        intervals = [base + timedelta(minutes=30 * i) for i in range(20)]
+        intervals.append(base + timedelta(minutes=1))
+
+        assert _detect_interval_size_minutes(intervals) == 30
+
+    def test_unknown_cadence_falls_back(self):
+        base = datetime(2010, 1, 1, 8, 0)
+        hourly = [base + timedelta(minutes=60 * i) for i in range(10)]
+
+        # 60 minutes is not a cadence WEM has published
+        assert _detect_interval_size_minutes(hourly) == WEM_LEGACY_INTERVAL_SIZE_MINUTES
+
+    def test_detects_five_minute_cadence(self):
+        base = datetime(2024, 6, 1, 8, 0)
+        five_min = [base + timedelta(minutes=5 * i) for i in range(20)]
+
+        assert _detect_interval_size_minutes(five_min) == 5
+
+
+class TestZeroHandling:
+    """Zeros are preserved by FloatField, so consumers must test `is None`"""
+
+    def test_zero_power_is_not_treated_as_missing(self):
+        record = WEMGenerationInterval(
+            trading_interval="2014-06-01 08:00:00",
+            facility_code="COLLIE_G1",
+            power=0.0,
+        )
+
+        assert record.generated == 0.0
+
+    def test_zero_actual_generation_is_not_a_forecast(self):
+        record = WEMBalancingSummaryInterval(
+            TRADING_DAY_INTERVAL="2014-06-01 08:00:00",
+            ACTUAL_TOTAL_GENERATION=0.0,
+        )
+
+        assert record.is_forecast is False
+
+    def test_missing_actuals_is_a_forecast(self):
+        record = WEMBalancingSummaryInterval(TRADING_DAY_INTERVAL="2014-06-01 08:00:00")
+
+        assert record.is_forecast is True
 
     def test_five_minute_wemde_cadence(self):
         record = WEMGenerationInterval(

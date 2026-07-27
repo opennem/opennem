@@ -13,6 +13,7 @@ See the URL constants for sources and unit tests
 
 import csv
 import logging
+from collections import Counter
 from datetime import datetime, timedelta
 from io import StringIO
 from typing import Annotated, Any
@@ -53,6 +54,10 @@ _AEMO_WEM2_GENERATION_URL = "https://aemo.com.au/aemo/data/wa/infographic/genera
 # facility-scada archive (2006-09 through the WEMDE cutover on 2023-10-01).
 # WEMDE dispatch intervals are 5-minute and are handled by opennem.clients.wemde.
 WEM_LEGACY_INTERVAL_SIZE_MINUTES = 30
+
+# Cadences WEM has actually published: 30 minute legacy trading intervals and 5 minute
+# WEMDE dispatch intervals. Anything else is treated as a detection failure.
+WEM_VALID_INTERVAL_SIZES = (5, 30)
 
 # The date AEMO began publishing the "EOI Quantity (MW)" column in the facility-scada
 # archive. Records before this carry only "Energy Generated (MWh)". See #598.
@@ -117,7 +122,9 @@ class WEMBalancingSummaryInterval(BaseModel):
 
     @property
     def is_forecast(self) -> bool:
-        return not self.actual_total_generation and not self.actual_nsg_mw
+        # `is None`, not falsiness: a published zero is an actual reading, not a missing
+        # one, and zeros are now preserved rather than coerced to None
+        return self.actual_total_generation is None and self.actual_nsg_mw is None
 
     model_config = ConfigDict(alias_generator=_wem_balancing_summary_field_alias)
 
@@ -163,16 +170,16 @@ class WEMGenerationInterval(BaseModel):
         that the archive carries `Energy Generated (MWh)` alone. Derive power from energy
         in that era rather than returning null (see #598).
         """
-        if self.power:
+        if self.power is not None:
             return self.power
 
-        if self.generated_scheduled and self.generated_non_scheduled:
+        if self.generated_scheduled is not None and self.generated_non_scheduled is not None:
             return self.generated_scheduled + self.generated_non_scheduled
 
-        if self.generated_non_scheduled:
+        if self.generated_non_scheduled is not None:
             return self.generated_non_scheduled
 
-        if self.generated_scheduled:
+        if self.generated_scheduled is not None:
             return self.generated_scheduled
 
         if self.eoi_quantity is not None:
@@ -382,6 +389,11 @@ def _detect_interval_size_minutes(intervals: list[datetime]) -> int:
     The legacy archive is 30-minute for its whole life and the WEMDE-era feeds are
     5-minute, but detecting rather than assuming keeps energy/power conversion correct
     if AEMO changes cadence again.
+
+    Uses the most common gap rather than the smallest: a single malformed or duplicated
+    timestamp would drag a minimum down and silently apply the wrong MWh->MW factor to
+    every record in the file. Falls back to the legacy size if the dominant gap is not a
+    cadence WEM has ever published.
     """
     distinct = sorted(set(intervals))
 
@@ -394,7 +406,13 @@ def _detect_interval_size_minutes(intervals: list[datetime]) -> int:
     if not deltas:
         return WEM_LEGACY_INTERVAL_SIZE_MINUTES
 
-    return min(deltas)
+    dominant = Counter(deltas).most_common(1)[0][0]
+
+    if dominant not in WEM_VALID_INTERVAL_SIZES:
+        logger.warning(f"Unexpected WEM interval size {dominant}min, falling back to {WEM_LEGACY_INTERVAL_SIZE_MINUTES}min")
+        return WEM_LEGACY_INTERVAL_SIZE_MINUTES
+
+    return dominant
 
 
 def parse_wem_facility_intervals(content: str, interval_size_minutes: int | None = None) -> list[WEMGenerationInterval]:
@@ -466,8 +484,17 @@ async def get_wem_live_facility_intervals(
     return wem_set
 
 
-async def get_wem_facility_intervals(from_date: datetime | None = None) -> WEMFacilityIntervalSet:
+async def get_wem_facility_intervals(
+    from_date: datetime | None = None, fallback_to_recent: bool = True
+) -> WEMFacilityIntervalSet:
     """Obtains WEM facility intervals from NEM web. Will default to most recent date
+
+    Args:
+        fallback_to_recent: When the requested month is missing, fall back to the file from
+            30 days ago. Useful for the live crawler where the current month may not be up
+            yet, but wrong for a historical backfill - a missing month must surface as
+            WEMFileNotFoundException so the caller can skip it, not silently return a
+            different month's data.
 
     @TODO not yet smart enough to know if it should check current or archive
     """
@@ -476,6 +503,9 @@ async def get_wem_facility_intervals(from_date: datetime | None = None) -> WEMFa
     try:
         content = await wem_downloader(_AEMO_WEM_SCADA_URL, from_date)
     except WEMFileNotFoundException:
+        if not fallback_to_recent:
+            raise
+
         _now = datetime.now()
         from_date = _now - timedelta(days=30)
         content = await wem_downloader(_AEMO_WEM_SCADA_URL, from_date)
