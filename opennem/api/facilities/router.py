@@ -24,6 +24,30 @@ from opennem.schema.unit import UnitDispatchType, UnitFueltechGroupType, UnitFue
 router = APIRouter()
 logger = logging.getLogger("opennem.api.facilities")
 
+# a unit is considered commissioning while its maximum observed generation is at or
+# below this proportion of its capacity. Mirrors the OpenElectricity website rule.
+_COMMISSIONING_CAPACITY_THRESHOLD = 0.9
+
+
+def _unit_effective_status(unit: Unit) -> str:
+    """The unit status as served by the API.
+
+    `commissioning` is a derived status: a unit that is operating but has not yet
+    demonstrated near-full output (max observed generation <= 90% of capacity).
+    It is never stored in the database or CMS. Units with no observed generation
+    yet remain `operating` — no data is not evidence of commissioning.
+    """
+    if unit.status_id != UnitStatusType.operating.value:
+        return str(unit.status_id)
+
+    capacity = unit.capacity_maximum or unit.capacity_registered
+
+    if unit.max_generation and capacity:
+        if float(unit.max_generation) / float(capacity) <= _COMMISSIONING_CAPACITY_THRESHOLD:
+            return UnitStatusType.commissioning.value
+
+    return str(unit.status_id)
+
 
 @api_version(major=4)
 @router.get(
@@ -45,7 +69,11 @@ async def get_facilities(
     status_id: Annotated[
         list[UnitStatusType] | None,
         Query(
-            description="Filter by unit operational status. Multi-value: `?status_id=operating&status_id=committed`.",
+            description=(
+                "Filter by unit operational status. Multi-value: `?status_id=operating&status_id=committed`. "
+                "`commissioning` is derived: operating units whose maximum observed generation is <=90% of capacity. "
+                "Such units report `status_id=commissioning` and are excluded from `operating` filters."
+            ),
             examples=[["operating"]],
         ),
     ] = None,
@@ -82,7 +110,9 @@ async def get_facilities(
 
     Filters:
     - facility_code: Filter by one or more facility codes
-    - status_id: Filter by one or more unit statuses (operating, committed, retired)
+    - status_id: Filter by one or more unit statuses (operating, commissioning, committed, retired).
+      commissioning is derived at the API layer: operating units whose maximum observed
+      generation is <=90% of capacity report status_id=commissioning
     - fueltech_id: Filter by one or more unit fuel technology types
     - network_id: Filter by one or more network codes
     - network_region: Filter by network region
@@ -146,7 +176,7 @@ async def get_facilities(
                     unit.approved
                     and not unit.interconnector
                     and unit.fueltech_id not in ["solar_rooftop", "imports", "exports"]
-                    and (status_values is None or unit.status_id in status_values)
+                    and (status_values is None or _unit_effective_status(unit) in status_values)
                     and (fueltech_values is None or unit.fueltech_id in fueltech_values)
                     and (
                         fueltech_group_values is None
@@ -189,7 +219,7 @@ async def get_facilities(
                         code=str(unit.code),
                         code_display=unit.code_display,
                         fueltech_id=UnitFueltechType(unit.fueltech_id),
-                        status_id=UnitStatusType(unit.status_id),
+                        status_id=UnitStatusType(_unit_effective_status(unit)),
                     )
 
                     if unit.capacity_registered:

@@ -31,11 +31,15 @@ class UnitStatusType(enum.Enum):
     Attributes:
         committed: Approved / under construction; not yet generating.
         operating: Currently dispatching to the market.
+        commissioning: Derived status — operating but not yet demonstrated near-full
+            output (max observed generation <= 90% of capacity). Not stored in the
+            database or CMS; computed at the API layer.
         retired: Permanently decommissioned.
     """
 
     committed = "committed"
     operating = "operating"
+    commissioning = "commissioning"
     retired = "retired"
 
 
