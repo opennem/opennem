@@ -34,6 +34,7 @@ from opennem.core.networks import network_from_network_code
 from opennem.db import get_read_session, get_write_session, retry_on_deadlock
 from opennem.db.models.opennem import Facility, Unit
 from opennem.schema.facility import FacilitySchema
+from opennem.schema.unit import UnitStatusType
 from opennem.workers.facility_data_seen import update_facility_seen_range
 
 logger = logging.getLogger("sanity.importer")
@@ -282,7 +283,10 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                     code=unit_operational_code,
                     code_display=unit_display_code,
                     fueltech_id=unit.fueltech_id.value if unit.fueltech_id else None,
-                    status_id=unit.status_id.value if unit.status_id else None,
+                    # commissioning is a derived API-only status — never persist it
+                    status_id=(
+                        unit.status_id.value if unit.status_id and unit.status_id != UnitStatusType.commissioning else None
+                    ),
                     dispatch_type=unit.dispatch_type.value if unit.dispatch_type else None,
                     capacity_registered=round(unit.capacity_registered, 2) if unit.capacity_registered else None,
                     capacity_maximum=(
@@ -378,8 +382,13 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 record_updated = True
 
             if unit.status_id:
-                unit_db.status_id = unit.status_id.value
-                record_updated = True
+                # commissioning is a derived API-only status — never persist it.
+                # See UnitStatusType.commissioning and api/facilities/router.py
+                if unit.status_id == UnitStatusType.commissioning:
+                    logger.warning(f"Unit {unit.code}: ignoring derived status 'commissioning' from CMS")
+                else:
+                    unit_db.status_id = unit.status_id.value
+                    record_updated = True
 
             if unit.dispatch_type:
                 unit_db.dispatch_type = unit.dispatch_type.value.upper()
