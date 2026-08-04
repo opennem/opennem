@@ -363,7 +363,7 @@ def _build_price_results(rows: list[tuple], network: NetworkSchema) -> list[Week
         results.append(
             WeeklyPriceResult(
                 network_region=region,
-                demand_energy_gwh=round(row[3] or 0, 2),
+                demand_energy_gwh=round((row[3] or 0) / 1000, 2),
                 avg_price=round(row[4] or 0, 2),
             )
         )

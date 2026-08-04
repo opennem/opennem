@@ -54,7 +54,11 @@ class UnitResponseSchema(BaseModel):
         examples=["coal_black"],
     )
     status_id: UnitStatusType = Field(
-        description="Operational status (`operating`, `committed`, `retired`, …).",
+        description=(
+            "Operational status (`operating`, `commissioning`, `committed`, `retired`). "
+            "`commissioning` is derived: an operating unit whose maximum observed generation "
+            "is <=90% of capacity."
+        ),
         examples=["operating"],
     )
     capacity_registered: RoundedFloat2 | None = Field(

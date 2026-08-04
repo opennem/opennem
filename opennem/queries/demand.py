@@ -15,6 +15,11 @@ def network_demand_clickhouse_query(
     """Query demand data from ClickHouse market_summary table.
 
     Uses materialized views for daily and monthly aggregations.
+
+    market_summary stores demand_total_energy in MWh and demand_total_market_value in dollars,
+    but this feeds the v3 export which declares demand.energy_giga (GWh) and demand.market_value
+    (AUD), so energy is scaled down here. Before #605 both columns were 1000x low in ClickHouse,
+    which the export absorbed by reading energy raw and multiplying market value by 1000.
     """
     if not networks_query:
         networks_query = [time_series.network]
@@ -29,8 +34,8 @@ def network_demand_clickhouse_query(
     if use_daily_mv and not use_monthly_mv:
         __query = """
             SELECT date AS interval, network_id, {network_region_select}
-                round(demand_total_energy_daily, 4) as demand_energy,
-                round(demand_total_market_value_daily * 1000, 4) as demand_market_value
+                round(demand_total_energy_daily / 1000, 4) as demand_energy,
+                round(demand_total_market_value_daily, 4) as demand_market_value
             FROM market_summary_daily_mv
             WHERE date >= toDate('{date_min}') AND date <= toDate('{date_max}')
                 AND network_id IN ({network_ids}) {network_region_filter}
@@ -44,8 +49,8 @@ def network_demand_clickhouse_query(
         # table. Sum the correct daily rows up to a month instead.
         __query = """
             SELECT toStartOfMonth(date) AS interval, network_id, {network_region_select}
-                round(sum(demand_total_energy_daily), 4) as demand_energy,
-                round(sum(demand_total_market_value_daily) * 1000, 4) as demand_market_value
+                round(sum(demand_total_energy_daily) / 1000, 4) as demand_energy,
+                round(sum(demand_total_market_value_daily), 4) as demand_market_value
             FROM market_summary_daily_mv FINAL
             WHERE date >= toStartOfMonth(toDate('{date_min}'))
                 AND date <= toDate('{date_max}')
@@ -57,8 +62,8 @@ def network_demand_clickhouse_query(
         __query = """
             SELECT toStartOfInterval(interval, INTERVAL {interval_size} {interval_unit}) AS interval,
                 network_id, {network_region_select}
-                round(sum(demand_total_energy), 4) as demand_energy,
-                round(sum(demand_total_market_value) * 1000, 4) as demand_market_value
+                round(sum(demand_total_energy) / 1000, 4) as demand_energy,
+                round(sum(demand_total_market_value), 4) as demand_market_value
             FROM market_summary FINAL
             WHERE interval >= toDateTime64('{date_min}', 3)
                 AND interval <= toDateTime64('{date_max}', 3)

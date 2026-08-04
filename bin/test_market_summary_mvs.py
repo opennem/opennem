@@ -139,7 +139,7 @@ def main():
             network_id,
             network_region,
             round(price_avg, 2) as avg_price,
-            round(demand_total_energy_daily, 2) as total_energy_gwh,
+            round(demand_total_energy_daily, 2) as total_energy_mwh,
             round(demand_total_market_value_daily, 2) as total_market_value
         FROM market_summary_daily_mv
         WHERE date = '2024-01-01'

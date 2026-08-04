@@ -5,6 +5,7 @@ Update facility intervals and balancing summary for WEM
 
 import logging
 
+from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.clients.wem import WEMBalancingSummarySet, WEMFacilityIntervalSet
@@ -15,6 +16,16 @@ from opennem.db.models.opennem import BalancingSummary, FacilityScada
 from opennem.utils.dates import get_today_nem
 
 logger = logging.getLogger(__name__)
+
+# asyncpg caps a statement at 32767 bind parameters. facility_scada inserts bind 7
+# columns per row, so keep chunks well under that ceiling.
+FACILITY_SCADA_INSERT_CHUNK_SIZE = 4000
+
+
+def _chunk_records(records: list[dict], chunk_size: int = FACILITY_SCADA_INSERT_CHUNK_SIZE):
+    """Yield records in chunks that fit within the postgres bind parameter limit"""
+    for i in range(0, len(records), chunk_size):
+        yield records[i : i + chunk_size]
 
 
 def store_wem_balancingsummary_set(balancing_set: WEMBalancingSummarySet) -> ControllerReturn:
@@ -140,9 +151,16 @@ async def store_wem_balancingsummary_set_bulk(balancing_set: WEMBalancingSummary
 
 
 async def store_wem_facility_intervals(
-    balancing_set: WEMFacilityIntervalSet, created_by: str = "wem.controller"
+    balancing_set: WEMFacilityIntervalSet, created_by: str = "wem.controller", fill_nulls_only: bool = False
 ) -> ControllerReturn:
-    """Persist WEM facility intervals"""
+    """Persist WEM facility intervals
+
+    Args:
+        fill_nulls_only: Only populate columns that are currently null, never overwrite an
+            existing value. Used by the historical backfill so that re-ingesting a month
+            which straddles the 2013-12-17 EOI cutover cannot clobber generation or energy
+            that is already published.
+    """
     cr = ControllerReturn()
 
     records_to_store = []
@@ -159,14 +177,17 @@ async def store_wem_facility_intervals(
         if (_rec.trading_interval, _rec.facility_code) in primary_keys:
             continue
 
+        primary_keys.add((_rec.trading_interval, _rec.facility_code))
+
         records_to_store.append(
             {
-                "created_by": "wem.controller",
                 "network_id": "WEM",
-                "trading_interval": _rec.trading_interval,
+                "interval": _rec.trading_interval.replace(tzinfo=None),
                 "facility_code": _rec.facility_code,
                 "generated": _rec.generated,
-                "eoi_quantity": _rec.eoi_quantity,
+                "energy": _rec.energy,
+                "is_forecast": False,
+                "energy_quality_flag": 2,
             }
         )
         cr.processed_records += 1
@@ -175,26 +196,37 @@ async def store_wem_facility_intervals(
         return cr
 
     async with SessionLocal() as session:
-        try:
-            stmt = insert(FacilityScada).values(records_to_store)
-            stmt = stmt.on_conflict_do_update(
-                index_elements=["trading_interval", "network_id", "facility_code", "is_forecast"],
-                set_={
-                    "generated": stmt.excluded.generated,
-                    "eoi_quantity": stmt.excluded.eoi_quantity,
-                },
-            )
+        for chunk in _chunk_records(records_to_store):
+            try:
+                stmt = insert(FacilityScada).values(chunk)
 
-            await session.execute(stmt)
-            await session.commit()
-            cr.inserted_records = len(records_to_store)
-        except Exception as e:
-            logger.error(f"Error: {e}")
-            cr.errors = len(records_to_store)
-            cr.error_detail.append(str(e))
-            await session.rollback()
-        finally:
-            await session.close()
+                if fill_nulls_only:
+                    set_ = {
+                        "generated": func.coalesce(FacilityScada.generated, stmt.excluded.generated),
+                        "energy": func.coalesce(FacilityScada.energy, stmt.excluded.energy),
+                    }
+                else:
+                    set_ = {
+                        "generated": stmt.excluded.generated,
+                        "energy": stmt.excluded.energy,
+                    }
+
+                stmt = stmt.on_conflict_do_update(
+                    index_elements=["interval", "network_id", "facility_code", "is_forecast"],
+                    set_=set_,
+                )
+
+                await session.execute(stmt)
+                await session.commit()
+                cr.inserted_records += len(chunk)
+            except Exception as e:
+                logger.error(f"Error: {e}")
+                cr.errors += len(chunk)
+                # truncated: the driver echoes the entire parameterised statement
+                cr.error_detail.append(str(e)[:500])
+                await session.rollback()
+
+        await session.close()
 
     return cr
 
@@ -205,7 +237,6 @@ async def store_wem_facility_intervals_bulk(facility_interval_set: WEMFacilityIn
     Optimized bulk insert version
     """
 
-    created_at = get_today_nem()
     cr = ControllerReturn()
 
     records_to_store = []
@@ -216,24 +247,23 @@ async def store_wem_facility_intervals_bulk(facility_interval_set: WEMFacilityIn
     cr.total_records = len(facility_interval_set.intervals)
     cr.server_latest = facility_interval_set.server_latest
 
-    primary_keys: list[set] = []
+    primary_keys: set = set()
 
     for _rec in facility_interval_set.intervals:
         if (_rec.trading_interval, _rec.facility_code) in primary_keys:
             continue
 
+        primary_keys.add((_rec.trading_interval, _rec.facility_code))
+
         records_to_store.append(
             {
-                "created_by": "opennem.controller",
-                "created_at": created_at,
-                "updated_at": None,
                 "network_id": "WEM",
-                "trading_interval": _rec.trading_interval,
+                "interval": _rec.trading_interval.replace(tzinfo=None),
                 "facility_code": _rec.facility_code,
                 "generated": _rec.generated,
-                "eoi_quantity": _rec.eoi_quantity,
+                "energy": _rec.energy,
                 "is_forecast": False,
-                "energy_quality_flag": 0,
+                "energy_quality_flag": 2,
             }
         )
 
@@ -242,6 +272,6 @@ async def store_wem_facility_intervals_bulk(facility_interval_set: WEMFacilityIn
     if len(records_to_store) < 1:
         return cr
 
-    await bulkinsert_mms_items(FacilityScada, records_to_store, ["generated", "eoi_quantity"])  # type: ignore
+    await bulkinsert_mms_items(FacilityScada, records_to_store, ["generated", "energy"])  # type: ignore
 
     return cr

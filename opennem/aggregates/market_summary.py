@@ -496,7 +496,9 @@ async def _prepare_market_summary_data(
     intervals_map = {network: 60 / interval for network, interval in network_intervals.items()}
     default_intervals = 60 / 5  # Default to 5-minute intervals
 
-    # Calculate energy values using vectorized operations (converting to MWh)
+    # Trapezoidal energy per interval: MW averaged over the interval, divided by intervals_per_hour
+    # gives MWh. There is no further scaling — a /1000 here treated the MW inputs as kW and left every
+    # energy column (and the market values derived from them) 1000x low, i.e. GWh labelled MWh (#605).
     df = df.with_columns(
         [
             (
@@ -510,7 +512,6 @@ async def _prepare_market_summary_data(
                         )
                     )
                     .otherwise(default_intervals)
-                    / 1000  # Convert from kWh to MWh
                 ).round(4)
             ).alias("demand_energy"),
             (
@@ -524,7 +525,6 @@ async def _prepare_market_summary_data(
                         )
                     )
                     .otherwise(default_intervals)
-                    / 1000  # Convert from kWh to MWh
                 ).round(4)
             ).alias("demand_total_energy"),
             (
@@ -538,7 +538,6 @@ async def _prepare_market_summary_data(
                         )
                     )
                     .otherwise(default_intervals)
-                    / 1000  # Convert from kWh to MWh
                 ).round(4)
             ).alias("demand_gross_energy"),
             (
@@ -552,7 +551,6 @@ async def _prepare_market_summary_data(
                         )
                     )
                     .otherwise(default_intervals)
-                    / 1000  # Convert from kWh to MWh
                 ).round(4)
             ).alias("generation_renewable_energy"),
             (
@@ -566,7 +564,6 @@ async def _prepare_market_summary_data(
                         )
                     )
                     .otherwise(default_intervals)
-                    / 1000  # Convert from kWh to MWh
                 ).round(4)
             ).alias("generation_renewable_with_storage_energy"),
             (
@@ -580,7 +577,6 @@ async def _prepare_market_summary_data(
                         )
                     )
                     .otherwise(default_intervals)
-                    / 1000  # Convert from kWh to MWh
                 ).round(4)
             ).alias("curtailment_energy_solar_total"),
             (
@@ -594,7 +590,6 @@ async def _prepare_market_summary_data(
                         )
                     )
                     .otherwise(default_intervals)
-                    / 1000  # Convert from kWh to MWh
                 ).round(4)
             ).alias("curtailment_energy_wind_total"),
         ]
