@@ -506,7 +506,6 @@ def _analyzed_record_to_milestone_schema(
     """
     Convert analyzed records to milestone record schemas.
     """
-    unit = get_milestone_unit(milestone_type)
     milestone_records = []
     milestone_primary_keys: list[set(str, str)] = []  # type: ignore
 
@@ -530,6 +529,11 @@ def _analyzed_record_to_milestone_schema(
             milestone_type_out = MilestoneType.energy
             if period == MilestonePeriod.interval:
                 milestone_type_out = MilestoneType.power
+
+        # Unit follows the output metric, not the input: demand at day+ is summed energy (MWh),
+        # only the interval period is power (MW). Keying off milestone_type stamped every
+        # backlog-generated demand.energy record as MW, disagreeing with the incremental path (#605).
+        unit = get_milestone_unit(milestone_type_out)
 
         value = record.get("total_value", record.get("total_generation"))
 
