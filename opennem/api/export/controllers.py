@@ -441,7 +441,7 @@ async def curtailment_network_region_daily(
     # curtailment based values for VWP
     if stats_curtailment_solar := stats_factory(
         stats=result_curtailment_solar,
-        units=get_unit("curtailment_solar_utility_energy"),
+        units=get_unit("curtailment_solar_utility_energy_giga"),
         network=time_series.network,
         fueltech_group=False,
         fueltech_code="curtailment_solar_utility",
@@ -452,7 +452,7 @@ async def curtailment_network_region_daily(
 
     if stats_curtailment_wind := stats_factory(
         stats=result_curtailment_wind,
-        units=get_unit("curtailment_wind_energy"),
+        units=get_unit("curtailment_wind_energy_giga"),
         network=time_series.network,
         fueltech_group=False,
         fueltech_code="curtailment_wind",

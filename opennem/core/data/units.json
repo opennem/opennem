@@ -54,9 +54,15 @@
     },
     {
         "name": "curtailment_solar_utility_energy",
-        "name_alias": "curtailment.solar.utility.energy",
+        "name_alias": "curtailment.solar.utility.energy_mega",
         "unit_type": "energy",
         "unit": "MWh"
+    },
+    {
+        "name": "curtailment_solar_utility_energy_giga",
+        "name_alias": "curtailment.solar.utility.energy",
+        "unit_type": "energy",
+        "unit": "GWh"
     },
     {
         "name": "curtailment_wind",
@@ -66,9 +72,15 @@
     },
     {
         "name": "curtailment_wind_energy",
-        "name_alias": "curtailment.wind.energy",
+        "name_alias": "curtailment.wind.energy_mega",
         "unit_type": "energy",
         "unit": "MWh"
+    },
+    {
+        "name": "curtailment_wind_energy_giga",
+        "name_alias": "curtailment.wind.energy",
+        "unit_type": "energy",
+        "unit": "GWh"
     },
     {
         "name": "energy_gig",

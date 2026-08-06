@@ -29,12 +29,14 @@ def get_network_curtailment_energy_query_analytics(
         network_region_code: Specific network region (optional)
 
     Returns:
-        str: ClickHouse SQL query returning curtailment energy in MWh
+        str: ClickHouse SQL query returning curtailment energy in GWh
 
     Note:
         Only NEM supports curtailment data. WEM has no curtailment data.
         For AU network, only NEM data is queried since WEM has no curtailment.
-        Energy values are stored and returned in MWh.
+        market_summary stores curtailment energy in MWh, but this feeds the v3
+        export where every energy series is GWh (the tracker applies one
+        GWh scale to the whole dataset), so values are scaled down here (#607).
     """
     if network != NetworkNEM:
         raise ValueError(f"Curtailment data is only supported on the NEM network. Got {network.code}")
@@ -70,9 +72,9 @@ def get_network_curtailment_energy_query_analytics(
             {time_bucket}(interval) AS interval,
             network_id,
             {select_region}
-            sum(curtailment_energy_total) AS curtailment_energy_total,
-            sum(curtailment_energy_solar_total) AS curtailment_energy_solar_total,
-            sum(curtailment_energy_wind_total) AS curtailment_energy_wind_total
+            round(sum(curtailment_energy_total) / 1000, 4) AS curtailment_energy_total,
+            round(sum(curtailment_energy_solar_total) / 1000, 4) AS curtailment_energy_solar_total,
+            round(sum(curtailment_energy_wind_total) / 1000, 4) AS curtailment_energy_wind_total
         FROM market_summary FINAL
         WHERE
             network_id = 'NEM'
