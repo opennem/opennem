@@ -38,6 +38,7 @@ from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
 from opennem.workers.catchup import catchup_aggregates, catchup_last_days, run_catchup_check
+from opennem.workers.data_integrity import run_data_integrity_check
 from opennem.workers.energy import process_energy_last_intervals
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
@@ -288,6 +289,16 @@ async def task_catchup_aggregates(ctx) -> None:
     aggregate runs before PostgreSQL has the crawled data.
     """
     await catchup_aggregates(days=0.5)
+
+
+async def task_data_integrity_check(ctx) -> None:
+    """Daily pipeline data-integrity check (PG source vs CH aggregates vs daily MVs).
+
+    Catches silent aggregate corruption — e.g. the rooftop catchup incident where
+    leading-edge locf NULLs clobbered good unit_intervals rows for months while
+    exports stayed consistent with ClickHouse. Alerts Slack monitoring on failure.
+    """
+    await run_data_integrity_check(alert_slack=True)
 
 
 async def task_update_milestones(ctx: dict) -> None:

@@ -41,6 +41,7 @@ from opennem.tasks.tasks import (
     task_catchup_days,
     task_check_unsplit_batteries,
     task_clean_tmp_dir,
+    task_data_integrity_check,
     task_export_capacity_history,
     task_export_daily_monthly,
     task_export_energy,
@@ -326,6 +327,15 @@ class WorkerSettings:
             task_catchup_aggregates,
             hour=set(range(0, 24, 2)),
             minute=45,
+            second=0,
+            timeout=600,
+            unique=True,
+        ),
+        # Daily pipeline data-integrity check (PG source vs CH aggregates vs daily MVs)
+        cron(
+            task_data_integrity_check,
+            hour=9,
+            minute=15,
             second=0,
             timeout=600,
             unique=True,
