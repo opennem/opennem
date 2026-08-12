@@ -64,14 +64,41 @@ def test_five_minute_interior_gap_filled():
     assert [v for _, v in data] == [1.0, None, None, None, 1.0]
 
 
-def test_calendar_interval_fills_against_observed_buckets():
-    """1M has no constant width, so the fill uses buckets present elsewhere in the response."""
-    results = [{"interval": datetime(2000, m, 1), "unit_code": "ER01", "energy": 1.0} for m in (1, 2, 3, 4)]
-    results += [{"interval": datetime(2000, m, 1), "unit_code": "ER04", "energy": 1.0} for m in (1, 3)]
+def test_calendar_interval_steps_by_months():
+    """1M has no constant width — buckets step a whole month at a time, across a year boundary."""
+    results = [{"interval": datetime(1999, 11, 1), "unit_code": "ER04", "energy": 1.0}]
+    results += [{"interval": datetime(2000, 2, 1), "unit_code": "ER04", "energy": 2.0}]
+
+    data = _series(_format(results, Interval.MONTH), "energy_ER04")
+
+    assert [(ts[:7], v) for ts, v in data] == [
+        ("1999-11", 1.0),
+        ("1999-12", None),
+        ("2000-01", None),
+        ("2000-02", 2.0),
+    ]
+
+
+def test_calendar_gap_filled_for_a_lone_series():
+    """The only series in the response still gets its hole filled (no sibling to borrow from)."""
+    results = [{"interval": datetime(2000, m, 1), "unit_code": "ER04", "energy": 1.0} for m in (1, 3)]
 
     data = _series(_format(results, Interval.MONTH), "energy_ER04")
 
     assert [(ts[:7], v) for ts, v in data] == [("2000-01", 1.0), ("2000-02", None), ("2000-03", 1.0)]
+
+
+def test_quarterly_steps_by_three_months():
+    results = [{"interval": datetime(2000, m, 1), "unit_code": "ER04", "energy": 1.0} for m in (1, 10)]
+
+    data = _series(_format(results, Interval.QUARTER), "energy_ER04")
+
+    assert [(ts[:7], v) for ts, v in data] == [
+        ("2000-01", 1.0),
+        ("2000-04", None),
+        ("2000-07", None),
+        ("2000-10", 1.0),
+    ]
 
 
 def test_complete_series_is_untouched():
