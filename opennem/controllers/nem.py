@@ -12,7 +12,7 @@ import pandas as pd
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.controllers.schema import ControllerReturn
-from opennem.core.battery import get_battery_unit_map
+from opennem.core.battery import HISTORIC_UNIT_ALIASES, get_battery_unit_map
 from opennem.core.networks import NetworkNEM
 from opennem.core.normalizers import clean_float
 from opennem.core.parsers.aemo.mms import AEMOTableSchema, AEMOTableSet
@@ -135,6 +135,21 @@ async def generate_facility_scada(
 
     # Drop the battery_copy field
     df = df.drop(columns=["battery_copy"])
+
+    # Retired single-direction duids are carried forward under the paired gen/load codes
+    # we model as units. Emit a copy rather than renaming, so the original aemo code stays
+    # in facility_scada and a re-crawl of pre-2026-02 data heals the derived series (#603).
+    def is_alias_unit(row) -> bool:
+        return row["facility_code"] in HISTORIC_UNIT_ALIASES
+
+    def map_alias_code(row) -> str:
+        return HISTORIC_UNIT_ALIASES[row["facility_code"]]
+
+    alias_copies = df.loc[df.apply(is_alias_unit, axis=1)].copy()
+
+    if len(alias_copies) > 0:
+        alias_copies["facility_code"] = alias_copies.apply(map_alias_code, axis=1)
+        df = pd.concat([df, alias_copies], ignore_index=True)
 
     # fill in energies
     df["energy"] = df.generated / (60 / network.interval_size)

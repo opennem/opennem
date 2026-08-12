@@ -31,6 +31,22 @@ class BatteryUnitMap(BaseModel):
 UNIT_MAP: dict[DUIDType, BatteryUnitMap] = {}
 
 
+# Historic single-direction DUIDs that AEMO retired in favour of the paired
+# generation/load codes we already model as units.
+#
+# These are NOT bidirectional and must never be sign-split: each one carries a single
+# direction, and its replacement code holds byte-identical values for every interval of
+# the overlap (verified 2025-06-01→06-08: BBATTERY==BBATTERYG1 and BBATRYL1==BBATTERYL1
+# on all 2,016 intervals; DALNTH01==DALNTHG1 on all 738). Splitting them by sign would
+# route the small negative auxiliary draw on the generation code into the charge unit,
+# double counting against the real charge DUID. So they are aliased 1:1 instead (#603).
+HISTORIC_UNIT_ALIASES: dict[str, str] = {
+    "BBATTERY": "BBATTERYG1",  # bouldercombe discharge
+    "BBATRYL1": "BBATTERYL1",  # bouldercombe charge
+    "DALNTH01": "DALNTHG1",  # dalrymple north discharge
+}
+
+
 async def get_battery_unit_map() -> dict[str, BatteryUnitMap]:
     """Get the battery unit mapping, generating it if not already cached.
 
@@ -57,7 +73,9 @@ def _generate_manual_battery_unit_map() -> dict[str, BatteryUnitMap]:
         "TEMPB1": BatteryUnitMap(unit="TEMPB1", charge_unit="TEMPBL1", discharge_unit="TEMPBG1"),  # templers
         "WDBESS1": BatteryUnitMap(unit="WDBESS1", charge_unit="WDBESSL1", discharge_unit="WDBESSG1"),  # western downs
         "DALNTH1": BatteryUnitMap(unit="DALNTH1", charge_unit="DALNTHL1", discharge_unit="DALNTHG1"),  # dairymple north
-        "DALNTH01": BatteryUnitMap(unit="DALNTH01", charge_unit="DALNTHL1", discharge_unit="DALNTHG1"),  # dairymple north
+        # DALNTH01 is the historic gen-only duid, not a bidirectional unit — see
+        # HISTORIC_UNIT_ALIASES. Sign-splitting it here was a no-op only because it never
+        # goes negative; BBATTERY does, which is why both are aliased instead (#603).
         "BBATTERY1": BatteryUnitMap(unit="BBATTERY1", charge_unit="BBATTERYL1", discharge_unit="BBATTERYG1"),  # battery
         # station code based?
         "0COLLIE_ESR2": BatteryUnitMap(unit="COLLIE_BESS2", charge_unit="COLLIE_BESSL2", discharge_unit="COLLIE_BESSG2"),
@@ -68,7 +86,9 @@ def _generate_manual_battery_unit_map() -> dict[str, BatteryUnitMap]:
         "0TEMPLERBESS": BatteryUnitMap(unit="TEMPB1", charge_unit="TEMPBL1", discharge_unit="TEMPBG1"),  # templers
         "WDBESS": BatteryUnitMap(unit="WDBESS1", charge_unit="WDBESSL1", discharge_unit="WDBESSG1"),  # western downs
         "DALNTH": BatteryUnitMap(unit="DALNTH", charge_unit="DALNTHL1", discharge_unit="DALNTHG1"),  # dairymple north
-        "BBATTERY": BatteryUnitMap(unit="BBATTERY1", charge_unit="BBATTERYL1", discharge_unit="BBATTERYG1"),  # battery
+        # NOTE: no "BBATTERY" entry. It reads as a station code here but collides with the
+        # historic duid of the same name, and `is_battery_unit()` matches on duid — so it
+        # sign-split real bouldercombe generation. Aliased in HISTORIC_UNIT_ALIASES (#603).
     }
 
 
