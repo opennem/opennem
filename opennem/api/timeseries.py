@@ -7,7 +7,7 @@ time series data across both market and data endpoints.
 
 import logging
 from collections.abc import Sequence
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 
 from pydantic import ConfigDict, Field, computed_field, model_validator
@@ -172,6 +172,74 @@ def _build_label_key_and_labels(
     return ("|".join(parts) if parts else "total"), labels
 
 
+# Intervals with a constant width, where the next bucket is a pure offset from the last.
+_FIXED_INTERVAL_STEP = {
+    Interval.INTERVAL: timedelta(minutes=5),
+    Interval.HOUR: timedelta(hours=1),
+    Interval.DAY: timedelta(days=1),
+    Interval.WEEK: timedelta(days=7),
+}
+
+# Calendar intervals have no constant width, but every bucket start is month-aligned, so the
+# next one is a whole number of months on from the last.
+_CALENDAR_INTERVAL_MONTHS = {
+    Interval.MONTH: 1,
+    Interval.QUARTER: 3,
+    Interval.SEASON: 3,
+    Interval.YEAR: 12,
+    Interval.FINANCIAL_YEAR: 12,
+}
+
+
+def _add_months(ts: datetime, months: int) -> datetime:
+    """Advance a month-aligned bucket start by whole months."""
+    month_index = ts.month - 1 + months
+    return ts.replace(year=ts.year + month_index // 12, month=month_index % 12 + 1)
+
+
+def _expected_buckets(interval: Interval, first: datetime, last: datetime) -> list[datetime]:
+    """Every bucket that should sit between `first` and `last` inclusive."""
+    step = _FIXED_INTERVAL_STEP.get(interval)
+    months = _CALENDAR_INTERVAL_MONTHS.get(interval)
+
+    if step is None and months is None:
+        return []
+
+    buckets: list[datetime] = []
+    ts = first
+
+    while ts <= last:
+        buckets.append(ts)
+        ts = ts + step if step is not None else _add_months(ts, months)  # type: ignore[arg-type]
+
+    return buckets
+
+
+def _fill_interior_gaps(grouped: dict[str, dict[str, Any]], interval: Interval) -> None:
+    """Insert explicit `(bucket, None)` points for interior buckets a series is missing.
+
+    A series that carries no row for a bucket inside its own lifetime is reporting "no data",
+    which is a different fact from "ran and generated nothing" (an explicit 0). Omitting the
+    point leaves a consumer unable to tell the two apart, or to tell either from
+    not-yet-commissioned. Only the interior is filled — nothing is invented before a unit's
+    first reading or after its last, so commissioning and retirement edges stay untouched (#615).
+    """
+    for g in grouped.values():
+        data = g["data"]
+
+        if len(data) < 2:
+            continue
+
+        expected = _expected_buckets(interval, data[0][0], data[-1][0])
+
+        if len(expected) == len(data):
+            continue
+
+        present = {ts for ts, _ in data}
+        data.extend((ts, None) for ts in expected if ts not in present)
+        data.sort(key=lambda x: x[0])
+
+
 def format_timeseries_response(
     network: str,
     metrics: Sequence[MetricType],
@@ -234,6 +302,8 @@ def format_timeseries_response(
         if not grouped:
             logger.warning(f"No grouped results for metric {metric_name}")
             continue
+
+        _fill_interior_gaps(grouped, interval)
 
         # date range from actual data
         all_ts = [ts for g in grouped.values() for ts, _ in g["data"]]
