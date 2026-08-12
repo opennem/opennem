@@ -39,6 +39,7 @@ from opennem.tasks.tasks import (
     task_catchup_aggregates,
     task_catchup_check,
     task_catchup_days,
+    task_check_unmapped_facility_codes,
     task_check_unsplit_batteries,
     task_clean_tmp_dir,
     task_export_capacity_history,
@@ -328,6 +329,15 @@ class WorkerSettings:
             minute=45,
             second=0,
             timeout=600,
+            unique=True,
+        ),
+        # Check for facility_scada codes the clickhouse ingest is silently dropping
+        cron(
+            task_check_unmapped_facility_codes,
+            hour=10,
+            minute=15,
+            second=0,
+            timeout=None,
             unique=True,
         ),
         # Check for unsplit batteries

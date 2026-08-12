@@ -34,6 +34,7 @@ from opennem.db.clickhouse.schema import optimize_clickhouse_tables
 from opennem.exporter.facilities import export_facilities_static
 
 # from opennem.exporter.historic import export_historic_intervals
+from opennem.monitors.unmapped_codes import run_unmapped_code_check
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
@@ -331,6 +332,22 @@ async def task_check_unsplit_batteries(ctx: dict) -> None:
         await check_unsplit_batteries()
     except Exception as e:
         logger.error(f"Error checking unsplit batteries: {str(e)}")
+        raise
+
+
+async def task_check_unmapped_facility_codes(ctx: dict) -> None:
+    """Task to check for facility_scada codes whose energy the clickhouse ingest silently drops.
+
+    Runs daily and alerts via Slack. A new code appearing here means AEMO introduced or
+    renamed a DUID and we are dropping live data from every downstream metric (#604).
+
+    Args:
+        ctx (dict): Task context
+    """
+    try:
+        await run_unmapped_code_check()
+    except Exception as e:
+        logger.error(f"Error checking unmapped facility codes: {str(e)}")
         raise
 
 
