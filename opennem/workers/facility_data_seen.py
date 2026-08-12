@@ -41,7 +41,9 @@ def get_update_seen_query(
             max(fs.interval) as data_last_seen
         from facility_scada fs
         where
-            fs.generated > 0
+            -- any telemetered reading counts as "seen". a `> 0` filter pushed data_first_seen
+            -- late for units that started idle (MM4 by 418 days) and excluded loads entirely (#615)
+            fs.generated is not null
             and fs.is_forecast = false
             {facility_codes_query}
             {trading_interval_window}

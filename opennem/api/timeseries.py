@@ -7,7 +7,7 @@ time series data across both market and data endpoints.
 
 import logging
 from collections.abc import Sequence
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 
 from pydantic import ConfigDict, Field, computed_field, model_validator
@@ -172,6 +172,72 @@ def _build_label_key_and_labels(
     return ("|".join(parts) if parts else "total"), labels
 
 
+# Intervals with a constant width, where the next bucket is a pure offset from the last.
+# Calendar intervals (1M, 3M, season, 1y, fy) are not here — they are gap-filled against the
+# buckets observed elsewhere in the same response instead of by arithmetic.
+_FIXED_INTERVAL_STEP = {
+    Interval.INTERVAL: timedelta(minutes=5),
+    Interval.HOUR: timedelta(hours=1),
+    Interval.DAY: timedelta(days=1),
+    Interval.WEEK: timedelta(days=7),
+}
+
+
+def _expected_buckets(
+    interval: Interval,
+    first: datetime,
+    last: datetime,
+    observed: Sequence[datetime],
+) -> list[datetime]:
+    """Every bucket that should sit between `first` and `last` inclusive.
+
+    Fixed-width intervals are stepped arithmetically. Calendar intervals have no constant
+    width, so they fall back to the buckets seen anywhere in this response — enough to fill
+    a hole in one series when any sibling series covers that bucket.
+    """
+    step = _FIXED_INTERVAL_STEP.get(interval)
+
+    if step is None:
+        return [ts for ts in observed if first <= ts <= last]
+
+    buckets: list[datetime] = []
+    ts = first
+    while ts <= last:
+        buckets.append(ts)
+        ts += step
+
+    return buckets
+
+
+def _fill_interior_gaps(
+    grouped: dict[str, dict[str, Any]],
+    interval: Interval,
+    all_buckets: Sequence[datetime],
+) -> None:
+    """Insert explicit `(bucket, None)` points for interior buckets a series is missing.
+
+    A series that carries no row for a bucket inside its own lifetime is reporting "no data",
+    which is a different fact from "ran and generated nothing" (an explicit 0). Omitting the
+    point leaves a consumer unable to tell the two apart, or to tell either from
+    not-yet-commissioned. Only the interior is filled — nothing is invented before a unit's
+    first reading or after its last, so commissioning and retirement edges stay untouched (#615).
+    """
+    for g in grouped.values():
+        data = g["data"]
+
+        if len(data) < 2:
+            continue
+
+        expected = _expected_buckets(interval, data[0][0], data[-1][0], all_buckets)
+
+        if len(expected) == len(data):
+            continue
+
+        present = {ts for ts, _ in data}
+        data.extend((ts, None) for ts in expected if ts not in present)
+        data.sort(key=lambda x: x[0])
+
+
 def format_timeseries_response(
     network: str,
     metrics: Sequence[MetricType],
@@ -234,6 +300,8 @@ def format_timeseries_response(
         if not grouped:
             logger.warning(f"No grouped results for metric {metric_name}")
             continue
+
+        _fill_interior_gaps(grouped, interval, sorted({ts for g in grouped.values() for ts, _ in g["data"]}))
 
         # date range from actual data
         all_ts = [ts for g in grouped.values() for ts, _ in g["data"]]

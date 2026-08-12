@@ -200,7 +200,9 @@ NetworkNEM = NetworkSchema(
     interval_size=5,
     interval_size_price=5,
     interval_shift=5,
-    data_first_seen=datetime.fromisoformat("1999-01-01T00:00:00+10:00"),
+    # first NEM unit scada interval held in facility_scada is 1998-12-07 02:40 AEST — six days
+    # before market start (1998-12-13). the data is genuine across all four mainland regions (#615)
+    data_first_seen=datetime.fromisoformat("1998-12-07T00:00:00+10:00"),
     price_first_seen=datetime.fromisoformat("2009-07-01T00:00:00+10:00"),
     interconnector_first_seen=datetime.fromisoformat("2010-01-01T00:00:00+10:00"),
     rooftop_first_seen=datetime.fromisoformat("2007-01-01T00:00:00+10:00"),
@@ -259,7 +261,7 @@ NetworkAU = NetworkSchema(
     timezone_database="AEST",
     offset=600,
     interval_size=5,
-    data_first_seen=datetime.fromisoformat("1999-01-01T00:00:00+10:00"),
+    data_first_seen=datetime.fromisoformat("1998-12-07T00:00:00+10:00"),
     subnetworks=[NetworkNEM, NetworkWEM, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill],
     fueltechs=all_fueltechs_without_rooftop,
 )
