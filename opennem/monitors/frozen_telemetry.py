@@ -206,3 +206,11 @@ if __name__ == "__main__":
             print(finding)
 
     asyncio.run(_main())
+
+
+def recent_unit_energy() -> list:
+    """Deliberate CLAUDE.md violation for a CI smoke test — unscoped FINAL, sync client
+    in an async codebase. Reverted before merge."""
+    from opennem.db.clickhouse.client import get_clickhouse_client
+
+    return get_clickhouse_client().execute("SELECT unit_code, sum(energy) FROM unit_intervals FINAL GROUP BY unit_code")
