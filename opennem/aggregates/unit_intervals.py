@@ -12,10 +12,14 @@ import resource
 import sys
 from collections.abc import AsyncIterator, Sequence
 from datetime import datetime, timedelta
+from typing import TYPE_CHECKING
 
 import polars as pl
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
+
+if TYPE_CHECKING:
+    from opennem.db.clickhouse.materialized_views import MaterializedView
 
 from opennem.db import get_write_session
 from opennem.db.clickhouse import (
@@ -695,6 +699,7 @@ async def process_unit_intervals_backlog(
     end_date: datetime,
     chunk_size: timedelta = timedelta(days=3),
     network: NetworkSchema | None = None,
+    rebuild_daily_views: bool = True,
 ) -> None:
     """
     Process historical unit interval data in chunks.
@@ -704,6 +709,10 @@ async def process_unit_intervals_backlog(
         start_date: Start date for processing
         end_date: End date for processing
         chunk_size: Size of each processing chunk
+        rebuild_daily_views: Rebuild the fueltech/renewable daily views over the same window
+            once the data is in. Required for correctness on any historical window — see
+            `_rebuild_daily_views`. Pass False only on hot paths that re-run a recent window
+            every few minutes, where the rebuild cost would dwarf the write.
     """
     current_start = start_date
     # Schema-ensure and inserts hit the blocking sync CH driver. This runs while `session`
@@ -741,6 +750,44 @@ async def process_unit_intervals_backlog(
             logger.warning(f"No records found for {current_start} to {chunk_end}")
 
         current_start = chunk_end
+
+    if rebuild_daily_views:
+        await _rebuild_daily_views(start_date=start_date, end_date=end_date)
+
+
+# The fueltech/renewable daily views are keyed by (date, network, region, fueltech), so a
+# late write for a day they already hold produces a competing version of an existing row.
+# Their version encodes completeness (interval_count * 1e9 + max(version)) — deliberately,
+# so a partial auto-populate can't clobber a full backfill — which means the late row,
+# covering only what was just written, loses and is discarded. The daily aggregate then
+# keeps its pre-backfill value indefinitely while unit_intervals moves on.
+#
+# unit_intervals_daily_mv is not affected: it's keyed per unit, so a backfilled unit is a
+# new key rather than a competing version. That asymmetry is what surfaced as network
+# totals disagreeing with the sum of their units (#592).
+_DAILY_VIEWS_NEEDING_REBUILD: "list[MaterializedView | str]" = [
+    "fueltech_intervals_daily_mv",
+    "renewable_intervals_daily_mv",
+]
+
+
+async def _rebuild_daily_views(start_date: datetime, end_date: datetime) -> None:
+    """Rebuild the completeness-versioned daily views over a window just written to.
+
+    DELETE-then-INSERT replaces the rows outright instead of trying to out-version them.
+    """
+    from opennem.db.clickhouse.materialized_views import backfill_materialized_views
+
+    logger.info(f"Rebuilding daily views from {start_date} to {end_date}")
+
+    # Blocking sync CH driver — keep it off the event loop (#572).
+    await asyncio.to_thread(
+        backfill_materialized_views,
+        views=_DAILY_VIEWS_NEEDING_REBUILD,
+        start_date=start_date,
+        end_date=end_date,
+        refresh_views=False,
+    )
 
 
 async def process_unit_intervals_backlog_streaming(
@@ -966,6 +1013,8 @@ async def run_unit_intervals_backlog(start_date: datetime | None = None, network
             network=network,
         )
         logger.info(f"Backlog processing complete: {total_processed} total records processed")
+
+    await _rebuild_daily_views(start_date=start_date, end_date=end_date)
 
     # Verify the data was inserted
     result = client.execute(
