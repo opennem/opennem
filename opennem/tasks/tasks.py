@@ -125,6 +125,9 @@ async def task_wem_day_crawl(ctx) -> None:
             start_date=start_date,
             end_date=end_date,
             network=NetworkWEM,
+            # runs every few minutes over a recent window — the daily views are rebuilt by
+            # the catchup pass instead, which covers the same days once per day (#592)
+            rebuild_daily_views=False,
         )
 
     await run_export_power_latest_for_network(network=NetworkWEM)
@@ -148,6 +151,9 @@ async def task_wem_interval_check(ctx) -> None:
             start_date=start_date,
             end_date=end_date,
             network=NetworkWEM,
+            # runs every few minutes over a recent window — the daily views are rebuilt by
+            # the catchup pass instead, which covers the same days once per day (#592)
+            rebuild_daily_views=False,
         )
 
     await run_export_power_latest_for_network(network=NetworkWEM)
