@@ -17,9 +17,9 @@ constraint setpoint just as steadily. Scanning NEM history for long flat runs re
 mostly those, and separating them needs curtailment state the monitor does not have.
 
 Night output has no such ambiguity. A solar farm produces nothing at 1am, so any material
-reading in the small hours is the signal stuck at its last daylight value. Run over six
-years of NEM history this flagged 41 unit-days across a dozen incidents with no false
-positives, BUSF1 among them.
+reading in the small hours is the signal stuck at its last daylight value. Run over eleven
+years of NEM history this found 22 incidents totalling ~8.6 GWh of generation that never
+happened, with no false positives — BUSF1 among them, though not the largest.
 
 The same trick has no equivalent for wind or thermal plant, which legitimately run flat
 through the night, so the check is deliberately solar-only. It is a floor on detection,
@@ -58,11 +58,15 @@ DEFAULT_WINDOW_DAYS = 7
 
 @dataclass(frozen=True, slots=True)
 class FrozenSignal:
-    """A solar unit reporting material generation in the middle of the night."""
+    """A solar unit reporting material generation in the middle of the night.
+
+    `night` is the date the night *started* on, so a run from 22:00 to 02:00 stays one
+    finding instead of being cut in half at midnight.
+    """
 
     facility_code: str
     network_region: str
-    day: str
+    night: str
     capacity_mw: float
     intervals: int
     min_mw: float
@@ -81,7 +85,7 @@ class FrozenSignal:
         shape = f"flat at {self.min_mw:,.2f} MW" if self.is_constant else f"{self.min_mw:,.2f}-{self.max_mw:,.2f} MW"
         return (
             f"{self.facility_code} ({self.network_region}, {self.capacity_mw:,.0f} MW) "
-            f"{self.day}: {shape} across {self.intervals} night intervals"
+            f"night of {self.night}: {shape} across {self.intervals} night intervals"
         )
 
 
@@ -89,7 +93,7 @@ _NIGHT_SOLAR_QUERY = text("""
     select
         fs.facility_code,
         f.network_region,
-        to_char(date_trunc('day', fs.interval), 'YYYY-MM-DD') as day,
+        to_char(date_trunc('day', fs.interval - interval '3 hours'), 'YYYY-MM-DD') as night,
         u.capacity_registered,
         count(*) as intervals,
         min(fs.generated) as min_mw,
@@ -100,7 +104,7 @@ _NIGHT_SOLAR_QUERY = text("""
     where
         fs.network_id = 'NEM'
         and fs.is_forecast is false
-        and fs.interval >= now() - (:window_days * interval '1 day')
+        and fs.interval >= (now() at time zone 'Australia/Brisbane') - (:window_days * interval '1 day')
         and u.fueltech_id = 'solar_utility'
         and u.capacity_registered > 0
         and (extract(hour from fs.interval) >= :night_start or extract(hour from fs.interval) < :night_end)
@@ -117,13 +121,13 @@ def to_findings(rows: Iterable[Sequence[Any]]) -> list[FrozenSignal]:
         FrozenSignal(
             facility_code=facility_code,
             network_region=network_region,
-            day=day,
+            night=night,
             capacity_mw=float(capacity),
             intervals=intervals,
             min_mw=float(min_mw),
             max_mw=float(max_mw),
         )
-        for facility_code, network_region, day, capacity, intervals, min_mw, max_mw in rows
+        for facility_code, network_region, night, capacity, intervals, min_mw, max_mw in rows
     ]
 
     findings.sort(key=lambda f: f.intervals, reverse=True)
@@ -155,7 +159,7 @@ async def check_frozen_telemetry(window_days: int = DEFAULT_WINDOW_DAYS) -> list
     findings = to_findings(rows)
 
     if findings:
-        logger.warning(f"{len(findings)} solar unit-days reporting night generation over {window_days}d")
+        logger.warning(f"{len(findings)} solar unit-nights reporting generation over {window_days}d")
         for finding in findings:
             logger.warning(f"  {finding}")
     else:

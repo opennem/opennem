@@ -2,10 +2,12 @@
 
 The detector's whole value is that it separates a genuine fault from the flat runs that
 normal solar operation produces all the time, so the tests are mostly about what it
-declines to flag.
+declines to flag — plus the two boundaries in the SQL that are easy to get wrong: the
+night straddles midnight, and the timestamps are AEST-naive while the session is UTC.
 """
 
 from opennem.monitors.frozen_telemetry import (
+    _NIGHT_SOLAR_QUERY,
     CAPACITY_FRACTION,
     MIN_NIGHT_INTERVALS,
     NIGHT_END_HOUR,
@@ -14,7 +16,7 @@ from opennem.monitors.frozen_telemetry import (
     to_findings,
 )
 
-# (facility_code, network_region, day, capacity, intervals, min_mw, max_mw)
+# (facility_code, network_region, night, capacity, intervals, min_mw, max_mw)
 BUSF1_ROW = ("BUSF1", "QLD1", "2026-04-30", 101.0, 60, 60.76, 60.76)
 
 
@@ -25,6 +27,7 @@ def test_busf1_is_flagged_as_a_freeze():
     assert finding.facility_code == "BUSF1"
     assert finding.is_constant
     assert "flat at 60.76 MW" in str(finding)
+    assert "night of 2026-04-30" in str(finding)
 
 
 def test_varying_night_output_is_reported_but_not_called_a_freeze():
@@ -43,6 +46,26 @@ def test_findings_are_ordered_worst_first():
     ]
 
     assert [f.intervals for f in to_findings(rows)] == [60, 16, 10]
+
+
+def test_night_is_grouped_whole_rather_than_split_at_midnight():
+    """The window runs 22:00-03:00, so grouping on the calendar day would cut every night
+    in two and could drop both halves below the interval threshold."""
+    sql = str(_NIGHT_SOLAR_QUERY)
+
+    assert "date_trunc('day', fs.interval - interval '3 hours')" in sql, (
+        "night grouping must shift back past midnight so 22:00 and 02:00 land in one group"
+    )
+
+
+def test_window_cutoff_is_computed_in_aest():
+    """facility_scada.interval is AEST-naive. Comparing it to a UTC now() would silently
+    widen every window by 10 hours."""
+    sql = str(_NIGHT_SOLAR_QUERY)
+
+    assert "now() at time zone 'Australia/Brisbane'" in sql
+    # Brisbane, not Sydney: NEM time is AEST year round and never shifts for DST.
+    assert "Australia/Sydney" not in sql
 
 
 def test_night_window_is_dark_across_the_whole_nem():
