@@ -62,22 +62,43 @@ async def get_osm_way(way_id: str) -> dict:
     return await get_osm_features(way_id)
 
 
+def _find_polygon(geojson: dict) -> dict | None:
+    for feature in geojson["features"]:
+        if feature["geometry"]["type"] in VALID_GEOMETRY_TYPES:
+            return feature["geometry"]
+    return None
+
+
 async def get_osm_geom(way_id: str, srid: int = 4326) -> WKBElement:
     """Returns a WKB element from an OSM way/relation ID.
 
     Handles both Polygon and MultiPolygon geometries.
-    Negative IDs are treated as OSM relations.
+
+    The sign convention (negative means relation) is not reliable in stored data: most
+    large wind and solar farms are mapped as relations, and their ids are held unsigned,
+    so a way lookup either 404/410s or resolves to an unrelated line with no closed area.
+    When the id read as a way yields nothing usable, retry it as a relation before giving
+    up — that recovers the majority of failures without needing every id re-signed.
     """
-    geojson = await get_osm_features(way_id)
+    osm_id_int = int(way_id)
+    attempts: list[str] = [way_id]
+    if osm_id_int > 0:
+        attempts.append(str(-osm_id_int))
 
-    geom_dict = None
-    for feature in geojson["features"]:
-        geom_type = feature["geometry"]["type"]
-        if geom_type in VALID_GEOMETRY_TYPES:
-            geom_dict = feature["geometry"]
-            break
+    last_error: Exception | None = None
+    for candidate in attempts:
+        try:
+            geojson = await get_osm_features(candidate)
+        except Exception as exc:  # noqa: BLE001 - try the other object type before failing
+            last_error = exc
+            continue
 
-    if not geom_dict:
-        raise Exception(f"No polygon/multipolygon found for OSM ID {way_id}")
+        geom_dict = _find_polygon(geojson)
+        if geom_dict:
+            if candidate != way_id:
+                logger.info(f"OSM id {way_id} resolved as a relation, not a way")
+            return from_shape(shape(geom_dict), srid=srid)
 
-    return from_shape(shape(geom_dict), srid=srid)
+        last_error = Exception(f"No polygon/multipolygon found for OSM ID {candidate}")
+
+    raise last_error or Exception(f"No geometry found for OSM ID {way_id}")
