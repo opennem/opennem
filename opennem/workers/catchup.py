@@ -368,7 +368,8 @@ async def catchup_date(target_date: datetime) -> None:
     # aggregates
     logger.info(f"Catchup for {day_start.date()}: aggregating")
     async with get_read_session() as session:
-        await process_unit_intervals_backlog(session=session, start_date=day_start, end_date=day_end)
+        # catchup already rebuilds every daily view below, so skip the targeted rebuild
+        await process_unit_intervals_backlog(session=session, start_date=day_start, end_date=day_end, rebuild_daily_views=False)
     async with get_read_session() as session:
         await process_market_summary_backlog(session=session, start_date=day_start, end_date=day_end)
 
