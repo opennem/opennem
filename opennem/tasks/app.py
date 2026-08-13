@@ -39,6 +39,7 @@ from opennem.tasks.tasks import (
     task_catchup_aggregates,
     task_catchup_check,
     task_catchup_days,
+    task_check_frozen_telemetry,
     task_check_unmapped_facility_codes,
     task_check_unsplit_batteries,
     task_clean_tmp_dir,
@@ -336,6 +337,15 @@ class WorkerSettings:
             task_check_unmapped_facility_codes,
             hour=10,
             minute=15,
+            second=0,
+            timeout=None,
+            unique=True,
+        ),
+        # Check for solar telemetry frozen at its last daylight value
+        cron(
+            task_check_frozen_telemetry,
+            hour=10,
+            minute=20,
             second=0,
             timeout=None,
             unique=True,
