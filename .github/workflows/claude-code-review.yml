@@ -29,6 +29,12 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           allowed_bots: "claude"
 
+          # Without this the run does the whole review and posts nothing: on a
+          # pull_request event the action picks agent mode, which has no comment to
+          # write into. This forces tag mode, which creates one. Verified empirically —
+          # the docs claim it is not needed for automated review, and it is.
+          track_progress: true
+
           # Supplying a prompt on a pull_request event selects automation mode, so the
           # review runs without needing an @claude mention. In v1 this input is `prompt`;
           # it was `direct_prompt` in v0 and is silently ignored under that name.
