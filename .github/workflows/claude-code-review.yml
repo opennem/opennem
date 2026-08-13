@@ -10,8 +10,10 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: read
-      pull-requests: read
-      issues: read
+      # write, not read: the action posts its review through the workflow token, so
+      # read-only permissions let it analyse the PR and then silently drop the result.
+      pull-requests: write
+      issues: write
       id-token: write
 
     steps:
