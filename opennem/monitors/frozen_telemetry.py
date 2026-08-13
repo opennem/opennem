@@ -53,6 +53,7 @@ CAPACITY_FRACTION = 0.1
 # is more likely a timestamp edge than a fault.
 MIN_NIGHT_INTERVALS = 6
 
+# A freeze can persist for days, so the window wants to outlast one run-to-run gap.
 DEFAULT_WINDOW_DAYS = 7
 
 
