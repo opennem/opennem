@@ -543,6 +543,12 @@ async def power_network_region_fueltech(
     # redirect to static JSONs
     redirect_url_format = "https://data.opennem.org.au/v3/stats/au/{network_code_out}/{network_region_out}power/7d.json"
 
+    # The static json this redirects to only ever holds the last 7 days, so it can only
+    # answer a request that didn't ask for a specific month. Capture that before `month`
+    # is defaulted below, otherwise every request looks like a current one and historical
+    # queries are silently served 7 days of recent data instead (#393).
+    month_requested = month is not None
+
     if not month:
         month = get_today_nem().date()
 
@@ -566,7 +572,7 @@ async def power_network_region_fueltech(
         network_region_out=network_region_out,
     )
 
-    if settings.redirect_api_static:
+    if settings.redirect_api_static and not month_requested:
         return RedirectResponse(url=redirect_to, status_code=status.HTTP_302_FOUND)
 
     interval_obj = network.get_interval()
