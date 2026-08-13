@@ -34,6 +34,7 @@ from opennem.db.clickhouse.schema import optimize_clickhouse_tables
 from opennem.exporter.facilities import export_facilities_static
 
 # from opennem.exporter.historic import export_historic_intervals
+from opennem.monitors.frozen_telemetry import run_frozen_telemetry_check
 from opennem.monitors.unmapped_codes import run_unmapped_code_check
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
@@ -354,6 +355,23 @@ async def task_check_unmapped_facility_codes(ctx: dict) -> None:
         await run_unmapped_code_check()
     except Exception as e:
         logger.error(f"Error checking unmapped facility codes: {str(e)}")
+        raise
+
+
+async def task_check_frozen_telemetry(ctx: dict) -> None:
+    """Task to check for solar units reporting generation overnight.
+
+    Solar can't generate at night, so a material reading in the small hours means the
+    telemetry has frozen at its last daylight value and is inflating energy for as long
+    as the freeze lasts (#544).
+
+    Args:
+        ctx (dict): Task context
+    """
+    try:
+        await run_frozen_telemetry_check()
+    except Exception as e:
+        logger.error(f"Error checking frozen telemetry: {str(e)}")
         raise
 
 
