@@ -61,7 +61,13 @@ async def get_capacity_history(
             AND COALESCE(u.capacity_maximum, u.capacity_registered) IS NOT NULL
             AND u.commencement_date IS NOT NULL
             AND f.network_id IN ('NEM', 'WEM')
-            AND u.fueltech_id NOT IN ('battery', 'solar_rooftop')
+            -- A battery is three unit rows carrying the same megawatts: the bidirectional
+            -- unit plus the derived charging and discharging halves. Keeping both halves
+            -- is correct for power and energy, where each direction is a real flow, but
+            -- doubles the capacity of every battery in a SUM. Count the discharging half
+            -- only, so battery capacity means generation capacity like every other
+            -- fueltech here (#488).
+            AND u.fueltech_id NOT IN ('battery', 'battery_charging', 'solar_rooftop')
             -- Only include valid regions: WEM network only has WEM region
             AND ((f.network_id = 'WEM' AND f.network_region = 'WEM') OR (f.network_id = 'NEM' AND f.network_region != 'WEM'))
             -- Unit is live if the month overlaps with its operational period
