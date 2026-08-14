@@ -40,6 +40,15 @@ from opennem.workers.facility_data_seen import update_facility_seen_range
 logger = logging.getLogger("sanity.importer")
 
 
+def normalise_osm_way_id(value: str | None) -> str | None:
+    """Trim an osm way id, collapsing blank to None so it clears rather than storing "".
+
+    A whitespace-only value from the CMS must read as "no link", not as a link to an empty
+    string, or the column stays truthy and the boundary is never retracted.
+    """
+    return (value or "").strip() or None
+
+
 def _resolved_codes(record: FacilitySchema | UnitSchema) -> tuple[str, str]:
     """Operational and display code for a facility or unit.
 
@@ -220,9 +229,23 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
             facility_db.cms_id = facility.cms_id
             record_updated = True
 
-        # Update new fields
-        if hasattr(facility, "osm_way_id") and facility.osm_way_id:
-            facility_db.osm_way_id = facility.osm_way_id.strip()
+        # Update new fields.
+        #
+        # osm_way_id syncs unconditionally, including to NULL. The truthy guard the other
+        # fields use meant clearing a link in the CMS had no effect downstream, so a wrong
+        # match was permanent: TESLA_PICTON (WA) kept pointing at Pindari Power Station in
+        # NSW, 3,392 km away, and kept serving that boundary, even after the id was removed
+        # from Sanity (#481).
+        #
+        # boundary is derived from osm_way_id by bin/osm-import-boundaries.py, which only
+        # fills rows where boundary IS NULL and so would never retract a stale polygon.
+        # Dropping the link has to drop the geometry with it or the wrong shape outlives it.
+        osm_way_id = normalise_osm_way_id(facility.osm_way_id)
+        if osm_way_id != facility_db.osm_way_id:
+            if osm_way_id is None:
+                logger.info(f"Clearing osm_way_id {facility_db.osm_way_id} and boundary for {facility.code}")
+                facility_db.boundary = None
+            facility_db.osm_way_id = osm_way_id
             record_updated = True
 
         if hasattr(facility, "npi_id") and facility.npi_id:
