@@ -60,6 +60,13 @@ class FacilitySchema(BaseModel):
     location: FacilityLocationSchema | None = None
     units: list[UnitSchema]
 
+    # Codes resolved by _validate_unique_codes against the whole payload: operational_code
+    # is what Postgres stores, display_code keeps the synthetic "0" prefix for display.
+    # Set after parsing rather than read from the CMS, since resolving a synthetic prefix
+    # needs to know which codes every other facility has claimed (#481).
+    operational_code: str | None = None
+    display_code: str | None = None
+
     # Sanity fields
     updated_at: datetime | None = None
     cms_id: str | None = Field(None, alias="_id")

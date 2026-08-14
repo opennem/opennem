@@ -3,28 +3,19 @@ name: Claude Code Review
 on:
   pull_request:
     types: [opened, synchronize]
-    # Optional: Only run on specific file changes
-    # paths:
-    #   - "src/**/*.ts"
-    #   - "src/**/*.tsx"
-    #   - "src/**/*.js"
-    #   - "src/**/*.jsx"
 
 jobs:
   claude-review:
-    # Optional: Filter by PR author
-    # if: |
-    #   github.event.pull_request.user.login == 'external-contributor' ||
-    #   github.event.pull_request.user.login == 'new-developer' ||
-    #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
-    
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
-      pull-requests: read
-      issues: read
+      # write, not read: the action posts its review through the workflow token, so
+      # read-only permissions let it analyse the PR and then silently drop the result.
+      pull-requests: write
+      issues: write
       id-token: write
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -33,46 +24,30 @@ jobs:
 
       - name: Run Claude Code Review
         id: claude-review
-        uses: anthropics/claude-code-action@beta
+        uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           allowed_bots: "claude"
 
-          # Optional: Specify model (defaults to Claude Sonnet 4, uncomment for Claude Opus 4)
-          # model: "claude-opus-4-20250514"
-          
-          # Direct prompt for automated review (no @claude mention needed)
-          direct_prompt: |
-            Please review this pull request and provide feedback on:
-            - Code quality and best practices
-            - Potential bugs or issues
-            - Performance considerations
+          # Without this the run does the whole review and posts nothing: on a
+          # pull_request event the action picks agent mode, which has no comment to
+          # write into. This forces tag mode, which creates one. Verified empirically —
+          # the docs claim it is not needed for automated review, and it is.
+          track_progress: true
+
+          # Supplying a prompt on a pull_request event selects automation mode, so the
+          # review runs without needing an @claude mention. In v1 this input is `prompt`;
+          # it was `direct_prompt` in v0 and is silently ignored under that name.
+          prompt: |
+            Review this pull request and give feedback on:
+            - Correctness — bugs, unhandled edge cases, incorrect assumptions
+            - Data pipeline safety — this repo has hard rules in CLAUDE.md covering
+              ClickHouse FINAL scoping, async vs sync in worker tasks, session
+              contention, static export boundaries and AEST vs UTC handling. Read it
+              and flag anything that violates them.
+            - Performance, particularly queries against facility_scada and unit_intervals
             - Security concerns
             - Test coverage
-            
-            Be constructive and helpful in your feedback.
 
-          # Optional: Use sticky comments to make Claude reuse the same comment on subsequent pushes to the same PR
-          # use_sticky_comment: true
-          
-          # Optional: Customize review based on file types
-          # direct_prompt: |
-          #   Review this PR focusing on:
-          #   - For TypeScript files: Type safety and proper interface usage
-          #   - For API endpoints: Security, input validation, and error handling
-          #   - For React components: Performance, accessibility, and best practices
-          #   - For tests: Coverage, edge cases, and test quality
-          
-          # Optional: Different prompts for different authors
-          # direct_prompt: |
-          #   ${{ github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' && 
-          #   'Welcome! Please review this PR from a first-time contributor. Be encouraging and provide detailed explanations for any suggestions.' ||
-          #   'Please provide a thorough code review focusing on our coding standards and best practices.' }}
-          
-          # Optional: Add specific tools for running tests or linting
-          # allowed_tools: "Bash(npm run test),Bash(npm run lint),Bash(npm run typecheck)"
-          
-          # Optional: Skip review for certain conditions
-          # if: |
-          #   !contains(github.event.pull_request.title, '[skip-review]') &&
-          #   !contains(github.event.pull_request.title, '[WIP]')
+            Be constructive and specific. Prefer a small number of real defects over a
+            long list of style observations.

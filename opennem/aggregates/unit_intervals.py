@@ -53,6 +53,30 @@ logger = logging.getLogger("opennem.aggregates.unit_intervals")
 # reading so we never fabricate a whole missing interval.
 _ROOFTOP_LOOKBACK = timedelta(minutes=35)
 
+# Fueltechs whose meter may legitimately read negative, because the unit really does
+# consume from the grid as part of normal operation. Everything else is a one-way
+# generator: a negative reading is site or auxiliary load measured at the same point,
+# not negative generation, and is clamped to 0 below.
+#
+# This is the same rule already applied downstream in market_summary.py and the renewable
+# MVs; applying it here means every consumer of unit_intervals inherits it instead of each
+# one re-deriving it. Emissions, emission_factor and market_value already gate on
+# `energy > 0`, so they were consistent with the clamp before it existed.
+#
+# Scale of the correction, measured across all of unit_intervals before it was applied:
+# 1,562 GWh of negative energy against 2.2 million GWh positive, so ~0.07% overall and for
+# almost every unit an auxiliary draw that is tiny next to its output. It is concentrated
+# in one place. WEM PRK_AG (parkeston) alone is 1,009 of those 1,562 GWh, and is the only
+# unit the clamp materially changes: its scada point turned into a NET SITE METER at the
+# WEMDE cutover in Sep/Oct 2023 (before: 0 to +72 MW and never negative; after: -59 to
+# +72 MW, negative in 97% of intervals), so it reads gross generation minus the co-located
+# kalgoorlie load and we were publishing a 110 MW gas peaker as consuming ~355 GWh/yr
+# (#613). The load is real but it is not this generator's, and the gross figure is not
+# recoverable from the feed, so the honest series is generation-or-zero. See also #623 for
+# the dispatch-vs-facilityScada overwrite that shares the same root.
+_NEGATIVE_CAPABLE_FUELTECHS = ("battery", "battery_charging", "battery_discharging", "pumps")
+_NEGATIVE_CAPABLE_FUELTECHS_SQL = ", ".join(f"'{ft}'" for ft in _NEGATIVE_CAPABLE_FUELTECHS)
+
 
 def _monitor_memory_usage() -> float:
     """Monitor and log memory usage, trigger GC if needed.
@@ -210,8 +234,20 @@ async def _get_unit_interval_data(
             u.fueltech_id,
             ftg.code as fueltech_group_id,
             ftg.renewable as renewable,
-            round(sum(fs.generated), 4) as generated,
-            round(sum(fs.energy), 4) as energy,
+            -- Clamp one-way generators at 0: a negative reading is site/auxiliary load on
+            -- the same meter, not negative generation. See _NEGATIVE_CAPABLE_FUELTECHS.
+            -- Clamp the summed interval, not each row, so a unit that both draws and
+            -- generates within one 5-minute bucket nets out before the floor applies.
+            CASE
+                WHEN u.fueltech_id IN ({_NEGATIVE_CAPABLE_FUELTECHS_SQL})
+                    THEN round(sum(fs.generated), 4)
+                ELSE greatest(round(sum(fs.generated), 4), 0)
+            END as generated,
+            CASE
+                WHEN u.fueltech_id IN ({_NEGATIVE_CAPABLE_FUELTECHS_SQL})
+                    THEN round(sum(fs.energy), 4)
+                ELSE greatest(round(sum(fs.energy), 4), 0)
+            END as energy,
             round(sum(fs.energy_storage), 4) as energy_storage
         FROM
             facility_scada fs
@@ -449,8 +485,20 @@ async def _stream_unit_interval_data(
             u.fueltech_id,
             ftg.code as fueltech_group_id,
             ftg.renewable as renewable,
-            round(sum(fs.generated), 4) as generated,
-            round(sum(fs.energy), 4) as energy,
+            -- Clamp one-way generators at 0: a negative reading is site/auxiliary load on
+            -- the same meter, not negative generation. See _NEGATIVE_CAPABLE_FUELTECHS.
+            -- Clamp the summed interval, not each row, so a unit that both draws and
+            -- generates within one 5-minute bucket nets out before the floor applies.
+            CASE
+                WHEN u.fueltech_id IN ({_NEGATIVE_CAPABLE_FUELTECHS_SQL})
+                    THEN round(sum(fs.generated), 4)
+                ELSE greatest(round(sum(fs.generated), 4), 0)
+            END as generated,
+            CASE
+                WHEN u.fueltech_id IN ({_NEGATIVE_CAPABLE_FUELTECHS_SQL})
+                    THEN round(sum(fs.energy), 4)
+                ELSE greatest(round(sum(fs.energy), 4), 0)
+            END as energy,
             round(sum(fs.energy_storage), 4) as energy_storage
         FROM
             facility_scada fs

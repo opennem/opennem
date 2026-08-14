@@ -34,10 +34,38 @@ from opennem.core.networks import network_from_network_code
 from opennem.db import get_read_session, get_write_session, retry_on_deadlock
 from opennem.db.models.opennem import Facility, Unit
 from opennem.schema.facility import FacilitySchema
-from opennem.schema.unit import UnitStatusType
+from opennem.schema.unit import UnitSchema, UnitStatusType
 from opennem.workers.facility_data_seen import update_facility_seen_range
 
 logger = logging.getLogger("sanity.importer")
+
+
+def normalise_osm_way_id(value: str | None) -> str | None:
+    """Trim an osm way id, collapsing blank to None so it clears rather than storing "".
+
+    A whitespace-only value from the CMS must read as "no link", not as a link to an empty
+    string, or the column stays truthy and the boundary is never retracted.
+    """
+    return (value or "").strip() or None
+
+
+def _resolved_codes(record: FacilitySchema | UnitSchema) -> tuple[str, str]:
+    """Operational and display code for a facility or unit.
+
+    `_validate_unique_codes` resolves these against the whole CMS payload, because whether a
+    leading "0" is a synthetic prefix or part of a real code depends on what every other
+    record has claimed (#481). Re-deriving them here with `strip_synthetic_prefix` alone
+    would reach a different answer for a collision and reintroduce the bug.
+
+    Falls back to the local strip for callers that build a schema outside the validated
+    sync path, where there is no payload to resolve against.
+    """
+    operational, display = record.operational_code, record.display_code
+
+    if operational and display:
+        return operational, display
+
+    return strip_synthetic_prefix(record.code)
 
 
 def get_opennem_stations() -> list[dict]:
@@ -119,7 +147,7 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 logger.info(f"Would create new facility: {facility.code} - {facility.name}")
                 return False
 
-            facility_operational_code, facility_display_code = strip_synthetic_prefix(facility.code)
+            facility_operational_code, facility_display_code = _resolved_codes(facility)
 
             facility_db = Facility(
                 code=facility_operational_code,
@@ -163,7 +191,7 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
             record_updated = True
 
         if facility.code:
-            facility_op_code, facility_disp_code = strip_synthetic_prefix(facility.code)
+            facility_op_code, facility_disp_code = _resolved_codes(facility)
             if facility_op_code != facility_db.code:
                 facility_db.code = facility_op_code
                 record_updated = True
@@ -201,9 +229,23 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
             facility_db.cms_id = facility.cms_id
             record_updated = True
 
-        # Update new fields
-        if hasattr(facility, "osm_way_id") and facility.osm_way_id:
-            facility_db.osm_way_id = facility.osm_way_id.strip()
+        # Update new fields.
+        #
+        # osm_way_id syncs unconditionally, including to NULL. The truthy guard the other
+        # fields use meant clearing a link in the CMS had no effect downstream, so a wrong
+        # match was permanent: TESLA_PICTON (WA) kept pointing at Pindari Power Station in
+        # NSW, 3,392 km away, and kept serving that boundary, even after the id was removed
+        # from Sanity (#481).
+        #
+        # boundary is derived from osm_way_id by bin/osm-import-boundaries.py, which only
+        # fills rows where boundary IS NULL and so would never retract a stale polygon.
+        # Dropping the link has to drop the geometry with it or the wrong shape outlives it.
+        osm_way_id = normalise_osm_way_id(facility.osm_way_id)
+        if osm_way_id != facility_db.osm_way_id:
+            if osm_way_id is None:
+                logger.info(f"Clearing osm_way_id {facility_db.osm_way_id} and boundary for {facility.code}")
+                facility_db.boundary = None
+            facility_db.osm_way_id = osm_way_id
             record_updated = True
 
         if hasattr(facility, "npi_id") and facility.npi_id:
@@ -277,7 +319,7 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                     else None
                 )
 
-                unit_operational_code, unit_display_code = strip_synthetic_prefix(unit.code)
+                unit_operational_code, unit_display_code = _resolved_codes(unit)
 
                 unit_db = Unit(
                     code=unit_operational_code,
@@ -369,7 +411,7 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
 
             # Always update all unit metadata from CMS
             if unit.code:
-                unit_op_code, unit_disp_code = strip_synthetic_prefix(unit.code)
+                unit_op_code, unit_disp_code = _resolved_codes(unit)
                 if unit_op_code != unit_db.code:
                     unit_db.code = unit_op_code  # type: ignore
                     record_updated = True
