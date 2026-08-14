@@ -150,6 +150,9 @@ class UnitSchema(BaseModel):
     """Facility output schema"""
 
     code: DUIDType
+    # Resolved by _validate_unique_codes against the whole payload — see FacilitySchema.
+    operational_code: str | None = None
+    display_code: str | None = None
     dispatch_type: UnitDispatchType
     fueltech_id: UnitFueltechType
     status_id: UnitStatusType
