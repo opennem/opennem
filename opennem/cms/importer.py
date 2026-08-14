@@ -34,10 +34,29 @@ from opennem.core.networks import network_from_network_code
 from opennem.db import get_read_session, get_write_session, retry_on_deadlock
 from opennem.db.models.opennem import Facility, Unit
 from opennem.schema.facility import FacilitySchema
-from opennem.schema.unit import UnitStatusType
+from opennem.schema.unit import UnitSchema, UnitStatusType
 from opennem.workers.facility_data_seen import update_facility_seen_range
 
 logger = logging.getLogger("sanity.importer")
+
+
+def _resolved_codes(record: FacilitySchema | UnitSchema) -> tuple[str, str]:
+    """Operational and display code for a facility or unit.
+
+    `_validate_unique_codes` resolves these against the whole CMS payload, because whether a
+    leading "0" is a synthetic prefix or part of a real code depends on what every other
+    record has claimed (#481). Re-deriving them here with `strip_synthetic_prefix` alone
+    would reach a different answer for a collision and reintroduce the bug.
+
+    Falls back to the local strip for callers that build a schema outside the validated
+    sync path, where there is no payload to resolve against.
+    """
+    operational, display = record.operational_code, record.display_code
+
+    if operational and display:
+        return operational, display
+
+    return strip_synthetic_prefix(record.code)
 
 
 def get_opennem_stations() -> list[dict]:
@@ -119,7 +138,7 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                 logger.info(f"Would create new facility: {facility.code} - {facility.name}")
                 return False
 
-            facility_operational_code, facility_display_code = strip_synthetic_prefix(facility.code)
+            facility_operational_code, facility_display_code = _resolved_codes(facility)
 
             facility_db = Facility(
                 code=facility_operational_code,
@@ -163,7 +182,7 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
             record_updated = True
 
         if facility.code:
-            facility_op_code, facility_disp_code = strip_synthetic_prefix(facility.code)
+            facility_op_code, facility_disp_code = _resolved_codes(facility)
             if facility_op_code != facility_db.code:
                 facility_db.code = facility_op_code
                 record_updated = True
@@ -277,7 +296,7 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
                     else None
                 )
 
-                unit_operational_code, unit_display_code = strip_synthetic_prefix(unit.code)
+                unit_operational_code, unit_display_code = _resolved_codes(unit)
 
                 unit_db = Unit(
                     code=unit_operational_code,
@@ -369,7 +388,7 @@ async def create_or_update_database_facility(facility: FacilitySchema, send_slac
 
             # Always update all unit metadata from CMS
             if unit.code:
-                unit_op_code, unit_disp_code = strip_synthetic_prefix(unit.code)
+                unit_op_code, unit_disp_code = _resolved_codes(unit)
                 if unit_op_code != unit_db.code:
                     unit_db.code = unit_op_code  # type: ignore
                     record_updated = True

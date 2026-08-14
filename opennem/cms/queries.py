@@ -35,7 +35,7 @@ from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_ex
 
 from opennem import settings
 from opennem.cms.client import sanity_client
-from opennem.cms.utils import strip_synthetic_prefix
+from opennem.cms.utils import resolve_operational_code, strip_synthetic_prefix
 from opennem.schema.facility import FacilityPhotoOutputSchema, FacilitySchema
 from opennem.schema.unit import UnitSchema
 
@@ -207,53 +207,71 @@ def get_unit_factors() -> list[dict]:
 
 
 def _validate_unique_codes(facilities: list[FacilitySchema]) -> list[FacilitySchema]:
-    """Validate unique codes and deduplicate synthetic/real collisions.
+    """Validate unique codes and resolve synthetic/real collisions.
 
-    Checks for duplicate codes using stripped operational codes (no "0" prefix).
-    When a synthetic (0-prefixed) facility collides with a real one, the synthetic
-    is dropped with a warning. True duplicates (same raw code) still raise.
+    Codes are compared on their operational form (no synthetic "0" prefix). A synthetic
+    code whose stripped form is claimed by a *different* record keeps its prefix instead of
+    being stripped, so both records survive; see `resolve_operational_code`. True duplicates
+    (two records with the same raw code) still raise.
+
+    The resolved codes are written back onto each schema as `operational_code` /
+    `display_code` so the importer persists exactly what was validated here rather than
+    re-deriving it and reaching a different answer.
 
     Returns:
-        Filtered list with synthetic duplicates removed.
+        The facilities, with codes resolved. Nothing is dropped for a prefix collision.
     """
+    # Resolve against every raw code in the payload before assigning any, so the outcome
+    # does not depend on which of a colliding pair happens to come first in the list.
+    raw_facility_codes = {f.code for f in facilities if f.code}
+    raw_unit_codes = {u.code for f in facilities for u in (f.units or []) if u.code}
+
     facility_codes: dict[str, str] = {}
     unit_codes: dict[str, str] = {}
-    filtered_facilities: list[FacilitySchema] = []
 
     for facility in facilities:
         if not facility.code:
             raise CMSQueryError(f"Facility missing code (facility id: {facility.cms_id})")
 
-        facility_op_code, _ = strip_synthetic_prefix(facility.code)
+        facility_op_code, facility_disp_code = resolve_operational_code(facility.code, raw_facility_codes - {facility.code})
+
         if facility_op_code in facility_codes:
             existing_code = facility_codes[facility_op_code]
-            if existing_code != facility.code:
-                # Synthetic/real collision — skip synthetic
-                logger.warning(f"Skipping duplicate facility {facility.code} (collides with {existing_code})")
-                continue
             raise DuplicateCodeError(
                 f"Duplicate facility code: {facility.code} (first: {existing_code}, second: {facility.cms_id})"
             )
+
+        if strip_synthetic_prefix(facility.code)[0] != facility_op_code:
+            logger.info(f"Keeping synthetic prefix on facility {facility.code} (stripped code belongs to another facility)")
+
         facility_codes[facility_op_code] = facility.code
+        facility.operational_code = facility_op_code
+        facility.display_code = facility_disp_code
+
+        # Units keep the pre-existing skip-with-warning behaviour on a genuine duplicate.
+        # After prefix resolution the only way to land here is two units sharing a raw code,
+        # which is a CMS authoring error rather than something this function can resolve.
+        kept_units = []
+        for unit in facility.units or []:
+            if not unit.code:
+                raise CMSQueryError(f"Unit missing code in facility: {facility.code}")
+
+            unit_op_code, unit_disp_code = resolve_operational_code(unit.code, raw_unit_codes - {unit.code})
+
+            if unit_op_code in unit_codes:
+                existing_fac = unit_codes[unit_op_code]
+                logger.warning(f"Skipping duplicate unit {unit.code} in {facility.code} (collides with {existing_fac})")
+                continue
+
+            unit_codes[unit_op_code] = facility.code
+            unit.operational_code = unit_op_code
+            unit.display_code = unit_disp_code
+            kept_units.append(unit)
 
         if facility.units:
-            filtered_units = []
-            for unit in facility.units:
-                if not unit.code:
-                    raise CMSQueryError(f"Unit missing code in facility: {facility.code}")
+            facility.units = kept_units
 
-                unit_op_code, _ = strip_synthetic_prefix(unit.code)
-                if unit_op_code in unit_codes:
-                    existing_fac = unit_codes[unit_op_code]
-                    logger.warning(f"Skipping duplicate unit {unit.code} in {facility.code} (collides with {existing_fac})")
-                    continue
-                unit_codes[unit_op_code] = facility.code
-                filtered_units.append(unit)
-            facility.units = filtered_units
-
-        filtered_facilities.append(facility)
-
-    return filtered_facilities
+    return facilities
 
 
 # Transient CMS errors worth retrying. The sanity client raises its own exception types
