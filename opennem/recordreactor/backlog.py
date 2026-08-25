@@ -263,7 +263,10 @@ def _analyze_milestone_records(
         else:
             raise ValueError("Price records are only supported at the interval period")
     elif milestone_type == MilestoneType.demand:
-        interval_count = "1"
+        # interval_count keeps the default count(distinct interval) at day+ — hardcoding it to 1
+        # made every low candidate fail the interval_threshold guard, so full-history rebuilds
+        # emitted zero demand low records and the incremental worker minted false lows into the
+        # empty chains (#640)
         if period == MilestonePeriod.interval:
             metric_column = "demand"
             agg_function = "AVG"

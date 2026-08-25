@@ -11,6 +11,7 @@ import pytest
 from bin.repair_demand_energy_milestones import (
     REBUILD_PERIODS,
     _assert_purge_matches_rebuild,
+    _assert_rebuild_has_both_aggregates,
     _assert_rebuild_sane,
 )
 
@@ -68,3 +69,28 @@ def test_rebuild_sane_rejects_rows_the_rebuild_did_not_produce() -> None:
 def test_rebuild_sane_rejects_dropped_rows() -> None:
     with pytest.raises(SystemExit, match="dropped on insert"):
         _assert_rebuild_sane(["MWh"], stored=150, attempted=161)
+
+
+def _record_ids_for_all_aggregates() -> set[str]:
+    return {
+        f"au.nem.demand.energy.{period}.{aggregate}"
+        for period in ("day", "month", "quarter", "year")
+        for aggregate in ("high", "low")
+    }
+
+
+def test_both_aggregates_accepts_a_full_rebuild() -> None:
+    _assert_rebuild_has_both_aggregates(_record_ids_for_all_aggregates())
+
+
+@pytest.mark.parametrize("aggregate", ["high", "low"])
+def test_both_aggregates_rejects_a_missing_class(aggregate: str) -> None:
+    # #640: the backlog emitted zero demand lows and the stored==attempted check could not see it
+    record_ids = {record_id for record_id in _record_ids_for_all_aggregates() if not record_id.endswith(f".day.{aggregate}")}
+    with pytest.raises(SystemExit, match=f".day.{aggregate}"):
+        _assert_rebuild_has_both_aggregates(record_ids)
+
+
+def test_both_aggregates_rejects_an_empty_rebuild() -> None:
+    with pytest.raises(SystemExit):
+        _assert_rebuild_has_both_aggregates(set())

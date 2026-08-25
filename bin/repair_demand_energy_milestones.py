@@ -130,6 +130,25 @@ def _assert_purge_matches_rebuild(periods: list[str]) -> None:
         )
 
 
+def _assert_rebuild_has_both_aggregates(attempted_record_ids: set[str]) -> None:
+    """Every rebuilt period must produce both high AND low chains.
+
+    The `stored == attempted` check below cannot see a record class the rebuild never attempted:
+    in #640 the backlog silently emitted zero demand low records (interval_count was hardcoded to 1
+    and never met the low-record interval threshold), the purge+rebuild left every `.low` chain
+    empty, and the incremental worker then minted the first period it saw as a false record.
+    """
+    for period in REBUILD_PERIODS:
+        for aggregate in ("high", "low"):
+            suffix = f".{period.value}.{aggregate}"
+            if not any(record_id.endswith(suffix) for record_id in attempted_record_ids):
+                raise SystemExit(
+                    f"Rebuild produced no '{suffix}' records — a whole aggregate class is missing "
+                    f"(#640 was zero lows from a broken interval_count guard). Investigate before the "
+                    f"purge is papered over by incrementally-minted false records."
+                )
+
+
 def _assert_rebuild_sane(units: list[str], stored: int, attempted: int) -> None:
     """Post-conditions for a successful rebuild. Any failure exits non-zero rather than logging.
 
@@ -214,6 +233,8 @@ async def repair_demand_energy_milestones(dry_run: bool = False) -> None:
     )
     attempted = {(record.record_id, record.interval) for record in records}
     logger.info(f"Rebuilt {len(attempted)} demand energy milestone records from {start_date} to {end_date}")
+
+    _assert_rebuild_has_both_aggregates({record_id for record_id, _ in attempted})
 
     rebuilt = await _summarise_existing()
     rebuilt_total = sum(count for _, count, _ in rebuilt)
