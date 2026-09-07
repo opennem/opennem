@@ -80,12 +80,50 @@ async def test_nem_demand_energy_is_mwh_not_gwh(no_flows) -> None:
 
 
 @pytest.mark.asyncio
-async def test_wem_uses_30_minute_intervals(no_flows) -> None:
+async def test_wem_rows_are_five_minute_buckets_like_nem(no_flows) -> None:
+    """WEM rows arrive on the same 5-minute grid as NEM, so they take the same divisor.
+
+    `_get_market_summary_data` gapfills every network with `time_bucket_gapfill('5 minutes', ...)`,
+    including the `wem_generation` demand proxy. Dividing WEM by its 30-minute publication cadence
+    treated one 5-minute bucket as half an hour of energy and left every WEM energy column, and the
+    market values built from them, 6x too high: 105 TWh a year against a true ~18 TWh.
+    """
     (row,) = await _prepare([_record("WEM")])
 
-    # WEM publishes 30-minute intervals, so intervals_per_hour is 2: 6000 / 2 = 3000 MWh.
-    assert row[IDX_DEMAND_ENERGY] == pytest.approx(3000.0)
-    assert row[IDX_DEMAND_TOTAL_ENERGY] == pytest.approx(3300.0)
+    # 6000 MW held for one 5-minute interval = 6000 / 12 = 500 MWh. The 30-minute divisor gave 3000.
+    assert row[IDX_DEMAND_ENERGY] == pytest.approx(500.0)
+    assert row[IDX_DEMAND_TOTAL_ENERGY] == pytest.approx(550.0)
+
+    # Market value follows energy, so it carried the same 6x.
+    assert row[IDX_DEMAND_MARKET_VALUE] == pytest.approx(50_000.0)
+
+
+@pytest.mark.asyncio
+async def test_energy_divisor_does_not_vary_by_network(no_flows) -> None:
+    """No network gets its own divisor — the grid is 5-minute for all of them."""
+    (nem_row,) = await _prepare([_record("NEM")])
+    (wem_row,) = await _prepare([_record("WEM")])
+
+    for index in (
+        IDX_DEMAND_ENERGY,
+        IDX_DEMAND_TOTAL_ENERGY,
+        IDX_DEMAND_GROSS_ENERGY,
+        IDX_GENERATION_RENEWABLE_ENERGY,
+        IDX_RENEWABLE_WITH_STORAGE_ENERGY,
+        IDX_CURTAILMENT_ENERGY_SOLAR,
+        IDX_CURTAILMENT_ENERGY_WIND,
+    ):
+        assert wem_row[index] == pytest.approx(nem_row[index])
+
+
+@pytest.mark.asyncio
+async def test_wem_day_of_flat_demand_sums_to_the_mw_average(no_flows) -> None:
+    """288 WEM buckets at a flat 6000 MW must sum to 144,000 MWh, the MW average over 24 hours."""
+    records = [_record("WEM") for _ in range(288)]
+    rows = await _prepare(records)
+
+    daily_mwh = sum(row[IDX_DEMAND_ENERGY] or 0 for row in rows)
+    assert daily_mwh == pytest.approx(6000.0 * 24)
 
 
 @pytest.mark.asyncio

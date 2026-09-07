@@ -35,6 +35,14 @@ _MARKET_SUMMARY_MATERIALIZED_VIEWS = [
     MARKET_SUMMARY_MONTHLY_VIEW,
 ]
 
+# Every market summary row covers exactly five minutes. `_get_market_summary_data` gapfills
+# every network onto a `time_bucket_gapfill('5 minutes', ...)` grid — including WEM, whose demand
+# proxy comes from the 5-minute `wem_generation` CTE and whose 30-minute trading price is carried
+# across the buckets with locf. So the trapezoid MW average is divided by 12 for every network.
+# Dividing WEM by its native 30-minute publication cadence (intervals_per_hour = 2) instead made
+# every WEM energy column — and the market values derived from them — 6x too high.
+INTERVALS_PER_HOUR = 12.0
+
 
 async def _get_market_summary_data(
     session: AsyncSession, start_time: datetime, end_time: datetime
@@ -487,111 +495,27 @@ async def _prepare_market_summary_data(
         ]
     )
 
-    network_intervals = {
-        "NEM": 5,
-        "WEM": 30,
-    }
-
-    # Create intervals_per_hour mapping
-    intervals_map = {network: 60 / interval for network, interval in network_intervals.items()}
-    default_intervals = 60 / 5  # Default to 5-minute intervals
-
     # Trapezoidal energy per interval: MW averaged over the interval, divided by intervals_per_hour
-    # gives MWh. There is no further scaling — a /1000 here treated the MW inputs as kW and left every
-    # energy column (and the market values derived from them) 1000x low, i.e. GWh labelled MWh (#605).
+    # gives MWh. Every row is a 5-minute bucket for every network — see INTERVALS_PER_HOUR; a
+    # per-network divisor here made WEM 6x high. There is no further scaling — a /1000 treated the MW
+    # inputs as kW and left every energy column (and the market values derived from them) 1000x low,
+    # i.e. GWh labelled MWh (#605).
+    def _trapezoid_energy(current: str, previous: str, alias: str) -> pl.Expr:
+        return ((pl.col(current) + pl.col(previous)) / 2 / INTERVALS_PER_HOUR).round(4).alias(alias)
+
     df = df.with_columns(
         [
-            (
-                (
-                    (pl.col("demand") + pl.col("prev_demand"))
-                    / 2
-                    / pl.when(pl.col("network_id").is_in(list(intervals_map.keys())))
-                    .then(
-                        pl.col("network_id").map_elements(
-                            lambda x: intervals_map.get(x, default_intervals), return_dtype=pl.Float64
-                        )
-                    )
-                    .otherwise(default_intervals)
-                ).round(4)
-            ).alias("demand_energy"),
-            (
-                (
-                    (pl.col("demand_total") + pl.col("prev_demand_total"))
-                    / 2
-                    / pl.when(pl.col("network_id").is_in(list(intervals_map.keys())))
-                    .then(
-                        pl.col("network_id").map_elements(
-                            lambda x: intervals_map.get(x, default_intervals), return_dtype=pl.Float64
-                        )
-                    )
-                    .otherwise(default_intervals)
-                ).round(4)
-            ).alias("demand_total_energy"),
-            (
-                (
-                    (pl.col("demand_gross") + pl.col("prev_demand_gross"))
-                    / 2
-                    / pl.when(pl.col("network_id").is_in(list(intervals_map.keys())))
-                    .then(
-                        pl.col("network_id").map_elements(
-                            lambda x: intervals_map.get(x, default_intervals), return_dtype=pl.Float64
-                        )
-                    )
-                    .otherwise(default_intervals)
-                ).round(4)
-            ).alias("demand_gross_energy"),
-            (
-                (
-                    (pl.col("generation_renewable") + pl.col("prev_generation_renewable"))
-                    / 2
-                    / pl.when(pl.col("network_id").is_in(list(intervals_map.keys())))
-                    .then(
-                        pl.col("network_id").map_elements(
-                            lambda x: intervals_map.get(x, default_intervals), return_dtype=pl.Float64
-                        )
-                    )
-                    .otherwise(default_intervals)
-                ).round(4)
-            ).alias("generation_renewable_energy"),
-            (
-                (
-                    (pl.col("generation_renewable_with_storage") + pl.col("prev_generation_renewable_with_storage"))
-                    / 2
-                    / pl.when(pl.col("network_id").is_in(list(intervals_map.keys())))
-                    .then(
-                        pl.col("network_id").map_elements(
-                            lambda x: intervals_map.get(x, default_intervals), return_dtype=pl.Float64
-                        )
-                    )
-                    .otherwise(default_intervals)
-                ).round(4)
-            ).alias("generation_renewable_with_storage_energy"),
-            (
-                (
-                    (pl.col("curtailment_solar_total") + pl.col("prev_curtailment_solar_total"))
-                    / 2
-                    / pl.when(pl.col("network_id").is_in(list(intervals_map.keys())))
-                    .then(
-                        pl.col("network_id").map_elements(
-                            lambda x: intervals_map.get(x, default_intervals), return_dtype=pl.Float64
-                        )
-                    )
-                    .otherwise(default_intervals)
-                ).round(4)
-            ).alias("curtailment_energy_solar_total"),
-            (
-                (
-                    (pl.col("curtailment_wind_total") + pl.col("prev_curtailment_wind_total"))
-                    / 2
-                    / pl.when(pl.col("network_id").is_in(list(intervals_map.keys())))
-                    .then(
-                        pl.col("network_id").map_elements(
-                            lambda x: intervals_map.get(x, default_intervals), return_dtype=pl.Float64
-                        )
-                    )
-                    .otherwise(default_intervals)
-                ).round(4)
-            ).alias("curtailment_energy_wind_total"),
+            _trapezoid_energy("demand", "prev_demand", "demand_energy"),
+            _trapezoid_energy("demand_total", "prev_demand_total", "demand_total_energy"),
+            _trapezoid_energy("demand_gross", "prev_demand_gross", "demand_gross_energy"),
+            _trapezoid_energy("generation_renewable", "prev_generation_renewable", "generation_renewable_energy"),
+            _trapezoid_energy(
+                "generation_renewable_with_storage",
+                "prev_generation_renewable_with_storage",
+                "generation_renewable_with_storage_energy",
+            ),
+            _trapezoid_energy("curtailment_solar_total", "prev_curtailment_solar_total", "curtailment_energy_solar_total"),
+            _trapezoid_energy("curtailment_wind_total", "prev_curtailment_wind_total", "curtailment_energy_wind_total"),
         ]
     )
 
