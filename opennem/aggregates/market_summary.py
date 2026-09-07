@@ -21,7 +21,7 @@ from opennem.db.clickhouse.views import (
     MARKET_SUMMARY_DAILY_VIEW,
     MARKET_SUMMARY_MONTHLY_VIEW,
 )
-from opennem.schema.network import NetworkNEM
+from opennem.schema.network import NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network
 
 # Flow solver imports (lazy — only used when flows_v4 is enabled)
@@ -42,6 +42,37 @@ _MARKET_SUMMARY_MATERIALIZED_VIEWS = [
 # Dividing WEM by its native 30-minute publication cadence (intervals_per_hour = 2) instead made
 # every WEM energy column — and the market values derived from them — 6x too high.
 INTERVALS_PER_HOUR = 12.0
+
+# Regions retired from the market that are still genuine historical rows in balancing_summary and
+# so must keep flowing into market_summary. SNOWY1 was its own NEM region until it was folded into
+# NSW1/VIC1 in July 2008 and holds ~50 MW of real demand across 1998-2008; dropping it would
+# silently rewrite a decade of network-level NEM demand.
+_HISTORIC_NETWORK_REGIONS: dict[str, list[str]] = {"NEM": ["SNOWY1"]}
+
+
+def _declared_network_regions() -> list[tuple[str, str]]:
+    """The (network_id, network_region) pairs that may appear in market_summary.
+
+    Built from the network schema rather than from whatever balancing_summary happens to hold.
+    balancing_summary also carries pairs that are not market rows of their own: WEM/WEMDE (the
+    WEMDE dispatch feed, which duplicates the WEM demand series) and the known-bad NEM/WEM.
+    """
+    pairs: list[tuple[str, str]] = []
+
+    for network in (NetworkNEM, NetworkWEM):
+        for region in list(network.regions or []) + _HISTORIC_NETWORK_REGIONS.get(network.code, []):
+            pairs.append((network.code, region))
+
+    return pairs
+
+
+def _declared_network_regions_values_sql() -> str:
+    """Render the declared pairs as a SQL VALUES list.
+
+    Inlined rather than bound: these are schema constants, never user input, and a bind
+    parameter list here would collide with the ':name' binds the surrounding query already uses.
+    """
+    return ", ".join(f"('{network_id}', '{network_region}')" for network_id, network_region in _declared_network_regions())
 
 
 async def _get_market_summary_data(
@@ -88,13 +119,28 @@ async def _get_market_summary_data(
     start_time_naive = start_time.replace(tzinfo=None)
     end_time_naive = end_time.replace(tzinfo=None)
 
-    query = text("""
-    WITH regions AS (
-        -- Get all unique network regions for the period
-        SELECT DISTINCT network_id, network_region
-        FROM balancing_summary
-        WHERE interval BETWEEN :start_time_window AND :end_time
-        AND is_forecast = false
+    query = text(f"""
+    WITH declared_regions AS (
+        -- The network_id/network_region pairs OpenNEM recognises, from the network schema.
+        -- balancing_summary holds pairs that are not markets of their own and must never reach
+        -- market_summary. WEM/WEMDE is the WEMDE dispatch feed filed under the WEM network with
+        -- its own region label: it inherits the network-wide WEM demand from the wem_generation
+        -- CTE below, so it emits a byte-for-byte duplicate of the WEM/WEM series and doubles
+        -- every network-level WEM sum over its window. NEM/WEM is long-standing bad data.
+        SELECT * FROM (VALUES {_declared_network_regions_values_sql()}) AS v (network_id, network_region)
+    ),
+    regions AS (
+        -- Unique declared network regions actually reporting in the period.
+        -- Matching on the PAIR matters: filtering network_id and network_region independently
+        -- (as this did) lets the cross product back in downstream, which is how NEM/WEM rows
+        -- kept being rebuilt even though no such market row exists.
+        SELECT DISTINCT bs.network_id, bs.network_region
+        FROM balancing_summary bs
+        JOIN declared_regions dr
+            ON dr.network_id = bs.network_id
+            AND dr.network_region = bs.network_region
+        WHERE bs.interval BETWEEN :start_time_window AND :end_time
+        AND bs.is_forecast = false
     ),
     rooftop_data AS (
         -- Rooftop solar generation by region, gap-filled to the 5-min grid.
@@ -145,7 +191,7 @@ async def _get_market_summary_data(
                     AND u.fueltech_id = 'solar_rooftop'
                     AND fs.is_forecast = false
                     AND f.network_id IN ('AEMO_ROOFTOP', 'OPENNEM_ROOFTOP_BACKFILL')
-                    AND f.network_region IN (SELECT network_region FROM regions)
+                    AND f.network_region IN (SELECT network_region FROM regions WHERE network_id = 'NEM')
                 GROUP BY 1, f.network_region
             ) rooftop_gapfilled
         ) rooftop_bounded
@@ -176,8 +222,7 @@ async def _get_market_summary_data(
         JOIN facilities f ON u.station_id = f.id
         WHERE fs.interval BETWEEN :start_time_window AND :end_time
             AND fs.is_forecast = false
-            AND f.network_id IN (SELECT network_id FROM regions)
-            AND f.network_region IN (SELECT network_region FROM regions)
+            AND (f.network_id, f.network_region) IN (SELECT network_id, network_region FROM regions)
         GROUP BY 1, 2, 3
     ),
     wem_generation AS (
@@ -238,8 +283,7 @@ async def _get_market_summary_data(
         FROM balancing_summary
         WHERE interval BETWEEN :start_time_window AND :end_time
             AND is_forecast = false
-            AND network_id IN (SELECT network_id FROM regions)
-            AND network_region IN (SELECT network_region FROM regions)
+            AND (network_id, network_region) IN (SELECT network_id, network_region FROM regions)
         GROUP BY 1, 2, 3
     ),
     combined_data AS (
