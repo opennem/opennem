@@ -16,11 +16,22 @@ backend back so the lock is dropped, and a second client sharing that backend re
 re-entrantly and sees success. A transaction-scoped lock is bound to a transaction, and pgbouncer
 cannot hand that backend to anyone else until the transaction ends, so it behaves correctly.
 
-The holder therefore keeps one transaction open for the whole rebuild, which collides with the
-5-minute `idle_in_transaction_session_timeout` set on dev and prod. `SET LOCAL` disables that timeout
-for the holder's transaction only, so nothing leaks back into the pooled connection. A heartbeat runs
-alongside as a liveness check — it cannot be relied on for the timeout, because the rebuild drives
-clickhouse-driver synchronously and a single long query blocks the event loop for minutes.
+THE HOLDER RUNS IN ITS OWN THREAD
+---------------------------------
+Holding one transaction open for a whole rebuild needs two things the obvious implementation does
+not give you. Both were observed failing on dev before this shape:
+
+- `idle_in_transaction_session_timeout` is 5 minutes. `SET LOCAL` disables it for the holder's
+  transaction only, so the pooled connection is handed back unchanged.
+- The connection still has to carry traffic. The rebuild drives clickhouse-driver *synchronously*,
+  so a single analysis query blocks the caller's event loop for minutes; a heartbeat coroutine
+  sharing that loop never gets scheduled, the idle connection is dropped somewhere along the path
+  (Tailscale, pgbouncer), and the lock silently disappears mid-rebuild. So the holder owns a private
+  thread, a private event loop and a private engine, and none of them are touched by the rebuild.
+
+If the connection drops anyway the holder reconnects and re-takes the lock, logging the gap. Only a
+re-acquire that loses the race is fatal, and that is logged as critical rather than swallowed — a
+lapsed guard looks identical to a working one from the outside.
 
 WHAT THIS DOES NOT COVER
 ------------------------
@@ -36,62 +47,170 @@ after the fact by the surplus check in `bin/repair_demand_energy_milestones.py`.
 
 import asyncio
 import logging
+import threading
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncConnection, create_async_engine
+from sqlalchemy.pool import NullPool
 
-from opennem.db import get_read_session, get_write_session
+from opennem import settings
+from opennem.db import get_read_session
 
 logger = logging.getLogger("opennem.recordreactor.rebuild_guard")
 
 # Fixed application-wide key. Any process that writes milestones must agree on it.
 MILESTONE_REBUILD_LOCK_KEY = 640640640
 
-# Liveness check only — the idle timeout is disabled outright, see the module docstring.
-_HEARTBEAT_SECONDS = 60
+# How often the holder pokes its connection. Short enough that a dropped connection is noticed and
+# re-taken quickly, and that nothing along the path sees the connection as idle.
+_HEARTBEAT_SECONDS = 20.0
+
+# Granularity at which the holder notices the stop signal.
+_POLL_SECONDS = 0.5
 
 # Long enough for an incremental check that probed the lock just before it was taken to finish
 # writing before the caller starts deleting.
-_SETTLE_SECONDS = 60
+_SETTLE_SECONDS = 60.0
+
+# Bound on how long the caller waits for the holder thread to report back.
+_ACQUIRE_TIMEOUT_SECONDS = 60.0
 
 
 class MilestoneRebuildLockUnavailable(RuntimeError):
     """Raised when another rebuild already holds the lock."""
 
 
-async def _heartbeat(session: AsyncSession, stop: asyncio.Event) -> None:
-    """Liveness check on the holder's connection.
+@asynccontextmanager
+async def _holder_connection() -> AsyncIterator[AsyncConnection]:
+    """A connection of the holder's very own, on the holder thread's event loop.
 
-    Only this task touches the session between acquire and release, so there is no concurrent use of
-    the AsyncSession. It is not what keeps the transaction alive — `SET LOCAL` disables the idle
-    timeout — because it cannot run at all while the rebuild is inside a synchronous
-    clickhouse-driver call, and those block the event loop for minutes at a time.
+    Deliberately not `get_write_session()`: that engine's pool is bound to the caller's event loop,
+    and asyncpg connections cannot be shared across loops. NullPool keeps this to exactly one
+    connection with no pool state to leak back.
     """
+    engine = create_async_engine(str(settings.db_url), poolclass=NullPool, pool_pre_ping=True)
+
+    try:
+        async with engine.connect() as connection:
+            yield connection
+    finally:
+        await engine.dispose()
+
+
+class MilestoneRebuildLock:
+    """Handle for a held lock. `lock_lost` is True if the guard stopped protecting the rebuild."""
+
+    def __init__(self) -> None:
+        self.lock_lost = False
+
+
+async def _take_lock(connection: AsyncConnection) -> bool:
+    # The transaction stays open for the whole rebuild, far past the 5-minute
+    # idle_in_transaction_session_timeout dev and prod set. SET LOCAL scopes the override to this
+    # transaction, so nothing leaks into the connection after it ends.
+    await connection.execute(text("set local idle_in_transaction_session_timeout = 0"))
+    result = await connection.execute(text("select pg_try_advisory_xact_lock(:key)"), {"key": MILESTONE_REBUILD_LOCK_KEY})
+
+    return bool(result.scalar())
+
+
+async def _hold_lock(
+    handle: MilestoneRebuildLock,
+    acquired: dict[str, object],
+    ready: threading.Event,
+    stop: threading.Event,
+) -> None:
+    """Take the lock, then keep the connection warm until asked to stop.
+
+    Reconnects and re-takes the lock if the connection drops, which is the observed failure and not
+    a hypothetical one. The lock is genuinely free during that gap, at most one heartbeat wide.
+    """
+    holding = False
+
     while not stop.is_set():
         try:
-            await asyncio.wait_for(stop.wait(), timeout=_HEARTBEAT_SECONDS)
+            async with _holder_connection() as connection:
+                got = await _take_lock(connection)
+
+                if not holding:
+                    acquired["acquired"] = got
+                    ready.set()
+                    if not got:
+                        return
+                    holding = True
+                    logger.info(f"Acquired milestone rebuild lock {MILESTONE_REBUILD_LOCK_KEY}")
+                elif not got:
+                    handle.lock_lost = True
+                    logger.critical(
+                        f"Lost milestone rebuild lock {MILESTONE_REBUILD_LOCK_KEY} to a dropped connection and could "
+                        f"not re-acquire it — something else holds it and the incremental milestone writers are free "
+                        f"to write into this rebuild."
+                    )
+                    return
+                else:
+                    logger.warning(f"Re-acquired milestone rebuild lock {MILESTONE_REBUILD_LOCK_KEY} after a dropped connection")
+
+                if not await _heartbeat_until_stopped(connection, stop):
+                    continue  # connection died — reconnect and re-take
+
+                await connection.rollback()
+                logger.info(f"Released milestone rebuild lock {MILESTONE_REBUILD_LOCK_KEY}")
+                return
+        except Exception as e:
+            if not ready.is_set():
+                acquired["error"] = True
+                acquired["message"] = str(e)
+                ready.set()
+                raise
+
+            handle.lock_lost = True
+            logger.critical(f"Milestone rebuild lock holder failed ({e}) — the rebuild is no longer guarded")
             return
-        except TimeoutError:
-            pass
+
+
+async def _heartbeat_until_stopped(connection: AsyncConnection, stop: threading.Event) -> bool:
+    """Poke the connection until stopped. False means it died and the caller should reconnect."""
+    waited = 0.0
+
+    while not stop.is_set():
+        await asyncio.sleep(_POLL_SECONDS)
+        waited += _POLL_SECONDS
+
+        if waited < _HEARTBEAT_SECONDS:
+            continue
+
+        waited = 0.0
 
         try:
-            await session.execute(text("select 1"))
+            await connection.execute(text("select 1"))
         except Exception as e:
-            logger.critical(
-                f"Milestone rebuild lock heartbeat failed ({e}). The advisory lock is no longer held and the "
-                f"incremental milestone writers are free to write into the rebuild window."
-            )
-            return
+            logger.warning(f"Milestone rebuild lock connection dropped ({e}) — reconnecting")
+            return False
+
+    return True
+
+
+def _run_holder(
+    handle: MilestoneRebuildLock,
+    acquired: dict[str, object],
+    ready: threading.Event,
+    stop: threading.Event,
+) -> None:
+    try:
+        asyncio.run(_hold_lock(handle, acquired, ready, stop))
+    except Exception:
+        ready.set()
+        raise
 
 
 @asynccontextmanager
-async def milestone_rebuild_lock(settle_seconds: float = _SETTLE_SECONDS) -> AsyncIterator[None]:
+async def milestone_rebuild_lock(settle_seconds: float = _SETTLE_SECONDS) -> AsyncIterator[MilestoneRebuildLock]:
     """Hold the milestone rebuild lock for the duration of the block.
 
-    The transaction opened here does no writes — it exists only to own the lock. The rebuild's own
-    reads and writes use their own sessions as usual.
+    The transaction that owns the lock does no writes and lives on its own thread. The rebuild's own
+    reads and writes use the normal sessions.
 
     Raises MilestoneRebuildLockUnavailable if another rebuild is already running, rather than
     queueing behind it: two full rebuilds in sequence is never what the operator wanted.
@@ -100,41 +219,51 @@ async def milestone_rebuild_lock(settle_seconds: float = _SETTLE_SECONDS) -> Asy
         settle_seconds: wait between taking the lock and yielding, so an incremental run that
             probed the lock just before it was taken finishes before anything is deleted.
     """
-    async with get_write_session() as session:
-        # The rebuild holds this transaction open for far longer than the 5-minute
-        # idle_in_transaction_session_timeout dev and prod set. SET LOCAL scopes the override to
-        # this transaction, so the pooled connection is handed back unchanged.
-        await session.execute(text("set local idle_in_transaction_session_timeout = 0"))
+    handle = MilestoneRebuildLock()
+    acquired: dict[str, object] = {}
+    ready = threading.Event()
+    stop = threading.Event()
 
-        result = await session.execute(text("select pg_try_advisory_xact_lock(:key)"), {"key": MILESTONE_REBUILD_LOCK_KEY})
+    thread = threading.Thread(
+        target=_run_holder,
+        args=(handle, acquired, ready, stop),
+        name="milestone-rebuild-lock",
+        daemon=True,
+    )
+    thread.start()
 
-        if not result.scalar():
-            raise MilestoneRebuildLockUnavailable(
-                f"Another milestone rebuild holds advisory lock {MILESTONE_REBUILD_LOCK_KEY}. "
-                f"Wait for it to finish rather than running two rebuilds over the same table."
-            )
+    if not await asyncio.to_thread(ready.wait, _ACQUIRE_TIMEOUT_SECONDS):
+        stop.set()
+        raise MilestoneRebuildLockUnavailable(
+            f"Timed out after {_ACQUIRE_TIMEOUT_SECONDS}s waiting to take advisory lock {MILESTONE_REBUILD_LOCK_KEY}"
+        )
 
-        logger.info(f"Acquired milestone rebuild lock {MILESTONE_REBUILD_LOCK_KEY}")
+    if acquired.get("error"):
+        stop.set()
+        raise RuntimeError(f"Could not take the milestone rebuild lock: {acquired.get('message')}")
 
+    if not acquired.get("acquired"):
+        stop.set()
+        raise MilestoneRebuildLockUnavailable(
+            f"Another milestone rebuild holds advisory lock {MILESTONE_REBUILD_LOCK_KEY}. "
+            f"Wait for it to finish rather than running two rebuilds over the same table."
+        )
+
+    try:
         if settle_seconds > 0:
             logger.info(f"Settling for {settle_seconds}s so any in-flight incremental check finishes")
             await asyncio.sleep(settle_seconds)
 
-        stop = asyncio.Event()
-        heartbeat = asyncio.create_task(_heartbeat(session, stop))
+        yield handle
+    finally:
+        stop.set()
+        await asyncio.to_thread(thread.join, _ACQUIRE_TIMEOUT_SECONDS)
 
-        try:
-            yield
-        finally:
-            stop.set()
-            heartbeat.cancel()
-            try:
-                await heartbeat
-            except asyncio.CancelledError:
-                pass
-            # Rollback ends the transaction, which releases the lock. Nothing was written in it.
-            await session.rollback()
-            logger.info(f"Released milestone rebuild lock {MILESTONE_REBUILD_LOCK_KEY}")
+        if handle.lock_lost:
+            logger.critical(
+                "The milestone rebuild ran unguarded for part of its run — verify the milestones table against what "
+                "the rebuild produced before trusting it."
+            )
 
 
 async def milestone_rebuild_in_progress() -> bool:

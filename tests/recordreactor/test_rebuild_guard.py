@@ -2,9 +2,13 @@
 
 A full rebuild empties the milestones table and refills it over many minutes. While a chain is
 empty the incremental checker sees no previous record and mints the next bucket it looks at as a
-brand new one — #640. These tests pin the three halves of the guard: the holder takes a
-transaction-scoped advisory lock and releases it, the probe reports the lock as held, and the two
-scheduled writers return without doing any work when it is.
+brand new one — #640. These tests pin the three halves of the guard: the holder takes and keeps a
+transaction-scoped advisory lock, the probe reports the lock as held, and the two scheduled writers
+return without doing any work when it is.
+
+The holder deliberately runs on its own thread with its own event loop and its own connection,
+because the rebuild blocks the caller's loop inside synchronous clickhouse-driver calls for minutes
+at a time. These tests run the real threading against a fake connection.
 """
 
 from contextlib import asynccontextmanager
@@ -22,83 +26,161 @@ class _FakeResult:
         return self._value
 
 
-class _FakeSession:
-    """Records the SQL it is handed and hands back a canned pg_try_advisory_xact_lock answer."""
+class _FakeConnection:
+    """Records the SQL it is handed and answers the try-lock with a canned value.
 
-    def __init__(self, lock_acquired: bool = True) -> None:
+    `die_after_heartbeats` makes `select 1` raise, which is how a dropped connection presents.
+    """
+
+    def __init__(self, lock_acquired: bool = True, die_after_heartbeats: int | None = None) -> None:
         self.lock_acquired = lock_acquired
+        self.die_after_heartbeats = die_after_heartbeats
         self.statements: list[str] = []
+        self.heartbeats = 0
         self.rolled_back = False
 
     async def execute(self, statement, params=None) -> _FakeResult:
-        self.statements.append(str(statement))
+        sql = str(statement)
+        self.statements.append(sql)
+
+        if sql.strip() == "select 1":
+            self.heartbeats += 1
+            if self.die_after_heartbeats is not None and self.heartbeats > self.die_after_heartbeats:
+                raise ConnectionResetError("connection is closed")
+
         return _FakeResult(self.lock_acquired)
 
     async def rollback(self) -> None:
         self.rolled_back = True
 
 
-def _patch_sessions(monkeypatch, session: _FakeSession) -> None:
-    @asynccontextmanager
-    async def _session_factory():
-        yield session
+def _patch_holder(monkeypatch, connections: list[_FakeConnection]) -> list[_FakeConnection]:
+    """Hand the holder each connection in turn, so reconnects can be observed."""
+    handed: list[_FakeConnection] = []
+    remaining = list(connections)
 
-    monkeypatch.setattr(rebuild_guard, "get_write_session", _session_factory)
-    monkeypatch.setattr(rebuild_guard, "get_read_session", _session_factory)
+    @asynccontextmanager
+    async def _connection():
+        connection = remaining.pop(0) if remaining else connections[-1]
+        handed.append(connection)
+        yield connection
+
+    monkeypatch.setattr(rebuild_guard, "_holder_connection", _connection)
+    # Real threads and a real loop, but no reason to wait 20 seconds for a heartbeat.
+    monkeypatch.setattr(rebuild_guard, "_HEARTBEAT_SECONDS", 0.02)
+    monkeypatch.setattr(rebuild_guard, "_POLL_SECONDS", 0.01)
+
+    return handed
+
+
+def _patch_probe(monkeypatch, connection: _FakeConnection) -> None:
+    @asynccontextmanager
+    async def _session():
+        yield connection
+
+    monkeypatch.setattr(rebuild_guard, "get_read_session", _session)
 
 
 @pytest.mark.asyncio
 async def test_lock_is_transaction_scoped_and_released(monkeypatch) -> None:
     """A session-scoped lock is useless through pgbouncer — the key must be an xact lock, and the
     holding transaction must end on the way out."""
-    session = _FakeSession(lock_acquired=True)
-    _patch_sessions(monkeypatch, session)
+    connection = _FakeConnection()
+    _patch_holder(monkeypatch, [connection])
 
-    async with rebuild_guard.milestone_rebuild_lock(settle_seconds=0):
-        assert any("pg_try_advisory_xact_lock" in statement for statement in session.statements)
-        assert not session.rolled_back
+    async with rebuild_guard.milestone_rebuild_lock(settle_seconds=0) as lock:
+        assert any("pg_try_advisory_xact_lock" in statement for statement in connection.statements)
+        assert not connection.rolled_back
+        assert not lock.lock_lost
 
-    assert session.rolled_back
+    assert connection.rolled_back
 
 
 @pytest.mark.asyncio
 async def test_holder_disables_the_idle_in_transaction_timeout(monkeypatch) -> None:
     """The holder keeps a transaction open for the whole rebuild, well past the 5-minute
     idle_in_transaction_session_timeout dev and prod set. It must be disabled for that transaction,
-    and with SET LOCAL so the pooled connection is handed back unchanged."""
-    session = _FakeSession(lock_acquired=True)
-    _patch_sessions(monkeypatch, session)
+    and with SET LOCAL so the connection is left unchanged."""
+    connection = _FakeConnection()
+    _patch_holder(monkeypatch, [connection])
 
     async with rebuild_guard.milestone_rebuild_lock(settle_seconds=0):
         pass
 
-    timeout_statements = [s for s in session.statements if "idle_in_transaction_session_timeout" in s]
+    timeout_statements = [s for s in connection.statements if "idle_in_transaction_session_timeout" in s]
     assert timeout_statements, "holder never disabled the idle transaction timeout"
     assert all("set local" in s.lower() for s in timeout_statements)
 
     # It has to be in force before the lock is taken, or the timeout applies to the lock's own wait.
-    assert session.statements.index(timeout_statements[0]) < next(
-        i for i, s in enumerate(session.statements) if "pg_try_advisory_xact_lock" in s
+    assert connection.statements.index(timeout_statements[0]) < next(
+        i for i, s in enumerate(connection.statements) if "pg_try_advisory_xact_lock" in s
     )
+
+
+@pytest.mark.asyncio
+async def test_holder_keeps_the_connection_warm(monkeypatch) -> None:
+    """An idle connection gets dropped somewhere along the path and the lock goes with it, so the
+    holder must actually be issuing traffic while the rebuild runs."""
+    connection = _FakeConnection()
+    _patch_holder(monkeypatch, [connection])
+
+    async with rebuild_guard.milestone_rebuild_lock(settle_seconds=0):
+        # The caller's loop is free here; in production it would be blocked inside clickhouse-driver,
+        # which is exactly why the heartbeat lives on another thread.
+        await _wait_until(lambda: connection.heartbeats >= 2)
+
+    assert connection.heartbeats >= 2
+
+
+@pytest.mark.asyncio
+async def test_holder_reconnects_and_retakes_a_dropped_lock(monkeypatch) -> None:
+    """Observed on dev: the holder's connection was dropped two minutes into a rebuild. Reconnecting
+    and re-taking the lock beats leaving the rest of the rebuild unguarded."""
+    dropped = _FakeConnection(die_after_heartbeats=1)
+    replacement = _FakeConnection()
+    handed = _patch_holder(monkeypatch, [dropped, replacement])
+
+    async with rebuild_guard.milestone_rebuild_lock(settle_seconds=0) as lock:
+        await _wait_until(lambda: replacement in handed)
+
+    assert handed[:2] == [dropped, replacement]
+    assert any("pg_try_advisory_xact_lock" in s for s in replacement.statements)
+    assert not lock.lock_lost
+    assert replacement.rolled_back
+
+
+@pytest.mark.asyncio
+async def test_losing_the_lock_to_someone_else_is_reported(monkeypatch) -> None:
+    """If the re-acquire loses the race the rebuild is genuinely unguarded, and a lapsed guard looks
+    identical to a working one unless it is surfaced."""
+    dropped = _FakeConnection(die_after_heartbeats=1)
+    stolen = _FakeConnection(lock_acquired=False)
+    handed = _patch_holder(monkeypatch, [dropped, stolen])
+
+    async with rebuild_guard.milestone_rebuild_lock(settle_seconds=0) as lock:
+        await _wait_until(lambda: lock.lock_lost)
+
+    assert stolen in handed
+    assert lock.lock_lost
 
 
 @pytest.mark.asyncio
 async def test_lock_is_released_when_the_rebuild_raises(monkeypatch) -> None:
     """A crashed rebuild must not leave every scheduled milestone writer permanently skipping."""
-    session = _FakeSession(lock_acquired=True)
-    _patch_sessions(monkeypatch, session)
+    connection = _FakeConnection()
+    _patch_holder(monkeypatch, [connection])
 
     with pytest.raises(RuntimeError, match="rebuild blew up"):
         async with rebuild_guard.milestone_rebuild_lock(settle_seconds=0):
             raise RuntimeError("rebuild blew up")
 
-    assert session.rolled_back
+    assert connection.rolled_back
 
 
 @pytest.mark.asyncio
 async def test_second_rebuild_refuses_rather_than_queueing(monkeypatch) -> None:
-    session = _FakeSession(lock_acquired=False)
-    _patch_sessions(monkeypatch, session)
+    connection = _FakeConnection(lock_acquired=False)
+    _patch_holder(monkeypatch, [connection])
 
     with pytest.raises(rebuild_guard.MilestoneRebuildLockUnavailable):
         async with rebuild_guard.milestone_rebuild_lock(settle_seconds=0):
@@ -108,10 +190,10 @@ async def test_second_rebuild_refuses_rather_than_queueing(monkeypatch) -> None:
 @pytest.mark.asyncio
 async def test_probe_reports_the_lock_as_held(monkeypatch) -> None:
     """The probe's own try-lock failing is the signal that a rebuild owns it."""
-    _patch_sessions(monkeypatch, _FakeSession(lock_acquired=False))
+    _patch_probe(monkeypatch, _FakeConnection(lock_acquired=False))
     assert await rebuild_guard.milestone_rebuild_in_progress() is True
 
-    _patch_sessions(monkeypatch, _FakeSession(lock_acquired=True))
+    _patch_probe(monkeypatch, _FakeConnection(lock_acquired=True))
     assert await rebuild_guard.milestone_rebuild_in_progress() is False
 
 
@@ -119,12 +201,12 @@ async def test_probe_reports_the_lock_as_held(monkeypatch) -> None:
 async def test_probe_ends_its_own_transaction(monkeypatch) -> None:
     """The probe takes the lock to test it, so it must release it immediately or it becomes the
     thing it is checking for."""
-    session = _FakeSession(lock_acquired=True)
-    _patch_sessions(monkeypatch, session)
+    connection = _FakeConnection()
+    _patch_probe(monkeypatch, connection)
 
     await rebuild_guard.milestone_rebuild_in_progress()
 
-    assert session.rolled_back
+    assert connection.rolled_back
 
 
 @pytest.mark.asyncio
@@ -173,13 +255,13 @@ async def test_refresh_backlog_purges_inside_the_lock(monkeypatch) -> None:
     async def _lock():
         events.append("lock")
         try:
-            yield
+            yield rebuild_guard.MilestoneRebuildLock()
         finally:
             events.append("unlock")
 
     @asynccontextmanager
     async def _write_session():
-        session = _FakeSession()
+        session = _FakeConnection()
 
         async def _commit() -> None:
             events.append("commit")
@@ -199,3 +281,17 @@ async def test_refresh_backlog_purges_inside_the_lock(monkeypatch) -> None:
     await backlog.run_milestone_analysis_backlog(refresh=True, confirm_delete=True)
 
     assert events == ["lock", "commit", "delete:True", "analysis", "unlock"]
+
+
+async def _wait_until(predicate, timeout: float = 5.0) -> None:
+    """The holder runs on another thread, so its progress has to be waited for, not assumed."""
+    import asyncio
+
+    deadline = asyncio.get_running_loop().time() + timeout
+
+    while asyncio.get_running_loop().time() < deadline:
+        if predicate():
+            return
+        await asyncio.sleep(0.01)
+
+    raise AssertionError("holder thread did not reach the expected state in time")
