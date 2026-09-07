@@ -118,24 +118,33 @@ async def test_holder_disables_the_idle_in_transaction_timeout(monkeypatch) -> N
 
 
 @pytest.mark.asyncio
-async def test_holder_keeps_the_connection_warm(monkeypatch) -> None:
-    """An idle connection gets dropped somewhere along the path and the lock goes with it, so the
-    holder must actually be issuing traffic while the rebuild runs."""
+async def test_heartbeat_survives_a_blocked_caller_loop(monkeypatch) -> None:
+    """This is the regression test for the failure that took the guard out on dev.
+
+    The rebuild drives clickhouse-driver synchronously, so the caller's event loop is blocked solid
+    for minutes at a time. A heartbeat coroutine sharing that loop never runs, the connection is
+    dropped, and the lock silently disappears. Blocking the loop here with `time.sleep` must not
+    stop the holder, because the holder is on another thread with its own loop.
+    """
+    import time
+
     connection = _FakeConnection()
     _patch_holder(monkeypatch, [connection])
 
-    async with rebuild_guard.milestone_rebuild_lock(settle_seconds=0):
-        # The caller's loop is free here; in production it would be blocked inside clickhouse-driver,
-        # which is exactly why the heartbeat lives on another thread.
-        await _wait_until(lambda: connection.heartbeats >= 2)
+    async with rebuild_guard.milestone_rebuild_lock(settle_seconds=0) as lock:
+        before = connection.heartbeats
+        time.sleep(0.4)  # not asyncio.sleep — the loop must be genuinely blocked
+        during = connection.heartbeats
 
-    assert connection.heartbeats >= 2
+    assert during > before, "holder stopped heartbeating while the caller's event loop was blocked"
+    assert lock.guard_intact
 
 
 @pytest.mark.asyncio
 async def test_holder_reconnects_and_retakes_a_dropped_lock(monkeypatch) -> None:
     """Observed on dev: the holder's connection was dropped two minutes into a rebuild. Reconnecting
-    and re-taking the lock beats leaving the rest of the rebuild unguarded."""
+    and re-taking the lock beats leaving the rest of the rebuild unguarded — but the lock really was
+    free in between, so the run must not be reported as cleanly guarded."""
     dropped = _FakeConnection(die_after_heartbeats=1)
     replacement = _FakeConnection()
     handed = _patch_holder(monkeypatch, [dropped, replacement])
@@ -146,7 +155,46 @@ async def test_holder_reconnects_and_retakes_a_dropped_lock(monkeypatch) -> None
     assert handed[:2] == [dropped, replacement]
     assert any("pg_try_advisory_xact_lock" in s for s in replacement.statements)
     assert not lock.lock_lost
+    assert lock.protection_gaps == 1
+    assert not lock.guard_intact
     assert replacement.rolled_back
+
+
+@pytest.mark.asyncio
+async def test_body_is_refused_if_the_holder_dies_during_the_settle(monkeypatch) -> None:
+    """The settle window is dead time for the caller but not for the holder. Entering the body with
+    a dead holder would purge the milestones table with nothing holding the lock."""
+    dropped = _FakeConnection(die_after_heartbeats=0)
+    stolen = _FakeConnection(lock_acquired=False)
+    _patch_holder(monkeypatch, [dropped, stolen])
+
+    with pytest.raises(rebuild_guard.MilestoneRebuildLockUnavailable, match="stopped before the rebuild began"):
+        async with rebuild_guard.milestone_rebuild_lock(settle_seconds=0.3):
+            pytest.fail("must not purge the milestones table with a dead lock holder")
+
+
+@pytest.mark.asyncio
+async def test_cancellation_during_acquire_stops_the_holder(monkeypatch) -> None:
+    """The holder is a daemon thread. A cancellation before the try/finally would strand it holding
+    the lock, permanently skipping every incremental check for the life of the process."""
+    import asyncio
+
+    connection = _FakeConnection()
+    _patch_holder(monkeypatch, [connection])
+
+    async def _enter() -> None:
+        async with rebuild_guard.milestone_rebuild_lock(settle_seconds=30):
+            pytest.fail("should have been cancelled during the settle")
+
+    task = asyncio.create_task(_enter())
+    await _wait_until(lambda: connection.heartbeats >= 1)
+    task.cancel()
+
+    with pytest.raises(asyncio.CancelledError):
+        await task
+
+    await _wait_until(lambda: connection.rolled_back)
+    assert connection.rolled_back
 
 
 @pytest.mark.asyncio

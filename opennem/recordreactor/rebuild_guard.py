@@ -29,9 +29,10 @@ not give you. Both were observed failing on dev before this shape:
   (Tailscale, pgbouncer), and the lock silently disappears mid-rebuild. So the holder owns a private
   thread, a private event loop and a private engine, and none of them are touched by the rebuild.
 
-If the connection drops anyway the holder reconnects and re-takes the lock, logging the gap. Only a
-re-acquire that loses the race is fatal, and that is logged as critical rather than swallowed — a
-lapsed guard looks identical to a working one from the outside.
+If the connection drops anyway the holder reconnects and re-takes the lock. Re-taking it does not
+undo the gap — a writer that probed a free lock in between is already running — so every gap is
+counted on the handle and reported as critical at the end of the block. A lapsed guard otherwise
+looks identical to a working one from the outside, and the rebuild's output would be trusted.
 
 WHAT THIS DOES NOT COVER
 ------------------------
@@ -100,10 +101,24 @@ async def _holder_connection() -> AsyncIterator[AsyncConnection]:
 
 
 class MilestoneRebuildLock:
-    """Handle for a held lock. `lock_lost` is True if the guard stopped protecting the rebuild."""
+    """Handle for a held lock.
+
+    Only the holder thread writes these; the caller reads them. Plain attributes are enough for a
+    bool and a counter under CPython, and nothing branches on a torn read.
+
+    - `lock_lost`: the guard stopped protecting the rebuild and did not get it back.
+    - `protection_gaps`: how many times the lock was dropped and re-taken. Each gap is a window in
+      which an incremental check could have probed a free lock and started writing, so a rebuild
+      that ends with a gap is not proof of a clean table.
+    """
 
     def __init__(self) -> None:
         self.lock_lost = False
+        self.protection_gaps = 0
+
+    @property
+    def guard_intact(self) -> bool:
+        return not self.lock_lost and self.protection_gaps == 0
 
 
 async def _take_lock(connection: AsyncConnection) -> bool:
@@ -150,9 +165,13 @@ async def _hold_lock(
                     )
                     return
                 else:
-                    logger.warning(f"Re-acquired milestone rebuild lock {MILESTONE_REBUILD_LOCK_KEY} after a dropped connection")
+                    logger.warning(
+                        f"Re-acquired milestone rebuild lock {MILESTONE_REBUILD_LOCK_KEY} after a dropped connection. "
+                        f"The lock was free in between, so an incremental check may have started writing."
+                    )
 
                 if not await _heartbeat_until_stopped(connection, stop):
+                    handle.protection_gaps += 1
                     continue  # connection died — reconnect and re-take
 
                 await connection.rollback()
@@ -168,6 +187,11 @@ async def _hold_lock(
             handle.lock_lost = True
             logger.critical(f"Milestone rebuild lock holder failed ({e}) — the rebuild is no longer guarded")
             return
+
+    # stop was set before the holder ever took the lock — nothing to release.
+    if not ready.is_set():
+        acquired["acquired"] = False
+        ready.set()
 
 
 async def _heartbeat_until_stopped(connection: AsyncConnection, stop: threading.Event) -> bool:
@@ -232,37 +256,54 @@ async def milestone_rebuild_lock(settle_seconds: float = _SETTLE_SECONDS) -> Asy
     )
     thread.start()
 
-    if not await asyncio.to_thread(ready.wait, _ACQUIRE_TIMEOUT_SECONDS):
-        stop.set()
-        raise MilestoneRebuildLockUnavailable(
-            f"Timed out after {_ACQUIRE_TIMEOUT_SECONDS}s waiting to take advisory lock {MILESTONE_REBUILD_LOCK_KEY}"
-        )
-
-    if acquired.get("error"):
-        stop.set()
-        raise RuntimeError(f"Could not take the milestone rebuild lock: {acquired.get('message')}")
-
-    if not acquired.get("acquired"):
-        stop.set()
-        raise MilestoneRebuildLockUnavailable(
-            f"Another milestone rebuild holds advisory lock {MILESTONE_REBUILD_LOCK_KEY}. "
-            f"Wait for it to finish rather than running two rebuilds over the same table."
-        )
-
+    # Everything from here on must be able to stop the thread. A cancellation between start() and
+    # the try/finally below would otherwise leave a daemon thread holding the lock forever, blocking
+    # every later rebuild and permanently skipping the incremental checker.
     try:
+        if not await asyncio.to_thread(ready.wait, _ACQUIRE_TIMEOUT_SECONDS):
+            raise MilestoneRebuildLockUnavailable(
+                f"Timed out after {_ACQUIRE_TIMEOUT_SECONDS}s waiting to take advisory lock {MILESTONE_REBUILD_LOCK_KEY}"
+            )
+
+        if acquired.get("error"):
+            raise RuntimeError(f"Could not take the milestone rebuild lock: {acquired.get('message')}")
+
+        if not acquired.get("acquired"):
+            raise MilestoneRebuildLockUnavailable(
+                f"Another milestone rebuild holds advisory lock {MILESTONE_REBUILD_LOCK_KEY}. "
+                f"Wait for it to finish rather than running two rebuilds over the same table."
+            )
+
         if settle_seconds > 0:
             logger.info(f"Settling for {settle_seconds}s so any in-flight incremental check finishes")
             await asyncio.sleep(settle_seconds)
+
+        # The holder can die during the settle. Entering the body then would delete the milestones
+        # table with nothing holding the lock, which is the whole failure this guard exists to stop.
+        if not handle.guard_intact or not thread.is_alive():
+            raise MilestoneRebuildLockUnavailable(
+                f"The milestone rebuild lock holder stopped before the rebuild began "
+                f"(lock_lost={handle.lock_lost}, gaps={handle.protection_gaps}, alive={thread.is_alive()}). "
+                f"Refusing to purge the milestones table unguarded."
+            )
 
         yield handle
     finally:
         stop.set()
         await asyncio.to_thread(thread.join, _ACQUIRE_TIMEOUT_SECONDS)
 
-        if handle.lock_lost:
+        if thread.is_alive():
             logger.critical(
-                "The milestone rebuild ran unguarded for part of its run — verify the milestones table against what "
-                "the rebuild produced before trusting it."
+                f"The milestone rebuild lock holder did not stop within {_ACQUIRE_TIMEOUT_SECONDS}s and may still be "
+                f"holding advisory lock {MILESTONE_REBUILD_LOCK_KEY}. Milestone writers will keep skipping until the "
+                f"process exits."
+            )
+
+        if not handle.guard_intact:
+            logger.critical(
+                f"The milestone rebuild ran unguarded for part of its run (lock_lost={handle.lock_lost}, "
+                f"gaps={handle.protection_gaps}). An incremental check may have written records the rebuild would "
+                f"not have produced — verify the milestones table, and re-run the rebuild if in doubt."
             )
 
 
