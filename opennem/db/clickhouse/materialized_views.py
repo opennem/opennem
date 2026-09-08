@@ -149,7 +149,12 @@ def backfill_materialized_view(
         # Process in chunks
         current_date = start_date
         while current_date <= end_date:
-            chunk_end = min(current_date + timedelta(days=chunk_size_days), end_date)
+            # Chunks are whole days: [D 00:00:00, D+n-1 23:59:59]. The next chunk starts at
+            # D+n 00:00:00 (chunk_end + 1s). Ending a chunk at D+n 00:00:00 instead handed
+            # the boundary day's midnight interval to this chunk and the other 287 to the
+            # next — each chunk DELETEs the boundary date then re-inserts only its slice,
+            # so every 30th day of a backfill was left one interval short.
+            chunk_end = min(current_date + timedelta(days=chunk_size_days) - timedelta(seconds=1), end_date)
 
             logger.info(f"Backfilling {view.name} from {current_date} to {chunk_end}")
 
