@@ -46,11 +46,14 @@ def test_power_hourly_uses_avg_of_inner_sum(query_type):
 
 @pytest.mark.parametrize("query_type", [QueryType.DATA, QueryType.FACILITY])
 @pytest.mark.parametrize("interval", [Interval.DAY, Interval.WEEK, Interval.MONTH, Interval.QUARTER, Interval.YEAR])
-def test_power_multi_bucket_uses_same_shape(query_type, interval):
-    """Day / week / month / quarter / year all use the same CTE structure as hourly.
+def test_power_multi_bucket_uses_daily_view(query_type, interval):
+    """Day / week / month / quarter / year keep the CTE structure but read the daily views.
 
-    The bucket function differs (toStartOfDay/Week/Month/etc) but the inner
-    pre-aggregation and outer avg() are identical to the hourly path.
+    The daily rows hold each day's sum-across-units-and-intervals plus a bitmap of
+    the raw intervals with a value, so the MW average is `sum(generated)` over the
+    merged bitmap cardinality rather than `avg()` over raw intervals — the pre-#525
+    daily path was wrong because it averaged across units; this one divides by
+    intervals only.
     """
     sql, _, _ = get_timeseries_query(
         query_type=query_type,
@@ -60,11 +63,13 @@ def test_power_multi_bucket_uses_same_shape(query_type, interval):
         date_start=datetime(2025, 1, 1, 0, 0),
         date_end=datetime(2025, 6, 1, 0, 0),
     )
+    expected_table = "unit_intervals_daily_mv" if query_type == QueryType.FACILITY else "fueltech_intervals_daily_mv"
+    assert f"FROM {expected_table} FINAL" in sql
+    assert "FROM unit_intervals FINAL" not in sql
     assert "sum(generated) AS generated_sum" in sql
-    assert "FROM unit_intervals FINAL" in sql
-    assert "round(avg(generated_sum), 6) AS power" in sql
-    # Make sure we no longer fall back to the buggy daily MV path
-    assert "unit_intervals_daily_mv" not in sql
+    assert "groupBitmapMerge(generated_slots) AS generated_sum_n" in sql
+    assert "round(sum(generated_sum) / nullIf(sum(generated_sum_n), 0), 6) AS power" in sql
+    assert "avg(" not in sql
 
 
 def test_network_aggregate_power_collapses_units_in_inner():
