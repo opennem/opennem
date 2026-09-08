@@ -33,6 +33,12 @@ class MaterializedView:
         return self.source_timestamp_column or self.timestamp_column
 
 
+# `*_slots` columns: a roaring bitmap (AggregateFunction(groupBitmap, UInt16)) of the
+# 5-minute slot-of-day (0..287) for every raw interval where that metric is non-NULL.
+# The API's day-or-coarser queries merge them across whichever keys a request collapses
+# (regions, fuel techs, units) to get the exact count of raw intervals that carried a
+# value — the denominator of an MW average — which a per-key interval count cannot give
+# (complementary gaps across keys, or NULLs inside a day). ~17 bytes per row.
 UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
     name="unit_intervals_daily_mv",
     timestamp_column="date",
@@ -57,6 +63,9 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             countIf(energy_storage IS NOT NULL) as energy_storage_count,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), unit_intervals.generated IS NOT NULL
+            ) as generated_slots,
             count() as interval_count,
             toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
         FROM unit_intervals
@@ -87,6 +96,9 @@ UNIT_INTERVALS_DAILY_VIEW = MaterializedView(
             countIf(energy_storage IS NOT NULL) as energy_storage_count,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), unit_intervals.generated IS NOT NULL
+            ) as generated_slots,
             count() as interval_count,
             toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
         FROM unit_intervals FINAL
@@ -176,6 +188,9 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             countIf(energy_storage IS NOT NULL) as energy_storage_count,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), unit_intervals.generated IS NOT NULL
+            ) as generated_slots,
             count() as unit_count,
             count(distinct interval) as interval_count,
             toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
@@ -201,6 +216,9 @@ FUELTECH_INTERVALS_DAILY_VIEW = MaterializedView(
             countIf(energy_storage IS NOT NULL) as energy_storage_count,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), unit_intervals.generated IS NOT NULL
+            ) as generated_slots,
             count() as unit_count,
             count(distinct interval) as interval_count,
             toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
@@ -288,6 +306,9 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             countIf(energy_storage IS NOT NULL) as energy_storage_count,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), unit_intervals.generated IS NOT NULL
+            ) as generated_slots,
             count() as unit_count,
             count(distinct interval) as interval_count,
             toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
@@ -308,6 +329,9 @@ RENEWABLE_INTERVALS_DAILY_VIEW = MaterializedView(
             countIf(energy_storage IS NOT NULL) as energy_storage_count,
             sum(emissions) as emissions,
             sum(market_value) as market_value,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), unit_intervals.generated IS NOT NULL
+            ) as generated_slots,
             count() as unit_count,
             count(distinct interval) as interval_count,
             toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
@@ -358,6 +382,33 @@ MARKET_SUMMARY_DAILY_VIEW = MaterializedView(
             sum(emissions_exports) as emissions_exports_daily,
             sum(market_value_imports) as market_value_imports_daily,
             sum(market_value_exports) as market_value_exports_daily,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), demand IS NOT NULL
+            ) as demand_slots,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), demand_gross IS NOT NULL
+            ) as demand_gross_slots,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), generation_renewable IS NOT NULL
+            ) as generation_renewable_slots,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), generation_renewable_with_storage IS NOT NULL
+            ) as generation_renewable_with_storage_slots,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), curtailment_total IS NOT NULL
+            ) as curtailment_total_slots,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), curtailment_solar_total IS NOT NULL
+            ) as curtailment_solar_total_slots,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), curtailment_wind_total IS NOT NULL
+            ) as curtailment_wind_total_slots,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), energy_imports IS NOT NULL
+            ) as energy_imports_slots,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), energy_exports IS NOT NULL
+            ) as energy_exports_slots,
             count() as interval_count,
             toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
         FROM market_summary
@@ -399,6 +450,33 @@ MARKET_SUMMARY_DAILY_VIEW = MaterializedView(
             sum(emissions_exports) as emissions_exports_daily,
             sum(market_value_imports) as market_value_imports_daily,
             sum(market_value_exports) as market_value_exports_daily,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), demand IS NOT NULL
+            ) as demand_slots,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), demand_gross IS NOT NULL
+            ) as demand_gross_slots,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), generation_renewable IS NOT NULL
+            ) as generation_renewable_slots,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), generation_renewable_with_storage IS NOT NULL
+            ) as generation_renewable_with_storage_slots,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), curtailment_total IS NOT NULL
+            ) as curtailment_total_slots,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), curtailment_solar_total IS NOT NULL
+            ) as curtailment_solar_total_slots,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), curtailment_wind_total IS NOT NULL
+            ) as curtailment_wind_total_slots,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), energy_imports IS NOT NULL
+            ) as energy_imports_slots,
+            groupBitmapStateIf(
+                toUInt16(intDiv(toHour(interval) * 60 + toMinute(interval), 5)), energy_exports IS NOT NULL
+            ) as energy_exports_slots,
             count() as interval_count,
             toUInt64(count(distinct interval)) * 1000000000 + max(version) as version
         FROM market_summary FINAL
