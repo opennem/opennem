@@ -92,10 +92,8 @@ class OpennemSettings(BaseSettings):
 
     # sentry DSN for error reporting
     sentry_url: str | None = None
-
-    # axiom observability
-    axiom_token: str | None = None
-    axiom_dataset: str | None = None
+    # fraction of requests/jobs sent to Sentry as performance traces (0-1)
+    sentry_traces_sample_rate: float = 0.05
 
     # Slack notifications (incoming webhooks — one-way)
     slack_notifications: bool = True

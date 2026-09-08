@@ -41,6 +41,7 @@ def setup_sentry(
     sentry_url: str,
     environment: str,
     service: ServiceType = "api",
+    traces_sample_rate: float = 0.05,
 ) -> None:
     """
     Setup Sentry for the application.
@@ -49,6 +50,8 @@ def setup_sentry(
         sentry_url: Sentry DSN
         environment: deployment environment (local, development, staging, production)
         service: "api" or "worker" - determines which integrations to load
+        traces_sample_rate: fraction of transactions sent as performance traces
+            (0-1). Applies to every non-local environment. Profiling is off.
     """
     if environment == "local":
         logger.info("Sentry not enabled in local mode")
@@ -58,8 +61,8 @@ def setup_sentry(
     sentry_options: dict = {
         "dsn": sentry_url,
         "environment": environment,
-        "traces_sample_rate": 1.0,
-        "profiles_sample_rate": 1.0,
+        "traces_sample_rate": traces_sample_rate,
+        "profiles_sample_rate": 0.0,
         "release": None,  # Will auto-detect from git
     }
 
@@ -85,14 +88,9 @@ def setup_sentry(
     # Filter auth exceptions in all non-local environments
     sentry_options["before_send"] = _sentry_before_send
 
-    # Production-specific config
-    if environment == "production":
-        sentry_options["traces_sample_rate"] = 0.1
-        sentry_options["profiles_sample_rate"] = 0.1
-
     sentry_sdk.init(**sentry_options)
 
     # Set service tag for filtering in Sentry UI
     sentry_sdk.set_tag("service", service)
 
-    logger.info(f"Sentry initialized for {service} in {environment}")
+    logger.info(f"Sentry initialized for {service} in {environment} (traces {traces_sample_rate:.0%})")
