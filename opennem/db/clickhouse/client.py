@@ -11,6 +11,7 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Any
 
+import sentry_sdk
 from clickhouse_driver import Client
 
 from opennem import settings
@@ -84,7 +85,10 @@ async def execute_async(client: Client, query: str, params: dict | None = None, 
         tl_client = get_clickhouse_client()
         return tl_client.execute(query, params, settings=merged_settings, **kwargs)
 
-    return await asyncio.to_thread(_run)
+    # clickhouse-driver has no Sentry integration; wrap so query time shows as a
+    # db span on sampled API/worker traces.
+    with sentry_sdk.start_span(op="db.clickhouse", name=query.lstrip()[:120]):
+        return await asyncio.to_thread(_run)
 
 
 async def insert_async(query: str, data: Any = None, timeout: int = 10) -> Any:

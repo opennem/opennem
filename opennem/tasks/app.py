@@ -74,7 +74,9 @@ logger = logging.getLogger("openenm.tasks.app")
 
 # Initialize Sentry for worker service (separate from API init in opennem/__init__.py)
 if settings.sentry_url:
-    setup_sentry(sentry_url=settings.sentry_url, environment=ENV, service="worker")
+    setup_sentry(
+        sentry_url=settings.sentry_url, environment=ENV, service="worker", traces_sample_rate=settings.sentry_traces_sample_rate
+    )
 
 
 async def startup(ctx: dict) -> None:

@@ -82,20 +82,13 @@ settings: OpennemSettings = OpennemSettings()  # type: ignore
 
 # Setup sentry
 if settings.sentry_url:
-    setup_sentry(sentry_url=settings.sentry_url, environment=ENV, service="api")
+    setup_sentry(
+        sentry_url=settings.sentry_url, environment=ENV, service="api", traces_sample_rate=settings.sentry_traces_sample_rate
+    )
     console.print(f" * Sentry configured at [red bold encircle]{obfuscate_dsn_password(settings.sentry_url)}[/]")
 else:
     console.print(" * Sentry not configured")
 
-
-if settings.axiom_token:
-    import axiom_py
-    from axiom_py.logging import AxiomHandler
-
-    axiom_client = axiom_py.Client(settings.axiom_token)
-    axiom_handler = AxiomHandler(axiom_client, settings.axiom_dataset or "api")
-    logging.getLogger("opennem").addHandler(axiom_handler)
-    console.print(f" * Axiom configured for dataset: [b magenta]{settings.axiom_dataset}[/]")
 
 if settings.db_url:
     console.print(f" * Using database connection: [red bold encircle]{obfuscate_dsn_password(settings.db_url)}[/]")
