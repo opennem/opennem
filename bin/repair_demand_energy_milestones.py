@@ -20,24 +20,20 @@ REQUIRED RUN ORDER
 4. run this script promptly after step 3
 
 Purge and rebuild are NOT atomic — the delete is one PG statement, the rebuild is a long ClickHouse
-analysis — and the incremental milestone worker can write into the gap. The purge takes a
-transaction-scoped advisory lock so two runs cannot delete concurrently, but nothing here holds a
-lock across the whole run: PG sits behind pgbouncer in transaction-pooling mode, where a
-session-level lock is released at commit and is re-entrant between runs sharing a backend, so a
-whole-run lock cannot be expressed. Run order and the post-rebuild check below are the real
-protection, and neither stops the incremental path. What that path does on
-collision is settled by `check_and_persist_milestones_chunked`, which bulk-inserts with
-`on_conflict_do_nothing` against the `(record_id, interval)` primary key: a row the incremental
-worker already wrote is SKIPPED by the rebuild, never duplicated and never overwritten. So a race
-cannot corrupt or double up the series.
+analysis — so both run under `milestone_rebuild_lock()`, which holds one transaction-scoped Postgres
+advisory lock across the whole run. The incremental checker and the monthly reconciliation probe
+that lock and skip while it is held, so they no longer write into the gap. The lock also stops a
+second copy of this script running concurrently.
 
-The damaging case is narrower: mid-purge the series is empty, so `get_current_milestone_state()`
+The damaging case it closes: mid-purge the series is empty, so `get_current_milestone_state()`
 returns nothing for these record_ids and the incremental worker treats the next interval it sees as
-a brand new record, minting a row the full-history rebuild would never have produced. That is what
-the post-rebuild validation catches — it compares the rows PG ends up holding against the distinct
-records the rebuild attempted, and exits non-zero on a surplus. A racer landing on a key the rebuild
-also wanted is benign and deliberately not flagged: both come from the same ClickHouse data under
-the same code, differing only in the linkage fields. Re-run from a quiet moment to resolve a surplus.
+a brand new record, minting a row the full-history rebuild would never have produced. The
+post-rebuild validation below stays as a belt-and-braces check — it compares the rows PG ends up
+holding against the distinct records the rebuild attempted, and exits non-zero on a surplus, which
+now means the lock itself lapsed (its heartbeat logs critical if that happens). A racer landing on a
+key the rebuild also wanted is benign and deliberately not flagged: `check_and_persist_milestones_chunked`
+bulk-inserts with `on_conflict_do_nothing` against the `(record_id, interval)` primary key, so both
+come from the same ClickHouse data under the same code and differ only in the linkage fields.
 
 Usage:
     uv run bin/repair_demand_energy_milestones.py --dry-run
@@ -54,6 +50,7 @@ from sqlalchemy import text
 
 from opennem.db import get_read_session, get_write_session
 from opennem.recordreactor.backlog import run_milestone_analysis
+from opennem.recordreactor.rebuild_guard import milestone_rebuild_lock
 from opennem.recordreactor.schema import MilestonePeriod, MilestoneType
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_last_completed_interval_for_network
@@ -71,15 +68,6 @@ REBUILD_PERIODS = [
     MilestonePeriod.quarter,
     MilestonePeriod.year,
 ]
-
-# Fixed key so two runs cannot purge concurrently. Transaction-scoped on purpose: PG is behind
-# pgbouncer in transaction-pooling mode, where every session lands on the same shared server backend
-# (verified on dev — four consecutive get_write_session() calls all reported one pg_backend_pid).
-# A session-level pg_advisory_lock is therefore useless here twice over: commit hands the backend
-# back so the lock is dropped, and while it is held a second run sharing that backend re-acquires it
-# re-entrantly and sees success. pg_advisory_xact_lock is bound to the transaction, so it behaves
-# correctly through the pooler. It cannot span the rebuild — see the module docstring.
-ADVISORY_LOCK_KEY = 605605605
 
 
 async def _summarise_existing() -> list[tuple[str, int, str | None]]:
@@ -130,6 +118,25 @@ def _assert_purge_matches_rebuild(periods: list[str]) -> None:
         )
 
 
+def _assert_rebuild_has_both_aggregates(attempted_record_ids: set[str]) -> None:
+    """Every rebuilt period must produce both high AND low chains.
+
+    The `stored == attempted` check below cannot see a record class the rebuild never attempted:
+    in #640 the backlog silently emitted zero demand low records (interval_count was hardcoded to 1
+    and never met the low-record interval threshold), the purge+rebuild left every `.low` chain
+    empty, and the incremental worker then minted the first period it saw as a false record.
+    """
+    for period in REBUILD_PERIODS:
+        for aggregate in ("high", "low"):
+            suffix = f".{period.value}.{aggregate}"
+            if not any(record_id.endswith(suffix) for record_id in attempted_record_ids):
+                raise SystemExit(
+                    f"Rebuild produced no '{suffix}' records — a whole aggregate class is missing "
+                    f"(#640 was zero lows from a broken interval_count guard). Investigate before the "
+                    f"purge is papered over by incrementally-minted false records."
+                )
+
+
 def _assert_rebuild_sane(units: list[str], stored: int, attempted: int) -> None:
     """Post-conditions for a successful rebuild. Any failure exits non-zero rather than logging.
 
@@ -158,9 +165,8 @@ def _assert_rebuild_sane(units: list[str], stored: int, attempted: int) -> None:
 
 
 async def _purge_demand_energy_milestones() -> None:
-    """Delete the series under a transaction-scoped advisory lock so two runs cannot purge at once."""
+    """Delete the series. The caller holds the milestone rebuild lock across purge and rebuild."""
     async with get_write_session() as session:
-        await session.execute(text("select pg_advisory_xact_lock(:key)"), {"key": ADVISORY_LOCK_KEY})
         await session.execute(
             text("delete from milestones where record_id like :pattern"),
             {"pattern": DEMAND_ENERGY_RECORD_ID_PATTERN},
@@ -203,17 +209,21 @@ async def repair_demand_energy_milestones(dry_run: bool = False) -> None:
         )
         return
 
-    await _purge_demand_energy_milestones()
-    logger.info(f"Deleted {total} demand energy milestone rows")
+    async with milestone_rebuild_lock():
+        await _purge_demand_energy_milestones()
+        logger.info(f"Deleted {total} demand energy milestone rows")
 
-    records = await run_milestone_analysis(
-        start_date=start_date,
-        end_date=end_date,
-        metrics=[MilestoneType.demand],
-        periods=REBUILD_PERIODS,
-    )
+        records = await run_milestone_analysis(
+            start_date=start_date,
+            end_date=end_date,
+            metrics=[MilestoneType.demand],
+            periods=REBUILD_PERIODS,
+        )
+
     attempted = {(record.record_id, record.interval) for record in records}
     logger.info(f"Rebuilt {len(attempted)} demand energy milestone records from {start_date} to {end_date}")
+
+    _assert_rebuild_has_both_aggregates({record_id for record_id, _ in attempted})
 
     rebuilt = await _summarise_existing()
     rebuilt_total = sum(count for _, count, _ in rebuilt)

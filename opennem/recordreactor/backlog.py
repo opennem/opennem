@@ -22,6 +22,7 @@ from opennem.db.clickhouse import get_clickhouse_client
 from opennem.db.models.opennem import Milestones
 from opennem.queries.utils import list_to_case
 from opennem.recordreactor.persistence import check_and_persist_milestones_chunked
+from opennem.recordreactor.rebuild_guard import milestone_rebuild_lock, skip_if_rebuild_in_progress
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
     MilestoneFueltechGrouping,
@@ -263,7 +264,10 @@ def _analyze_milestone_records(
         else:
             raise ValueError("Price records are only supported at the interval period")
     elif milestone_type == MilestoneType.demand:
-        interval_count = "1"
+        # interval_count keeps the default count(distinct interval) at day+ — hardcoding it to 1
+        # made every low candidate fail the interval_threshold guard, so full-history rebuilds
+        # emitted zero demand low records and the incremental worker minted false lows into the
+        # empty chains (#640)
         if period == MilestonePeriod.interval:
             metric_column = "demand"
             agg_function = "AVG"
@@ -717,6 +721,10 @@ async def run_milestone_analysis_backlog(
     This is an admin-only operation for initial seeding or rebuilding the milestones table.
     It should NOT be called from scheduled tasks — use incremental detection instead.
 
+    A refresh purges the table and refills it over many minutes. Everything from the delete to the
+    end of the rebuild runs under the milestone rebuild lock, so the incremental checker and the
+    reconciliation job stand down instead of minting false records into the empty chains (#640).
+
     Args:
         refresh: If True, deletes all milestones before re-generating. Requires confirm_delete=True.
         confirm_delete: Safety guard — must be True alongside refresh to actually delete.
@@ -724,16 +732,20 @@ async def run_milestone_analysis_backlog(
     end_date = get_last_completed_interval_for_network(NetworkNEM)
     start_date = NetworkNEM.data_first_seen.replace(tzinfo=None)
 
-    if refresh:
+    if not refresh:
+        milestone_records = await run_milestone_analysis(start_date=start_date, end_date=end_date, debug=debug)
+    else:
         if not confirm_delete:
             logger.critical("refresh=True requires confirm_delete=True — aborting to prevent accidental data loss")
             raise ValueError("refresh=True requires confirm_delete=True to prevent accidental data loss")
-        async with get_write_session() as session:
-            await session.execute(text("delete from milestones"))
-            await session.commit()
-        logger.warning("Milestones table deleted (refresh=True, confirm_delete=True)")
 
-    milestone_records = await run_milestone_analysis(start_date=start_date, end_date=end_date, debug=debug)
+        async with milestone_rebuild_lock():
+            async with get_write_session() as session:
+                await session.execute(text("delete from milestones"))
+                await session.commit()
+            logger.warning("Milestones table deleted (refresh=True, confirm_delete=True)")
+
+            milestone_records = await run_milestone_analysis(start_date=start_date, end_date=end_date, debug=debug)
 
     # filter milestones for alerts to significance 8 or above
     milestone_records = list(filter(lambda x: x.significance >= 9, milestone_records))
@@ -778,9 +790,14 @@ async def run_milestone_reconciliation(lookback_years: int = 2) -> None:
     """Monthly reconciliation: run full backlog analysis over a recent window
     and INSERT any records that the incremental checker may have missed.
 
-    This never deletes existing records — it only fills gaps.
+    This never deletes existing records — it only fills gaps. It still has to stand down during a
+    rebuild: mid-rebuild the chains it reconciles against are partly empty, so it would insert
+    records the finished rebuild would never have produced.
     """
     from dateutil.relativedelta import relativedelta
+
+    if await skip_if_rebuild_in_progress("milestone reconciliation"):
+        return
 
     end_date = get_last_completed_interval_for_network(NetworkNEM)
     start_date = end_date - relativedelta(years=lookback_years)

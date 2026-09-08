@@ -22,6 +22,7 @@ from opennem.recordreactor.metric_registry import (
 )
 from opennem.recordreactor.persistence import check_and_persist_milestones_chunked
 from opennem.recordreactor.queries_incremental import query_all_groupings_for_period
+from opennem.recordreactor.rebuild_guard import skip_if_rebuild_in_progress
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
     MilestoneFueltechGrouping,
@@ -253,6 +254,7 @@ async def run_incremental_milestone_check(
 ) -> list[MilestoneRecordOutputSchema]:
     """Run incremental milestone detection.
 
+    0. Stand down entirely if a full rebuild is running
     1. Check for gaps > 1 day and backfill if needed
     2. Load current state (latest high/low per record_id)
     3. Determine which periods have just completed
@@ -260,7 +262,14 @@ async def run_incremental_milestone_check(
     5. Compare against current records
     6. INSERT new records
     7. Alert on significance >= 9
+
+    Step 0 covers the gap backfill as well as the check itself. Mid-rebuild the milestones table is
+    empty or partly refilled, so both paths would read no current record for a record_id and mint
+    the first bucket they see as a brand new one (#640).
     """
+    if await skip_if_rebuild_in_progress("incremental milestone check"):
+        return []
+
     # Fill any gap from downtime before doing the incremental check
     await _backfill_gap_if_needed()
 
