@@ -277,6 +277,35 @@ def get_source_table_for_metric_grouping(metric_def: MetricDefinition, grouping:
 _GENERATION_METRICS = (MilestoneType.power, MilestoneType.energy, MilestoneType.emissions)
 
 
+def _rooftop_rows(metric: MilestoneType, group_by_fields: list[str] | None) -> bool | tuple[str, str | int]:
+    """Which rows of a (metric, grouping) query can contain rooftop solar.
+
+    True: every row. False: none. (column, value): the rows where `column = value`.
+
+    The single definition behind both `row_contains_rooftop` (the incremental path, per row in
+    Python) and `get_rooftop_settled_sql` (the backlog, per row in SQL), so the two can't drift
+    (#662).
+    """
+    fields = group_by_fields or []
+
+    if metric == MilestoneType.proportion:
+        # rooftop is in both generation_renewable and demand_gross
+        return True
+
+    if metric not in _GENERATION_METRICS:
+        # demand is operational demand (rooftop excluded); price has no generation in it
+        return False
+
+    if "fueltech_group_id" in fields:
+        return ("fueltech_group_id", MilestoneFueltechGrouping.solar.value)
+
+    if "renewable" in fields:
+        return ("renewable", 1)
+
+    # network and region totals have no fueltech filter, so rooftop is in them
+    return True
+
+
 def row_contains_rooftop(metric_def: MetricDefinition, grouping: GroupingConfig, row: dict) -> bool:
     """Whether an aggregated row's value can contain rooftop solar.
 
@@ -288,22 +317,55 @@ def row_contains_rooftop(metric_def: MetricDefinition, grouping: GroupingConfig,
     Note this is a per-ROW test, not a per-query one: the fueltech grouping returns solar next to
     coal, and the renewable grouping returns renewables next to fossils, in the same result set.
     """
-    if metric_def.metric == MilestoneType.proportion:
-        # rooftop is in both generation_renewable and demand_gross
-        return True
+    rows = _rooftop_rows(metric_def.metric, grouping.group_by_fields)
 
-    if metric_def.metric not in _GENERATION_METRICS:
-        # demand is operational demand (rooftop excluded); price has no generation in it
-        return False
+    if isinstance(rows, bool):
+        return rows
 
-    if "fueltech_group_id" in grouping.group_by_fields:
-        return row.get("fueltech_group_id") == MilestoneFueltechGrouping.solar.value
+    column, value = rows
 
-    if "renewable" in grouping.group_by_fields:
-        return bool(row.get("renewable"))
+    if column == "renewable":
+        return bool(row.get(column)) == bool(value)
 
-    # network and region totals have no fueltech filter, so rooftop is in them
-    return True
+    return row.get(column) == value
+
+
+def get_rooftop_settled_sql(
+    metric: MilestoneType,
+    group_by_fields: list[str] | None,
+    time_expression: str,
+    settled_interval: datetime,
+) -> str:
+    """SQL excluding rows that can contain rooftop solar after the last settled interval.
+
+    The backlog (full rebuild, gap backfill, reconciliation) ran every interval series to the last
+    completed interval, so the most recent hour or two of any series with rooftop in it was summed
+    on grid-only generation. That is how the false vic1 generation interval lows got in, and a
+    rebuild would have minted them again (#662). This is the backlog's version of the per-row gate
+    the incremental path applies in `row_contains_rooftop` (#652), built from the same definition.
+
+    Like `get_fueltech_cutoff_sql` it belongs in the WHERE of the aggregation, so the running
+    extremes never see the partial rows — not in a filter over the output (#654, #656). Only for
+    the interval period: day+ buckets are trimmed to the last complete bucket and rooftop has long
+    landed by then.
+
+    Returns "" when no row of the query can contain rooftop.
+    """
+    rows = _rooftop_rows(metric, group_by_fields)
+
+    if rows is False:
+        return ""
+
+    settled_dt = f"toDateTime('{settled_interval.strftime('%Y-%m-%d %H:%M:%S')}')"
+
+    if rows is True:
+        # every row carries rooftop: the whole query ends at the settled interval
+        return f"and {time_expression} <= {settled_dt}"
+
+    column, value = rows
+    value_sql = f"'{value}'" if isinstance(value, str) else str(value)
+
+    return f"and NOT ({column} = {value_sql} AND {time_expression} > {settled_dt})"
 
 
 def get_value_expression(metric_def: MetricDefinition, period: MilestonePeriod) -> tuple[str, str]:
