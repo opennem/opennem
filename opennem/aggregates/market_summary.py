@@ -49,6 +49,15 @@ INTERVALS_PER_HOUR = 12.0
 # silently rewrite a decade of network-level NEM demand.
 _HISTORIC_NETWORK_REGIONS: dict[str, list[str]] = {"NEM": ["SNOWY1"]}
 
+# demand_total is AEMO DEMAND_AND_NONSCHEDGEN, TOTALDEMAND plus non-scheduled generation, so it
+# should never sit far below demand (TOTALDEMAND). On 2024-05-22 11:45 AEMO published it near
+# zero in every NEM region while TOTALDEMAND was normal, and the collapsed demand_gross latched
+# the renewable proportion record chains (#661). Below this ratio of demand the value is treated
+# as missing. The demand floor keeps SA1's legitimately near-zero midday operational demand out
+# of the guard, since TOTALDEMAND is near zero there too.
+DEMAND_TOTAL_COLLAPSE_RATIO = 0.5
+DEMAND_TOTAL_COLLAPSE_MIN_DEMAND_MW = 200.0
+
 
 def _declared_network_regions() -> list[tuple[str, str]]:
     """The (network_id, network_region) pairs that may appear in market_summary.
@@ -406,6 +415,14 @@ async def _get_market_summary_data(
     return [tuple(row) for row in result.fetchall()]  # type: ignore
 
 
+def _null_collapsed_demand_total(demand_total: str, demand: str) -> pl.Expr:
+    """demand_total as NULL where it has collapsed below DEMAND_TOTAL_COLLAPSE_RATIO of demand (#661)"""
+    collapsed = (pl.col(demand) > DEMAND_TOTAL_COLLAPSE_MIN_DEMAND_MW) & (
+        pl.col(demand_total) < pl.col(demand) * DEMAND_TOTAL_COLLAPSE_RATIO
+    )
+    return pl.when(collapsed).then(None).otherwise(pl.col(demand_total)).alias(demand_total)
+
+
 async def _prepare_market_summary_data(
     records: Sequence[
         tuple[
@@ -510,6 +527,17 @@ async def _prepare_market_summary_data(
             pl.col("prev_curtailment_solar_total").fill_null(0),
             pl.col("prev_curtailment_wind_total").fill_null(0),
             pl.col("curtailment_total").fill_null(0),
+        ]
+    )
+
+    # Null a collapsed demand_total (#661) so demand_gross, its energy and the renewable proportion
+    # go NULL for the interval rather than wrong. prev_demand_total is guarded against prev_demand
+    # too, or the following interval's trapezoid would still average in the collapsed value.
+    # demand_total is deliberately left out of the fill_null(0) above so the NULL survives.
+    df = df.with_columns(
+        [
+            _null_collapsed_demand_total("demand_total", "demand"),
+            _null_collapsed_demand_total("prev_demand_total", "prev_demand"),
         ]
     )
 
