@@ -1,3 +1,4 @@
+import logging
 import uuid
 from datetime import datetime
 
@@ -343,3 +344,29 @@ class TestShouldNotifyMilestone:
         milestone = create_milestone_record(value=710.0, interval=datetime(2026, 5, 31, 12, 30))
 
         assert should_notify_milestone(milestone, previous, debounce_intervals=1000) is True
+
+
+class TestRescanLogging:
+    """#652: the widened interval window re-scans intervals that already hold their record.
+
+    That branch fired 115 times in a single incremental pass on dev, so it is routine traffic and
+    must not be logged at WARNING. The return value is unchanged.
+    """
+
+    def test_already_recorded_interval_is_not_a_warning(self, caplog):
+        previous = create_interval_output_record(value=100.0, interval=datetime(2026, 5, 31, 12, 0))
+        milestone = create_interval_record(value=500.0, interval=datetime(2026, 5, 31, 11, 55))
+
+        # the project's loggers don't propagate to root, so attach caplog's handler directly
+        module_logger = logging.getLogger("opennem.recordreactor.utils")
+        module_logger.addHandler(caplog.handler)
+
+        try:
+            with caplog.at_level(logging.DEBUG, logger="opennem.recordreactor.utils"):
+                assert check_milestone_is_new(milestone, previous) is False
+        finally:
+            module_logger.removeHandler(caplog.handler)
+
+        levels = {record.levelno for record in caplog.records}
+        assert logging.WARNING not in levels
+        assert logging.DEBUG in levels

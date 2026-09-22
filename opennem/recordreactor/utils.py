@@ -71,7 +71,9 @@ def check_milestone_is_new(
         bool: True if the milestone is new, False if it has changed
     """
     if milestone.interval <= milestone_previous.interval:
-        logger.warning(f"Skipping milestone {milestone.record_id} because it is not greater than the previous milestone")
+        # routine: the interval query re-scans a settle-lag window every run (#652), so most
+        # candidates are intervals that already hold their record
+        logger.debug(f"Skipping milestone {milestone.record_id} because it is not greater than the previous milestone")
         return False
 
     _op = operator.gt if milestone.aggregate == MilestoneAggregate.high else operator.lt
