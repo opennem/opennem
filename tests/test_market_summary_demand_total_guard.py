@@ -57,6 +57,9 @@ def _record(
     prev_rooftop: float | None | str = "same",
     interval: datetime = datetime(2024, 5, 22, 11, 45),
     network_id: str = "NEM",
+    scada_rows: int | None = 120,
+    prev_scada_rows: int | None = 120,
+    renewable: float | None = 2000.0,
 ) -> tuple[Any, ...]:
     return (
         interval,
@@ -69,8 +72,8 @@ def _record(
         prev_demand_total,
         rooftop,  # rooftop_solar
         rooftop if prev_rooftop == "same" else prev_rooftop,  # prev_rooftop_solar
-        2000.0,  # renewable_generation
-        2000.0,  # prev_renewable_generation
+        renewable,  # renewable_generation
+        renewable,  # prev_renewable_generation
         0.0,  # storage_generation
         0.0,  # prev_storage_generation
         0.0,  # curtailment_solar_total
@@ -78,6 +81,8 @@ def _record(
         0.0,  # prev_curtailment_solar_total
         0.0,  # prev_curtailment_wind_total
         0.0,  # curtailment_total
+        scada_rows,
+        prev_scada_rows,
     )
 
 
@@ -234,3 +239,78 @@ def test_query_does_not_zero_fill_rooftop() -> None:
 
     assert "COALESCE(rd.rooftop_solar, 0)" not in source
     assert "rd.rooftop_solar," in source
+
+
+@pytest.mark.asyncio
+async def test_region_with_no_scada_rows_nulls_renewable(no_flows) -> None:
+    # ingest gap: no unit reported for the bucket, the CTE's interpolated value is not trusted
+    (row,) = await _prepare([_record("QLD1", 6000.0, 6300.0, 6000.0, 6300.0, rooftop=3000.0, scada_rows=None)])
+
+    assert row[IDX_GENERATION_RENEWABLE] is None
+    assert row[IDX_GENERATION_RENEWABLE_WITH_STORAGE] is None
+    assert row[IDX_GENERATION_RENEWABLE_ENERGY] is None
+    assert row[IDX_GENERATION_RENEWABLE_WITH_STORAGE_ENERGY] is None
+    # demand side has all its inputs
+    assert row[IDX_DEMAND_GROSS] == pytest.approx(9300.0)
+    assert row[IDX_DEMAND] == pytest.approx(6000.0)
+
+
+@pytest.mark.asyncio
+async def test_region_with_no_prev_scada_rows_nulls_renewable_energy(no_flows) -> None:
+    (row,) = await _prepare([_record("QLD1", 6000.0, 6300.0, 6000.0, 6300.0, prev_scada_rows=0)])
+
+    assert row[IDX_GENERATION_RENEWABLE] == pytest.approx(3000.0)
+    assert row[IDX_GENERATION_RENEWABLE_ENERGY] is None
+
+
+@pytest.mark.asyncio
+async def test_units_reporting_zero_renewable_stays_zero(no_flows) -> None:
+    # units reported, renewable output genuinely 0 (and the CTE may hand back NULL for it)
+    (row,) = await _prepare(
+        [_record("TAS1", 1000.0, 1050.0, 1000.0, 1050.0, rooftop=0.0, renewable=None, scada_rows=8, prev_scada_rows=8)]
+    )
+
+    assert row[IDX_GENERATION_RENEWABLE] == pytest.approx(0.0)
+    assert row[IDX_GENERATION_RENEWABLE_ENERGY] == pytest.approx(0.0)
+
+
+@pytest.mark.asyncio
+async def test_scada_absence_before_era_keeps_zero_fill(no_flows) -> None:
+    (row,) = await _prepare(
+        [
+            _record(
+                "NSW1",
+                7000.0,
+                7100.0,
+                7000.0,
+                7100.0,
+                rooftop=None,
+                renewable=None,
+                scada_rows=None,
+                prev_scada_rows=None,
+                interval=datetime(2012, 1, 5, 13, 0),
+            )
+        ]
+    )
+
+    assert row[IDX_GENERATION_RENEWABLE] == pytest.approx(0.0)
+
+
+@pytest.mark.asyncio
+async def test_wem_scada_absence_only_after_wemde_cutover(no_flows) -> None:
+    # WEM facility_scada was 30-min before WEMDE, so empty 5-min buckets are normal there
+    kw = {"rooftop": None, "network_id": "WEM", "scada_rows": None, "prev_scada_rows": None}
+    (pre,) = await _prepare([_record("WEM", 2500.0, 2500.0, 2500.0, 2500.0, interval=datetime(2022, 6, 1, 12, 5), **kw)])
+    (post,) = await _prepare([_record("WEM", 2500.0, 2500.0, 2500.0, 2500.0, interval=datetime(2025, 6, 1, 12, 5), **kw)])
+
+    assert pre[IDX_GENERATION_RENEWABLE] == pytest.approx(2000.0)
+    assert post[IDX_GENERATION_RENEWABLE] is None
+    assert post[IDX_DEMAND_GROSS] == pytest.approx(2500.0)
+
+
+def test_query_carries_scada_presence() -> None:
+    source = " ".join(inspect.getsource(market_summary_mod._get_market_summary_data).split())
+
+    assert "count(*) as scada_rows" in source
+    assert "LAG(scada_rows) OVER" in source
+    assert source.rstrip().count("prev_scada_rows") >= 2

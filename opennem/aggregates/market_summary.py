@@ -69,6 +69,20 @@ DEMAND_TOTAL_COLLAPSE_MIN_DEMAND_MW = 200.0
 ROOFTOP_EXPECTED_FROM = datetime(2015, 10, 26)
 ROOFTOP_EXPECTED_NETWORKS = ("NEM",)
 
+# Same rule for unit scada (#661): from these dates a region/interval with no facility_scada rows
+# at all is an ingest gap, so renewable generation and everything built on it is NULL rather than
+# the renewable CTE's interpolated or zero-filled value. A region whose units reported 0 renewable
+# output keeps its 0. NEM shares the rooftop era rather than its 1998 data start: older NEM scada
+# has structural holes that can't be refetched (pre-2009 DST hours #622, absent unit-days #615)
+# and blanking those would only move proportion further from the records cutoff. WEM reads the
+# same facility_scada but was 30-min until the WEMDE cutover, which leaves five of every six
+# 5-min buckets with no rows, so the check starts the day after the 2023-10-01 08.00 AWST cutover
+# (a whole day of margin so the naive interval's timezone can't pull 30-min buckets in).
+SCADA_EXPECTED_FROM: dict[str, datetime] = {
+    "NEM": ROOFTOP_EXPECTED_FROM,
+    "WEM": datetime(2023, 10, 2),
+}
+
 
 def _declared_network_regions() -> list[tuple[str, str]]:
     """The (network_id, network_region) pairs that may appear in market_summary.
@@ -132,7 +146,7 @@ async def _get_market_summary_data(
          prev_demand, prev_demand_total, rooftop_solar, prev_rooftop_solar,
          renewable_generation, prev_renewable_generation,
          curtailment_solar_total, curtailment_wind_total, prev_curtailment_solar_total,
-         prev_curtailment_wind_total, curtailment_total)
+         prev_curtailment_wind_total, curtailment_total, scada_rows, prev_scada_rows)
         Note: Only returns complete interval pairs where both current and previous intervals are available
     """
     # Strip timezone info
@@ -237,7 +251,10 @@ async def _get_market_summary_data(
                 WHEN u.code IN ('TUMUT3', 'SNOWYP')
                 THEN greatest(fs.generated, 0)
                 ELSE 0
-            END)) as storage_generation
+            END)) as storage_generation,
+            -- presence, not value: gapfill leaves this NULL for a bucket with no unit rows at
+            -- all (an ingest gap the interpolate() above papers over) (#661)
+            count(*) as scada_rows
         FROM facility_scada fs
         JOIN units u ON fs.facility_code = u.code
         JOIN facilities f ON u.station_id = f.id
@@ -335,6 +352,7 @@ async def _get_market_summary_data(
             rd.rooftop_solar,
             COALESCE(rn.renewable_generation, 0) as renewable_generation,
             COALESCE(rn.storage_generation, 0) as storage_generation,
+            rn.scada_rows,
             gd.curtailment_solar_total,
             gd.curtailment_wind_total
         FROM gapfilled_data gd
@@ -389,7 +407,12 @@ async def _get_market_summary_data(
             LAG(curtailment_wind_total) OVER (
                 PARTITION BY network_id, network_region
                 ORDER BY interval
-            ) as prev_curtailment_wind_total
+            ) as prev_curtailment_wind_total,
+            scada_rows,
+            LAG(scada_rows) OVER (
+                PARTITION BY network_id, network_region
+                ORDER BY interval
+            ) as prev_scada_rows
         FROM combined_data
         ORDER BY interval
     )
@@ -412,7 +435,9 @@ async def _get_market_summary_data(
         curtailment_wind_total,
         prev_curtailment_solar_total,
         prev_curtailment_wind_total,
-        COALESCE(curtailment_solar_total, 0) + COALESCE(curtailment_wind_total, 0) as curtailment_total
+        COALESCE(curtailment_solar_total, 0) + COALESCE(curtailment_wind_total, 0) as curtailment_total,
+        scada_rows,
+        prev_scada_rows
     FROM ranked_data
     WHERE interval BETWEEN :start_time AND :end_time
     ORDER BY interval, network_id, network_region
@@ -442,6 +467,15 @@ def _fill_unexpected_rooftop(column: str, interval: pl.Expr) -> pl.Expr:
     """0 for a missing rooftop value only where rooftop is not an expected input (#661)"""
     expected = pl.col("network_id").is_in(list(ROOFTOP_EXPECTED_NETWORKS)) & (interval >= ROOFTOP_EXPECTED_FROM)
     return pl.when(expected).then(pl.col(column)).otherwise(pl.col(column).fill_null(0)).alias(column)
+
+
+def _renewable_unless_scada_absent(column: str, scada_rows: str, interval: pl.Expr) -> pl.Expr:
+    """NULL where scada is expected but no unit reported for the bucket, else 0-filled (#661)"""
+    expected = pl.any_horizontal(
+        [(pl.col("network_id") == network_id) & (interval >= start) for network_id, start in SCADA_EXPECTED_FROM.items()]
+    )
+    absent = expected & (pl.col(scada_rows).is_null() | (pl.col(scada_rows) == 0))
+    return pl.when(absent).then(None).otherwise(pl.col(column).fill_null(0)).alias(column)
 
 
 async def _prepare_market_summary_data(
@@ -527,6 +561,8 @@ async def _prepare_market_summary_data(
             "prev_curtailment_solar_total": pl.Float64,
             "prev_curtailment_wind_total": pl.Float64,
             "curtailment_total": pl.Float64,
+            "scada_rows": pl.Int64,
+            "prev_scada_rows": pl.Int64,
         },
         orient="row",
     )
@@ -547,8 +583,10 @@ async def _prepare_market_summary_data(
     # fill curtailment and renewable records with 0 if they are null
     df = df.with_columns(
         [
-            pl.col("renewable_generation").fill_null(0),
-            pl.col("prev_renewable_generation").fill_null(0),
+            _renewable_unless_scada_absent("renewable_generation", "scada_rows", pl.col("interval")),
+            _renewable_unless_scada_absent(
+                "prev_renewable_generation", "prev_scada_rows", pl.col("interval") - timedelta(minutes=5)
+            ),
             pl.col("storage_generation").fill_null(0),
             pl.col("prev_storage_generation").fill_null(0),
             pl.col("curtailment_solar_total").fill_null(0),
