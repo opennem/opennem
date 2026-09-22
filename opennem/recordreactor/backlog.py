@@ -21,6 +21,7 @@ from opennem.db import get_read_session, get_write_session
 from opennem.db.clickhouse import get_clickhouse_client
 from opennem.db.models.opennem import Milestones
 from opennem.queries.utils import list_to_case
+from opennem.recordreactor.metric_registry import get_fueltech_cutoff_sql
 from opennem.recordreactor.persistence import check_and_persist_milestones_chunked
 from opennem.recordreactor.rebuild_guard import milestone_rebuild_lock, skip_if_rebuild_in_progress
 from opennem.recordreactor.schema import (
@@ -350,6 +351,11 @@ def _analyze_milestone_records(
     if milestone_type in [MilestoneType.proportion]:
         date_cutoffs = "and time_bucket >= toDateTime('2007-06-01')"
 
+    # Per-fueltech data-quality cutoffs, in the WHERE alongside the metric-wide ones so the
+    # running extremes are computed over post-cutoff data only. Filtering them out of the output
+    # instead left solar and wind with every low they found discarded and an empty chain (#656).
+    fueltech_cutoffs = get_fueltech_cutoff_sql(grouping.group_by_fields, "time_bucket")
+
     total_value_query = f"{agg_function}({metric_column})" if agg_function else metric_column
 
     base_query = f"""
@@ -363,6 +369,7 @@ def _analyze_milestone_records(
         network_id in ('{network.code.upper()}', {list_to_case([i.code for i in network.subnetworks])})
         {date_clause}
         {date_cutoffs}
+        {fueltech_cutoffs}
       GROUP BY
         {time_bucket_sql}{group_by_select}
       ORDER BY 1 asc, 2
@@ -583,23 +590,9 @@ def _analyzed_record_to_milestone_schema(
             logger.info(milestone_schema)
             raise ValueError(f"Duplicate milestone record: {primary_keys}")
 
-        # skip solar records before 26 October 2015 because of backfill
-        if fueltech in [
-            MilestoneFueltechGrouping.solar,
-        ] and milestone_schema.interval < datetime.fromisoformat("2015-10-26T00:00:00"):
-            continue
-
-        # skip renewables records before 2014 because of backfill
-        if fueltech in [MilestoneFueltechGrouping.renewables] and milestone_schema.interval < datetime.fromisoformat(
-            "2000-01-01T00:00:00"
-        ):
-            continue
-
-        # skip wind before we had non-scheduled generation data
-        if fueltech in [MilestoneFueltechGrouping.wind] and milestone_schema.interval < datetime.fromisoformat(
-            "2009-07-01T00:00:00"
-        ):
-            continue
+        # @NOTE the fueltech date cutoffs (solar from 2015-10-26, wind from 2009-07-01) are applied
+        # in the query's WHERE now, not here — dropping records after the running extremes had been
+        # computed left the affected chains empty (#656). See metric_registry.get_fueltech_cutoff_sql
 
         milestone_primary_keys.append(primary_keys)
 

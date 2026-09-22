@@ -15,6 +15,7 @@ fossils, demand and price are complete as soon as the grid data lands and run to
 completed interval. Day+ periods must not be delayed by any of this.
 """
 
+import uuid
 from datetime import datetime, timedelta
 
 import pytest
@@ -32,7 +33,7 @@ from opennem.recordreactor.metric_registry import (
     row_contains_rooftop,
 )
 from opennem.recordreactor.queries_incremental import get_live_rooftop_network_codes, query_last_rooftop_interval
-from opennem.recordreactor.schema import MilestonePeriod, MilestoneType
+from opennem.recordreactor.schema import MilestonePeriod, MilestoneRecordOutputSchema, MilestoneType
 from opennem.schema.network import NetworkNEM, NetworkWEM
 
 NOW = datetime(2026, 9, 20, 12, 0)
@@ -207,6 +208,29 @@ def test_rows_that_cannot_contain_rooftop(metric_def, grouping, row) -> None:
     assert row_contains_rooftop(metric_def, grouping, row) is False
 
 
+class _SeededState(dict):
+    """A chain for every record_id, holding an old and easily beaten value.
+
+    Since #656 a record_id with no chain is skipped outright, so without this the settled gate
+    under test would not be the thing deciding the outcome.
+    """
+
+    def get(self, record_id, default=None):  # type: ignore[override]
+        aggregate = record_id.rsplit(".", 1)[-1]
+        return MilestoneRecordOutputSchema(
+            record_id=record_id,
+            interval=datetime(2000, 1, 1),
+            instance_id=uuid.uuid4(),
+            aggregate=aggregate,
+            metric="power",
+            period="interval",
+            significance=1,
+            value=1.0 if aggregate == "high" else 1e9,
+            value_unit="MW",
+            network_id="NEM",
+        )
+
+
 def _map(metric_def, grouping, row, interval, settled=SETTLED):
     return _map_row_to_records(
         row={"time_bucket": interval, "interval_count": 1, **row},
@@ -214,7 +238,7 @@ def _map(metric_def, grouping, row, interval, settled=SETTLED):
         grouping=grouping,
         period=MilestonePeriod.interval,
         network=NetworkNEM,
-        current_state={},
+        current_state=_SeededState(),
         settled_interval=settled,
     )
 

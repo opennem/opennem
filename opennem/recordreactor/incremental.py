@@ -159,6 +159,7 @@ def _map_row_to_records(
     network: NetworkSchema,
     current_state: dict[str, MilestoneRecordOutputSchema],
     settled_interval: datetime | None = None,
+    unseeded_record_ids: set[str] | None = None,
 ) -> list[MilestoneRecordSchema]:
     """Convert a single aggregated row into milestone record schemas for both high and low.
 
@@ -170,6 +171,9 @@ def _map_row_to_records(
     interval has settled (#652). The test is per row, not per query: one fueltech query returns
     solar alongside coal, and one renewable query returns renewables alongside fossils, so gating
     the query would hold back series that have no rooftop in them at all.
+
+    A record_id with no chain is skipped rather than seeded from the one value in front of us, and
+    collected into `unseeded_record_ids` for the caller to report (#656).
     """
     value = row.get("value")
     if value is None:
@@ -262,17 +266,28 @@ def _map_row_to_records(
         # Compare against current state
         prev = current_state.get(record_id)
 
-        if prev is not None:
-            if not check_milestone_is_new(candidate, prev):
-                continue
-            # Set previous_instance_id for chain linking
-            candidate.previous_instance_id = prev.instance_id
+        # An empty chain is not evidence that this value is an all-time extreme — it means nothing
+        # has established the extreme yet. Minting a record here wrote wem solar's *highest* day
+        # of the week as its all-time low (#656). The backlog builds the chain from history; this
+        # path only ever extends one. A genuinely new series therefore waits for the next backlog
+        # run (monthly reconciliation, or one kicked off after the warning the caller logs).
+        if prev is None:
+            if unseeded_record_ids is not None:
+                unseeded_record_ids.add(record_id)
+            logger.debug(f"Skipping {record_id} at {interval}: no chain to compare against")
+            continue
 
-            # Calculate pct_change
-            if prev.value and prev.value != 0:
-                pct = ((value - prev.value) / abs(prev.value)) * 100
-                if abs(pct) < 9999 and abs(pct) > 0.01:
-                    candidate.pct_change = round(pct, 2)
+        if not check_milestone_is_new(candidate, prev):
+            continue
+
+        # Set previous_instance_id for chain linking
+        candidate.previous_instance_id = prev.instance_id
+
+        # Calculate pct_change
+        if prev.value and prev.value != 0:
+            pct = ((value - prev.value) / abs(prev.value)) * 100
+            if abs(pct) < 9999 and abs(pct) > 0.01:
+                candidate.pct_change = round(pct, 2)
 
         records.append(candidate)
 
@@ -440,6 +455,8 @@ async def run_incremental_milestone_check(
     all_new_records: list[MilestoneRecordOutputSchema] = []
     # records that clear the notification debounce — the record itself is always persisted (#651)
     notifiable_instance_ids: set[uuid.UUID] = set()
+    # record_ids with data but no chain — reported at the end of the run (#656)
+    unseeded_record_ids: set[str] = set()
 
     for network in networks or _DEFAULT_NETWORKS:
         # get_last_completed_interval_for_network returns the start of the current interval
@@ -483,6 +500,7 @@ async def run_incremental_milestone_check(
                             network=network,
                             current_state=current_state,
                             settled_interval=settled_interval,
+                            unseeded_record_ids=unseeded_record_ids,
                         )
                         new_records.extend(records)
 
@@ -504,6 +522,13 @@ async def run_incremental_milestone_check(
                     # Update in-memory state for subsequent comparisons
                     for record in persisted:
                         update_milestone_state(record.record_id, record)
+
+    if unseeded_record_ids:
+        sample = ", ".join(sorted(unseeded_record_ids)[:5])
+        logger.warning(
+            f"{len(unseeded_record_ids)} record ids have data but no chain to compare against and were skipped "
+            f"(e.g. {sample}) — run the backlog to build them"
+        )
 
     # Alert on high-significance records. The interval debounce gates the announcement only:
     # a record inside the window is stored above but not announced here (#651).
