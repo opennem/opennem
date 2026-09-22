@@ -94,11 +94,16 @@ def test_record_outside_debounce_window_is_notified(monkeypatch) -> None:
     assert highs[0].instance_id in notifiable
 
 
-def test_first_record_in_a_chain_is_notified(monkeypatch) -> None:
-    """No previous record — nothing to debounce against."""
+def test_record_with_no_anchor_is_notified(monkeypatch) -> None:
+    """Nothing to debounce against — announce it.
+
+    `_map_row_to_records` no longer produces records against an empty chain (#656), so this
+    exercises the notify selection directly.
+    """
     monkeypatch.setattr(settings, "milestone_interval_debounce_intervals", 10)
 
-    records = _map(24020.0, datetime(2026, 9, 18, 12, 15), {})
+    state = _state(high_value=23814.0, low_value=1.0, interval=datetime(2026, 9, 18, 12, 0))
+    records = _map(24020.0, datetime(2026, 9, 18, 12, 15), state)
     notifiable = _select_notifiable_instance_ids(records, {}, debounce_intervals=10)
 
     assert records
