@@ -9,12 +9,27 @@ aggregation functions, and value constraints.
 from dataclasses import dataclass, field
 from datetime import datetime
 
+from opennem.queries.utils import list_to_case
 from opennem.recordreactor.schema import MilestoneFueltechGrouping, MilestonePeriod, MilestoneType
+from opennem.schema.network import NetworkSchema, NetworkWEM
 
 # Source table constants
 TABLE_FUELTECH_INTERVALS = "fueltech_intervals_mv"
 TABLE_RENEWABLE_INTERVALS = "renewable_intervals_mv"
 TABLE_MARKET_SUMMARY = "market_summary"
+
+# Renewable proportion, bounded at 200%. Values above come from a near-zero demand_gross
+# denominator (a data artifact, GH #558) and return -1 so the `total_value > 0` filters in the
+# record CTEs drop them. Legit >100% net-exporter intervals pass through.
+#
+# This is no longer the primary guard: `get_proportion_sql` makes the proportion NULL unless every
+# input is present for every region and interval of the bucket (#662). The clamp stays as a
+# last-resort bound on complete data.
+PROPORTION_CLAMPED_SQL = (
+    "round(if(sum(demand_gross) > 0 "
+    "AND (sum(generation_renewable) / sum(demand_gross)) * 100 <= 200, "
+    "(sum(generation_renewable) / sum(demand_gross)) * 100, -1), 2)"
+)
 
 
 @dataclass
@@ -233,15 +248,9 @@ _METRIC_REGISTRY: list[MetricDefinition] = [
         groupings=MARKET_GROUPINGS,
         source_table=TABLE_MARKET_SUMMARY,
         time_col="interval",
-        # Bound the proportion: a renewable % above 200 is a data artifact from a near-zero
-        # demand_gross denominator (see GH #558) — return -1 so the
-        # `total_value > 0` filters in the max/min record CTEs drop it instead of registering a
-        # bogus 50,000% record. Legit values (incl. >100% net-exporter intervals) pass through.
-        value_column=(
-            "round(if(sum(demand_gross) > 0 "
-            "AND (sum(generation_renewable) / sum(demand_gross)) * 100 <= 200, "
-            "(sum(generation_renewable) / sum(demand_gross)) * 100, -1), 2)"
-        ),
+        # the clamped expression alone; queries wrap it in the completeness guard from
+        # get_proportion_sql (#662)
+        value_column=PROPORTION_CLAMPED_SQL,
         agg_function="",  # pre-computed expression
         min_value=0,
         round_to=2,
@@ -277,6 +286,35 @@ def get_source_table_for_metric_grouping(metric_def: MetricDefinition, grouping:
 _GENERATION_METRICS = (MilestoneType.power, MilestoneType.energy, MilestoneType.emissions)
 
 
+def _rooftop_rows(metric: MilestoneType, group_by_fields: list[str] | None) -> bool | tuple[str, str | int]:
+    """Which rows of a (metric, grouping) query can contain rooftop solar.
+
+    True: every row. False: none. (column, value): the rows where `column = value`.
+
+    The single definition behind both `row_contains_rooftop` (the incremental path, per row in
+    Python) and `get_rooftop_settled_sql` (the backlog, per row in SQL), so the two can't drift
+    (#662).
+    """
+    fields = group_by_fields or []
+
+    if metric == MilestoneType.proportion:
+        # rooftop is in both generation_renewable and demand_gross
+        return True
+
+    if metric not in _GENERATION_METRICS:
+        # demand is operational demand (rooftop excluded); price has no generation in it
+        return False
+
+    if "fueltech_group_id" in fields:
+        return ("fueltech_group_id", MilestoneFueltechGrouping.solar.value)
+
+    if "renewable" in fields:
+        return ("renewable", 1)
+
+    # network and region totals have no fueltech filter, so rooftop is in them
+    return True
+
+
 def row_contains_rooftop(metric_def: MetricDefinition, grouping: GroupingConfig, row: dict) -> bool:
     """Whether an aggregated row's value can contain rooftop solar.
 
@@ -288,22 +326,143 @@ def row_contains_rooftop(metric_def: MetricDefinition, grouping: GroupingConfig,
     Note this is a per-ROW test, not a per-query one: the fueltech grouping returns solar next to
     coal, and the renewable grouping returns renewables next to fossils, in the same result set.
     """
-    if metric_def.metric == MilestoneType.proportion:
-        # rooftop is in both generation_renewable and demand_gross
-        return True
+    rows = _rooftop_rows(metric_def.metric, grouping.group_by_fields)
 
-    if metric_def.metric not in _GENERATION_METRICS:
-        # demand is operational demand (rooftop excluded); price has no generation in it
-        return False
+    if isinstance(rows, bool):
+        return rows
 
-    if "fueltech_group_id" in grouping.group_by_fields:
-        return row.get("fueltech_group_id") == MilestoneFueltechGrouping.solar.value
+    column, value = rows
 
-    if "renewable" in grouping.group_by_fields:
-        return bool(row.get("renewable"))
+    if column == "renewable":
+        return bool(row.get(column)) == bool(value)
 
-    # network and region totals have no fueltech filter, so rooftop is in them
-    return True
+    return row.get(column) == value
+
+
+def get_rooftop_settled_sql(
+    metric: MilestoneType,
+    group_by_fields: list[str] | None,
+    time_expression: str,
+    settled_interval: datetime,
+) -> str:
+    """SQL excluding rows that can contain rooftop solar after the last settled interval.
+
+    The backlog (full rebuild, gap backfill, reconciliation) ran every interval series to the last
+    completed interval, so the most recent hour or two of any series with rooftop in it was summed
+    on grid-only generation. That is how the false vic1 generation interval lows got in, and a
+    rebuild would have minted them again (#662). This is the backlog's version of the per-row gate
+    the incremental path applies in `row_contains_rooftop` (#652), built from the same definition.
+
+    Like `get_fueltech_cutoff_sql` it belongs in the WHERE of the aggregation, so the running
+    extremes never see the partial rows — not in a filter over the output (#654, #656). Only for
+    the interval period: day+ buckets are trimmed to the last complete bucket and rooftop has long
+    landed by then.
+
+    Returns "" when no row of the query can contain rooftop.
+    """
+    rows = _rooftop_rows(metric, group_by_fields)
+
+    if rows is False:
+        return ""
+
+    settled_dt = f"toDateTime('{settled_interval.strftime('%Y-%m-%d %H:%M:%S')}')"
+
+    if rows is True:
+        # every row carries rooftop: the whole query ends at the settled interval
+        return f"and {time_expression} <= {settled_dt}"
+
+    column, value = rows
+    value_sql = f"'{value}'" if isinstance(value, str) else str(value)
+
+    return f"and NOT ({column} = {value_sql} AND {time_expression} > {settled_dt})"
+
+
+# WEM ran 30-minute trading intervals until the WEMDE cutover (NetworkWEMDE.data_first_seen, in
+# WEM network time). The network schema only knows the 5-minute size, so the expected interval
+# count for a bucket that starts before this can't be derived; those buckets keep the old
+# behaviour (no completeness count) rather than being rejected wholesale.
+_WEM_FIVE_MINUTE_FROM = datetime.fromisoformat("2023-10-01T08:00:00")
+
+_PERIOD_SQL_INTERVAL = {
+    MilestonePeriod.day: "DAY",
+    MilestonePeriod.week: "WEEK",
+    MilestonePeriod.month: "MONTH",
+    MilestonePeriod.quarter: "QUARTER",
+    MilestonePeriod.year: "YEAR",
+}
+
+
+def get_expected_intervals_sql(period: MilestonePeriod, time_bucket_sql: str, interval_size: int) -> str:
+    """SQL for how many network intervals a bucket holds: 288 for a day at 5 minutes.
+
+    Network time is a fixed offset with no DST, so this is the bucket's length in minutes over the
+    interval size, computed from the bucket itself so a 28-day February and a leap year get their
+    real counts rather than the loose `_DEFAULT_INTERVAL_THRESHOLDS`.
+    """
+    if period == MilestonePeriod.interval:
+        return "1"
+
+    unit = _PERIOD_SQL_INTERVAL.get(period)
+
+    if not unit:
+        raise ValueError(f"No expected interval count for period {period}")
+
+    return f"intDiv(dateDiff('minute', {time_bucket_sql}, {time_bucket_sql} + INTERVAL 1 {unit}), {interval_size})"
+
+
+def get_proportion_sql(
+    network: NetworkSchema,
+    group_by_fields: list[str] | None,
+    period: MilestonePeriod,
+    time_col: str,
+    time_bucket_sql: str,
+) -> tuple[str, str]:
+    """(value, interval_count) SQL for renewable proportion, NULL unless its inputs are complete.
+
+    market_summary leaves demand_gross and generation_renewable NULL for a region and interval
+    when any input (rooftop, demand_total, scada) is missing (#661). sum() silently skips NULLs,
+    so a network proportion over four of five regions, or a day with an hour missing, came out as
+    a plausible partial number and could register as a record (#662). The rule is now: NULL
+    unless every input is present.
+
+    - interval: every region of the network (the one region, for the region grouping) has both
+      columns non-NULL for the interval.
+    - day and above: that holds for every interval of the bucket, counted against the bucket's
+      real length (`get_expected_intervals_sql`). WEM buckets starting before the 5-minute cutover
+      are exempt, see `_WEM_FIVE_MINUTE_FROM`.
+
+    Completeness counts distinct (interval, region) pairs among the network's declared regions, so
+    a stray region row (the historic SNOWY1, or the known-bad NEM/WEM rows) can't stand in for a
+    missing one. A NULL value is dropped by both paths: the backlog's `total_value > 0` /
+    `total_value = running_max` filters and the incremental path's `value is None` check. It
+    applies to highs and lows alike.
+
+    The same SQL is used by the backlog and the incremental queries so the two can't disagree.
+    interval_count is the number of complete intervals, which equals the expected count exactly
+    when the bucket is complete.
+    """
+    fields = group_by_fields or []
+    regions = network.regions or [network.code]
+    required_regions = 1 if "network_region" in fields else len(regions)
+
+    complete_pairs = (
+        f"uniqExactIf(({time_col}, network_region), network_region IN ({list_to_case(regions)}) "
+        "AND demand_gross IS NOT NULL AND generation_renewable IS NOT NULL)"
+    )
+    expected = get_expected_intervals_sql(period, time_bucket_sql, network.interval_size)
+    complete = f"{complete_pairs} = {expected} * {required_regions}"
+
+    if period == MilestonePeriod.interval:
+        return f"if({complete}, {PROPORTION_CLAMPED_SQL}, NULL)", "1"
+
+    interval_count = f"intDiv({complete_pairs}, {required_regions})"
+
+    if network == NetworkWEM:
+        exempt = f"{time_bucket_sql} < toDateTime('{_WEM_FIVE_MINUTE_FROM.strftime('%Y-%m-%d %H:%M:%S')}')"
+        complete = f"({exempt} OR {complete})"
+        interval_count = f"if({exempt}, {expected}, {interval_count})"
+
+    return f"if({complete}, {PROPORTION_CLAMPED_SQL}, NULL)", interval_count
 
 
 def get_value_expression(metric_def: MetricDefinition, period: MilestonePeriod) -> tuple[str, str]:

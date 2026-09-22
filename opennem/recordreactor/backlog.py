@@ -8,7 +8,7 @@ across different metrics, networks, periods and grouping configurations.
 import logging
 import uuid
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 from textwrap import dedent
 from typing import Any
 
@@ -21,8 +21,9 @@ from opennem.db import get_read_session, get_write_session
 from opennem.db.clickhouse import get_clickhouse_client
 from opennem.db.models.opennem import Milestones
 from opennem.queries.utils import list_to_case
-from opennem.recordreactor.metric_registry import get_fueltech_cutoff_sql
+from opennem.recordreactor.metric_registry import get_fueltech_cutoff_sql, get_proportion_sql, get_rooftop_settled_sql
 from opennem.recordreactor.persistence import check_and_persist_milestones_chunked
+from opennem.recordreactor.queries_incremental import get_last_settled_interval
 from opennem.recordreactor.rebuild_guard import milestone_rebuild_lock, skip_if_rebuild_in_progress
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
@@ -184,6 +185,7 @@ def _analyze_milestone_records(
     start_date: datetime | None = None,
     end_date: datetime | None = None,
     debug: bool = False,
+    settled_interval: datetime | None = None,
 ) -> list[dict[str, Any]]:
     """
     Analyze historical records to find milestone records.
@@ -200,6 +202,8 @@ def _analyze_milestone_records(
         grouping: How to group the records
         start_date: Optional start date to limit analysis
         end_date: Optional end date to limit analysis
+        settled_interval: Last interval rooftop has landed for. At the interval period, rows that
+            can contain rooftop stop here (#662); None applies no cap
 
     Returns:
         list[dict[str, Any]]: List of milestone records
@@ -279,20 +283,12 @@ def _analyze_milestone_records(
             metric_column = "demand_energy"
         agg_function = "SUM"
     elif milestone_type == MilestoneType.proportion:
-        interval_count = "1"
-
-        if period != MilestonePeriod.interval:
-            interval_count = 10000000000  # @note hack until we do bounds on renew propoertion
-
-        # Bound the proportion at 200% — values above come from a near-zero demand_gross
-        # denominator (data artifact, GH #558) and return -1 so the `total_value > 0` filters
-        # below drop them rather than registering bogus 50,000% records. Legit >100%
-        # net-exporter intervals still pass.
-        metric_column = (
-            "round(if(sum(demand_gross) > 0 "
-            "AND (sum(generation_renewable) / sum(demand_gross)) * 100 <= 200, "
-            "(sum(generation_renewable) / sum(demand_gross)) * 100, -1), 2)"
-        )
+        # NULL unless every input is present for every region and interval of the bucket, and
+        # interval_count is the real count of complete intervals — this replaces the old
+        # interval_count = 10000000000 hack that waved every day+ bucket through the low guard
+        # whatever it held (#662). The 200% clamp inside is now only a last-resort bound. Shared
+        # with the incremental query so the two paths agree.
+        metric_column, interval_count = get_proportion_sql(network, grouping.group_by_fields, period, time_col, time_bucket_sql)
         agg_function = ""
 
     if not metric_column:
@@ -356,6 +352,15 @@ def _analyze_milestone_records(
     # instead left solar and wind with every low they found discarded and an empty chain (#656).
     fueltech_cutoffs = get_fueltech_cutoff_sql(grouping.group_by_fields, "time_bucket")
 
+    # Rows that can contain rooftop stop at the last settled interval, per row: the solar rows of a
+    # fueltech query and the renewable rows of a renewable query wait, coal and fossils beside them
+    # don't. Without this the tail of every rooftop series was summed on grid-only generation and
+    # minted false interval lows (#662). In the WHERE, like the cutoffs above, so the running
+    # extremes never see the partial rows. Day+ keep their trim to the last complete bucket.
+    rooftop_settled = ""
+    if period == MilestonePeriod.interval and settled_interval is not None:
+        rooftop_settled = get_rooftop_settled_sql(milestone_type, grouping.group_by_fields, time_col, settled_interval)
+
     total_value_query = f"{agg_function}({metric_column})" if agg_function else metric_column
 
     base_query = f"""
@@ -370,6 +375,7 @@ def _analyze_milestone_records(
         {date_clause}
         {date_cutoffs}
         {fueltech_cutoffs}
+        {rooftop_settled}
       GROUP BY
         {time_bucket_sql}{group_by_select}
       ORDER BY 1 asc, 2
@@ -612,6 +618,20 @@ def _analyzed_record_to_milestone_schema(
     return milestone_records
 
 
+def _get_backlog_settled_interval(client: Client, network: NetworkSchema, end_date: datetime | None) -> datetime:
+    """Last settled interval for a backlog run, derived the same way as the incremental path.
+
+    The backlog trims interval queries to `interval < end_date`, so the last interval it can see
+    is one before `end_date` (or the live last completed interval when unbounded). For a run
+    ending in the past this caps at most the last settle-lag of rooftop rows, which the next run
+    picks up.
+    """
+    if end_date is None:
+        end_date = get_last_completed_interval_for_network(network)
+
+    return get_last_settled_interval(client=client, network=network, now=end_date - timedelta(minutes=network.interval_size))
+
+
 _DEFAULT_PERIODS = [
     MilestonePeriod.interval,
     MilestonePeriod.day,
@@ -662,6 +682,9 @@ async def run_milestone_analysis(
     client = get_clickhouse_client()
     milestone_schema_records: list[MilestoneRecordOutputSchema] = []
 
+    # One settled interval per network per run, shared by every interval query that needs it (#662)
+    settled_intervals: dict[str, datetime] = {}
+
     # Iterate through all periods and grouping configurations
     for metric in metrics or _DEFAULT_METRICS:
         for network in networks or _DEFAULT_NETWORKS:
@@ -692,6 +715,13 @@ async def run_milestone_analysis(
                         ]:
                             continue
 
+                    settled_interval: datetime | None = None
+                    if period == MilestonePeriod.interval:
+                        if network.code not in settled_intervals:
+                            settled_intervals[network.code] = _get_backlog_settled_interval(client, network, end_date)
+                            logger.info(f"{network.code} interval rooftop series settled at {settled_intervals[network.code]}")
+                        settled_interval = settled_intervals[network.code]
+
                     records = _analyze_milestone_records(
                         client=client,
                         network=network,
@@ -701,6 +731,7 @@ async def run_milestone_analysis(
                         start_date=start_date,
                         end_date=end_date,
                         debug=debug,
+                        settled_interval=settled_interval,
                     )
 
                     milestone_records.extend(_analyzed_record_to_milestone_schema(records, network, period, metric, grouping))

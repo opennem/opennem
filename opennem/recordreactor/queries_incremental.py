@@ -9,15 +9,17 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any
 
+from opennem import settings
 from opennem.queries.utils import list_to_case
 from opennem.recordreactor.metric_registry import (
     TABLE_FUELTECH_INTERVALS,
     GroupingConfig,
     MetricDefinition,
+    get_proportion_sql,
     get_source_table_for_metric_grouping,
     get_value_expression,
 )
-from opennem.recordreactor.schema import MilestonePeriod
+from opennem.recordreactor.schema import MilestonePeriod, MilestoneType
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.recordreactor.queries_incremental")
@@ -109,6 +111,29 @@ def query_last_rooftop_interval(client: Any, network: NetworkSchema, now: dateti
     return min(last_interval_by_region[region] for region in network.regions)
 
 
+def get_last_settled_interval(client: Any, network: NetworkSchema, now: datetime) -> datetime:
+    """Last interval whose data has settled, i.e. rooftop solar has landed for every region.
+
+    Interval detection runs ~5 minutes after the interval but rooftop arrives 30-60 minutes
+    later, so any series containing solar was being computed on a partial interval and nothing
+    re-checked it once the data settled (#652).
+
+    Derived from the data where possible; falls back to `milestone_interval_settle_lag_minutes`
+    behind `now` when there's no live rooftop subnetwork or the rooftop data is missing/stale.
+    Never returns an interval later than `now`.
+
+    Lives here rather than in `incremental` because the backlog uses it too (#662), and backlog
+    importing incremental made an import cycle with the gap backfill's lazy backlog import.
+    """
+    lag = timedelta(minutes=settings.milestone_interval_settle_lag_minutes)
+    rooftop_interval = query_last_rooftop_interval(client=client, network=network, now=now)
+
+    if rooftop_interval is None:
+        return now - lag
+
+    return min(now, rooftop_interval)
+
+
 def build_period_aggregation_query(
     metric_def: MetricDefinition,
     network: NetworkSchema,
@@ -136,17 +161,24 @@ def build_period_aggregation_query(
         group_by_fields.extend(grouping.group_by_fields)
 
     # Build value expression
-    if agg_func:
-        select_fields.append(f"{agg_func}({value_col}) as value")
+    if metric_def.metric == MilestoneType.proportion:
+        # NULL unless every input is complete, with the count of complete intervals — the same
+        # SQL the backlog uses (#662)
+        proportion_value, proportion_count = get_proportion_sql(network, grouping.group_by_fields, period, time_col, time_bucket)
+        select_fields.append(f"{proportion_value} as value")
+        select_fields.append(f"{proportion_count} as interval_count")
     else:
-        # Pre-computed expression (e.g., proportion)
-        select_fields.append(f"{value_col} as value")
+        if agg_func:
+            select_fields.append(f"{agg_func}({value_col}) as value")
+        else:
+            # Pre-computed expression
+            select_fields.append(f"{value_col} as value")
 
-    # Add interval count for LOW record validation
-    if period != MilestonePeriod.interval:
-        select_fields.append(f"count(distinct {time_col}) as interval_count")
-    else:
-        select_fields.append("1 as interval_count")
+        # Add interval count for LOW record validation
+        if period != MilestonePeriod.interval:
+            select_fields.append(f"count(distinct {time_col}) as interval_count")
+        else:
+            select_fields.append("1 as interval_count")
 
     select_clause = ", ".join(select_fields)
     group_by_clause = ", ".join(group_by_fields)
