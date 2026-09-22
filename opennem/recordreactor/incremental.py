@@ -36,6 +36,12 @@ from opennem.recordreactor.schema import (
 from opennem.recordreactor.state import refresh_current_milestone_state, update_milestone_state
 from opennem.recordreactor.unit import get_milestone_unit
 from opennem.recordreactor.utils import check_milestone_is_new, should_notify_milestone
+from opennem.recordreactor.watermark import (
+    get_gap_backfill_enqueued_at,
+    get_last_incremental_run,
+    set_gap_backfill_enqueued_at,
+    set_last_incremental_run,
+)
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.tasks.broker import get_redis_pool
 from opennem.utils.dates import get_last_completed_interval_for_network
@@ -44,11 +50,13 @@ logger = logging.getLogger("opennem.recordreactor.incremental")
 
 _DEFAULT_NETWORKS = [NetworkNEM, NetworkWEM]
 
-# Gap wider than this hands over to the backlog; the incremental pass only sees the latest period
-GAP_BACKFILL_THRESHOLD_HOURS = 24
-
 # Fixed arq job id so only one gap backfill is ever queued or running
 GAP_BACKFILL_JOB_ID = "milestone_gap_backfill"
+
+# Our own floor on how often a backfill may be queued, independent of arq's job id. A pass that
+# fails before it updates the watermark leaves the detector permanently stale, and this is what
+# stops that becoming continuous background load (#658).
+GAP_BACKFILL_COOLDOWN = timedelta(hours=1)
 
 # Cap social submissions per run so a day-boundary burst doesn't flood the approval
 # queue. Most significant first; anything dropped is logged (not silent).
@@ -326,12 +334,8 @@ def _select_notifiable_instance_ids(
     return notifiable
 
 
-async def _get_milestone_gap_hours() -> tuple[datetime | None, datetime, float]:
-    """(newest milestone interval, last completed interval, gap in hours).
-
-    The gap is 0 when there are no milestones at all — an empty table needs a full rebuild, not a
-    gap backfill.
-    """
+async def _milestones_table_is_empty() -> bool:
+    """An empty table needs a full rebuild, not a gap backfill."""
     from sqlalchemy import func, select
 
     from opennem.db import get_read_session
@@ -339,21 +343,32 @@ async def _get_milestone_gap_hours() -> tuple[datetime | None, datetime, float]:
 
     async with get_read_session() as session:
         result = await session.execute(select(func.max(Milestones.interval)))
-        last_milestone = result.scalar()
 
+    return result.scalar() is None
+
+
+async def _get_downtime_hours() -> tuple[datetime | None, datetime, float]:
+    """(watermark, last completed interval, hours since the checker last completed a pass).
+
+    Staleness is measured against the watermark, not against `max(milestones.interval)`. The
+    backfill covers worker downtime, and a healthy system routinely goes more than a day without
+    setting a record — so measuring the newest record meant the gap never closed and the backfill
+    re-enqueued itself every 15 minutes forever (#658).
+    """
     now = get_last_completed_interval_for_network(NetworkNEM)
+    watermark = await get_last_incremental_run()
 
-    if not last_milestone:
+    if watermark is None:
         return None, now, 0.0
 
-    return last_milestone, now, (now - last_milestone).total_seconds() / 3600
+    return watermark, now, (now - watermark).total_seconds() / 3600
 
 
 async def _enqueue_gap_backfill_if_needed() -> None:
-    """Queue a gap backfill job when the newest milestone is more than a day old.
+    """Queue a gap backfill job when the incremental checker has not completed a pass recently.
 
-    The incremental checker only looks at the latest period, so a multi-day outage leaves records
-    undetected; the backlog's window functions find every record-breaking bucket in the range.
+    The checker only looks at the latest period, so records set during an outage are never
+    detected; the backlog's window functions find every record-breaking bucket in the range.
 
     This is enqueued rather than run inline. Since #654 a bounded backlog run seeds its running
     extremes from full history, so a gap backfill is ~8 minutes of ClickHouse work — far past the
@@ -362,17 +377,30 @@ async def _enqueue_gap_backfill_if_needed() -> None:
     tick. The job carries the worker's default timeout instead, and the incremental pass gets on
     with its own work in the meantime.
 
-    `GAP_BACKFILL_JOB_ID` keeps one in flight: arq refuses a second job with a live id. Note the id
-    stays reserved while arq keeps the finished job's result, so a failed backfill won't be retried
-    immediately — a deliberate circuit breaker against the loop described above.
+    Two guards keep one backfill in flight. `GAP_BACKFILL_JOB_ID` is arq's: it refuses a second
+    job while that id is live. `GAP_BACKFILL_COOLDOWN` is ours, in the same durable row as the
+    watermark, because a pass that fails before it can update the watermark would otherwise
+    re-enqueue as fast as arq allows.
     """
-    last_milestone, now, gap_hours = await _get_milestone_gap_hours()
-
-    if last_milestone is None:
+    if await _milestones_table_is_empty():
         logger.warning("No milestones found — run full backlog first")
         return
 
-    if gap_hours <= GAP_BACKFILL_THRESHOLD_HOURS:
+    watermark, now, downtime_hours = await _get_downtime_hours()
+
+    if watermark is None:
+        # Fresh deployment or a restored database: no evidence of downtime, and the pass about to
+        # run writes the watermark, so the next run has something to measure against.
+        logger.info("No incremental watermark yet — skipping the gap check until this run records one")
+        return
+
+    if downtime_hours <= settings.milestone_gap_backfill_threshold_hours:
+        return
+
+    enqueued_at = await get_gap_backfill_enqueued_at()
+
+    if enqueued_at and (now - enqueued_at) < GAP_BACKFILL_COOLDOWN:
+        logger.info(f"Incremental checker {downtime_hours:.0f}h stale but a backfill was queued at {enqueued_at} — waiting")
         return
 
     try:
@@ -385,14 +413,19 @@ async def _enqueue_gap_backfill_if_needed() -> None:
         logger.error(f"Could not enqueue milestone gap backfill: {e}")
         return
 
+    await set_gap_backfill_enqueued_at(now)
+
     if job is None:
-        logger.info(f"Milestone gap of {gap_hours:.0f}h — backfill already queued or recently run")
+        logger.info(f"Incremental checker {downtime_hours:.0f}h stale — backfill already queued or recently run")
     else:
-        logger.info(f"Milestone gap detected: {gap_hours:.0f}h ({last_milestone} to {now}). Enqueued gap backfill.")
+        logger.info(
+            f"Incremental checker last completed a pass at {watermark}, {downtime_hours:.0f}h before {now}. "
+            "Enqueued gap backfill."
+        )
 
 
 async def run_gap_backfill() -> None:
-    """Fill the gap between the newest milestone and now with a backlog run.
+    """Fill the window the incremental checker missed while it was down.
 
     Runs as its own arq job (`task_milestone_gap_backfill`) on the worker's default job timeout,
     not inside the 5-minute incremental cron. Stands down during a rebuild for the same reason the
@@ -404,20 +437,24 @@ async def run_gap_backfill() -> None:
     if await skip_if_rebuild_in_progress("milestone gap backfill"):
         return
 
-    last_milestone, now, gap_hours = await _get_milestone_gap_hours()
-
-    if last_milestone is None:
+    if await _milestones_table_is_empty():
         logger.warning("No milestones found — run full backlog first")
         return
 
-    if gap_hours <= GAP_BACKFILL_THRESHOLD_HOURS:
-        logger.info(f"Milestone gap is {gap_hours:.0f}h — closed before the backfill ran, nothing to do")
+    watermark, now, downtime_hours = await _get_downtime_hours()
+
+    if watermark is None:
+        logger.info("No incremental watermark — nothing to measure a gap against")
         return
 
-    logger.info(f"Filling milestone gap of {gap_hours:.0f}h ({last_milestone} to {now})")
+    if downtime_hours <= settings.milestone_gap_backfill_threshold_hours:
+        logger.info(f"Incremental checker is {downtime_hours:.0f}h stale — caught up before the backfill ran")
+        return
+
+    logger.info(f"Filling the {downtime_hours:.0f}h the incremental checker missed ({watermark} to {now})")
 
     # Align to start of day so day-period queries get complete days
-    start_date = last_milestone.replace(hour=0, minute=0, second=0, microsecond=0)
+    start_date = watermark.replace(hour=0, minute=0, second=0, microsecond=0)
     await run_milestone_analysis(start_date=start_date, end_date=now)
 
     logger.info("Gap backfill complete")
@@ -430,13 +467,13 @@ async def run_incremental_milestone_check(
     """Run incremental milestone detection.
 
     0. Stand down entirely if a full rebuild is running
-    1. Enqueue a gap backfill job if the newest milestone is more than a day old
+    1. Enqueue a gap backfill job if this checker hasn't completed a pass recently
     2. Load current state (latest high/low per record_id)
     3. Determine which periods have just completed (interval stops at the last settled interval)
     4. Query ClickHouse for aggregated values
     5. Compare against current records
     6. INSERT new records
-    7. Alert on significance >= 9
+    7. Record the watermark, then alert on significance >= 9
 
     Step 0 covers the gap backfill as well as the check itself: nothing is enqueued during a
     rebuild, and the job stands down again when it runs. Mid-rebuild the milestones table is empty
@@ -446,7 +483,7 @@ async def run_incremental_milestone_check(
     if await skip_if_rebuild_in_progress("incremental milestone check"):
         return []
 
-    # Hand any multi-day gap to its own job — it is minutes of work, this cron has 300s (#654)
+    # Hand any downtime gap to its own job — it is minutes of work, this cron has 300s (#654)
     await _enqueue_gap_backfill_if_needed()
 
     client = get_clickhouse_client()
@@ -522,6 +559,10 @@ async def run_incremental_milestone_check(
                     # Update in-memory state for subsequent comparisons
                     for record in persisted:
                         update_milestone_state(record.record_id, record)
+
+    # The pass completed: this is what the gap detector measures downtime against (#658). Written
+    # before the alerting below so a Slack or social failure can't make the checker look stale.
+    await set_last_incremental_run(get_last_completed_interval_for_network(NetworkNEM))
 
     if unseeded_record_ids:
         sample = ", ".join(sorted(unseeded_record_ids)[:5])
