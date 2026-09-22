@@ -313,6 +313,23 @@ async def task_update_milestones(ctx: dict) -> None:
     await run_incremental_milestone_check(alert_slack=True)
 
 
+async def task_milestone_gap_backfill(ctx: dict) -> None:
+    """
+    Fill a multi-day gap in the milestones table with a backlog run.
+
+    Enqueued by the incremental check when the newest milestone is more than a day old, never
+    scheduled. It runs on the worker's default job timeout rather than the 300s budget of the
+    5-minute incremental cron: since #654 a bounded backlog run seeds its running extremes from
+    full history, so filling a gap is minutes of ClickHouse work.
+    """
+    if not settings.run_milestones:
+        return
+
+    from opennem.recordreactor.incremental import run_gap_backfill
+
+    await run_gap_backfill()
+
+
 async def task_milestone_reconciliation(ctx: dict) -> None:
     """
     Monthly full reconciliation — fills any gaps from incremental detection.
