@@ -33,7 +33,7 @@ from opennem.recordreactor.schema import (
 )
 from opennem.recordreactor.state import refresh_current_milestone_state, update_milestone_state
 from opennem.recordreactor.unit import get_milestone_unit
-from opennem.recordreactor.utils import check_milestone_is_new
+from opennem.recordreactor.utils import check_milestone_is_new, should_notify_milestone
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network
 
@@ -115,7 +115,9 @@ def _map_row_to_records(
 ) -> list[MilestoneRecordSchema]:
     """Convert a single aggregated row into milestone record schemas for both high and low.
 
-    Compares against current state and only returns records that are new.
+    Compares against current state and only returns records that are new. Every genuine new
+    extreme is returned for persistence — whether it is announced is decided separately by
+    `_select_notifiable_instance_ids` (#651).
     """
     value = row.get("value")
     if value is None:
@@ -199,7 +201,7 @@ def _map_row_to_records(
         prev = current_state.get(record_id)
 
         if prev is not None:
-            if not check_milestone_is_new(candidate, prev, debounce_intervals=settings.milestone_interval_debounce_intervals):
+            if not check_milestone_is_new(candidate, prev):
                 continue
             # Set previous_instance_id for chain linking
             candidate.previous_instance_id = prev.instance_id
@@ -213,6 +215,38 @@ def _map_row_to_records(
         records.append(candidate)
 
     return records
+
+
+def _select_notifiable_instance_ids(
+    records: list[MilestoneRecordSchema],
+    current_state: dict[str, MilestoneRecordOutputSchema],
+    debounce_intervals: int,
+) -> set[uuid.UUID]:
+    """Pick the records that should raise an outbound notification.
+
+    Every record passed in is persisted — the debounce only decides what gets announced (#651).
+    The anchor is the last record announced for that record_id (falling back to the current stored
+    record), so a value that breaks its own record every interval is announced once per window
+    rather than once per interval.
+    """
+    if debounce_intervals <= 0:
+        return {r.instance_id for r in records if r.instance_id}
+
+    notifiable: set[uuid.UUID] = set()
+    anchors: dict[str, MilestoneRecordOutputSchema | MilestoneRecordSchema] = {}
+
+    for record in sorted(records, key=lambda r: r.interval):
+        anchor = anchors.get(record.record_id) or current_state.get(record.record_id)
+
+        if not should_notify_milestone(record, anchor, debounce_intervals=debounce_intervals):
+            continue
+
+        if record.instance_id:
+            notifiable.add(record.instance_id)
+
+        anchors[record.record_id] = record
+
+    return notifiable
 
 
 async def _backfill_gap_if_needed() -> None:
@@ -277,6 +311,8 @@ async def run_incremental_milestone_check(
     # Always reload state from DB to avoid stale reads after reconciliation/admin writes
     current_state = await refresh_current_milestone_state()
     all_new_records: list[MilestoneRecordOutputSchema] = []
+    # records that clear the notification debounce — the record itself is always persisted (#651)
+    notifiable_instance_ids: set[uuid.UUID] = set()
 
     for network in networks or _DEFAULT_NETWORKS:
         # get_last_completed_interval_for_network returns the start of the current interval
@@ -317,6 +353,12 @@ async def run_incremental_milestone_check(
                         new_records.extend(records)
 
                 if new_records:
+                    notifiable_instance_ids |= _select_notifiable_instance_ids(
+                        new_records,
+                        current_state,
+                        debounce_intervals=settings.milestone_interval_debounce_intervals,
+                    )
+
                     logger.info(
                         f"Found {len(new_records)} new records for {network.code} {metric_def.metric.value} {period.value}"
                     )
@@ -329,19 +371,21 @@ async def run_incremental_milestone_check(
                     for record in persisted:
                         update_milestone_state(record.record_id, record)
 
-    # Alert on high-significance records
+    # Alert on high-significance records. The interval debounce gates the announcement only:
+    # a record inside the window is stored above but not announced here (#651).
     significant_records = [r for r in all_new_records if r.significance >= 9]
+    announce_records = [r for r in significant_records if r.instance_id in notifiable_instance_ids]
 
-    if alert_slack and significant_records and settings.slack_hook_records:
-        descriptions = [f"- {r.description} ({r.value})" for r in significant_records[:10]]
-        message = f"New milestone records detected ({len(significant_records)}):\n" + "\n".join(descriptions)
+    if alert_slack and announce_records and settings.slack_hook_records:
+        descriptions = [f"- {r.description} ({r.value})" for r in announce_records[:10]]
+        message = f"New milestone records detected ({len(announce_records)}):\n" + "\n".join(descriptions)
         await slack_message(
             webhook_url=settings.slack_hook_records,
             message=message,
         )
 
     # Submit significant milestones to social media pipeline
-    if significant_records:
+    if announce_records:
         import asyncio as _asyncio
 
         from sqlalchemy import and_, select
@@ -353,7 +397,7 @@ async def run_incremental_milestone_check(
         from opennem.social.schema import CreateSocialPostRequest, SocialPostType
 
         # Most significant first; cap the per-run burst and log anything dropped.
-        ordered = sorted(significant_records, key=lambda r: r.significance, reverse=True)
+        ordered = sorted(announce_records, key=lambda r: r.significance, reverse=True)
         to_post = ordered[:_MAX_SOCIAL_POSTS_PER_RUN]
         if len(ordered) > _MAX_SOCIAL_POSTS_PER_RUN:
             logger.warning(
@@ -423,7 +467,10 @@ async def run_incremental_milestone_check(
                 logger.error(f"Failed to submit milestone {record.record_id} to social pipeline: {e}")
 
     if all_new_records:
-        logger.info(f"Incremental check complete: {len(all_new_records)} new records ({len(significant_records)} significant)")
+        logger.info(
+            f"Incremental check complete: {len(all_new_records)} new records "
+            f"({len(significant_records)} significant, {len(announce_records)} announced)"
+        )
     else:
         logger.debug("Incremental check complete: no new records")
 

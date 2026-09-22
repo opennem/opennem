@@ -178,11 +178,12 @@ class OpennemSettings(BaseSettings):
 
     # feature flags
     run_milestones: bool = True  # do we enable the milestones
-    # debounce interval-period milestone records (e.g. battery charging) so a ramping
-    # value doesn't fire a record + Slack/social notification every interval on the way
-    # up/down. A new interval record is only kept if it breaks the previous one at least
-    # this many intervals later. 0 disables. Day+ periods are spaced far enough apart to
-    # never trip this. See opennem.recordreactor.utils.check_milestone_is_new
+    # debounce interval-period milestone NOTIFICATIONS (e.g. battery charging) so a ramping
+    # value doesn't fire a Slack/social notification every interval on the way up/down. The
+    # record itself is always persisted — dropping it decimated the stored chain (#651) — only
+    # the announcement is suppressed when the record lands fewer than this many intervals after
+    # the previous record in its chain. 0 disables. Day+ periods are spaced far enough apart to
+    # never trip this. See opennem.recordreactor.utils.should_notify_milestone
     milestone_interval_debounce_intervals: int = 10
     run_crawlers: bool = True  # do we enable the crawlers
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
