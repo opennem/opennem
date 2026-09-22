@@ -39,6 +39,7 @@ from opennem.recordreactor.utils import check_milestone_is_new, should_notify_mi
 from opennem.recordreactor.watermark import (
     get_gap_backfill_enqueued_at,
     get_last_incremental_run,
+    get_last_settled_intervals,
     set_gap_backfill_enqueued_at,
     set_last_incremental_run,
 )
@@ -116,11 +117,40 @@ def get_last_settled_interval(client: Any, network: NetworkSchema, now: datetime
     return min(now, rooftop_interval)
 
 
+def get_interval_window_start(
+    settled_interval: datetime,
+    last_settled_interval: datetime | None,
+    lookback_minutes: int,
+    max_catchup_hours: int,
+) -> datetime:
+    """Where the interval window starts: from the last settled interval this checker covered.
+
+    A fixed lookback before the current settled interval skips intervals whenever the settled
+    interval jumps further than the lookback between two runs — a worker restart, a slow rooftop
+    crawl, rooftop landing in a batch. Those intervals were then never checked with rooftop in
+    them (dev missed QLD1 renewables at 8,360.7 MW on 2026-09-22 12:30, #662). So the window
+    reaches back to `last_settled_interval`, the watermark of what earlier passes covered, when
+    that is older than the lookback.
+
+    The reach back is capped at `max_catchup_hours` before the settled interval so a stale
+    watermark (days of downtime) can't turn a 5-minute cron into a full scan; the gap backfill
+    covers anything older. No watermark (first run after deploy) falls back to the lookback.
+    """
+    start = settled_interval - timedelta(minutes=lookback_minutes)
+
+    if last_settled_interval is not None and last_settled_interval < start:
+        start = last_settled_interval
+
+    return max(start, settled_interval - timedelta(hours=max_catchup_hours))
+
+
 def get_completed_periods(
     now: datetime,
     network: NetworkSchema,
     settled_interval: datetime | None = None,
     interval_lookback_minutes: int = 0,
+    last_settled_interval: datetime | None = None,
+    max_catchup_hours: int = 24,
 ) -> list[tuple[MilestonePeriod, datetime, datetime]]:
     """Return the most recently completed period for each period level.
 
@@ -139,6 +169,10 @@ def get_completed_periods(
     intervals is idempotent — `check_milestone_is_new` requires the interval to advance.
     Day+ periods are not gated on settledness.
 
+    When `last_settled_interval` (the watermark of what earlier passes covered) is older than the
+    lookback, the window starts there instead, up to `max_catchup_hours` back (#662). See
+    `get_interval_window_start`.
+
     Returns list of (period, period_start, period_end) tuples.
     """
     completed: list[tuple[MilestonePeriod, datetime, datetime]] = []
@@ -149,8 +183,13 @@ def get_completed_periods(
         elif period == MilestonePeriod.year:
             start, end = _get_last_completed_year(now)
         elif period == MilestonePeriod.interval and settled_interval is not None:
-            start, _ = get_period_start_end(settled_interval, period, network)
-            start = start - timedelta(minutes=interval_lookback_minutes)
+            window_start = get_interval_window_start(
+                settled_interval,
+                last_settled_interval,
+                lookback_minutes=interval_lookback_minutes,
+                max_catchup_hours=max_catchup_hours,
+            )
+            start, _ = get_period_start_end(window_start, period, network)
             _, end = get_period_start_end(now, period, network)
         else:
             start, end = get_period_start_end(now, period, network)
@@ -494,6 +533,9 @@ async def run_incremental_milestone_check(
     notifiable_instance_ids: set[uuid.UUID] = set()
     # record_ids with data but no chain — reported at the end of the run (#656)
     unseeded_record_ids: set[str] = set()
+    # the settled interval each network's pass covers, written to the watermark at the end (#662)
+    covered_settled_intervals: dict[str, datetime] = {}
+    last_settled_intervals = await get_last_settled_intervals()
 
     for network in networks or _DEFAULT_NETWORKS:
         # get_last_completed_interval_for_network returns the start of the current interval
@@ -505,7 +547,10 @@ async def run_incremental_milestone_check(
             network,
             settled_interval=settled_interval,
             interval_lookback_minutes=settings.milestone_interval_settle_lag_minutes,
+            last_settled_interval=last_settled_intervals.get(network.code),
+            max_catchup_hours=settings.milestone_interval_max_catchup_hours,
         )
+        covered_settled_intervals[network.code] = settled_interval
 
         logger.info(f"Checking {network.code}: {len(completed_periods)} periods at {now} (settled at {settled_interval})")
 
@@ -562,7 +607,13 @@ async def run_incremental_milestone_check(
 
     # The pass completed: this is what the gap detector measures downtime against (#658). Written
     # before the alerting below so a Slack or social failure can't make the checker look stale.
-    await set_last_incremental_run(get_last_completed_interval_for_network(NetworkNEM))
+    # The settled intervals go in the same upsert, and only after every record above is persisted:
+    # a pass that dies part way leaves them where they were, so the next pass re-covers the gap
+    # (#662).
+    await set_last_incremental_run(
+        get_last_completed_interval_for_network(NetworkNEM),
+        settled_intervals=covered_settled_intervals,
+    )
 
     if unseeded_record_ids:
         sample = ", ".join(sorted(unseeded_record_ids)[:5])

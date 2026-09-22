@@ -323,14 +323,18 @@ async def test_a_pass_that_finds_nothing_still_records_the_watermark(monkeypatch
     async def _no_state() -> dict:
         return {}
 
-    async def _record(when: datetime) -> None:
+    async def _record(when: datetime, settled_intervals: dict | None = None) -> None:
         written.append(when)
+
+    async def _no_settled() -> dict:
+        return {}
 
     monkeypatch.setattr(incremental, "skip_if_rebuild_in_progress", _no_rebuild)
     monkeypatch.setattr(incremental, "_enqueue_gap_backfill_if_needed", _no_gap)
     monkeypatch.setattr(incremental, "get_clickhouse_client", lambda: object())
     monkeypatch.setattr(incremental, "refresh_current_milestone_state", _no_state)
     monkeypatch.setattr(incremental, "get_last_settled_interval", lambda **kwargs: NOW)
+    monkeypatch.setattr(incremental, "get_last_settled_intervals", _no_settled)
     monkeypatch.setattr(incremental, "query_all_groupings_for_period", lambda **kwargs: [])
     monkeypatch.setattr(incremental, "get_last_completed_interval_for_network", lambda *a, **k: NOW)
     monkeypatch.setattr(incremental, "set_last_incremental_run", _record)
