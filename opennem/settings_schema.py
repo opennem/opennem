@@ -195,6 +195,12 @@ class OpennemSettings(BaseSettings):
     # intervals aren't skipped when rooftop lands in a 30-minute block. Day+ periods are not gated
     # on this. See opennem.recordreactor.metric_registry.row_contains_rooftop
     milestone_interval_settle_lag_minutes: int = 60
+    # how long the incremental milestone checker may go without completing a pass before its
+    # missed window is handed to a backlog job. measured against a durable watermark of the last
+    # completed pass, not against the newest record — a healthy system goes days without setting
+    # one (#658).
+    # See opennem.recordreactor.incremental._enqueue_gap_backfill_if_needed
+    milestone_gap_backfill_threshold_hours: int = 24
     run_crawlers: bool = True  # do we enable the crawlers
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
     show_emissions_in_power_outputs: bool = True  # show emissions in power outputs
