@@ -8,7 +8,6 @@ from datetime import datetime
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.exc import IntegrityError
 
-from opennem import settings
 from opennem.db import get_write_session
 from opennem.db.models.opennem import Milestones
 from opennem.recordreactor.schema import MilestoneRecordOutputSchema, MilestoneRecordSchema
@@ -55,13 +54,11 @@ async def check_and_persist_milestones_chunked(milestones: list[MilestoneRecordS
     # get the current milestone state
     milestone_state = await get_current_milestone_state()
 
-    debounce_intervals = settings.milestone_interval_debounce_intervals
-
     # local state of the last record we KEPT per record_id, seeded from the global state.
     # the global state isn't updated mid-batch, so without this a backlog/reconciliation
     # batch (many records per record_id, sorted ascending) would compare every record
-    # against the same pre-batch prev — breaking both the value comparison and the debounce
-    # re-anchoring. Tracking the last kept record locally makes both paths consistent.
+    # against the same pre-batch prev, so every value in the batch would be compared to a
+    # stale extreme. Tracking the last kept record locally makes both paths consistent.
     local_state: dict[str, MilestoneRecordOutputSchema] = {}
 
     # check for duplicate primary keys
@@ -79,7 +76,7 @@ async def check_and_persist_milestones_chunked(milestones: list[MilestoneRecordS
         # effective previous = last record kept this batch, else the pre-batch global state
         milestone_prev = local_state.get(record.record_id) or milestone_state.get(record.record_id)
 
-        if milestone_prev and not check_milestone_is_new(record, milestone_prev, debounce_intervals=debounce_intervals):
+        if milestone_prev and not check_milestone_is_new(record, milestone_prev):
             continue
 
         # check primary key to make sure we don't have duplicates
@@ -94,8 +91,9 @@ async def check_and_persist_milestones_chunked(milestones: list[MilestoneRecordS
         description = get_record_description(record)
         significance = calculate_milestone_significance(record)
 
-        # link to the previous record we actually kept (debounce may have dropped intermediate
-        # records, so the upstream-computed previous_instance_id can point at a skipped record)
+        # link to the previous record we actually kept (the value comparison may have dropped
+        # intermediate records, so the upstream-computed previous_instance_id can point at a
+        # skipped record)
         previous_instance_id = milestone_prev.instance_id if milestone_prev else record.previous_instance_id
 
         milestone_dict = {

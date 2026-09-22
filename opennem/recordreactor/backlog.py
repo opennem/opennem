@@ -268,12 +268,15 @@ def _analyze_milestone_records(
         # made every low candidate fail the interval_threshold guard, so full-history rebuilds
         # emitted zero demand low records and the incremental worker minted false lows into the
         # empty chains (#640)
+        # demand is summed at every period: market_summary holds exactly one row per
+        # (interval, network_region), so SUM matches AVG for the region grouping and is the only
+        # correct choice for the network grouping, which has no region key. AVG at the interval
+        # period published nem-wide demand as the mean of the five regions (#653)
         if period == MilestonePeriod.interval:
             metric_column = "demand"
-            agg_function = "AVG"
         else:
             metric_column = "demand_energy"
-            agg_function = "SUM"
+        agg_function = "SUM"
     elif milestone_type == MilestoneType.proportion:
         interval_count = "1"
 
@@ -294,14 +297,25 @@ def _analyze_milestone_records(
     if not metric_column:
         raise ValueError(f"Unsupported milestone type: {milestone_type}")
 
-    # Build date range conditions
+    # Build date range conditions.
+    #
+    # Only end_date is applied here. start_date deliberately is NOT: the running max/min windows
+    # are seeded from every bucket before the window, otherwise a bounded run restarts them at its
+    # own edge, the first row has prev_max/prev_min NULL and is emitted as a record purely because
+    # the window starts there (#654). It filters the OUTPUT rows below instead.
+    #
+    # @NOTE the cost of this is that a bounded run scans full history (from date_cutoffs) in
+    # base_stats rather than just its window.
     date_conditions = []
-    if start_date:
-        date_conditions.append(f"{time_col} >= toDateTime('{start_date.strftime('%Y-%m-%d %H:%M:%S')}')")
     if end_date:
         date_conditions.append(_trim_end_date(time_col, end_date, period))
 
     date_clause = f"AND {' AND '.join(date_conditions)}" if date_conditions else ""
+
+    # Emit only the buckets inside the requested window, seeded from everything before it
+    output_window_clause = ""
+    if start_date:
+        output_window_clause = f"WHERE interval >= toDateTime('{start_date.strftime('%Y-%m-%d %H:%M:%S')}')"
 
     # get the min value for the period
     interval_threshold = INTERVAL_THRESHOLDS.get_for_period(period)
@@ -469,6 +483,7 @@ def _analyze_milestone_records(
         total_value = running_min
         AND (prev_min IS NULL OR total_value < prev_min AND interval_count >= {interval_threshold})
     )
+    {output_window_clause}
     ORDER BY interval"""
 
     try:

@@ -178,12 +178,23 @@ class OpennemSettings(BaseSettings):
 
     # feature flags
     run_milestones: bool = True  # do we enable the milestones
-    # debounce interval-period milestone records (e.g. battery charging) so a ramping
-    # value doesn't fire a record + Slack/social notification every interval on the way
-    # up/down. A new interval record is only kept if it breaks the previous one at least
-    # this many intervals later. 0 disables. Day+ periods are spaced far enough apart to
-    # never trip this. See opennem.recordreactor.utils.check_milestone_is_new
+    # debounce interval-period milestone NOTIFICATIONS (e.g. battery charging) so a ramping
+    # value doesn't fire a Slack/social notification every interval on the way up/down. The
+    # record itself is always persisted — dropping it decimated the stored chain (#651) — only
+    # the announcement is suppressed when the record lands fewer than this many intervals after
+    # the previous record in its chain. 0 disables. Day+ periods are spaced far enough apart to
+    # never trip this. See opennem.recordreactor.utils.should_notify_milestone
     milestone_interval_debounce_intervals: int = 10
+    # rooftop solar lands 30 minutes to two hours after the interval it covers, so an interval
+    # checked as soon as the grid data arrives is partial for every series containing solar
+    # (#652). Those series - network/region totals, solar, renewables, renewable proportion - stop
+    # at the last settled interval, derived from the data (the latest interval with rooftop rows
+    # for every region) and falling back to this many minutes behind the last completed interval
+    # when that can't be determined. Series with no rooftop in them (coal, gas, wind, batteries,
+    # fossils, demand, price) are not held back at all. The same window is re-scanned each run so
+    # intervals aren't skipped when rooftop lands in a 30-minute block. Day+ periods are not gated
+    # on this. See opennem.recordreactor.metric_registry.row_contains_rooftop
+    milestone_interval_settle_lag_minutes: int = 60
     run_crawlers: bool = True  # do we enable the crawlers
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
     show_emissions_in_power_outputs: bool = True  # show emissions in power outputs
