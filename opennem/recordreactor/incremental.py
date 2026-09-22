@@ -10,7 +10,6 @@ Replaces the full-regeneration approach in backlog.py for scheduled runs.
 import logging
 import uuid
 from datetime import datetime, timedelta
-from typing import Any
 
 from opennem import settings
 from opennem.clients.slack import slack_message
@@ -23,7 +22,7 @@ from opennem.recordreactor.metric_registry import (
     row_contains_rooftop,
 )
 from opennem.recordreactor.persistence import check_and_persist_milestones_chunked
-from opennem.recordreactor.queries_incremental import query_all_groupings_for_period, query_last_rooftop_interval
+from opennem.recordreactor.queries_incremental import get_last_settled_interval, query_all_groupings_for_period
 from opennem.recordreactor.rebuild_guard import skip_if_rebuild_in_progress
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
@@ -95,26 +94,6 @@ def _get_last_completed_year(dt: datetime) -> tuple[datetime, datetime]:
     """Return (start, end) of the last fully completed calendar year."""
     start_of_year = dt.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
     return start_of_year.replace(year=start_of_year.year - 1), start_of_year
-
-
-def get_last_settled_interval(client: Any, network: NetworkSchema, now: datetime) -> datetime:
-    """Last interval whose data has settled, i.e. rooftop solar has landed for every region.
-
-    Interval detection runs ~5 minutes after the interval but rooftop arrives 30-60 minutes
-    later, so any series containing solar was being computed on a partial interval and nothing
-    re-checked it once the data settled (#652).
-
-    Derived from the data where possible; falls back to `milestone_interval_settle_lag_minutes`
-    behind `now` when there's no live rooftop subnetwork or the rooftop data is missing/stale.
-    Never returns an interval later than `now`.
-    """
-    lag = timedelta(minutes=settings.milestone_interval_settle_lag_minutes)
-    rooftop_interval = query_last_rooftop_interval(client=client, network=network, now=now)
-
-    if rooftop_interval is None:
-        return now - lag
-
-    return min(now, rooftop_interval)
 
 
 def get_interval_window_start(

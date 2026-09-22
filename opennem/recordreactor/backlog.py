@@ -21,9 +21,9 @@ from opennem.db import get_read_session, get_write_session
 from opennem.db.clickhouse import get_clickhouse_client
 from opennem.db.models.opennem import Milestones
 from opennem.queries.utils import list_to_case
-from opennem.recordreactor.incremental import get_last_settled_interval
 from opennem.recordreactor.metric_registry import get_fueltech_cutoff_sql, get_proportion_sql, get_rooftop_settled_sql
 from opennem.recordreactor.persistence import check_and_persist_milestones_chunked
+from opennem.recordreactor.queries_incremental import get_last_settled_interval
 from opennem.recordreactor.rebuild_guard import milestone_rebuild_lock, skip_if_rebuild_in_progress
 from opennem.recordreactor.schema import (
     MilestoneAggregate,

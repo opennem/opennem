@@ -9,6 +9,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any
 
+from opennem import settings
 from opennem.queries.utils import list_to_case
 from opennem.recordreactor.metric_registry import (
     TABLE_FUELTECH_INTERVALS,
@@ -108,6 +109,29 @@ def query_last_rooftop_interval(client: Any, network: NetworkSchema, now: dateti
         return None
 
     return min(last_interval_by_region[region] for region in network.regions)
+
+
+def get_last_settled_interval(client: Any, network: NetworkSchema, now: datetime) -> datetime:
+    """Last interval whose data has settled, i.e. rooftop solar has landed for every region.
+
+    Interval detection runs ~5 minutes after the interval but rooftop arrives 30-60 minutes
+    later, so any series containing solar was being computed on a partial interval and nothing
+    re-checked it once the data settled (#652).
+
+    Derived from the data where possible; falls back to `milestone_interval_settle_lag_minutes`
+    behind `now` when there's no live rooftop subnetwork or the rooftop data is missing/stale.
+    Never returns an interval later than `now`.
+
+    Lives here rather than in `incremental` because the backlog uses it too (#662), and backlog
+    importing incremental made an import cycle with the gap backfill's lazy backlog import.
+    """
+    lag = timedelta(minutes=settings.milestone_interval_settle_lag_minutes)
+    rooftop_interval = query_last_rooftop_interval(client=client, network=network, now=now)
+
+    if rooftop_interval is None:
+        return now - lag
+
+    return min(now, rooftop_interval)
 
 
 def build_period_aggregation_query(
