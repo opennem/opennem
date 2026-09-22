@@ -22,7 +22,7 @@ from opennem.db.clickhouse import get_clickhouse_client
 from opennem.db.models.opennem import Milestones
 from opennem.queries.utils import list_to_case
 from opennem.recordreactor.incremental import get_last_settled_interval
-from opennem.recordreactor.metric_registry import get_fueltech_cutoff_sql, get_rooftop_settled_sql
+from opennem.recordreactor.metric_registry import get_fueltech_cutoff_sql, get_proportion_sql, get_rooftop_settled_sql
 from opennem.recordreactor.persistence import check_and_persist_milestones_chunked
 from opennem.recordreactor.rebuild_guard import milestone_rebuild_lock, skip_if_rebuild_in_progress
 from opennem.recordreactor.schema import (
@@ -283,20 +283,12 @@ def _analyze_milestone_records(
             metric_column = "demand_energy"
         agg_function = "SUM"
     elif milestone_type == MilestoneType.proportion:
-        interval_count = "1"
-
-        if period != MilestonePeriod.interval:
-            interval_count = 10000000000  # @note hack until we do bounds on renew propoertion
-
-        # Bound the proportion at 200% — values above come from a near-zero demand_gross
-        # denominator (data artifact, GH #558) and return -1 so the `total_value > 0` filters
-        # below drop them rather than registering bogus 50,000% records. Legit >100%
-        # net-exporter intervals still pass.
-        metric_column = (
-            "round(if(sum(demand_gross) > 0 "
-            "AND (sum(generation_renewable) / sum(demand_gross)) * 100 <= 200, "
-            "(sum(generation_renewable) / sum(demand_gross)) * 100, -1), 2)"
-        )
+        # NULL unless every input is present for every region and interval of the bucket, and
+        # interval_count is the real count of complete intervals — this replaces the old
+        # interval_count = 10000000000 hack that waved every day+ bucket through the low guard
+        # whatever it held (#662). The 200% clamp inside is now only a last-resort bound. Shared
+        # with the incremental query so the two paths agree.
+        metric_column, interval_count = get_proportion_sql(network, grouping.group_by_fields, period, time_col, time_bucket_sql)
         agg_function = ""
 
     if not metric_column:

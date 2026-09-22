@@ -14,10 +14,11 @@ from opennem.recordreactor.metric_registry import (
     TABLE_FUELTECH_INTERVALS,
     GroupingConfig,
     MetricDefinition,
+    get_proportion_sql,
     get_source_table_for_metric_grouping,
     get_value_expression,
 )
-from opennem.recordreactor.schema import MilestonePeriod
+from opennem.recordreactor.schema import MilestonePeriod, MilestoneType
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.recordreactor.queries_incremental")
@@ -136,17 +137,24 @@ def build_period_aggregation_query(
         group_by_fields.extend(grouping.group_by_fields)
 
     # Build value expression
-    if agg_func:
-        select_fields.append(f"{agg_func}({value_col}) as value")
+    if metric_def.metric == MilestoneType.proportion:
+        # NULL unless every input is complete, with the count of complete intervals — the same
+        # SQL the backlog uses (#662)
+        proportion_value, proportion_count = get_proportion_sql(network, grouping.group_by_fields, period, time_col, time_bucket)
+        select_fields.append(f"{proportion_value} as value")
+        select_fields.append(f"{proportion_count} as interval_count")
     else:
-        # Pre-computed expression (e.g., proportion)
-        select_fields.append(f"{value_col} as value")
+        if agg_func:
+            select_fields.append(f"{agg_func}({value_col}) as value")
+        else:
+            # Pre-computed expression
+            select_fields.append(f"{value_col} as value")
 
-    # Add interval count for LOW record validation
-    if period != MilestonePeriod.interval:
-        select_fields.append(f"count(distinct {time_col}) as interval_count")
-    else:
-        select_fields.append("1 as interval_count")
+        # Add interval count for LOW record validation
+        if period != MilestonePeriod.interval:
+            select_fields.append(f"count(distinct {time_col}) as interval_count")
+        else:
+            select_fields.append("1 as interval_count")
 
     select_clause = ", ".join(select_fields)
     group_by_clause = ", ".join(group_by_fields)
