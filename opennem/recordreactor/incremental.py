@@ -10,6 +10,7 @@ Replaces the full-regeneration approach in backlog.py for scheduled runs.
 import logging
 import uuid
 from datetime import datetime, timedelta
+from typing import Any
 
 from opennem import settings
 from opennem.clients.slack import slack_message
@@ -21,7 +22,7 @@ from opennem.recordreactor.metric_registry import (
     get_metric_definitions_for_period,
 )
 from opennem.recordreactor.persistence import check_and_persist_milestones_chunked
-from opennem.recordreactor.queries_incremental import query_all_groupings_for_period
+from opennem.recordreactor.queries_incremental import query_all_groupings_for_period, query_last_rooftop_interval
 from opennem.recordreactor.rebuild_guard import skip_if_rebuild_in_progress
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
@@ -79,7 +80,32 @@ def _get_last_completed_year(dt: datetime) -> tuple[datetime, datetime]:
     return start_of_year.replace(year=start_of_year.year - 1), start_of_year
 
 
-def get_completed_periods(now: datetime, network: NetworkSchema) -> list[tuple[MilestonePeriod, datetime, datetime]]:
+def get_last_settled_interval(client: Any, network: NetworkSchema, now: datetime) -> datetime:
+    """Last interval whose data has settled, i.e. rooftop solar has landed for every region.
+
+    Interval detection runs ~5 minutes after the interval but rooftop arrives 30-60 minutes
+    later, so any series containing solar was being computed on a partial interval and nothing
+    re-checked it once the data settled (#652).
+
+    Derived from the data where possible; falls back to `milestone_interval_settle_lag_minutes`
+    behind `now` when there's no live rooftop subnetwork or the rooftop data is missing/stale.
+    Never returns an interval later than `now`.
+    """
+    lag = timedelta(minutes=settings.milestone_interval_settle_lag_minutes)
+    rooftop_interval = query_last_rooftop_interval(client=client, network=network, now=now)
+
+    if rooftop_interval is None:
+        return now - lag
+
+    return min(now, rooftop_interval)
+
+
+def get_completed_periods(
+    now: datetime,
+    network: NetworkSchema,
+    settled_interval: datetime | None = None,
+    interval_lookback_minutes: int = 0,
+) -> list[tuple[MilestonePeriod, datetime, datetime]]:
     """Return the most recently completed period for each period level.
 
     Always checks all period levels — the comparison against state ensures
@@ -88,6 +114,12 @@ def get_completed_periods(now: datetime, network: NetworkSchema) -> list[tuple[M
 
     Quarter and year use aligned boundaries to avoid inserting partial-period
     records (e.g., a mid-quarter run must not create a partial quarter milestone).
+
+    The interval period ends at `settled_interval` rather than `now` and re-scans
+    `interval_lookback_minutes` before it: rooftop lands in 30-minute blocks, so the settled
+    interval jumps several intervals at a time and a single-interval query would skip the rest
+    (#652). Re-checking already-recorded intervals is idempotent — `check_milestone_is_new`
+    requires the interval to advance. Day+ periods are not gated on settledness.
 
     Returns list of (period, period_start, period_end) tuples.
     """
@@ -98,6 +130,9 @@ def get_completed_periods(now: datetime, network: NetworkSchema) -> list[tuple[M
             start, end = _get_last_completed_quarter(now)
         elif period == MilestonePeriod.year:
             start, end = _get_last_completed_year(now)
+        elif period == MilestonePeriod.interval and settled_interval is not None:
+            start, end = get_period_start_end(settled_interval, period, network)
+            start = start - timedelta(minutes=interval_lookback_minutes)
         else:
             start, end = get_period_start_end(now, period, network)
         completed.append((period, start, end))
@@ -291,7 +326,7 @@ async def run_incremental_milestone_check(
     0. Stand down entirely if a full rebuild is running
     1. Check for gaps > 1 day and backfill if needed
     2. Load current state (latest high/low per record_id)
-    3. Determine which periods have just completed
+    3. Determine which periods have just completed (interval stops at the last settled interval)
     4. Query ClickHouse for aggregated values
     5. Compare against current records
     6. INSERT new records
@@ -318,9 +353,15 @@ async def run_incremental_milestone_check(
         # get_last_completed_interval_for_network returns the start of the current interval
         # (e.g. 10:05 at 10:07) — subtract one interval to get the last truly completed one
         now = get_last_completed_interval_for_network(network) - timedelta(minutes=network.interval_size)
-        completed_periods = get_completed_periods(now, network)
+        settled_interval = get_last_settled_interval(client=client, network=network, now=now)
+        completed_periods = get_completed_periods(
+            now,
+            network,
+            settled_interval=settled_interval,
+            interval_lookback_minutes=settings.milestone_interval_settle_lag_minutes,
+        )
 
-        logger.info(f"Checking {network.code}: {len(completed_periods)} periods at {now}")
+        logger.info(f"Checking {network.code}: {len(completed_periods)} periods at {now} (settled at {settled_interval})")
 
         for period, period_start, period_end in completed_periods:
             # Get all metric definitions valid for this period

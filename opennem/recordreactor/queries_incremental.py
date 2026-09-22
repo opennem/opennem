@@ -6,11 +6,12 @@ one value per grouping key. Python handles comparison against current state.
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 
 from opennem.queries.utils import list_to_case
 from opennem.recordreactor.metric_registry import (
+    TABLE_FUELTECH_INTERVALS,
     GroupingConfig,
     MetricDefinition,
     get_source_table_for_metric_grouping,
@@ -52,6 +53,60 @@ def _build_network_filter(network: NetworkSchema, time_col: str) -> str:
     if network.subnetworks:
         network_codes.extend([s.code for s in network.subnetworks])
     return f"network_id IN ({list_to_case(network_codes)})"
+
+
+def get_live_rooftop_network_codes(network: NetworkSchema) -> list[str]:
+    """Network ids of the rooftop subnetworks still receiving data for a network.
+
+    Backfill subnetworks (data_last_seen in the past) are excluded — their last interval is years
+    old and would peg the settled interval to it.
+    """
+    return [
+        subnetwork.code
+        for subnetwork in network.subnetworks or []
+        if "solar_rooftop" in (subnetwork.fueltechs or []) and not subnetwork.data_last_seen
+    ]
+
+
+def query_last_rooftop_interval(client: Any, network: NetworkSchema, now: datetime) -> datetime | None:
+    """Latest interval with rooftop rows for EVERY region of the network.
+
+    Rooftop arrives 30-60 minutes after the interval it covers. Until it lands, any series
+    containing solar sums to grid-only generation, so a record computed on it is wrong (#652).
+
+    Returns None when the network has no live rooftop subnetwork, the query fails, or a region is
+    missing entirely (a stale region must not let the other four declare the interval settled).
+    """
+    rooftop_codes = get_live_rooftop_network_codes(network)
+
+    if not rooftop_codes or not network.regions:
+        return None
+
+    # bound the scan: rooftop that hasn't landed within a day is an outage, not a lag
+    lookback_str = (now - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
+
+    query = f"""
+    SELECT network_region, max(interval) as last_interval
+    FROM {TABLE_FUELTECH_INTERVALS}
+    WHERE network_id IN ({list_to_case(rooftop_codes)})
+      AND interval >= toDateTime('{lookback_str}')
+    GROUP BY network_region
+    """
+
+    try:
+        rows = client.execute(query)
+    except Exception as e:
+        logger.error(f"Rooftop settled-interval query failed for {network.code}: {e}")
+        return None
+
+    last_interval_by_region = {region: interval for region, interval in rows if interval}
+    missing = set(network.regions) - set(last_interval_by_region)
+
+    if missing:
+        logger.warning(f"No recent rooftop data for {network.code} regions {sorted(missing)} — falling back to lag")
+        return None
+
+    return min(last_interval_by_region[region] for region in network.regions)
 
 
 def build_period_aggregation_query(

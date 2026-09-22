@@ -185,6 +185,14 @@ class OpennemSettings(BaseSettings):
     # the previous record in its chain. 0 disables. Day+ periods are spaced far enough apart to
     # never trip this. See opennem.recordreactor.utils.should_notify_milestone
     milestone_interval_debounce_intervals: int = 10
+    # rooftop solar lands 30-60 minutes after the interval it covers, so an interval checked as
+    # soon as the grid data arrives is partial for every series containing solar (#652). Interval
+    # record detection stops at the last settled interval, derived from the data (the latest
+    # interval with rooftop rows for every region) and falling back to this many minutes behind
+    # the last completed interval when that can't be determined. The same window is re-scanned
+    # each run so intervals aren't skipped when rooftop lands in a 30-minute block.
+    # Day+ periods are not gated on this. See opennem.recordreactor.incremental
+    milestone_interval_settle_lag_minutes: int = 60
     run_crawlers: bool = True  # do we enable the crawlers
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
     show_emissions_in_power_outputs: bool = True  # show emissions in power outputs
