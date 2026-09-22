@@ -67,6 +67,8 @@ def _record(network_id: str) -> tuple[Any, ...]:
         24.0,  # prev_curtailment_solar_total
         120.0,  # prev_curtailment_wind_total
         144.0,  # curtailment_total
+        40,  # scada_rows
+        40,  # prev_scada_rows
     )
 
 
