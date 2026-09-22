@@ -297,14 +297,25 @@ def _analyze_milestone_records(
     if not metric_column:
         raise ValueError(f"Unsupported milestone type: {milestone_type}")
 
-    # Build date range conditions
+    # Build date range conditions.
+    #
+    # Only end_date is applied here. start_date deliberately is NOT: the running max/min windows
+    # are seeded from every bucket before the window, otherwise a bounded run restarts them at its
+    # own edge, the first row has prev_max/prev_min NULL and is emitted as a record purely because
+    # the window starts there (#654). It filters the OUTPUT rows below instead.
+    #
+    # @NOTE the cost of this is that a bounded run scans full history (from date_cutoffs) in
+    # base_stats rather than just its window.
     date_conditions = []
-    if start_date:
-        date_conditions.append(f"{time_col} >= toDateTime('{start_date.strftime('%Y-%m-%d %H:%M:%S')}')")
     if end_date:
         date_conditions.append(_trim_end_date(time_col, end_date, period))
 
     date_clause = f"AND {' AND '.join(date_conditions)}" if date_conditions else ""
+
+    # Emit only the buckets inside the requested window, seeded from everything before it
+    output_window_clause = ""
+    if start_date:
+        output_window_clause = f"WHERE interval >= toDateTime('{start_date.strftime('%Y-%m-%d %H:%M:%S')}')"
 
     # get the min value for the period
     interval_threshold = INTERVAL_THRESHOLDS.get_for_period(period)
@@ -472,6 +483,7 @@ def _analyze_milestone_records(
         total_value = running_min
         AND (prev_min IS NULL OR total_value < prev_min AND interval_count >= {interval_threshold})
     )
+    {output_window_clause}
     ORDER BY interval"""
 
     try:
