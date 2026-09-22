@@ -91,6 +91,54 @@ _FUELTECH_DATE_CUTOFFS: dict[str, datetime] = {
 }
 
 
+# Fueltech groupings derived from the renewable flag rather than a fueltech_group_id column
+_RENEWABLE_FLAG_GROUPINGS = (MilestoneFueltechGrouping.renewables.value, MilestoneFueltechGrouping.fossils.value)
+
+
+def get_fueltech_date_cutoffs() -> dict[str, datetime]:
+    """Earliest date each fueltech grouping has usable data.
+
+    Single source of truth for both detection paths — the backlog used to carry its own hardcoded
+    copy of these dates (#656).
+    """
+    return _FUELTECH_DATE_CUTOFFS
+
+
+def get_fueltech_cutoff_sql(group_by_fields: list[str] | None, time_expression: str) -> str:
+    """SQL excluding buckets before a fueltech's data-quality cutoff.
+
+    This belongs in the WHERE of the aggregation, not in a filter over its output. The backlog
+    computed its running extremes over all history and then dropped the pre-cutoff records
+    afterwards, so a series whose lows all sit at the start of its history — solar and wind both
+    do, they only grow — had every low it found discarded and was written to the table with an
+    empty low chain. The live checker then minted the next value it saw as an all-time low (#656).
+
+    Returns "" for a grouping with no fueltech key: a network or region total has no single
+    fueltech to cut off.
+    """
+    fields = group_by_fields or []
+    clauses: list[str] = []
+
+    if "fueltech_group_id" in fields:
+        for fueltech, cutoff in _FUELTECH_DATE_CUTOFFS.items():
+            if fueltech in _RENEWABLE_FLAG_GROUPINGS:
+                continue
+            clauses.append(
+                f"NOT (fueltech_group_id = '{fueltech}' "
+                f"AND {time_expression} < toDateTime('{cutoff.strftime('%Y-%m-%d %H:%M:%S')}'))"
+            )
+
+    if "renewable" in fields:
+        cutoff = _FUELTECH_DATE_CUTOFFS.get(MilestoneFueltechGrouping.renewables.value)
+        if cutoff:
+            clauses.append(f"NOT (renewable = 1 AND {time_expression} < toDateTime('{cutoff.strftime('%Y-%m-%d %H:%M:%S')}'))")
+
+    if not clauses:
+        return ""
+
+    return "and " + "\n        and ".join(clauses)
+
+
 def _get_source_table_for_grouping(grouping: GroupingConfig) -> str:
     """Determine the ClickHouse source table based on grouping type"""
     if "renewable" in grouping.group_by_fields:
