@@ -198,9 +198,12 @@ class OpennemSettings(BaseSettings):
     # how long the incremental milestone checker may go without completing a pass before its
     # missed window is handed to a backlog job. measured against a durable watermark of the last
     # completed pass, not against the newest record — a healthy system goes days without setting
-    # one (#658).
+    # one (#658). 3h rather than the old 24h: an outage longer than
+    # milestone_interval_settle_lag_minutes already loses interval records that the next pass
+    # can't recover, so repairing same-day is the point, and the job is single-flight, out of band
+    # and cooled down. ordinary restarts take seconds and never reach this.
     # See opennem.recordreactor.incremental._enqueue_gap_backfill_if_needed
-    milestone_gap_backfill_threshold_hours: int = 24
+    milestone_gap_backfill_threshold_hours: int = 3
     run_crawlers: bool = True  # do we enable the crawlers
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
     show_emissions_in_power_outputs: bool = True  # show emissions in power outputs
