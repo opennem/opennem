@@ -268,12 +268,15 @@ def _analyze_milestone_records(
         # made every low candidate fail the interval_threshold guard, so full-history rebuilds
         # emitted zero demand low records and the incremental worker minted false lows into the
         # empty chains (#640)
+        # demand is summed at every period: market_summary holds exactly one row per
+        # (interval, network_region), so SUM matches AVG for the region grouping and is the only
+        # correct choice for the network grouping, which has no region key. AVG at the interval
+        # period published nem-wide demand as the mean of the five regions (#653)
         if period == MilestonePeriod.interval:
             metric_column = "demand"
-            agg_function = "AVG"
         else:
             metric_column = "demand_energy"
-            agg_function = "SUM"
+        agg_function = "SUM"
     elif milestone_type == MilestoneType.proportion:
         interval_count = "1"
 

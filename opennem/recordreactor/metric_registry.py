@@ -167,7 +167,7 @@ _METRIC_REGISTRY: list[MetricDefinition] = [
         source_table=TABLE_MARKET_SUMMARY,
         time_col="interval",
         value_column="demand",  # at interval level; demand_energy at day+
-        agg_function="AVG",  # at interval level; SUM at day+
+        agg_function="SUM",  # market_summary holds one row per (interval, network_region)
         min_value=100,
         date_cutoff=datetime.fromisoformat("2009-07-01T00:00:00"),
         interval_thresholds=_DEFAULT_INTERVAL_THRESHOLDS,
@@ -228,14 +228,20 @@ def get_source_table_for_metric_grouping(metric_def: MetricDefinition, grouping:
 def get_value_expression(metric_def: MetricDefinition, period: MilestonePeriod) -> tuple[str, str]:
     """Get the value column and aggregation function for a metric + period.
 
-    Handles special cases like demand switching from AVG(demand) at interval
+    Handles special cases like demand switching from SUM(demand) at interval
     to SUM(demand_energy) at day+.
+
+    Demand is always summed. `market_summary` holds exactly one row per
+    (interval, network_region), so SUM is identical to AVG for the region grouping and is the
+    only correct choice for the network grouping, which has no region key: AVG returned the mean
+    of the five NEM regions, publishing nem-wide demand lows at a fifth of the real value (#653).
+    Price stays AVG — the mean across regions is the intended definition there.
 
     Returns (value_column, agg_function)
     """
     if metric_def.metric == MilestoneType.demand:
         if period == MilestonePeriod.interval:
-            return "demand", "AVG"
+            return "demand", "SUM"
         return "demand_energy", "SUM"
 
     return metric_def.value_column, metric_def.agg_function
