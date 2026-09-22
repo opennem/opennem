@@ -185,13 +185,15 @@ class OpennemSettings(BaseSettings):
     # the previous record in its chain. 0 disables. Day+ periods are spaced far enough apart to
     # never trip this. See opennem.recordreactor.utils.should_notify_milestone
     milestone_interval_debounce_intervals: int = 10
-    # rooftop solar lands 30-60 minutes after the interval it covers, so an interval checked as
-    # soon as the grid data arrives is partial for every series containing solar (#652). Interval
-    # record detection stops at the last settled interval, derived from the data (the latest
-    # interval with rooftop rows for every region) and falling back to this many minutes behind
-    # the last completed interval when that can't be determined. The same window is re-scanned
-    # each run so intervals aren't skipped when rooftop lands in a 30-minute block.
-    # Day+ periods are not gated on this. See opennem.recordreactor.incremental
+    # rooftop solar lands 30 minutes to two hours after the interval it covers, so an interval
+    # checked as soon as the grid data arrives is partial for every series containing solar
+    # (#652). Those series - network/region totals, solar, renewables, renewable proportion - stop
+    # at the last settled interval, derived from the data (the latest interval with rooftop rows
+    # for every region) and falling back to this many minutes behind the last completed interval
+    # when that can't be determined. Series with no rooftop in them (coal, gas, wind, batteries,
+    # fossils, demand, price) are not held back at all. The same window is re-scanned each run so
+    # intervals aren't skipped when rooftop lands in a 30-minute block. Day+ periods are not gated
+    # on this. See opennem.recordreactor.metric_registry.row_contains_rooftop
     milestone_interval_settle_lag_minutes: int = 60
     run_crawlers: bool = True  # do we enable the crawlers
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable

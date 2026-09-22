@@ -8,18 +8,47 @@ settled 111%).
 
 Detection now stops at the last settled interval — the latest interval with rooftop rows for every
 region — and re-scans a settle-lag window so a 30-minute rooftop block doesn't skip intervals.
-Day+ periods must not be delayed by any of this.
+
+The gate is per SERIES, not per network: only rows whose value can contain rooftop (network and
+region totals, solar, renewables, renewable proportion) wait for it. Coal, gas, wind, batteries,
+fossils, demand and price are complete as soon as the grid data lands and run to the last
+completed interval. Day+ periods must not be delayed by any of this.
 """
 
 from datetime import datetime, timedelta
 
+import pytest
+
 from opennem import settings
-from opennem.recordreactor.incremental import get_completed_periods, get_last_settled_interval
+from opennem.recordreactor.incremental import _map_row_to_records, get_completed_periods, get_last_settled_interval
+from opennem.recordreactor.metric_registry import (
+    GROUPING_FUELTECH,
+    GROUPING_NETWORK,
+    GROUPING_REGION,
+    GROUPING_RENEWABLE,
+    GroupingConfig,
+    MetricDefinition,
+    get_metric_registry,
+    row_contains_rooftop,
+)
 from opennem.recordreactor.queries_incremental import get_live_rooftop_network_codes, query_last_rooftop_interval
-from opennem.recordreactor.schema import MilestonePeriod
+from opennem.recordreactor.schema import MilestonePeriod, MilestoneType
 from opennem.schema.network import NetworkNEM, NetworkWEM
 
 NOW = datetime(2026, 9, 20, 12, 0)
+# prod rooftop lag in fueltech_intervals_mv measured at ~1h45m on 22 Sep 2026
+SETTLED = NOW - timedelta(minutes=105)
+
+
+def _metric(metric: MilestoneType) -> MetricDefinition:
+    return next(m for m in get_metric_registry() if m.metric == metric)
+
+
+POWER = _metric(MilestoneType.power)
+DEMAND = _metric(MilestoneType.demand)
+PRICE = _metric(MilestoneType.price)
+PROPORTION = _metric(MilestoneType.proportion)
+EMISSIONS = _metric(MilestoneType.emissions)
 
 
 class _StubClient:
@@ -93,17 +122,17 @@ def test_settled_interval_uses_rooftop_when_available(monkeypatch) -> None:
     assert get_last_settled_interval(client, NetworkNEM, NOW) == NOW - timedelta(minutes=35)
 
 
-def test_interval_period_stops_at_the_settled_interval() -> None:
+def test_interval_window_spans_the_settle_lag_through_to_now() -> None:
+    """One query covers both kinds of row; the settled bound is applied per row, not per query."""
     settled = NOW - timedelta(minutes=35)
     periods = {p: (s, e) for p, s, e in get_completed_periods(NOW, NetworkNEM, settled, 60)}
 
     start, end = periods[MilestonePeriod.interval]
 
-    # window ends on the settled interval (end is exclusive, one interval past it)
-    assert end == settled + timedelta(minutes=NetworkNEM.interval_size)
-    assert end <= NOW
-    # and re-scans the settle-lag window so a 30-minute rooftop block doesn't skip intervals
+    # re-scans the settle-lag window so a 30-minute rooftop block doesn't skip intervals
     assert start == settled - timedelta(minutes=60)
+    # and still reaches the last completed interval for the series that don't wait on rooftop
+    assert end == NOW + timedelta(minutes=NetworkNEM.interval_size)
 
 
 def test_interval_period_unchanged_without_a_settled_interval() -> None:
@@ -133,3 +162,112 @@ def test_wem_settles_on_apvi_rooftop(monkeypatch) -> None:
 
     assert get_last_settled_interval(client, NetworkWEM, NOW) == NOW - timedelta(minutes=20)
     assert "'APVI'" in client.queries[0]
+
+
+GROUPING_REGION_FUELTECH = GroupingConfig(name="region_fueltech", group_by_fields=["network_region", "fueltech_group_id"])
+
+
+@pytest.mark.parametrize(
+    "metric_def,grouping,row",
+    [
+        # no fueltech filter at all — rooftop is inside the total
+        (POWER, GROUPING_NETWORK, {}),
+        (POWER, GROUPING_REGION, {"network_region": "VIC1"}),
+        (EMISSIONS, GROUPING_REGION, {"network_region": "VIC1"}),
+        # the solar rows of a fueltech query
+        (POWER, GROUPING_FUELTECH, {"fueltech_group_id": "solar"}),
+        (POWER, GROUPING_REGION_FUELTECH, {"network_region": "SA1", "fueltech_group_id": "solar"}),
+        # the renewables rows of a renewable query
+        (POWER, GROUPING_RENEWABLE, {"renewable": 1}),
+        # rooftop is in both generation_renewable and demand_gross
+        (PROPORTION, GROUPING_NETWORK, {}),
+        (PROPORTION, GROUPING_REGION, {"network_region": "SA1"}),
+    ],
+)
+def test_rows_that_can_contain_rooftop(metric_def, grouping, row) -> None:
+    assert row_contains_rooftop(metric_def, grouping, row) is True
+
+
+@pytest.mark.parametrize(
+    "metric_def,grouping,row",
+    [
+        (POWER, GROUPING_FUELTECH, {"fueltech_group_id": "coal"}),
+        (POWER, GROUPING_FUELTECH, {"fueltech_group_id": "wind"}),
+        (POWER, GROUPING_FUELTECH, {"fueltech_group_id": "battery_charging"}),
+        (POWER, GROUPING_REGION_FUELTECH, {"network_region": "QLD1", "fueltech_group_id": "coal"}),
+        # the fossils rows of a renewable query
+        (POWER, GROUPING_RENEWABLE, {"renewable": 0}),
+        # operational demand excludes rooftop; price has no generation in it
+        (DEMAND, GROUPING_NETWORK, {}),
+        (DEMAND, GROUPING_REGION, {"network_region": "VIC1"}),
+        (PRICE, GROUPING_REGION, {"network_region": "VIC1"}),
+    ],
+)
+def test_rows_that_cannot_contain_rooftop(metric_def, grouping, row) -> None:
+    assert row_contains_rooftop(metric_def, grouping, row) is False
+
+
+def _map(metric_def, grouping, row, interval, settled=SETTLED):
+    return _map_row_to_records(
+        row={"time_bucket": interval, "interval_count": 1, **row},
+        metric_def=metric_def,
+        grouping=grouping,
+        period=MilestonePeriod.interval,
+        network=NetworkNEM,
+        current_state={},
+        settled_interval=settled,
+    )
+
+
+def test_unsettled_solar_row_is_held_back() -> None:
+    records = _map(POWER, GROUPING_FUELTECH, {"fueltech_group_id": "solar", "value": 18294.0}, NOW)
+
+    assert records == []
+
+
+def test_unsettled_region_total_row_is_held_back() -> None:
+    """The vic1 power interval lows of #652 came from region totals missing their rooftop."""
+    records = _map(POWER, GROUPING_REGION, {"network_region": "VIC1", "value": 3248.0}, NOW)
+
+    assert records == []
+
+
+def test_unsettled_proportion_row_is_held_back() -> None:
+    records = _map(PROPORTION, GROUPING_REGION, {"network_region": "SA1", "value": 196.31}, NOW)
+
+    assert records == []
+
+
+def test_unsettled_coal_row_is_detected_immediately() -> None:
+    """QLD1 coal has no rooftop in it and must not wait on the rooftop lag."""
+    records = _map(POWER, GROUPING_REGION_FUELTECH, {"network_region": "QLD1", "fueltech_group_id": "coal", "value": 5000.0}, NOW)
+
+    assert [r.interval for r in records] == [NOW, NOW]  # high and low candidates
+
+
+def test_unsettled_demand_and_price_rows_are_detected_immediately() -> None:
+    demand = _map(DEMAND, GROUPING_NETWORK, {"value": 9072.29}, NOW)
+    price = _map(PRICE, GROUPING_REGION, {"network_region": "VIC1", "value": 120.0}, NOW)
+
+    assert demand and all(r.interval == NOW for r in demand)
+    assert price and all(r.interval == NOW for r in price)
+
+
+def test_unsettled_fossils_row_is_detected_immediately() -> None:
+    records = _map(POWER, GROUPING_RENEWABLE, {"renewable": 0, "value": 12000.0}, NOW)
+
+    assert records and all(r.interval == NOW for r in records)
+
+
+def test_settled_solar_row_is_detected() -> None:
+    """Once the interval has settled the same solar row goes through."""
+    records = _map(POWER, GROUPING_FUELTECH, {"fueltech_group_id": "solar", "value": 24020.0}, SETTLED)
+
+    assert records and all(r.interval == SETTLED for r in records)
+
+
+def test_no_settled_interval_gates_nothing() -> None:
+    """Without a settled interval (day+ periods, or a caller that doesn't pass one) nothing waits."""
+    records = _map(POWER, GROUPING_FUELTECH, {"fueltech_group_id": "solar", "value": 24020.0}, NOW, settled=None)
+
+    assert records and all(r.interval == NOW for r in records)

@@ -20,6 +20,7 @@ from opennem.recordreactor.metric_registry import (
     GroupingConfig,
     MetricDefinition,
     get_metric_definitions_for_period,
+    row_contains_rooftop,
 )
 from opennem.recordreactor.persistence import check_and_persist_milestones_chunked
 from opennem.recordreactor.queries_incremental import query_all_groupings_for_period, query_last_rooftop_interval
@@ -115,11 +116,13 @@ def get_completed_periods(
     Quarter and year use aligned boundaries to avoid inserting partial-period
     records (e.g., a mid-quarter run must not create a partial quarter milestone).
 
-    The interval period ends at `settled_interval` rather than `now` and re-scans
-    `interval_lookback_minutes` before it: rooftop lands in 30-minute blocks, so the settled
-    interval jumps several intervals at a time and a single-interval query would skip the rest
-    (#652). Re-checking already-recorded intervals is idempotent — `check_milestone_is_new`
-    requires the interval to advance. Day+ periods are not gated on settledness.
+    The interval period spans `interval_lookback_minutes` before `settled_interval` through the
+    last completed interval. It reaches back because rooftop lands in 30-minute blocks, so the
+    settled interval jumps several intervals at a time and a single-interval query would skip the
+    rest; it still runs up to `now` because only the rooftop-dependent rows are held back, and
+    that is decided per row in `_map_row_to_records` (#652). Re-checking already-recorded
+    intervals is idempotent — `check_milestone_is_new` requires the interval to advance.
+    Day+ periods are not gated on settledness.
 
     Returns list of (period, period_start, period_end) tuples.
     """
@@ -131,8 +134,9 @@ def get_completed_periods(
         elif period == MilestonePeriod.year:
             start, end = _get_last_completed_year(now)
         elif period == MilestonePeriod.interval and settled_interval is not None:
-            start, end = get_period_start_end(settled_interval, period, network)
+            start, _ = get_period_start_end(settled_interval, period, network)
             start = start - timedelta(minutes=interval_lookback_minutes)
+            _, end = get_period_start_end(now, period, network)
         else:
             start, end = get_period_start_end(now, period, network)
         completed.append((period, start, end))
@@ -147,12 +151,18 @@ def _map_row_to_records(
     period: MilestonePeriod,
     network: NetworkSchema,
     current_state: dict[str, MilestoneRecordOutputSchema],
+    settled_interval: datetime | None = None,
 ) -> list[MilestoneRecordSchema]:
     """Convert a single aggregated row into milestone record schemas for both high and low.
 
     Compares against current state and only returns records that are new. Every genuine new
     extreme is returned for persistence — whether it is announced is decided separately by
     `_select_notifiable_instance_ids` (#651).
+
+    At the interval period a row whose value can contain rooftop solar is dropped until the
+    interval has settled (#652). The test is per row, not per query: one fueltech query returns
+    solar alongside coal, and one renewable query returns renewables alongside fossils, so gating
+    the query would hold back series that have no rooftop in them at all.
     """
     value = row.get("value")
     if value is None:
@@ -167,6 +177,16 @@ def _map_row_to_records(
         interval = datetime.combine(raw_interval, datetime.min.time())
     else:
         interval = raw_interval
+
+    # Hold back rows that are still waiting on rooftop; everything else runs to the last
+    # completed interval
+    if (
+        period == MilestonePeriod.interval
+        and settled_interval is not None
+        and interval > settled_interval
+        and row_contains_rooftop(metric_def, grouping, row)
+    ):
+        return []
 
     # Determine network_region and fueltech from grouping fields
     network_region = row.get("network_region") if "network_region" in grouping.group_by_fields else None
@@ -390,6 +410,7 @@ async def run_incremental_milestone_check(
                             period=period,
                             network=network,
                             current_state=current_state,
+                            settled_interval=settled_interval,
                         )
                         new_records.extend(records)
 

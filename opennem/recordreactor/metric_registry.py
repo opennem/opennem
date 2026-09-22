@@ -225,6 +225,39 @@ def get_source_table_for_metric_grouping(metric_def: MetricDefinition, grouping:
     return _get_source_table_for_grouping(grouping)
 
 
+# Generation metrics whose totals roll rooftop solar in with grid generation
+_GENERATION_METRICS = (MilestoneType.power, MilestoneType.energy, MilestoneType.emissions)
+
+
+def row_contains_rooftop(metric_def: MetricDefinition, grouping: GroupingConfig, row: dict) -> bool:
+    """Whether an aggregated row's value can contain rooftop solar.
+
+    Rooftop lands 30 minutes to two hours after the interval it covers, so only these rows are
+    partial until it settles (#652). Everything else — coal, gas, hydro, wind, batteries, pumps,
+    fossils, operational demand, price — is complete as soon as the grid data arrives and must not
+    be held back.
+
+    Note this is a per-ROW test, not a per-query one: the fueltech grouping returns solar next to
+    coal, and the renewable grouping returns renewables next to fossils, in the same result set.
+    """
+    if metric_def.metric == MilestoneType.proportion:
+        # rooftop is in both generation_renewable and demand_gross
+        return True
+
+    if metric_def.metric not in _GENERATION_METRICS:
+        # demand is operational demand (rooftop excluded); price has no generation in it
+        return False
+
+    if "fueltech_group_id" in grouping.group_by_fields:
+        return row.get("fueltech_group_id") == MilestoneFueltechGrouping.solar.value
+
+    if "renewable" in grouping.group_by_fields:
+        return bool(row.get("renewable"))
+
+    # network and region totals have no fueltech filter, so rooftop is in them
+    return True
+
+
 def get_value_expression(metric_def: MetricDefinition, period: MilestonePeriod) -> tuple[str, str]:
     """Get the value column and aggregation function for a metric + period.
 
