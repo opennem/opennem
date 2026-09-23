@@ -119,6 +119,30 @@ def get_fueltech_date_cutoffs() -> dict[str, datetime]:
     return _FUELTECH_DATE_CUTOFFS
 
 
+# Regions that were part of a network but are no longer declared on it. Mirrors
+# aggregates.market_summary._HISTORIC_NETWORK_REGIONS: SNOWY1 was a NEM region until July 2008
+# and carries real demand in market_summary.
+_HISTORIC_NETWORK_REGIONS: dict[str, list[str]] = {"NEM": ["SNOWY1"]}
+
+
+def get_network_region_filter_sql(network: NetworkSchema) -> str:
+    """SQL keeping only rows in the network's own regions (declared plus historic).
+
+    Record queries select a network by network_id plus its subnetworks, and a subnetwork can carry
+    regions outside the network: the OPENNEM_ROOFTOP_BACKFILL rooftop has NT1 rows (2015-10 to
+    2016-08), which minted au.nem.nt1.* record chains and added NT rooftop into NEM totals. It
+    also drops market_summary's known-bad network_id NEM / network_region WEM rows.
+
+    Returns "" for a network with no declared regions.
+    """
+    regions = list(network.regions or []) + _HISTORIC_NETWORK_REGIONS.get(network.code, [])
+
+    if not regions:
+        return ""
+
+    return f"and network_region IN ({list_to_case(regions)})"
+
+
 def get_fueltech_cutoff_sql(group_by_fields: list[str] | None, time_expression: str) -> str:
     """SQL excluding buckets before a fueltech's data-quality cutoff.
 
