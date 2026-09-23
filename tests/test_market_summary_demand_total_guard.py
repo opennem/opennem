@@ -135,10 +135,26 @@ async def test_sa1_near_zero_operational_demand_kept(no_flows) -> None:
 
 
 @pytest.mark.asyncio
-async def test_threshold_is_strictly_below_half(no_flows) -> None:
-    (row,) = await _prepare([_record("QLD1", 4000.0, 2000.0, 4000.0, 2000.0)])
+async def test_threshold_is_strictly_below_ratio(no_flows) -> None:
+    (row,) = await _prepare([_record("QLD1", 4000.0, 3600.0, 4000.0, 3600.0)])
 
-    assert row[IDX_DEMAND_TOTAL] == pytest.approx(2000.0)
+    assert row[IDX_DEMAND_TOTAL] == pytest.approx(3600.0)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("region", "demand", "demand_total"),
+    [
+        ("TAS1", 1119.19, 581.49953),  # 2018-01-22 11:15, read 192% renewable
+        ("TAS1", 1118.76, 821.70524),  # 2023-03-14 14:55
+        ("SA1", 259.51, 228.47488),  # 2016-09-28 19:40
+    ],
+)
+async def test_partial_collapses_are_nulled(no_flows, region: str, demand: float, demand_total: float) -> None:
+    (row,) = await _prepare([_record(region, demand, demand_total, demand, demand / 0.99)])
+
+    assert row[IDX_DEMAND_TOTAL] is None
+    assert row[IDX_DEMAND_GROSS] is None
 
 
 def _assert_gross_family_null(row: tuple[Any, ...]) -> None:
