@@ -488,7 +488,10 @@ def get_proportion_sql(
     if network == NetworkWEM:
         exempt = f"{time_bucket_sql} < toDateTime('{_WEM_FIVE_MINUTE_FROM.strftime('%Y-%m-%d %H:%M:%S')}')"
         complete = f"({exempt} OR {complete})"
-        interval_count = f"if({exempt}, {expected}, {interval_count})"
+        # both branches cast to UInt64: `expected` is signed (dateDiff) and the count is unsigned,
+        # which ClickHouse 25 rejects ("no supertype") and 26 turns into a Variant that base_stats
+        # can't ORDER BY. clickhouse local 24.1 in the tests accepts either, so it didn't show there
+        interval_count = f"if({exempt}, toUInt64({expected}), toUInt64({interval_count}))"
 
     return f"if({complete}, {PROPORTION_CLAMPED_SQL}, NULL)", interval_count
 
