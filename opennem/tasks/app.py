@@ -27,7 +27,7 @@ Running the script:
 import logging
 from datetime import timedelta, timezone
 
-from arq import cron
+from arq import cron, func
 from arq.worker import create_worker
 
 from opennem import ENV, settings
@@ -49,6 +49,7 @@ from opennem.tasks.tasks import (
     task_export_facility_geojson,
     task_export_flows,
     task_facility_first_seen_check,
+    task_milestone_gap_backfill,
     task_milestone_reconciliation,
     task_nem_interval_check,
     task_nem_per_day_check,
@@ -111,6 +112,12 @@ async def startup(ctx: dict) -> None:
 class WorkerSettings:
     # queue_name = "opennem"
     on_startup = startup
+    # Enqueued on demand, not scheduled. timeout=None takes the worker's job_timeout (12h) rather
+    # than the 300s of the incremental cron that queues it — a gap backfill scans full history
+    # to seed its running extremes (#654) and takes minutes.
+    functions = [
+        func(task_milestone_gap_backfill, timeout=None),
+    ]
     cron_jobs = [
         # NEM Interval Check — fires early, polls AEMO with backoff until data arrives
         cron(

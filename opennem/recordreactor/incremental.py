@@ -19,9 +19,10 @@ from opennem.recordreactor.metric_registry import (
     GroupingConfig,
     MetricDefinition,
     get_metric_definitions_for_period,
+    row_contains_rooftop,
 )
 from opennem.recordreactor.persistence import check_and_persist_milestones_chunked
-from opennem.recordreactor.queries_incremental import query_all_groupings_for_period
+from opennem.recordreactor.queries_incremental import get_last_settled_interval, query_all_groupings_for_period
 from opennem.recordreactor.rebuild_guard import skip_if_rebuild_in_progress
 from opennem.recordreactor.schema import (
     MilestoneAggregate,
@@ -33,13 +34,29 @@ from opennem.recordreactor.schema import (
 )
 from opennem.recordreactor.state import refresh_current_milestone_state, update_milestone_state
 from opennem.recordreactor.unit import get_milestone_unit
-from opennem.recordreactor.utils import check_milestone_is_new
+from opennem.recordreactor.utils import check_milestone_is_new, should_notify_milestone
+from opennem.recordreactor.watermark import (
+    get_gap_backfill_enqueued_at,
+    get_last_incremental_run,
+    get_last_settled_intervals,
+    set_gap_backfill_enqueued_at,
+    set_last_incremental_run,
+)
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.tasks.broker import get_redis_pool
 from opennem.utils.dates import get_last_completed_interval_for_network
 
 logger = logging.getLogger("opennem.recordreactor.incremental")
 
 _DEFAULT_NETWORKS = [NetworkNEM, NetworkWEM]
+
+# Fixed arq job id so only one gap backfill is ever queued or running
+GAP_BACKFILL_JOB_ID = "milestone_gap_backfill"
+
+# Our own floor on how often a backfill may be queued, independent of arq's job id. A pass that
+# fails before it updates the watermark leaves the detector permanently stale, and this is what
+# stops that becoming continuous background load (#658).
+GAP_BACKFILL_COOLDOWN = timedelta(hours=1)
 
 # Cap social submissions per run so a day-boundary burst doesn't flood the approval
 # queue. Most significant first; anything dropped is logged (not silent).
@@ -79,7 +96,41 @@ def _get_last_completed_year(dt: datetime) -> tuple[datetime, datetime]:
     return start_of_year.replace(year=start_of_year.year - 1), start_of_year
 
 
-def get_completed_periods(now: datetime, network: NetworkSchema) -> list[tuple[MilestonePeriod, datetime, datetime]]:
+def get_interval_window_start(
+    settled_interval: datetime,
+    last_settled_interval: datetime | None,
+    lookback_minutes: int,
+    max_catchup_hours: int,
+) -> datetime:
+    """Where the interval window starts: from the last settled interval this checker covered.
+
+    A fixed lookback before the current settled interval skips intervals whenever the settled
+    interval jumps further than the lookback between two runs — a worker restart, a slow rooftop
+    crawl, rooftop landing in a batch. Those intervals were then never checked with rooftop in
+    them (dev missed QLD1 renewables at 8,360.7 MW on 2026-09-22 12:30, #662). So the window
+    reaches back to `last_settled_interval`, the watermark of what earlier passes covered, when
+    that is older than the lookback.
+
+    The reach back is capped at `max_catchup_hours` before the settled interval so a stale
+    watermark (days of downtime) can't turn a 5-minute cron into a full scan; the gap backfill
+    covers anything older. No watermark (first run after deploy) falls back to the lookback.
+    """
+    start = settled_interval - timedelta(minutes=lookback_minutes)
+
+    if last_settled_interval is not None and last_settled_interval < start:
+        start = last_settled_interval
+
+    return max(start, settled_interval - timedelta(hours=max_catchup_hours))
+
+
+def get_completed_periods(
+    now: datetime,
+    network: NetworkSchema,
+    settled_interval: datetime | None = None,
+    interval_lookback_minutes: int = 0,
+    last_settled_interval: datetime | None = None,
+    max_catchup_hours: int = 24,
+) -> list[tuple[MilestonePeriod, datetime, datetime]]:
     """Return the most recently completed period for each period level.
 
     Always checks all period levels — the comparison against state ensures
@@ -88,6 +139,18 @@ def get_completed_periods(now: datetime, network: NetworkSchema) -> list[tuple[M
 
     Quarter and year use aligned boundaries to avoid inserting partial-period
     records (e.g., a mid-quarter run must not create a partial quarter milestone).
+
+    The interval period spans `interval_lookback_minutes` before `settled_interval` through the
+    last completed interval. It reaches back because rooftop lands in 30-minute blocks, so the
+    settled interval jumps several intervals at a time and a single-interval query would skip the
+    rest; it still runs up to `now` because only the rooftop-dependent rows are held back, and
+    that is decided per row in `_map_row_to_records` (#652). Re-checking already-recorded
+    intervals is idempotent — `check_milestone_is_new` requires the interval to advance.
+    Day+ periods are not gated on settledness.
+
+    When `last_settled_interval` (the watermark of what earlier passes covered) is older than the
+    lookback, the window starts there instead, up to `max_catchup_hours` back (#662). See
+    `get_interval_window_start`.
 
     Returns list of (period, period_start, period_end) tuples.
     """
@@ -98,6 +161,15 @@ def get_completed_periods(now: datetime, network: NetworkSchema) -> list[tuple[M
             start, end = _get_last_completed_quarter(now)
         elif period == MilestonePeriod.year:
             start, end = _get_last_completed_year(now)
+        elif period == MilestonePeriod.interval and settled_interval is not None:
+            window_start = get_interval_window_start(
+                settled_interval,
+                last_settled_interval,
+                lookback_minutes=interval_lookback_minutes,
+                max_catchup_hours=max_catchup_hours,
+            )
+            start, _ = get_period_start_end(window_start, period, network)
+            _, end = get_period_start_end(now, period, network)
         else:
             start, end = get_period_start_end(now, period, network)
         completed.append((period, start, end))
@@ -112,10 +184,22 @@ def _map_row_to_records(
     period: MilestonePeriod,
     network: NetworkSchema,
     current_state: dict[str, MilestoneRecordOutputSchema],
+    settled_interval: datetime | None = None,
+    unseeded_record_ids: set[str] | None = None,
 ) -> list[MilestoneRecordSchema]:
     """Convert a single aggregated row into milestone record schemas for both high and low.
 
-    Compares against current state and only returns records that are new.
+    Compares against current state and only returns records that are new. Every genuine new
+    extreme is returned for persistence — whether it is announced is decided separately by
+    `_select_notifiable_instance_ids` (#651).
+
+    At the interval period a row whose value can contain rooftop solar is dropped until the
+    interval has settled (#652). The test is per row, not per query: one fueltech query returns
+    solar alongside coal, and one renewable query returns renewables alongside fossils, so gating
+    the query would hold back series that have no rooftop in them at all.
+
+    A record_id with no chain is skipped rather than seeded from the one value in front of us, and
+    collected into `unseeded_record_ids` for the caller to report (#656).
     """
     value = row.get("value")
     if value is None:
@@ -130,6 +214,16 @@ def _map_row_to_records(
         interval = datetime.combine(raw_interval, datetime.min.time())
     else:
         interval = raw_interval
+
+    # Hold back rows that are still waiting on rooftop; everything else runs to the last
+    # completed interval
+    if (
+        period == MilestonePeriod.interval
+        and settled_interval is not None
+        and interval > settled_interval
+        and row_contains_rooftop(metric_def, grouping, row)
+    ):
+        return []
 
     # Determine network_region and fueltech from grouping fields
     network_region = row.get("network_region") if "network_region" in grouping.group_by_fields else None
@@ -198,54 +292,190 @@ def _map_row_to_records(
         # Compare against current state
         prev = current_state.get(record_id)
 
-        if prev is not None:
-            if not check_milestone_is_new(candidate, prev, debounce_intervals=settings.milestone_interval_debounce_intervals):
-                continue
-            # Set previous_instance_id for chain linking
-            candidate.previous_instance_id = prev.instance_id
+        # An empty chain is not evidence that this value is an all-time extreme — it means nothing
+        # has established the extreme yet. Minting a record here wrote wem solar's *highest* day
+        # of the week as its all-time low (#656). The backlog builds the chain from history; this
+        # path only ever extends one. A genuinely new series therefore waits for the next backlog
+        # run (monthly reconciliation, or one kicked off after the warning the caller logs).
+        if prev is None:
+            if unseeded_record_ids is not None:
+                unseeded_record_ids.add(record_id)
+            logger.debug(f"Skipping {record_id} at {interval}: no chain to compare against")
+            continue
 
-            # Calculate pct_change
-            if prev.value and prev.value != 0:
-                pct = ((value - prev.value) / abs(prev.value)) * 100
-                if abs(pct) < 9999 and abs(pct) > 0.01:
-                    candidate.pct_change = round(pct, 2)
+        if not check_milestone_is_new(candidate, prev):
+            continue
+
+        # Set previous_instance_id for chain linking
+        candidate.previous_instance_id = prev.instance_id
+
+        # Calculate pct_change
+        if prev.value and prev.value != 0:
+            pct = ((value - prev.value) / abs(prev.value)) * 100
+            if abs(pct) < 9999 and abs(pct) > 0.01:
+                candidate.pct_change = round(pct, 2)
 
         records.append(candidate)
 
     return records
 
 
-async def _backfill_gap_if_needed() -> None:
-    """Check if there's a gap between last milestone and now. If > 1 day, run backlog to fill it.
+def _select_notifiable_instance_ids(
+    records: list[MilestoneRecordSchema],
+    current_state: dict[str, MilestoneRecordOutputSchema],
+    debounce_intervals: int,
+) -> set[uuid.UUID]:
+    """Pick the records that should raise an outbound notification.
 
-    This handles scenarios where the system was down for days — the incremental checker
-    only looks at the latest period, so it would miss records from the gap. The backlog
-    uses window functions and correctly detects every record-breaking day in the range.
+    Every record passed in is persisted — the debounce only decides what gets announced (#651).
+    The anchor is the last record announced for that record_id (falling back to the current stored
+    record), so a value that breaks its own record every interval is announced once per window
+    rather than once per interval.
     """
+    if debounce_intervals <= 0:
+        return {r.instance_id for r in records if r.instance_id}
+
+    notifiable: set[uuid.UUID] = set()
+    anchors: dict[str, MilestoneRecordOutputSchema | MilestoneRecordSchema] = {}
+
+    for record in sorted(records, key=lambda r: r.interval):
+        anchor = anchors.get(record.record_id) or current_state.get(record.record_id)
+
+        if not should_notify_milestone(record, anchor, debounce_intervals=debounce_intervals):
+            continue
+
+        if record.instance_id:
+            notifiable.add(record.instance_id)
+
+        anchors[record.record_id] = record
+
+    return notifiable
+
+
+async def _milestones_table_is_empty() -> bool:
+    """An empty table needs a full rebuild, not a gap backfill."""
     from sqlalchemy import func, select
 
     from opennem.db import get_read_session
     from opennem.db.models.opennem import Milestones
-    from opennem.recordreactor.backlog import run_milestone_analysis
 
     async with get_read_session() as session:
         result = await session.execute(select(func.max(Milestones.interval)))
-        last_milestone = result.scalar()
 
-    if not last_milestone:
+    return result.scalar() is None
+
+
+async def _get_downtime_hours() -> tuple[datetime | None, datetime, float]:
+    """(watermark, last completed interval, hours since the checker last completed a pass).
+
+    Staleness is measured against the watermark, not against `max(milestones.interval)`. The
+    backfill covers worker downtime, and a healthy system routinely goes more than a day without
+    setting a record — so measuring the newest record meant the gap never closed and the backfill
+    re-enqueued itself every 15 minutes forever (#658).
+    """
+    now = get_last_completed_interval_for_network(NetworkNEM)
+    watermark = await get_last_incremental_run()
+
+    if watermark is None:
+        return None, now, 0.0
+
+    return watermark, now, (now - watermark).total_seconds() / 3600
+
+
+async def _enqueue_gap_backfill_if_needed() -> None:
+    """Queue a gap backfill job when the incremental checker has not completed a pass recently.
+
+    The checker only looks at the latest period, so records set during an outage are never
+    detected; the backlog's window functions find every record-breaking bucket in the range.
+
+    This is enqueued rather than run inline. Since #654 a bounded backlog run seeds its running
+    extremes from full history, so a gap backfill is ~8 minutes of ClickHouse work — far past the
+    300s budget of the 5-minute `task_update_milestones` cron that calls this. Running it inline
+    got the task killed mid-backfill, which left the gap open, which started it again on the next
+    tick. The job carries the worker's default timeout instead, and the incremental pass gets on
+    with its own work in the meantime.
+
+    Two guards keep one backfill in flight. `GAP_BACKFILL_JOB_ID` is arq's: it refuses a second
+    job while that id is live. `GAP_BACKFILL_COOLDOWN` is ours, in the same durable row as the
+    watermark, because a pass that fails before it can update the watermark would otherwise
+    re-enqueue as fast as arq allows.
+    """
+    if await _milestones_table_is_empty():
         logger.warning("No milestones found — run full backlog first")
         return
 
-    now = get_last_completed_interval_for_network(NetworkNEM)
-    gap = now - last_milestone
-    gap_hours = gap.total_seconds() / 3600
+    watermark, now, downtime_hours = await _get_downtime_hours()
 
-    if gap_hours > 24:
-        logger.info(f"Milestone gap detected: {gap_hours:.0f}h ({last_milestone} to {now}). Running backlog to fill.")
-        # Align to start of day so day-period queries get complete days
-        start_date = last_milestone.replace(hour=0, minute=0, second=0, microsecond=0)
-        await run_milestone_analysis(start_date=start_date, end_date=now)
-        logger.info("Gap backfill complete")
+    if watermark is None:
+        # Fresh deployment or a restored database: no evidence of downtime, and the pass about to
+        # run writes the watermark, so the next run has something to measure against.
+        logger.info("No incremental watermark yet — skipping the gap check until this run records one")
+        return
+
+    if downtime_hours <= settings.milestone_gap_backfill_threshold_hours:
+        return
+
+    enqueued_at = await get_gap_backfill_enqueued_at()
+
+    if enqueued_at and (now - enqueued_at) < GAP_BACKFILL_COOLDOWN:
+        logger.info(f"Incremental checker {downtime_hours:.0f}h stale but a backfill was queued at {enqueued_at} — waiting")
+        return
+
+    try:
+        redis = await get_redis_pool()
+        try:
+            job = await redis.enqueue_job("task_milestone_gap_backfill", _job_id=GAP_BACKFILL_JOB_ID)
+        finally:
+            await redis.close()
+    except Exception as e:
+        logger.error(f"Could not enqueue milestone gap backfill: {e}")
+        return
+
+    await set_gap_backfill_enqueued_at(now)
+
+    if job is None:
+        logger.info(f"Incremental checker {downtime_hours:.0f}h stale — backfill already queued or recently run")
+    else:
+        logger.info(
+            f"Incremental checker last completed a pass at {watermark}, {downtime_hours:.0f}h before {now}. "
+            "Enqueued gap backfill."
+        )
+
+
+async def run_gap_backfill() -> None:
+    """Fill the window the incremental checker missed while it was down.
+
+    Runs as its own arq job (`task_milestone_gap_backfill`) on the worker's default job timeout,
+    not inside the 5-minute incremental cron. Stands down during a rebuild for the same reason the
+    incremental check does: mid-rebuild the chains are partly empty, so this would insert records
+    the finished rebuild would never have produced (#640).
+    """
+    from opennem.recordreactor.backlog import run_milestone_analysis
+
+    if await skip_if_rebuild_in_progress("milestone gap backfill"):
+        return
+
+    if await _milestones_table_is_empty():
+        logger.warning("No milestones found — run full backlog first")
+        return
+
+    watermark, now, downtime_hours = await _get_downtime_hours()
+
+    if watermark is None:
+        logger.info("No incremental watermark — nothing to measure a gap against")
+        return
+
+    if downtime_hours <= settings.milestone_gap_backfill_threshold_hours:
+        logger.info(f"Incremental checker is {downtime_hours:.0f}h stale — caught up before the backfill ran")
+        return
+
+    logger.info(f"Filling the {downtime_hours:.0f}h the incremental checker missed ({watermark} to {now})")
+
+    # Align to start of day so day-period queries get complete days
+    start_date = watermark.replace(hour=0, minute=0, second=0, microsecond=0)
+    await run_milestone_analysis(start_date=start_date, end_date=now)
+
+    logger.info("Gap backfill complete")
 
 
 async def run_incremental_milestone_check(
@@ -255,36 +485,53 @@ async def run_incremental_milestone_check(
     """Run incremental milestone detection.
 
     0. Stand down entirely if a full rebuild is running
-    1. Check for gaps > 1 day and backfill if needed
+    1. Enqueue a gap backfill job if this checker hasn't completed a pass recently
     2. Load current state (latest high/low per record_id)
-    3. Determine which periods have just completed
+    3. Determine which periods have just completed (interval stops at the last settled interval)
     4. Query ClickHouse for aggregated values
     5. Compare against current records
     6. INSERT new records
-    7. Alert on significance >= 9
+    7. Record the watermark, then alert on significance >= 9
 
-    Step 0 covers the gap backfill as well as the check itself. Mid-rebuild the milestones table is
-    empty or partly refilled, so both paths would read no current record for a record_id and mint
-    the first bucket they see as a brand new one (#640).
+    Step 0 covers the gap backfill as well as the check itself: nothing is enqueued during a
+    rebuild, and the job stands down again when it runs. Mid-rebuild the milestones table is empty
+    or partly refilled, so both paths would read no current record for a record_id and mint the
+    first bucket they see as a brand new one (#640).
     """
     if await skip_if_rebuild_in_progress("incremental milestone check"):
         return []
 
-    # Fill any gap from downtime before doing the incremental check
-    await _backfill_gap_if_needed()
+    # Hand any downtime gap to its own job — it is minutes of work, this cron has 300s (#654)
+    await _enqueue_gap_backfill_if_needed()
 
     client = get_clickhouse_client()
     # Always reload state from DB to avoid stale reads after reconciliation/admin writes
     current_state = await refresh_current_milestone_state()
     all_new_records: list[MilestoneRecordOutputSchema] = []
+    # records that clear the notification debounce — the record itself is always persisted (#651)
+    notifiable_instance_ids: set[uuid.UUID] = set()
+    # record_ids with data but no chain — reported at the end of the run (#656)
+    unseeded_record_ids: set[str] = set()
+    # the settled interval each network's pass covers, written to the watermark at the end (#662)
+    covered_settled_intervals: dict[str, datetime] = {}
+    last_settled_intervals = await get_last_settled_intervals()
 
     for network in networks or _DEFAULT_NETWORKS:
         # get_last_completed_interval_for_network returns the start of the current interval
         # (e.g. 10:05 at 10:07) — subtract one interval to get the last truly completed one
         now = get_last_completed_interval_for_network(network) - timedelta(minutes=network.interval_size)
-        completed_periods = get_completed_periods(now, network)
+        settled_interval = get_last_settled_interval(client=client, network=network, now=now)
+        completed_periods = get_completed_periods(
+            now,
+            network,
+            settled_interval=settled_interval,
+            interval_lookback_minutes=settings.milestone_interval_settle_lag_minutes,
+            last_settled_interval=last_settled_intervals.get(network.code),
+            max_catchup_hours=settings.milestone_interval_max_catchup_hours,
+        )
+        covered_settled_intervals[network.code] = settled_interval
 
-        logger.info(f"Checking {network.code}: {len(completed_periods)} periods at {now}")
+        logger.info(f"Checking {network.code}: {len(completed_periods)} periods at {now} (settled at {settled_interval})")
 
         for period, period_start, period_end in completed_periods:
             # Get all metric definitions valid for this period
@@ -313,10 +560,18 @@ async def run_incremental_milestone_check(
                             period=period,
                             network=network,
                             current_state=current_state,
+                            settled_interval=settled_interval,
+                            unseeded_record_ids=unseeded_record_ids,
                         )
                         new_records.extend(records)
 
                 if new_records:
+                    notifiable_instance_ids |= _select_notifiable_instance_ids(
+                        new_records,
+                        current_state,
+                        debounce_intervals=settings.milestone_interval_debounce_intervals,
+                    )
+
                     logger.info(
                         f"Found {len(new_records)} new records for {network.code} {metric_def.metric.value} {period.value}"
                     )
@@ -329,19 +584,38 @@ async def run_incremental_milestone_check(
                     for record in persisted:
                         update_milestone_state(record.record_id, record)
 
-    # Alert on high-significance records
-    significant_records = [r for r in all_new_records if r.significance >= 9]
+    # The pass completed: this is what the gap detector measures downtime against (#658). Written
+    # before the alerting below so a Slack or social failure can't make the checker look stale.
+    # The settled intervals go in the same upsert, and only after every record above is persisted:
+    # a pass that dies part way leaves them where they were, so the next pass re-covers the gap
+    # (#662).
+    await set_last_incremental_run(
+        get_last_completed_interval_for_network(NetworkNEM),
+        settled_intervals=covered_settled_intervals,
+    )
 
-    if alert_slack and significant_records and settings.slack_hook_records:
-        descriptions = [f"- {r.description} ({r.value})" for r in significant_records[:10]]
-        message = f"New milestone records detected ({len(significant_records)}):\n" + "\n".join(descriptions)
+    if unseeded_record_ids:
+        sample = ", ".join(sorted(unseeded_record_ids)[:5])
+        logger.warning(
+            f"{len(unseeded_record_ids)} record ids have data but no chain to compare against and were skipped "
+            f"(e.g. {sample}) — run the backlog to build them"
+        )
+
+    # Alert on high-significance records. The interval debounce gates the announcement only:
+    # a record inside the window is stored above but not announced here (#651).
+    significant_records = [r for r in all_new_records if r.significance >= 9]
+    announce_records = [r for r in significant_records if r.instance_id in notifiable_instance_ids]
+
+    if alert_slack and announce_records and settings.slack_hook_records:
+        descriptions = [f"- {r.description} ({r.value})" for r in announce_records[:10]]
+        message = f"New milestone records detected ({len(announce_records)}):\n" + "\n".join(descriptions)
         await slack_message(
             webhook_url=settings.slack_hook_records,
             message=message,
         )
 
     # Submit significant milestones to social media pipeline
-    if significant_records:
+    if announce_records:
         import asyncio as _asyncio
 
         from sqlalchemy import and_, select
@@ -353,7 +627,7 @@ async def run_incremental_milestone_check(
         from opennem.social.schema import CreateSocialPostRequest, SocialPostType
 
         # Most significant first; cap the per-run burst and log anything dropped.
-        ordered = sorted(significant_records, key=lambda r: r.significance, reverse=True)
+        ordered = sorted(announce_records, key=lambda r: r.significance, reverse=True)
         to_post = ordered[:_MAX_SOCIAL_POSTS_PER_RUN]
         if len(ordered) > _MAX_SOCIAL_POSTS_PER_RUN:
             logger.warning(
@@ -423,7 +697,10 @@ async def run_incremental_milestone_check(
                 logger.error(f"Failed to submit milestone {record.record_id} to social pipeline: {e}")
 
     if all_new_records:
-        logger.info(f"Incremental check complete: {len(all_new_records)} new records ({len(significant_records)} significant)")
+        logger.info(
+            f"Incremental check complete: {len(all_new_records)} new records "
+            f"({len(significant_records)} significant, {len(announce_records)} announced)"
+        )
     else:
         logger.debug("Incremental check complete: no new records")
 

@@ -49,6 +49,46 @@ INTERVALS_PER_HOUR = 12.0
 # silently rewrite a decade of network-level NEM demand.
 _HISTORIC_NETWORK_REGIONS: dict[str, list[str]] = {"NEM": ["SNOWY1"]}
 
+# demand_total is AEMO DEMAND_AND_NONSCHEDGEN, TOTALDEMAND plus non-scheduled generation, so it
+# should never sit far below demand (TOTALDEMAND). On 2024-05-22 11:45 AEMO published it near
+# zero in every NEM region while TOTALDEMAND was normal, and the collapsed demand_gross latched
+# the renewable proportion record chains (#661). Below this ratio of demand the value is treated
+# as missing. The demand floor keeps SA1's legitimately near-zero midday operational demand out
+# of the guard, since TOTALDEMAND is near zero there too.
+#
+# 0.9 is set from the data: across ~9M NEM region-intervals since 2009 (demand > 200 MW) the ratio
+# never legitimately falls below 0.965. Only four intervals do, all single-interval glitches:
+# 2024-05-22 11:45 (every region, ~0), TAS1 2018-01-22 11:15 (0.52, which read 192% renewable),
+# TAS1 2023-03-14 14:55 (0.73) and SA1 2016-09-28 19:40 (0.88, the evening of the SA black system).
+# The first cut at 0.5 let the TAS1 ones through.
+DEMAND_TOTAL_COLLAPSE_RATIO = 0.9
+DEMAND_TOTAL_COLLAPSE_MIN_DEMAND_MW = 200.0
+
+# Renewable proportion is only published when every input is present (#661). From this date NEM
+# rooftop is an expected input, so a region/interval with no rooftop after the interpolation and
+# bounded locf in the rooftop CTE is unknown, and demand_gross, generation_renewable and their
+# energies go NULL rather than being computed with rooftop = 0. Before it (and for WEM, whose
+# rooftop is not joined here) rooftop is treated as 0, i.e. no rooftop term, as before. Rooftop
+# backfill data starts 2015-03-19, but this matches the solar records cutoff in
+# recordreactor.metric_registry so the patchy first months of the backfill are not NULLed.
+# Intervals are naive network time.
+ROOFTOP_EXPECTED_FROM = datetime(2015, 10, 26)
+ROOFTOP_EXPECTED_NETWORKS = ("NEM",)
+
+# Same rule for unit scada (#661): from these dates a region/interval with no facility_scada rows
+# at all is an ingest gap, so renewable generation and everything built on it is NULL rather than
+# the renewable CTE's interpolated or zero-filled value. A region whose units reported 0 renewable
+# output keeps its 0. NEM shares the rooftop era rather than its 1998 data start: older NEM scada
+# has structural holes that can't be refetched (pre-2009 DST hours #622, absent unit-days #615)
+# and blanking those would only move proportion further from the records cutoff. WEM reads the
+# same facility_scada but was 30-min until the WEMDE cutover, which leaves five of every six
+# 5-min buckets with no rows, so the check starts the day after the 2023-10-01 08.00 AWST cutover
+# (a whole day of margin so the naive interval's timezone can't pull 30-min buckets in).
+SCADA_EXPECTED_FROM: dict[str, datetime] = {
+    "NEM": ROOFTOP_EXPECTED_FROM,
+    "WEM": datetime(2023, 10, 2),
+}
+
 
 def _declared_network_regions() -> list[tuple[str, str]]:
     """The (network_id, network_region) pairs that may appear in market_summary.
@@ -112,7 +152,7 @@ async def _get_market_summary_data(
          prev_demand, prev_demand_total, rooftop_solar, prev_rooftop_solar,
          renewable_generation, prev_renewable_generation,
          curtailment_solar_total, curtailment_wind_total, prev_curtailment_solar_total,
-         prev_curtailment_wind_total, curtailment_total)
+         prev_curtailment_wind_total, curtailment_total, scada_rows, prev_scada_rows)
         Note: Only returns complete interval pairs where both current and previous intervals are available
     """
     # Strip timezone info
@@ -160,10 +200,11 @@ async def _get_market_summary_data(
         -- renewable_proportion (#579). For that trailing edge we instead carry the last
         -- real value forward (locf) up to one 30-min block (+25 min) so rooftop reaches
         -- the core-gen edge without fabricating a whole missing interval. When rooftop
-        -- lags a full block the single freshest bucket is intentionally left at 0
-        -- rather than invented; the API serves NULL-not-0 at that settling edge
-        -- (#575/#577) so it doesn't inflect. The :start_time_window lookback (1h) seeds
-        -- both accessors before :start_time.
+        -- lags a full block the single freshest bucket is intentionally left NULL
+        -- rather than invented, and demand_gross / generation_renewable go NULL with it
+        -- (#661, see ROOFTOP_EXPECTED_FROM); the hourly catchup re-aggregation fills it
+        -- once rooftop lands. The :start_time_window lookback (1h) seeds both accessors
+        -- before :start_time.
         SELECT interval, network_id, network_region, rooftop_solar
         FROM (
             SELECT
@@ -216,7 +257,10 @@ async def _get_market_summary_data(
                 WHEN u.code IN ('TUMUT3', 'SNOWYP')
                 THEN greatest(fs.generated, 0)
                 ELSE 0
-            END)) as storage_generation
+            END)) as storage_generation,
+            -- presence, not value: gapfill leaves this NULL for a bucket with no unit rows at
+            -- all (an ingest gap the interpolate() above papers over) (#661)
+            count(*) as scada_rows
         FROM facility_scada fs
         JOIN units u ON fs.facility_code = u.code
         JOIN facilities f ON u.station_id = f.id
@@ -303,14 +347,18 @@ async def _get_market_summary_data(
                 THEN COALESCE(gd.demand, wg.total_generation)
                 ELSE gd.demand
             END as demand,
+            -- the total_generation fallback is WEM only, where it is the defined demand source.
+            -- a NEM interval with no balancing_summary row stays NULL, never a proxy (#661)
             CASE
                 WHEN COALESCE(gd.network_id, rd.network_id, rn.network_id) = 'WEM'
                 THEN COALESCE(gd.demand_total, wg.total_generation)
                 ELSE gd.demand_total
             END as demand_total,
-            COALESCE(rd.rooftop_solar, 0) as rooftop_solar,
+            -- left NULL: _prepare_market_summary_data decides whether a missing rooftop is 0 or unknown (#661)
+            rd.rooftop_solar,
             COALESCE(rn.renewable_generation, 0) as renewable_generation,
             COALESCE(rn.storage_generation, 0) as storage_generation,
+            rn.scada_rows,
             gd.curtailment_solar_total,
             gd.curtailment_wind_total
         FROM gapfilled_data gd
@@ -365,7 +413,12 @@ async def _get_market_summary_data(
             LAG(curtailment_wind_total) OVER (
                 PARTITION BY network_id, network_region
                 ORDER BY interval
-            ) as prev_curtailment_wind_total
+            ) as prev_curtailment_wind_total,
+            scada_rows,
+            LAG(scada_rows) OVER (
+                PARTITION BY network_id, network_region
+                ORDER BY interval
+            ) as prev_scada_rows
         FROM combined_data
         ORDER BY interval
     )
@@ -388,7 +441,9 @@ async def _get_market_summary_data(
         curtailment_wind_total,
         prev_curtailment_solar_total,
         prev_curtailment_wind_total,
-        COALESCE(curtailment_solar_total, 0) + COALESCE(curtailment_wind_total, 0) as curtailment_total
+        COALESCE(curtailment_solar_total, 0) + COALESCE(curtailment_wind_total, 0) as curtailment_total,
+        scada_rows,
+        prev_scada_rows
     FROM ranked_data
     WHERE interval BETWEEN :start_time AND :end_time
     ORDER BY interval, network_id, network_region
@@ -404,6 +459,29 @@ async def _get_market_summary_data(
     )
     # Type cast to match expected return type
     return [tuple(row) for row in result.fetchall()]  # type: ignore
+
+
+def _null_collapsed_demand_total(demand_total: str, demand: str) -> pl.Expr:
+    """demand_total as NULL where it has collapsed below DEMAND_TOTAL_COLLAPSE_RATIO of demand (#661)"""
+    collapsed = (pl.col(demand) > DEMAND_TOTAL_COLLAPSE_MIN_DEMAND_MW) & (
+        pl.col(demand_total) < pl.col(demand) * DEMAND_TOTAL_COLLAPSE_RATIO
+    )
+    return pl.when(collapsed).then(None).otherwise(pl.col(demand_total)).alias(demand_total)
+
+
+def _fill_unexpected_rooftop(column: str, interval: pl.Expr) -> pl.Expr:
+    """0 for a missing rooftop value only where rooftop is not an expected input (#661)"""
+    expected = pl.col("network_id").is_in(list(ROOFTOP_EXPECTED_NETWORKS)) & (interval >= ROOFTOP_EXPECTED_FROM)
+    return pl.when(expected).then(pl.col(column)).otherwise(pl.col(column).fill_null(0)).alias(column)
+
+
+def _renewable_unless_scada_absent(column: str, scada_rows: str, interval: pl.Expr) -> pl.Expr:
+    """NULL where scada is expected but no unit reported for the bucket, else 0-filled (#661)"""
+    expected = pl.any_horizontal(
+        [(pl.col("network_id") == network_id) & (interval >= start) for network_id, start in SCADA_EXPECTED_FROM.items()]
+    )
+    absent = expected & (pl.col(scada_rows).is_null() | (pl.col(scada_rows) == 0))
+    return pl.when(absent).then(None).otherwise(pl.col(column).fill_null(0)).alias(column)
 
 
 async def _prepare_market_summary_data(
@@ -489,6 +567,8 @@ async def _prepare_market_summary_data(
             "prev_curtailment_solar_total": pl.Float64,
             "prev_curtailment_wind_total": pl.Float64,
             "curtailment_total": pl.Float64,
+            "scada_rows": pl.Int64,
+            "prev_scada_rows": pl.Int64,
         },
         orient="row",
     )
@@ -496,13 +576,23 @@ async def _prepare_market_summary_data(
     # round all float64 columns to 4 decimal places
     df = df.with_columns([pl.col(col).round(4) for col in df.columns if isinstance(col, pl.Float64)])
 
-    # fill curtailment, rooftop, and renewable records with 0 if they are null
+    # rooftop is only 0 where it is not an expected input; where it is expected a NULL stays NULL
+    # so the gross/renewable family is NULL rather than short by the rooftop term (#661). prev_ is
+    # the LAG value, so its era is judged on the previous bucket.
     df = df.with_columns(
         [
-            pl.col("rooftop_solar").fill_null(0),
-            pl.col("prev_rooftop_solar").fill_null(0),
-            pl.col("renewable_generation").fill_null(0),
-            pl.col("prev_renewable_generation").fill_null(0),
+            _fill_unexpected_rooftop("rooftop_solar", pl.col("interval")),
+            _fill_unexpected_rooftop("prev_rooftop_solar", pl.col("interval") - timedelta(minutes=5)),
+        ]
+    )
+
+    # fill curtailment and renewable records with 0 if they are null
+    df = df.with_columns(
+        [
+            _renewable_unless_scada_absent("renewable_generation", "scada_rows", pl.col("interval")),
+            _renewable_unless_scada_absent(
+                "prev_renewable_generation", "prev_scada_rows", pl.col("interval") - timedelta(minutes=5)
+            ),
             pl.col("storage_generation").fill_null(0),
             pl.col("prev_storage_generation").fill_null(0),
             pl.col("curtailment_solar_total").fill_null(0),
@@ -510,6 +600,17 @@ async def _prepare_market_summary_data(
             pl.col("prev_curtailment_solar_total").fill_null(0),
             pl.col("prev_curtailment_wind_total").fill_null(0),
             pl.col("curtailment_total").fill_null(0),
+        ]
+    )
+
+    # Null a collapsed demand_total (#661) so demand_gross, its energy and the renewable proportion
+    # go NULL for the interval rather than wrong. prev_demand_total is guarded against prev_demand
+    # too, or the following interval's trapezoid would still average in the collapsed value.
+    # demand_total is deliberately left out of the fill_null(0) above so the NULL survives.
+    df = df.with_columns(
+        [
+            _null_collapsed_demand_total("demand_total", "demand"),
+            _null_collapsed_demand_total("prev_demand_total", "prev_demand"),
         ]
     )
 

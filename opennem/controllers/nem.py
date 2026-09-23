@@ -538,11 +538,32 @@ async def process_meter_data_gen_duid(table: AEMOTableSchema) -> ControllerRetur
     return cr
 
 
+def _has_rooftop_measurement(record: dict[str, Any]) -> bool:
+    """AEMO publishes a blank POWER (QI=0) when it has no rooftop measurement for a region and
+    interval. Leave the interval missing so it is interpolated, rather than letting
+    generate_facility_scada zero-fill it into 0 MW midday (#660)."""
+    power = record.get("power")
+
+    if power is None:
+        return False
+
+    if isinstance(power, str):
+        return power.strip() != ""
+
+    return not pd.isna(power)
+
+
 async def process_rooftop_actual(table: AEMOTableSchema) -> ControllerReturn:
     cr = ControllerReturn(total_records=len(table.records))
 
+    # crawlers only fetch the _MEASUREMENT_ files, so there are no SATELLITE rows to fall back to
+    measured_records = [i for i in table.records if isinstance(i, dict) and _has_rooftop_measurement(i)]
+
+    if not measured_records:
+        return cr
+
     records = await generate_facility_scada(
-        table.records,  # type: ignore
+        measured_records,
         interval_field="interval_datetime",
         facility_code_field="regionid",
         power_field="power",

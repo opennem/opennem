@@ -39,11 +39,12 @@ WHAT THIS DOES NOT COVER
 The writers probe the lock once, at the top of their run. A rebuild that starts in the moment
 between a writer's probe and its first insert is not excluded, so `milestone_rebuild_lock()` waits
 out a settle period after acquiring and before its caller purges anything. That covers a normal
-incremental run, which takes seconds. It does not cover `_backfill_gap_if_needed` deciding to run a
-multi-minute gap backlog. Holding a shared lock across a whole incremental run would close the
-window properly, but it would pin one of ten pooled connections for the duration of a run that opens
-more sessions inside itself — the deadlock shape CLAUDE.md warns about. The residual case is caught
-after the fact by the surplus check in `bin/repair_demand_energy_milestones.py`.
+incremental run, which takes seconds. It does not cover the minutes-long writers — the gap backfill
+job (`incremental.run_gap_backfill`) and the monthly reconciliation — which probe once and then run.
+Holding a shared lock across a whole run would close the window properly, but it would pin one of
+ten pooled connections for the duration of a run that opens more sessions inside itself — the
+deadlock shape CLAUDE.md warns about. The residual case is caught after the fact by the surplus
+check in `bin/repair_demand_energy_milestones.py`.
 """
 
 import asyncio

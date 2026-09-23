@@ -6,17 +6,21 @@ one value per grouping key. Python handles comparison against current state.
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 
+from opennem import settings
 from opennem.queries.utils import list_to_case
 from opennem.recordreactor.metric_registry import (
+    TABLE_FUELTECH_INTERVALS,
     GroupingConfig,
     MetricDefinition,
+    get_network_region_filter_sql,
+    get_proportion_sql,
     get_source_table_for_metric_grouping,
     get_value_expression,
 )
-from opennem.recordreactor.schema import MilestonePeriod
+from opennem.recordreactor.schema import MilestonePeriod, MilestoneType
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.recordreactor.queries_incremental")
@@ -51,7 +55,86 @@ def _build_network_filter(network: NetworkSchema, time_col: str) -> str:
     network_codes = [network.code.upper()]
     if network.subnetworks:
         network_codes.extend([s.code for s in network.subnetworks])
-    return f"network_id IN ({list_to_case(network_codes)})"
+    # own regions only, like the backlog: a subnetwork can carry regions outside the network
+    region_filter = get_network_region_filter_sql(network)
+    return f"network_id IN ({list_to_case(network_codes)}) {region_filter}".rstrip()
+
+
+def get_live_rooftop_network_codes(network: NetworkSchema) -> list[str]:
+    """Network ids of the rooftop subnetworks still receiving data for a network.
+
+    Backfill subnetworks (data_last_seen in the past) are excluded — their last interval is years
+    old and would peg the settled interval to it.
+    """
+    return [
+        subnetwork.code
+        for subnetwork in network.subnetworks or []
+        if "solar_rooftop" in (subnetwork.fueltechs or []) and not subnetwork.data_last_seen
+    ]
+
+
+def query_last_rooftop_interval(client: Any, network: NetworkSchema, now: datetime) -> datetime | None:
+    """Latest interval with rooftop rows for EVERY region of the network.
+
+    Rooftop arrives 30-60 minutes after the interval it covers. Until it lands, any series
+    containing solar sums to grid-only generation, so a record computed on it is wrong (#652).
+
+    Returns None when the network has no live rooftop subnetwork, the query fails, or a region is
+    missing entirely (a stale region must not let the other four declare the interval settled).
+    """
+    rooftop_codes = get_live_rooftop_network_codes(network)
+
+    if not rooftop_codes or not network.regions:
+        return None
+
+    # bound the scan: rooftop that hasn't landed within a day is an outage, not a lag
+    lookback_str = (now - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
+
+    query = f"""
+    SELECT network_region, max(interval) as last_interval
+    FROM {TABLE_FUELTECH_INTERVALS}
+    WHERE network_id IN ({list_to_case(rooftop_codes)})
+      AND interval >= toDateTime('{lookback_str}')
+    GROUP BY network_region
+    """
+
+    try:
+        rows = client.execute(query)
+    except Exception as e:
+        logger.error(f"Rooftop settled-interval query failed for {network.code}: {e}")
+        return None
+
+    last_interval_by_region = {region: interval for region, interval in rows if interval}
+    missing = set(network.regions) - set(last_interval_by_region)
+
+    if missing:
+        logger.warning(f"No recent rooftop data for {network.code} regions {sorted(missing)} — falling back to lag")
+        return None
+
+    return min(last_interval_by_region[region] for region in network.regions)
+
+
+def get_last_settled_interval(client: Any, network: NetworkSchema, now: datetime) -> datetime:
+    """Last interval whose data has settled, i.e. rooftop solar has landed for every region.
+
+    Interval detection runs ~5 minutes after the interval but rooftop arrives 30-60 minutes
+    later, so any series containing solar was being computed on a partial interval and nothing
+    re-checked it once the data settled (#652).
+
+    Derived from the data where possible; falls back to `milestone_interval_settle_lag_minutes`
+    behind `now` when there's no live rooftop subnetwork or the rooftop data is missing/stale.
+    Never returns an interval later than `now`.
+
+    Lives here rather than in `incremental` because the backlog uses it too (#662), and backlog
+    importing incremental made an import cycle with the gap backfill's lazy backlog import.
+    """
+    lag = timedelta(minutes=settings.milestone_interval_settle_lag_minutes)
+    rooftop_interval = query_last_rooftop_interval(client=client, network=network, now=now)
+
+    if rooftop_interval is None:
+        return now - lag
+
+    return min(now, rooftop_interval)
 
 
 def build_period_aggregation_query(
@@ -81,17 +164,24 @@ def build_period_aggregation_query(
         group_by_fields.extend(grouping.group_by_fields)
 
     # Build value expression
-    if agg_func:
-        select_fields.append(f"{agg_func}({value_col}) as value")
+    if metric_def.metric == MilestoneType.proportion:
+        # NULL unless every input is complete, with the count of complete intervals — the same
+        # SQL the backlog uses (#662)
+        proportion_value, proportion_count = get_proportion_sql(network, grouping.group_by_fields, period, time_col, time_bucket)
+        select_fields.append(f"{proportion_value} as value")
+        select_fields.append(f"{proportion_count} as interval_count")
     else:
-        # Pre-computed expression (e.g., proportion)
-        select_fields.append(f"{value_col} as value")
+        if agg_func:
+            select_fields.append(f"{agg_func}({value_col}) as value")
+        else:
+            # Pre-computed expression
+            select_fields.append(f"{value_col} as value")
 
-    # Add interval count for LOW record validation
-    if period != MilestonePeriod.interval:
-        select_fields.append(f"count(distinct {time_col}) as interval_count")
-    else:
-        select_fields.append("1 as interval_count")
+        # Add interval count for LOW record validation
+        if period != MilestonePeriod.interval:
+            select_fields.append(f"count(distinct {time_col}) as interval_count")
+        else:
+            select_fields.append("1 as interval_count")
 
     select_clause = ", ".join(select_fields)
     group_by_clause = ", ".join(group_by_fields)

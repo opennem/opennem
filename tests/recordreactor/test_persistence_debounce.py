@@ -1,13 +1,15 @@
-"""Tests for interval-record debounce + in-batch re-anchoring in
-check_and_persist_milestones_chunked.
+"""Tests for in-batch re-anchoring in check_and_persist_milestones_chunked.
 
-The persistence layer is the authoritative debounce gate for BOTH the live
-incremental path (one record per record_id per call) and the backlog/
-reconciliation path (many records per record_id in one batch, sorted ascending).
-The backlog case relies on the local re-anchoring state because the global
-milestone_state is not updated mid-batch. These tests exercise that batch path
-with the DB mocked out — the function returns the records it kept, which is
-exactly the debounce decision.
+The persistence layer keeps EVERY genuine new extreme for BOTH the live incremental path (one
+record per record_id per call) and the backlog/reconciliation path (many records per record_id in
+one batch, sorted ascending). The batch path relies on the local re-anchoring state because the
+global milestone_state is not updated mid-batch.
+
+The interval debounce used to live here and dropped records inside its window, decimating the
+stored chain (#651) — it is now a notification-only gate in
+`opennem.recordreactor.utils.should_notify_milestone`, so persistence must be indifferent to it.
+These tests exercise the batch path with the DB mocked out — the function returns the records it
+kept, which is exactly the decision under test.
 """
 
 import uuid
@@ -84,9 +86,14 @@ def mock_db(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_batch_debounces_consecutive_interval_records(monkeypatch, mock_db):
-    """A monotonic ramp (one new high every interval) is kept once per window."""
-    monkeypatch.setattr(settings, "milestone_interval_debounce_intervals", 10)
+@pytest.mark.parametrize("debounce", [0, 10])
+async def test_batch_keeps_every_consecutive_interval_record(monkeypatch, mock_db, debounce: int):
+    """A monotonic ramp (one new high every interval) is kept in full, whatever the debounce.
+
+    #651: keeping only the first value in each debounce window threw away the actual peak, so a
+    later lower value beat the decimated chain and published as an all-time record.
+    """
+    monkeypatch.setattr(settings, "milestone_interval_debounce_intervals", debounce)
 
     base = datetime(2026, 5, 31, 12, 0)
     iids = [uuid.uuid4() for _ in range(13)]
@@ -95,28 +102,33 @@ async def test_batch_debounces_consecutive_interval_records(monkeypatch, mock_db
 
     kept = await persistence_mod.check_and_persist_milestones_chunked(records)
 
-    # window = 10 intervals = 50m -> keep 12:00, then next at 12:50, rest suppressed
-    assert [r.interval for r in kept] == [base, base + timedelta(minutes=50)]
-    # first kept has no previous; second kept re-links to the first kept (not a dropped record)
+    assert [r.interval for r in kept] == [base + timedelta(minutes=5 * i) for i in range(13)]
+    # the true peak survives
+    assert kept[-1].value == max(r.value for r in records)
+    # chain links each record to its immediate predecessor
     assert kept[0].previous_instance_id is None
-    assert kept[1].previous_instance_id == iids[0]
+    assert [r.previous_instance_id for r in kept[1:]] == iids[:-1]
 
 
 @pytest.mark.asyncio
-async def test_batch_no_debounce_keeps_all_interval_records(monkeypatch, mock_db):
-    """Setting 0 disables debouncing — every new high is kept."""
-    monkeypatch.setattr(settings, "milestone_interval_debounce_intervals", 0)
+async def test_batch_still_drops_records_that_do_not_beat_the_chain(monkeypatch, mock_db):
+    """The value comparison is untouched: a lower value mid-ramp is not a record."""
+    monkeypatch.setattr(settings, "milestone_interval_debounce_intervals", 10)
 
     base = datetime(2026, 5, 31, 12, 0)
-    records = [_rec(value=100 + i * 20, interval=base + timedelta(minutes=5 * i), instance_id=uuid.uuid4()) for i in range(5)]
+    records = [
+        _rec(value=100, interval=base, instance_id=uuid.uuid4()),
+        _rec(value=90, interval=base + timedelta(minutes=5), instance_id=uuid.uuid4()),
+        _rec(value=150, interval=base + timedelta(minutes=10), instance_id=uuid.uuid4()),
+    ]
 
     kept = await persistence_mod.check_and_persist_milestones_chunked(records)
 
-    assert len(kept) == 5
+    assert [r.value for r in kept] == [100, 150]
 
 
 @pytest.mark.asyncio
-async def test_batch_does_not_debounce_day_records(monkeypatch, mock_db):
+async def test_batch_keeps_day_records(monkeypatch, mock_db):
     """Day+ period records are spaced far apart and are never debounced."""
     monkeypatch.setattr(settings, "milestone_interval_debounce_intervals", 10)
 

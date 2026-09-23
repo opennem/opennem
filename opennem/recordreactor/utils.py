@@ -54,24 +54,26 @@ def get_milestone_type_label(milestone_type: MilestoneType) -> str:
 def check_milestone_is_new(
     milestone: MilestoneRecordSchema,
     milestone_previous: MilestoneRecordOutputSchema,
-    debounce_intervals: int = 0,
 ) -> bool:
     """
     Checks if the given milestone is new or has changed
 
+    Every genuine new extreme is a record and must be stored — the interval debounce is a
+    notification concern only (see `should_notify_milestone`). Dropping records here decimated
+    the stored chain: the first value of each debounce window was kept and the actual peak
+    thrown away, so a later lower value then beat the decimated chain (#651).
+
     Args:
         milestone (MilestoneRecord): The milestone record
         milestone_previous (MilestoneRecordOutputSchema): The previous (most recent kept) record
-        debounce_intervals (int): For interval-period records only, suppress a new record if it
-            breaks the previous one fewer than this many intervals later. Prevents a burst of
-            records (and Slack/social notifications) as a value ramps up/down across consecutive
-            intervals (e.g. battery charging). 0 (default) disables debouncing.
 
     Returns:
         bool: True if the milestone is new, False if it has changed
     """
     if milestone.interval <= milestone_previous.interval:
-        logger.warning(f"Skipping milestone {milestone.record_id} because it is not greater than the previous milestone")
+        # routine: the interval query re-scans a settle-lag window every run (#652), so most
+        # candidates are intervals that already hold their record
+        logger.debug(f"Skipping milestone {milestone.record_id} because it is not greater than the previous milestone")
         return False
 
     _op = operator.gt if milestone.aggregate == MilestoneAggregate.high else operator.lt
@@ -90,19 +92,47 @@ def check_milestone_is_new(
     if not _op(rounded_current, rounded_previous):
         return False
 
-    # Debounce interval-period records: a ramping value (battery charging in particular) breaks
-    # its own record every interval on the way up/down, firing a record + notification each time.
-    # Only treat it as new once it has been at least `debounce_intervals` intervals since the
-    # previous kept record. Day+ periods are spaced far further apart than any sane window so they
-    # never trip this.
-    if debounce_intervals > 0 and milestone.period == MilestonePeriod.interval:
-        gap_minutes = (milestone.interval - milestone_previous.interval).total_seconds() / 60
-        if gap_minutes < debounce_intervals * milestone.network.interval_size:
-            logger.debug(
-                f"Debouncing {milestone.record_id} at {milestone.interval}: "
-                f"{gap_minutes:.0f}m since previous record < {debounce_intervals}-interval window"
-            )
-            return False
+    return True
+
+
+def should_notify_milestone(
+    milestone: MilestoneRecordSchema,
+    milestone_previous: MilestoneRecordOutputSchema | MilestoneRecordSchema | None,
+    debounce_intervals: int = 0,
+) -> bool:
+    """
+    Decide whether a new record should raise an outbound notification (Slack + social queue).
+
+    A ramping value (battery charging in particular) breaks its own record every interval on the
+    way up/down. Every one of those is a genuine record and is stored, but announcing each one
+    floods Slack and the social approval queue, so only announce once the record is at least
+    `debounce_intervals` intervals on from the previous record in the same chain.
+
+    Day+ periods are spaced far further apart than any sane window so they never trip this.
+
+    Args:
+        milestone (MilestoneRecordSchema): The new record
+        milestone_previous: The last record announced for this record_id (or the current stored
+            record), or None when this is the first record for the record_id
+        debounce_intervals (int): Window size in network intervals. 0 (default) disables debouncing.
+
+    Returns:
+        bool: True if the record should be announced
+    """
+    if milestone_previous is None or debounce_intervals <= 0:
+        return True
+
+    if milestone.period != MilestonePeriod.interval:
+        return True
+
+    gap_minutes = (milestone.interval - milestone_previous.interval).total_seconds() / 60
+
+    if gap_minutes < debounce_intervals * milestone.network.interval_size:
+        logger.debug(
+            f"Debouncing notification for {milestone.record_id} at {milestone.interval}: "
+            f"{gap_minutes:.0f}m since previous record < {debounce_intervals}-interval window"
+        )
+        return False
 
     return True
 

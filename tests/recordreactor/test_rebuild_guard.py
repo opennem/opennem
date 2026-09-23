@@ -259,7 +259,7 @@ async def test_probe_ends_its_own_transaction(monkeypatch) -> None:
 
 @pytest.mark.asyncio
 async def test_incremental_check_stands_down_during_a_rebuild(monkeypatch) -> None:
-    """The whole check, gap backfill included, must be skipped — the backfill writes milestones too."""
+    """The whole check must be skipped, and nothing queued — the backfill writes milestones too."""
     from opennem.recordreactor import incremental
 
     async def _in_progress(caller: str) -> bool:
@@ -269,7 +269,7 @@ async def test_incremental_check_stands_down_during_a_rebuild(monkeypatch) -> No
         raise AssertionError("incremental check ran during a rebuild")
 
     monkeypatch.setattr(incremental, "skip_if_rebuild_in_progress", _in_progress)
-    monkeypatch.setattr(incremental, "_backfill_gap_if_needed", _boom)
+    monkeypatch.setattr(incremental, "_enqueue_gap_backfill_if_needed", _boom)
     monkeypatch.setattr(incremental, "get_clickhouse_client", _boom)
 
     assert await incremental.run_incremental_milestone_check(alert_slack=False) == []

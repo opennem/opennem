@@ -1,3 +1,4 @@
+import logging
 import uuid
 from datetime import datetime
 
@@ -9,7 +10,7 @@ from opennem.recordreactor.schema import (
     MilestoneType,
     MilestoneUnitSchema,
 )
-from opennem.recordreactor.utils import check_milestone_is_new
+from opennem.recordreactor.utils import check_milestone_is_new, should_notify_milestone
 from opennem.schema.network import NetworkNEM
 
 
@@ -258,51 +259,82 @@ def create_interval_output_record(
     )
 
 
-class TestCheckMilestoneIsNewDebounce:
-    """Test the interval-period debounce in check_milestone_is_new"""
+class TestIntervalRecordsAreAlwaysKept:
+    """#651: the debounce must not drop interval records — only their notification"""
 
-    def test_default_no_debounce_keeps_consecutive_records(self):
-        """Without the debounce arg, a record one interval later is still new (legacy behaviour)"""
-        previous = create_interval_output_record(value=100.0, interval=datetime(2026, 5, 31, 12, 0))
-        milestone = create_interval_record(value=120.0, interval=datetime(2026, 5, 31, 12, 5))
+    def test_consecutive_interval_records_are_new(self):
+        """Every genuine new extreme is a record, however close it lands to the previous one"""
+        previous = create_interval_output_record(value=23814.0, interval=datetime(2026, 9, 18, 12, 0))
+        milestone = create_interval_record(value=24020.0, interval=datetime(2026, 9, 18, 12, 15))
 
         assert check_milestone_is_new(milestone, previous) is True
 
-    def test_debounce_suppresses_record_within_window(self):
-        """An increasing interval record one interval later is suppressed within the window"""
+    def test_value_check_still_applies(self):
+        """A record that fails the value comparison is still not new"""
+        previous = create_interval_output_record(value=200.0, interval=datetime(2026, 5, 31, 12, 0))
+        milestone = create_interval_record(value=150.0, interval=datetime(2026, 5, 31, 13, 0))
+
+        assert check_milestone_is_new(milestone, previous) is False
+
+    def test_interval_must_advance(self):
+        """A record at or before the previous interval is never new"""
+        previous = create_interval_output_record(value=100.0, interval=datetime(2026, 5, 31, 12, 0))
+        milestone = create_interval_record(value=500.0, interval=datetime(2026, 5, 31, 12, 0))
+
+        assert check_milestone_is_new(milestone, previous) is False
+
+
+class TestShouldNotifyMilestone:
+    """Test the interval-period notification debounce"""
+
+    def test_default_no_debounce_notifies(self):
+        """Without the debounce arg every record is announced"""
+        previous = create_interval_output_record(value=100.0, interval=datetime(2026, 5, 31, 12, 0))
+        milestone = create_interval_record(value=120.0, interval=datetime(2026, 5, 31, 12, 5))
+
+        assert should_notify_milestone(milestone, previous) is True
+
+    def test_debounce_suppresses_notification_within_window(self):
+        """An interval record one interval later is not announced within the window"""
         previous = create_interval_output_record(value=100.0, interval=datetime(2026, 5, 31, 12, 0))
         milestone = create_interval_record(value=120.0, interval=datetime(2026, 5, 31, 12, 5))
 
         # 5 minutes = 1 interval, well within a 10-interval window
-        assert check_milestone_is_new(milestone, previous, debounce_intervals=10) is False
+        assert should_notify_milestone(milestone, previous, debounce_intervals=10) is False
 
     def test_debounce_suppresses_just_below_window(self):
         """9 intervals (45m) is still within a 10-interval window -> suppressed"""
         previous = create_interval_output_record(value=100.0, interval=datetime(2026, 5, 31, 12, 0))
         milestone = create_interval_record(value=200.0, interval=datetime(2026, 5, 31, 12, 45))
 
-        assert check_milestone_is_new(milestone, previous, debounce_intervals=10) is False
+        assert should_notify_milestone(milestone, previous, debounce_intervals=10) is False
 
-    def test_debounce_keeps_at_window_boundary(self):
-        """Exactly the window (10 intervals = 50m) is far enough apart -> kept"""
+    def test_debounce_notifies_at_window_boundary(self):
+        """Exactly the window (10 intervals = 50m) is far enough apart -> announced"""
         previous = create_interval_output_record(value=100.0, interval=datetime(2026, 5, 31, 12, 0))
         milestone = create_interval_record(value=200.0, interval=datetime(2026, 5, 31, 12, 50))
 
-        assert check_milestone_is_new(milestone, previous, debounce_intervals=10) is True
+        assert should_notify_milestone(milestone, previous, debounce_intervals=10) is True
 
-    def test_debounce_keeps_after_window(self):
-        """Well beyond the window -> kept"""
+    def test_debounce_notifies_after_window(self):
+        """Well beyond the window -> announced"""
         previous = create_interval_output_record(value=100.0, interval=datetime(2026, 5, 31, 12, 0))
         milestone = create_interval_record(value=200.0, interval=datetime(2026, 5, 31, 13, 0))
 
-        assert check_milestone_is_new(milestone, previous, debounce_intervals=10) is True
+        assert should_notify_milestone(milestone, previous, debounce_intervals=10) is True
 
     def test_debounce_disabled_with_zero(self):
         """debounce_intervals=0 disables debouncing"""
         previous = create_interval_output_record(value=100.0, interval=datetime(2026, 5, 31, 12, 0))
         milestone = create_interval_record(value=120.0, interval=datetime(2026, 5, 31, 12, 5))
 
-        assert check_milestone_is_new(milestone, previous, debounce_intervals=0) is True
+        assert should_notify_milestone(milestone, previous, debounce_intervals=0) is True
+
+    def test_no_previous_record_notifies(self):
+        """The first record in a chain has nothing to debounce against"""
+        milestone = create_interval_record(value=120.0, interval=datetime(2026, 5, 31, 12, 5))
+
+        assert should_notify_milestone(milestone, None, debounce_intervals=10) is True
 
     def test_debounce_only_applies_to_interval_period(self):
         """Day+ period records are never debounced even with a huge window"""
@@ -311,12 +343,30 @@ class TestCheckMilestoneIsNewDebounce:
         previous = create_milestone_output_record(value=700.0, interval=datetime(2026, 5, 30, 12, 30))
         milestone = create_milestone_record(value=710.0, interval=datetime(2026, 5, 31, 12, 30))
 
-        assert check_milestone_is_new(milestone, previous, debounce_intervals=1000) is True
+        assert should_notify_milestone(milestone, previous, debounce_intervals=1000) is True
 
-    def test_debounce_does_not_override_value_check(self):
-        """A record that fails the value comparison is still not new regardless of debounce"""
-        previous = create_interval_output_record(value=200.0, interval=datetime(2026, 5, 31, 12, 0))
-        # lower value, high aggregate -> not a new high
-        milestone = create_interval_record(value=150.0, interval=datetime(2026, 5, 31, 13, 0))
 
-        assert check_milestone_is_new(milestone, previous, debounce_intervals=10) is False
+class TestRescanLogging:
+    """#652: the widened interval window re-scans intervals that already hold their record.
+
+    That branch fired 115 times in a single incremental pass on dev, so it is routine traffic and
+    must not be logged at WARNING. The return value is unchanged.
+    """
+
+    def test_already_recorded_interval_is_not_a_warning(self, caplog):
+        previous = create_interval_output_record(value=100.0, interval=datetime(2026, 5, 31, 12, 0))
+        milestone = create_interval_record(value=500.0, interval=datetime(2026, 5, 31, 11, 55))
+
+        # the project's loggers don't propagate to root, so attach caplog's handler directly
+        module_logger = logging.getLogger("opennem.recordreactor.utils")
+        module_logger.addHandler(caplog.handler)
+
+        try:
+            with caplog.at_level(logging.DEBUG, logger="opennem.recordreactor.utils"):
+                assert check_milestone_is_new(milestone, previous) is False
+        finally:
+            module_logger.removeHandler(caplog.handler)
+
+        levels = {record.levelno for record in caplog.records}
+        assert logging.WARNING not in levels
+        assert logging.DEBUG in levels
