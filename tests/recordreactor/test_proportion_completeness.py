@@ -137,6 +137,16 @@ def test_wem_day_buckets_before_the_five_minute_cutover_are_exempt() -> None:
     assert count.startswith("if(toStartOfDay(interval) < toDateTime('2023-10-01 08:00:00')")
 
 
+def test_wem_exempt_interval_count_has_one_unsigned_type() -> None:
+    """Both branches must be UInt64: the expected count is signed (dateDiff) and the complete count
+    unsigned. ClickHouse 25 (prod) rejects the mix with "no supertype" and 26 (dev) makes it a
+    Variant that base_stats can't ORDER BY; clickhouse local 24.1 here accepts it, so assert the SQL."""
+    _, count = get_proportion_sql(NetworkWEM, [], MilestonePeriod.day, "interval", "toStartOfDay(interval)")
+
+    assert "toUInt64(intDiv(dateDiff(" in count
+    assert "toUInt64(intDiv(countIf(" in count
+
+
 def test_nem_day_buckets_have_no_exemption() -> None:
     value, _ = get_proportion_sql(NetworkNEM, [], MilestonePeriod.day, "interval", "toStartOfDay(interval)")
 
