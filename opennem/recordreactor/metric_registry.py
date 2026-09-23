@@ -431,9 +431,14 @@ def get_proportion_sql(
       real length (`get_expected_intervals_sql`). WEM buckets starting before the 5-minute cutover
       are exempt, see `_WEM_FIVE_MINUTE_FROM`.
 
-    Completeness counts distinct (interval, region) pairs among the network's declared regions, so
-    a stray region row (the historic SNOWY1, or the known-bad NEM/WEM rows) can't stand in for a
-    missing one. A NULL value is dropped by both paths: the backlog's `total_value > 0` /
+    Completeness counts (interval, region) rows among the network's declared regions, so a stray
+    region row (the historic SNOWY1, or the known-bad NEM/WEM rows) can't stand in for a missing
+    one. It is a plain countIf, not a distinct count: both paths read market_summary FINAL, which
+    holds exactly one row per (interval, network_id, network_region), and market_summary only
+    carries the NEM and WEM network ids. uniqExactIf gave the same answer but kept a hash set per
+    group, and at the interval period (one group per interval and region, ~17M of them over NEM
+    history) that alone pushed the rebuild's region query past 4 GB. A NULL value is dropped by
+    both paths: the backlog's `total_value > 0` /
     `total_value = running_max` filters and the incremental path's `value is None` check. It
     applies to highs and lows alike.
 
@@ -446,8 +451,7 @@ def get_proportion_sql(
     required_regions = 1 if "network_region" in fields else len(regions)
 
     complete_pairs = (
-        f"uniqExactIf(({time_col}, network_region), network_region IN ({list_to_case(regions)}) "
-        "AND demand_gross IS NOT NULL AND generation_renewable IS NOT NULL)"
+        f"countIf(network_region IN ({list_to_case(regions)}) AND demand_gross IS NOT NULL AND generation_renewable IS NOT NULL)"
     )
     expected = get_expected_intervals_sql(period, time_bucket_sql, network.interval_size)
     complete = f"{complete_pairs} = {expected} * {required_regions}"
