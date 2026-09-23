@@ -55,7 +55,13 @@ _HISTORIC_NETWORK_REGIONS: dict[str, list[str]] = {"NEM": ["SNOWY1"]}
 # the renewable proportion record chains (#661). Below this ratio of demand the value is treated
 # as missing. The demand floor keeps SA1's legitimately near-zero midday operational demand out
 # of the guard, since TOTALDEMAND is near zero there too.
-DEMAND_TOTAL_COLLAPSE_RATIO = 0.5
+#
+# 0.9 is set from the data: across ~9M NEM region-intervals since 2009 (demand > 200 MW) the ratio
+# never legitimately falls below 0.965. Only four intervals do, all single-interval glitches:
+# 2024-05-22 11:45 (every region, ~0), TAS1 2018-01-22 11:15 (0.52, which read 192% renewable),
+# TAS1 2023-03-14 14:55 (0.73) and SA1 2016-09-28 19:40 (0.88, the evening of the SA black system).
+# The first cut at 0.5 let the TAS1 ones through.
+DEMAND_TOTAL_COLLAPSE_RATIO = 0.9
 DEMAND_TOTAL_COLLAPSE_MIN_DEMAND_MW = 200.0
 
 # Renewable proportion is only published when every input is present (#661). From this date NEM
