@@ -15,6 +15,7 @@ from opennem.recordreactor.metric_registry import (
     TABLE_FUELTECH_INTERVALS,
     GroupingConfig,
     MetricDefinition,
+    get_network_region_filter_sql,
     get_proportion_sql,
     get_source_table_for_metric_grouping,
     get_value_expression,
@@ -54,7 +55,9 @@ def _build_network_filter(network: NetworkSchema, time_col: str) -> str:
     network_codes = [network.code.upper()]
     if network.subnetworks:
         network_codes.extend([s.code for s in network.subnetworks])
-    return f"network_id IN ({list_to_case(network_codes)})"
+    # own regions only, like the backlog: a subnetwork can carry regions outside the network
+    region_filter = get_network_region_filter_sql(network)
+    return f"network_id IN ({list_to_case(network_codes)}) {region_filter}".rstrip()
 
 
 def get_live_rooftop_network_codes(network: NetworkSchema) -> list[str]:
