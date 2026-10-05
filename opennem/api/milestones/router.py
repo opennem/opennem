@@ -226,12 +226,13 @@ async def get_milestone_by_record_id(
 ) -> APIV4ResponseSchema | Response:
     """Get a single milestone by record id
 
-    Successful responses are cached as serialised json for MILESTONE_HISTORY_CACHE_TTL so a hit is
-    byte-identical to the miss that filled it. Error responses are never cached.
+    Responses with records are cached as serialised json for MILESTONE_HISTORY_CACHE_TTL so a hit is
+    byte-identical to the miss that filled it. Error and not-found responses are never cached: the
+    route is unauthenticated, so caching misses would let arbitrary record ids fill the cache.
     """
 
-    if limit > 1000:
-        raise HTTPException(status_code=400, detail="Limit must be less than 1000")
+    if limit > 1000 or limit < 0:
+        raise HTTPException(status_code=400, detail="Limit must be between 0 and 1000")
 
     if page < 1:
         return APIV4ResponseSchema(success=True, error="Page must be greater than 0", total_records=0)
@@ -274,7 +275,7 @@ async def get_milestone_by_record_id(
     # same serialisation fastapi applies via response_model (by_alias, exclude_none)
     body = response_schema.model_dump_json(by_alias=True, exclude_none=True).encode()
 
-    if cache_backend:
+    if cache_backend and db_record:
         try:
             await cache_backend.set(cache_key, body, expire=MILESTONE_HISTORY_CACHE_TTL)
         except Exception:

@@ -167,6 +167,26 @@ def test_error_responses_are_not_cached(query: AsyncMock) -> None:
     assert query.await_count == 2
 
 
+def test_not_found_is_not_cached(query: AsyncMock) -> None:
+    """The route is unauthenticated, so caching misses would let arbitrary record ids fill the cache"""
+    client = _make_client()
+    query.return_value = ([], 0)
+
+    for _ in range(2):
+        response = client.get("/history/au.nem.not.a.record")
+        assert response.json()["error"] == "Milestone record not found"
+        assert response.headers["x-fastapi-cache"] == "MISS"
+
+    assert query.await_count == 2
+
+
+def test_negative_limit_is_rejected(query: AsyncMock) -> None:
+    client = _make_client()
+
+    assert client.get(f"/history/{RECORD_ID}?limit=-5").status_code == 400
+    assert query.await_count == 0
+
+
 def test_auth_dependency_runs_on_cache_hits(query: AsyncMock) -> None:
     """Route auth must be a FastAPI dependency so it runs before the endpoint, hit or miss.
     The cache key ignores the caller, so callers share entries but each one is still checked."""
