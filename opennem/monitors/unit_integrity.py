@@ -52,11 +52,8 @@ async def check_unit_date_integrity() -> dict[str, list[dict]]:
         operating_units = operating_result.scalars().all()
 
         for unit in operating_units:
-            # Additional check for interconnector codes that might have None fueltech
-            if unit.code and any(
-                pattern in unit.code
-                for pattern in ["MNSP", "FLOW", "-NSW1", "-QLD1", "-VIC1", "-SA1", "-TAS1", "V-S", "V-SA", "N-Q"]
-            ):
+            # Interconnectors have no fueltech or dates by design
+            if unit.interconnector:
                 continue
 
             logger.warning(
@@ -83,11 +80,8 @@ async def check_unit_date_integrity() -> dict[str, list[dict]]:
         retired_units = retired_result.scalars().all()
 
         for unit in retired_units:
-            # Additional check for interconnector codes that might have None fueltech
-            if unit.code and any(
-                pattern in unit.code
-                for pattern in ["MNSP", "FLOW", "-NSW1", "-QLD1", "-VIC1", "-SA1", "-TAS1", "V-S", "V-SA", "N-Q"]
-            ):
+            # Interconnectors have no fueltech or dates by design
+            if unit.interconnector:
                 continue
 
             logger.warning(
@@ -138,9 +132,6 @@ async def check_unit_date_consistency() -> dict[str, list[dict]]:
     # Fueltechs to skip
     skip_fueltechs = ["solar_rooftop", "imports", "exports", "interconnector"]
 
-    # Interconnector code patterns to skip
-    interconnector_patterns = ["MNSP", "FLOW", "-NSW1", "-QLD1", "-VIC1", "-SA1", "-TAS1", "V-S", "V-SA", "N-Q"]
-
     async with get_read_session() as session:
         # Check units where closure date is before commencement date
         date_order_query = select(Unit).where(
@@ -153,8 +144,8 @@ async def check_unit_date_consistency() -> dict[str, list[dict]]:
         date_order_units = date_order_result.scalars().all()
 
         for unit in date_order_units:
-            # Skip interconnectors with None fueltech
-            if unit.code and any(pattern in unit.code for pattern in interconnector_patterns):
+            # Interconnectors have no fueltech or dates by design
+            if unit.interconnector:
                 continue
 
             logger.warning(
@@ -180,8 +171,8 @@ async def check_unit_date_consistency() -> dict[str, list[dict]]:
         operating_closed_units = operating_closed_result.scalars().all()
 
         for unit in operating_closed_units:
-            # Skip interconnectors with None fueltech
-            if unit.code and any(pattern in unit.code for pattern in interconnector_patterns):
+            # Interconnectors have no fueltech or dates by design
+            if unit.interconnector:
                 continue
 
             logger.warning(

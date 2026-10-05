@@ -790,10 +790,9 @@ async def _compute_flows_for_range(start_time: datetime, end_time: datetime) -> 
     emissions_imports, emissions_exports, market_value_imports, market_value_exports
     """
     from opennem.core.flow_solver_v4 import solve_flows_v4
-    from opennem.core.interconnector_topology import get_network_topology
+    from opennem.core.interconnector_topology import topology_from_pairs
     from opennem.db import get_read_session
 
-    topology = get_network_topology("NEM")
     logger.info(f"Computing flows for {start_time} to {end_time}")
 
     # 1. Load interconnector SCADA from PG (async)
@@ -812,6 +811,8 @@ async def _compute_flows_for_range(start_time: datetime, end_time: datetime) -> 
         WHERE fs.interval >= '{start_str}'
             AND fs.interval <= '{end_str}'
             AND u.interconnector = true
+            AND u.interconnector_region_from IS NOT NULL
+            AND u.interconnector_region_to IS NOT NULL
             AND f.network_id = 'NEM'
         GROUP BY 1, 2, 3
         ORDER BY 1
@@ -830,6 +831,10 @@ async def _compute_flows_for_range(start_time: datetime, end_time: datetime) -> 
         schema=["interval", "interconnector_region_from", "interconnector_region_to", "energy"],
         orient="row",
     ).with_columns(pl.col("interval").cast(pl.Datetime("us")))
+
+    topology = topology_from_pairs(
+        NetworkNEM, interconnector_df.select("interconnector_region_from", "interconnector_region_to").unique().rows()
+    )
 
     # 2. Load emissions intensity from CH
     client = get_clickhouse_client()

@@ -5,8 +5,8 @@ Supports automatic expansion when new interconnectors (e.g. PEC NSW1<->SA1) appe
 """
 
 import logging
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from functools import lru_cache
 
 from opennem.db import db_connect_sync
 from opennem.schema.network import NetworkNEM, NetworkSchema
@@ -84,29 +84,24 @@ def load_topology_from_db(network: NetworkSchema = NetworkNEM) -> NetworkTopolog
         logger.warning(f"No interconnectors found for network {network.code}")
         return NetworkTopology(network=network)
 
-    flows: list[tuple[str, str]] = [(row[0], row[1]) for row in rows]
-    regions = sorted({r for pair in flows for r in pair})
-
-    topology = NetworkTopology(
-        network=network,
-        regions=tuple(regions),
-        flows=tuple(flows),
-    )
+    topology = topology_from_pairs(network, ((row[0], row[1]) for row in rows))
 
     logger.info(f"Loaded topology for {network.code}: {topology.num_regions} regions, {topology.num_flows} directional flows")
 
     return topology
 
 
-@lru_cache(maxsize=4)
-def get_network_topology(network_code: str = "NEM") -> NetworkTopology:
-    """Cached topology lookup. Call .cache_clear() to refresh after interconnector changes."""
-    from opennem.schema.network import NETWORKS
+def topology_from_pairs(network: NetworkSchema, pairs: Iterable[tuple[str, str]]) -> NetworkTopology:
+    """Build a topology from (region_from, region_to) pairs.
 
-    network = next((n for n in NETWORKS if n.code == network_code), None)
-    if not network:
-        raise ValueError(f"Unknown network: {network_code}")
-    return load_topology_from_db(network)
+    The flows aggregate builds its topology from the interconnector rows it is about to solve,
+    so a newly mapped interconnector is in the topology on the next run. A process-level cache
+    of the units table served the pre-PEC topology until the workers restarted.
+    """
+    flows = tuple(sorted(set(pairs)))
+    regions = tuple(sorted({r for pair in flows for r in pair}))
+
+    return NetworkTopology(network=network, regions=regions, flows=flows)
 
 
 # Hardcoded fallback for NEM (pre-PEC topology) used when DB is unavailable or in tests
