@@ -23,16 +23,17 @@ def test_known_unmapped_codes_are_skipped():
     assert filter_dropped(rows, REASON_NO_UNIT) == []
 
 
-def test_interconnectors_are_skipped():
-    """No fueltech by design; flows are handled by a separate pipeline."""
-    rows = [
-        ("NEM", "VIC1-NSW1", 80920.0, 2131),
-        ("NEM", "N-Q-MNSP1", -2855.0, 2131),
-        ("NEM", "V-SA", -23644.0, 2131),
-        ("NEM", "T-V-MNSP1", 8921.0, 2131),
-    ]
+def test_unmapped_interconnector_is_reported():
+    """The flows aggregate inner joins units too, so a new interconnector is dropped until mapped (#650).
 
-    assert filter_dropped(rows, REASON_NO_FUELTECH) == []
+    A code pattern skip (`-SA1`) hid PEC's NSW1-SA1. Mapped interconnectors are excluded in the
+    unjoinable query by `units.interconnector`, never by their code.
+    """
+    rows = [("NEM", "NSW1-SA1", -1938.3, 1539)]
+
+    findings = filter_dropped(rows, REASON_NO_UNIT)
+
+    assert [f.code for f in findings] == ["NSW1-SA1"]
 
 
 def test_negative_energy_still_reported():

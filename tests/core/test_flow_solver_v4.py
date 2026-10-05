@@ -14,7 +14,9 @@ from opennem.core.flow_solver_v4 import (
 from opennem.core.interconnector_topology import (
     NEM_DEFAULT_TOPOLOGY,
     NEM_PEC_TOPOLOGY,
+    topology_from_pairs,
 )
+from opennem.schema.network import NetworkNEM
 
 TEST_INTERVAL = datetime.fromisoformat("2023-01-01T00:00:00")
 
@@ -83,6 +85,22 @@ class TestNetworkTopology:
         idx = NEM_DEFAULT_TOPOLOGY.region_index
         assert len(idx) == 5
         assert idx["NSW1"] == 0
+
+    def test_topology_from_pairs_picks_up_pec(self):
+        """Built from the rows being solved, so a newly mapped interconnector is in it on the next run (#650)."""
+        pairs = [("VIC1", "SA1"), ("NSW1", "QLD1"), ("VIC1", "SA1"), ("NSW1", "SA1"), ("TAS1", "VIC1"), ("VIC1", "NSW1")]
+
+        topology = topology_from_pairs(NetworkNEM, pairs)
+
+        assert topology.regions == ("NSW1", "QLD1", "SA1", "TAS1", "VIC1")
+        assert topology.flows == (("NSW1", "QLD1"), ("NSW1", "SA1"), ("TAS1", "VIC1"), ("VIC1", "NSW1"), ("VIC1", "SA1"))
+        assert topology.flows_into("SA1") == [("NSW1", "SA1"), ("VIC1", "SA1")]
+
+    def test_topology_from_no_pairs_is_empty(self):
+        topology = topology_from_pairs(NetworkNEM, [])
+
+        assert topology.regions == ()
+        assert topology.flows == ()
 
 
 class TestComputeRegionFlows:
@@ -215,6 +233,74 @@ class TestPECTopology:
         # All values non-negative
         for col in ["energy_imports", "energy_exports", "emissions_imports", "emissions_exports"]:
             assert (result[col] >= 0).all(), f"{col} has negative values"
+
+    def test_simple_pec_only_moves_nsw_and_sa(self):
+        """NSW1-SA1 is one more edge: NSW1 exports 15 at 0.55, SA1 imports it, nothing else changes."""
+        baseline = solve_flow_emissions_simple(NEM_DEFAULT_TOPOLOGY, _interconnector_df(), _region_emissions_df())
+        with_pec = solve_flow_emissions_simple(NEM_PEC_TOPOLOGY, self._pec_interconnector_df(), _region_emissions_df())
+
+        delta = with_pec.join(baseline, on=["interval", "network_region"], suffix="_base").select(
+            "network_region",
+            *[
+                (pl.col(c) - pl.col(f"{c}_base")).alias(c)
+                for c in ["energy_imports", "energy_exports", "emissions_imports", "emissions_exports"]
+            ],
+        )
+        by_region = {row["network_region"]: row for row in delta.iter_rows(named=True)}
+
+        assert by_region["NSW1"]["energy_exports"] == pytest.approx(15.0)
+        assert by_region["NSW1"]["emissions_exports"] == pytest.approx(15.0 * 0.55)
+        assert by_region["SA1"]["energy_imports"] == pytest.approx(15.0)
+        assert by_region["SA1"]["emissions_imports"] == pytest.approx(15.0 * 0.55)
+        assert by_region["NSW1"]["energy_imports"] == pytest.approx(0.0)
+        assert by_region["SA1"]["energy_exports"] == pytest.approx(0.0)
+
+        for region in ("QLD1", "TAS1", "VIC1"):
+            assert all(value == pytest.approx(0.0) for key, value in by_region[region].items() if key != "network_region")
+
+    def test_simple_pec_reverse_flow_is_sa_export(self):
+        """Negative METEREDMWFLOW on NSW1-SA1 is SA1 exporting to NSW1 at SA1's intensity."""
+        is_pec = (pl.col("interconnector_region_from") == "NSW1") & (pl.col("interconnector_region_to") == "SA1")
+        flows = self._pec_interconnector_df().with_columns(
+            pl.when(is_pec).then(pl.lit(-15.0)).otherwise(pl.col("energy")).alias("energy")
+        )
+
+        result = solve_flow_emissions_simple(NEM_PEC_TOPOLOGY, flows, _region_emissions_df())
+        sa = result.filter(pl.col("network_region") == "SA1").row(0, named=True)
+        nsw = result.filter(pl.col("network_region") == "NSW1").row(0, named=True)
+
+        # SA1 still imports 22 from VIC1 and now exports 15 to NSW1 at 0.15
+        assert sa["energy_imports"] == pytest.approx(22.0)
+        assert sa["energy_exports"] == pytest.approx(15.0)
+        assert sa["emissions_exports"] == pytest.approx(15.0 * 0.15)
+        # NSW1 imports 55 from QLD1, 27.5 from VIC1 and 15 from SA1
+        assert nsw["energy_imports"] == pytest.approx(97.5)
+        assert nsw["emissions_imports"] == pytest.approx(55 * 0.65 + 27.5 * 0.60 + 15.0 * 0.15)
+        assert nsw["energy_exports"] == pytest.approx(0.0)
+
+    def test_simple_pec_conserves_energy_and_emissions(self):
+        """Every edge is counted once as an export and once as an import, loop or not."""
+        result = solve_flow_emissions_simple(NEM_PEC_TOPOLOGY, self._pec_interconnector_df(), _region_emissions_df())
+
+        assert result["energy_imports"].sum() == pytest.approx(result["energy_exports"].sum())
+        assert result["emissions_imports"].sum() == pytest.approx(result["emissions_exports"].sum())
+
+    def test_simple_pec_loop_circulation(self):
+        """Flow around the whole loop (NSW1->SA1->VIC1->NSW1) leaves every region's net at zero."""
+        circulating = pl.DataFrame(
+            {
+                "interval": [TEST_INTERVAL] * 3,
+                "interconnector_region_from": ["NSW1", "VIC1", "VIC1"],
+                "interconnector_region_to": ["SA1", "SA1", "NSW1"],
+                "energy": [10.0, -10.0, 10.0],
+            }
+        )
+
+        result = solve_flow_emissions_simple(NEM_PEC_TOPOLOGY, circulating, _region_emissions_df())
+
+        for row in result.iter_rows(named=True):
+            assert row["energy_imports"] == pytest.approx(10.0), row["network_region"]
+            assert row["energy_exports"] == pytest.approx(10.0), row["network_region"]
 
 
 class TestSolveFlowsV4:
