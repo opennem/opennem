@@ -1,9 +1,11 @@
+import hashlib
 import logging
 import uuid
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Response
+from fastapi_cache import Backend, FastAPICache
 from fastapi_cache.decorator import cache
 from fastapi_versionizer.versionizer import api_version
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,6 +31,34 @@ from .queries import get_milestone_record, get_milestone_record_ids, get_milesto
 logger = logging.getLogger("opennem.api.milestones.router")
 
 milestones_router = APIRouter(tags=["Milestones"], include_in_schema=True)
+
+# record history only changes when a milestone is written, so repeat lookups are served from the api cache (#648)
+MILESTONE_HISTORY_CACHE_TTL = 60 * 5
+
+
+def _get_cache_backend() -> Backend | None:
+    """The api cache backend, or None when FastAPICache was never initialised (no app lifespan)"""
+    try:
+        return FastAPICache.get_backend()
+    except AssertionError:
+        return None
+
+
+def _milestone_history_cache_key(record_id: str, page: int, limit: int) -> str:
+    """Cache key for one page of a record history. Keyed on the query only, never on the caller"""
+    digest = hashlib.sha256(repr((record_id, page, limit)).encode()).hexdigest()
+    return f"{FastAPICache.get_prefix()}:milestones-history:{digest}"
+
+
+def _milestone_history_response(body: bytes, max_age: int, cache_status: str) -> Response:
+    """Serve cached or fresh history json. private so only the browser caches it, never a shared cache or cdn"""
+    max_age = min(max(max_age, 0), MILESTONE_HISTORY_CACHE_TTL)
+
+    return Response(
+        content=body,
+        media_type="application/json",
+        headers={"Cache-Control": f"private, max-age={max_age}", "X-FastAPI-Cache": cache_status},
+    )
 
 
 @api_version(4)
@@ -181,7 +211,6 @@ async def get_milestones(
 
 @api_version(4)
 @api_protected()
-# @cache(expire=60 * 60)
 @milestones_router.get(
     "/history/{record_id}",
     response_model=APIV4ResponseSchema,
@@ -194,14 +223,32 @@ async def get_milestone_by_record_id(
     limit: int = 1000,
     page: int = 1,
     db: AsyncSession = Depends(get_scoped_read_session),
-) -> APIV4ResponseSchema:
-    """Get a single milestone by record id"""
+) -> APIV4ResponseSchema | Response:
+    """Get a single milestone by record id
+
+    Successful responses are cached as serialised json for MILESTONE_HISTORY_CACHE_TTL so a hit is
+    byte-identical to the miss that filled it. Error responses are never cached.
+    """
 
     if limit > 1000:
         raise HTTPException(status_code=400, detail="Limit must be less than 1000")
 
     if page < 1:
         return APIV4ResponseSchema(success=True, error="Page must be greater than 0", total_records=0)
+
+    cache_backend = _get_cache_backend()
+    # limit=0 returns the full history and ignores page, so every page shares one entry
+    cache_key = _milestone_history_cache_key(record_id, page if limit else 1, limit) if cache_backend else ""
+
+    if cache_backend:
+        try:
+            ttl, cached = await cache_backend.get_with_ttl(cache_key)
+        except Exception:
+            logger.warning("Error reading milestone history cache", exc_info=True)
+            ttl, cached = 0, None
+
+        if cached is not None:
+            return _milestone_history_response(cached, max_age=ttl, cache_status="HIT")
 
     try:
         db_record, total_records = await get_milestone_records(session=db, record_id=record_id, page_number=page, limit=limit)
@@ -220,11 +267,20 @@ async def get_milestone_by_record_id(
         return response_schema
 
     if not db_record:
-        return APIV4ResponseSchema(success=True, error="Milestone record not found", total_records=0)
+        response_schema = APIV4ResponseSchema(success=True, error="Milestone record not found", total_records=0)
+    else:
+        response_schema = APIV4ResponseSchema(success=True, data=milestone_record, total_records=total_records)
 
-    response_schema = APIV4ResponseSchema(success=True, data=milestone_record, total_records=total_records)
+    # same serialisation fastapi applies via response_model (by_alias, exclude_none)
+    body = response_schema.model_dump_json(by_alias=True, exclude_none=True).encode()
 
-    return response_schema
+    if cache_backend:
+        try:
+            await cache_backend.set(cache_key, body, expire=MILESTONE_HISTORY_CACHE_TTL)
+        except Exception:
+            logger.warning("Error writing milestone history cache", exc_info=True)
+
+    return _milestone_history_response(body, max_age=MILESTONE_HISTORY_CACHE_TTL, cache_status="MISS")
 
 
 @api_version(4)
