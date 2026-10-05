@@ -5,9 +5,12 @@ SCADA data and regional emissions intensities.
 
 Two modes:
 - simple (default): emissions on flow A->B = energy(A->B) * generation_intensity(A)
-  This matches v3 behaviour and is suitable for tree topologies.
+  This matches v3 behaviour. It is computed per interconnector, so it holds the same on a
+  loop (PEC closes SA1-VIC1-NSW1-SA1 from 2026-10-01) as on a tree. Both ignore transit
+  equally: QLD1 energy passing through NSW1 to VIC1 is counted at NSW1's intensity.
 - consumption_mix: solves a linear system accounting for transit flows through
-  intermediate regions. Required for accurate accounting with loops (e.g. PEC).
+  intermediate regions. Switching to it is a methodology change for the whole emissions
+  series, not something PEC requires.
 """
 
 import logging
