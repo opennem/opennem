@@ -18,6 +18,12 @@ Two distinct failure modes are checked:
 2. **unjoinable** — a `units` row that exists but has no `fueltech_id` or no
    `station_id`, so it dies on the second or third join instead of the first.
 
+Interconnectors are mapped units with `interconnector = true` and no fueltech by design, so
+a missing fueltech is only reported for units without that flag. An interconnector with no `units` row
+at all is reported as unmapped like anything else: the flows aggregate inner joins `units` too,
+so a new interconnector (PEC's `NSW1-SA1`, #650) is dropped from every region's imports and
+exports until it is mapped. Matching interconnectors by code pattern hid exactly that case.
+
 The check is windowed rather than full-history. A rolling window answers the question
 that actually matters — "is AEMO sending us something we are dropping *right now*" —
 and it does so in seconds against a table where the full-history equivalent takes
@@ -47,10 +53,6 @@ KNOWN_UNMAPPED_CODES: set[str] = {
     "DALNTH01",
 }
 
-# Interconnectors have no fueltech by design and are excluded from the generation
-# aggregate; their flows are handled by the flows pipeline instead.
-INTERCONNECTOR_PATTERNS = ("MNSP", "FLOW", "-NSW1", "-QLD1", "-VIC1", "-SA1", "-TAS1", "V-S", "V-SA", "N-Q")
-
 # MWh over the window. Above float noise, far below anything a real generator produces.
 ENERGY_THRESHOLD_MWH = 1.0
 
@@ -75,21 +77,16 @@ REASON_NO_UNIT = "no units row"
 REASON_NO_FUELTECH = "unit has no fueltech or station"
 
 
-def _is_interconnector(code: str) -> bool:
-    return any(pattern in code for pattern in INTERCONNECTOR_PATTERNS)
-
-
 def filter_dropped(rows: Iterable[Sequence[Any]], reason: str) -> list[DroppedCode]:
     """Turn query rows into alertable findings, dropping the ones we expect.
 
     Rows are `(network_id, code, energy, intervals)` — either plain tuples or SQLAlchemy
-    `Row`s. Interconnectors are excluded because they carry no fueltech by design and
-    never enter the generation aggregate.
+    `Row`s. Mapped interconnectors are already excluded by the unjoinable query.
     """
     findings: list[DroppedCode] = []
 
     for network_id, code, energy, intervals in rows:
-        if code in KNOWN_UNMAPPED_CODES or _is_interconnector(code):
+        if code in KNOWN_UNMAPPED_CODES:
             logger.debug(f"Skipping expected unmapped code {code}")
             continue
 
@@ -131,7 +128,7 @@ _UNJOINABLE_QUERY = text("""
     from units u
     join facility_scada fs on fs.facility_code = u.code
     where
-        (u.fueltech_id is null or u.station_id is null)
+        ((u.fueltech_id is null and u.interconnector is not true) or u.station_id is null)
         and fs.is_forecast is false
         and fs.interval >= now() - (:window_days * interval '1 day')
     group by 1, 2
@@ -185,7 +182,8 @@ async def run_unmapped_code_check(window_days: int = DEFAULT_WINDOW_DAYS) -> lis
             f"*Unmapped facility codes dropping energy* ({window_days}d window)\n"
             f"These codes carry energy in `facility_scada` but are discarded by the clickhouse "
             f"ingest joins, so they are missing from the API and every export:\n{lines}\n"
-            f"Map them in the CMS, or add to `KNOWN_UNMAPPED_CODES` if the omission is intentional."
+            f"Map them in the CMS (interconnectors need a manual `units` row with `interconnector = true`, "
+            f"see #650), or add to `KNOWN_UNMAPPED_CODES` if the omission is intentional."
         ),
         tag_users=settings.slack_admin_alert,
     )
