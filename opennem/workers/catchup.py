@@ -65,14 +65,34 @@ async def check_facility_data_gaps(
         tuple[bool, datetime | None]: (has_gap, last_seen_time)
         where has_gap indicates if a gap was detected and last_seen_time is the most recent data point
     """
+    # SCADA alone isn't enough: the interval check can land SCADA and still stall before the
+    # dispatch prices, so the older of the two is how far behind the network is. data_last_seen
+    # holds network time labelled UTC, so AT TIME ZONE 'UTC' gives the same naive network time
+    # as balancing_summary.interval.
     query = text(
         """
-        SELECT max(data_last_seen) as last_seen
-        FROM units u
-        JOIN facilities f ON f.id = u.station_id
-        WHERE u.status_id = 'operating'
-        AND f.network_id = 'NEM'
-        AND u.dispatch_type = 'GENERATOR'
+        SELECT least(
+            (
+                SELECT max(u.data_last_seen) AT TIME ZONE 'UTC'
+                FROM units u
+                JOIN facilities f ON f.id = u.station_id
+                WHERE u.status_id = 'operating'
+                AND f.network_id = 'NEM'
+                AND u.dispatch_type = 'GENERATOR'
+            ),
+            -- least() skips NULLs, so no price in the window counts as a price gap at its start
+            coalesce(
+                (
+                    SELECT max(bs.interval)
+                    FROM balancing_summary bs
+                    WHERE bs.network_id = 'NEM'
+                    AND bs.price IS NOT NULL
+                    AND bs.is_forecast = false
+                    AND bs.interval > now() - interval '14 days'
+                ),
+                (now() AT TIME ZONE 'Australia/Brisbane') - interval '14 days'
+            )
+        ) as last_seen
         """
     )
 
