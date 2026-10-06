@@ -88,7 +88,7 @@ async def run_export_energy_for_year(
     This function retrieves the export map and filters energy exports by daily priority
     and the specified year. If a network region code or network is provided, it further filters the exports accordingly.
 
-    :param year: The year to filter energy exports. Defaults to the current year.
+    :param year: The year to filter energy exports. None runs every year.
     :param network_region_code: Optional network region code to filter exports.
     :param network: Optional network schema object to filter exports.
     """
