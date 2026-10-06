@@ -19,7 +19,7 @@ from sqlalchemy import bindparam, text
 
 from opennem.core.normalizers import clean_float
 from opennem.db import get_read_session
-from opennem.db.clickhouse import insert_async
+from opennem.db.clickhouse import execute_async, get_clickhouse_client, insert_async
 from opennem.schema.network import NetworkNEM
 
 logger = logging.getLogger("opennem.aggregates.forecast")
@@ -98,6 +98,37 @@ async def insert_forecast_rows(rows: Sequence[ForecastRow]) -> int:
 
     await insert_async(_INSERT, list(rows), timeout=60)
     return len(rows)
+
+
+async def _run_already_stored(metric: str, version: int, interval_from: datetime) -> bool:
+    rows = await execute_async(
+        get_clickhouse_client(),
+        f"SELECT count() FROM {FORECAST_TABLE} "
+        "WHERE network_id = %(network)s AND metric = %(metric)s AND interval >= %(interval_from)s AND version = %(version)s",
+        {"network": NetworkNEM.code, "metric": metric, "interval_from": interval_from, "version": version},
+    )
+    return bool(rows and rows[0][0])
+
+
+async def insert_new_forecast_runs(rows: Sequence[ForecastRow]) -> int:
+    """Insert each forecast run in `rows` unless that exact run is already stored.
+
+    Guards against a crawl re-processing a file. Only an identical run is skipped: during
+    catch-up an older run still holds the one interval before the next run starts, so "older
+    than the newest stored" is not a duplicate.
+    """
+    by_run: dict[tuple[str, int], list[ForecastRow]] = {}
+    for row in rows:
+        by_run.setdefault((row[3], row[8]), []).append(row)
+
+    inserted = 0
+    for (metric, version), run_rows in by_run.items():
+        if await _run_already_stored(metric, version, min(r[0] for r in run_rows)):
+            logger.debug(f"Forecast run {metric} {version} already stored, skipping")
+            continue
+        inserted += await insert_forecast_rows(run_rows)
+
+    return inserted
 
 
 _PG_ROOFTOP_FORECAST = text("""
