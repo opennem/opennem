@@ -6,7 +6,6 @@ from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, Query, Response
 from fastapi_cache import Backend, FastAPICache
-from fastapi_cache.decorator import cache
 from fastapi_versionizer.versionizer import api_version
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.exceptions import HTTPException
@@ -287,7 +286,6 @@ async def get_milestone_by_record_id(
 
 
 @api_version(4)
-@cache(expire=60 * 60)
 @milestones_router.get(
     "/instance/{instance_id}",
     response_model=APIV4ResponseSchema,

@@ -5,6 +5,8 @@ and every milestones route served anonymous requests. Auth is now a router depen
 on the real versioned app, including the unversioned and legacy aliases.
 """
 
+from unittest.mock import AsyncMock, patch
+
 import pytest
 from fastapi.routing import APIRoute
 from fastapi.testclient import TestClient
@@ -42,7 +44,7 @@ def test_every_router_route_depends_on_auth() -> None:
 
 def test_app_serves_the_v4_routes() -> None:
     v4 = [p for p in MILESTONE_PATHS if p.startswith("/v4/milestones/")]
-    assert len(v4) == 5, MILESTONE_PATHS
+    assert len(v4) == 5, f"route count changed, update this test and check the new route needs auth: {MILESTONE_PATHS}"
 
 
 @pytest.mark.parametrize("path", MILESTONE_PATHS)
@@ -51,6 +53,8 @@ def test_anonymous_request_is_rejected(path: str) -> None:
 
 
 @pytest.mark.parametrize("path", MILESTONE_PATHS)
-def test_short_key_is_rejected(path: str) -> None:
-    # under 10 chars is refused before unkey is called, so this needs no network
-    assert TestClient(app).get(path, headers={"Authorization": "Bearer short"}).status_code == 401
+def test_unknown_key_is_rejected(path: str) -> None:
+    with patch("opennem.api.security.unkey_validate", AsyncMock(return_value=None)):
+        response = TestClient(app).get(path, headers={"Authorization": "Bearer not_a_real_key_1234567890"})
+
+    assert response.status_code == 401
