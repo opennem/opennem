@@ -28,6 +28,7 @@ class MarketMetric(StrEnum):
     FLOW_EXPORTS = "flow_exports"
     FLOW_IMPORTS_ENERGY = "flow_imports_energy"
     FLOW_EXPORTS_ENERGY = "flow_exports_energy"
+    SOLAR_ROOFTOP_FORECAST = "solar_rooftop_forecast"
 
     @property
     def unit(self) -> str:
@@ -46,6 +47,7 @@ class MarketMetric(StrEnum):
             "flow_exports": "MW",
             "flow_imports_energy": "MWh",
             "flow_exports_energy": "MWh",
+            "solar_rooftop_forecast": "MW",
         }
         return units[self.value]
 

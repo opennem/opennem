@@ -4,14 +4,21 @@ Market data router for OpenNEM API.
 
 import logging
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from fastapi_cache.decorator import cache
 from fastapi_versionizer import api_version
 
-from opennem.api.data.utils import validate_date_range
+from opennem.api.data.utils import get_max_interval_days, validate_date_range
+from opennem.api.forecast import (
+    SOURCE_INTERVAL,
+    get_forecast_run_times,
+    get_forecast_timeseries_query,
+    get_latest_forecast_interval,
+    is_forecast_metric,
+)
 from opennem.api.intervals import cap_date_end_to_settled_interval
 from opennem.api.queries import QueryType, get_timeseries_query
 from opennem.api.schema import std_error_responses
@@ -22,6 +29,9 @@ from opennem.core.grouping import PrimaryGrouping
 from opennem.core.metric import Metric
 from opennem.core.time_interval import Interval
 from opennem.db.clickhouse import execute_async, get_clickhouse_dependency
+from opennem.schema.network import NetworkSchema
+from opennem.users.schema import OpenNEMUser
+from opennem.utils.dates import get_last_completed_interval_for_network
 
 router = APIRouter()
 logger = logging.getLogger("opennem.api.market")
@@ -50,6 +60,7 @@ _SUPPORTED_METRICS = [
     Metric.FLOW_EXPORTS,
     Metric.FLOW_IMPORTS_ENERGY,
     Metric.FLOW_EXPORTS_ENERGY,
+    Metric.SOLAR_ROOFTOP_FORECAST,
 ]
 
 
@@ -92,13 +103,78 @@ async def get_network_data(
     client: Any = Depends(get_clickhouse_dependency),
     user: optional_user = None,
 ) -> dict:
-    """Get market data for a network."""
+    """Get market data for a network.
+
+    Forecast metrics (`*_forecast`) are served from the forecast table with their own date
+    defaults: a live request runs from now to the end of the latest forecast run rather than
+    ending at the last settled interval (#675).
+    """
     network = get_api_network_from_code(network_code)
     validate_metrics(metrics, _SUPPORTED_METRICS)
 
     if network_region:
         primary_grouping = PrimaryGrouping.NETWORK_REGION
 
+    forecast_metrics = [m for m in metrics if is_forecast_metric(m)]
+    actual_metrics = [m for m in metrics if not is_forecast_metric(m)]
+
+    timeseries_list: list[dict[str, Any]] = []
+    found_rows = False
+
+    if actual_metrics:
+        actual, rows = await _actual_timeseries(
+            client, network, actual_metrics, interval, date_start, date_end, network_region, primary_grouping, user
+        )
+        timeseries_list.extend(actual)
+        found_rows |= rows
+
+    if forecast_metrics:
+        forecast, rows = await _forecast_timeseries(
+            client, network, forecast_metrics, interval, date_start, date_end, network_region, primary_grouping, user
+        )
+        timeseries_list.extend(forecast)
+        found_rows |= rows
+
+    if not found_rows:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No market data available for network {network_code} in the specified time range",
+        )
+
+    # mixed requests come back in the order the metrics were asked for; a single family is
+    # already in request order (including repeated metrics) and is left alone
+    if actual_metrics and forecast_metrics:
+        order: dict[str, int] = {}
+        for i, m in enumerate(metrics):
+            order.setdefault(m.value, i)
+        timeseries_list.sort(key=lambda ts: order.get(ts["metric"], len(order)))
+
+    return build_timeseries_response(timeseries_list)
+
+
+async def _run_query(client: Any, query: str, params: dict[str, Any]) -> list[Any]:
+    start_time = time.time()
+    try:
+        logger.debug(query, params)
+        results = await execute_async(client, query, params)
+        logger.debug(f"Query execution time: {(time.time() - start_time) * 1000:.2f} ms")
+    except Exception as e:
+        logger.error(f"Error executing query: {e}")
+        raise HTTPException(status_code=500, detail="Error executing query") from e
+    return results or []
+
+
+async def _actual_timeseries(
+    client: Any,
+    network: NetworkSchema,
+    metrics: list[Metric],
+    interval: Interval,
+    date_start: datetime | None,
+    date_end: datetime | None,
+    network_region: str | None,
+    primary_grouping: PrimaryGrouping,
+    user: OpenNEMUser | None,
+) -> tuple[list[dict[str, Any]], bool]:
     live_query = date_end is None
 
     date_start, date_end = validate_date_range(
@@ -125,21 +201,75 @@ async def get_network_data(
         network_region=network_region,
     )
 
-    start_time = time.time()
-    try:
-        logger.debug(query, params)
-        results = await execute_async(client, query, params)
-        elapsed_ms = (time.time() - start_time) * 1000
-        logger.debug(f"Query execution time: {elapsed_ms:.2f} ms")
-    except Exception as e:
-        logger.error(f"Error executing query: {e}")
-        raise HTTPException(status_code=500, detail="Error executing query") from e
-
+    results = await _run_query(client, query, params)
     if not results:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No market data available for network {network_code} in the specified time range",
-        )
+        return [], False
+
+    result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
+
+    timeseries_list = format_timeseries_response(
+        network=network.code,
+        metrics=metrics,
+        interval=interval,
+        primary_grouping=primary_grouping,
+        secondary_groupings=None,
+        results=result_dicts,
+    )
+    return timeseries_list, True
+
+
+async def _forecast_timeseries(
+    client: Any,
+    network: NetworkSchema,
+    metrics: list[Metric],
+    interval: Interval,
+    date_start: datetime | None,
+    date_end: datetime | None,
+    network_region: str | None,
+    primary_grouping: PrimaryGrouping,
+    user: OpenNEMUser | None,
+) -> tuple[list[dict[str, Any]], bool]:
+    # forecasts look forward: the window starts now unless the caller says otherwise
+    start_defaulted = date_start is None
+    if date_start is None:
+        date_start = get_last_completed_interval_for_network(network=network, tz_aware=False)
+
+    if date_end is None:
+        latest = await get_latest_forecast_interval(client, network, metrics)
+        if latest is None:
+            return [], False
+
+        # exclusive end that still takes in the last row's 5 minute steps
+        date_end = latest + SOURCE_INTERVAL
+
+        # a stale forecast that ends before the window starts is no rows, not a bad request
+        if date_end <= date_start:
+            return [], False
+
+        if start_defaulted:
+            # keep the default window inside the plan's range for this interval
+            date_end = min(date_end, date_start + timedelta(days=get_max_interval_days(interval, user)))
+
+    date_start, date_end = validate_date_range(
+        network=network, user=user, interval=interval, date_start=date_start, date_end=date_end
+    )
+
+    if date_start > date_end:
+        raise HTTPException(status_code=400, detail="Date start must be before date end")
+
+    query, params, column_names = get_forecast_timeseries_query(
+        network=network,
+        metrics=metrics,
+        interval=interval,
+        date_start=date_start,
+        date_end=date_end,
+        primary_grouping=primary_grouping,
+        network_region=network_region,
+    )
+
+    results = await _run_query(client, query, params)
+    if not results:
+        return [], False
 
     result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
 
@@ -152,4 +282,10 @@ async def get_network_data(
         results=result_dicts,
     )
 
-    return build_timeseries_response(timeseries_list)
+    run_times = await get_forecast_run_times(client, network, metrics, date_start, date_end, network_region)
+    network_tz = network.get_fixed_offset()
+    for ts in timeseries_list:
+        run_time = run_times.get(Metric(ts["metric"]))
+        ts["forecast_run_time"] = run_time.astimezone(network_tz).isoformat() if run_time else None
+
+    return timeseries_list, True

@@ -109,6 +109,14 @@ class TimeSeries(BaseConfig):
     results: list[TimeSeriesResult] = Field(
         description="One entry per unique grouping combination — each carries its own labels and data points.",
     )
+    forecast_run_time: datetime | None = Field(
+        default=None,
+        description=(
+            "Forecast metrics only: when the newest forecast run behind these values was issued "
+            "(network-local time). Absent for actual metrics."
+        ),
+        examples=["2026-10-06T10:30:00+10:00"],
+    )
 
     @computed_field(  # type: ignore[prop-decorator]
         description="Network's fixed UTC offset as an ISO-8601 string (e.g. `+10:00` for NEM, `+08:00` for WEM).",
