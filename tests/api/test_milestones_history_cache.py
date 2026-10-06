@@ -6,12 +6,12 @@ never cached, private (browser-only) cache-control, and auth dependencies still 
 
 import asyncio
 import uuid
-from collections.abc import AsyncGenerator, Iterator
+from collections.abc import AsyncGenerator, Awaitable, Callable, Iterator
 from datetime import datetime
 from unittest.mock import AsyncMock, patch
 
 import pytest
-from fastapi import Depends, FastAPI, HTTPException, Request, params
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.testclient import TestClient
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
@@ -22,6 +22,7 @@ from opennem.api.milestones.router import (
     _milestone_history_cache_key,
     milestones_router,
 )
+from opennem.api.security import get_current_user
 from opennem.db import get_scoped_read_session
 
 RECORD_ID = "au.nem.wind.power.interval.high"
@@ -51,10 +52,16 @@ async def _fake_db() -> AsyncGenerator[None]:
     yield None
 
 
-def _make_client(*dependencies: params.Depends) -> TestClient:
+async def _any_caller() -> None:
+    return None
+
+
+def _make_client(auth: Callable[..., Awaitable[None]] = _any_caller) -> TestClient:
+    """The router requires `get_current_user`; tests stand it in rather than hitting unkey"""
     app = FastAPI()
-    app.include_router(milestones_router, dependencies=list(dependencies))
+    app.include_router(milestones_router)
     app.dependency_overrides[get_scoped_read_session] = _fake_db
+    app.dependency_overrides[get_current_user] = auth
     return TestClient(app, raise_server_exceptions=False)
 
 
@@ -188,7 +195,7 @@ def test_negative_limit_is_rejected(query: AsyncMock) -> None:
 
 
 def test_auth_dependency_runs_on_cache_hits(query: AsyncMock) -> None:
-    """Route auth must be a FastAPI dependency so it runs before the endpoint, hit or miss.
+    """The router auth dependency runs before the endpoint, hit or miss.
     The cache key ignores the caller, so callers share entries but each one is still checked."""
     seen_tokens: list[str | None] = []
 
@@ -198,7 +205,7 @@ def test_auth_dependency_runs_on_cache_hits(query: AsyncMock) -> None:
         if token not in ("Bearer key-a", "Bearer key-b"):
             raise HTTPException(status_code=401, detail="Invalid API key")
 
-    client = _make_client(Depends(fake_auth))
+    client = _make_client(fake_auth)
 
     first = client.get(f"/history/{RECORD_ID}", headers={"Authorization": "Bearer key-a"})
     second = client.get(f"/history/{RECORD_ID}", headers={"Authorization": "Bearer key-b"})

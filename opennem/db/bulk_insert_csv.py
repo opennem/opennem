@@ -93,7 +93,8 @@ def build_insert_query(
                     _ts = i["schema"]  # type: ignore
 
         if not _ts:
-            logger.warning(f"Table schema not found for table: {table.__table__.name}")  # type: ignore
+            # no explicit schema is the normal case (public), not worth a warning on every insert
+            logger.debug(f"Table schema not found for table: {table.__table__.name}")  # type: ignore
         else:
             table_schema = f"{_ts}."
 

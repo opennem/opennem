@@ -233,7 +233,12 @@ def parse_dirlisting_line(dirlisting_line: str) -> DirlistingEntry | None:
     model: DirlistingEntry | None = None
 
     if not matches:
-        logger.warning(f"Could not match dirlisting line: {dirlisting_line}")
+        # subdirectory rows in the current nemweb format (`<dir>` where the size goes) don't match
+        # and are skipped. Nothing crawls into subdirectories, so they are not worth a warning.
+        if "<dir>" in dirlisting_line.lower():
+            logger.debug(f"Skipping dirlisting directory line: {dirlisting_line}")
+        else:
+            logger.warning(f"Could not match dirlisting line: {dirlisting_line}")
         return None
 
     try:
