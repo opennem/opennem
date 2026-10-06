@@ -11,8 +11,8 @@ from fastapi_versionizer.versionizer import api_version
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.exceptions import HTTPException
 
-from opennem.api.keys import api_protected
 from opennem.api.schema import APIV4ResponseSchema
+from opennem.api.security import get_current_user
 from opennem.db import get_scoped_read_session
 from opennem.recordreactor.controllers import map_milestone_output_records_from_db
 from opennem.recordreactor.schema import (
@@ -30,7 +30,11 @@ from .queries import get_milestone_record, get_milestone_record_ids, get_milesto
 
 logger = logging.getLogger("opennem.api.milestones.router")
 
-milestones_router = APIRouter(tags=["Milestones"], include_in_schema=True)
+# Every route requires an api key. Auth is a router dependency rather than `@api_protected()` per
+# route: that decorator sat above `@milestones_router.get`, so it wrapped a function FastAPI never
+# calls and every milestones route served anonymous requests. A router dependency runs before the
+# endpoint, cache hit or miss, and covers routes added later.
+milestones_router = APIRouter(tags=["Milestones"], include_in_schema=True, dependencies=[Depends(get_current_user)])
 
 # record history only changes when a milestone is written, so repeat lookups are served from the api cache (#648)
 MILESTONE_HISTORY_CACHE_TTL = 60 * 5
@@ -62,7 +66,6 @@ def _milestone_history_response(body: bytes, max_age: int, cache_status: str) ->
 
 
 @api_version(4)
-@api_protected()
 @milestones_router.get(
     "/records",
     response_model=APIV4ResponseSchema,
@@ -210,7 +213,6 @@ async def get_milestones(
 
 
 @api_version(4)
-@api_protected()
 @milestones_router.get(
     "/history/{record_id}",
     response_model=APIV4ResponseSchema,
@@ -285,7 +287,6 @@ async def get_milestone_by_record_id(
 
 
 @api_version(4)
-@api_protected()
 @cache(expire=60 * 60)
 @milestones_router.get(
     "/instance/{instance_id}",
@@ -334,7 +335,6 @@ async def get_milestone(
 
 
 @api_version(4)
-@api_protected()
 # @cache(expire=60 * 60)
 @milestones_router.get(
     "/record_id",
@@ -428,7 +428,6 @@ async def api_get_milestone_record_ids(
 
 
 @api_version(4)
-@api_protected()
 @milestones_router.get(
     "/metadata",
     response_model=MilestoneMetadataSchema,
