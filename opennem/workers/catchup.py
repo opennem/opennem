@@ -87,6 +87,7 @@ async def check_facility_data_gaps(
                     FROM balancing_summary bs
                     WHERE bs.network_id = 'NEM'
                     AND bs.price IS NOT NULL
+                    AND bs.is_forecast = false
                     AND bs.interval > now() - interval '14 days'
                 ),
                 (now() AT TIME ZONE 'Australia/Brisbane') - interval '14 days'
