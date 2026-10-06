@@ -109,6 +109,14 @@ class TimeSeries(BaseConfig):
     results: list[TimeSeriesResult] = Field(
         description="One entry per unique grouping combination — each carries its own labels and data points.",
     )
+    forecast_run_time: datetime | None = Field(
+        default=None,
+        description=(
+            "Forecast metrics only: when the newest forecast run behind these values was issued "
+            "(network-local time). Absent for actual metrics."
+        ),
+        examples=["2026-10-06T10:30:00+10:00"],
+    )
 
     @computed_field(  # type: ignore[prop-decorator]
         description="Network's fixed UTC offset as an ISO-8601 string (e.g. `+10:00` for NEM, `+08:00` for WEM).",
@@ -175,6 +183,7 @@ def _build_label_key_and_labels(
 # Intervals with a constant width, where the next bucket is a pure offset from the last.
 _FIXED_INTERVAL_STEP = {
     Interval.INTERVAL: timedelta(minutes=5),
+    Interval.HALF_HOUR: timedelta(minutes=30),
     Interval.HOUR: timedelta(hours=1),
     Interval.DAY: timedelta(days=1),
     Interval.WEEK: timedelta(days=7),

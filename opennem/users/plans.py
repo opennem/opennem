@@ -37,6 +37,7 @@ class PlanConfig(BaseModel):
 
 BUCKET_LIMITS_USER: dict[Interval, int] = {
     Interval.INTERVAL: 8,
+    Interval.HALF_HOUR: 16,
     Interval.HOUR: 32,
     Interval.DAY: 366,
     Interval.WEEK: 366,
@@ -48,6 +49,7 @@ BUCKET_LIMITS_USER: dict[Interval, int] = {
 
 BUCKET_LIMITS_ADMIN: dict[Interval, int] = {
     Interval.INTERVAL: 30,
+    Interval.HALF_HOUR: 180,
     Interval.HOUR: 365,
     Interval.DAY: 3650,
     Interval.WEEK: 3650,
