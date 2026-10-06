@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import random
+import time
 from typing import Any
 from urllib.parse import urlparse
 
@@ -9,6 +10,26 @@ import rnet
 from opennem import settings
 
 logger = logging.getLogger("opennem.utils.http")
+
+# after a proxied request fails, every client goes direct for this long before trying the proxy again
+PROXY_COOLDOWN_SECONDS = 300
+
+# a 407 is the proxy refusing us, not the upstream answering
+_PROXY_FAILURE_CODES = {407}
+
+# monotonic time until which the proxy counts as down, shared across clients in the process
+_proxy_down_until = 0.0
+
+
+def _proxy_is_up() -> bool:
+    return time.monotonic() >= _proxy_down_until
+
+
+def _mark_proxy_down(url: str, reason: str) -> None:
+    global _proxy_down_until
+    if _proxy_is_up():
+        logger.warning(f"Proxy failed for {url} ({reason}), going direct for {PROXY_COOLDOWN_SECONDS}s")
+    _proxy_down_until = time.monotonic() + PROXY_COOLDOWN_SECONDS
 
 
 def _get_rnet_proxy() -> rnet.Proxy:
@@ -221,6 +242,9 @@ class HttpClient:
         last_exception = None
 
         while attempts <= self._retries:
+            # a failed proxy falls back to a direct connection until its cooldown ends
+            via_proxy = proxy if proxy is not None and _proxy_is_up() else None
+
             try:
                 if self.debug:
                     logger.info(f"{method.upper()} {url}")
@@ -230,7 +254,7 @@ class HttpClient:
 
                 # rnet methods signature: url, **kwargs
                 # We pass proxy here
-                resp = await rnet_method(url, proxy=proxy, headers=req_headers, **kwargs)
+                resp = await rnet_method(url, proxy=via_proxy, headers=req_headers, **kwargs)
 
                 # Pre-load content for compatibility
                 content = await resp.bytes()
@@ -239,6 +263,11 @@ class HttpClient:
                 logger.debug(f"{url} - {resp.status} - {len(content)} bytes")
 
                 compat_resp = HttpResponse(resp, content, text)
+
+                if via_proxy is not None and compat_resp.status_code in _PROXY_FAILURE_CODES:
+                    # straight to the direct retry, without spending an attempt
+                    _mark_proxy_down(url, f"status {compat_resp.status_code}")
+                    continue
 
                 if compat_resp.status_code in self._retry_codes:
                     if attempts == self._retries:
@@ -257,6 +286,10 @@ class HttpClient:
                 return compat_resp
 
             except Exception as e:
+                if via_proxy is not None:
+                    _mark_proxy_down(url, repr(e))
+                    continue
+
                 last_exception = e
                 if attempts == self._retries:
                     raise
