@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import time
 from datetime import timedelta
 
 from arq import Retry
@@ -51,16 +52,24 @@ logger = logging.getLogger("opennem.pipelines.nem")
 
 # crawl tasks
 
+# the SCADA poll stops here so a slow fetch can't run the 270s job out before prices,
+# aggregates and exports (a hung proxy did exactly that)
+NEM_SCADA_POLL_BUDGET_SECONDS = 120
+
 
 async def task_nem_interval_check(ctx) -> None:
     """Poll AEMO until new dispatch_scada data arrives, then run full pipeline."""
     backoff = [5, 10, 15, 20, 20, 20, 20]
     scada_result = None
+    poll_deadline = time.monotonic() + NEM_SCADA_POLL_BUDGET_SECONDS
 
     for attempt, wait in enumerate(backoff):
         scada_result = await run_crawl(AEMONNemwebDispatchScada, latest=True)
         if scada_result and scada_result.inserted_records > 0:
             logger.info(f"SCADA data received on poll attempt {attempt + 1}")
+            break
+        if time.monotonic() + wait > poll_deadline:
+            logger.warning(f"Poll attempt {attempt + 1}: no new SCADA data, poll budget spent, moving on")
             break
         logger.info(f"Poll attempt {attempt + 1}: no new SCADA data, waiting {wait}s")
         await asyncio.sleep(wait)
