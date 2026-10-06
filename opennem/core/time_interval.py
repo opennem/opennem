@@ -19,6 +19,7 @@ class Interval(StrEnum):
 
     Attributes:
         INTERVAL: 5-minute interval (default trading interval)
+        HALF_HOUR: 30-minute interval (AEMO's rooftop and forecast resolution)
         HOUR: 1-hour interval
         DAY: Daily interval
         WEEK: 7-day interval
@@ -30,6 +31,7 @@ class Interval(StrEnum):
     """
 
     INTERVAL = "5m"
+    HALF_HOUR = "30m"
     HOUR = "1h"
     DAY = "1d"
     WEEK = "7d"
@@ -82,6 +84,7 @@ def _get_timescaledb_interval(interval: Interval, timestamp_column: str) -> str:
     """
     interval_map = {
         Interval.INTERVAL: "5 minutes",
+        Interval.HALF_HOUR: "30 minutes",
         Interval.HOUR: "1 hour",
         Interval.DAY: "1 day",
         Interval.WEEK: "7 days",
@@ -143,6 +146,8 @@ def _get_clickhouse_interval(interval: Interval, timestamp_column: str) -> str:
                 )
             )
         """
+    elif interval == Interval.HALF_HOUR:
+        return f"toStartOfInterval({timestamp_column}, INTERVAL 30 minute)"
     elif interval == Interval.FINANCIAL_YEAR:
         return f"""
             toStartOfYear(

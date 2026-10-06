@@ -175,6 +175,7 @@ def _build_label_key_and_labels(
 # Intervals with a constant width, where the next bucket is a pure offset from the last.
 _FIXED_INTERVAL_STEP = {
     Interval.INTERVAL: timedelta(minutes=5),
+    Interval.HALF_HOUR: timedelta(minutes=30),
     Interval.HOUR: timedelta(hours=1),
     Interval.DAY: timedelta(days=1),
     Interval.WEEK: timedelta(days=7),
