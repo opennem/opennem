@@ -1,8 +1,10 @@
 from datetime import datetime
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
+from opennem.core.parsers import dirlisting
 from opennem.core.parsers.dirlisting import DirlistingEntry, parse_dirlisting_datetime, parse_dirlisting_line
 
 from .conftest import PATH_TESTS_FIXTURES
@@ -68,3 +70,21 @@ def test_dirlisting_line(line: str, result: dict[str, str | datetime | int]) -> 
     dirlisting_line_result = parse_dirlisting_line(line)
 
     assert result_model == dirlisting_line_result, "Models match for dirlisting line"
+
+
+def test_current_format_directory_line_is_skipped_quietly() -> None:
+    """nemweb's current listing puts `<dir>` where the size goes; those rows are skipped at debug, not warned"""
+    line = 'Tuesday, July 22, 2025 10:23 AM <dir> <A HREF="/Reports/CURRENT/DispatchIS_Reports/DUPLICATE/">DUPLICATE</A>'
+
+    with patch.object(dirlisting, "logger") as logger:
+        assert parse_dirlisting_line(line) is None
+
+    logger.warning.assert_not_called()
+    logger.debug.assert_called_once()
+
+
+def test_unmatched_file_line_still_warns() -> None:
+    with patch.object(dirlisting, "logger") as logger:
+        assert parse_dirlisting_line("this is not a dirlisting line") is None
+
+    logger.warning.assert_called_once()
