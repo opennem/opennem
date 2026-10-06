@@ -11,6 +11,7 @@ from typing import Any
 import pandas as pd
 from sqlalchemy.dialects.postgresql import insert
 
+from opennem.aggregates.forecast import insert_forecast_rows, rooftop_forecast_rows
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.battery import HISTORIC_UNIT_ALIASES, get_battery_unit_map
 from opennem.core.networks import NetworkNEM
@@ -598,6 +599,13 @@ async def process_rooftop_forecast(table: AEMOTableSchema) -> ControllerReturn:
     cr.processed_records = len(records)
     cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy"])  # type: ignore
     cr.server_latest = max([i["interval"] for i in records]) if records else None
+
+    # the api's solar_rooftop_forecast metric reads clickhouse, with the run time pg never kept
+    # (#675). a failure here must not lose the pg write the static exports use.
+    try:
+        await insert_forecast_rows(rooftop_forecast_rows(table.records))  # type: ignore[arg-type]
+    except Exception as e:
+        logger.error(f"Error writing rooftop forecast to clickhouse: {e}")
 
     return cr
 
