@@ -48,6 +48,8 @@ def get_default_period_for_interval(interval: Interval) -> timedelta:
     default_periods = {
         # 5-minute intervals -> 7 days of data
         Interval.INTERVAL: timedelta(days=7),
+        # 30-minute intervals -> 7 days of data
+        Interval.HALF_HOUR: timedelta(days=7),
         # Hourly intervals -> 14 days of data
         Interval.HOUR: timedelta(days=14),
         # Daily intervals -> 30 days of data

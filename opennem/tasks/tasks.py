@@ -141,7 +141,13 @@ async def task_wem_day_crawl(ctx) -> None:
         )
 
     await run_export_power_latest_for_network(network=NetworkWEM)
-    await run_export_energy_for_year(network=NetworkWEM)
+
+    # only the years the crawl window touches, which straddles new year for a day or two. With no
+    # year this re-exported every WEM year since 2006 each hour, logging errors for the years
+    # before WEM market data exists. WEM rows for 31 Dec landing after 2 Jan are picked up by the
+    # daily catchup, which exports the previous year as well.
+    for year in sorted({start_date.year, end_date.year}):
+        await run_export_energy_for_year(year=year, network=NetworkWEM)
 
 
 async def task_wem_interval_check(ctx) -> None:

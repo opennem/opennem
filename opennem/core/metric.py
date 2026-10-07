@@ -57,6 +57,7 @@ class Metric(StrEnum):
     FLOW_EXPORTS = "flow_exports"
     FLOW_IMPORTS_ENERGY = "flow_imports_energy"
     FLOW_EXPORTS_ENERGY = "flow_exports_energy"
+    SOLAR_ROOFTOP_FORECAST = "solar_rooftop_forecast"
 
 
 @dataclass
@@ -264,6 +265,13 @@ METRIC_METADATA = {
         description="Interconnector energy exports",
         column_name="energy_exports",
         default_agg="sum",
+        precision=3,
+    ),
+    Metric.SOLAR_ROOFTOP_FORECAST: MetricMetadata(
+        unit="MW",
+        description="AEMO rooftop solar forecast (ROOFTOP_PV FORECAST POWERMEAN)",
+        column_name="solar_rooftop",
+        default_agg="avg",
         precision=3,
     ),
 }

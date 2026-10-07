@@ -336,7 +336,8 @@ AEMONemwebRooftopForecast = CrawlerDefinition(
     contains_days=14,
     archive_version=AEMONemwebRooftopForecastArchive,
     priority=CrawlerPriority.low,
-    schedule=CrawlerSchedule.four_times_a_day,
+    # aemo issues a new rooftop forecast every 30 min; the api fills the rooftop lag gap with it (#675)
+    schedule=CrawlerSchedule.half_hour,
     name="au.nemweb.current.rooftop_forecast",
     url="https://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/FORECAST/",
     network=NetworkAEMORooftop,
