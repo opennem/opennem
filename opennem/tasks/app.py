@@ -127,11 +127,11 @@ class WorkerSettings:
             timeout=270,
             unique=True,
         ),
-        # Incremental milestone detection — every 5 min
+        # Incremental milestone detection — every 5 min, runs at :55 (after aggregate refresh at :10/:50)
         cron(
             task_update_milestones,
             minute=set(range(0, 60, 5)),
-            second=30,
+            second=55,
             timeout=300,
             unique=True,
         ),
