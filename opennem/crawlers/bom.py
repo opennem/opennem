@@ -1,8 +1,8 @@
 """BoM Crawler"""
 
+import asyncio
 import logging
 from datetime import datetime
-from time import sleep
 
 from opennem.clients.bom import get_bom_observations
 from opennem.controllers.bom import store_bom_observation_intervals
@@ -39,7 +39,7 @@ async def crawl_bom_capitals(
 
             if crawler.backoff and crawler.backoff > 0:
                 logger.info(f"Backing off for {crawler.backoff}")
-                sleep(crawler.backoff)
+                await asyncio.sleep(crawler.backoff)
         except Exception as e:
             logger.info(f"Bom error for station {bom_station.name}: {e}")
 

@@ -3,6 +3,7 @@ Module to handle zip files and nested zip files.
 
 """
 
+import asyncio
 import io
 import json
 import logging
@@ -196,6 +197,42 @@ async def download_and_unzip(url: str) -> Path:
     return dest_dir
 
 
+def _extract_and_parse_json(content: bytes, is_zip: bool, temp_dir: Path, url: str) -> list[Any]:
+    """Blocking half of `download_and_parse_json_zip`: write/extract into temp_dir and parse each JSON file"""
+    response_jsons: list[Any] = []
+
+    if is_zip:
+        # If the file is a ZIP, unzip it in the temporary directory
+        with zipfile.ZipFile(io.BytesIO(content)) as zip_file:
+            zip_file.extractall(temp_dir)
+            logger.info(f"Extracted {len(zip_file.namelist())} files: {zip_file.namelist()}")
+
+            for file_name in zip_file.namelist():
+                file_path = temp_dir / file_name
+
+                with open(file_path, "rb") as file:
+                    try:
+                        json_data = json.load(file)  # type: ignore
+                        response_jsons.append(json_data)
+                    except json.JSONDecodeError as e:
+                        raise Exception(f"Failed to parse JSON for file {url}") from e
+    else:
+        # If not a ZIP file, treat it as a JSON file
+        file_path = temp_dir / "downloaded_file"
+        with open(file_path, "wb") as file:
+            file.write(content)
+
+        # Read and parse the JSON file
+        with open(file_path) as file:
+            try:
+                json_data = json.load(file)  # type: ignore
+                response_jsons.append(json_data)
+            except json.JSONDecodeError as e:
+                raise Exception(f"Failed to parse JSON for file {url}") from e
+
+    return response_jsons
+
+
 async def download_and_parse_json_zip(url: str, indent: int | None = None) -> list[Any]:
     """
     Downloads a file from the given URL. If the file is a ZIP archive, it is unzipped.
@@ -231,38 +268,14 @@ async def download_and_parse_json_zip(url: str, indent: int | None = None) -> li
 
         logger.debug(f"Content type: {content_type}")
 
-        if "zip" in content_type.lower():
-            # If the file is a ZIP, unzip it in the temporary directory
-            with zipfile.ZipFile(io.BytesIO(response.content)) as zip_file:
-                zip_file.extractall(temp_dir)
-                logger.info(f"Extracted {len(zip_file.namelist())} files: {zip_file.namelist()}")
-
-                for file_name in zip_file.namelist():
-                    file_path = temp_dir / file_name
-
-                    with open(file_path, "rb") as file:
-                        try:
-                            json_data = json.load(file)  # type: ignore
-                            response_jsons.append(json_data)
-                        except json.JSONDecodeError as e:
-                            raise Exception(f"Failed to parse JSON for file {url}") from e
-        else:
-            # If not a ZIP file, treat it as a JSON file
-            file_path = temp_dir / "downloaded_file"
-            with open(file_path, "wb") as file:
-                file.write(response.content)
-
-            # Read and parse the JSON file
-            with open(file_path) as file:
-                try:
-                    json_data = json.load(file)  # type: ignore
-                    response_jsons.append(json_data)
-                except json.JSONDecodeError as e:
-                    raise Exception(f"Failed to parse JSON for file {url}") from e
+        # extract, json parse and file io are blocking: keep them off the event loop
+        response_jsons = await asyncio.to_thread(
+            _extract_and_parse_json, response.content, "zip" in content_type.lower(), temp_dir, url
+        )
 
     finally:
         # Clean up by deleting the temporary directory
-        shutil.rmtree(temp_dir)
+        await asyncio.to_thread(shutil.rmtree, temp_dir)
 
     return response_jsons
 
