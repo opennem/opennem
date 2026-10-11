@@ -30,7 +30,7 @@ async def energy_fueltech_daily(
     logger.debug(f"ClickHouse query: {query}")
 
     client = get_clickhouse_client()
-    results = await execute_async(client, query)
+    results = await execute_async(client, query, serving_limits=False)
 
     result_dicts = [
         {

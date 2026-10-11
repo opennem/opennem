@@ -63,6 +63,7 @@ class FakeClient:
         self._lock = threading.Lock()
         self.reentered = False
         self.threads: set[int] = set()
+        self.calls: list[dict[str, Any]] = []
 
     def execute(self, query: str, params: Any = None, **kwargs: Any) -> list[tuple]:
         with self._lock:
@@ -70,6 +71,7 @@ class FakeClient:
                 self.reentered = True
                 raise RuntimeError("Simultaneous queries on single connection")
             self._busy = True
+        self.calls.append(kwargs)
         try:
             self.threads.add(threading.get_ident())
             if self._delay:
@@ -104,6 +106,10 @@ def install_client(monkeypatch: pytest.MonkeyPatch) -> Callable[..., FakeClient]
             @property
             def reentered(self) -> bool:
                 return any(c.reentered for c in made)
+
+            @property
+            def calls(self) -> list[dict[str, Any]]:
+                return [k for c in made for k in c.calls]
 
             @property
             def threads(self) -> set[int]:
@@ -265,3 +271,30 @@ async def test_concurrent_export_reads_do_not_share_a_connection(install_client:
     assert not fake.reentered
     # reads ran off the loop thread
     assert threading.get_ident() not in fake.threads
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("name", list(CASES))
+async def test_export_reads_pass_no_settings_like_old_sync_call(
+    name: str, install_client: Callable[..., FakeClient], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Old sync `client.execute(query)` passed no settings; serving limits must be absent."""
+    _patch_pg(monkeypatch)
+    monkeypatch.setattr(ch_client_module.settings, "clickhouse_query_max_execution_time", 90, raising=False)
+    rows_for, fn = CASES[name]
+    fake = install_client(rows_for)
+    await fn()
+    assert fake.calls
+    assert all("settings" not in c for c in fake.calls)
+
+
+@pytest.mark.asyncio
+async def test_serving_callers_still_get_limits(
+    install_client: Callable[..., FakeClient], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(ch_client_module.settings, "clickhouse_query_max_execution_time", 90, raising=False)
+    fake = install_client(_flow_rows)
+    await ch_client_module.execute_async(None, "SELECT 1")  # type: ignore[arg-type]
+    assert fake.calls[-1]["settings"]["max_execution_time"] == 90
+    await ch_client_module.execute_async(None, "SELECT 1", serving_limits=False, settings={"readonly": 1})  # type: ignore[arg-type]
+    assert fake.calls[-1]["settings"] == {"readonly": 1}

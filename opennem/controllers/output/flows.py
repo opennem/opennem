@@ -48,7 +48,7 @@ async def power_flows_per_interval(
     ORDER BY 1 DESC
     """
 
-    rows = await execute_async(ch_client, query)
+    rows = await execute_async(ch_client, query, serving_limits=False)
 
     if not rows:
         logger.warning(f"No flow results for {network_region_code}")
