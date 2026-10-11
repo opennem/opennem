@@ -151,6 +151,12 @@ async def get_facility_pollution(
 
         # Create facility code lookup
         npi_to_facility = {f.npi_id: f.code for f in facilities}
+        # first facility wins per code, matching the previous linear `next(...)` lookup
+        facility_names: dict[str, str] = {}
+        for f in facilities:
+            facility_names.setdefault(str(f.code), str(f.name))
+        # substance rows already come back from the join; no per-pollutant re-query
+        substances: dict[str, NPISubstance] = {}
 
         for pollution, substance, _npi_facility in pollution_data:
             row_facility_code = npi_to_facility.get(pollution.npi_facility_id, pollution.npi_facility_id)
@@ -162,6 +168,7 @@ async def get_facility_pollution(
             data_quality = pollution.data_quality or DataQuality.UNKNOWN.value
 
             # Add to pollutant group with value and quality
+            substances.setdefault(substance.code, substance)
             pollutant_groups[substance.code][row_facility_code].append(
                 {"timestamp": timestamp, "value": pollution.pollution_value, "data_quality": data_quality}
             )
@@ -171,9 +178,7 @@ async def get_facility_pollution(
 
         for pollutant_code, facility_data in pollutant_groups.items():
             # Get substance metadata
-            substance_stmt = select(NPISubstance).where(NPISubstance.code == pollutant_code)
-            substance_result = await session.execute(substance_stmt)
-            substance = substance_result.scalar_one()
+            substance = substances[str(pollutant_code)]
 
             # Get date range for this pollutant
             all_dates = []
@@ -194,7 +199,7 @@ async def get_facility_pollution(
                 data_points.sort(key=lambda x: x["timestamp"])
 
                 # Get facility name
-                facility_name = next((str(f.name) for f in facilities if f.code == fc), fc_str)
+                facility_name = facility_names.get(fc_str, fc_str)
 
                 # Format data for TimeSeries (timestamp, value)
                 formatted_data = [(dp["timestamp"], dp["value"]) for dp in data_points]

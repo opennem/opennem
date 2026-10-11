@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from fastapi_cache.decorator import cache
 from fastapi_versionizer import api_version
 
+from opennem.api.cache_keys import tiered_key_builder
 from opennem.api.data.utils import validate_date_range
 from opennem.api.intervals import cap_date_end_to_settled_interval
 from opennem.api.queries import QueryType, get_timeseries_query
@@ -37,7 +38,7 @@ _SUPPORTED_METRICS = [
 
 @api_version(4)
 @router.get("/network/{network_code}", responses=std_error_responses())
-@cache(expire=60 * 5)
+@cache(expire=60 * 5, key_builder=tiered_key_builder)
 async def get_network_data(
     network_code: Annotated[
         str,
@@ -165,7 +166,7 @@ async def get_network_data(
 
 @api_version(4)
 @router.get("/facilities/{network_code}", responses=std_error_responses())
-@cache(expire=60 * 5)
+@cache(expire=60 * 5, key_builder=tiered_key_builder)
 async def get_facility_data(
     network_code: Annotated[
         str,
