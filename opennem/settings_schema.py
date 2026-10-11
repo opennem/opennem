@@ -100,6 +100,8 @@ class OpennemSettings(BaseSettings):
     loop_monitor_interval_s: float = 0.1
     # lag above this logs a (rate-limited) warning + Sentry breadcrumb
     loop_monitor_threshold_ms: float = 250.0
+    # loop silent longer than this: watchdog thread captures the loop thread's stack (log + Sentry)
+    loop_monitor_stack_threshold_ms: float = 1000.0
 
     # Slack notifications (incoming webhooks — one-way)
     slack_notifications: bool = True

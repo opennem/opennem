@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import threading
 import time
 from typing import Any
 
@@ -112,3 +113,119 @@ async def test_executor_depth() -> None:
     depth = get_executor_depth()
     assert depth is None or depth >= 0
     assert get_executor_depth(object()) is None  # pyright: ignore
+
+
+# stall watchdog
+
+
+def _watch_mon(**kw) -> LoopMonitor:
+    kw.setdefault("stack_threshold_ms", 1000.0)
+    kw.setdefault("watchdog_interval_s", 0.05)
+    return _mon(**kw)
+
+
+@pytest.fixture
+def captured(monkeypatch: pytest.MonkeyPatch) -> list[dict[str, Any]]:
+    events: list[dict[str, Any]] = []
+    monkeypatch.setattr(loop_monitor.sentry_sdk.Scope, "capture_event", lambda self, event, *a, **k: events.append(event))
+    return events
+
+
+def _blocking_in_coroutine_marker() -> None:
+    time.sleep(1.5)
+
+
+async def test_watchdog_captures_real_blocker(captured: list[dict[str, Any]]) -> None:
+    mon = _watch_mon()
+    mon.start()
+    await asyncio.sleep(0.1)
+    _blocking_in_coroutine_marker()  # blocks the loop thread
+    await asyncio.sleep(0.1)
+    await mon.stop()
+    assert mon.stack_captures >= 1
+    frames = captured[0]["exception"]["values"][0]["stacktrace"]["frames"]
+    assert frames[-1]["function"] == "_blocking_in_coroutine_marker"
+    assert any(f["function"] == "test_watchdog_captures_real_blocker" for f in frames)
+    assert "test_loop_monitor.py" in frames[-1]["filename"]
+    assert captured[0]["fingerprint"][0] == "event-loop-stall"
+    assert "_blocking_in_coroutine_marker" in captured[0]["extra"]["stack"]
+    assert len(frames) <= loop_monitor.STACK_MAX_FRAMES
+
+
+async def test_watchdog_idle_no_capture(captured: list[dict[str, Any]]) -> None:
+    mon = _watch_mon(stack_threshold_ms=300.0)
+    mon.start()
+    await asyncio.sleep(0.6)
+    await mon.stop()
+    assert mon.stack_captures == 0 and captured == []
+
+
+async def test_watchdog_one_episode_capped_samples(captured: list[dict[str, Any]]) -> None:
+    mon = _watch_mon()
+    mon._loop_thread_id = threading.get_ident()
+    mon._last_tick = 0.0
+    for i in range(40):  # one long stall, wakes 0.25s apart
+        mon._watch_once(2.0 + i * 0.25)
+    assert mon.stack_captures == loop_monitor.STACK_MAX_SAMPLES
+    mon._last_tick = 100.0  # loop ticked again: new stall re-arms
+    mon._watch_once(100.1)
+    assert mon.stack_captures == loop_monitor.STACK_MAX_SAMPLES
+    mon._watch_once(101.5)
+    assert mon.stack_captures == loop_monitor.STACK_MAX_SAMPLES + 1
+
+
+async def test_watchdog_rate_limited(captured: list[dict[str, Any]]) -> None:
+    mon = _watch_mon()
+    mon._loop_thread_id = threading.get_ident()
+    for i in range(20):  # 20 distinct stalls within one minute
+        mon._last_tick = float(i)
+        mon._watch_once(i + 2.0)
+    assert mon.stack_captures == loop_monitor.STACK_MAX_PER_MIN
+    mon._last_tick = 200.0
+    mon._watch_once(202.0)  # window passed
+    assert mon.stack_captures == loop_monitor.STACK_MAX_PER_MIN + 1
+
+
+async def test_watchdog_threshold_honoured(captured: list[dict[str, Any]]) -> None:
+    mon = _watch_mon(stack_threshold_ms=5000.0)
+    mon._loop_thread_id = threading.get_ident()
+    mon._last_tick = 0.0
+    mon._watch_once(3.0)
+    assert mon.stack_captures == 0
+    mon._watch_once(5.5)
+    assert mon.stack_captures == 1
+
+
+async def test_watchdog_clean_stop_and_idempotent() -> None:
+    mon = _watch_mon()
+    mon.start()
+    mon.start()
+    thread = mon._watchdog
+    assert thread is not None and thread.is_alive() and thread.daemon
+    await mon.stop()
+    assert not thread.is_alive()
+    await mon.stop()
+
+
+async def test_watchdog_survives_errors(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[float] = []
+
+    def boom(self: LoopMonitor, now: float) -> None:
+        calls.append(now)
+        raise RuntimeError("x")
+
+    monkeypatch.setattr(LoopMonitor, "_watch_once", boom)
+    mon = _watch_mon(watchdog_interval_s=0.02)
+    mon.start()
+    await asyncio.sleep(0.2)
+    await mon.stop()
+    assert len(calls) >= 3  # kept running after raising
+
+
+async def test_watchdog_sentry_failure_never_raises(monkeypatch: pytest.MonkeyPatch) -> None:
+    def boom(*a, **k):
+        raise RuntimeError("x")
+
+    monkeypatch.setattr(loop_monitor.sentry_sdk.Scope, "capture_event", boom)
+    mon = _watch_mon()
+    mon._report_stall(1500.0, 1, [{"filename": "a.py", "lineno": 1, "function": "f"}])
