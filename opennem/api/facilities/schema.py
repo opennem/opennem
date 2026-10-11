@@ -37,6 +37,19 @@ class UnitDateSpecificity(Enum):
     DAY = "day"
 
 
+UNIT_TZ_FIELDS: tuple[str, ...] = (
+    "data_first_seen",
+    "data_last_seen",
+    "closure_date",
+    "expected_closure_date",
+    "construction_start_date",
+    "project_approval_date",
+    "project_lodgement_date",
+    "commencement_date",
+    "expected_operation_date",
+)
+
+
 class UnitResponseSchema(BaseModel):
     """Unit response schema with selected fields"""
 
@@ -165,38 +178,17 @@ class UnitResponseSchema(BaseModel):
 
     model_config = ConfigDict(from_attributes=True, defer_build=True)
 
-    @model_validator(mode="after")
-    def add_network_timezone(self) -> Any:
-        """Add network timezone to datetime fields based on parent facility network."""
-        # Get parent context which should contain network_id
-        context = self.model_config.get("context", {})
-        network_id = context.get("network_id")
+    def apply_network_timezone(self, network_id: str) -> None:
+        """Label naive datetime fields with the fixed offset of the unit's own network (NEM +10:00, WEM +08:00)."""
+        if not (self.data_first_seen or self.data_last_seen):
+            return
 
-        if network_id and (self.data_first_seen or self.data_last_seen):
-            network = network_from_network_code(network_id)
-            tz_offset = network.get_fixed_offset()
+        tz_offset = network_from_network_code(network_id).get_fixed_offset()
 
-            # Apply timezone to datetime fields if they exist
-            if self.data_first_seen:
-                self.data_first_seen = self.data_first_seen.replace(tzinfo=tz_offset)
-            if self.data_last_seen:
-                self.data_last_seen = self.data_last_seen.replace(tzinfo=tz_offset)
-            if self.closure_date:
-                self.closure_date = self.closure_date.replace(tzinfo=tz_offset)
-            if self.expected_closure_date:
-                self.expected_closure_date = self.expected_closure_date.replace(tzinfo=tz_offset)
-            if self.construction_start_date:
-                self.construction_start_date = self.construction_start_date.replace(tzinfo=tz_offset)
-            if self.project_approval_date:
-                self.project_approval_date = self.project_approval_date.replace(tzinfo=tz_offset)
-            if self.project_lodgement_date:
-                self.project_lodgement_date = self.project_lodgement_date.replace(tzinfo=tz_offset)
-            if self.commencement_date:
-                self.commencement_date = self.commencement_date.replace(tzinfo=tz_offset)
-            if self.expected_operation_date:
-                self.expected_operation_date = self.expected_operation_date.replace(tzinfo=tz_offset)
-
-        return self
+        for field in UNIT_TZ_FIELDS:
+            value = getattr(self, field)
+            if value:
+                setattr(self, field, value.replace(tzinfo=tz_offset))
 
 
 class FacilityResponseSchema(BaseModel):
@@ -260,15 +252,9 @@ class FacilityResponseSchema(BaseModel):
 
     @model_validator(mode="after")
     def add_network_to_units(self) -> Any:
-        """Add network_id to unit context for timezone conversion."""
-        # Create context with network_id for units
-        context = {"network_id": self.network_id}
-
-        # Update each unit's context with the network_id.
-        # `context` is not part of Pydantic's ConfigDict TypedDict, but is read
-        # by the unit's after-validator via self.model_config.get("context", {}).
+        """Apply this facility's network timezone to its units (per instance, no shared state)."""
         for unit in self.units:
-            unit.model_config["context"] = context  # type: ignore[typeddict-unknown-key]
+            unit.apply_network_timezone(self.network_id)
 
         return self
 
