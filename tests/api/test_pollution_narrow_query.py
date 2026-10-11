@@ -8,13 +8,26 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-from fastapi import HTTPException
+import pytest_asyncio
+from fastapi import HTTPException, Request, Response
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
 
 from opennem.api.pollution import router as pollution_router
+from opennem.api.schema import APIV4ResponseSchema
+from opennem.api.timeseries import TimeSeries
 
 pytestmark = pytest.mark.asyncio
 
 FIXTURE = Path(__file__).parent / "fixtures" / "pollution_expected.json"
+
+
+@pytest_asyncio.fixture(autouse=True)
+async def _cache() -> Any:
+    InMemoryBackend._store.clear()  # class-level dict shared across instances
+    FastAPICache.init(InMemoryBackend(), prefix="test")
+    yield
+    FastAPICache.reset()
 
 
 class _Row:
@@ -87,8 +100,13 @@ async def _run(monkeypatch: pytest.MonkeyPatch, facs: list[Any], rows: list[Any]
         "date_end": None,
     }
     args.update(kw)
-    resp = await pollution_router.get_facility_pollution(user=None, **args)  # pyright: ignore[reportArgumentType]
-    return resp, log
+    raw = await pollution_router.get_facility_pollution(
+        request=Request({"type": "http", "headers": []}),
+        response=Response(),
+        user=None,
+        **args,  # pyright: ignore[reportArgumentType]
+    )
+    return APIV4ResponseSchema[list[TimeSeries]].model_validate_json(bytes(raw.body)), log
 
 
 async def test_response_equals_old_code_fixture(monkeypatch: pytest.MonkeyPatch) -> None:
