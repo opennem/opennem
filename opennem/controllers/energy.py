@@ -6,7 +6,7 @@ from opennem.api.stats.controllers import stats_factory
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.units import get_unit
-from opennem.db.clickhouse import get_clickhouse_client
+from opennem.db.clickhouse import execute_async, get_clickhouse_client
 from opennem.queries.energy import get_energy_network_fueltech_query_clickhouse
 from opennem.schema.network import NetworkSchema
 
@@ -30,7 +30,7 @@ async def energy_fueltech_daily(
     logger.debug(f"ClickHouse query: {query}")
 
     client = get_clickhouse_client()
-    results = client.execute(query)
+    results = await execute_async(client, query, serving_limits=False)
 
     result_dicts = [
         {
