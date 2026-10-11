@@ -4,6 +4,7 @@ OpenNEM API
 Primary Router. All the main setup of the API is here.
 """
 
+import copy
 import logging
 from contextlib import asynccontextmanager
 
@@ -425,22 +426,7 @@ def units() -> list[UnitDefinition]:
     return UNITS
 
 
-@api_version(4)
-@app.get(
-    "/metrics",
-    response_model=dict,
-    response_model_exclude_none=True,
-    response_model_exclude_unset=False,
-    tags=["Core"],
-    description="Get all available metrics and their metadata",
-)
-def get_metrics() -> dict:
-    """
-    Get all available metrics with their metadata.
-
-    Returns a dictionary of metrics with their units, descriptions, and other metadata.
-    This endpoint helps clients discover what metrics are available in the API.
-    """
+def _build_metrics_response() -> dict:
     metrics_info = {}
 
     for metric, metadata in METRIC_METADATA.items():
@@ -470,6 +456,28 @@ def get_metrics() -> dict:
             "data": ["power", "energy", "emissions", "market_value", "renewable_proportion"],
         },
     }
+
+
+_METRICS_RESPONSE: dict = _build_metrics_response()
+
+
+@api_version(4)
+@app.get(
+    "/metrics",
+    response_model=dict,
+    response_model_exclude_none=True,
+    response_model_exclude_unset=False,
+    tags=["Core"],
+    description="Get all available metrics and their metadata",
+)
+async def get_metrics() -> dict:
+    """
+    Get all available metrics with their metadata.
+
+    Returns a dictionary of metrics with their units, descriptions, and other metadata.
+    This endpoint helps clients discover what metrics are available in the API.
+    """
+    return copy.deepcopy(_METRICS_RESPONSE)
 
 
 @app.get("/health", include_in_schema=False)

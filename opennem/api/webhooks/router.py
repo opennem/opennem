@@ -8,18 +8,18 @@ from fastapi import APIRouter, Request
 from fastapi.responses import Response
 from fastapi_versionizer.versionizer import api_version
 from pydantic import BaseModel, EmailStr
-from sanity.exceptions import SanityConnectionError, SanityRateLimitError, SanityServerError, SanityTimeoutError
-from sqlalchemy.exc import IntegrityError
 from starlette.exceptions import HTTPException
 
 from opennem import settings
 from opennem.clients.slack import slack_message
 from opennem.clients.slack_app import verify_slack_signature
-from opennem.controllers.sanity import parse_sanity_webhook_request
+from opennem.tasks.broker import get_redis_pool
 
 logger = logging.getLogger("opennem.api.webhooks.router")
 
 router = APIRouter(tags=["Webhooks"], include_in_schema=False)
+
+SANITY_SYNC_DEFER_SECONDS = 60
 
 
 class ClerkEmailAddress(BaseModel):
@@ -92,20 +92,30 @@ async def webhook_sanity_update(webhook_secret: str, request: Request) -> str:
     if "_type" not in request_json:
         raise HTTPException(status_code=400, detail="Invalid request no _type field present")
 
+    if "_id" not in request_json:
+        raise HTTPException(status_code=400, detail="Invalid request no _id field present")
+
+    record_type = str(request_json["_type"]).lower()
+    cms_id = str(request_json["_id"]).strip()
+
+    # sanity is eventually consistent so the sync is deferred, and the job id dedupes bursts of
+    # edits to the same document while a job is still queued
     try:
-        await parse_sanity_webhook_request(request_json)
-    except TimeoutError as e:
-        logger.warning(f"Sanity webhook timeout: {e}")
-        raise HTTPException(status_code=503, detail="Service temporarily unavailable") from e
-    except IntegrityError as e:
-        logger.warning(f"Sanity webhook skipped — DB constraint conflict (duplicate code?): {e}")
-    except (SanityTimeoutError, SanityConnectionError, SanityServerError, SanityRateLimitError) as e:
-        # already retried inside get_cms_facilities — this means the CMS CDN is still down
-        logger.warning(f"Sanity webhook skipped — CMS temporarily unavailable: {e}")
-        raise HTTPException(status_code=503, detail="Service temporarily unavailable") from e
+        redis = await get_redis_pool()
+        try:
+            await redis.enqueue_job(
+                "task_sanity_webhook",
+                record_type,
+                cms_id,
+                _defer_by=SANITY_SYNC_DEFER_SECONDS,
+                _job_id=f"sanity:{record_type}:{cms_id}",
+            )
+        finally:
+            await redis.close()
     except Exception as e:
-        logger.error(f"Error parsing sanity webhook: {e}")
-        raise HTTPException(status_code=500, detail="Server Error") from e
+        # 5xx so sanity retries the delivery
+        logger.error(f"Could not enqueue sanity webhook {record_type}:{cms_id}: {e}")
+        raise HTTPException(status_code=503, detail="Service temporarily unavailable") from e
 
     return "OK"
 

@@ -2,7 +2,6 @@
 Takes Sanity webhook responses and parses into structured format for persistance and updates
 """
 
-import asyncio
 import logging
 
 from sqlalchemy import select
@@ -33,22 +32,14 @@ async def get_facility_cms_id_by_unit_cms_id(cms_id: str) -> str | None:
         return None
 
 
-async def parse_sanity_webhook_request(request: dict) -> None:
-    """Parse a sanity webhook response"""
-    if "_type" not in request:
-        raise Exception("Invalid request: no _type field present. Fields are {" + ", ".join(request.keys()) + "}")
+async def sync_sanity_record(record_type: str, cms_id: str) -> None:
+    """Sync a record changed in sanity into the database and re-export facilities.
 
-    if "_id" not in request:
-        raise Exception("Invalid request: no _id field present. Fields are {" + ", ".join(request.keys()) + "}")
-
-    # since sanity is eventually consistent, we're going to put in a silly pause here to wait for it.
-    # eventually this should be a background worker task
-    await asyncio.sleep(60)
-
-    record_type: str = request["_type"].lower()
-    cms_id = request["_id"].strip()
-
-    logger.debug(request)
+    Runs in the ARQ worker (task_sanity_webhook), deferred after the webhook since sanity is
+    eventually consistent.
+    """
+    record_type = record_type.lower()
+    cms_id = cms_id.strip()
 
     if record_type in ["facility"]:
         await update_database_facilities_from_cms(cms_id=cms_id, send_slack=False)
