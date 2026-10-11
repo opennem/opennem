@@ -7,7 +7,7 @@ Handles NPI pollution data queries for facilities.
 import logging
 from collections import defaultdict
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, HTTPException, Query
 from fastapi_versionizer import api_version
@@ -81,13 +81,15 @@ async def get_facility_pollution(
     """
     async with get_read_session() as session:
         # Build query to get facilities with NPI IDs
-        stmt = select(Facility).where(Facility.approved.is_(True), Facility.npi_id.is_not(None))
+        stmt = select(Facility.code, Facility.name, Facility.npi_id).where(
+            Facility.approved.is_(True), Facility.npi_id.is_not(None)
+        )
 
         if facility_code:
             stmt = stmt.where(Facility.code.in_(facility_code))
 
         result = await session.execute(stmt)
-        facilities = result.scalars().all()
+        facilities = result.all()
 
         if not facilities:
             raise HTTPException(
@@ -102,7 +104,17 @@ async def get_facility_pollution(
 
         # Build query for pollution data
         pollution_stmt = (
-            select(NPIPollution, NPISubstance, NPIFacility)
+            select(
+                NPIPollution.npi_facility_id,
+                NPIPollution.report_year,
+                NPIPollution.pollution_value,
+                NPIPollution.data_quality,
+                NPISubstance.code,
+                NPISubstance.npi_name,
+                NPISubstance.category,
+                NPISubstance.cas_number,
+            )
+            .select_from(NPIPollution)
             .join(NPISubstance, NPIPollution.substance_code == NPISubstance.code)
             .join(NPIFacility, NPIPollution.npi_facility_id == NPIFacility.npi_id)
             .where(NPIPollution.npi_facility_id.in_(npi_ids), NPISubstance.enabled.is_(True))
@@ -136,8 +148,13 @@ async def get_facility_pollution(
         if date_end:
             pollution_stmt = pollution_stmt.where(NPIPollution.report_year <= date_end.year)
 
+        # category/subcategory tiebreak: several rows can share (facility, substance, year); matches the unique index order
         pollution_stmt = pollution_stmt.order_by(
-            NPIPollution.npi_facility_id, NPIPollution.substance_code, NPIPollution.report_year
+            NPIPollution.npi_facility_id,
+            NPIPollution.substance_code,
+            NPIPollution.report_year,
+            NPIPollution.pollution_category,
+            NPIPollution.pollution_subcategory,
         )
 
         pollution_result = await session.execute(pollution_stmt)
@@ -156,21 +173,21 @@ async def get_facility_pollution(
         for f in facilities:
             facility_names.setdefault(str(f.code), str(f.name))
         # substance rows already come back from the join; no per-pollutant re-query
-        substances: dict[str, NPISubstance] = {}
+        substances: dict[str, Any] = {}
 
-        for pollution, substance, _npi_facility in pollution_data:
-            row_facility_code = npi_to_facility.get(pollution.npi_facility_id, pollution.npi_facility_id)
+        for row in pollution_data:
+            row_facility_code = npi_to_facility.get(row.npi_facility_id, row.npi_facility_id)
 
             # Create datetime for the report year (use July 1st as middle of reporting year)
-            timestamp = datetime(pollution.report_year, 7, 1)
+            timestamp = datetime(row.report_year, 7, 1)
 
             # Get data quality or default to unknown
-            data_quality = pollution.data_quality or DataQuality.UNKNOWN.value
+            data_quality = row.data_quality or DataQuality.UNKNOWN.value
 
             # Add to pollutant group with value and quality
-            substances.setdefault(substance.code, substance)
-            pollutant_groups[substance.code][row_facility_code].append(
-                {"timestamp": timestamp, "value": pollution.pollution_value, "data_quality": data_quality}
+            substances.setdefault(row.code, row)
+            pollutant_groups[row.code][row_facility_code].append(
+                {"timestamp": timestamp, "value": row.pollution_value, "data_quality": data_quality}
             )
 
         # Create TimeSeries objects for each pollutant
