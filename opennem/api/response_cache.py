@@ -46,8 +46,10 @@ def _make_coder(adapter: "TypeAdapter[Any] | None", exclude_none: bool) -> type[
                 return bytes(value.body)
             if adapter is None:
                 # what FastAPI + JSONResponse do when the route has no response_model field (plain dict payloads)
+                # default= only fires for non-native values (datetime, Decimal, models): same output as jsonable_encoder
+                # on the whole payload, without a second full walk of an already-plain dict
                 return json.dumps(
-                    jsonable_encoder(value), ensure_ascii=False, allow_nan=False, indent=None, separators=(",", ":")
+                    value, default=jsonable_encoder, ensure_ascii=False, allow_nan=False, separators=(",", ":")
                 ).encode("utf-8")
             return adapter.dump_json(value, by_alias=True, exclude_none=exclude_none)
 
