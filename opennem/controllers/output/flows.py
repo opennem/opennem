@@ -5,7 +5,7 @@ from opennem.api.stats.controllers import stats_factory
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.units import get_unit
-from opennem.db.clickhouse import get_clickhouse_client
+from opennem.db.clickhouse import execute_async, get_clickhouse_client
 from opennem.utils.dates import fmt_clickhouse_dt
 
 logger = logging.getLogger("opennem.controllers.flows")
@@ -48,7 +48,7 @@ async def power_flows_per_interval(
     ORDER BY 1 DESC
     """
 
-    rows = ch_client.execute(query)
+    rows = await execute_async(ch_client, query)
 
     if not rows:
         logger.warning(f"No flow results for {network_region_code}")

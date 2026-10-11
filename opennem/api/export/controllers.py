@@ -14,7 +14,7 @@ from opennem.api.time import human_to_interval
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.units import get_unit
 from opennem.db import db_connect, get_database_engine
-from opennem.db.clickhouse import get_clickhouse_client
+from opennem.db.clickhouse import execute_async, get_clickhouse_client
 from opennem.queries.curtailment import get_network_curtailment_energy_query_analytics
 from opennem.queries.power import (
     get_fueltech_power_query_clickhouse,
@@ -122,7 +122,7 @@ async def power_week(
         network_region=network_region_code,
     )
     logger.debug(query)
-    row = ch_client.execute(query)
+    row = await execute_async(ch_client, query)
 
     stats = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
 
@@ -260,7 +260,7 @@ async def power_week(
 
     ch_client = get_clickhouse_client()
 
-    result_price_and_demand_and_curtailment = ch_client.execute(query)
+    result_price_and_demand_and_curtailment = await execute_async(ch_client, query)
 
     stats_price_results = [
         DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None)
@@ -363,7 +363,7 @@ async def demand_network_region_daily(
     query = network_demand_clickhouse_query(time_series=time_series, network_region=network_region_code, networks_query=networks)
 
     logger.debug(f"ClickHouse demand query: {query}")
-    row = ch_client.execute(str(query))
+    row = await execute_async(ch_client, str(query))
 
     if network_region_code:
         results_energy = [DataQueryResult(interval=i[0], group_by=i[2], result=i[3] if len(i) > 3 else None) for i in row]
@@ -422,7 +422,7 @@ async def curtailment_network_region_daily(
         network_region_code=network_region_code,
     )
 
-    result_curtailment = ch_client.execute(query)
+    result_curtailment = await execute_async(ch_client, query)
 
     result_curtailment_solar = [
         DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 1 else None) for i in result_curtailment
@@ -521,7 +521,7 @@ async def energy_interconnector_flows_and_emissions_v4(
         ORDER BY 1 DESC
     """
 
-    row = ch_client.execute(query)
+    row = await execute_async(ch_client, query)
 
     if not row:
         logger.error(f"No v4 flow results for {time_series.network} {network_region_code}")
