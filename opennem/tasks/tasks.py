@@ -82,12 +82,13 @@ async def task_nem_interval_check(ctx) -> None:
     await process_energy_last_intervals(num_intervals=12)
     await run_market_summary_aggregate_for_last_intervals(num_intervals=12)
 
-    # unit_intervals aggregate doesn't block exports — run concurrently
-    await asyncio.gather(
-        run_unit_intervals_aggregate_to_now(),
-        run_export_power_latest_for_network(network=NetworkNEM),
-        run_export_power_latest_for_network(network=NetworkAU),
-    )
+    # unit_intervals aggregate doesn't block exports — run concurrently with ONE export chain.
+    # NEM and AU exports run back to back, not gathered (peak memory, #677).
+    async def _exports() -> None:
+        await run_export_power_latest_for_network(network=NetworkNEM)
+        await run_export_power_latest_for_network(network=NetworkAU)
+
+    await asyncio.gather(run_unit_intervals_aggregate_to_now(), _exports())
 
 
 async def task_nem_per_day_check(ctx) -> None:
