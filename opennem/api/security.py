@@ -98,6 +98,11 @@ def _cache_key(key: str) -> str:
     return hashlib.sha256(key.encode()).hexdigest()
 
 
+def key_fingerprint(key: str) -> str:
+    """Short non-reversible id for logging a key (never log the key or any prefix of it)."""
+    return _cache_key(key)[:8]
+
+
 async def _fetch_user(key: str) -> OpenNEMUser:
     """Unkey verify + Clerk enrichment (no caching).
 
