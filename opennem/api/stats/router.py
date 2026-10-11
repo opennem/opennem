@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from datetime import date, datetime, timedelta
 from functools import partial
@@ -919,20 +920,23 @@ async def power_station_v4(
     if not results:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No data for station")
 
-    rows = [dict(zip(column_names, row, strict=True)) for row in results]
-
-    stats = [DataQueryResult(interval=r["interval"], group_by=r["unit_code"], result=r["power"]) for r in rows]
-
     interval_obj = human_to_interval(_INTERVAL_TO_HUMAN.get(interval, interval.value))
+    units = get_unit("power")
 
-    result = stats_factory(
-        stats,
-        code=facility_code,
-        network=network,
-        interval=interval_obj,
-        include_group_code=True,
-        units=get_unit("power"),
-    )
+    def _build() -> OpennemDataSet | None:
+        rows = [dict(zip(column_names, row, strict=True)) for row in results]
+        stats = [DataQueryResult(interval=r["interval"], group_by=r["unit_code"], result=r["power"]) for r in rows]
+        return stats_factory(
+            stats,
+            code=facility_code,
+            network=network,
+            interval=interval_obj,
+            include_group_code=True,
+            units=units,
+        )
+
+    # row building + stats_factory is ~25 ms of CPU: keep it off the loop so cheap requests are not queued behind it
+    result = await asyncio.to_thread(_build)
 
     if not result:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No results found")

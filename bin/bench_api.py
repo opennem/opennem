@@ -18,7 +18,7 @@ import json
 import math
 import time
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -58,6 +58,11 @@ class Endpoint:
     path: str
     auth: bool = True
     scale: float = 1.0  # request-count multiplier (throttle slow/third-party-backed routes)
+
+
+# ~2y window kept inside the 730-day plan limit (relative to today, else it drifts into fast 400s)
+LONG_START = (datetime.now(UTC) - timedelta(days=700)).strftime("%Y-%m-%dT00:00:00")
+LONG_END = (datetime.now(UTC) - timedelta(days=2)).strftime("%Y-%m-%dT00:00:00")
 
 
 def build_endpoints(milestone_record_id: str | None) -> list[Endpoint]:
@@ -101,9 +106,7 @@ def build_endpoints(milestone_record_id: str | None) -> list[Endpoint]:
         Endpoint(
             "fd_monthly",
             "get_facility_data",
-            fac
-            + "metrics=energy&interval=1M&facility_code=ERARING&"
-            + d.format(s="2023-01-01T00:00:00", e="2025-01-01T00:00:00"),
+            fac + "metrics=energy&interval=1M&facility_code=ERARING&" + d.format(s=LONG_START, e=LONG_END),
         ),
         Endpoint(
             "fd_no_filter_1d",
@@ -162,9 +165,7 @@ def build_endpoints(milestone_record_id: str | None) -> list[Endpoint]:
         Endpoint(
             "nd_monthly_2y",
             "data get_network_data",
-            nem
-            + "metrics=energy&interval=1M&secondary_grouping=fueltech_group&"
-            + d.format(s="2023-01-01T00:00:00", e="2025-01-01T00:00:00"),
+            nem + "metrics=energy&interval=1M&secondary_grouping=fueltech_group&" + d.format(s=LONG_START, e=LONG_END),
         ),
         Endpoint("nd_live", "data get_network_data", nem + "metrics=power&interval=5m&secondary_grouping=fueltech_group"),
         Endpoint(
@@ -214,9 +215,7 @@ def build_endpoints(milestone_record_id: str | None) -> list[Endpoint]:
         Endpoint(
             "mk_monthly",
             "market get_network_data",
-            mkt
-            + "metrics=demand_energy&metrics=generation_renewable_energy&interval=1M&"
-            + d.format(s="2023-01-01T00:00:00", e="2025-01-01T00:00:00"),
+            mkt + "metrics=demand_energy&metrics=generation_renewable_energy&interval=1M&" + d.format(s=LONG_START, e=LONG_END),
         ),
         Endpoint("mk_live", "market get_network_data", mkt + "metrics=price&metrics=demand&interval=5m"),
         Endpoint("pollution_default", "get_facility_pollution", "/v4/pollution/facilities"),
@@ -258,7 +257,8 @@ class Sample:
 
     @property
     def is_error(self) -> bool:
-        return self.status == 0 or self.status == 429 or self.status >= 500
+        # any non-2xx is an error: a fast 400 must never pass as a fast success
+        return not 200 <= self.status < 300
 
 
 @dataclass

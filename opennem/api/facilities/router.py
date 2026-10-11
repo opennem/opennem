@@ -8,7 +8,6 @@ import logging
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query
-from fastapi_cache.decorator import cache
 from fastapi_versionizer import api_version
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
@@ -16,6 +15,7 @@ from sqlalchemy.orm import selectinload
 from opennem.api.cache_keys import tiered_key_builder
 from opennem.api.facilities.schema import APIV4FacilityResponseSchema, FacilityResponseSchema, UnitResponseSchema
 from opennem.api.facilities.utils import unit_specificity_from_string
+from opennem.api.response_cache import cached_json
 from opennem.api.schema import std_error_responses
 from opennem.api.security import authenticated_user
 from opennem.db import get_read_session
@@ -60,7 +60,9 @@ def _unit_effective_status(unit: Unit) -> str:
     tags=["Facilities"],
     description="Get all facilities and their associated units",
 )
-@cache(expire=60 * 15, key_builder=tiered_key_builder)  # 15 minute cache on facility endpoints
+@cached_json(
+    expire=60 * 15, key_builder=tiered_key_builder, return_type=APIV4FacilityResponseSchema, exclude_none=True
+)  # 15 minute cache on facility endpoints
 async def get_facilities(
     user: authenticated_user,
     facility_code: Annotated[
