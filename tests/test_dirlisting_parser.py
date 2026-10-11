@@ -1,6 +1,9 @@
+import asyncio
+import hashlib
+import time
 from datetime import datetime
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -88,3 +91,56 @@ def test_unmatched_file_line_still_warns() -> None:
         assert parse_dirlisting_line("this is not a dirlisting line") is None
 
     logger.warning.assert_called_once()
+
+
+# golden digest of `get_dirlisting` over the fixture, captured before the parse moved off the event loop
+_FIXTURE_URL = "https://nemweb.com.au/Reports/Current/Dispatch_SCADA/"
+_FIXTURE_ENTRIES = 578
+_FIXTURE_SHA256 = "0253370530f83ab76d4772a70ef185dcf43c82792e01582e968c8b0f22e48009"
+
+
+def _patched_http(text: str):  # noqa: ANN202
+    resp = MagicMock()
+    resp.text = text
+    return patch.object(dirlisting.http, "get", AsyncMock(return_value=resp))
+
+
+@pytest.mark.asyncio
+async def test_get_dirlisting_fixture_characterization() -> None:
+    with _patched_http(load_fixture()):
+        listing = await dirlisting.get_dirlisting(_FIXTURE_URL, "Australia/Brisbane")
+
+    assert len(listing.entries) == _FIXTURE_ENTRIES
+    assert hashlib.sha256(listing.model_dump_json().encode()).hexdigest() == _FIXTURE_SHA256
+
+
+@pytest.mark.asyncio
+async def test_get_dirlisting_large_listing_keeps_loop_ticking() -> None:
+    row = (
+        "     Monday, November 8, 2021  2:30 PM        18166 "
+        '<a href="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/{name}">{name}</a>'
+    )
+    names = [f"PUBLIC_DISPATCHIS_2021110814{n % 60:02d}_{n:016d}.zip" for n in range(25_000)]
+    html_text = "<pre>" + "<br>".join(row.format(name=name) for name in names) + "</pre>"
+
+    lags: list[float] = []
+    stop = asyncio.Event()
+
+    async def ticker() -> None:
+        last = time.perf_counter()
+        while not stop.is_set():
+            await asyncio.sleep(0.05)
+            now = time.perf_counter()
+            lags.append(now - last - 0.05)
+            last = now
+
+    task = asyncio.create_task(ticker())
+    await asyncio.sleep(0.1)
+    with _patched_http(html_text):
+        listing = await dirlisting.get_dirlisting(_FIXTURE_URL, "Australia/Brisbane")
+    stop.set()
+    await task
+
+    assert len(listing.entries) == len(names)
+    assert listing.entries[0].filename == Path(names[0])
+    assert max(lags) < 0.25, f"event loop stalled {max(lags):.2f}s during dirlisting parse"

@@ -10,6 +10,7 @@ Currently supports:
     * Extracing metadata from AEMO filenames
 """
 
+import asyncio
 import html
 import logging
 import re
@@ -261,23 +262,16 @@ def parse_dirlisting_line(dirlisting_line: str) -> DirlistingEntry | None:
     return model
 
 
-async def get_dirlisting(url: str, timezone: str | None = None) -> DirectoryListing:
-    """Parse a directory listng into a list of DirlistingEntry models"""
-    dirlisting_content = await http.get(url)
-
-    logger.debug(f"Got dirlisting content of lenght {len(dirlisting_content.text)}")
-
-    if not dirlisting_content.text:
-        raise Exception("No dirlisting content")
-
-    # resp = pq(dirlisting_content.text, parser="html")
+def _parse_dirlisting_html(url: str, content: str, timezone: str | None) -> DirectoryListing:
+    """Parse the html of a directory listing into a DirectoryListing (CPU bound, run off the event loop)"""
+    # resp = pq(content, parser="html")
 
     _dirlisting_models: list[DirlistingEntry] = []
 
     # pre_area = resp("pre")
 
     # use regex to find the pre area
-    pre_area = re.search(r"<pre>(.*?)</pre>", dirlisting_content.text, re.DOTALL)
+    pre_area = re.search(r"<pre>(.*?)</pre>", content, re.DOTALL)
 
     if not pre_area:
         raise Exception("Invalid directory listing: no pre or bad html")
@@ -310,6 +304,19 @@ async def get_dirlisting(url: str, timezone: str | None = None) -> DirectoryList
     logger.debug(f"Got back {len(listing_model.entries)} models")
 
     return listing_model
+
+
+async def get_dirlisting(url: str, timezone: str | None = None) -> DirectoryListing:
+    """Parse a directory listng into a list of DirlistingEntry models"""
+    dirlisting_content = await http.get(url)
+
+    logger.debug(f"Got dirlisting content of lenght {len(dirlisting_content.text)}")
+
+    if not dirlisting_content.text:
+        raise Exception("No dirlisting content")
+
+    # the regex + pydantic parse of ~1.3k lines held the loop for 1s+ on the worker
+    return await asyncio.to_thread(_parse_dirlisting_html, url, dirlisting_content.text, timezone)
 
 
 # debug entry point
