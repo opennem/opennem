@@ -92,3 +92,22 @@ async def test_model_hit_matches_miss_exclude_none_alias(client: AsyncClient) ->
     body = hit.json()
     assert "opt" not in body
     assert body["Renamed"] == 7
+
+
+async def test_old_format_entries_never_read(client: AsyncClient) -> None:
+    """A legacy JsonCoder blob under the un-versioned key must not be served."""
+    from fastapi_cache.coder import JsonCoder
+
+    from opennem.api.response_cache import CACHE_FORMAT
+
+    await client.get("/d?x=5")
+    store = InMemoryBackend._store  # pyright: ignore[reportPrivateUsage]
+    keys = [k for k in store if CACHE_FORMAT in k]
+    assert len(keys) == 1
+    legacy = keys[0].replace(f":{CACHE_FORMAT}", "")
+    assert legacy != keys[0]
+    await FastAPICache.get_backend().set(legacy, JsonCoder.encode({"x": 999}), 60)
+
+    hit = await client.get("/d?x=5")
+    assert hit.json()["x"] == 5
+    assert CALLS == [5]

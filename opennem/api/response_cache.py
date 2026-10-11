@@ -30,6 +30,8 @@ R = TypeVar("R")
 
 # name fastapi-cache injects its response param under (injected_dependency_namespace="__fastapi_cache")
 _INJECTED_RESPONSE = "__fastapi_cache_response"
+# bump when the stored format changes: old entries (JsonCoder blobs, still in Redis across a deploy) are never read
+CACHE_FORMAT = "rawjson-v2"
 _SKIP_HEADERS = frozenset({"content-length", "content-type"})
 
 
@@ -73,10 +75,19 @@ def cached_json(
     exclude_none mirrors response_model_exclude_none. Together they make the stored bytes equal what FastAPI
     would have produced on a MISS.
     """
+
+    def versioned_key_builder(*args: Any, **kwargs: Any) -> Any:
+        # key_builder gets (func, namespace, ...): version the namespace so raw-bytes entries never collide with old ones
+        if len(args) >= 2 and isinstance(args[1], str):
+            args = (args[0], f"{args[1]}:{CACHE_FORMAT}", *args[2:])
+        else:
+            kwargs["namespace"] = f"{kwargs.get('namespace', '')}:{CACHE_FORMAT}"
+        return key_builder(*args, **kwargs)
+
     coder = _make_coder(TypeAdapter(return_type) if return_type is not None else None, exclude_none)
 
     def wrapper(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[Any]]:
-        inner = cache(expire=expire, key_builder=key_builder, coder=coder)(func)
+        inner = cache(expire=expire, key_builder=versioned_key_builder, coder=coder)(func)
 
         @functools.wraps(inner)
         async def outer(*args: P.args, **kwargs: P.kwargs) -> Any:
