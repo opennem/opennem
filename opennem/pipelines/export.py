@@ -31,12 +31,10 @@ async def run_export_power_latest_for_network(network: NetworkSchema, network_re
 
     logger.info(f"Running {len(latest_power_exports.resources)} exports")
 
-    tasks = []
-
+    # sequential on purpose: each export holds a full stat set in memory, and gathering 12+ of
+    # them spiked the worker past 2 GB (#677). Wall time is the same (db-bound).
     for resource in latest_power_exports.resources:
-        tasks.append(export_power(stats=[resource]))
-
-    await asyncio.gather(*tasks)
+        await export_power(stats=[resource])
 
 
 async def run_export_all(network_region_code: str | None = None, network: NetworkSchema | None = None) -> None:
