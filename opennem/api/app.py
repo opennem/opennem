@@ -33,7 +33,7 @@ from opennem.api.openapi_extra import custom_openapi
 from opennem.api.plans.router import router as plans_router
 from opennem.api.pollution.router import router as pollution_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
-from opennem.api.security import authenticated_user
+from opennem.api.security import fresh_authenticated_user
 from opennem.api.social.router import router as social_router
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
@@ -487,7 +487,7 @@ def health_check() -> str:
     tags=["User"],
     description="Get the current user",
 )
-async def get_user_me(user: authenticated_user) -> OpenNEMUserMeResponse:
+async def get_user_me(user: fresh_authenticated_user) -> OpenNEMUserMeResponse:
     return OpenNEMUserMeResponse(data=to_user_me(user))
 
 
