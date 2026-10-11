@@ -8,6 +8,7 @@ Admin resolution: Clerk privateMetadata.role == "admin".
 
 import asyncio
 import hashlib
+import hmac
 import logging
 import time
 from typing import Annotated
@@ -279,8 +280,42 @@ def check_roles(required_roles: list[OpenNEMRoles]):
     return role_checker
 
 
+def _is_bypass_key(key: str) -> bool:
+    """True for the dev/internal bypass keys (constant-time compare)."""
+    bypass = [settings.api_dev_key]
+    if settings.api_internal_key:
+        bypass.append(settings.api_internal_key)
+    return any(k and hmac.compare_digest(key.encode(), k.encode()) for k in bypass)
+
+
+async def get_admin_user(
+    authorization: Annotated[HTTPAuthorizationCredentials, Depends(api_token_scheme)],
+) -> OpenNEMUser:
+    """FastAPI dependency for admin routes: a real Clerk admin, identified via their API key.
+
+    The dev/internal bypass keys resolve to an enterprise admin user in the shared resolver; they are
+    rejected (403) before resolving, and the bypass user is rejected again after as defence in depth.
+    The admin role must come from Clerk (user has an owner_id), and is read fresh so a revoked admin
+    loses access immediately. Missing/invalid key -> 401, valid non-admin -> 403.
+    """
+    key = authorization.credentials
+
+    if _is_bypass_key(key):
+        logger.warning(f"Admin access denied for bypass key {key_fingerprint(key)}")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access requires a Clerk admin user")
+
+    user = await _resolve_user_from_key(key, fresh=True)
+
+    is_bypass_user = user.id == _OPENNEM_INTERNAL_USER.id or user.owner_id == _OPENNEM_INTERNAL_USER.owner_id
+    if is_bypass_user or not user.owner_id or not user.is_admin:
+        logger.warning(f"Admin access denied for user {user.id} (key {key_fingerprint(key)})")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
+
+    return user
+
+
 # Common auth dependencies
 authenticated_user = Annotated[OpenNEMUser, Depends(get_current_user)]
 fresh_authenticated_user = Annotated[OpenNEMUser, Depends(get_current_user_fresh)]
 optional_user = Annotated[OpenNEMUser | None, Depends(get_optional_user)]
-admin_user = Annotated[OpenNEMUser, Depends(check_roles([OpenNEMRoles.admin]))]
+admin_user = Annotated[OpenNEMUser, Depends(get_admin_user)]
