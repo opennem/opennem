@@ -12,7 +12,7 @@ import resource
 import sys
 from collections.abc import AsyncIterator, Sequence
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import polars as pl
 from sqlalchemy import text
@@ -620,6 +620,25 @@ async def _stream_unit_interval_data(
     result.close()
 
 
+_UNIT_INTERVAL_SCHEMA: dict[str, Any] = {
+    "interval": pl.Datetime,
+    "network_id": pl.String,
+    "network_region": pl.String,
+    "facility_code": pl.String,
+    "unit_code": pl.String,
+    "status_id": pl.String,
+    "fueltech_id": pl.String,
+    "fueltech_group_id": pl.String,
+    "renewable": pl.Boolean,
+    "generated": pl.Float64,
+    "energy": pl.Float64,
+    "energy_storage": pl.Float64,
+    "emissions": pl.Float64,
+    "emission_factor": pl.Float64,
+    "market_value": pl.Float64,
+}
+
+
 def _prepare_unit_interval_data(records: Sequence[tuple]) -> list[tuple]:
     """
     Prepare unit interval data for ClickHouse by converting to the correct format.
@@ -633,26 +652,11 @@ def _prepare_unit_interval_data(records: Sequence[tuple]) -> list[tuple]:
     if not records:
         return []
 
-    # Convert records to polars DataFrame
+    # Convert records to polars DataFrame, built per column: row-wise construction from python
+    # tuples is several times slower on large chunks
     df = pl.DataFrame(
-        records,
-        schema={
-            "interval": pl.Datetime,
-            "network_id": pl.String,
-            "network_region": pl.String,
-            "facility_code": pl.String,
-            "unit_code": pl.String,
-            "status_id": pl.String,
-            "fueltech_id": pl.String,
-            "fueltech_group_id": pl.String,
-            "renewable": pl.Boolean,
-            "generated": pl.Float64,
-            "energy": pl.Float64,
-            "energy_storage": pl.Float64,
-            "emissions": pl.Float64,
-            "emission_factor": pl.Float64,
-            "market_value": pl.Float64,
-        },
+        dict(zip(_UNIT_INTERVAL_SCHEMA, zip(*records, strict=True), strict=True)),
+        schema=_UNIT_INTERVAL_SCHEMA,
     )
 
     # Round numeric values to 4 decimal places
@@ -776,7 +780,7 @@ async def process_unit_intervals_backlog(
         # Get and process data for this chunk
         records = await _get_unit_interval_data(session, current_start, chunk_end, network)
         if records:
-            prepared_data = _prepare_unit_interval_data(records)
+            prepared_data = await asyncio.to_thread(_prepare_unit_interval_data, records)
 
             # Batch insert into ClickHouse (off-loop — see note above)
             await insert_async(
@@ -884,7 +888,7 @@ async def process_unit_intervals_backlog_streaming(
         try:
             async for batch in _stream_unit_interval_data(session, current_start, chunk_end, network, batch_size):
                 if batch:
-                    prepared_data = _prepare_unit_interval_data(batch)
+                    prepared_data = await asyncio.to_thread(_prepare_unit_interval_data, batch)
 
                     # Batch insert into ClickHouse
                     client.execute(
@@ -964,7 +968,7 @@ async def run_unit_intervals_aggregate_to_now() -> int:
     # run unit intervals from earliest lagging network to now
     async with get_write_session() as session:
         records = await _get_unit_interval_data(session, date_from, date_to)
-        prepared_data = _prepare_unit_interval_data(records)
+        prepared_data = await asyncio.to_thread(_prepare_unit_interval_data, records)
 
     await insert_async(
         """
@@ -1000,7 +1004,7 @@ async def run_unit_intervals_aggregate_for_last_intervals(num_intervals: int) ->
 
     async with get_write_session() as session:
         records = await _get_unit_interval_data(session, start_date, end_date)
-        prepared_data = _prepare_unit_interval_data(records)
+        prepared_data = await asyncio.to_thread(_prepare_unit_interval_data, records)
 
     client = get_clickhouse_client()
 

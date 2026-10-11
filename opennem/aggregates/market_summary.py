@@ -5,6 +5,7 @@ This module handles the aggregation of market summary data from PostgreSQL to Cl
 It calculates energy values from power readings and stores them in MWh in ClickHouse for efficient querying.
 """
 
+import asyncio
 import logging
 from collections.abc import Sequence
 from datetime import datetime, timedelta
@@ -943,7 +944,8 @@ async def process_market_summary_backlog(
     """
     current_start = start_date
     client = get_clickhouse_client()
-    _ensure_clickhouse_schema()
+    # sync CH ping + migrations: off-loop, the client is thread-local so it is fetched inside the thread
+    await asyncio.to_thread(_ensure_clickhouse_schema)
 
     while current_start < end_date:
         chunk_end = min(current_start + chunk_size, end_date)
@@ -1180,7 +1182,7 @@ async def reset_market_summary(start_date: datetime | None = None, skip_schema_r
         _refresh_clickhouse_schema()
     else:
         # Just ensure schema exists
-        _ensure_clickhouse_schema()
+        await asyncio.to_thread(_ensure_clickhouse_schema)
 
     # Step 2: Determine date range
     end_date = get_last_completed_interval_for_network(network=NetworkNEM)
