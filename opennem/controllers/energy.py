@@ -1,8 +1,9 @@
 """Energy controllers — ClickHouse-backed"""
 
+import asyncio
 import logging
 
-from opennem.api.stats.controllers import stats_factory
+from opennem.api.stats.controllers import stats_factory_async
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.units import get_unit
@@ -43,24 +44,31 @@ async def energy_fueltech_daily(
         for row in results
     ]
 
-    results_energy = [
-        DataQueryResult(interval=i["interval"], group_by=i["fueltech_code"], result=i["fueltech_energy_gwh"])
-        for i in result_dicts
-    ]
+    results_energy = await asyncio.to_thread(
+        lambda: [
+            DataQueryResult(interval=i["interval"], group_by=i["fueltech_code"], result=i["fueltech_energy_gwh"])
+            for i in result_dicts
+        ]
+    )
 
     if not results_energy:
         return None
 
-    results_market_value = [
-        DataQueryResult(interval=i["interval"], group_by=i["fueltech_code"], result=i["fueltech_market_value_dollars"])
-        for i in result_dicts
-    ]
+    results_market_value = await asyncio.to_thread(
+        lambda: [
+            DataQueryResult(interval=i["interval"], group_by=i["fueltech_code"], result=i["fueltech_market_value_dollars"])
+            for i in result_dicts
+        ]
+    )
 
-    results_emissions = [
-        DataQueryResult(interval=i["interval"], group_by=i["fueltech_code"], result=i["fueltech_emissions"]) for i in result_dicts
-    ]
+    results_emissions = await asyncio.to_thread(
+        lambda: [
+            DataQueryResult(interval=i["interval"], group_by=i["fueltech_code"], result=i["fueltech_emissions"])
+            for i in result_dicts
+        ]
+    )
 
-    stats = stats_factory(
+    stats = await stats_factory_async(
         stats=results_energy,
         units=units,
         network=time_series.network,
@@ -71,7 +79,7 @@ async def energy_fueltech_daily(
         code=network.code.lower(),
     )
 
-    stats_market_value = stats_factory(
+    stats_market_value = await stats_factory_async(
         stats=results_market_value,
         units=get_unit("market_value"),
         network=time_series.network,
@@ -84,7 +92,7 @@ async def energy_fueltech_daily(
 
     stats.append_set(stats_market_value)
 
-    stats_emissions = stats_factory(
+    stats_emissions = await stats_factory_async(
         stats=results_emissions,
         units=get_unit("emissions"),
         network=time_series.network,

@@ -1,5 +1,7 @@
+import asyncio
 import logging
 from collections import OrderedDict
+from collections.abc import Callable
 from datetime import datetime, timedelta, timezone
 from textwrap import dedent
 from typing import Any
@@ -30,6 +32,22 @@ from opennem.utils.version import get_version
 from .schema import DataQueryResult, OpennemData, OpennemDataHistory, OpennemDataSet, ScadaDateRange
 
 logger = logging.getLogger(__name__)
+
+
+async def stats_factory_async(
+    stats: list[DataQueryResult] | Callable[[], list[DataQueryResult]], **kwargs: Any
+) -> OpennemDataSet:
+    """Run `stats_factory` in a worker thread so large result sets don't stall the event loop.
+
+    `stats` may be a zero-arg callable so the per-row `DataQueryResult` validation
+    (also pure CPU) is built in the same thread hop. Both are pure functions of
+    their inputs: no shared mutable state, so concurrent calls are safe.
+    """
+
+    def _run() -> OpennemDataSet:
+        return stats_factory(stats() if callable(stats) else stats, **kwargs)
+
+    return await asyncio.to_thread(_run)
 
 
 def stats_factory(
