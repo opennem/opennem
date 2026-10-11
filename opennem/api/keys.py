@@ -103,6 +103,10 @@ def api_protected(
                         value = func(*args, **kwargs)
                     return value
 
+                # shared internal key is deliberately not honoured here (legacy behaviour): never reaches the resolver
+                if settings.api_internal_key and key == settings.api_internal_key:
+                    raise HTTPException(status_code=403, detail="Permission denied")
+
                 # shared resolver: cached enriched user, single-flight, stale-if-error, negative cache
                 try:
                     user = await _resolve_user_from_key(key)

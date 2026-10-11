@@ -116,6 +116,19 @@ async def test_dev_key_bypass_unchanged(upstream: SimpleNamespace) -> None:
     upstream.clerk.assert_not_called()
 
 
+async def test_internal_key_not_honoured(upstream: SimpleNamespace, captured: pytest.LogCaptureFixture) -> None:
+    internal = "oe_internal_x_1234567890"
+    for endpoint in (_endpoint([OpenNEMRoles.admin]), _endpoint()):
+        with pytest.raises(HTTPException) as exc:
+            await endpoint(authorization=_creds(internal))
+        assert exc.value.status_code == 403
+        assert exc.value.detail == "Permission denied"
+    upstream.unkey.assert_not_called()
+    _no_key_in(captured, internal)
+    user = await _endpoint([OpenNEMRoles.admin])(authorization=_creds(DEV_KEY))
+    assert user is not None and user.id == "dev"
+
+
 async def test_on_exc_handler_receives_exception(upstream: SimpleNamespace) -> None:
     @api_protected(on_exc=lambda exc: getattr(exc, "status_code", None))
     async def endpoint(authorization: HTTPAuthorizationCredentials | None = None) -> str:
