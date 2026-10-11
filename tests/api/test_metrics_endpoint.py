@@ -14,15 +14,16 @@ GOLDEN = json.loads((Path(__file__).parent.parent / "fixtures" / "metrics_golden
 
 @pytest.mark.asyncio
 async def test_metrics_equals_golden() -> None:
-    assert await get_metrics() == GOLDEN
+    resp = await get_metrics()
+    assert resp.media_type == "application/json"
+    assert json.loads(resp.body) == GOLDEN
 
 
 @pytest.mark.asyncio
-async def test_metrics_mutation_does_not_leak() -> None:
-    first = await get_metrics()
-    first["metrics"].clear()
-    first["endpoints"]["market"].append("x")
-    assert await get_metrics() == GOLDEN
+async def test_metrics_body_is_shared_bytes() -> None:
+    """Immutable pre-encoded body: callers cannot mutate shared state."""
+    assert isinstance(app_module._METRICS_BODY, bytes)
+    assert (await get_metrics()).body is app_module._METRICS_BODY
 
 
 def test_metrics_is_precomputed() -> None:
@@ -32,3 +33,5 @@ def test_metrics_is_precomputed() -> None:
 def test_metrics_http_ok() -> None:
     resp = TestClient(app_module.app).get("/v4/metrics")
     assert resp.status_code in (200, 401, 403)
+    if resp.status_code == 200:
+        assert resp.json() == GOLDEN
