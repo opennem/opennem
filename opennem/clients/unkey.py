@@ -2,9 +2,8 @@
 
 import asyncio
 import logging
-from functools import wraps
 
-from cachetools import TTLCache
+import httpx
 from pydantic import ValidationError
 from unkey.py import Unkey
 
@@ -13,48 +12,62 @@ from opennem.users.schema import OpennemAPIRequestMeta, OpenNEMRoles, OpenNEMUse
 
 logger = logging.getLogger("opennem.clients.unkey")
 
-# Cache for unkey validation results - 5 minute TTL
-_unkey_cache = TTLCache(maxsize=10000, ttl=60 * 5)
+UNKEY_TIMEOUT_S = 3.0
+UNKEY_ATTEMPTS = 2  # one retry
 
-
-def cache_unkey_result(func):
-    """Decorator to cache unkey validation results for 5 minutes."""
-
-    @wraps(func)
-    async def wrapper(api_key: str, *args, **kwargs) -> OpenNEMUser | None:
-        # Check cache first
-        if api_key in _unkey_cache:
-            return _unkey_cache[api_key]
-
-        # Call original function
-        result = await func(api_key, *args, **kwargs)
-
-        # Cache successful results
-        if result:
-            _unkey_cache[api_key] = result
-
-        return result
-
-    return wrapper
+_unkey_client: Unkey | None = None
 
 
 class UnkeyInvalidUserException(Exception):
-    pass
+    """Unkey answered and the key is not valid."""
 
 
-@cache_unkey_result
+class UnkeyUnavailableException(UnkeyInvalidUserException):
+    """Unkey did not give an answer (timeout, transport or server error). Never means the key is invalid.
+
+    Subclasses UnkeyInvalidUserException so legacy callers that catch the base keep working.
+    """
+
+
+def _get_unkey_client() -> Unkey:
+    """Shared module-level Unkey client: keepalive connection pool, bounded timeout."""
+    global _unkey_client
+
+    if _unkey_client is None:
+        _unkey_client = Unkey(
+            root_key=settings.unkey_root_key,
+            async_client=httpx.AsyncClient(
+                timeout=httpx.Timeout(UNKEY_TIMEOUT_S),
+                limits=httpx.Limits(max_connections=100, max_keepalive_connections=20, keepalive_expiry=60),
+            ),
+            timeout_ms=int(UNKEY_TIMEOUT_S * 1000),
+        )
+
+    return _unkey_client
+
+
 async def unkey_validate(api_key: str) -> None | OpenNEMUser:
     """
     Validate a key with unkey.
-    Results are cached for 5 minutes to reduce API calls.
+    Raises UnkeyInvalidUserException when Unkey says the key is invalid and
+    UnkeyUnavailableException when Unkey could not be reached (retried once).
     """
 
     if not settings.unkey_root_key:
         raise Exception("No unkey root key set")
 
     try:
-        async with Unkey(root_key=settings.unkey_root_key) as client:
-            response = await client.keys.verify_key_async(key=api_key)
+        response = None
+        for attempt in range(UNKEY_ATTEMPTS):
+            try:
+                response = await asyncio.wait_for(
+                    _get_unkey_client().keys.verify_key_async(key=api_key), timeout=UNKEY_TIMEOUT_S + 1
+                )
+                break
+            except Exception as e:
+                if attempt == UNKEY_ATTEMPTS - 1:
+                    raise UnkeyUnavailableException(f"Unkey unreachable: {type(e).__name__}: {e}") from e
+                logger.warning(f"Unkey verify failed ({type(e).__name__}), retrying")
 
         if not response or not response.data:
             logger.warning("Unkey verification failed: no response data")
@@ -111,7 +124,7 @@ async def unkey_validate(api_key: str) -> None | OpenNEMUser:
         raise
     except Exception as e:
         logger.warning(f"Unexpected error in unkey_validate: {e}")
-        raise UnkeyInvalidUserException("Unkey verification failed: unexpected error") from e
+        raise UnkeyUnavailableException("Unkey verification failed: unexpected error") from e
 
 
 # debug entry point

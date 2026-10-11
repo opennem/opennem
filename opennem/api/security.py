@@ -6,15 +6,19 @@ Plan resolution: Clerk privateMetadata.plan → OpenNEMPlan enum.
 Admin resolution: Clerk privateMetadata.role == "admin".
 """
 
+import asyncio
+import hashlib
 import logging
+import time
 from typing import Annotated
 
+from cachetools import TTLCache
 from clerk_backend_api import Clerk
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from opennem import settings
-from opennem.clients.unkey import unkey_validate
+from opennem.clients.unkey import UnkeyInvalidUserException, UnkeyUnavailableException, unkey_validate
 from opennem.users.plans import OpenNEMPlan
 from opennem.users.schema import OpenNEMRoles, OpenNEMUser
 
@@ -31,6 +35,24 @@ api_token_scheme = HTTPBearer()
 # Optional bearer scheme: does not 401 on a missing credential so anonymous
 # requests can be served (at COMMUNITY limits) by optional-auth endpoints.
 api_token_scheme_optional = HTTPBearer(auto_error=False)
+
+# Enriched-user cache (post Unkey + Clerk). Entries are fresh for USER_CACHE_TTL_S; if Unkey/Clerk
+# fail, an entry up to USER_CACHE_MAX_STALE_S past that is served instead (stale-if-error).
+USER_CACHE_TTL_S = 5 * 60
+USER_CACHE_MAX_STALE_S = 5 * 60
+NEGATIVE_CACHE_TTL_S = 30
+CLERK_TIMEOUT_MS = 3000
+
+
+def _now() -> float:
+    return time.monotonic()
+
+
+_user_cache: TTLCache[str, tuple[OpenNEMUser, float]] = TTLCache(
+    maxsize=10000, ttl=USER_CACHE_TTL_S + USER_CACHE_MAX_STALE_S, timer=lambda: _now()
+)
+_invalid_key_cache: TTLCache[str, bool] = TTLCache(maxsize=10000, ttl=NEGATIVE_CACHE_TTL_S, timer=lambda: _now())
+_inflight: dict[str, asyncio.Task[OpenNEMUser]] = {}
 
 # Default internal user for development
 _OPENNEM_INTERNAL_USER = OpenNEMUser(
@@ -72,12 +94,79 @@ def _resolve_admin(private_metadata: dict | None) -> bool:
     return False
 
 
+def _cache_key(key: str) -> str:
+    return hashlib.sha256(key.encode()).hexdigest()
+
+
+async def _fetch_user(key: str) -> OpenNEMUser:
+    """Unkey verify + Clerk enrichment (no caching).
+
+    Raises UnkeyInvalidUserException only when Unkey says the key is invalid; any other
+    exception (timeouts, transport, Clerk errors) is an upstream failure.
+    """
+    user = await unkey_validate(api_key=key)
+
+    if not user:
+        raise UnkeyInvalidUserException("Invalid API key")
+
+    # Enrich with Clerk user data
+    if not user.owner_id:
+        logger.info(f"No owner_id for user {user.id}, skipping Clerk enrichment")
+        # Resolve plan from unkey meta if available
+        user.plan = _resolve_plan(None, user.unkey_meta)
+        return user
+
+    clerk_user = await clerk_client.users.get_async(user_id=user.owner_id, timeout_ms=CLERK_TIMEOUT_MS)
+
+    if not clerk_user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+
+    user.full_name = f"{clerk_user.first_name} {clerk_user.last_name}"
+    user.email = clerk_user.email_addresses[0].email_address
+
+    private_meta = clerk_user.private_metadata if clerk_user.private_metadata else None
+
+    # Resolve plan from Clerk, with Unkey meta fallback
+    user.plan = _resolve_plan(private_meta, user.unkey_meta)
+
+    # Resolve admin from Clerk privateMetadata.role
+    if _resolve_admin(private_meta):
+        if OpenNEMRoles.admin not in user.roles:
+            user.roles.append(OpenNEMRoles.admin)
+
+    return user
+
+
+def _swallow_task_exception(task: "asyncio.Task[OpenNEMUser]") -> None:
+    if not task.cancelled():
+        task.exception()
+
+
+async def _fetch_user_single_flight(key: str, ckey: str) -> OpenNEMUser:
+    """One upstream fetch per key at a time; concurrent callers share the result.
+
+    The fetch runs in its own task so a cancelled first caller doesn't fail the others.
+    """
+    task = _inflight.get(ckey)
+
+    if task is None:
+        task = asyncio.create_task(_fetch_user(key))
+        task.add_done_callback(_swallow_task_exception)
+        task.add_done_callback(lambda _t: _inflight.pop(ckey, None))
+        _inflight[ckey] = task
+
+    return await asyncio.shield(task)
+
+
 async def _resolve_user_from_key(key: str) -> OpenNEMUser:
     """Resolve an OpenNEMUser from a raw API key.
 
     Always raises HTTPException(401) on failure — invalid/short key, unknown key,
     missing Clerk user, or an unexpected Unkey/Clerk error. Callers (required and
     optional auth) share these semantics, so the error handling lives here only.
+
+    The enriched user is cached per key (5 min), concurrent misses share one upstream
+    call, and on an upstream error a cached user up to 5 min past expiry is served.
     """
     try:
         if not key or len(key) < 10:
@@ -90,44 +179,53 @@ async def _resolve_user_from_key(key: str) -> OpenNEMUser:
         if key == settings.api_dev_key or (settings.api_internal_key and key == settings.api_internal_key):
             return _OPENNEM_INTERNAL_USER.model_copy(deep=True)
 
-        # Validate with Unkey
-        user = await unkey_validate(api_key=key)
+        ckey = _cache_key(key)
 
-        if not user:
+        if ckey in _invalid_key_cache:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key")
 
-        # Enrich with Clerk user data
-        if not user.owner_id:
-            logger.info(f"No owner_id for user {user.id}, skipping Clerk enrichment")
-            # Resolve plan from unkey meta if available
-            user.plan = _resolve_plan(None, user.unkey_meta)
-            return user
+        # copies out: callers mutate the returned user, never the cached one
+        cached = _user_cache.get(ckey)
+        if cached is not None:
+            cached_user, stored_at = cached
+            if _now() - stored_at < USER_CACHE_TTL_S:
+                return cached_user.model_copy(deep=True)
 
-        clerk_user = await clerk_client.users.get_async(user_id=user.owner_id)
+        try:
+            user = await _fetch_user_single_flight(key, ckey)
+        except HTTPException:
+            raise
+        except UnkeyUnavailableException as e:
+            return _serve_stale_or_raise(ckey, cached, e)
+        except UnkeyInvalidUserException as e:
+            # Unkey answered: key is invalid. Drop any cached user and remember the rejection.
+            _user_cache.pop(ckey, None)
+            _invalid_key_cache[ckey] = True
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key") from e
+        except Exception as e:
+            return _serve_stale_or_raise(ckey, cached, e)
 
-        if not clerk_user:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
-
-        user.full_name = f"{clerk_user.first_name} {clerk_user.last_name}"
-        user.email = clerk_user.email_addresses[0].email_address
-
-        private_meta = clerk_user.private_metadata if clerk_user.private_metadata else None
-
-        # Resolve plan from Clerk, with Unkey meta fallback
-        user.plan = _resolve_plan(private_meta, user.unkey_meta)
-
-        # Resolve admin from Clerk privateMetadata.role
-        if _resolve_admin(private_meta):
-            if OpenNEMRoles.admin not in user.roles:
-                user.roles.append(OpenNEMRoles.admin)
-
-        return user
+        _user_cache[ckey] = (user.model_copy(deep=True), _now())
+        return user.model_copy(deep=True)
 
     except HTTPException:
         raise
     except Exception as e:
         logger.warning(f"Authentication error: {str(e)}")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication failed") from e
+
+
+def _serve_stale_or_raise(ckey: str, cached: tuple[OpenNEMUser, float] | None, error: Exception) -> OpenNEMUser:
+    """Upstream failed (never negative-cached): serve a cached user up to USER_CACHE_MAX_STALE_S stale."""
+    if cached is not None:
+        cached_user, stored_at = cached
+        stale_s = _now() - stored_at - USER_CACHE_TTL_S
+        if stale_s < USER_CACHE_MAX_STALE_S:
+            logger.warning(f"Serving stale cached user {cached_user.id} ({stale_s:.0f}s past ttl) after upstream error: {error}")
+            return cached_user.model_copy(deep=True)
+
+    logger.warning(f"Authentication error: {error}")
+    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication failed") from error
 
 
 async def get_current_user(
