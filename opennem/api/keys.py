@@ -6,13 +6,12 @@ import logging
 from collections.abc import Callable, Coroutine
 from typing import Annotated, Any, TypeVar
 
-from clerk_backend_api import Clerk
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from unkey.py import models
 
 from opennem import settings
-from opennem.clients.unkey import UnkeyInvalidUserException, unkey_validate
+from opennem.api.security import _resolve_user_from_key, key_fingerprint
 from opennem.users.plans import OpenNEMPlan
 from opennem.users.schema import OpenNEMRoles, OpenNEMUser
 
@@ -36,8 +35,6 @@ ExcHandlerT = Callable[[Exception], Any]
 # API Keys
 if not settings.unkey_root_key or not settings.clerk_secret_key:
     raise ValueError("No API key or clerk secret key set")
-
-clerk_client = Clerk(bearer_auth=settings.clerk_secret_key)
 
 api_token_scheme = HTTPBearer()
 
@@ -84,7 +81,7 @@ def api_protected(
 
                 # dev hard coded internalkey bypasses unkey
                 if not key or not len(key) > 10:
-                    logger.error(f"Failed to get API key: {key}")
+                    logger.error("Failed to get API key: key too short")
                     raise HTTPException(status_code=403, detail="Permission denied: no key provided")
 
                 # dev key bypasses unkey
@@ -106,49 +103,12 @@ def api_protected(
                         value = func(*args, **kwargs)
                     return value
 
-                # try unkey verification of the API key in bearer
-                unkey_verification = None
-
+                # shared resolver: cached enriched user, single-flight, stale-if-error, negative cache
                 try:
-                    unkey_verification = await unkey_validate(api_key=key)
-                except UnkeyInvalidUserException as e:
-                    raise HTTPException(status_code=403, detail=str(e)) from e
-
-                if not unkey_verification:
-                    logger.error(f"Unkey verification failed for key: {key}")
-                    raise HTTPException(status_code=403, detail="Permission denied")
-
-                user = unkey_verification
-
-                # Attach Clerk user data if key has owner association
-                if user.owner_id:
-                    clerk_user = await clerk_client.users.get_async(user_id=user.owner_id)
-
-                    if not clerk_user:
-                        logger.error(f"Clerk user not found for {user.owner_id}")
-                        raise HTTPException(status_code=403, detail="Permission denied")
-
-                    user.full_name = clerk_user.first_name + " " + clerk_user.last_name
-                    user.email = clerk_user.email_addresses[0].email_address
-
-                    # Resolve plan from Clerk privateMetadata
-                    raw_plan = clerk_user.private_metadata.get("plan") if clerk_user.private_metadata else None
-                    if raw_plan:
-                        try:
-                            user.plan = OpenNEMPlan(raw_plan if raw_plan != "BASIC" else "COMMUNITY")
-                        except ValueError:
-                            user.plan = OpenNEMPlan.COMMUNITY
-                    else:
-                        user.plan = OpenNEMPlan.COMMUNITY
-
-                    # Resolve admin from Clerk privateMetadata.role
-                    if clerk_user.private_metadata and clerk_user.private_metadata.get("role") == "admin":
-                        if OpenNEMRoles.admin not in user.roles:
-                            user.roles.append(OpenNEMRoles.admin)
-                else:
-                    logger.info(f"Key {user.id} not associated with Clerk user, skipping enrichment")
-                    user.full_name = None
-                    user.email = None
+                    user = await _resolve_user_from_key(key)
+                except HTTPException as e:
+                    logger.warning(f"API key {key_fingerprint(key)} rejected: {e.detail}")
+                    raise HTTPException(status_code=403, detail="Permission denied") from e
 
                 if "user" in inspect.signature(func).parameters:
                     kwargs["user"] = user
