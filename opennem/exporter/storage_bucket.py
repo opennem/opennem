@@ -15,10 +15,13 @@ The module supports:
  * Directory listing and file information retrieval
 """
 
+import importlib
 import logging
 import os
+import time
 from dataclasses import dataclass
 from datetime import datetime
+from functools import lru_cache
 from zoneinfo import ZoneInfo
 
 import aioboto3
@@ -35,6 +38,35 @@ logger = logging.getLogger("opennem.storage_bucket")
 # R2 surface as failed uploads and abort exports. "standard" mode retries 5xx /
 # throttling / InternalError with exponential backoff.
 _S3_RETRY_CONFIG = Config(retries={"max_attempts": 10, "mode": "standard"})
+
+
+@lru_cache(maxsize=1)
+def get_s3_session() -> aioboto3.Session:
+    """Process-wide shared aioboto3 session.
+
+    A fresh Session per upload rebuilds botocore's loader so the S3 service model was
+    re-read on every client creation (~1s event loop stall). Sessions hold no loop-bound
+    state; clients are still created per upload.
+    """
+    return aioboto3.Session()
+
+
+async def warm_s3_client() -> None:
+    """Load the S3 service model and lazy aiofiles imports at boot. Never raises.
+
+    Client creation makes no network call; the client is opened and closed immediately.
+    """
+    start = time.perf_counter()
+    try:
+        # aioboto3 imports aiofiles (incl. the aiofiles.tempfile submodule) lazily on first use
+        for mod in ("aiofiles.tempfile", "aioboto3.s3.inject"):
+            importlib.import_module(mod)
+
+        async with await CloudflareR2Uploader()._get_s3_client():  # type: ignore
+            pass
+        logger.info(f"S3 client warmed in {time.perf_counter() - start:.2f}s")
+    except Exception as e:
+        logger.warning(f"S3 client warm-up failed: {e}")
 
 
 @dataclass
@@ -112,8 +144,7 @@ class CloudflareR2Uploader:
         Returns:
             An aioboto3 S3 client session.
         """
-        session = aioboto3.Session()
-        return session.client(
+        return get_s3_session().client(
             service_name="s3",
             endpoint_url=self.endpoint_url,
             aws_access_key_id=self.access_key_id,

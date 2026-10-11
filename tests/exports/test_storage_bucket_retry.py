@@ -3,7 +3,7 @@ InternalError (s3 500) responses are retried instead of aborting exports."""
 
 import pytest
 
-from opennem.exporter.storage_bucket import _S3_RETRY_CONFIG, CloudflareR2Uploader
+from opennem.exporter.storage_bucket import _S3_RETRY_CONFIG, CloudflareR2Uploader, get_s3_session
 
 
 def test_retry_config_uses_standard_mode_with_extra_attempts() -> None:
@@ -14,6 +14,7 @@ def test_retry_config_uses_standard_mode_with_extra_attempts() -> None:
 @pytest.mark.asyncio
 async def test_client_is_created_with_retry_config(monkeypatch: pytest.MonkeyPatch) -> None:
     captured: dict = {}
+    get_s3_session.cache_clear()
 
     class _FakeSession:
         def client(self, **kwargs):  # noqa: ANN003, ANN201
@@ -25,3 +26,4 @@ async def test_client_is_created_with_retry_config(monkeypatch: pytest.MonkeyPat
     await CloudflareR2Uploader()._get_s3_client()
 
     assert captured["config"] is _S3_RETRY_CONFIG
+    get_s3_session.cache_clear()

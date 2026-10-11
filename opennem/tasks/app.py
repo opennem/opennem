@@ -99,6 +99,11 @@ async def startup(ctx: dict) -> None:
     await redis.flushdb()
     logger.info("Redis queue flushed on startup")
 
+    # warm the S3 service model + aiofiles imports so the first export doesn't stall the loop
+    from opennem.exporter.storage_bucket import warm_s3_client
+
+    await warm_s3_client()
+
     # Check for pending ClickHouse migrations
     try:
         from opennem.db.clickhouse import get_clickhouse_client
