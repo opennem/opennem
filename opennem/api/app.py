@@ -4,14 +4,15 @@ OpenNEM API
 Primary Router. All the main setup of the API is here.
 """
 
-import copy
+import json
 import logging
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.param_functions import Query
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.backends.redis import RedisBackend
@@ -22,6 +23,7 @@ from redis import asyncio as aioredis
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 from opennem import settings
 from opennem.api.admin.router import admin_router
@@ -111,18 +113,25 @@ app.add_middleware(
 )
 
 
-#  Maintenance mode middleware
-@app.middleware("http")
-async def intercept_maintenance_mode(request: Request, call_next):  # type: ignore
-    if settings.maintenance_mode:
-        logger.debug("Maintenance mode")
+class MaintenanceModeMiddleware:
+    """Pure ASGI maintenance gate: no per-request task/stream wrapping like BaseHTTPMiddleware."""
 
-        resp_content = OpennemErrorSchema(error="Maintenance Mode")
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
 
-        return OpennemExceptionResponse(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, response_class=resp_content)
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] == "http" and settings.maintenance_mode:
+            logger.debug("Maintenance mode")
+            resp = OpennemExceptionResponse(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE, response_class=OpennemErrorSchema(error="Maintenance Mode")
+            )
+            await resp(scope, receive, send)
+            return
 
-    response = await call_next(request)
-    return response
+        await self.app(scope, receive, send)
+
+
+app.add_middleware(MaintenanceModeMiddleware)
 
 
 # Custom exception handler
@@ -464,6 +473,8 @@ def _build_metrics_response() -> dict:
 
 
 _METRICS_RESPONSE: dict = _build_metrics_response()
+# static for the process lifetime: encode once, skip per-request deepcopy + response_model validation
+_METRICS_BODY: bytes = json.dumps(jsonable_encoder(_METRICS_RESPONSE, exclude_none=True), separators=(",", ":")).encode()
 
 
 @api_version(4)
@@ -475,14 +486,14 @@ _METRICS_RESPONSE: dict = _build_metrics_response()
     tags=["Core"],
     description="Get all available metrics and their metadata",
 )
-async def get_metrics() -> dict:
+async def get_metrics() -> Response:
     """
     Get all available metrics with their metadata.
 
     Returns a dictionary of metrics with their units, descriptions, and other metadata.
     This endpoint helps clients discover what metrics are available in the API.
     """
-    return copy.deepcopy(_METRICS_RESPONSE)
+    return Response(content=_METRICS_BODY, media_type="application/json")
 
 
 @app.get("/health", include_in_schema=False)

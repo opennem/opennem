@@ -5,11 +5,13 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import RedirectResponse
+from fastapi_cache.decorator import cache
 from fastapi_versionizer import api_version
 from sqlalchemy import select
 from starlette import status
 
 from opennem import settings
+from opennem.api.cache_keys import tiered_key_builder
 from opennem.api.data.utils import get_max_interval_days, validate_date_range
 from opennem.api.export.controllers import power_week
 from opennem.api.export.queries import interconnector_flow_network_regions_query
@@ -878,6 +880,7 @@ _INTERVAL_TO_HUMAN: dict[Interval, str] = {
     response_model=OpennemDataSet,
     response_model_exclude_unset=False,
 )
+@cache(expire=60 * 5, key_builder=tiered_key_builder)
 async def power_station_v4(
     network_code: str,
     facility_code: str,
@@ -945,6 +948,7 @@ async def power_station_v4(
     response_model=OpennemDataSet,
     response_model_exclude_unset=False,
 )
+@cache(expire=60 * 5, key_builder=tiered_key_builder)
 async def energy_station_v4(
     network_code: str,
     facility_code: str,

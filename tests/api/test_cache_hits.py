@@ -14,6 +14,8 @@ from fastapi_cache.backends.inmemory import InMemoryBackend
 from opennem.api.data import router as data_router
 from opennem.api.facilities import router as facilities_router
 from opennem.api.market import router as market_router
+from opennem.api.stats import router as stats_router
+from opennem.api.stats import schema as stats_schema
 from opennem.core.metric import Metric
 from opennem.core.time_interval import Interval
 from opennem.users.plans import OpenNEMPlan
@@ -136,3 +138,21 @@ async def test_get_facilities_hits(monkeypatch: pytest.MonkeyPatch) -> None:
         )  # fmt: skip
 
     await _assert_hits(call, opened)
+
+
+@pytest.mark.parametrize("name", ["power_station_v4", "energy_station_v4"])
+async def test_station_v4_hits(monkeypatch: pytest.MonkeyPatch, name: str) -> None:
+    execute = AsyncMock(return_value=[(_START, "U1", 1.0, 1.0, 1.0, 1.0)])
+    monkeypatch.setattr(stats_router, "get_api_network_from_code", lambda code: SimpleNamespace(code=code))
+    monkeypatch.setattr(stats_router, "_period_to_date_range", lambda period, network: (_START, _END))
+    monkeypatch.setattr(stats_router, "validate_date_range", lambda **kw: (_START, _END))
+    cols = ["interval", "unit_code", "power", "energy", "emissions", "market_value"]
+    monkeypatch.setattr(stats_router, "get_timeseries_query", lambda **kw: ("q", {}, cols))
+    monkeypatch.setattr(stats_router, "execute_async", execute)
+    monkeypatch.setattr(stats_router, "human_to_interval", lambda s: s)
+    monkeypatch.setattr(stats_router, "stats_factory", lambda *a, **kw: stats_schema.OpennemDataSet(code="X"))
+
+    async def call(**kw: Any) -> Any:
+        return await getattr(stats_router, name)(network_code="NEM", facility_code="BANGOWF", **kw)
+
+    await _assert_hits(call, execute)
