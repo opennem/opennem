@@ -35,8 +35,9 @@ _N = 12
 
 
 def _norm(js: str) -> str:
-    """created_at is wall-clock; everything else must be byte-identical."""
-    return re.sub(r'"created_at":"[^"]*"', '"created_at":"X"', js)
+    """created_at is wall-clock and version bumps per release; everything else must be byte-identical."""
+    js = re.sub(r'"created_at":"[^"]*"', '"created_at":"X"', js)
+    return re.sub(r'"version":"[^"]*"', '"version":"X"', js)
 
 
 def _times(step_min: int = 5) -> list[datetime]:
@@ -234,7 +235,7 @@ async def test_export_output_byte_identical(
         golden[name] = out
         GOLDEN.write_text(json.dumps(golden, indent=1, sort_keys=True))
         return
-    assert out == golden[name]
+    assert out == _norm(golden[name])
 
 
 @pytest.mark.asyncio
@@ -298,3 +299,81 @@ async def test_serving_callers_still_get_limits(
     assert fake.calls[-1]["settings"]["max_execution_time"] == 90
     await ch_client_module.execute_async(None, "SELECT 1", serving_limits=False, settings={"readonly": 1})  # type: ignore[arg-type]
     assert fake.calls[-1]["settings"] == {"readonly": 1}
+
+
+# --- CPU off the loop: row building + stats_factory must not stall the loop ---
+
+_BIG_SERIES = 38
+_BIG_POINTS = 2017  # 7d of 5m intervals, the size of a real NEM power export
+
+
+def _big_power_rows(q: str) -> list[tuple]:
+    if "fueltech" in q.lower() and "price" not in q.lower():
+        ts = [_T0 + timedelta(minutes=5 * i) for i in range(_BIG_POINTS)]
+        return [(t, f"ft_{j}", 100.0 + i + j, 10.0 + i, 0.9) for j in range(_BIG_SERIES) for i, t in enumerate(ts)]
+    return _power_rows(q)
+
+
+async def _max_loop_lag(work: Awaitable[Any], period: float = 0.05) -> float:
+    """Run `work` next to a ticker; return the worst gap between ticks beyond `period`."""
+    worst = 0.0
+    stop = asyncio.Event()
+
+    async def ticker() -> None:
+        nonlocal worst
+        last = time.perf_counter()
+        while not stop.is_set():
+            await asyncio.sleep(period)
+            now = time.perf_counter()
+            worst = max(worst, now - last - period)
+            last = now
+
+    t = asyncio.create_task(ticker())
+    await asyncio.sleep(period * 2)
+    await work
+    stop.set()
+    await t
+    return worst
+
+
+@pytest.mark.asyncio
+async def test_power_week_row_building_does_not_stall_loop(
+    install_client: Callable[..., FakeClient], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """~76k rows x 3 builds + stats_factory used to block the loop for 100s of ms each."""
+    _patch_pg(monkeypatch)
+    install_client(_big_power_rows)
+    lag = await _max_loop_lag(_power_week())
+    assert lag < 0.25, f"event loop stalled {lag * 1000:.0f}ms"
+
+
+@pytest.mark.asyncio
+async def test_stats_factory_async_does_not_stall_loop() -> None:
+    from opennem.api.stats.controllers import stats_factory_async
+    from opennem.api.stats.schema import DataQueryResult
+    from opennem.core.units import get_unit
+
+    ts = [_T0 + timedelta(minutes=5 * i) for i in range(_BIG_POINTS)]
+    rows = [(t, f"ft_{j}", 100.0 + i) for j in range(_BIG_SERIES * 2) for i, t in enumerate(ts)]
+    lag = await _max_loop_lag(
+        stats_factory_async(
+            lambda: [DataQueryResult(interval=r[0], result=r[2], group_by=r[1]) for r in rows],
+            network=NetworkNEM,
+            interval=get_interval("5m"),
+            units=get_unit("power"),
+            fueltech_group=True,
+        )
+    )
+    assert lag < 0.25, f"event loop stalled {lag * 1000:.0f}ms"
+
+
+@pytest.mark.asyncio
+async def test_concurrent_cpu_offload_is_thread_safe(
+    install_client: Callable[..., FakeClient], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Row building / stats_factory run in pool threads; concurrent exports must not interfere."""
+    _patch_pg(monkeypatch)
+    install_client(_big_power_rows)
+    solo = _norm(await _power_week())
+    outs = await asyncio.gather(*(_power_week() for _ in range(4)))
+    assert {_norm(o) for o in outs} == {solo}
