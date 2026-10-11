@@ -204,3 +204,44 @@ async def test_unkey_validate_invalid_key_not_retried(monkeypatch: pytest.Monkey
     with pytest.raises(UnkeyInvalidUserException) as exc:
         await unkey_mod.unkey_validate(api_key=KEY)
     assert not isinstance(exc.value, UnkeyUnavailableException) and verify.await_count == 1
+
+
+async def test_fresh_bypasses_cache_but_other_calls_use_it(upstream: SimpleNamespace) -> None:
+    await security._resolve_user_from_key(KEY)
+    assert upstream.unkey.await_count == 1
+
+    await security._resolve_user_from_key(KEY)  # normal endpoint: cache hit
+    assert upstream.unkey.await_count == 1
+
+    await security._resolve_user_from_key(KEY, fresh=True)  # /me: upstream despite fresh entry
+    assert upstream.unkey.await_count == 2
+    assert upstream.clerk.await_count == 2
+
+
+async def test_fresh_refreshes_cache_entry(upstream: SimpleNamespace) -> None:
+    await security._resolve_user_from_key(KEY)
+    upstream.clerk.return_value = SimpleNamespace(
+        first_name="New",
+        last_name="Name",
+        email_addresses=[SimpleNamespace(email_address="n@b.com")],
+        private_metadata={"plan": "PRO"},
+    )
+
+    assert (await security._resolve_user_from_key(KEY, fresh=True)).email == "n@b.com"
+    assert (await security._resolve_user_from_key(KEY)).email == "n@b.com"
+    assert upstream.unkey.await_count == 2
+
+
+async def test_fresh_falls_back_to_stale_on_timeout(upstream: SimpleNamespace) -> None:
+    await security._resolve_user_from_key(KEY)  # entry is fresh, not expired
+    upstream.unkey.side_effect = UnkeyUnavailableException("timeout")
+
+    user = await security._resolve_user_from_key(KEY, fresh=True)
+
+    assert user.id == "key_1" and user.email == "a@b.com"
+
+
+async def test_fresh_concurrent_single_flight(upstream: SimpleNamespace) -> None:
+    await asyncio.gather(*[security._resolve_user_from_key(KEY, fresh=True) for _ in range(10)])
+
+    assert upstream.unkey.await_count == 1

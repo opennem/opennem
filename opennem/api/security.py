@@ -158,7 +158,7 @@ async def _fetch_user_single_flight(key: str, ckey: str) -> OpenNEMUser:
     return await asyncio.shield(task)
 
 
-async def _resolve_user_from_key(key: str) -> OpenNEMUser:
+async def _resolve_user_from_key(key: str, *, fresh: bool = False) -> OpenNEMUser:
     """Resolve an OpenNEMUser from a raw API key.
 
     Always raises HTTPException(401) on failure — invalid/short key, unknown key,
@@ -167,6 +167,8 @@ async def _resolve_user_from_key(key: str) -> OpenNEMUser:
 
     The enriched user is cached per key (5 min), concurrent misses share one upstream
     call, and on an upstream error a cached user up to 5 min past expiry is served.
+    ``fresh=True`` skips the fresh-cache read (always Unkey + Clerk, still single-flight and
+    stale-if-error) and refreshes the cache entry with the result.
     """
     try:
         if not key or len(key) < 10:
@@ -188,7 +190,7 @@ async def _resolve_user_from_key(key: str) -> OpenNEMUser:
         cached = _user_cache.get(ckey)
         if cached is not None:
             cached_user, stored_at = cached
-            if _now() - stored_at < USER_CACHE_TTL_S:
+            if not fresh and _now() - stored_at < USER_CACHE_TTL_S:
                 return cached_user.model_copy(deep=True)
 
         try:
@@ -235,6 +237,13 @@ async def get_current_user(
     return await _resolve_user_from_key(authorization.credentials)
 
 
+async def get_current_user_fresh(
+    authorization: Annotated[HTTPAuthorizationCredentials, Depends(api_token_scheme)],
+) -> OpenNEMUser:
+    """Like get_current_user but never reads the fresh-user cache (e.g. /v4/me shows live plan/role)."""
+    return await _resolve_user_from_key(authorization.credentials, fresh=True)
+
+
 async def get_optional_user(
     authorization: Annotated[HTTPAuthorizationCredentials | None, Depends(api_token_scheme_optional)],
 ) -> OpenNEMUser | None:
@@ -267,5 +276,6 @@ def check_roles(required_roles: list[OpenNEMRoles]):
 
 # Common auth dependencies
 authenticated_user = Annotated[OpenNEMUser, Depends(get_current_user)]
+fresh_authenticated_user = Annotated[OpenNEMUser, Depends(get_current_user_fresh)]
 optional_user = Annotated[OpenNEMUser | None, Depends(get_optional_user)]
 admin_user = Annotated[OpenNEMUser, Depends(check_roles([OpenNEMRoles.admin]))]
