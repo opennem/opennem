@@ -86,6 +86,29 @@ def _get_random_rnet_browser() -> rnet.Emulation:
     return random.choice(rnet_browsers)
 
 
+# bodies known to be at most this size are read inline, anything larger (or of unknown length) goes off the loop
+INLINE_BODY_MAX_BYTES = 64 * 1024
+
+
+async def _read_body(resp: Any) -> tuple[bytes, str]:
+    return await resp.bytes(), await resp.text()
+
+
+async def _read_rnet_body(resp: Any) -> tuple[bytes, str]:
+    """Read the body of an rnet response without blocking the event loop
+
+    `await resp.bytes()` holds the calling thread for the entire network read (measured: a 2.5s throttled
+    27 MB read stalled the loop for 2.5s, `await client.get()` itself does not). Large or unknown-length
+    bodies are read on a worker thread with its own loop, which keeps the loop thread free.
+    """
+    content_length = getattr(resp, "content_length", None)
+
+    if isinstance(content_length, int) and content_length <= INLINE_BODY_MAX_BYTES:
+        return await _read_body(resp)
+
+    return await asyncio.to_thread(asyncio.run, _read_body(resp))
+
+
 class HttpResponse:
     """Wrapper for rnet response to be compatible with old response"""
 
@@ -257,8 +280,7 @@ class HttpClient:
                 resp = await rnet_method(url, proxy=via_proxy, headers=req_headers, **kwargs)
 
                 # Pre-load content for compatibility
-                content = await resp.bytes()
-                text = await resp.text()
+                content, text = await _read_rnet_body(resp)
 
                 logger.debug(f"{url} - {resp.status} - {len(content)} bytes")
 
