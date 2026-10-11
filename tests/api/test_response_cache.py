@@ -1,6 +1,7 @@
 """cached_json: HIT returns the exact bytes the MISS path serialised, with cache headers, no re-encode."""
 
 from datetime import UTC, datetime
+from enum import StrEnum
 
 import pytest
 import pytest_asyncio
@@ -25,8 +26,38 @@ class Item(BaseModel):
     renamed: int = Field(default=1, alias="Renamed")
 
 
+def _tricky() -> dict:
+    """Payload shapes the real timeseries/facility routes return: datetimes, nested models, floats, unicode, None."""
+    return {
+        "t": datetime(2026, 1, 2, 3, 4, 5, tzinfo=UTC),
+        "naive": datetime(2026, 1, 2, 3, 4, 5),
+        "floats": [0.1, 1e-05, 1e16, 123456789.123456789, -0.0, 3.0, 2**53],
+        "uni": 'caf\u00e9 \u2603 "q" \\ \n',
+        "none": None,
+        "nested": [{"a": None, "b": [1, 2, {"c": Item(name="n", when=datetime(2026, 1, 1, tzinfo=UTC))}]}],
+        "enum": Mode.A,
+    }
+
+
+class Mode(StrEnum):
+    A = "a"
+
+
 def _make_app() -> FastAPI:
     app = FastAPI()
+
+    @app.get("/tricky")
+    @cached_json(expire=60, key_builder=tiered_key_builder, return_type=None)
+    async def get_tricky() -> dict:
+        return _tricky()
+
+    @app.get("/tricky_plain", response_model=None)
+    async def get_tricky_plain() -> dict:
+        return _tricky()
+
+    @app.get("/m_plain", response_model=Item, response_model_exclude_none=True)
+    async def get_m_plain() -> Item:
+        return Item(name="a", when=datetime(2026, 1, 2, 3, 4, 5, tzinfo=UTC), Renamed=7)
 
     @app.get("/d")
     @cached_json(expire=60, key_builder=tiered_key_builder, return_type=None)
@@ -111,3 +142,18 @@ async def test_old_format_entries_never_read(client: AsyncClient) -> None:
     hit = await client.get("/d?x=5")
     assert hit.json()["x"] == 5
     assert CALLS == [5]
+
+
+async def test_miss_body_byte_identical_to_uncached_fastapi(client: AsyncClient) -> None:
+    """MISS now returns the encoder's own bytes; they must equal what plain FastAPI serialises."""
+    miss = await client.get("/tricky")
+    plain = await client.get("/tricky_plain")
+    assert miss.headers["x-fastapi-cache"] == "MISS"
+    assert miss.content == plain.content
+    assert (await client.get("/tricky")).content == plain.content
+
+    m_miss = await client.get("/m")
+    m_plain = await client.get("/m_plain")
+    assert m_miss.content == m_plain.content
+    assert m_miss.headers["content-type"] == m_plain.headers["content-type"]
+    assert m_miss.headers["cache-control"].startswith("max-age=")
