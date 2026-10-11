@@ -49,6 +49,7 @@ from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.users.schema import OpenNEMUserMeResponse, to_user_me
 from opennem.utils.host import get_hostname
+from opennem.utils.loop_monitor import start_loop_monitor, stop_loop_monitor
 from opennem.utils.version import get_version
 
 logger = logging.getLogger("opennem.api")
@@ -74,9 +75,12 @@ async def lifespan(app: FastAPI):
         FastAPICache.init(RedisBackend(redis), prefix="api-cache")
         logger.info("Enabled API cache")
 
+    start_loop_monitor("api")
+
     yield
 
     # Shutdown logic
+    await stop_loop_monitor()
 
 
 app = FastAPI(

@@ -95,6 +95,12 @@ class OpennemSettings(BaseSettings):
     # fraction of requests/jobs sent to Sentry as performance traces (0-1)
     sentry_traces_sample_rate: float = 0.05
 
+    # event loop lag monitor (API + worker): sleeps `interval` and measures overshoot
+    loop_monitor_enabled: bool = True
+    loop_monitor_interval_s: float = 0.1
+    # lag above this logs a (rate-limited) warning + Sentry breadcrumb
+    loop_monitor_threshold_ms: float = 250.0
+
     # Slack notifications (incoming webhooks — one-way)
     slack_notifications: bool = True
     slack_hook_new_facilities: str | None = None
