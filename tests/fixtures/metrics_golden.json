@@ -1,0 +1,214 @@
+{
+ "metrics": {
+  "power": {
+   "name": "power",
+   "unit": "MW",
+   "description": "Power output/consumption",
+   "default_aggregation": "avg",
+   "precision": 3
+  },
+  "energy": {
+   "name": "energy",
+   "unit": "MWh",
+   "description": "Energy generated/consumed",
+   "default_aggregation": "sum",
+   "precision": 3
+  },
+  "price": {
+   "name": "price",
+   "unit": "$/MWh",
+   "description": "Price per unit of energy",
+   "default_aggregation": "avg",
+   "precision": 2
+  },
+  "market_value": {
+   "name": "market_value",
+   "unit": "$",
+   "description": "Total market value",
+   "default_aggregation": "sum",
+   "precision": 2
+  },
+  "demand": {
+   "name": "demand",
+   "unit": "MW",
+   "description": "Demand generation",
+   "default_aggregation": "avg",
+   "precision": 3
+  },
+  "demand_energy": {
+   "name": "demand_energy",
+   "unit": "MWh",
+   "description": "Demand generation energy",
+   "default_aggregation": "sum",
+   "precision": 3
+  },
+  "demand_gross": {
+   "name": "demand_gross",
+   "unit": "MW",
+   "description": "Total demand including rooftop solar",
+   "default_aggregation": "sum",
+   "precision": 3
+  },
+  "demand_gross_energy": {
+   "name": "demand_gross_energy",
+   "unit": "MWh",
+   "description": "Total demand energy including rooftop solar",
+   "default_aggregation": "sum",
+   "precision": 3
+  },
+  "generation_renewable": {
+   "name": "generation_renewable",
+   "unit": "MW",
+   "description": "Total renewable generation including rooftop solar",
+   "default_aggregation": "sum",
+   "precision": 3
+  },
+  "generation_renewable_energy": {
+   "name": "generation_renewable_energy",
+   "unit": "MWh",
+   "description": "Total renewable energy including rooftop solar",
+   "default_aggregation": "sum",
+   "precision": 3
+  },
+  "generation_renewable_with_storage": {
+   "name": "generation_renewable_with_storage",
+   "unit": "MW",
+   "description": "Total renewable generation including storage (battery discharge, pumps) and TUMUT3",
+   "default_aggregation": "sum",
+   "precision": 3
+  },
+  "generation_renewable_with_storage_energy": {
+   "name": "generation_renewable_with_storage_energy",
+   "unit": "MWh",
+   "description": "Total renewable energy including storage (battery discharge, pumps) and TUMUT3",
+   "default_aggregation": "sum",
+   "precision": 3
+  },
+  "renewable_with_storage_proportion": {
+   "name": "renewable_with_storage_proportion",
+   "unit": "%",
+   "description": "Percentage of renewable energy including storage",
+   "default_aggregation": "avg",
+   "precision": 2
+  },
+  "emissions": {
+   "name": "emissions",
+   "unit": "t",
+   "description": "CO2 equivalent emissions",
+   "default_aggregation": "sum",
+   "precision": 3
+  },
+  "renewable_proportion": {
+   "name": "renewable_proportion",
+   "unit": "%",
+   "description": "Percentage of renewable energy",
+   "default_aggregation": "avg",
+   "precision": 2
+  },
+  "curtailment": {
+   "name": "curtailment",
+   "unit": "MW",
+   "description": "Energy curtailment",
+   "default_aggregation": "avg",
+   "precision": 3
+  },
+  "curtailment_energy": {
+   "name": "curtailment_energy",
+   "unit": "MWh",
+   "description": "Energy curtailment",
+   "default_aggregation": "sum",
+   "precision": 3
+  },
+  "curtailment_solar_utility": {
+   "name": "curtailment_solar_utility",
+   "unit": "MW",
+   "description": "Utility solar energy curtailment",
+   "default_aggregation": "avg",
+   "precision": 3
+  },
+  "curtailment_solar_utility_energy": {
+   "name": "curtailment_solar_utility_energy",
+   "unit": "MWh",
+   "description": "Utility solar energy curtailment",
+   "default_aggregation": "sum",
+   "precision": 3
+  },
+  "curtailment_wind": {
+   "name": "curtailment_wind",
+   "unit": "MW",
+   "description": "Wind energy curtailment",
+   "default_aggregation": "avg",
+   "precision": 3
+  },
+  "curtailment_wind_energy": {
+   "name": "curtailment_wind_energy",
+   "unit": "MWh",
+   "description": "Wind energy curtailment",
+   "default_aggregation": "sum",
+   "precision": 3
+  },
+  "storage_battery": {
+   "name": "storage_battery",
+   "unit": "MWh",
+   "description": "Battery storage level",
+   "default_aggregation": "avg",
+   "precision": 3
+  },
+  "flow_imports": {
+   "name": "flow_imports",
+   "unit": "MW",
+   "description": "Interconnector power imports",
+   "default_aggregation": "sum",
+   "precision": 3
+  },
+  "flow_exports": {
+   "name": "flow_exports",
+   "unit": "MW",
+   "description": "Interconnector power exports",
+   "default_aggregation": "sum",
+   "precision": 3
+  },
+  "flow_imports_energy": {
+   "name": "flow_imports_energy",
+   "unit": "MWh",
+   "description": "Interconnector energy imports",
+   "default_aggregation": "sum",
+   "precision": 3
+  },
+  "flow_exports_energy": {
+   "name": "flow_exports_energy",
+   "unit": "MWh",
+   "description": "Interconnector energy exports",
+   "default_aggregation": "sum",
+   "precision": 3
+  },
+  "solar_rooftop_forecast": {
+   "name": "solar_rooftop_forecast",
+   "unit": "MW",
+   "description": "AEMO rooftop solar forecast (ROOFTOP_PV FORECAST POWERMEAN)",
+   "default_aggregation": "avg",
+   "precision": 3
+  }
+ },
+ "total": 27,
+ "endpoints": {
+  "market": [
+   "price",
+   "demand",
+   "demand_energy",
+   "curtailment",
+   "curtailment_energy",
+   "curtailment_solar_utility",
+   "curtailment_solar_utility_energy",
+   "curtailment_wind",
+   "curtailment_wind_energy"
+  ],
+  "data": [
+   "power",
+   "energy",
+   "emissions",
+   "market_value",
+   "renewable_proportion"
+  ]
+ }
+}

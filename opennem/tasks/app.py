@@ -57,6 +57,7 @@ from opennem.tasks.tasks import (
     task_refresh_clickhouse_mv_fast,
     task_refresh_clickhouse_mv_full,
     task_refresh_from_cms,
+    task_sanity_webhook,
     task_send_cms_updates_slack_report,
     task_update_facility_first_seen,
     task_update_facility_seen_range,
@@ -117,6 +118,9 @@ class WorkerSettings:
     # to seed its running extremes (#654) and takes minutes.
     functions = [
         func(task_milestone_gap_backfill, timeout=None),
+        # keep_result=0: arq refuses a repeat _job_id while the result key lives (1h default), which
+        # would drop later edits to the same doc. Dedupe only while queued/running.
+        func(task_sanity_webhook, timeout=600, max_tries=3, keep_result=0),
     ]
     cron_jobs = [
         # NEM Interval Check — fires early, polls AEMO with backoff until data arrives
