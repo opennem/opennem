@@ -4,7 +4,7 @@ Facilities API Schema
 Defines the schema for the facilities API endpoint responses.
 """
 
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
@@ -37,9 +37,13 @@ class UnitDateSpecificity(Enum):
     DAY = "day"
 
 
-UNIT_TZ_FIELDS: tuple[str, ...] = (
-    "data_first_seen",
-    "data_last_seen",
+# Computed from naive network-local scada intervals and stored labelled UTC: the wall clock is already local,
+# so the network offset is relabelled (replace), never converted.
+UNIT_WALL_CLOCK_FIELDS: tuple[str, ...] = ("data_first_seen", "data_last_seen")
+
+# CMS dates are stored as true instants (local midnight in the network offset): convert (astimezone) so the
+# local date is the date the CMS holds. Tz-naive values are assumed to be UTC.
+UNIT_CMS_DATE_FIELDS: tuple[str, ...] = (
     "closure_date",
     "expected_closure_date",
     "construction_start_date",
@@ -179,16 +183,24 @@ class UnitResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True, defer_build=True)
 
     def apply_network_timezone(self, network_id: str) -> None:
-        """Label naive datetime fields with the fixed offset of the unit's own network (NEM +10:00, WEM +08:00)."""
-        if not (self.data_first_seen or self.data_last_seen):
-            return
+        """Emit unit datetimes in the fixed offset of the unit's own network (NEM +10:00, WEM +08:00).
 
+        CMS dates are instants and are converted; data seen fields are naive local wall clocks and are relabelled.
+        Idempotent, so safe on re-validation of already serialised values.
+        """
         tz_offset = network_from_network_code(network_id).get_fixed_offset()
 
-        for field in UNIT_TZ_FIELDS:
+        for field in UNIT_WALL_CLOCK_FIELDS:
             value = getattr(self, field)
             if value:
                 setattr(self, field, value.replace(tzinfo=tz_offset))
+
+        for field in UNIT_CMS_DATE_FIELDS:
+            value = getattr(self, field)
+            if value:
+                if value.tzinfo is None:
+                    value = value.replace(tzinfo=UTC)
+                setattr(self, field, value.astimezone(tz_offset))
 
 
 class FacilityResponseSchema(BaseModel):
