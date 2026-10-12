@@ -4,12 +4,14 @@ Runs before routing, auth (Unkey/Clerk), dependencies and ClickHouse, so rejecte
 """
 
 import logging
+from collections.abc import Callable
 from datetime import datetime
 from urllib.parse import parse_qsl
 
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 from opennem.api.known_codes import has_unknown_codes
+from opennem.api.security import is_key_known_valid
 from opennem.schema.opennem import OpennemErrorSchema
 
 logger = logging.getLogger("opennem.api.early_reject")
@@ -51,24 +53,47 @@ def _tz_aware(value: str) -> bool:
         return False
 
 
-def facility_request_rejection(query_string: bytes) -> tuple[int, str] | None:
-    """Cheap pre-auth checks for /data/facilities. Returns (status, detail) matching the in-route errors, or None."""
+def _bearer_key(scope: Scope) -> str | None:
+    for name, value in scope["headers"]:
+        if name == b"authorization":
+            scheme, _, token = value.decode("latin-1").partition(" ")
+            return token.strip() if scheme.lower() == "bearer" and token.strip() else None
+    return None
+
+
+def _caller_is_known_valid(scope: Scope) -> bool:
+    key = _bearer_key(scope)
+    return key is not None and is_key_known_valid(key)
+
+
+def facility_request_rejection(
+    query_string: bytes, caller_is_known_valid: Callable[[], bool] = lambda: True
+) -> tuple[int, str] | None:
+    """Cheap pre-auth checks for /data/facilities. Returns (status, detail) matching the in-route errors, or None.
+
+    The unknown-code 404 reveals which codes exist, so it is only served to callers whose key is already validated
+    (in-memory user cache, no Unkey/Clerk call). Everyone else falls through to normal auth.
+    """
     if not query_string:
         return None
 
     facility_code: list[str] = []
     unit_code: list[str] = []
+    dates: dict[str, str] = {}  # FastAPI uses the last value of a repeated scalar param
     for key, value in parse_qsl(query_string.decode("latin-1")):
         if key == "facility_code":
             facility_code.append(value)
         elif key == "unit_code":
             unit_code.append(value)
-        elif key == "date_start" and _tz_aware(value):
-            return 400, "Date start must be timezone naive and in network time"
-        elif key == "date_end" and _tz_aware(value):
-            return 400, "Date end must be timezone naive and in network time"
+        elif key in ("date_start", "date_end"):
+            dates[key] = value
 
-    if (facility_code or unit_code) and has_unknown_codes(facility_code, unit_code):
+    if (value := dates.get("date_start")) and _tz_aware(value):
+        return 400, "Date start must be timezone naive and in network time"
+    if (value := dates.get("date_end")) and _tz_aware(value):
+        return 400, "Date end must be timezone naive and in network time"
+
+    if (facility_code or unit_code) and has_unknown_codes(facility_code, unit_code) and caller_is_known_valid():
         filter_desc = f"facility={facility_code}" if facility_code else ""
         if unit_code:
             filter_desc += f"{', ' if filter_desc else ''}unit={unit_code}"
@@ -99,7 +124,9 @@ class EarlyRejectMiddleware:
                 await _send_json(send, 410, _GONE_BODY, cache_seconds=3600)
                 return
 
-            if _is_facility_data_path(path) and (rejection := facility_request_rejection(scope.get("query_string", b""))):
+            if _is_facility_data_path(path) and (
+                rejection := facility_request_rejection(scope.get("query_string", b""), lambda: _caller_is_known_valid(scope))
+            ):
                 status_code, detail = rejection
                 await _send_json(send, status_code, OpennemErrorSchema(error=detail, success=False).model_dump_json().encode())
                 return

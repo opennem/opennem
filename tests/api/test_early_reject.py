@@ -13,7 +13,9 @@ from opennem.utils.sentry import _sentry_before_send_transaction
 pytestmark = pytest.mark.asyncio
 
 
-async def _run(path: str, query: bytes = b"", method: str = "GET") -> tuple[list[dict[str, Any]], list[str]]:
+async def _run(
+    path: str, query: bytes = b"", method: str = "GET", auth: str | None = "Bearer on_dev_some_other_key_123"
+) -> tuple[list[dict[str, Any]], list[str]]:
     sent: list[dict[str, Any]] = []
     called: list[str] = []
 
@@ -27,7 +29,15 @@ async def _run(path: str, query: bytes = b"", method: str = "GET") -> tuple[list
         sent.append(msg)
 
     await EarlyRejectMiddleware(inner)(
-        {"type": "http", "method": method, "path": path, "query_string": query, "headers": []}, receive, send
+        {
+            "type": "http",
+            "method": method,
+            "path": path,
+            "query_string": query,
+            "headers": [(b"authorization", auth.encode())] if auth else [],
+        },
+        receive,
+        send,
     )
     return sent, called
 
@@ -38,6 +48,9 @@ def loaded_codes(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(known_codes._state, "units", frozenset({"BANGOWF1", "ERARING1"}))
     monkeypatch.setattr(known_codes._state, "loaded_at", time.monotonic())
     monkeypatch.setattr(known_codes, "_schedule_refresh", lambda: None)
+    from opennem.api import security
+
+    monkeypatch.setattr(security.settings, "api_dev_key", "on_dev_some_other_key_123")
 
 
 @pytest.mark.parametrize(
@@ -206,12 +219,12 @@ def test_e2e_dead_route_410_no_auth(app_client: Any) -> None:
     fetch_user.assert_not_called()
 
 
-def test_e2e_unknown_facility_404_no_auth_no_clickhouse(app_client: Any) -> None:
+def test_e2e_unknown_facility_404_validated_key_no_upstream(app_client: Any) -> None:
     client, fetch_user, execute = app_client
     r = client.get(
         "/v4/data/facilities/NEM",
         params={"metrics": "energy", "facility_code": "NOPE"},
-        headers={"Authorization": "Bearer some_unknown_key_value"},
+        headers={"Authorization": "Bearer on_dev_some_other_key_123"},
     )
     assert r.status_code == 404
     assert r.json()["error"] == "No data available for facility=['NOPE'] in the specified time range"
@@ -243,3 +256,55 @@ def test_e2e_valid_facility_reaches_route(app_client: Any) -> None:
     assert r.status_code == 404  # mocked ClickHouse returns no rows: the in-route 404, proving it got past the middleware
     execute.assert_called_once()
     fetch_user.assert_not_called()  # dev key bypass
+
+
+async def test_tz_check_uses_last_repeated_date(loaded_codes: None) -> None:
+    q = b"metrics=energy&date_start=2024-01-01T00:00:00%2B10:00&date_start=2024-01-01T00:00:00"
+    sent, called = await _run("/v4/data/facilities/NEM", q)
+    assert called
+
+
+async def test_miss_refresh_backs_off_after_recent_attempt(loaded_codes: None, monkeypatch: pytest.MonkeyPatch) -> None:
+    import asyncio
+
+    monkeypatch.undo()  # drop the _schedule_refresh stub from loaded_codes
+    monkeypatch.setattr(known_codes._state, "facilities", frozenset({"A"}))
+    monkeypatch.setattr(known_codes._state, "units", frozenset({"A1"}))
+    monkeypatch.setattr(known_codes._state, "loaded_at", time.monotonic() - 120)
+    monkeypatch.setattr(known_codes._state, "last_attempt", time.monotonic() - 5)
+    monkeypatch.setattr(known_codes._state, "refresh_task", None)
+    created: list[Any] = []
+    monkeypatch.setattr(asyncio, "create_task", lambda *a, **k: created.append(1))
+    assert known_codes.has_unknown_codes(["NOPE"], []) is False
+    assert not created
+
+
+@pytest.mark.parametrize("auth", [None, "Bearer never_validated_key_123", "Basic abc"])
+async def test_unknown_code_not_revealed_to_unvalidated_callers(loaded_codes: None, auth: str | None) -> None:
+    sent, called = await _run("/v4/data/facilities/NEM", b"metrics=energy&facility_code=NOPE", auth=auth)
+    assert called
+    assert not sent
+
+
+async def test_cached_valid_key_gets_early_404(loaded_codes: None, monkeypatch: pytest.MonkeyPatch) -> None:
+    from opennem.api import security
+    from opennem.users.plans import OpenNEMPlan
+    from opennem.users.schema import OpenNEMUser
+
+    key = "cached_valid_key_1234567"
+    user = OpenNEMUser(id="u", owner_id="u", plan=OpenNEMPlan.COMMUNITY, roles=[])
+    monkeypatch.setitem(security._user_cache, security._cache_key(key), (user, security._now()))
+    sent, called = await _run("/v4/data/facilities/NEM", b"metrics=energy&facility_code=NOPE", auth=f"Bearer {key}")
+    assert not called
+    assert sent[0]["status"] == 404
+
+
+def test_e2e_unknown_facility_unvalidated_key_goes_to_auth(app_client: Any) -> None:
+    client, fetch_user, execute = app_client
+    r = client.get(
+        "/v4/data/facilities/NEM",
+        params={"metrics": "energy", "facility_code": "NOPE"},
+        headers={"Authorization": "Bearer some_unknown_key_value"},
+    )
+    assert r.status_code != 404
+    execute.assert_not_called()

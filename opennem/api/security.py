@@ -164,6 +164,14 @@ async def _fetch_user_single_flight(key: str, ckey: str) -> OpenNEMUser:
     return await asyncio.shield(task)
 
 
+def is_key_known_valid(key: str) -> bool:
+    """True when the key is a bypass key or already sits in the fresh user cache. In-memory only, never calls Unkey/Clerk."""
+    if _is_bypass_key(key):
+        return True
+    cached = _user_cache.get(_cache_key(key))
+    return cached is not None and _now() - cached[1] < USER_CACHE_TTL_S
+
+
 async def _resolve_user_from_key(key: str, *, fresh: bool = False) -> OpenNEMUser:
     """Resolve an OpenNEMUser from a raw API key.
 

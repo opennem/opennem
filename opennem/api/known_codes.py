@@ -29,6 +29,7 @@ class _KnownCodes:
     facilities: frozenset[str] = frozenset()
     units: frozenset[str] = frozenset()
     loaded_at: float | None = None
+    last_attempt: float = float("-inf")  # monotonic time of the last refresh attempt, success or not
     refresh_task: asyncio.Task[None] | None = field(default=None, repr=False)
 
 
@@ -50,6 +51,7 @@ async def _load_codes() -> tuple[frozenset[str], frozenset[str]]:
 
 async def refresh_known_codes() -> None:
     """Reload the sets. Keeps the previous sets on any failure or an empty result."""
+    _state.last_attempt = time.monotonic()
     try:
         facilities, units = await asyncio.wait_for(_load_codes(), timeout=_LOAD_TIMEOUT_SECONDS)
     except Exception as e:
@@ -70,6 +72,13 @@ async def _refresh_loop() -> None:
         await asyncio.sleep(REFRESH_INTERVAL_SECONDS)
 
 
+async def stop_known_codes_refresher(task: asyncio.Task[None]) -> None:
+    for t in (task, _state.refresh_task):
+        if t and not t.done():
+            t.cancel()
+            await asyncio.gather(t, return_exceptions=True)
+
+
 def start_known_codes_refresher() -> asyncio.Task[None]:
     """Start the periodic refresh (first load happens in the task, not on startup)."""
     return asyncio.create_task(_refresh_loop(), name="known-codes-refresh")
@@ -78,6 +87,9 @@ def start_known_codes_refresher() -> asyncio.Task[None]:
 def _schedule_refresh() -> None:
     """Single-flight refresh kicked from a request that missed."""
     if _state.refresh_task and not _state.refresh_task.done():
+        return
+    # back off from the last attempt (not the last success) so an outage cannot cause back-to-back refreshes
+    if time.monotonic() - _state.last_attempt < MISS_REFRESH_AFTER_SECONDS:
         return
     _state.refresh_task = asyncio.create_task(refresh_known_codes(), name="known-codes-miss-refresh")
 

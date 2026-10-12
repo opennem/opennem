@@ -32,7 +32,7 @@ from opennem.api.early_reject import EarlyRejectMiddleware
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
 from opennem.api.facilities.router import router as facilities_router
 from opennem.api.feedback.router import router as feedback_router
-from opennem.api.known_codes import start_known_codes_refresher
+from opennem.api.known_codes import start_known_codes_refresher, stop_known_codes_refresher
 from opennem.api.market.router import router as market_router
 from opennem.api.milestones.router import milestones_router
 from opennem.api.openapi_extra import custom_openapi
@@ -85,7 +85,7 @@ async def lifespan(app: FastAPI):
     yield
 
     # Shutdown logic
-    known_codes_task.cancel()
+    await stop_known_codes_refresher(known_codes_task)
     await stop_loop_monitor()
 
 
