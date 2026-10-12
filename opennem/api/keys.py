@@ -76,12 +76,12 @@ def api_protected(
             try:
                 if not (key := _key_extractor(*args, **kwargs)):
                     message = "Failed to get API key"
-                    logger.error(message)
+                    logger.debug(message)
                     raise HTTPException(status_code=403, detail=message)
 
                 # dev hard coded internalkey bypasses unkey
                 if not key or not len(key) > 10:
-                    logger.error("Failed to get API key: key too short")
+                    logger.debug("Failed to get API key: key too short")
                     raise HTTPException(status_code=403, detail="Permission denied: no key provided")
 
                 # dev key bypasses unkey

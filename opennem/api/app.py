@@ -28,9 +28,11 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 from opennem import settings
 from opennem.api.admin.router import admin_router
 from opennem.api.data.router import router as data_router
+from opennem.api.early_reject import EarlyRejectMiddleware
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
 from opennem.api.facilities.router import router as facilities_router
 from opennem.api.feedback.router import router as feedback_router
+from opennem.api.known_codes import start_known_codes_refresher
 from opennem.api.market.router import router as market_router
 from opennem.api.milestones.router import milestones_router
 from opennem.api.openapi_extra import custom_openapi
@@ -78,10 +80,12 @@ async def lifespan(app: FastAPI):
         logger.info("Enabled API cache")
 
     start_loop_monitor("api")
+    known_codes_task = start_known_codes_refresher()
 
     yield
 
     # Shutdown logic
+    known_codes_task.cancel()
     await stop_loop_monitor()
 
 
@@ -102,6 +106,9 @@ origins = [
 if settings.is_dev:
     origins = ["*"]  # Allow all origins in development mode
 
+
+# added before CORS so it sits inside it: early rejections still carry CORS headers (#646/#649)
+app.add_middleware(EarlyRejectMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
