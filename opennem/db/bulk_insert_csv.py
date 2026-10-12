@@ -127,6 +127,33 @@ async def get_pool() -> Pool:
     return pool
 
 
+_COPY_CHUNK_ROWS = 2000
+
+
+def _convert_records(records: list[dict], columns: list[str], column_types: dict[str, str]) -> list[list[Any]]:
+    """Coerce record dicts to asyncpg COPY rows (pure CPU; run off-loop)."""
+    records_to_insert = []
+    for record in records:
+        record_values = []
+        for col in columns:
+            value = record.get(col)
+            if value is None:
+                record_values.append(None)
+            elif column_types[col] == "timestamp without time zone":
+                record_values.append(value if isinstance(value, datetime) else datetime.fromisoformat(str(value)))
+            elif column_types[col] == "numeric":
+                record_values.append(float(value) if value is not None and value != "" else None)
+            elif column_types[col] == "boolean":
+                value = str(value).lower()
+                record_values.append(value in ("true", "t", "yes", "y", "1"))
+            elif column_types[col] in ("integer", "bigint", "smallint"):
+                record_values.append(int(value) if value is not None else None)
+            else:
+                record_values.append(str(value))
+        records_to_insert.append(record_values)
+    return records_to_insert
+
+
 async def _bulkinsert_mms_items_inner[ORMTableType: Table](
     table: type[ORMTableType],
     records: list[dict],
@@ -152,31 +179,16 @@ async def _bulkinsert_mms_items_inner[ORMTableType: Table](
             columns = [col["column_name"] for col in table_info]
             column_types = {col["column_name"]: col["data_type"] for col in table_info}
 
-            records_to_insert = []
-            for record in records:
-                record_values = []
-                for col in columns:
-                    value = record.get(col)
-                    if value is None:
-                        record_values.append(None)
-                    elif column_types[col] == "timestamp without time zone":
-                        record_values.append(value if isinstance(value, datetime) else datetime.fromisoformat(str(value)))
-                    elif column_types[col] == "numeric":
-                        record_values.append(float(value) if value is not None and value != "" else None)
-                    elif column_types[col] == "boolean":
-                        value = str(value).lower()
-                        record_values.append(value in ("true", "t", "yes", "y", "1"))
-                    elif column_types[col] in ("integer", "bigint", "smallint"):
-                        record_values.append(int(value) if value is not None else None)
-                    else:
-                        record_values.append(str(value))
-                records_to_insert.append(record_values)
+            records_to_insert = await asyncio.to_thread(_convert_records, records, columns, column_types)
 
-            await conn.copy_records_to_table(
-                tmp_table_name.split(".")[-1],
-                records=records_to_insert,
-                columns=columns,
-            )
+            # asyncpg encodes COPY rows on the loop; chunk so the loop gets control between slices
+            for i in range(0, len(records_to_insert), _COPY_CHUNK_ROWS):
+                await conn.copy_records_to_table(
+                    tmp_table_name.split(".")[-1],
+                    records=records_to_insert[i : i + _COPY_CHUNK_ROWS],
+                    columns=columns,
+                )
+                await asyncio.sleep(0)
 
             insert_result = await conn.execute(sql_queries[2])
 

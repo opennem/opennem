@@ -1,5 +1,6 @@
 """Persistence methods to facility_scada"""
 
+import asyncio
 import logging
 
 import deprecation
@@ -54,7 +55,8 @@ async def persist_facility_scada_bulk(
 ) -> None:
     """Takes a lits of records and persists them to the database"""
 
-    records_to_store = [dict(i) for i in records]
+    # pydantic __iter__ per row blocks the loop for ~1s on large WEM batches
+    records_to_store = await asyncio.to_thread(lambda: [dict(i) for i in records])
 
     if not update_fields:
         update_fields = ["interval", "network_id", "facility_code", "is_forecast"]

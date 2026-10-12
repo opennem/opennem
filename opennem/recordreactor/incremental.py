@@ -564,21 +564,32 @@ async def run_incremental_milestone_check(
                 )
 
                 # Collect new records from all groupings
-                new_records: list[MilestoneRecordSchema] = []
+                # pydantic construction per row: seconds of CPU on big backlogs, so off-loop (read-only on current_state)
+                def _map_all(
+                    grouping_results=grouping_results,
+                    metric_def=metric_def,
+                    period=period,
+                    network=network,
+                    settled_interval=settled_interval,
+                ) -> list[MilestoneRecordSchema]:
+                    out: list[MilestoneRecordSchema] = []
+                    for grouping, rows in grouping_results:
+                        for row in rows:
+                            out.extend(
+                                _map_row_to_records(
+                                    row=row,
+                                    metric_def=metric_def,
+                                    grouping=grouping,
+                                    period=period,
+                                    network=network,
+                                    current_state=current_state,
+                                    settled_interval=settled_interval,
+                                    unseeded_record_ids=unseeded_record_ids,
+                                )
+                            )
+                    return out
 
-                for grouping, rows in grouping_results:
-                    for row in rows:
-                        records = _map_row_to_records(
-                            row=row,
-                            metric_def=metric_def,
-                            grouping=grouping,
-                            period=period,
-                            network=network,
-                            current_state=current_state,
-                            settled_interval=settled_interval,
-                            unseeded_record_ids=unseeded_record_ids,
-                        )
-                        new_records.extend(records)
+                new_records: list[MilestoneRecordSchema] = await asyncio.to_thread(_map_all)
 
                 if new_records:
                     notifiable_instance_ids |= _select_notifiable_instance_ids(

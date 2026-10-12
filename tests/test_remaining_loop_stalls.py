@@ -249,3 +249,44 @@ def test_prepare_unit_interval_data_dtypes_order_values() -> None:
     )
     assert cols.equals(pl.DataFrame(records, schema=unit_intervals._UNIT_INTERVAL_SCHEMA, orient="row"))
     assert cols.schema == pl.DataFrame(records, schema=unit_intervals._UNIT_INTERVAL_SCHEMA, orient="row").schema
+
+
+@pytest.mark.asyncio
+async def test_persist_facility_scada_bulk_converts_off_loop_and_unchanged() -> None:
+    from opennem.persistence import postgres_facility_scada as pfs
+    from opennem.persistence.schema import FacilityScadaSchema
+
+    records = [
+        FacilityScadaSchema(interval=datetime(2026, 1, 1, 0, i % 60), network_id="WEM", facility_code=f"F{i}", generated=i)
+        for i in range(300_000)
+    ]
+    seen: list[list[dict]] = []
+
+    async def fake_bulk(table: object, records: list[dict], update_fields: list[str]) -> int:
+        seen.append(records)
+        return len(records)
+
+    with patch.object(pfs, "bulkinsert_mms_items", fake_bulk):
+        gap = await _max_gap(lambda: pfs.persist_facility_scada_bulk(records, ["generated"]))
+
+    assert seen[0] == [dict(r) for r in records]
+    assert gap < 0.25
+
+
+def test_bulk_insert_convert_records_coerces_types() -> None:
+    from opennem.db.bulk_insert_csv import _convert_records
+
+    rows = _convert_records(
+        [{"a": "2026-01-01T00:05:00", "b": "1.5", "c": "t", "d": "7", "e": 3, "f": None}],
+        ["a", "b", "c", "d", "e", "f"],
+        {
+            "a": "timestamp without time zone",
+            "b": "numeric",
+            "c": "boolean",
+            "d": "integer",
+            "e": "text",
+            "f": "text",
+        },
+    )
+
+    assert rows == [[datetime(2026, 1, 1, 0, 5), 1.5, True, 7, "3", None]]
