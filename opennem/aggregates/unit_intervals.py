@@ -108,7 +108,11 @@ _UNIT_INTERVALS_MATERIALIZED_VIEWS = [
 
 
 async def _get_unit_interval_data(
-    session: AsyncSession, start_time: datetime, end_time: datetime, network: NetworkSchema | None = None
+    session: AsyncSession,
+    start_time: datetime,
+    end_time: datetime,
+    network: NetworkSchema | None = None,
+    inclusive_end: bool = False,
 ) -> list[tuple]:
     """
     Get unit interval data from PostgreSQL for a given time range.
@@ -118,6 +122,9 @@ async def _get_unit_interval_data(
         start_time: Start time for data range
         end_time: End date for data range
         network: Optional network filter
+        inclusive_end: also return the bucket AT end_time. Default is half-open [start, end) so
+            adjacent backlog chunks don't overlap; the incremental path passes True because
+            end_time is the last settled interval and must be published (#726)
 
     Returns:
         List of tuples containing unit interval data
@@ -125,6 +132,8 @@ async def _get_unit_interval_data(
     # Strip timezone info
     start_time_naive = start_time.replace(tzinfo=None)
     end_time_naive = end_time.replace(tzinfo=None)
+    # exclusive upper bound for gapfill + output; the source scans above stay `<= :end_time`
+    end_excl_naive = end_time_naive + timedelta(minutes=5) if inclusive_end else end_time_naive
 
     network_where_clause = ""
 
@@ -150,7 +159,7 @@ async def _get_unit_interval_data(
     filled_balancing_summary AS (
         -- Now gap-fill and carry forward the 30-minute prices to 5-minute intervals
         SELECT
-            time_bucket_gapfill('5 minutes', pd.interval, :start_time, :end_time) as interval,
+            time_bucket_gapfill('5 minutes', pd.interval, :start_time, :end_excl) as interval,
             pd.network_id,
             pd.network_region,
             locf(avg(pd.demand)) AS demand,
@@ -194,7 +203,7 @@ async def _get_unit_interval_data(
                 max(real_interval) OVER (PARTITION BY unit_code) as max_real_interval
             FROM (
                 SELECT
-                    time_bucket_gapfill('5 minutes', fs.interval, :solar_start_time, :end_time) as interval,
+                    time_bucket_gapfill('5 minutes', fs.interval, :solar_start_time, :end_excl) as interval,
                     fs.network_id,
                     f.network_region,
                     f.code as facility_code,
@@ -336,7 +345,7 @@ async def _get_unit_interval_data(
         AND bs.network_region = cd.network_region
     WHERE
         cd.interval >= :start_time
-        AND cd.interval < :end_time
+        AND cd.interval < :end_excl
     ORDER BY 1,2,3,4,5
     """)
 
@@ -345,6 +354,7 @@ async def _get_unit_interval_data(
         {
             "start_time": start_time_naive,
             "end_time": end_time_naive,
+            "end_excl": end_excl_naive,
             "solar_start_time": start_time_naive - _ROOFTOP_LOOKBACK,
         },
     )
@@ -967,7 +977,9 @@ async def run_unit_intervals_aggregate_to_now() -> int:
 
     # run unit intervals from earliest lagging network to now
     async with get_write_session() as session:
-        records = await _get_unit_interval_data(session, date_from, date_to)
+        # date_to is the last settled interval: include its bucket (#726). Re-inserting an interval is
+        # safe, the table is ReplacingMergeTree(version) keyed on interval + unit.
+        records = await _get_unit_interval_data(session, date_from, date_to, inclusive_end=True)
         prepared_data = await asyncio.to_thread(_prepare_unit_interval_data, records)
 
     await insert_async(
@@ -984,7 +996,10 @@ async def run_unit_intervals_aggregate_to_now() -> int:
         prepared_data,
     )
 
-    logger.info(f"Processed {len(prepared_data)} records from {date_from} to {date_to}")
+    # newest bucket actually written: lets prod logs show ch keeping up with scada (#726)
+    # NEM rows only: rooftop locf rows can extend to the end bucket before any NEM scada does
+    max_written = max((row[0] for row in prepared_data if row[1] == "NEM"), default=None)
+    logger.info(f"Processed {len(prepared_data)} records from {date_from} to {date_to}, max interval written {max_written}")
 
     return len(prepared_data)
 
