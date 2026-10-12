@@ -37,6 +37,17 @@ def _sentry_before_send(event, hint):
     return event
 
 
+_DROPPED_TRANSACTION_STATUSES = {404, 410}
+
+
+def _sentry_before_send_transaction(event, hint):
+    """Drop 404/410 transactions (dead routes, unknown codes): pure noise against span quota (#649)"""
+    data = (event.get("contexts") or {}).get("trace", {}).get("data") or {}
+    if data.get("http.response.status_code") in _DROPPED_TRANSACTION_STATUSES:
+        return None
+    return event
+
+
 def setup_sentry(
     sentry_url: str,
     environment: str,
@@ -87,6 +98,7 @@ def setup_sentry(
 
     # Filter auth exceptions in all non-local environments
     sentry_options["before_send"] = _sentry_before_send
+    sentry_options["before_send_transaction"] = _sentry_before_send_transaction
 
     sentry_sdk.init(**sentry_options)
 
