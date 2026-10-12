@@ -50,7 +50,9 @@ def test_unit_intervals_solar_gapfill_extends_to_end_with_lookback_seed() -> Non
         # gapfill must have an explicit window [solar_start_time, end_time] so locf can
         # carry the last reading forward to the core-gen edge (implicit bounds truncated
         # rooftop at the last real reading in the narrow incremental window).
-        assert "time_bucket_gapfill('5 minutes', fs.interval, :solar_start_time, :end_time)" in src, (
+        # _get_unit_interval_data gapfills to the exclusive :end_excl bound (#726), the streaming one to :end_time
+        bound = ":end_excl" if fn is _get_unit_interval_data else ":end_time"
+        assert f"time_bucket_gapfill('5 minutes', fs.interval, :solar_start_time, {bound})" in src, (
             f"{fn.__name__}: rooftop gapfill must use explicit :solar_start_time/:end_time bounds (#579)"
         )
         # locf carries the 30-min reading across the 5-min grid and past the last reading.

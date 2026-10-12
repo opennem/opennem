@@ -32,14 +32,12 @@ def test_poll_budget_leaves_time_for_the_rest_of_the_pipeline() -> None:
         asyncio.run(tasks.task_nem_interval_check({}))
 
     crawlers = [c.args[0] for c in crawl.await_args_list]
-    # polls end at 50s, 105s and 165s; waiting again after the third would pass the 120s budget
-    assert crawlers == [
-        tasks.AEMONNemwebDispatchScada,
-        tasks.AEMONNemwebDispatchScada,
-        tasks.AEMONNemwebDispatchScada,
-        tasks.AEMONemwebDispatchIS,
-        tasks.AEMONemwebTradingIS,
-    ]
+    # prices start alongside the poll (#726); polls end at 50s, 105s and 165s, and waiting again after
+    # the third would pass the 120s budget. No SCADA landed, so no second price crawl.
+    assert sorted(c.name for c in crawlers) == sorted(
+        [tasks.AEMONNemwebDispatchScada.name] * 3 + [tasks.AEMONemwebDispatchIS.name, tasks.AEMONemwebTradingIS.name]
+    )
+    assert crawlers.index(tasks.AEMONemwebDispatchIS) < crawlers.index(tasks.AEMONemwebTradingIS)
     energy.assert_awaited_once()
     market.assert_awaited_once()
     assert export.await_count == 2
