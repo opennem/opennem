@@ -3,6 +3,7 @@ Utility functions for API exporter
 
 """
 
+import asyncio
 import logging
 
 from pydantic.main import BaseModel
@@ -21,7 +22,8 @@ async def write_output(
     exclude_unset: bool = True,
 ) -> int:
     """Writes output of stat sets either locally or to s3"""
-    write_content = stat_set.model_dump_json(exclude_unset=exclude_unset)
+    # 1.4-2.2 MiB serialisation is CPU-bound; keep it off the event loop
+    write_content = await asyncio.to_thread(stat_set.model_dump_json, exclude_unset=exclude_unset)
 
     byte_count = 0
 

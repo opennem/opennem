@@ -246,7 +246,7 @@ class Facility(Base):
     location = Column(Geometry("POINT", srid=4326), nullable=True)  # PostGIS location point
     boundary = Column(Geometry("GEOMETRY", srid=4326), nullable=True)  # OSM boundary polygon/multipolygon
 
-    units: Mapped[list["Unit"]] = relationship("Unit", innerjoin=True, lazy="selectin")
+    units: Mapped[list["Unit"]] = relationship("Unit", innerjoin=True, lazy="selectin", order_by="Unit.code")
 
     code_display: Mapped[str | None] = mapped_column(Text, nullable=True)
 

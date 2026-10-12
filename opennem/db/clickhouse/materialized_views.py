@@ -7,6 +7,7 @@ materialized views in ClickHouse.
 
 import logging
 from datetime import datetime, timedelta
+from typing import cast
 
 from opennem.db.clickhouse.client import get_clickhouse_client, table_exists
 from opennem.db.clickhouse.views import (
@@ -25,17 +26,26 @@ def ensure_materialized_views_exist(views: list[MaterializedView] | None = None)
     if views is None:
         views = list(CLICKHOUSE_MATERIALIZED_VIEWS.values())
 
+    if not views:
+        return
+
+    # One system.tables lookup for every view rather than two per view (N+1, BACKEND-61Y)
+    rows = cast(
+        list[tuple[str, str]],
+        client.execute(
+            "SELECT name, engine FROM system.tables WHERE database = currentDatabase() AND name IN %(names)s",
+            {"names": tuple(view.name for view in views)},
+        ),
+    )
+    engines = dict(rows)
+
     for view in views:
-        exists = table_exists(client, view.name)
+        exists = view.name in engines
+        wants_mv = "CREATE MATERIALIZED VIEW" in view.schema.upper()
 
         if exists:
             # Check if engine type matches schema (TABLE vs MV)
-            result = client.execute(
-                "SELECT engine FROM system.tables WHERE database = currentDatabase() AND name = %(name)s",
-                {"name": view.name},
-            )
-            is_mv = bool(result and "MaterializedView" in str(result[0][0]))
-            wants_mv = "CREATE MATERIALIZED VIEW" in view.schema.upper()
+            is_mv = "MaterializedView" in engines[view.name]
 
             if is_mv != wants_mv:
                 logger.info(f"Recreating {view.name} (engine type changed)")
@@ -44,6 +54,8 @@ def ensure_materialized_views_exist(views: list[MaterializedView] | None = None)
 
         if not exists:
             client.execute(view.schema)
+            # Record it so a view repeated in `views` isn't created twice
+            engines[view.name] = "MaterializedView" if wants_mv else "Table"
             logger.info(f"Created: {view.name}")
         else:
             logger.debug(f"Already exists: {view.name}")

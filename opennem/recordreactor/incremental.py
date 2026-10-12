@@ -7,9 +7,12 @@ periods from ClickHouse, compares against current records, and INSERTs only new 
 Replaces the full-regeneration approach in backlog.py for scheduled runs.
 """
 
+import asyncio
 import logging
 import uuid
+from collections.abc import Callable
 from datetime import datetime, timedelta
+from typing import Any
 
 from opennem import settings
 from opennem.clients.slack import slack_message
@@ -478,6 +481,19 @@ async def run_gap_backfill() -> None:
     logger.info("Gap backfill complete")
 
 
+async def _run_ch_off_loop[T](fn: Callable[..., T], **kwargs: Any) -> T:
+    """Run a sync ClickHouse query function on a worker thread so the worker event loop keeps running.
+
+    The client is fetched inside the thread: it is thread-local, so a coroutine using the loop
+    thread's client can never collide with this call ("Simultaneous queries on single connection").
+    """
+
+    def _run() -> T:
+        return fn(client=get_clickhouse_client(), **kwargs)
+
+    return await asyncio.to_thread(_run)
+
+
 async def run_incremental_milestone_check(
     networks: list[NetworkSchema] | None = None,
     alert_slack: bool = True,
@@ -504,7 +520,6 @@ async def run_incremental_milestone_check(
     # Hand any downtime gap to its own job — it is minutes of work, this cron has 300s (#654)
     await _enqueue_gap_backfill_if_needed()
 
-    client = get_clickhouse_client()
     # Always reload state from DB to avoid stale reads after reconciliation/admin writes
     current_state = await refresh_current_milestone_state()
     all_new_records: list[MilestoneRecordOutputSchema] = []
@@ -520,7 +535,7 @@ async def run_incremental_milestone_check(
         # get_last_completed_interval_for_network returns the start of the current interval
         # (e.g. 10:05 at 10:07) — subtract one interval to get the last truly completed one
         now = get_last_completed_interval_for_network(network) - timedelta(minutes=network.interval_size)
-        settled_interval = get_last_settled_interval(client=client, network=network, now=now)
+        settled_interval = await _run_ch_off_loop(get_last_settled_interval, network=network, now=now)
         completed_periods = get_completed_periods(
             now,
             network,
@@ -539,8 +554,8 @@ async def run_incremental_milestone_check(
 
             for metric_def in metric_defs:
                 # Query all groupings for this metric + period
-                grouping_results = query_all_groupings_for_period(
-                    client=client,
+                grouping_results = await _run_ch_off_loop(
+                    query_all_groupings_for_period,
                     metric_def=metric_def,
                     network=network,
                     period=period,
@@ -549,21 +564,32 @@ async def run_incremental_milestone_check(
                 )
 
                 # Collect new records from all groupings
-                new_records: list[MilestoneRecordSchema] = []
+                # pydantic construction per row: seconds of CPU on big backlogs, so off-loop (read-only on current_state)
+                def _map_all(
+                    grouping_results=grouping_results,
+                    metric_def=metric_def,
+                    period=period,
+                    network=network,
+                    settled_interval=settled_interval,
+                ) -> list[MilestoneRecordSchema]:
+                    out: list[MilestoneRecordSchema] = []
+                    for grouping, rows in grouping_results:
+                        for row in rows:
+                            out.extend(
+                                _map_row_to_records(
+                                    row=row,
+                                    metric_def=metric_def,
+                                    grouping=grouping,
+                                    period=period,
+                                    network=network,
+                                    current_state=current_state,
+                                    settled_interval=settled_interval,
+                                    unseeded_record_ids=unseeded_record_ids,
+                                )
+                            )
+                    return out
 
-                for grouping, rows in grouping_results:
-                    for row in rows:
-                        records = _map_row_to_records(
-                            row=row,
-                            metric_def=metric_def,
-                            grouping=grouping,
-                            period=period,
-                            network=network,
-                            current_state=current_state,
-                            settled_interval=settled_interval,
-                            unseeded_record_ids=unseeded_record_ids,
-                        )
-                        new_records.extend(records)
+                new_records: list[MilestoneRecordSchema] = await asyncio.to_thread(_map_all)
 
                 if new_records:
                     notifiable_instance_ids |= _select_notifiable_instance_ids(

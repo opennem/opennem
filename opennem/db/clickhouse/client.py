@@ -69,7 +69,9 @@ def get_clickhouse_client(timeout: int = 10) -> Client:
     return client
 
 
-async def execute_async(client: Client, query: str, params: dict | None = None, **kwargs: Any) -> Any:
+async def execute_async(
+    client: Client, query: str, params: dict | None = None, *, serving_limits: bool = True, **kwargs: Any
+) -> Any:
     """
     Run a blocking clickhouse-driver execute() in a thread so the
     asyncio event loop is not blocked.  Each thread in the pool gets
@@ -78,12 +80,18 @@ async def execute_async(client: Client, query: str, params: dict | None = None, 
     Conservative per-query resource limits (see ``_serving_query_settings``) are applied
     by default so one expensive serving query cannot OOM the shared server. Callers can
     override individual limits by passing ``settings={...}`` (caller keys win per-key).
+
+    ``serving_limits=False`` skips those defaults (export/batch reads that may legitimately run
+    long); only caller-supplied ``settings`` are passed, so the call matches a plain sync execute.
     """
-    merged_settings = {**_serving_query_settings(), **(kwargs.pop("settings", None) or {})}
+    caller_settings = kwargs.pop("settings", None) or {}
+    merged_settings = {**(_serving_query_settings() if serving_limits else {}), **caller_settings}
+    if serving_limits or merged_settings:
+        kwargs["settings"] = merged_settings
 
     def _run() -> Any:
         tl_client = get_clickhouse_client()
-        return tl_client.execute(query, params, settings=merged_settings, **kwargs)
+        return tl_client.execute(query, params, **kwargs)
 
     # clickhouse-driver has no Sentry integration; wrap so query time shows as a
     # db span on sampled API/worker traces.

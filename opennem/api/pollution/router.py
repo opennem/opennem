@@ -7,12 +7,15 @@ Handles NPI pollution data queries for facilities.
 import logging
 from collections import defaultdict
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Any
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request, Response
+from fastapi.routing import serialize_response
 from fastapi_versionizer import api_version
+from pydantic import TypeAdapter
 from sqlalchemy import select
 
+from opennem.api.pollution.cache import build_cache_key, cache_get, cache_set
 from opennem.api.schema import APIV4ResponseSchema, std_error_responses
 from opennem.api.security import authenticated_user
 from opennem.api.timeseries import TimeSeries, TimeSeriesResult
@@ -31,6 +34,7 @@ from opennem.schema.pollution import (
 
 router = APIRouter()
 logger = logging.getLogger("opennem.api.pollution")
+_FALLBACK_ADAPTER: TypeAdapter[APIV4ResponseSchema[list[TimeSeries]]] = TypeAdapter(APIV4ResponseSchema[list[TimeSeries]])
 
 
 @api_version(4)
@@ -43,6 +47,8 @@ logger = logging.getLogger("opennem.api.pollution")
     description="Get pollution data for facilities with NPI tracking",
 )
 async def get_facility_pollution(
+    request: Request,
+    response: Response,
     user: authenticated_user,
     facility_code: Annotated[
         list[str] | None, Query(description="The facility code(s) to get pollution data for", examples=["YALLOURN"])
@@ -61,7 +67,7 @@ async def get_facility_pollution(
         datetime | None, Query(description="Start time for the query", examples=["1998-01-01T00:00:00"])
     ] = None,
     date_end: Annotated[datetime | None, Query(description="End time for the query", examples=["2024-12-31T00:00:00"])] = None,
-) -> APIV4ResponseSchema[list[TimeSeries]]:
+) -> Response:
     """
     Get pollution data for facilities that have NPI tracking.
 
@@ -79,15 +85,59 @@ async def get_facility_pollution(
     Returns:
         APIV4ResponseSchema: Time series data response with pollution data grouped by pollutant
     """
+    pollutant_codes_to_query = _resolve_pollutant_codes(pollutant_code, pollutant_category)
+    key = build_cache_key(facility_code, sorted(pollutant_codes_to_query), date_start, date_end)
+
+    body = await cache_get(key)
+    if body is None:
+        # HTTPException (404) propagates here, so errors are never cached
+        result = await _build_response(facility_code, pollutant_codes_to_query, date_start, date_end)
+        body = await _serialize(request, result)
+        await cache_set(key, body)
+
+    out = Response(content=body, media_type="application/json")
+    # headers set by dependencies (rate limit etc.), as FastAPI appends on the normal path
+    out.headers.raw.extend(response.headers.raw)
+    return out
+
+
+def _resolve_pollutant_codes(
+    pollutant_code: list[PollutantCode] | None, pollutant_category: list[PollutantCategory] | None
+) -> set[str]:
+    """Pollutant codes to query: explicit codes plus category members; air pollutants when no filters."""
+    codes: set[str] = set()
+    if pollutant_code:
+        codes.update(code.value for code in pollutant_code)
+    if pollutant_category:
+        for category in pollutant_category:
+            codes.update(code.value for code in get_pollutants_by_category(category))
+    if not pollutant_code and not pollutant_category:
+        codes.update(code.value for code in get_pollutants_by_category(PollutantCategory.AIR_POLLUTANT))
+    return codes
+
+
+async def _serialize(request: Request, result: APIV4ResponseSchema[list[TimeSeries]]) -> bytes:
+    """Serialize exactly as FastAPI's response_model path does (validate + dump_json, exclude_none)."""
+    field = getattr(request.scope.get("route"), "response_field", None)
+    if field is None:
+        return _FALLBACK_ADAPTER.dump_json(result, by_alias=True, exclude_none=True)
+    return await serialize_response(field=field, response_content=result, exclude_none=True, dump_json=True)
+
+
+async def _build_response(
+    facility_code: list[str] | None, pollutant_codes_to_query: set[str], date_start: datetime | None, date_end: datetime | None
+) -> APIV4ResponseSchema[list[TimeSeries]]:
     async with get_read_session() as session:
         # Build query to get facilities with NPI IDs
-        stmt = select(Facility).where(Facility.approved.is_(True), Facility.npi_id.is_not(None))
+        stmt = select(Facility.code, Facility.name, Facility.npi_id).where(
+            Facility.approved.is_(True), Facility.npi_id.is_not(None)
+        )
 
         if facility_code:
             stmt = stmt.where(Facility.code.in_(facility_code))
 
         result = await session.execute(stmt)
-        facilities = result.scalars().all()
+        facilities = result.all()
 
         if not facilities:
             raise HTTPException(
@@ -102,29 +152,21 @@ async def get_facility_pollution(
 
         # Build query for pollution data
         pollution_stmt = (
-            select(NPIPollution, NPISubstance, NPIFacility)
+            select(
+                NPIPollution.npi_facility_id,
+                NPIPollution.report_year,
+                NPIPollution.pollution_value,
+                NPIPollution.data_quality,
+                NPISubstance.code,
+                NPISubstance.npi_name,
+                NPISubstance.category,
+                NPISubstance.cas_number,
+            )
+            .select_from(NPIPollution)
             .join(NPISubstance, NPIPollution.substance_code == NPISubstance.code)
             .join(NPIFacility, NPIPollution.npi_facility_id == NPIFacility.npi_id)
             .where(NPIPollution.npi_facility_id.in_(npi_ids), NPISubstance.enabled.is_(True))
         )
-
-        # Determine which pollutants to query
-        pollutant_codes_to_query = set()
-
-        # If specific codes provided, use those
-        if pollutant_code:
-            pollutant_codes_to_query.update([code.value for code in pollutant_code])
-
-        # If categories provided, add codes for those categories
-        if pollutant_category:
-            for category in pollutant_category:
-                category_codes = get_pollutants_by_category(category)
-                pollutant_codes_to_query.update([code.value for code in category_codes])
-
-        # If no filters provided, default to air pollutants
-        if not pollutant_code and not pollutant_category:
-            air_codes = get_pollutants_by_category(PollutantCategory.AIR_POLLUTANT)
-            pollutant_codes_to_query.update([code.value for code in air_codes])
 
         # Apply pollutant filter if we have specific codes
         if pollutant_codes_to_query:
@@ -136,8 +178,13 @@ async def get_facility_pollution(
         if date_end:
             pollution_stmt = pollution_stmt.where(NPIPollution.report_year <= date_end.year)
 
+        # category/subcategory tiebreak: several rows can share (facility, substance, year); matches the unique index order
         pollution_stmt = pollution_stmt.order_by(
-            NPIPollution.npi_facility_id, NPIPollution.substance_code, NPIPollution.report_year
+            NPIPollution.npi_facility_id,
+            NPIPollution.substance_code,
+            NPIPollution.report_year,
+            NPIPollution.pollution_category,
+            NPIPollution.pollution_subcategory,
         )
 
         pollution_result = await session.execute(pollution_stmt)
@@ -151,19 +198,26 @@ async def get_facility_pollution(
 
         # Create facility code lookup
         npi_to_facility = {f.npi_id: f.code for f in facilities}
+        # first facility wins per code, matching the previous linear `next(...)` lookup
+        facility_names: dict[str, str] = {}
+        for f in facilities:
+            facility_names.setdefault(str(f.code), str(f.name))
+        # substance rows already come back from the join; no per-pollutant re-query
+        substances: dict[str, Any] = {}
 
-        for pollution, substance, _npi_facility in pollution_data:
-            row_facility_code = npi_to_facility.get(pollution.npi_facility_id, pollution.npi_facility_id)
+        for row in pollution_data:
+            row_facility_code = npi_to_facility.get(row.npi_facility_id, row.npi_facility_id)
 
             # Create datetime for the report year (use July 1st as middle of reporting year)
-            timestamp = datetime(pollution.report_year, 7, 1)
+            timestamp = datetime(row.report_year, 7, 1)
 
             # Get data quality or default to unknown
-            data_quality = pollution.data_quality or DataQuality.UNKNOWN.value
+            data_quality = row.data_quality or DataQuality.UNKNOWN.value
 
             # Add to pollutant group with value and quality
-            pollutant_groups[substance.code][row_facility_code].append(
-                {"timestamp": timestamp, "value": pollution.pollution_value, "data_quality": data_quality}
+            substances.setdefault(row.code, row)
+            pollutant_groups[row.code][row_facility_code].append(
+                {"timestamp": timestamp, "value": row.pollution_value, "data_quality": data_quality}
             )
 
         # Create TimeSeries objects for each pollutant
@@ -171,9 +225,7 @@ async def get_facility_pollution(
 
         for pollutant_code, facility_data in pollutant_groups.items():
             # Get substance metadata
-            substance_stmt = select(NPISubstance).where(NPISubstance.code == pollutant_code)
-            substance_result = await session.execute(substance_stmt)
-            substance = substance_result.scalar_one()
+            substance = substances[str(pollutant_code)]
 
             # Get date range for this pollutant
             all_dates = []
@@ -194,7 +246,7 @@ async def get_facility_pollution(
                 data_points.sort(key=lambda x: x["timestamp"])
 
                 # Get facility name
-                facility_name = next((str(f.name) for f in facilities if f.code == fc), fc_str)
+                facility_name = facility_names.get(fc_str, fc_str)
 
                 # Format data for TimeSeries (timestamp, value)
                 formatted_data = [(dp["timestamp"], dp["value"]) for dp in data_points]

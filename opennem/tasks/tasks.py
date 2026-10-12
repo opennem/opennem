@@ -6,6 +6,8 @@ import time
 from datetime import timedelta
 
 from arq import Retry
+from sanity.exceptions import SanityConnectionError, SanityRateLimitError, SanityServerError, SanityTimeoutError
+from sqlalchemy.exc import IntegrityError
 
 from opennem import settings
 from opennem.aggregates.market_summary import run_market_summary_aggregate_for_last_intervals
@@ -15,6 +17,7 @@ from opennem.cms.importer import update_database_facilities_from_cms
 from opennem.cms.updates import send_cms_updates_slack_report
 from opennem.controllers.capacity_history import export_capacity_history_json
 from opennem.controllers.export import run_export_energy_all, run_export_energy_for_year
+from opennem.controllers.sanity import sync_sanity_record
 from opennem.core.battery import check_unsplit_batteries
 from opennem.crawl import run_crawl
 from opennem.crawlers.aemo_market_notice import run_market_notice_update
@@ -82,12 +85,13 @@ async def task_nem_interval_check(ctx) -> None:
     await process_energy_last_intervals(num_intervals=12)
     await run_market_summary_aggregate_for_last_intervals(num_intervals=12)
 
-    # unit_intervals aggregate doesn't block exports — run concurrently
-    await asyncio.gather(
-        run_unit_intervals_aggregate_to_now(),
-        run_export_power_latest_for_network(network=NetworkNEM),
-        run_export_power_latest_for_network(network=NetworkAU),
-    )
+    # unit_intervals aggregate doesn't block exports — run concurrently with ONE export chain.
+    # NEM and AU exports run back to back, not gathered (peak memory, #677).
+    async def _exports() -> None:
+        await run_export_power_latest_for_network(network=NetworkNEM)
+        await run_export_power_latest_for_network(network=NetworkAU)
+
+    await asyncio.gather(run_unit_intervals_aggregate_to_now(), _exports())
 
 
 async def task_nem_per_day_check(ctx) -> None:
@@ -275,6 +279,21 @@ async def task_refresh_from_cms(ctx) -> None:
     pass
 
     await update_database_facilities_from_cms(send_slack=False)
+
+
+SANITY_WEBHOOK_RETRY_DELAY = 30
+
+
+async def task_sanity_webhook(ctx: dict, record_type: str, cms_id: str) -> None:
+    """Sync a record from a sanity webhook (enqueued deferred, deduped by sanity:{type}:{id})"""
+    try:
+        await sync_sanity_record(record_type, cms_id)
+    except IntegrityError as e:
+        logger.warning(f"Sanity sync skipped — DB constraint conflict (duplicate code?): {e}")
+    except (TimeoutError, SanityTimeoutError, SanityConnectionError, SanityServerError, SanityRateLimitError) as e:
+        # CMS CDN still down after in-client retries — replaces the old 503 so sanity retried
+        logger.warning(f"Sanity sync for {record_type}:{cms_id} — CMS unavailable, retrying: {e}")
+        raise Retry(defer=SANITY_WEBHOOK_RETRY_DELAY * ctx.get("job_try", 1)) from e
 
 
 # other tasks

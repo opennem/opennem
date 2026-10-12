@@ -4,13 +4,15 @@ OpenNEM API
 Primary Router. All the main setup of the API is here.
 """
 
+import json
 import logging
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.param_functions import Query
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.backends.redis import RedisBackend
@@ -21,20 +23,23 @@ from redis import asyncio as aioredis
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 from opennem import settings
+from opennem.api.admin.router import admin_router
 from opennem.api.data.router import router as data_router
+from opennem.api.early_reject import EarlyRejectMiddleware
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
 from opennem.api.facilities.router import router as facilities_router
 from opennem.api.feedback.router import router as feedback_router
+from opennem.api.known_codes import start_known_codes_refresher, stop_known_codes_refresher
 from opennem.api.market.router import router as market_router
 from opennem.api.milestones.router import milestones_router
 from opennem.api.openapi_extra import custom_openapi
 from opennem.api.plans.router import router as plans_router
 from opennem.api.pollution.router import router as pollution_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
-from opennem.api.security import authenticated_user
-from opennem.api.social.router import router as social_router
+from opennem.api.security import fresh_authenticated_user
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
 from opennem.api.webhooks.router import router as webhooks_router
@@ -48,6 +53,7 @@ from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.users.schema import OpenNEMUserMeResponse, to_user_me
 from opennem.utils.host import get_hostname
+from opennem.utils.loop_monitor import start_loop_monitor, stop_loop_monitor
 from opennem.utils.version import get_version
 
 logger = logging.getLogger("opennem.api")
@@ -73,9 +79,14 @@ async def lifespan(app: FastAPI):
         FastAPICache.init(RedisBackend(redis), prefix="api-cache")
         logger.info("Enabled API cache")
 
+    start_loop_monitor("api")
+    known_codes_task = start_known_codes_refresher()
+
     yield
 
     # Shutdown logic
+    await stop_known_codes_refresher(known_codes_task)
+    await stop_loop_monitor()
 
 
 app = FastAPI(
@@ -96,6 +107,9 @@ if settings.is_dev:
     origins = ["*"]  # Allow all origins in development mode
 
 
+# added before CORS so it sits inside it: early rejections still carry CORS headers (#646/#649)
+app.add_middleware(EarlyRejectMiddleware)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -106,18 +120,25 @@ app.add_middleware(
 )
 
 
-#  Maintenance mode middleware
-@app.middleware("http")
-async def intercept_maintenance_mode(request: Request, call_next):  # type: ignore
-    if settings.maintenance_mode:
-        logger.debug("Maintenance mode")
+class MaintenanceModeMiddleware:
+    """Pure ASGI maintenance gate: no per-request task/stream wrapping like BaseHTTPMiddleware."""
 
-        resp_content = OpennemErrorSchema(error="Maintenance Mode")
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
 
-        return OpennemExceptionResponse(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, response_class=resp_content)
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] == "http" and settings.maintenance_mode:
+            logger.debug("Maintenance mode")
+            resp = OpennemExceptionResponse(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE, response_class=OpennemErrorSchema(error="Maintenance Mode")
+            )
+            await resp(scope, receive, send)
+            return
 
-    response = await call_next(request)
-    return response
+        await self.app(scope, receive, send)
+
+
+app.add_middleware(MaintenanceModeMiddleware)
 
 
 # Custom exception handler
@@ -244,7 +265,8 @@ app.include_router(webhooks_router, tags=["Webhooks"], prefix="/webhooks", inclu
 app.include_router(data_router, tags=["Data"], prefix="/data")
 app.include_router(market_router, tags=["Market"], prefix="/market")
 app.include_router(plans_router, tags=["Plans"], prefix="/plans")
-app.include_router(social_router, tags=["Social"], prefix="/social")
+# admin routes: clerk-admin only, never in any openapi doc (see opennem/api/admin/router.py)
+app.include_router(admin_router, prefix="/admin", include_in_schema=False)
 
 # new v4 routes
 try:
@@ -425,22 +447,7 @@ def units() -> list[UnitDefinition]:
     return UNITS
 
 
-@api_version(4)
-@app.get(
-    "/metrics",
-    response_model=dict,
-    response_model_exclude_none=True,
-    response_model_exclude_unset=False,
-    tags=["Core"],
-    description="Get all available metrics and their metadata",
-)
-def get_metrics() -> dict:
-    """
-    Get all available metrics with their metadata.
-
-    Returns a dictionary of metrics with their units, descriptions, and other metadata.
-    This endpoint helps clients discover what metrics are available in the API.
-    """
+def _build_metrics_response() -> dict:
     metrics_info = {}
 
     for metric, metadata in METRIC_METADATA.items():
@@ -472,6 +479,30 @@ def get_metrics() -> dict:
     }
 
 
+_METRICS_RESPONSE: dict = _build_metrics_response()
+# static for the process lifetime: encode once, skip per-request deepcopy + response_model validation
+_METRICS_BODY: bytes = json.dumps(jsonable_encoder(_METRICS_RESPONSE, exclude_none=True), separators=(",", ":")).encode()
+
+
+@api_version(4)
+@app.get(
+    "/metrics",
+    response_model=dict,
+    response_model_exclude_none=True,
+    response_model_exclude_unset=False,
+    tags=["Core"],
+    description="Get all available metrics and their metadata",
+)
+async def get_metrics() -> Response:
+    """
+    Get all available metrics with their metadata.
+
+    Returns a dictionary of metrics with their units, descriptions, and other metadata.
+    This endpoint helps clients discover what metrics are available in the API.
+    """
+    return Response(content=_METRICS_BODY, media_type="application/json")
+
+
 @app.get("/health", include_in_schema=False)
 def health_check() -> str:
     """Health check"""
@@ -487,7 +518,7 @@ def health_check() -> str:
     tags=["User"],
     description="Get the current user",
 )
-async def get_user_me(user: authenticated_user) -> OpenNEMUserMeResponse:
+async def get_user_me(user: fresh_authenticated_user) -> OpenNEMUserMeResponse:
     return OpenNEMUserMeResponse(data=to_user_me(user))
 
 

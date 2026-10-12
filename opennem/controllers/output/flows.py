@@ -1,11 +1,12 @@
+import asyncio
 import logging
 
 from opennem import settings
-from opennem.api.stats.controllers import stats_factory
+from opennem.api.stats.controllers import stats_factory_async
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.units import get_unit
-from opennem.db.clickhouse import get_clickhouse_client
+from opennem.db.clickhouse import execute_async, get_clickhouse_client
 from opennem.utils.dates import fmt_clickhouse_dt
 
 logger = logging.getLogger("opennem.controllers.flows")
@@ -48,20 +49,24 @@ async def power_flows_per_interval(
     ORDER BY 1 DESC
     """
 
-    rows = ch_client.execute(query)
+    rows = await execute_async(ch_client, query, serving_limits=False)
 
     if not rows:
         logger.warning(f"No flow results for {network_region_code}")
         return None
 
-    imports = [DataQueryResult(interval=i[0], result=i[2], group_by="imports") for i in rows]
-    exports = [DataQueryResult(interval=i[0], result=i[3], group_by="exports") for i in rows]
-    emissions_imports = [DataQueryResult(interval=i[0], result=i[4], group_by="imports") for i in rows]
-    emissions_exports = [DataQueryResult(interval=i[0], result=i[5], group_by="exports") for i in rows]
-    ef_imports = [DataQueryResult(interval=i[0], result=i[8], group_by="imports") for i in rows]
-    ef_exports = [DataQueryResult(interval=i[0], result=i[9], group_by="exports") for i in rows]
+    imports = await asyncio.to_thread(lambda: [DataQueryResult(interval=i[0], result=i[2], group_by="imports") for i in rows])
+    exports = await asyncio.to_thread(lambda: [DataQueryResult(interval=i[0], result=i[3], group_by="exports") for i in rows])
+    emissions_imports = await asyncio.to_thread(
+        lambda: [DataQueryResult(interval=i[0], result=i[4], group_by="imports") for i in rows]
+    )
+    emissions_exports = await asyncio.to_thread(
+        lambda: [DataQueryResult(interval=i[0], result=i[5], group_by="exports") for i in rows]
+    )
+    ef_imports = await asyncio.to_thread(lambda: [DataQueryResult(interval=i[0], result=i[8], group_by="imports") for i in rows])
+    ef_exports = await asyncio.to_thread(lambda: [DataQueryResult(interval=i[0], result=i[9], group_by="exports") for i in rows])
 
-    result = stats_factory(
+    result = await stats_factory_async(
         imports,
         network=time_series.network,
         interval=time_series.interval,
@@ -73,7 +78,7 @@ async def power_flows_per_interval(
     if not result:
         return None
 
-    result_exports = stats_factory(
+    result_exports = await stats_factory_async(
         exports,
         network=time_series.network,
         interval=time_series.interval,
@@ -84,7 +89,7 @@ async def power_flows_per_interval(
     result.append_set(result_exports)
 
     result.append_set(
-        stats_factory(
+        await stats_factory_async(
             emissions_imports,
             network=time_series.network,
             interval=time_series.interval,
@@ -94,7 +99,7 @@ async def power_flows_per_interval(
         )
     )
     result.append_set(
-        stats_factory(
+        await stats_factory_async(
             emissions_exports,
             network=time_series.network,
             interval=time_series.interval,
@@ -106,7 +111,7 @@ async def power_flows_per_interval(
 
     if settings.show_emission_factors_in_power_outputs:
         result.append_set(
-            stats_factory(
+            await stats_factory_async(
                 ef_imports,
                 network=time_series.network,
                 interval=time_series.interval,
@@ -116,7 +121,7 @@ async def power_flows_per_interval(
             )
         )
         result.append_set(
-            stats_factory(
+            await stats_factory_async(
                 ef_exports,
                 network=time_series.network,
                 interval=time_series.interval,

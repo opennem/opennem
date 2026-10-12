@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import re
 from datetime import timedelta
@@ -8,13 +9,13 @@ from opennem.api.export.queries import (
     country_stats_query,
     interconnector_flow_network_regions_query,
 )
-from opennem.api.stats.controllers import stats_factory
+from opennem.api.stats.controllers import stats_factory_async
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.api.time import human_to_interval
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.units import get_unit
 from opennem.db import db_connect, get_database_engine
-from opennem.db.clickhouse import get_clickhouse_client
+from opennem.db.clickhouse import execute_async, get_clickhouse_client
 from opennem.queries.curtailment import get_network_curtailment_energy_query_analytics
 from opennem.queries.power import (
     get_fueltech_power_query_clickhouse,
@@ -46,13 +47,15 @@ async def gov_stats_cpi() -> OpennemDataSet | None:
         result = await conn.execute(query)
         row = result.fetchall()
 
-    stats = [DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None) for i in row]
+    stats = await asyncio.to_thread(
+        lambda: [DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None) for i in row]
+    )
 
     if len(stats) < 1:
         logger.error("No results for gov_stats_cpi returing blank set")
         return None
 
-    result = stats_factory(
+    result = await stats_factory_async(
         stats,
         code="au.cpi",
         network=NetworkNEM,
@@ -83,9 +86,11 @@ async def power_flows_network_week(
         logger.warning(f"No results from interconnector_flow_network_regions_query with {time_series}")
         return None
 
-    imports = [DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in row]
+    imports = await asyncio.to_thread(
+        lambda: [DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in row]
+    )
 
-    result = stats_factory(
+    result = await stats_factory_async(
         imports,
         # code=network_region_code or network.code,
         network=time_series.network,
@@ -122,9 +127,11 @@ async def power_week(
         network_region=network_region_code,
     )
     logger.debug(query)
-    row = ch_client.execute(query)
+    row = await execute_async(ch_client, query, serving_limits=False)
 
-    stats = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
+    stats = await asyncio.to_thread(
+        lambda: [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
+    )
 
     if not stats:
         logger.error(f"No results from power week query with {time_series}")
@@ -135,7 +142,7 @@ async def power_week(
     gen_boundary = max(i[0] for i in row)
     time_series = time_series.model_copy(update={"end": gen_boundary})
 
-    result = stats_factory(
+    result = await stats_factory_async(
         stats,
         # code=network_region_code or network.code,
         network=time_series.network,
@@ -151,9 +158,11 @@ async def power_week(
         return None, time_series
 
     # emissions
-    emissions = [DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None) for i in row]
+    emissions = await asyncio.to_thread(
+        lambda: [DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None) for i in row]
+    )
 
-    stats_emissions = stats_factory(
+    stats_emissions = await stats_factory_async(
         emissions,
         network=time_series.network,
         interval=time_series.interval,
@@ -167,8 +176,10 @@ async def power_week(
 
     # emission factors
     if settings.show_emission_factors_in_power_outputs:
-        emission_factors = [DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in row]
-        stats_emission_factors = stats_factory(
+        emission_factors = await asyncio.to_thread(
+            lambda: [DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in row]
+        )
+        stats_emission_factors = await stats_factory_async(
             emission_factors,
             network=time_series.network,
             interval=time_series.interval,
@@ -193,9 +204,11 @@ async def power_week(
         result_rooftop = await conn.execute(query)
         row = result_rooftop.fetchall()
 
-    rooftop_generation = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
+    rooftop_generation = await asyncio.to_thread(
+        lambda: [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
+    )
 
-    result_rooftop = stats_factory(
+    result_rooftop = await stats_factory_async(
         rooftop_generation,
         network=time_series.network,
         # @NOTE dirty dirty hack to get APVI and AEMO_ROOFTOP to match the 30min interval
@@ -220,11 +233,11 @@ async def power_week(
         result_rooftop_forecast = await conn.execute(query)
         row = result_rooftop_forecast.fetchall()
 
-    rooftop_forecast_generation = [
-        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row
-    ]
+    rooftop_forecast_generation = await asyncio.to_thread(
+        lambda: [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
+    )
 
-    result_rooftop_forecast = stats_factory(
+    result_rooftop_forecast = await stats_factory_async(
         rooftop_forecast_generation,
         network=time_series.network,
         # @NOTE dirty dirty hack to get APVI and AEMO_ROOFTOP to match the 30min interval
@@ -260,14 +273,16 @@ async def power_week(
 
     ch_client = get_clickhouse_client()
 
-    result_price_and_demand_and_curtailment = ch_client.execute(query)
+    result_price_and_demand_and_curtailment = await execute_async(ch_client, query, serving_limits=False)
 
-    stats_price_results = [
-        DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None)
-        for i in result_price_and_demand_and_curtailment
-    ]
+    stats_price_results = await asyncio.to_thread(
+        lambda: [
+            DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None)
+            for i in result_price_and_demand_and_curtailment
+        ]
+    )
 
-    stats_price = stats_factory(
+    stats_price = await stats_factory_async(
         stats=stats_price_results,
         units=get_unit("price_energy_mega"),
         network=time_series.network,
@@ -279,12 +294,14 @@ async def power_week(
     result.append_set(stats_price)
 
     #  demand
-    stats_demand_results = [
-        DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None)
-        for i in result_price_and_demand_and_curtailment
-    ]
+    stats_demand_results = await asyncio.to_thread(
+        lambda: [
+            DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None)
+            for i in result_price_and_demand_and_curtailment
+        ]
+    )
 
-    stats_demand = stats_factory(
+    stats_demand = await stats_factory_async(
         stats=stats_demand_results,
         units=get_unit("demand"),
         network=time_series.network,
@@ -303,7 +320,7 @@ async def power_week(
     #     for i in result_price_and_demand_and_curtailment
     # ]
 
-    # stats_curtailment = stats_factory(
+    # stats_curtailment = await stats_factory_async(
     #     stats=stats_curtailment_results,
     #     units=get_unit("curtailment"),
     #     network=time_series.network,
@@ -313,12 +330,14 @@ async def power_week(
 
     # result.append_set(stats_curtailment)
 
-    stats_curtailment_solar_results = [
-        DataQueryResult(interval=i[0], result=i[7], group_by=i[1] if len(i) > 1 else None)
-        for i in result_price_and_demand_and_curtailment
-    ]
+    stats_curtailment_solar_results = await asyncio.to_thread(
+        lambda: [
+            DataQueryResult(interval=i[0], result=i[7], group_by=i[1] if len(i) > 1 else None)
+            for i in result_price_and_demand_and_curtailment
+        ]
+    )
 
-    stats_curtailment_solar = stats_factory(
+    stats_curtailment_solar = await stats_factory_async(
         stats=stats_curtailment_solar_results,
         units=get_unit("curtailment_solar_utility"),
         network=time_series.network,
@@ -330,12 +349,14 @@ async def power_week(
 
     result.append_set(stats_curtailment_solar)
 
-    stats_curtailment_wind_results = [
-        DataQueryResult(interval=i[0], result=i[8], group_by=i[1] if len(i) > 1 else None)
-        for i in result_price_and_demand_and_curtailment
-    ]
+    stats_curtailment_wind_results = await asyncio.to_thread(
+        lambda: [
+            DataQueryResult(interval=i[0], result=i[8], group_by=i[1] if len(i) > 1 else None)
+            for i in result_price_and_demand_and_curtailment
+        ]
+    )
 
-    stats_curtailment_wind = stats_factory(
+    stats_curtailment_wind = await stats_factory_async(
         stats=stats_curtailment_wind_results,
         units=get_unit("curtailment_wind"),
         network=time_series.network,
@@ -363,24 +384,30 @@ async def demand_network_region_daily(
     query = network_demand_clickhouse_query(time_series=time_series, network_region=network_region_code, networks_query=networks)
 
     logger.debug(f"ClickHouse demand query: {query}")
-    row = ch_client.execute(str(query))
+    row = await execute_async(ch_client, str(query), serving_limits=False)
 
     if network_region_code:
-        results_energy = [DataQueryResult(interval=i[0], group_by=i[2], result=i[3] if len(i) > 3 else None) for i in row]
-        results_market_value = [DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 4 else None) for i in row]
+        results_energy = await asyncio.to_thread(
+            lambda: [DataQueryResult(interval=i[0], group_by=i[2], result=i[3] if len(i) > 3 else None) for i in row]
+        )
+        results_market_value = await asyncio.to_thread(
+            lambda: [DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 4 else None) for i in row]
+        )
     else:
         network_code = time_series.network.code
-        results_energy = [DataQueryResult(interval=i[0], group_by=network_code, result=i[2] if len(i) > 2 else None) for i in row]
-        results_market_value = [
-            DataQueryResult(interval=i[0], group_by=network_code, result=i[3] if len(i) > 3 else None) for i in row
-        ]
+        results_energy = await asyncio.to_thread(
+            lambda: [DataQueryResult(interval=i[0], group_by=network_code, result=i[2] if len(i) > 2 else None) for i in row]
+        )
+        results_market_value = await asyncio.to_thread(
+            lambda: [DataQueryResult(interval=i[0], group_by=network_code, result=i[3] if len(i) > 3 else None) for i in row]
+        )
 
     if not results_energy:
         logger.error(f"No results from query: {query}")
         return None
 
     # demand based values for VWP
-    stats = stats_factory(
+    stats = await stats_factory_async(
         stats=results_energy,
         units=get_unit("demand.energy_giga"),
         network=time_series.network,
@@ -392,7 +419,7 @@ async def demand_network_region_daily(
     if not stats:
         raise Exception(f"Not stats for demand_network_region_daily: {network_region_code}")
 
-    if stats_market_value := stats_factory(
+    if stats_market_value := await stats_factory_async(
         stats=results_market_value,
         units=get_unit("demand.market_value"),
         network=time_series.network,
@@ -422,15 +449,15 @@ async def curtailment_network_region_daily(
         network_region_code=network_region_code,
     )
 
-    result_curtailment = ch_client.execute(query)
+    result_curtailment = await execute_async(ch_client, query, serving_limits=False)
 
-    result_curtailment_solar = [
-        DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 1 else None) for i in result_curtailment
-    ]
+    result_curtailment_solar = await asyncio.to_thread(
+        lambda: [DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 1 else None) for i in result_curtailment]
+    )
 
-    result_curtailment_wind = [
-        DataQueryResult(interval=i[0], group_by=i[2], result=i[5] if len(i) > 1 else None) for i in result_curtailment
-    ]
+    result_curtailment_wind = await asyncio.to_thread(
+        lambda: [DataQueryResult(interval=i[0], group_by=i[2], result=i[5] if len(i) > 1 else None) for i in result_curtailment]
+    )
 
     if not result_curtailment_solar:
         logger.error(f"No results from query: {query}")
@@ -439,7 +466,7 @@ async def curtailment_network_region_daily(
     stats = OpennemDataSet()
 
     # curtailment based values for VWP
-    if stats_curtailment_solar := stats_factory(
+    if stats_curtailment_solar := await stats_factory_async(
         stats=result_curtailment_solar,
         units=get_unit("curtailment_solar_utility_energy_giga"),
         network=time_series.network,
@@ -450,7 +477,7 @@ async def curtailment_network_region_daily(
     ):
         stats.append_set(stats_curtailment_solar)
 
-    if stats_curtailment_wind := stats_factory(
+    if stats_curtailment_wind := await stats_factory_async(
         stats=result_curtailment_wind,
         units=get_unit("curtailment_wind_energy_giga"),
         network=time_series.network,
@@ -521,22 +548,30 @@ async def energy_interconnector_flows_and_emissions_v4(
         ORDER BY 1 DESC
     """
 
-    row = ch_client.execute(query)
+    row = await execute_async(ch_client, query, serving_limits=False)
 
     if not row:
         logger.error(f"No v4 flow results for {time_series.network} {network_region_code}")
         return None
 
-    imports = [DataQueryResult(interval=i[0], group_by="imports", result=i[2]) for i in row]
-    exports = [DataQueryResult(interval=i[0], group_by="exports", result=i[3]) for i in row]
-    import_emissions = [DataQueryResult(interval=i[0], group_by="imports", result=i[4]) for i in row]
-    export_emissions = [DataQueryResult(interval=i[0], group_by="exports", result=i[5]) for i in row]
-    import_mv = [DataQueryResult(interval=i[0], group_by="imports", result=i[6]) for i in row]
-    export_mv = [DataQueryResult(interval=i[0], group_by="exports", result=i[7]) for i in row]
-    import_emission_factor = [DataQueryResult(interval=i[0], group_by="imports", result=i[8]) for i in row]
-    export_emission_factor = [DataQueryResult(interval=i[0], group_by="exports", result=i[9]) for i in row]
+    imports = await asyncio.to_thread(lambda: [DataQueryResult(interval=i[0], group_by="imports", result=i[2]) for i in row])
+    exports = await asyncio.to_thread(lambda: [DataQueryResult(interval=i[0], group_by="exports", result=i[3]) for i in row])
+    import_emissions = await asyncio.to_thread(
+        lambda: [DataQueryResult(interval=i[0], group_by="imports", result=i[4]) for i in row]
+    )
+    export_emissions = await asyncio.to_thread(
+        lambda: [DataQueryResult(interval=i[0], group_by="exports", result=i[5]) for i in row]
+    )
+    import_mv = await asyncio.to_thread(lambda: [DataQueryResult(interval=i[0], group_by="imports", result=i[6]) for i in row])
+    export_mv = await asyncio.to_thread(lambda: [DataQueryResult(interval=i[0], group_by="exports", result=i[7]) for i in row])
+    import_emission_factor = await asyncio.to_thread(
+        lambda: [DataQueryResult(interval=i[0], group_by="imports", result=i[8]) for i in row]
+    )
+    export_emission_factor = await asyncio.to_thread(
+        lambda: [DataQueryResult(interval=i[0], group_by="exports", result=i[9]) for i in row]
+    )
 
-    result = stats_factory(
+    result = await stats_factory_async(
         imports,
         network=time_series.network,
         interval=time_series.interval,
@@ -545,7 +580,7 @@ async def energy_interconnector_flows_and_emissions_v4(
         fueltech_group=True,
     )
 
-    result_exports = stats_factory(
+    result_exports = await stats_factory_async(
         exports,
         network=time_series.network,
         interval=time_series.interval,
@@ -555,7 +590,7 @@ async def energy_interconnector_flows_and_emissions_v4(
     )
     result.append_set(result_exports)
 
-    result_import_emissions = stats_factory(
+    result_import_emissions = await stats_factory_async(
         import_emissions,
         network=time_series.network,
         interval=time_series.interval,
@@ -566,7 +601,7 @@ async def energy_interconnector_flows_and_emissions_v4(
     )
     result.append_set(result_import_emissions)
 
-    result_export_emissions = stats_factory(
+    result_export_emissions = await stats_factory_async(
         export_emissions,
         network=time_series.network,
         interval=time_series.interval,
@@ -577,7 +612,7 @@ async def energy_interconnector_flows_and_emissions_v4(
     )
     result.append_set(result_export_emissions)
 
-    result_import_mv = stats_factory(
+    result_import_mv = await stats_factory_async(
         import_mv,
         network=time_series.network,
         interval=time_series.interval,
@@ -588,7 +623,7 @@ async def energy_interconnector_flows_and_emissions_v4(
     )
     result.append_set(result_import_mv)
 
-    result_export_mv = stats_factory(
+    result_export_mv = await stats_factory_async(
         export_mv,
         network=time_series.network,
         interval=time_series.interval,
@@ -600,7 +635,7 @@ async def energy_interconnector_flows_and_emissions_v4(
     result.append_set(result_export_mv)
 
     if include_emission_factor:
-        result_import_ef = stats_factory(
+        result_import_ef = await stats_factory_async(
             import_emission_factor,
             network=time_series.network,
             interval=time_series.interval,
@@ -611,7 +646,7 @@ async def energy_interconnector_flows_and_emissions_v4(
         )
         result.append_set(result_import_ef)
 
-        result_export_ef = stats_factory(
+        result_export_ef = await stats_factory_async(
             export_emission_factor,
             network=time_series.network,
             interval=time_series.interval,

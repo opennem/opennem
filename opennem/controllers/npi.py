@@ -13,6 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from opennem.api.pollution.cache import bump_pollution_version_external
 from opennem.db import get_write_session
 from opennem.db.models.npi import (
     INITIAL_SUBSTANCES,
@@ -294,6 +295,7 @@ async def import_npi_xml_file(file_path: Path | str, dry_run: bool = False) -> d
         else:
             await session.commit()
             logger.info("Import complete - transaction committed")
+            await bump_pollution_version_external()
 
     return stats
 
@@ -418,6 +420,7 @@ async def import_all_npi_historical_data(
         else:
             await session.commit()
             logger.info("Import complete - transaction committed")
+            await bump_pollution_version_external()
 
     # Log summary
     logger.info("Import Summary:")

@@ -1,4 +1,4 @@
-"""Social media post management API."""
+"""Social media post management (admin only, mounted under /v4/admin/social)."""
 
 import logging
 from uuid import UUID
@@ -8,7 +8,7 @@ from fastapi_versionizer.versionizer import api_version
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from opennem.api.keys import api_protected
+from opennem.api.security import admin_user
 from opennem.db import get_read_session
 from opennem.db.models.opennem import SocialPost
 from opennem.social.pipeline import (
@@ -19,15 +19,20 @@ from opennem.social.pipeline import (
     retry_social_post,
 )
 from opennem.social.schema import CreateSocialPostRequest, SocialPostResponse
+from opennem.users.schema import OpenNEMUser
 
-logger = logging.getLogger("opennem.api.social")
+logger = logging.getLogger("opennem.api.admin.social")
 
 router = APIRouter()
 
 
+def admin_identity(user: OpenNEMUser) -> str:
+    """Audit identity for approved_by/rejected_by: email, falling back to the user id."""
+    return user.email or user.id
+
+
 @api_version(4)
 @router.get("")
-@api_protected()
 async def list_social_posts(
     status: str | None = None,
     post_type: str | None = None,
@@ -84,7 +89,6 @@ async def list_social_posts(
 
 @api_version(4)
 @router.get("/{post_id}")
-@api_protected()
 async def get_post(post_id: UUID) -> dict:
     """Get a single social post with platform statuses."""
     post = await get_social_post(post_id)
@@ -95,7 +99,6 @@ async def get_post(post_id: UUID) -> dict:
 
 @api_version(4)
 @router.post("")
-@api_protected()
 async def create_post(req: CreateSocialPostRequest) -> dict:
     """Create a new social post (manual or agent-driven)."""
     post = await create_social_post(req)
@@ -104,27 +107,24 @@ async def create_post(req: CreateSocialPostRequest) -> dict:
 
 @api_version(4)
 @router.post("/{post_id}/approve")
-@api_protected()
-async def approve_post(post_id: UUID, approved_by: str = "api") -> dict:
-    """Approve a social post for publishing (alternative to Slack buttons)."""
-    await approve_social_post(post_id, approved_by)
+async def approve_post(post_id: UUID, user: admin_user, approved_by: str | None = None) -> dict:
+    """Approve a social post for publishing (alternative to Slack buttons). Defaults to the admin's identity."""
+    await approve_social_post(post_id, approved_by or admin_identity(user))
     post = await get_social_post(post_id)
     return {"success": True, "data": post}
 
 
 @api_version(4)
 @router.post("/{post_id}/reject")
-@api_protected()
-async def reject_post(post_id: UUID, rejected_by: str = "api") -> dict:
-    """Reject a social post."""
-    await reject_social_post(post_id, rejected_by)
+async def reject_post(post_id: UUID, user: admin_user, rejected_by: str | None = None) -> dict:
+    """Reject a social post. Defaults to the admin's identity."""
+    await reject_social_post(post_id, rejected_by or admin_identity(user))
     post = await get_social_post(post_id)
     return {"success": True, "data": post}
 
 
 @api_version(4)
 @router.post("/{post_id}/retry")
-@api_protected()
 async def retry_post(post_id: UUID) -> dict:
     """Retry publishing to failed platforms."""
     await retry_social_post(post_id)

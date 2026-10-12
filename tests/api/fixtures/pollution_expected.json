@@ -1,0 +1,329 @@
+{
+ "data": [
+  {
+   "date_end": "2022-07-01T00:00:00",
+   "date_start": "2019-07-01T00:00:00",
+   "groupings": [
+    "facility",
+    "pollutant"
+   ],
+   "interval": "1y",
+   "metric": "pollution",
+   "network_code": "AU",
+   "network_timezone_offset": "+10:00",
+   "results": [
+    {
+     "columns": {
+      "cas_number": "",
+      "facility_name": "First",
+      "pollutant_category": "air_pollutant",
+      "pollutant_code": "NOX",
+      "pollutant_label": "NOX",
+      "pollutant_name": "Oxides of Nitrogen"
+     },
+     "data": [
+      [
+       "2019-07-01T00:00:00",
+       1234.5
+      ],
+      [
+       "2019-07-01T00:00:00",
+       1234.5
+      ],
+      [
+       "2020-07-01T00:00:00",
+       0.0
+      ],
+      [
+       "2020-07-01T00:00:00",
+       0.0
+      ],
+      [
+       "2022-07-01T00:00:00",
+       3703.5
+      ],
+      [
+       "2022-07-01T00:00:00",
+       3703.5
+      ]
+     ],
+     "date_end": "2022-07-01T00:00:00",
+     "date_start": "2019-07-01T00:00:00",
+     "name": "F1"
+    },
+    {
+     "columns": {
+      "cas_number": "",
+      "facility_name": "Second",
+      "pollutant_category": "air_pollutant",
+      "pollutant_code": "NOX",
+      "pollutant_label": "NOX",
+      "pollutant_name": "Oxides of Nitrogen"
+     },
+     "data": [
+      [
+       "2019-07-01T00:00:00",
+       1234.5
+      ],
+      [
+       "2020-07-01T00:00:00",
+       0.0
+      ],
+      [
+       "2022-07-01T00:00:00",
+       3703.5
+      ]
+     ],
+     "date_end": "2022-07-01T00:00:00",
+     "date_start": "2019-07-01T00:00:00",
+     "name": "F2"
+    },
+    {
+     "columns": {
+      "cas_number": "",
+      "facility_name": "UNKNOWN",
+      "pollutant_category": "air_pollutant",
+      "pollutant_code": "NOX",
+      "pollutant_label": "NOX",
+      "pollutant_name": "Oxides of Nitrogen"
+     },
+     "data": [
+      [
+       "2019-07-01T00:00:00",
+       1234.5
+      ],
+      [
+       "2020-07-01T00:00:00",
+       0.0
+      ],
+      [
+       "2022-07-01T00:00:00",
+       3703.5
+      ]
+     ],
+     "date_end": "2022-07-01T00:00:00",
+     "date_start": "2019-07-01T00:00:00",
+     "name": "UNKNOWN"
+    }
+   ],
+   "unit": "kg"
+  },
+  {
+   "date_end": "2022-07-01T00:00:00",
+   "date_start": "2019-07-01T00:00:00",
+   "groupings": [
+    "facility",
+    "pollutant"
+   ],
+   "interval": "1y",
+   "metric": "pollution",
+   "network_code": "AU",
+   "network_timezone_offset": "+10:00",
+   "results": [
+    {
+     "columns": {
+      "cas_number": "7446-09-5",
+      "facility_name": "First",
+      "pollutant_category": "air_pollutant",
+      "pollutant_code": "SO2",
+      "pollutant_label": "SO2",
+      "pollutant_name": "Sulfur dioxide"
+     },
+     "data": [
+      [
+       "2019-07-01T00:00:00",
+       1234.5
+      ],
+      [
+       "2019-07-01T00:00:00",
+       1234.5
+      ],
+      [
+       "2020-07-01T00:00:00",
+       0.0
+      ],
+      [
+       "2020-07-01T00:00:00",
+       0.0
+      ],
+      [
+       "2022-07-01T00:00:00",
+       3703.5
+      ],
+      [
+       "2022-07-01T00:00:00",
+       3703.5
+      ]
+     ],
+     "date_end": "2022-07-01T00:00:00",
+     "date_start": "2019-07-01T00:00:00",
+     "name": "F1"
+    },
+    {
+     "columns": {
+      "cas_number": "7446-09-5",
+      "facility_name": "Second",
+      "pollutant_category": "air_pollutant",
+      "pollutant_code": "SO2",
+      "pollutant_label": "SO2",
+      "pollutant_name": "Sulfur dioxide"
+     },
+     "data": [
+      [
+       "2019-07-01T00:00:00",
+       1234.5
+      ],
+      [
+       "2020-07-01T00:00:00",
+       0.0
+      ],
+      [
+       "2022-07-01T00:00:00",
+       3703.5
+      ]
+     ],
+     "date_end": "2022-07-01T00:00:00",
+     "date_start": "2019-07-01T00:00:00",
+     "name": "F2"
+    },
+    {
+     "columns": {
+      "cas_number": "7446-09-5",
+      "facility_name": "UNKNOWN",
+      "pollutant_category": "air_pollutant",
+      "pollutant_code": "SO2",
+      "pollutant_label": "SO2",
+      "pollutant_name": "Sulfur dioxide"
+     },
+     "data": [
+      [
+       "2019-07-01T00:00:00",
+       1234.5
+      ],
+      [
+       "2020-07-01T00:00:00",
+       0.0
+      ],
+      [
+       "2022-07-01T00:00:00",
+       3703.5
+      ]
+     ],
+     "date_end": "2022-07-01T00:00:00",
+     "date_start": "2019-07-01T00:00:00",
+     "name": "UNKNOWN"
+    }
+   ],
+   "unit": "kg"
+  },
+  {
+   "date_end": "2022-07-01T00:00:00",
+   "date_start": "2019-07-01T00:00:00",
+   "groupings": [
+    "facility",
+    "pollutant"
+   ],
+   "interval": "1y",
+   "metric": "pollution",
+   "network_code": "AU",
+   "network_timezone_offset": "+10:00",
+   "results": [
+    {
+     "columns": {
+      "cas_number": "",
+      "facility_name": "First",
+      "pollutant_category": "air_pollutant",
+      "pollutant_code": "PM10",
+      "pollutant_label": "PM10",
+      "pollutant_name": "PM10"
+     },
+     "data": [
+      [
+       "2019-07-01T00:00:00",
+       1234.5
+      ],
+      [
+       "2019-07-01T00:00:00",
+       1234.5
+      ],
+      [
+       "2020-07-01T00:00:00",
+       0.0
+      ],
+      [
+       "2020-07-01T00:00:00",
+       0.0
+      ],
+      [
+       "2022-07-01T00:00:00",
+       3703.5
+      ],
+      [
+       "2022-07-01T00:00:00",
+       3703.5
+      ]
+     ],
+     "date_end": "2022-07-01T00:00:00",
+     "date_start": "2019-07-01T00:00:00",
+     "name": "F1"
+    },
+    {
+     "columns": {
+      "cas_number": "",
+      "facility_name": "Second",
+      "pollutant_category": "air_pollutant",
+      "pollutant_code": "PM10",
+      "pollutant_label": "PM10",
+      "pollutant_name": "PM10"
+     },
+     "data": [
+      [
+       "2019-07-01T00:00:00",
+       1234.5
+      ],
+      [
+       "2020-07-01T00:00:00",
+       0.0
+      ],
+      [
+       "2022-07-01T00:00:00",
+       3703.5
+      ]
+     ],
+     "date_end": "2022-07-01T00:00:00",
+     "date_start": "2019-07-01T00:00:00",
+     "name": "F2"
+    },
+    {
+     "columns": {
+      "cas_number": "",
+      "facility_name": "UNKNOWN",
+      "pollutant_category": "air_pollutant",
+      "pollutant_code": "PM10",
+      "pollutant_label": "PM10",
+      "pollutant_name": "PM10"
+     },
+     "data": [
+      [
+       "2019-07-01T00:00:00",
+       1234.5
+      ],
+      [
+       "2020-07-01T00:00:00",
+       0.0
+      ],
+      [
+       "2022-07-01T00:00:00",
+       3703.5
+      ]
+     ],
+     "date_end": "2022-07-01T00:00:00",
+     "date_start": "2019-07-01T00:00:00",
+     "name": "UNKNOWN"
+    }
+   ],
+   "unit": "kg"
+  }
+ ],
+ "success": true
+}

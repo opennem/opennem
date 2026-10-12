@@ -12,6 +12,7 @@ The crawl still writes the same forecast to `facility_scada` for the static powe
 import logging
 from collections.abc import Iterable, Sequence
 from datetime import UTC, datetime, timedelta
+from functools import lru_cache
 from typing import Any
 
 import pandas as pd
@@ -44,9 +45,24 @@ _INSERT = f"""
 type ForecastRow = tuple[datetime, str, str, str, str, float, datetime, int, int]
 
 
-def _naive(value: Any) -> datetime:
-    """AEMO datetimes as naive network time, parsed the same way as the facility_scada path"""
+def _parse_naive(value: Any) -> datetime:
     return pd.to_datetime(value).to_pydatetime().replace(tzinfo=None)
+
+
+@lru_cache(maxsize=4096)
+def _parse_naive_str(value: str) -> datetime:
+    return _parse_naive(value)
+
+
+def _naive(value: Any) -> datetime:
+    """AEMO datetimes as naive network time, parsed the same way as the facility_scada path.
+
+    A file repeats a few hundred distinct timestamp strings across thousands of records and
+    pandas re-guesses the format on every call, so strings are memoised (same parser, same result).
+    """
+    if isinstance(value, str):
+        return _parse_naive_str(value)
+    return _parse_naive(value)
 
 
 def _forecast_row(interval: datetime, region: str, value: float, run_time: datetime, horizon_minutes: int) -> ForecastRow:

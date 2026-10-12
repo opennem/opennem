@@ -57,6 +57,7 @@ from opennem.tasks.tasks import (
     task_refresh_clickhouse_mv_fast,
     task_refresh_clickhouse_mv_full,
     task_refresh_from_cms,
+    task_sanity_webhook,
     task_send_cms_updates_slack_report,
     task_update_facility_first_seen,
     task_update_facility_seen_range,
@@ -68,6 +69,7 @@ from opennem.tasks.tasks import (
     task_wem_interval_check,
 )
 from opennem.utils.host import get_hostname
+from opennem.utils.loop_monitor import start_loop_monitor, stop_loop_monitor
 from opennem.utils.sentry import setup_sentry
 from opennem.utils.version import get_version
 
@@ -91,9 +93,16 @@ async def startup(ctx: dict) -> None:
     """
     logger.info(f"OpenNEM worker starting up on {settings.env}: v{get_version()} on host {get_hostname()}")
 
+    start_loop_monitor("worker")
+
     redis = await get_redis_pool()
     await redis.flushdb()
     logger.info("Redis queue flushed on startup")
+
+    # warm the S3 service model + aiofiles imports so the first export doesn't stall the loop
+    from opennem.exporter.storage_bucket import warm_s3_client
+
+    await warm_s3_client()
 
     # Check for pending ClickHouse migrations
     try:
@@ -109,14 +118,23 @@ async def startup(ctx: dict) -> None:
         logger.warning(f"Could not check CH migrations: {e}")
 
 
+async def shutdown(ctx: dict[str, object]) -> None:
+    """Stop the loop monitor on worker shutdown."""
+    await stop_loop_monitor()
+
+
 class WorkerSettings:
     # queue_name = "opennem"
     on_startup = startup
+    on_shutdown = shutdown
     # Enqueued on demand, not scheduled. timeout=None takes the worker's job_timeout (12h) rather
     # than the 300s of the incremental cron that queues it — a gap backfill scans full history
     # to seed its running extremes (#654) and takes minutes.
     functions = [
         func(task_milestone_gap_backfill, timeout=None),
+        # keep_result=0: arq refuses a repeat _job_id while the result key lives (1h default), which
+        # would drop later edits to the same doc. Dedupe only while queued/running.
+        func(task_sanity_webhook, timeout=600, max_tries=3, keep_result=0),
     ]
     cron_jobs = [
         # NEM Interval Check — fires early, polls AEMO with backoff until data arrives
