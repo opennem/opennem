@@ -290,3 +290,35 @@ def test_bulk_insert_convert_records_coerces_types() -> None:
     )
 
     assert rows == [[datetime(2026, 1, 1, 0, 5), 1.5, True, 7, "3", None]]
+
+
+@pytest.mark.asyncio
+async def test_market_summary_backlog_ch_insert_is_off_loop() -> None:
+    main = asyncio.get_running_loop()
+    threads: list[bool] = []
+
+    def slow_execute(query: str, data: object = None) -> None:
+        threads.append(_in_loop_thread(main))
+        time.sleep(0.4)
+
+    class _Client:
+        execute = staticmethod(slow_execute)
+
+    async def fake_data(*_a: object) -> list[tuple]:
+        return [(1,)]
+
+    async def fake_prepare(records: list[tuple]) -> list[tuple]:
+        return records
+
+    with (
+        patch.object(market_summary, "_ensure_clickhouse_schema", lambda: None),
+        patch.object(market_summary, "_get_market_summary_data", fake_data),
+        patch.object(market_summary, "_prepare_market_summary_data", fake_prepare),
+        patch("opennem.db.clickhouse.client.get_clickhouse_client", lambda timeout=10: _Client()),
+    ):
+        gap = await _max_gap(
+            lambda: market_summary.process_market_summary_backlog(None, datetime(2026, 1, 1), datetime(2026, 1, 2))  # type: ignore[arg-type]
+        )
+
+    assert threads == [False]
+    assert gap < 0.25

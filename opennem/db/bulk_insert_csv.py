@@ -127,7 +127,7 @@ async def get_pool() -> Pool:
     return pool
 
 
-_COPY_CHUNK_ROWS = 2000
+_COPY_CHUNK_ROWS = 5000  # measured on dev PG: 2000 -> 0.11s worst slice, 8000 -> 0.27s
 
 
 def _convert_records(records: list[dict], columns: list[str], column_types: dict[str, str]) -> list[list[Any]]:
