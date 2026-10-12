@@ -943,7 +943,6 @@ async def process_market_summary_backlog(
         chunk_size: Size of each processing chunk
     """
     current_start = start_date
-    client = get_clickhouse_client()
     # sync CH ping + migrations: off-loop, the client is thread-local so it is fetched inside the thread
     await asyncio.to_thread(_ensure_clickhouse_schema)
 
@@ -956,7 +955,7 @@ async def process_market_summary_backlog(
             prepared_data = await _prepare_market_summary_data(records)  # noqa: must be outside session ideally but chunk loop requires it
 
             # Batch insert into ClickHouse
-            client.execute(
+            await insert_async(
                 """
                 INSERT INTO market_summary
                 (
@@ -983,11 +982,9 @@ async def process_market_summary_backlog(
 
 async def run_market_summary_aggregate_to_now() -> int:
     """ """
-    client = get_clickhouse_client()
-
     # get the max interval — scope to last 7 days to avoid full-table FINAL scan
     # falls back to unscoped query if table has a >7 day gap
-    result = client.execute("SELECT MAX(interval) FROM market_summary FINAL WHERE interval > now() - INTERVAL 7 DAY")
+    result = await insert_async("SELECT MAX(interval) FROM market_summary FINAL WHERE interval > now() - INTERVAL 7 DAY")
     result_rows = list(result)  # type: ignore
 
     if not result_rows or not result_rows[0] or result_rows[0][0] is None:
@@ -1025,7 +1022,7 @@ async def run_market_summary_aggregate_to_now() -> int:
     # compute flows outside the write session to avoid connection pool contention
     prepared_data = await _prepare_market_summary_data(records)
 
-    client.execute(
+    await insert_async(
         """
         INSERT INTO market_summary
         (
@@ -1112,9 +1109,6 @@ async def run_market_summary_backlog() -> None:
         return
     start_date = NetworkNEM.data_first_seen.replace(tzinfo=None)
 
-    # Ensure ClickHouse schema exists
-    client = get_clickhouse_client()
-
     # Process the data
     async with get_write_session() as session:
         await process_market_summary_backlog(
@@ -1125,7 +1119,7 @@ async def run_market_summary_backlog() -> None:
         )
 
     # Verify the data was inserted
-    result = client.execute(
+    result = await insert_async(
         """
         SELECT
             network_id,

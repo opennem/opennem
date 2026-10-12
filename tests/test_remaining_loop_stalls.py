@@ -249,3 +249,76 @@ def test_prepare_unit_interval_data_dtypes_order_values() -> None:
     )
     assert cols.equals(pl.DataFrame(records, schema=unit_intervals._UNIT_INTERVAL_SCHEMA, orient="row"))
     assert cols.schema == pl.DataFrame(records, schema=unit_intervals._UNIT_INTERVAL_SCHEMA, orient="row").schema
+
+
+@pytest.mark.asyncio
+async def test_persist_facility_scada_bulk_converts_off_loop_and_unchanged() -> None:
+    from opennem.persistence import postgres_facility_scada as pfs
+    from opennem.persistence.schema import FacilityScadaSchema
+
+    records = [
+        FacilityScadaSchema(interval=datetime(2026, 1, 1, 0, i % 60), network_id="WEM", facility_code=f"F{i}", generated=i)
+        for i in range(300_000)
+    ]
+    seen: list[list[dict]] = []
+
+    async def fake_bulk(table: object, records: list[dict], update_fields: list[str]) -> int:
+        seen.append(records)
+        return len(records)
+
+    with patch.object(pfs, "bulkinsert_mms_items", fake_bulk):
+        gap = await _max_gap(lambda: pfs.persist_facility_scada_bulk(records, ["generated"]))
+
+    assert seen[0] == [dict(r) for r in records]
+    assert gap < 0.25
+
+
+def test_bulk_insert_convert_records_coerces_types() -> None:
+    from opennem.db.bulk_insert_csv import _convert_records
+
+    rows = _convert_records(
+        [{"a": "2026-01-01T00:05:00", "b": "1.5", "c": "t", "d": "7", "e": 3, "f": None}],
+        ["a", "b", "c", "d", "e", "f"],
+        {
+            "a": "timestamp without time zone",
+            "b": "numeric",
+            "c": "boolean",
+            "d": "integer",
+            "e": "text",
+            "f": "text",
+        },
+    )
+
+    assert rows == [[datetime(2026, 1, 1, 0, 5), 1.5, True, 7, "3", None]]
+
+
+@pytest.mark.asyncio
+async def test_market_summary_backlog_ch_insert_is_off_loop() -> None:
+    main = asyncio.get_running_loop()
+    threads: list[bool] = []
+
+    def slow_execute(query: str, data: object = None) -> None:
+        threads.append(_in_loop_thread(main))
+        time.sleep(0.4)
+
+    class _Client:
+        execute = staticmethod(slow_execute)
+
+    async def fake_data(*_a: object) -> list[tuple]:
+        return [(1,)]
+
+    async def fake_prepare(records: list[tuple]) -> list[tuple]:
+        return records
+
+    with (
+        patch.object(market_summary, "_ensure_clickhouse_schema", lambda: None),
+        patch.object(market_summary, "_get_market_summary_data", fake_data),
+        patch.object(market_summary, "_prepare_market_summary_data", fake_prepare),
+        patch("opennem.db.clickhouse.client.get_clickhouse_client", lambda timeout=10: _Client()),
+    ):
+        gap = await _max_gap(
+            lambda: market_summary.process_market_summary_backlog(None, datetime(2026, 1, 1), datetime(2026, 1, 2))  # type: ignore[arg-type]
+        )
+
+    assert threads == [False]
+    assert gap < 0.25
