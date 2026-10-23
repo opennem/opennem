@@ -368,3 +368,54 @@ def build_timeseries_response(timeseries_list: list[dict[str, Any]]) -> dict[str
         "success": True,
         "data": timeseries_list,
     }
+
+
+def rows_to_timeseries_list(
+    column_names: Sequence[str],
+    rows: Sequence[Sequence[Any]],
+    *,
+    network: str,
+    metrics: Sequence[MetricType],
+    interval: Interval,
+    primary_grouping: PrimaryGrouping,
+    secondary_groupings: Sequence[SecondaryGrouping] | None,
+    facility_code: str | list[str] | None = None,
+) -> list[dict[str, Any]]:
+    """Row tuples to formatted timeseries dicts. Pure and CPU-bound: run via asyncio.to_thread."""
+    result_dicts = [dict(zip(column_names, row, strict=True)) for row in rows]
+
+    return format_timeseries_response(
+        network=network,
+        metrics=metrics,
+        interval=interval,
+        primary_grouping=primary_grouping,
+        secondary_groupings=secondary_groupings,
+        results=result_dicts,
+        facility_code=facility_code,
+    )
+
+
+def rows_to_timeseries_response(
+    column_names: Sequence[str],
+    rows: Sequence[Sequence[Any]],
+    *,
+    network: str,
+    metrics: Sequence[MetricType],
+    interval: Interval,
+    primary_grouping: PrimaryGrouping,
+    secondary_groupings: Sequence[SecondaryGrouping] | None,
+    facility_code: str | list[str] | None = None,
+) -> dict[str, Any]:
+    """Row tuples to the full response payload. Pure and CPU-bound: run via asyncio.to_thread."""
+    return build_timeseries_response(
+        rows_to_timeseries_list(
+            column_names,
+            rows,
+            network=network,
+            metrics=metrics,
+            interval=interval,
+            primary_grouping=primary_grouping,
+            secondary_groupings=secondary_groupings,
+            facility_code=facility_code,
+        )
+    )
