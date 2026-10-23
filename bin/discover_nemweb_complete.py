@@ -316,9 +316,9 @@ async def main():
         logger.info(f"JSON catalog saved to: {json_path}")
 
         # Print summary
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print("NEMWEB Complete Discovery Finished!")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
         print(f"Total data sources: {len(discovery.data_sources)}")
         print(f"Total unique tables: {len(discovery.all_tables)}")
         print(f"Total fields documented: {sum(t['field_count'] for t in discovery.all_tables.values())}")

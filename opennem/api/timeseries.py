@@ -512,6 +512,147 @@ def format_timeseries_rows(
     return timeseries_list
 
 
+def _series_has_gap(interval: Interval, first: datetime, last: datetime, n: int) -> bool:
+    """Same test as `_fill_interior_gaps`: does the series hold fewer points than its span?"""
+    step = _FIXED_INTERVAL_STEP.get(interval)
+    if step is not None:
+        return (last - first) // step + 1 != n
+    return len(_expected_buckets(interval, first, last)) != n
+
+
+def format_timeseries_columnar(
+    column_names: Sequence[str],
+    rows: Sequence[Sequence[Any]],
+    *,
+    network: str,
+    metrics: Sequence[MetricType],
+    interval: Interval,
+    primary_grouping: PrimaryGrouping,
+    secondary_groupings: Sequence[SecondaryGrouping] | None,
+) -> list[dict[str, Any]]:
+    """Assemble the response from series rows built by `get_timeseries_query(columnar=True)` (#740).
+
+    Each row is one series: its key column values, a sorted array of final ISO timestamp
+    strings (`ts`), then one value array per metric, all in series order. Output is identical
+    to `format_timeseries_rows` on the equivalent per-interval rows. Pure and CPU-bound.
+    """
+    tz_offset_str = get_api_network_from_code(network).get_offset_string()
+
+    col_idx = {name: i for i, name in enumerate(column_names)}
+    ts_idx = col_idx["ts"]
+    key_cols = list(column_names[:ts_idx])
+    key_idx = list(range(len(key_cols)))
+    metric_names = [m.value.lower() for m in metrics]
+    metric_idx = [col_idx[n] for n in metric_names]
+
+    # series label per row; row order is the series order the row path produces
+    labels_by_key: dict[str, dict[str, Any]] = {}
+    series_keys: list[str] = []
+    for row in rows:
+        row_map = {key_cols[i]: row[i] for i in key_idx}
+        label_key, labels = _build_label_key_and_labels(row_map, primary_grouping, secondary_groupings, None)
+        if label_key in labels_by_key:
+            raise ValueError(f"duplicate series key {label_key!r}")
+        labels_by_key[label_key] = labels
+        series_keys.append(label_key)
+
+    # interior gaps: only series whose span holds fewer points than the grid are rewritten
+    gap_fixes: dict[int, tuple[list[str], dict[int, list[float | None]]]] = {}
+    for ri, row in enumerate(rows):
+        ts_list = row[ts_idx]
+        n = len(ts_list)
+        if n < 2:
+            continue
+        if not _series_has_gap(interval, datetime.fromisoformat(ts_list[0]), datetime.fromisoformat(ts_list[-1]), n):
+            continue
+        parsed = [datetime.fromisoformat(t) for t in ts_list]
+        # one shared grid for every metric: fill on the first, then align the rest to it
+        base = {"k": {"data": [(t, i) for i, t in enumerate(parsed)]}}
+        _fill_interior_gaps(base, interval)
+        filled = base["k"]["data"]
+        new_ts = [t.isoformat() for t, _ in filled]
+        index = [i for _, i in filled]
+        vals: dict[int, list[float | None]] = {}
+        for mi in set(metric_idx):
+            src = row[mi]
+            vals[mi] = [None if i is None else src[i] for i in index]
+        gap_fixes[ri] = (new_ts, vals)
+
+    def _ts(ri: int) -> list[str]:
+        return gap_fixes[ri][0] if ri in gap_fixes else rows[ri][ts_idx]
+
+    if not rows:
+        logger.warning("No grouped results for any metric")
+        return []
+
+    date_start_iso = min(_ts(ri)[0] for ri in range(len(rows)))
+    date_end_iso = max(_ts(ri)[-1] for ri in range(len(rows)))
+
+    groupings: list[str] = []
+    if secondary_groupings:
+        groupings = [primary_grouping.value] + [g.value.lower() for g in secondary_groupings]
+
+    timeseries_list: list[dict[str, Any]] = []
+    for metric, metric_name, mi in zip(metrics, metric_names, metric_idx, strict=True):
+        meta = get_metric_metadata(metric)
+        result_dicts = []
+        for ri, row in enumerate(rows):
+            if ri in gap_fixes:
+                ts_list, series_vals = _ts(ri), gap_fixes[ri][1][mi]
+            else:
+                ts_list, series_vals = row[ts_idx], row[mi]
+            label_key = series_keys[ri]
+            result_dicts.append(
+                {
+                    "name": f"{metric_name}_{label_key}",
+                    "date_start": date_start_iso,
+                    "date_end": date_end_iso,
+                    "columns": dict(labels_by_key[label_key]),
+                    "data": list(zip(ts_list, series_vals, strict=True)),  # tuples encode as JSON arrays
+                }
+            )
+
+        timeseries_list.append(
+            {
+                "network_code": network,
+                "metric": metric_name,
+                "unit": meta.unit,
+                "interval": interval.value,
+                "date_start": date_start_iso,
+                "date_end": date_end_iso,
+                "groupings": groupings,
+                "results": result_dicts,
+                "network_timezone_offset": tz_offset_str,
+            }
+        )
+
+    return timeseries_list
+
+
+def columnar_to_timeseries_response(
+    column_names: Sequence[str],
+    rows: Sequence[Sequence[Any]],
+    *,
+    network: str,
+    metrics: Sequence[MetricType],
+    interval: Interval,
+    primary_grouping: PrimaryGrouping,
+    secondary_groupings: Sequence[SecondaryGrouping] | None,
+) -> dict[str, Any]:
+    """Series rows to the full response payload. Pure and CPU-bound: run via asyncio.to_thread."""
+    return build_timeseries_response(
+        format_timeseries_columnar(
+            column_names,
+            rows,
+            network=network,
+            metrics=metrics,
+            interval=interval,
+            primary_grouping=primary_grouping,
+            secondary_groupings=secondary_groupings,
+        )
+    )
+
+
 def rows_to_timeseries_list(
     column_names: Sequence[str],
     rows: Sequence[Sequence[Any]],

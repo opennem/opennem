@@ -14,11 +14,11 @@ from fastapi_versionizer import api_version
 from opennem.api.cache_keys import tiered_key_builder
 from opennem.api.data.utils import validate_date_range
 from opennem.api.intervals import cap_date_end_to_settled_interval
-from opennem.api.queries import QueryType, get_timeseries_query
+from opennem.api.queries import QueryType, columnar_supported, get_timeseries_query
 from opennem.api.response_cache import cached_json
 from opennem.api.schema import std_error_responses
 from opennem.api.security import authenticated_user, optional_user
-from opennem.api.timeseries import rows_to_timeseries_response
+from opennem.api.timeseries import columnar_to_timeseries_response, rows_to_timeseries_response
 from opennem.api.utils import get_api_network_from_code, validate_metrics
 from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
 from opennem.core.metric import Metric
@@ -121,19 +121,46 @@ async def get_network_data(
     if fueltech_group:
         secondary_groupings = [SecondaryGrouping.FUELTECH_GROUP]
 
-    query, params, column_names = get_timeseries_query(
-        query_type=QueryType.DATA,
-        network=network,
-        metrics=metrics,
-        interval=interval,
-        date_start=date_start,
-        date_end=date_end,
-        primary_grouping=primary_grouping,
-        secondary_groupings=secondary_groupings,
-        network_region=network_region,
-        fueltech=fueltech,
-        fueltech_group=fueltech_group,
-    )
+    columnar = columnar_supported(QueryType.DATA, primary_grouping, secondary_groupings)
+    query_kwargs: dict[str, Any] = {
+        "query_type": QueryType.DATA,
+        "network": network,
+        "metrics": metrics,
+        "interval": interval,
+        "date_start": date_start,
+        "date_end": date_end,
+        "primary_grouping": primary_grouping,
+        "secondary_groupings": secondary_groupings,
+        "network_region": network_region,
+        "fueltech": fueltech,
+        "fueltech_group": fueltech_group,
+    }
+    format_kwargs: dict[str, Any] = {
+        "network": network.code,
+        "metrics": metrics,
+        "interval": interval,
+        "primary_grouping": primary_grouping,
+        "secondary_groupings": secondary_groupings,
+    }
+
+    # Tracker shapes: clickhouse groups rows into series arrays (#740). Any failure in the
+    # columnar path falls through to the row path below, which is the reference behaviour.
+    if columnar:
+        try:
+            query, params, column_names = get_timeseries_query(**query_kwargs, columnar=True)
+            results = await execute_async(client, query, params)
+            if not results:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"No data available for network {network_code} in the specified time range",
+                )
+            return await asyncio.to_thread(columnar_to_timeseries_response, column_names, results, **format_kwargs)
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.warning(f"columnar timeseries path failed, using row path: {e}")
+
+    query, params, column_names = get_timeseries_query(**query_kwargs)
 
     start_time = time.time()
     try:
@@ -151,16 +178,7 @@ async def get_network_data(
             detail=f"No data available for network {network_code} in the specified time range",
         )
 
-    return await asyncio.to_thread(
-        rows_to_timeseries_response,
-        column_names,
-        results,
-        network=network.code,
-        metrics=metrics,
-        interval=interval,
-        primary_grouping=primary_grouping,
-        secondary_groupings=secondary_groupings,
-    )
+    return await asyncio.to_thread(rows_to_timeseries_response, column_names, results, **format_kwargs)
 
 
 @api_version(4)
