@@ -68,6 +68,7 @@ class OpennemSettings(BaseSettings):
     cache_warm_concurrency: int = Field(2, ge=1, le=16)
     cache_warm_budget_seconds: int = Field(200, ge=10)
     cache_warm_include_30d: bool = False
+    cache_warm_ahead: bool = True  # also pre-build the next slot's entries each cycle (#752)
 
     # if we're doing a dry run
     dry_run: bool = False

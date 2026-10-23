@@ -61,17 +61,24 @@ def is_live_edge_request(date_end: datetime | None, now: datetime | None = None)
 # slot 06:20 lives to ~06:20:30, not 60s, so the cache-warmer's refresh (right after the interval lands) serves
 # the whole slot. A cold build before the interval landed is stale for at most the rest of its slot, and the
 # warmer force-refreshes it; no setting gate needed because the TTL can never outlive the slot by more than slack.
-SLOT_TTL_CAP = 330
+SLOT_SECONDS = 300
 SLOT_TTL_SLACK = 30
+# warm-ahead (#752): an entry for the NEXT slot (slot_end 300-600 s away) is built before that slot starts and must
+# live until the end of that slot + slack, so the cap covers a full extra slot
+SLOT_TTL_CAP = 2 * SLOT_SECONDS + SLOT_TTL_SLACK
 _TTL_BUCKET = 10  # round up so lazily built per-TTL cache wrappers stay few
 
 
 def slot_live_ttl(slot_end: datetime, floor: int, now: datetime | None = None) -> int:
-    """Live TTL for a request whose key slot ends at `slot_end` (naive NEM-local); `floor` when not in the current slot."""
+    """Live TTL for a request whose key slot ends at `slot_end` (naive NEM-local).
+
+    Current slot (0-300 s left) and the next slot (300-600 s left, warm-ahead entries) get TTL = time left + slack, so
+    expiry is always slot_end + slack (+ bucket rounding). `floor` for a past slot or anything further ahead.
+    """
     now_local = (now or datetime.now(_NEM_TZ)).astimezone(_NEM_TZ).replace(tzinfo=None)
     remaining = (slot_end - now_local).total_seconds()
-    if remaining < 0 or remaining > 300:
-        return floor  # past slot or a future one: not the warmed/current slot, keep the short TTL
+    if remaining < 0 or remaining > 2 * SLOT_SECONDS:
+        return floor  # past slot or further ahead than the next one: keep the short TTL
     ttl = -(-int(remaining + SLOT_TTL_SLACK) // _TTL_BUCKET) * _TTL_BUCKET
     return max(floor, min(SLOT_TTL_CAP, ttl))
 
