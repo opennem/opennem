@@ -35,6 +35,7 @@ def upstream(monkeypatch: pytest.MonkeyPatch) -> SimpleNamespace:
     security._user_cache.clear()
     security._invalid_key_cache.clear()
     security._inflight.clear()
+    security._background_refreshes.clear()
     monkeypatch.setattr(security.settings, "api_dev_key", "on_dev_some_other_key_123")
     monkeypatch.setattr(security.settings, "api_internal_key", "oe_internal_x_1234567890")
 
@@ -79,6 +80,7 @@ async def test_timeout_serves_stale(upstream: SimpleNamespace, clock: list[float
     upstream.unkey.side_effect = UnkeyUnavailableException("timeout")
 
     user = await security._resolve_user_from_key(KEY)
+    await asyncio.gather(*security._background_refreshes.values())  # SWR refresh fails, stale kept
 
     assert user.id == "key_1" and user.plan == OpenNEMPlan.PRO
     assert upstream.unkey.await_count == 2

@@ -40,7 +40,7 @@ from opennem.api.openapi_extra import custom_openapi
 from opennem.api.plans.router import router as plans_router
 from opennem.api.pollution.router import router as pollution_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
-from opennem.api.security import fresh_authenticated_user
+from opennem.api.security import cancel_background_refreshes, fresh_authenticated_user
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
 from opennem.api.webhooks.router import router as webhooks_router
@@ -89,6 +89,7 @@ async def lifespan(app: FastAPI):
     # Shutdown logic
     await stop_known_codes_refresher(known_codes_task)
     await stop_loop_monitor()
+    await cancel_background_refreshes()
     api_executor.shutdown(wait=False, cancel_futures=True)
 
 
