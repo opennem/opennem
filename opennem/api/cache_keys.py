@@ -43,21 +43,30 @@ def _ceil_5m(dt: datetime) -> datetime:
     return floored if floored == dt else floored + _GRID
 
 
-def _normalise_window(kwargs: dict[str, Any]) -> dict[str, Any]:
-    """Key-only: collapse date_start/date_end to the 5m grid they select; else return kwargs unchanged."""
+def grid_slot_end(kwargs: dict[str, Any]) -> datetime | None:
+    """5m-grid end the key normalises date_end to, or None when the window is keyed exactly (see below)."""
     start, end = kwargs.get("date_start"), kwargs.get("date_end")
     interval = kwargs.get("interval", Interval.INTERVAL)
     if not (isinstance(start, datetime) and isinstance(end, datetime)):
         # end None = live (capped to settled interval); start None derives from raw end: keep exact
-        return kwargs
+        return None
     if start.tzinfo is not None or end.tzinfo is not None:
-        return kwargs  # rejected by validation; keep exact
+        return None  # rejected by validation; keep exact
     if interval not in _NORMALISED_INTERVALS:
-        return kwargs
+        return None
     if any(m in FORECAST_METRICS for m in kwargs.get("metrics") or []):
-        return kwargs  # forecast table has its own date semantics
+        return None  # forecast table has its own date semantics
+    return _ceil_5m(end)
+
+
+def _normalise_window(kwargs: dict[str, Any]) -> dict[str, Any]:
+    """Key-only: collapse date_start/date_end to the 5m grid they select; else return kwargs unchanged."""
+    slot_end = grid_slot_end(kwargs)
+    if slot_end is None:
+        return kwargs
+    start, end = kwargs["date_start"], kwargs["date_end"]
     # validate_date_range checks `(end - start).days` against the plan limit on the raw values
-    return {**kwargs, "date_start": _ceil_5m(start), "date_end": _ceil_5m(end), "_range_days": (end - start).days}
+    return {**kwargs, "date_start": _ceil_5m(start), "date_end": slot_end, "_range_days": (end - start).days}
 
 
 def tiered_key_builder(

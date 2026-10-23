@@ -72,13 +72,13 @@ async def lifespan(app: FastAPI):
 
     logger.info(f"OpenElectricity API starting up on {settings.env}: v{get_version()} on host {get_hostname()}")
 
-    if settings.is_dev:
-        logger.info("Cache disabled")
-        FastAPICache.init(backend=InMemoryBackend())
-    else:
+    if settings.uses_shared_api_cache:
         redis = await aioredis.from_url(str(settings.redis_url))
         FastAPICache.init(RedisBackend(redis), prefix="api-cache")
-        logger.info("Enabled API cache")
+        logger.info("Enabled API cache (redis)")
+    else:
+        logger.info("API cache in-memory (local/test)")
+        FastAPICache.init(backend=InMemoryBackend())
 
     api_executor = install_api_executor()
     start_loop_monitor("api")
