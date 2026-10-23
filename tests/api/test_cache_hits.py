@@ -52,6 +52,8 @@ def _patch_ts(monkeypatch: pytest.MonkeyPatch, mod: Any) -> MagicMock:
     # data router formats rows + builds the payload in one off-loop helper; market splits them
     monkeypatch.setattr(mod, "rows_to_timeseries_response", lambda *a, **kw: {"data": []}, raising=False)
     monkeypatch.setattr(mod, "rows_to_timeseries_list", lambda *a, **kw: [], raising=False)
+    monkeypatch.setattr(mod, "columnar_to_timeseries_response", lambda *a, **kw: {"data": []}, raising=False)
+    monkeypatch.setattr(mod, "format_timeseries_columnar", lambda *a, **kw: [], raising=False)
     monkeypatch.setattr(mod, "build_timeseries_response", lambda ts: {"data": []}, raising=False)
     return execute
 
