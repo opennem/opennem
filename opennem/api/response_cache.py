@@ -14,7 +14,7 @@ import asyncio
 import functools
 import json
 import logging
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, Mapping
 from datetime import datetime, timedelta, timezone
 from typing import Any, ParamSpec, TypeVar
 
@@ -24,6 +24,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi_cache.coder import Coder
 from fastapi_cache.decorator import cache
 from pydantic import TypeAdapter
+from starlette.datastructures import MutableHeaders
 from starlette.responses import JSONResponse
 
 from opennem.api.cache_keys import grid_slot_end
@@ -37,7 +38,54 @@ R = TypeVar("R")
 _INJECTED_RESPONSE = "__fastapi_cache_response"
 # bump when the stored format changes: old entries (JsonCoder blobs, still in Redis across a deploy) are never read
 CACHE_FORMAT = "rawjson-v2"
+_INJECTED_REQUEST = "__fastapi_cache_request"
 _SKIP_HEADERS = frozenset({"content-length", "content-type"})
+
+
+def apply_cache_visibility(headers: MutableHeaders | dict[str, str], authorized: bool) -> None:
+    """Mark a keyed response `private` (#751) so shared caches (Cloudflare caches by URL, ignoring Authorization)
+    never serve it to a keyless client. Only the visibility directive changes: max-age is kept as set by
+    fastapi-cache (live/slot TTL on a MISS, remaining ttl on a HIT). Anonymous responses and responses with no
+    max-age cache-control (errors, no-store) are left untouched.
+    """
+    if not authorized:
+        return
+    cc = headers.get("cache-control")
+    if cc is None or "max-age" not in cc.lower():
+        return
+    if not any(d.strip().lower() in ("private", "no-store") for d in cc.split(",")):
+        headers["Cache-Control"] = f"private, {cc}"
+    vary = headers.get("vary")
+    if vary is None:
+        headers["Vary"] = "Authorization"
+    elif "authorization" not in vary.lower():
+        headers["Vary"] = f"{vary}, Authorization"
+
+
+def apply_request_cache_visibility(kwargs: Mapping[str, Any]) -> None:
+    """Apply `apply_cache_visibility` to the injected sub-response; keyed when the request carried Authorization.
+
+    Falls back to a non-None `user` kwarg when the request was not injected.
+    """
+    sub_response = kwargs.get(_INJECTED_RESPONSE)
+    if not isinstance(sub_response, Response):
+        return
+    request = kwargs.get(_INJECTED_REQUEST)
+    authorized = request.headers.get("authorization") is not None if request is not None else kwargs.get("user") is not None
+    apply_cache_visibility(sub_response.headers, authorized)
+
+
+def private_when_keyed[**Q, T](func: Callable[Q, Awaitable[T]]) -> Callable[Q, Awaitable[T]]:
+    """For plain fastapi-cache `@cache` routes: place ABOVE `@cache`, below the router decorator."""
+
+    @functools.wraps(func)
+    async def wrapper(*args: Q.args, **kwargs: Q.kwargs) -> T:
+        result = await func(*args, **kwargs)
+        apply_request_cache_visibility(kwargs)
+        return result
+
+    return wrapper
+
 
 # a request is "live" when its date_end is unset or within this window of now: new intervals land every 5 min,
 # so those responses go stale far faster than a range that ended days ago (#726)
@@ -203,6 +251,7 @@ def cached_json(
                     chosen = slot_variant(ttl)
             result = await chosen(*args, **kwargs)
             sub_response = kwargs.get(_INJECTED_RESPONSE)
+            apply_request_cache_visibility(kwargs)  # miss + hit + 304 (sub_response is returned as is)
             if isinstance(result, PreEncoded):  # MISS: hand FastAPI the finished bytes, no second serialisation
                 result = RawJsonResponse(content=result.body)
             # a raw Response skips FastAPI's sub-response header merge: carry cache headers over by hand
