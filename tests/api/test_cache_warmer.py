@@ -204,6 +204,7 @@ async def test_run_counts_and_limits_concurrency(monkeypatch: pytest.MonkeyPatch
     _enable(monkeypatch)
     monkeypatch.setattr(cw.settings, "cache_warm_concurrency", 2, raising=False)
     monkeypatch.setattr(cw.settings, "cache_warm_include_30d", False, raising=False)
+    monkeypatch.setattr(cw.settings, "cache_warm_ahead", False, raising=False)
     seen: list[httpx.Request] = []
     inflight = 0
     peak = 0
@@ -259,6 +260,100 @@ def test_cache_backend_selection() -> None:
         assert OpennemSettings(env=env).uses_shared_api_cache is shared
 
 
+# --- warm-ahead (#752) ---
+
+
+@pytest.mark.parametrize("second", [0, 1, 17, 30, 59])
+@pytest.mark.parametrize("range_label", ["1d", "3d", "7d", "30d"])
+def test_warm_ahead_key_equals_real_request_at_next_slot_start(second: int, range_label: str) -> None:
+    """Cycle runs in slot 06:20 (grid_end); ahead entries must match a real request a few seconds into slot 06:25."""
+    grid_end = datetime(2026, 10, 24, 6, 20)
+    next_end = grid_end + cw.GRID
+    # real request a few seconds after the slot boundary (06:20:00 + second, second 0 is still slot 06:20)
+    now = datetime(2026, 10, 24, 6, 20, second) if second else datetime(2026, 10, 24, 6, 20, 1)
+    assert cw.next_grid_end(now) == next_end
+    ahead = {(r.path, r.params) for r in cw.build_cycle_requests(grid_end, include_30d=True) if r.rank[0] == cw.PHASE_AHEAD}
+    span, interval = {**cw.RANGES, **cw.RANGES_30D}[range_label]
+    for region in cw.REGIONS:
+        for metrics in cw.DATA_CALLS:
+            for end in (now, now - span):  # current and prior window
+                real = cw._request("data", metrics, region, end - span, end, interval)
+                warm_end = next_end if end == now else next_end - span
+                expect = cw._request("data", metrics, region, warm_end - span, warm_end, interval)
+                assert (expect.path, expect.params) in ahead
+                assert _key(real.params, "data") == _key(expect.params, "data")
+        for metrics in cw.MARKET_CALLS:
+            real = _bench_real_request("market", metrics, region, now, span, interval)
+            expect = cw._request("market", metrics, region, next_end - span, next_end, interval)
+            assert (expect.path, expect.params) in ahead
+            assert _key(real.params, "market") == _key(expect.params, "market")
+
+
+def test_cycle_requests_disjoint_and_ahead_optional() -> None:
+    end = datetime(2026, 10, 24, 6, 20)
+    both = cw.build_cycle_requests(end)
+    assert len(both) == 2 * 14 * 6 * 3
+    assert len({(r.path, r.params) for r in both}) == len(both)
+    assert len(cw.build_cycle_requests(end, ahead=False)) == 14 * 6 * 3
+    assert all(r.rank[0] == cw.PHASE_CURRENT for r in cw.build_cycle_requests(end, ahead=False))
+
+
+def test_priority_order() -> None:
+    end = datetime(2026, 10, 24, 6, 20)
+    reqs = cw.build_cycle_requests(end)
+    ranks = [r.rank for r in reqs]
+    assert ranks == sorted(ranks)
+    n = len(reqs) // 2
+    assert all(r.rank[0] == cw.PHASE_CURRENT for r in reqs[:n])  # current slot fully before the next one
+
+    def region_of(r: cw.WarmRequest) -> str | None:
+        return dict(r.params).get("network_region")
+
+    first = reqs[0]
+    assert region_of(first) is None and first.path == "/v4/data/network/NEM"  # whole NEM, heavy data, 1d
+    assert dict(first.params)["interval"] == "5m"
+    cur = reqs[:n]
+    # hot regions (NEM, NSW1, VIC1, QLD1) all before SA1/TAS1
+    last_hot = max(i for i, r in enumerate(cur) if region_of(r) in (None, "NSW1", "VIC1", "QLD1"))
+    first_cold = min(i for i, r in enumerate(cur) if region_of(r) in ("SA1", "TAS1"))
+    assert last_hot < first_cold
+    # within the hot tier: all 1d before any 3d, before any 7d
+    hot = [r for r in cur if region_of(r) in (None, "NSW1", "VIC1", "QLD1")]
+    days = [
+        (datetime.fromisoformat(dict(r.params)["date_end"]) - datetime.fromisoformat(dict(r.params)["date_start"])).days
+        for r in hot
+    ]
+    assert days == sorted(days)
+    # heavy current-window data calls come before market calls for the same region/range
+    assert [r.rank[4] for r in hot[:14]] == sorted(r.rank[4] for r in hot[:14])
+
+
+@pytest.mark.asyncio
+async def test_run_with_ahead_warms_both_slots_and_logs_offsets(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    _enable(monkeypatch)
+    monkeypatch.setattr(cw.settings, "cache_warm_concurrency", 2, raising=False)
+    monkeypatch.setattr(cw.settings, "cache_warm_include_30d", False, raising=False)
+    monkeypatch.setattr(cw.settings, "cache_warm_ahead", True, raising=False)
+    ends: list[str] = []
+
+    async def handler(request: httpx.Request) -> httpx.Response:
+        ends.append(request.url.params["date_end"])
+        return httpx.Response(200, json={})
+
+    real_client = httpx.AsyncClient
+    monkeypatch.setattr(cw.httpx, "AsyncClient", lambda **kw: real_client(transport=httpx.MockTransport(handler), **kw))
+    lg = cw.logger
+    lg.addHandler(caplog.handler)
+    lg.setLevel("INFO")
+    stats = await cw.run_cache_warm(now=datetime(2026, 10, 24, 6, 17, 30))
+    assert stats is not None and stats.total == stats.ok == 504
+    assert "2026-10-24T06:25:00" in ends
+    lg.removeHandler(caplog.handler)
+    assert "start_to_slot_end=150.0s" in caplog.text and "end_to_slot_end=" in caplog.text
+
+
 # --- slot-bounded live TTL for grid-normalised windows ---
 
 _SLOT = datetime(2026, 10, 24, 6, 20)
@@ -271,7 +366,11 @@ _SLOT = datetime(2026, 10, 24, 6, 20)
         (datetime(2026, 10, 24, 6, 15, 1), 330),  # 299s + 30 capped
         (datetime(2026, 10, 24, 6, 19, 58), 60),  # near slot end: floor
         (datetime(2026, 10, 24, 6, 20, 5), 60),  # slot already over
-        (datetime(2026, 10, 24, 6, 5, 0), 60),  # a future slot (15 min away): short TTL
+        (datetime(2026, 10, 24, 6, 5, 0), 60),  # 15 min away: short TTL
+        (datetime(2026, 10, 24, 6, 10, 0), 60 * 10 + 30),  # next slot, 600s away: full slot + slack, capped 630
+        (datetime(2026, 10, 24, 6, 10, 1), 630),  # 599s + 30 = 629 -> bucket 630
+        (datetime(2026, 10, 24, 6, 9, 59), 60),  # 601s away: beyond next slot
+        (datetime(2026, 10, 24, 6, 12, 0), 510),  # warm-ahead mid-slot: 480 + 30
     ],
 )
 def test_slot_live_ttl(now: datetime, ttl: int) -> None:
@@ -284,11 +383,13 @@ def test_slot_live_ttl(now: datetime, ttl: int) -> None:
 def test_slot_live_ttl_never_outlives_slot_by_more_than_slack_plus_bucket() -> None:
     from opennem.api.response_cache import SLOT_TTL_SLACK, slot_live_ttl
 
-    for sec in range(0, 300, 7):
-        now = datetime(2026, 10, 24, 6, 15, 0) + timedelta(seconds=sec, milliseconds=1)
+    for sec in range(0, 600, 7):  # current slot and the next one (warm-ahead)
+        now = datetime(2026, 10, 24, 6, 10, 0) + timedelta(seconds=sec, milliseconds=1)
         got = slot_live_ttl(_SLOT, 60, now=now.replace(tzinfo=cw.NEM_TZ))
         expiry = now + timedelta(seconds=got)
         assert expiry <= _SLOT + timedelta(seconds=max(SLOT_TTL_SLACK + 10, 60))
+        if _SLOT - now > timedelta(seconds=30):  # entry (incl. warm-ahead) lives through its whole slot
+            assert expiry >= _SLOT  # lives through its whole slot
 
 
 @pytest.mark.asyncio

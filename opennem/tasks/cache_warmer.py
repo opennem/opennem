@@ -12,6 +12,16 @@ real requests map to next (`next_grid_end`), and start = end - span (whole-minut
 `tiered_key_builder` produces the same key as any real request in that slot. The key also includes the user
 tier (plan + admin flag), so the warmer's api key must belong to the same plan as the frontend's public key.
 
+Warm-ahead (#752): a request in slot E (time in (E-5m, E]) keys on date_end=E and, via
+`cap_date_end_to_settled_interval`, its content depends only on `min(E, latest)` where `latest` is the newest interval
+in ClickHouse. When interval L lands (at L + X, inside slot L+5m) the cycle refreshes slot L+5m; the next slot
+L+10m starts at L+5m, and nothing new lands before L+5m+X, so an entry for key L+10m built from the data available
+now (latest = L) equals a cold build at the start of that slot. Each cycle therefore refreshes the current slot first,
+then pre-builds the next one (cycle phase "ahead"). The post-landing force refresh of the next cycle then overwrites it
+with latest = L+5m, exactly as it does for an entry a user cold-built before landing. Late landing: the cold build at
+the slot start would also see latest = L-5m, and so does the pre-built entry; the late cycle then refreshes the
+now-current slot (already keyed) and pre-builds the one after. TTL for a next-slot entry: `slot_live_ttl`.
+
 Entries are refreshed with `Cache-Control: no-cache` (fastapi-cache recomputes and overwrites): a user who
 arrived before the interval finished landing would otherwise leave a stale-by-one-row entry for the warmer
 to "hit".
@@ -63,10 +73,19 @@ MARKET_CALLS: tuple[tuple[str, ...], ...] = (
 )
 
 
+# hot-first order (#752): whole NEM then the big regions get warmed before the small ones
+REGION_PRIORITY: tuple[str | None, ...] = (None, "NSW1", "VIC1", "QLD1", "SA1", "TAS1")
+HOT_REGIONS = frozenset(REGION_PRIORITY[:4])
+PHASE_CURRENT = 0
+PHASE_AHEAD = 1
+
+
 @dataclass(frozen=True)
 class WarmRequest:
     path: str
     params: tuple[tuple[str, str], ...]
+    # sort key, see `priority_key`; not part of identity
+    rank: tuple[int, ...] = field(default=(), compare=False)
 
 
 @dataclass
@@ -91,12 +110,31 @@ def next_grid_end(now: datetime) -> datetime:
     return floored if floored == now else floored + GRID
 
 
+def _naive_local(now: datetime) -> datetime:
+    return now.astimezone(NEM_TZ).replace(tzinfo=None) if now.tzinfo is not None else now
+
+
 def _fmt(dt: datetime) -> str:
     return dt.strftime("%Y-%m-%dT%H:%M:%S")
 
 
+def priority_key(region: str | None, range_idx: int, call_rank: int, phase: int = PHASE_CURRENT) -> tuple[int, ...]:
+    """Lower sorts first: current slot before the next one, hot regions, short ranges, then heavy data calls.
+
+    call_rank: 0 = data call on the current window (heavy), 1 = market call, 2 = data call on the prior window.
+    """
+    region_idx = REGION_PRIORITY.index(region) if region in REGION_PRIORITY else len(REGION_PRIORITY)
+    return (phase, 0 if region in HOT_REGIONS else 1, range_idx, region_idx, call_rank)
+
+
 def _request(
-    kind: str, metrics: tuple[str, ...], region: str | None, start: datetime, end: datetime, interval: str
+    kind: str,
+    metrics: tuple[str, ...],
+    region: str | None,
+    start: datetime,
+    end: datetime,
+    interval: str,
+    rank: tuple[int, ...] = (),
 ) -> WarmRequest:
     params: list[tuple[str, str]] = [("metrics", m) for m in metrics]
     params += [("interval", interval), ("date_start", _fmt(start)), ("date_end", _fmt(end))]
@@ -104,23 +142,41 @@ def _request(
         params.append(("network_region", region))
     if kind == "data":
         params.append(("secondary_grouping", "fueltech"))
-    return WarmRequest(path=f"/v4/{kind}/network/{NETWORK}", params=tuple(params))
+    return WarmRequest(path=f"/v4/{kind}/network/{NETWORK}", params=tuple(params), rank=rank)
 
 
 def build_requests(
-    date_end: datetime, *, include_30d: bool = False, regions: tuple[str | None, ...] = REGIONS
+    date_end: datetime,
+    *,
+    include_30d: bool = False,
+    regions: tuple[str | None, ...] = REGIONS,
+    phase: int = PHASE_CURRENT,
 ) -> list[WarmRequest]:
-    """All tracker calls for one grid slot: current window for every call, prior window for the data calls."""
+    """All tracker calls for one grid slot: current window for every call, prior window for the data calls.
+
+    Returned in priority order (`priority_key`), so a spent budget drops the least valuable tail.
+    """
     ranges = {**RANGES, **(RANGES_30D if include_30d else {})}
     out: list[WarmRequest] = []
-    for span, interval in ranges.values():
+    for range_idx, (span, interval) in enumerate(ranges.values()):
         for region in regions:
             for metrics in DATA_CALLS:
-                out.append(_request("data", metrics, region, date_end - span, date_end, interval))
+                rank = priority_key(region, range_idx, 0, phase)
+                out.append(_request("data", metrics, region, date_end - span, date_end, interval, rank))
             for metrics in MARKET_CALLS:
-                out.append(_request("market", metrics, region, date_end - span, date_end, interval))
+                rank = priority_key(region, range_idx, 1, phase)
+                out.append(_request("market", metrics, region, date_end - span, date_end, interval, rank))
             for metrics in DATA_CALLS:  # prior period: now-2span .. now-span
-                out.append(_request("data", metrics, region, date_end - 2 * span, date_end - span, interval))
+                rank = priority_key(region, range_idx, 2, phase)
+                out.append(_request("data", metrics, region, date_end - 2 * span, date_end - span, interval, rank))
+    return sorted(out, key=lambda r: r.rank)  # stable: ties keep build order
+
+
+def build_cycle_requests(grid_end: datetime, *, include_30d: bool = False, ahead: bool = True) -> list[WarmRequest]:
+    """Current slot first, then (warm-ahead) the next slot, each in priority order."""
+    out = build_requests(grid_end, include_30d=include_30d)
+    if ahead:
+        out += build_requests(grid_end + GRID, include_30d=include_30d, phase=PHASE_AHEAD)
     return out
 
 
@@ -186,7 +242,9 @@ async def run_cache_warm(now: datetime | None = None) -> WarmStats | None:
     try:
         assert settings.cache_warm_api_url and settings.cache_warm_api_key  # noqa: S101
         grid_end = next_grid_end(now or datetime.now(NEM_TZ))
-        requests = build_requests(grid_end, include_30d=settings.cache_warm_include_30d)
+        requests = build_cycle_requests(grid_end, include_30d=settings.cache_warm_include_30d, ahead=settings.cache_warm_ahead)
+        # seconds until the slot being refreshed ends (negative = past it); coverage = end offset vs the boundary
+        start_offset = (grid_end - _naive_local(now or datetime.now(NEM_TZ))).total_seconds()
         headers = {
             "Authorization": f"Bearer {settings.cache_warm_api_key.get_secret_value()}",
             "Cache-Control": "no-cache",
@@ -202,9 +260,10 @@ async def run_cache_warm(now: datetime | None = None) -> WarmStats | None:
                 budget_seconds=settings.cache_warm_budget_seconds,
             )
         logger.info(
-            f"tracker cache warm grid_end={grid_end.isoformat()} total={stats.total} attempted={stats.attempted} "
-            f"ok={stats.ok} hit={stats.hit} miss={stats.miss} errors={stats.errors} "
-            f"skipped_budget={stats.skipped_budget} elapsed={stats.elapsed:.1f}s"
+            f"tracker cache warm grid_end={grid_end.isoformat()} ahead={settings.cache_warm_ahead} "
+            f"start_to_slot_end={start_offset:.1f}s end_to_slot_end={start_offset - stats.elapsed:.1f}s "
+            f"total={stats.total} attempted={stats.attempted} ok={stats.ok} hit={stats.hit} "
+            f"miss={stats.miss} errors={stats.errors} skipped_budget={stats.skipped_budget} elapsed={stats.elapsed:.1f}s"
         )
         return stats
     finally:
