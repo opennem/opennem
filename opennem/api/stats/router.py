@@ -12,6 +12,7 @@ from starlette import status
 from opennem.api.cache_keys import tiered_key_builder
 from opennem.api.data.utils import validate_date_range
 from opennem.api.queries import QueryType, get_timeseries_query
+from opennem.api.response_cache import private_when_keyed
 from opennem.api.security import authenticated_user
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.api.utils import get_api_network_from_code
@@ -90,6 +91,7 @@ _INTERVAL_TO_HUMAN: dict[Interval, str] = {
     response_model=OpennemDataSet,
     response_model_exclude_unset=False,
 )
+@private_when_keyed
 @cache(expire=60 * 5, key_builder=tiered_key_builder)
 async def power_station_v4(
     network_code: str,
@@ -161,6 +163,7 @@ async def power_station_v4(
     response_model=OpennemDataSet,
     response_model_exclude_unset=False,
 )
+@private_when_keyed
 @cache(expire=60 * 5, key_builder=tiered_key_builder)
 async def energy_station_v4(
     network_code: str,
