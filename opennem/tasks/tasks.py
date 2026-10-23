@@ -80,6 +80,27 @@ async def _crawl_nem_prices() -> int:
         return 0
 
 
+async def _enqueue_cache_warm(ctx: dict) -> None:
+    """Queue the tracker cache warm; never fails the interval check. No-op when the warmer is unset."""
+    from opennem.tasks.cache_warmer import is_enabled
+
+    redis = ctx.get("redis")
+    if redis is None or not is_enabled():
+        return
+    try:
+        # fixed job id: arq drops a repeat while one is queued or running (keep_result=0 on the func)
+        await redis.enqueue_job("task_warm_tracker_cache", _job_id="tracker-cache-warm")
+    except Exception:
+        logger.exception("could not enqueue tracker cache warm")
+
+
+async def task_warm_tracker_cache(ctx: dict) -> None:
+    """Replay the browser tracker's standard calls against the API so the shared response cache is warm."""
+    from opennem.tasks.cache_warmer import run_cache_warm
+
+    await run_cache_warm()
+
+
 async def task_nem_interval_check(ctx) -> None:
     """Poll AEMO until new dispatch_scada data arrives, then run full pipeline."""
     backoff = [5, 10, 15, 20, 20, 20, 20]
@@ -126,6 +147,10 @@ async def task_nem_interval_check(ctx) -> None:
     except Exception as e:
         logger.exception("unit_intervals aggregate failed, exporting anyway")
         aggregate_error = e
+
+    # data is queryable now: refill the tracker response cache before users arrive (#737)
+    if aggregate_error is None:
+        await _enqueue_cache_warm(ctx)
 
     # NEM and AU exports run back to back, not gathered (peak memory, #677).
     await run_export_power_latest_for_network(network=NetworkNEM)

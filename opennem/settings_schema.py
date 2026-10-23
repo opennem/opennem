@@ -8,7 +8,7 @@ from datetime import UTC
 from datetime import timezone as pytimezone
 from pathlib import Path
 
-from pydantic import AliasChoices, AnyUrl, Field, RedisDsn, field_validator
+from pydantic import AliasChoices, AnyUrl, Field, RedisDsn, SecretStr, field_validator
 from pydantic_settings import BaseSettings
 
 from opennem.schema.field_types import URLNoPath
@@ -59,6 +59,15 @@ class OpennemSettings(BaseSettings):
         RedisDsn("redis://127.0.0.1"),
         validation_alias=AliasChoices("REDIS_HOST_URL", "cache_url"),
     )
+
+    # tracker cache warmer (#737): worker calls the API over http after each NEM interval lands.
+    # Disabled when cache_warm_api_url or cache_warm_api_key is unset. The key MUST be the same plan
+    # tier as the frontend's public key (PUBLIC_OE_API_KEY): the response cache key includes the tier.
+    cache_warm_api_url: str | None = None  # e.g. https://api.openelectricity.org.au
+    cache_warm_api_key: SecretStr | None = None
+    cache_warm_concurrency: int = Field(2, ge=1, le=16)
+    cache_warm_budget_seconds: int = Field(200, ge=10)
+    cache_warm_include_30d: bool = False
 
     # if we're doing a dry run
     dry_run: bool = False
@@ -276,6 +285,11 @@ class OpennemSettings(BaseSettings):
     @property
     def is_dev(self) -> bool:
         return self.env.lower() in ("local", "dev", "development", "staging")
+
+    @property
+    def uses_shared_api_cache(self) -> bool:
+        """Deployed envs (dev, staging, prod) use the redis API cache; local/test use in-memory."""
+        return self.env.lower() not in ("local", "test", "testing")
 
     @property
     def is_local(self) -> bool:

@@ -63,6 +63,7 @@ from opennem.tasks.tasks import (
     task_update_facility_seen_range,
     task_update_max_generation_for_units,
     task_update_milestones,
+    task_warm_tracker_cache,
     task_weekly_summary_nem,
     task_weekly_summary_wem,
     task_wem_day_crawl,
@@ -132,6 +133,8 @@ class WorkerSettings:
     # to seed its running extremes (#654) and takes minutes.
     functions = [
         func(task_milestone_gap_backfill, timeout=None),
+        # enqueued by task_nem_interval_check once data lands; keep_result=0 so the fixed _job_id only dedupes live jobs
+        func(task_warm_tracker_cache, timeout=300, max_tries=1, keep_result=0),
         # keep_result=0: arq refuses a repeat _job_id while the result key lives (1h default), which
         # would drop later edits to the same doc. Dedupe only while queued/running.
         func(task_sanity_webhook, timeout=600, max_tries=3, keep_result=0),

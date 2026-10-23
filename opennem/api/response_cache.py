@@ -26,6 +26,8 @@ from fastapi_cache.decorator import cache
 from pydantic import TypeAdapter
 from starlette.responses import JSONResponse
 
+from opennem.api.cache_keys import grid_slot_end
+
 logger = logging.getLogger("opennem.api.response_cache")
 
 P = ParamSpec("P")
@@ -52,6 +54,26 @@ def is_live_edge_request(date_end: datetime | None, now: datetime | None = None)
     if date_end.tzinfo is not None:
         date_end = date_end.astimezone(_NEM_TZ).replace(tzinfo=None)
     return date_end >= now_local - LIVE_WINDOW
+
+
+# Grid-normalised sub-day windows (#729) key on the 5m slot they end in, so an entry is only ever read by requests
+# of that slot. Live TTL for them = time left in the slot + slack, capped here: an entry written at 06:16:30 for
+# slot 06:20 lives to ~06:20:30, not 60s, so the cache-warmer's refresh (right after the interval lands) serves
+# the whole slot. A cold build before the interval landed is stale for at most the rest of its slot, and the
+# warmer force-refreshes it; no setting gate needed because the TTL can never outlive the slot by more than slack.
+SLOT_TTL_CAP = 330
+SLOT_TTL_SLACK = 30
+_TTL_BUCKET = 10  # round up so lazily built per-TTL cache wrappers stay few
+
+
+def slot_live_ttl(slot_end: datetime, floor: int, now: datetime | None = None) -> int:
+    """Live TTL for a request whose key slot ends at `slot_end` (naive NEM-local); `floor` when not in the current slot."""
+    now_local = (now or datetime.now(_NEM_TZ)).astimezone(_NEM_TZ).replace(tzinfo=None)
+    remaining = (slot_end - now_local).total_seconds()
+    if remaining < 0 or remaining > 300:
+        return floor  # past slot or a future one: not the warmed/current slot, keep the short TTL
+    ttl = -(-int(remaining + SLOT_TTL_SLACK) // _TTL_BUCKET) * _TTL_BUCKET
+    return max(floor, min(SLOT_TTL_CAP, ttl))
 
 
 class PreEncoded:
@@ -131,7 +153,8 @@ def cached_json(
     live_expire: shorter TTL for live-edge requests (date_end kwarg unset or within LIVE_WINDOW of now), see
     `is_live_edge_request`. Both TTLs share one key space (same key, tier included): a key's date_end only ever moves
     from live to historical, so a stale long entry can't be served to a live request. Cache-Control max-age follows
-    whichever TTL applied, so Cloudflare (which caches by URL) never holds a 60s-fresh body for 300s.
+    whichever TTL applied, so Cloudflare (which caches by URL) never holds a 60s-fresh body for 300s. Grid-normalised
+    sub-day windows get the longer slot-bounded TTL from `slot_live_ttl` (max-age follows it the same way).
     """
 
     def versioned_key_builder(*args: Any, **kwargs: Any) -> Any:
@@ -162,11 +185,23 @@ def cached_json(
             else inner
         )
 
+        slot_variants: dict[int, Callable[..., Awaitable[Any]]] = {}
+
+        def slot_variant(ttl: int) -> Callable[..., Awaitable[Any]]:
+            if ttl not in slot_variants:
+                slot_variants[ttl] = cache(expire=ttl, key_builder=versioned_key_builder, coder=coder)(encoded)
+            return slot_variants[ttl]
+
         @functools.wraps(inner)
         async def outer(*args: P.args, **kwargs: P.kwargs) -> Any:
             date_end = kwargs.get("date_end")
             use_live = live_expire is not None and is_live_edge_request(date_end if isinstance(date_end, datetime) else None)
-            result = await (inner_live if use_live else inner)(*args, **kwargs)
+            chosen = inner_live if use_live else inner
+            if use_live and live_expire is not None and (slot_end := grid_slot_end(kwargs)) is not None:
+                ttl = slot_live_ttl(slot_end, live_expire)
+                if ttl != live_expire:
+                    chosen = slot_variant(ttl)
+            result = await chosen(*args, **kwargs)
             sub_response = kwargs.get(_INJECTED_RESPONSE)
             if isinstance(result, PreEncoded):  # MISS: hand FastAPI the finished bytes, no second serialisation
                 result = RawJsonResponse(content=result.body)
