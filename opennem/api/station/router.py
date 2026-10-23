@@ -24,7 +24,7 @@ router = APIRouter()
 # router decorator wrapped a copy FastAPI never called, #744). `user: authenticated_user` is a normal dependency,
 # so auth runs before the endpoint on cache hits too. Errors raise out of the handler and are never stored.
 FACILITIES_CACHE_TTL = 60 * 5
-FACILITY_CACHE_TTL = 60 * 60
+FACILITY_CACHE_TTL = 60 * 5
 
 _RESPONSE_ADAPTER: "TypeAdapter[APIV4ResponseSchema]" = TypeAdapter(APIV4ResponseSchema)
 
