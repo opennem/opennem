@@ -8,6 +8,7 @@ time series data across both market and data endpoints.
 import logging
 from collections.abc import Sequence
 from datetime import datetime, timedelta
+from operator import itemgetter
 from typing import Any
 
 from pydantic import ConfigDict, Field, computed_field, model_validator
@@ -370,6 +371,147 @@ def build_timeseries_response(timeseries_list: list[dict[str, Any]]) -> dict[str
     }
 
 
+def format_timeseries_rows(
+    column_names: Sequence[str],
+    rows: Sequence[Sequence[Any]],
+    *,
+    network: str,
+    metrics: Sequence[MetricType],
+    interval: Interval,
+    primary_grouping: PrimaryGrouping,
+    secondary_groupings: Sequence[SecondaryGrouping] | None,
+    facility_code: str | list[str] | None = None,
+) -> list[dict[str, Any]]:
+    """Columnar fast path of `format_timeseries_response` (byte-identical output, #732).
+
+    Reads row tuples by column position (no per-row dict), groups all metrics in one pass,
+    resolves each distinct group key to its label once, and formats each distinct interval
+    once. Pure and CPU-bound: safe to run via asyncio.to_thread.
+    """
+    network_obj = get_api_network_from_code(network)
+    tz_offset = network_obj.get_fixed_offset()
+    tz_offset_str = network_obj.get_offset_string()
+
+    col_idx = {name: i for i, name in enumerate(column_names)}
+    interval_idx = col_idx["interval"]
+
+    key_cols: list[str] = []
+    if facility_code:
+        key_cols = ["unit_code"]
+    else:
+        if primary_grouping == PrimaryGrouping.NETWORK_REGION:
+            key_cols.append("network_region")
+        if secondary_groupings:
+            key_cols.extend(_GROUPING_COL[g] for g in secondary_groupings)
+    key_idx = [col_idx[c] for c in key_cols]
+
+    metric_names = [m.value.lower() for m in metrics]
+    metric_idx = [col_idx.get(n) for n in metric_names]
+    if rows:
+        for name, idx in zip(metric_names, metric_idx, strict=True):
+            if idx is None:
+                logger.warning(f"Metric '{name}' not in row. Keys: {list(column_names)}")
+
+    # distinct raw interval -> aware datetime; aware datetime -> iso string
+    ts_cache: dict[Any, datetime] = {}
+    iso_cache: dict[datetime, str] = {}
+    # raw key tuple -> label_key; label_key -> labels (first row wins, as before)
+    label_key_cache: dict[tuple[Any, ...], str] = {}
+    labels_by_key: dict[str, dict[str, Any]] = {}
+
+    group_ts: dict[str, list[datetime]] = {}
+    group_vals: list[dict[str, list[float | None]]] = [{} for _ in metrics]
+
+    for row in rows:
+        iv = row[interval_idx]
+        ts = ts_cache.get(iv)
+        if ts is None:
+            if isinstance(iv, datetime):
+                ts = iv.replace(tzinfo=tz_offset)
+            else:
+                ts = datetime.combine(iv, datetime.min.time(), tzinfo=tz_offset)
+            ts_cache[iv] = ts
+            iso_cache[ts] = ts.isoformat()
+
+        raw_key = tuple([row[i] for i in key_idx])
+        label_key = label_key_cache.get(raw_key)
+        if label_key is None:
+            row_map = dict(zip(key_cols, raw_key, strict=True))
+            label_key, labels = _build_label_key_and_labels(row_map, primary_grouping, secondary_groupings, facility_code)
+            label_key_cache[raw_key] = label_key
+            if label_key not in labels_by_key:
+                labels_by_key[label_key] = labels
+
+        ts_list = group_ts.get(label_key)
+        if ts_list is None:
+            ts_list = group_ts[label_key] = []
+            for gv in group_vals:
+                gv[label_key] = []
+        ts_list.append(ts)
+
+        for gv, idx in zip(group_vals, metric_idx, strict=True):
+            v = None if idx is None else row[idx]
+            gv[label_key].append(None if v is None else float(v))
+
+    timeseries_list: list[dict[str, Any]] = []
+    first_ts = itemgetter(0)
+
+    for metric, metric_name, gv in zip(metrics, metric_names, group_vals, strict=True):
+        meta = get_metric_metadata(metric)
+
+        grouped: dict[str, dict[str, Any]] = {}
+        for label_key, ts_list in group_ts.items():
+            data = list(zip(ts_list, gv[label_key], strict=True))
+            data.sort(key=first_ts)
+            grouped[label_key] = {
+                "name": f"{metric_name}_{label_key}",
+                "columns": dict(labels_by_key[label_key]),
+                "data": data,
+            }
+
+        if not grouped:
+            logger.warning(f"No grouped results for metric {metric_name}")
+            continue
+
+        _fill_interior_gaps(grouped, interval)
+
+        date_start = min(g["data"][0][0] for g in grouped.values())
+        date_end = max(g["data"][-1][0] for g in grouped.values())
+        date_start_iso = date_start.isoformat()
+        date_end_iso = date_end.isoformat()
+
+        groupings: list[str] = []
+        if secondary_groupings:
+            groupings = [primary_grouping.value] + [g.value.lower() for g in secondary_groupings]
+
+        result_dicts = [
+            {
+                "name": g["name"],
+                "date_start": date_start_iso,
+                "date_end": date_end_iso,
+                "columns": g["columns"],
+                "data": [[iso_cache.get(ts) or ts.isoformat(), v] for ts, v in g["data"]],
+            }
+            for g in grouped.values()
+        ]
+
+        timeseries_list.append(
+            {
+                "network_code": network,
+                "metric": metric_name,
+                "unit": meta.unit,
+                "interval": interval.value,
+                "date_start": date_start_iso,
+                "date_end": date_end_iso,
+                "groupings": groupings,
+                "results": result_dicts,
+                "network_timezone_offset": tz_offset_str,
+            }
+        )
+
+    return timeseries_list
+
+
 def rows_to_timeseries_list(
     column_names: Sequence[str],
     rows: Sequence[Sequence[Any]],
@@ -382,15 +524,14 @@ def rows_to_timeseries_list(
     facility_code: str | list[str] | None = None,
 ) -> list[dict[str, Any]]:
     """Row tuples to formatted timeseries dicts. Pure and CPU-bound: run via asyncio.to_thread."""
-    result_dicts = [dict(zip(column_names, row, strict=True)) for row in rows]
-
-    return format_timeseries_response(
+    return format_timeseries_rows(
+        column_names,
+        rows,
         network=network,
         metrics=metrics,
         interval=interval,
         primary_grouping=primary_grouping,
         secondary_groupings=secondary_groupings,
-        results=result_dicts,
         facility_code=facility_code,
     )
 
