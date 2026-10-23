@@ -30,6 +30,7 @@ from opennem.api.admin.router import admin_router
 from opennem.api.data.router import router as data_router
 from opennem.api.early_reject import EarlyRejectMiddleware
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
+from opennem.api.executor import install_api_executor
 from opennem.api.facilities.router import router as facilities_router
 from opennem.api.feedback.router import router as feedback_router
 from opennem.api.known_codes import start_known_codes_refresher, stop_known_codes_refresher
@@ -79,6 +80,7 @@ async def lifespan(app: FastAPI):
         FastAPICache.init(RedisBackend(redis), prefix="api-cache")
         logger.info("Enabled API cache")
 
+    api_executor = install_api_executor()
     start_loop_monitor("api")
     known_codes_task = start_known_codes_refresher()
 
@@ -87,6 +89,7 @@ async def lifespan(app: FastAPI):
     # Shutdown logic
     await stop_known_codes_refresher(known_codes_task)
     await stop_loop_monitor()
+    api_executor.shutdown(wait=False, cancel_futures=True)
 
 
 app = FastAPI(

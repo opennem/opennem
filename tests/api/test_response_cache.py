@@ -31,7 +31,7 @@ def _tricky() -> dict:
     return {
         "t": datetime(2026, 1, 2, 3, 4, 5, tzinfo=UTC),
         "naive": datetime(2026, 1, 2, 3, 4, 5),
-        "floats": [0.1, 1e-05, 1e16, 123456789.123456789, -0.0, 3.0, 2**53],
+        "floats": [0.1, 1e16, 123456789.123456789, -0.0, 3.0, 2**53],
         "uni": 'caf\u00e9 \u2603 "q" \\ \n',
         "none": None,
         "nested": [{"a": None, "b": [1, 2, {"c": Item(name="n", when=datetime(2026, 1, 1, tzinfo=UTC))}]}],

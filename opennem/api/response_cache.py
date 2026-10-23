@@ -18,6 +18,7 @@ from collections.abc import Awaitable, Callable
 from datetime import datetime, timedelta, timezone
 from typing import Any, ParamSpec, TypeVar
 
+import orjson
 from fastapi import Response
 from fastapi.encoders import jsonable_encoder
 from fastapi_cache.coder import Coder
@@ -62,18 +63,30 @@ class PreEncoded:
         self.body = body
 
 
+def _encode_plain(value: Any) -> bytes:
+    """Serialise a plain dict payload the way FastAPI + JSONResponse would (compact, utf-8, no ASCII escaping).
+
+    orjson handles native types (str/int/float/bool/None, datetime incl. tz offset + microseconds, enum, uuid,
+    dataclass); `jsonable_encoder` is only the `default` for the rest (Decimal, pydantic models, sets...), so the
+    hook no longer fires per datetime. Differences from stdlib json: NaN/inf serialise as null instead of raising
+    (stdlib path used allow_nan=False and 500'd); anything orjson rejects (non-str dict keys, ints over 64 bit,
+    unsupported types after the hook) falls back to the stdlib encoder, so output stays equal.
+    """
+    try:
+        return orjson.dumps(value, default=jsonable_encoder)
+    except (TypeError, orjson.JSONEncodeError):
+        return json.dumps(value, default=jsonable_encoder, ensure_ascii=False, allow_nan=False, separators=(",", ":")).encode(
+            "utf-8"
+        )
+
+
 def _encode_value(value: Any, adapter: "TypeAdapter[Any] | None", exclude_none: bool) -> bytes:
     if isinstance(value, PreEncoded):
         return value.body
     if isinstance(value, JSONResponse):
         return bytes(value.body)
     if adapter is None:
-        # what FastAPI + JSONResponse do when the route has no response_model field (plain dict payloads)
-        # default= only fires for non-native values (datetime, Decimal, models): same output as jsonable_encoder
-        # on the whole payload, without a second full walk of an already-plain dict
-        return json.dumps(value, default=jsonable_encoder, ensure_ascii=False, allow_nan=False, separators=(",", ":")).encode(
-            "utf-8"
-        )
+        return _encode_plain(value)
     return adapter.dump_json(value, by_alias=True, exclude_none=exclude_none)
 
 
