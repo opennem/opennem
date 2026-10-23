@@ -55,6 +55,19 @@ class OpennemSettings(BaseSettings):
         description="ClickHouse max_execution_time (seconds) for serving-path queries. 0 = unset.",
     )
 
+    # Route eligible sub-daily /v4/data queries to the 5m fueltech_intervals_mv instead of
+    # unit_intervals (#742). Env CLICKHOUSE_SUBDAY_MV_ROUTING=true turns it on without a code deploy.
+    # Default OFF: the dev equivalence matrix had one unreproduced transient diff and prod view state is unverified.
+    clickhouse_subday_mv_routing: bool = Field(
+        False,
+        description="Serve eligible sub-daily data queries from fueltech_intervals_mv.",
+    )
+    clickhouse_subday_mv_max_age_days: int = Field(
+        45,
+        ge=1,
+        description="Only route windows starting within this many days to fueltech_intervals_mv (older history stays raw).",
+    )
+
     redis_url: RedisDsn = Field(
         RedisDsn("redis://127.0.0.1"),
         validation_alias=AliasChoices("REDIS_HOST_URL", "cache_url"),
