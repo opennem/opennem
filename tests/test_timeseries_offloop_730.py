@@ -11,6 +11,7 @@ from opennem.api.queries import QueryType, get_timeseries_query
 from opennem.api.timeseries import (
     build_timeseries_response,
     format_timeseries_response,
+    format_timeseries_rows,
     rows_to_timeseries_list,
     rows_to_timeseries_response,
 )
@@ -116,14 +117,14 @@ async def _ticks_during(work: Any) -> tuple[int, Any]:
 def test_helper_runs_off_loop_thread() -> None:
     columns, rows = _setup()
     seen: list[int] = []
-    real = format_timeseries_response
+    real = format_timeseries_rows
 
-    def spy(**kw: Any) -> list[dict[str, Any]]:
+    def spy(*a: Any, **kw: Any) -> list[dict[str, Any]]:
         seen.append(threading.get_ident())
-        return real(**kw)
+        return real(*a, **kw)
 
     async def run() -> None:
-        with patch("opennem.api.timeseries.format_timeseries_response", spy):
+        with patch("opennem.api.timeseries.format_timeseries_rows", spy):
             await asyncio.to_thread(rows_to_timeseries_response, columns, rows, **_kwargs())
 
     main_ident = threading.get_ident()
