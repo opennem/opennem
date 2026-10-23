@@ -2,6 +2,7 @@
 Market data router for OpenNEM API.
 """
 
+import asyncio
 import logging
 import time
 from datetime import datetime, timedelta
@@ -24,7 +25,7 @@ from opennem.api.queries import QueryType, get_timeseries_query
 from opennem.api.response_cache import cached_json
 from opennem.api.schema import std_error_responses
 from opennem.api.security import optional_user
-from opennem.api.timeseries import build_timeseries_response, format_timeseries_response
+from opennem.api.timeseries import build_timeseries_response, rows_to_timeseries_list
 from opennem.api.utils import get_api_network_from_code, validate_metrics
 from opennem.core.grouping import PrimaryGrouping
 from opennem.core.metric import Metric
@@ -206,15 +207,15 @@ async def _actual_timeseries(
     if not results:
         return [], False
 
-    result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
-
-    timeseries_list = format_timeseries_response(
+    timeseries_list = await asyncio.to_thread(
+        rows_to_timeseries_list,
+        column_names,
+        results,
         network=network.code,
         metrics=metrics,
         interval=interval,
         primary_grouping=primary_grouping,
         secondary_groupings=None,
-        results=result_dicts,
     )
     return timeseries_list, True
 
@@ -272,15 +273,15 @@ async def _forecast_timeseries(
     if not results:
         return [], False
 
-    result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
-
-    timeseries_list = format_timeseries_response(
+    timeseries_list = await asyncio.to_thread(
+        rows_to_timeseries_list,
+        column_names,
+        results,
         network=network.code,
         metrics=metrics,
         interval=interval,
         primary_grouping=primary_grouping,
         secondary_groupings=None,
-        results=result_dicts,
     )
 
     run_times = await get_forecast_run_times(client, network, metrics, date_start, date_end, network_region)

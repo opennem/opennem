@@ -2,6 +2,7 @@
 API router for OpenNEM data endpoints.
 """
 
+import asyncio
 import logging
 import time
 from datetime import datetime
@@ -17,7 +18,7 @@ from opennem.api.queries import QueryType, get_timeseries_query
 from opennem.api.response_cache import cached_json
 from opennem.api.schema import std_error_responses
 from opennem.api.security import authenticated_user, optional_user
-from opennem.api.timeseries import build_timeseries_response, format_timeseries_response
+from opennem.api.timeseries import rows_to_timeseries_response
 from opennem.api.utils import get_api_network_from_code, validate_metrics
 from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
 from opennem.core.metric import Metric
@@ -150,18 +151,16 @@ async def get_network_data(
             detail=f"No data available for network {network_code} in the specified time range",
         )
 
-    result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
-
-    timeseries_list = format_timeseries_response(
+    return await asyncio.to_thread(
+        rows_to_timeseries_response,
+        column_names,
+        results,
         network=network.code,
         metrics=metrics,
         interval=interval,
         primary_grouping=primary_grouping,
         secondary_groupings=secondary_groupings,
-        results=result_dicts,
     )
-
-    return build_timeseries_response(timeseries_list)
 
 
 @api_version(4)
@@ -259,16 +258,14 @@ async def get_facility_data(
             detail=f"No data available for {filter_desc or 'the specified filters'} in the specified time range",
         )
 
-    result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
-
-    timeseries_list = format_timeseries_response(
+    return await asyncio.to_thread(
+        rows_to_timeseries_response,
+        column_names,
+        results,
         network=network.code,
         metrics=metrics,
         interval=interval,
         primary_grouping=PrimaryGrouping.NETWORK,
         secondary_groupings=None,
-        results=result_dicts,
         facility_code=facility_code,
     )
-
-    return build_timeseries_response(timeseries_list)
