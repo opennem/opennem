@@ -492,6 +492,45 @@ def subday_mv_supported(
     return bool(metrics) and all(m in _SUBDAY_MV_METRICS for m in metrics)
 
 
+AGG_TABLE = "fueltech_region_intervals"
+_AGG_PRIMARY = frozenset({PrimaryGrouping.NETWORK, PrimaryGrouping.NETWORK_REGION})
+
+
+def agg_table_supported(
+    query_type: QueryType,
+    primary_grouping: PrimaryGrouping,
+    interval: Interval,
+    metrics: Sequence[MetricType],
+    secondary_groupings: Sequence[SecondaryGrouping] | None,
+    facility_code: Sequence[str] | None = None,
+    unit_code: Sequence[str] | None = None,
+    date_start: datetime | None = None,
+    now: datetime | None = None,
+) -> bool:
+    """True when a sub-daily DATA query can read `fueltech_region_intervals` instead of `unit_intervals` (#763).
+
+    The table holds per (interval, network, region, fueltech) sums of generated / energy / emissions /
+    market_value written from the unit_intervals write path, so it serves the tracker shapes only:
+    DATA, 5m/30m/1h, network or region primary grouping, no secondary grouping or one fueltech /
+    fueltech_group grouping, the four additive metrics, no facility/unit filter. Everything else
+    (storage_battery, renewable/status groupings, daily buckets, MARKET, FACILITY) falls back.
+
+    Recency guard: only windows starting within `clickhouse_agg_table_max_age_days` (the backfilled,
+    swept range) are served. `date_start` is naive network-local time, compared against UTC now + 10h.
+    """
+    if query_type != QueryType.DATA or interval not in _SUBDAY_MV_INTERVALS or facility_code or unit_code:
+        return False
+    if primary_grouping not in _AGG_PRIMARY:
+        return False
+    if date_start is not None:
+        ref = now or datetime.now(UTC).replace(tzinfo=None)
+        if date_start.replace(tzinfo=None) < ref - timedelta(days=settings.clickhouse_agg_table_max_age_days, hours=10):
+            return False
+    if secondary_groupings and (len(secondary_groupings) != 1 or secondary_groupings[0] not in _COLUMNAR_SECONDARY):
+        return False
+    return bool(metrics) and all(m in _SUBDAY_MV_METRICS for m in metrics)
+
+
 def _wrap_columnar(sql: str, key_cols: list[str], metric_cols: list[str], tz_suffix: str) -> str:
     """Group the per-interval rows of `sql` into one row of arrays per series.
 
@@ -544,13 +583,16 @@ def get_timeseries_query(
     fueltech_group: list[str] | None = None,
     columnar: bool = False,
     use_subday_mv: bool | None = None,
+    use_agg_table: bool | None = None,
 ) -> tuple[str, dict, list[str]]:
     """Build a CTE-based time-series query for the given parameters.
 
     See module docstring for the structural design.
 
     `use_subday_mv` (default: the `clickhouse_subday_mv_routing` setting) routes eligible sub-daily
-    DATA queries to the 5m fueltech view, see `subday_mv_supported`.
+    DATA queries to the 5m fueltech view, see `subday_mv_supported`. `use_agg_table` (default: the
+    `clickhouse_agg_table_routing` setting) routes the tracker shapes to `fueltech_region_intervals`
+    (#763, see `agg_table_supported`); it wins over the view when both apply.
 
     With `columnar=True` (see `columnar_supported`) the query is wrapped so clickhouse groups
     the rows into one row per series: the returned column names are the series key columns,
@@ -567,13 +609,24 @@ def get_timeseries_query(
     use_daily = split is not None
     if use_subday_mv is None:
         use_subday_mv = settings.clickhouse_subday_mv_routing
-    raw_table = (
-        SUBDAY_MV_TABLE
-        if use_subday_mv
+    if use_agg_table is None:
+        use_agg_table = settings.clickhouse_agg_table_routing
+    if (
+        use_agg_table
+        and not use_daily
+        and agg_table_supported(
+            query_type, primary_grouping, interval, metrics, secondary_groupings, facility_code, unit_code, date_start
+        )
+    ):
+        raw_table = AGG_TABLE
+    elif (
+        use_subday_mv
         and not use_daily
         and subday_mv_supported(query_type, interval, metrics, secondary_groupings, facility_code, unit_code, date_start)
-        else config.base_table
-    )
+    ):
+        raw_table = SUBDAY_MV_TABLE
+    else:
+        raw_table = config.base_table
     plans = config.daily_plans if use_daily else config.plans
     base_table = _daily_table_for(config, query_type, secondary_groupings, facility_code, unit_code) if use_daily else raw_table
 

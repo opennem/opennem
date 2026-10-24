@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import text
 
 from opennem import settings
+from opennem.aggregates.fueltech_region_intervals import rebuild_range as rebuild_agg_range
 from opennem.aggregates.market_summary import process_market_summary_backlog, run_market_summary_aggregate_for_last_days
 from opennem.aggregates.unit_intervals import process_unit_intervals_backlog, run_unit_intervals_aggregate_for_last_days
 from opennem.api.export.tasks import export_power
@@ -337,6 +338,7 @@ async def catchup_last_days(days: int = 1, network: NetworkSchema | None = None,
     mv_end = datetime.now(ZoneInfo("Australia/Brisbane")).replace(tzinfo=None, microsecond=0)
     mv_start = mv_end - timedelta(days=days + 1)
     await asyncio.to_thread(backfill_materialized_views, start_date=mv_start, end_date=mv_end, refresh_views=False)
+    await rebuild_agg_range(mv_start, mv_end)  # additive fueltech/region table (#763)
 
     # run exports
     CURRENT_YEAR = datetime.now(ZoneInfo("Australia/Brisbane")).year
@@ -397,6 +399,7 @@ async def catchup_date(target_date: datetime) -> None:
     from opennem.db.clickhouse.materialized_views import backfill_materialized_views
 
     await asyncio.to_thread(backfill_materialized_views, start_date=day_start, end_date=day_end, refresh_views=False)
+    await rebuild_agg_range(day_start, day_end)  # additive fueltech/region table (#763)
 
     # exports
     year = day_start.year

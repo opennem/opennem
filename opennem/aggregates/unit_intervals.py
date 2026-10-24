@@ -21,6 +21,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 if TYPE_CHECKING:
     from opennem.db.clickhouse.materialized_views import MaterializedView
 
+from opennem.aggregates.fueltech_region_intervals import rebuild_range as rebuild_agg_range
+from opennem.aggregates.fueltech_region_intervals import write_aggregate as write_agg_rows
 from opennem.db import get_write_session
 from opennem.db.clickhouse import (
     create_table_if_not_exists,
@@ -806,6 +808,8 @@ async def process_unit_intervals_backlog(
                 """,
                 prepared_data,
             )
+            # same rows, same version; flag-gated and failure-isolated (#763)
+            await write_agg_rows(prepared_data)
 
             logger.info(f"Processed {len(prepared_data)} records from {current_start} to {chunk_end}")
         else:
@@ -850,6 +854,8 @@ async def _rebuild_daily_views(start_date: datetime, end_date: datetime) -> None
         end_date=end_date,
         refresh_views=False,
     )
+    # the additive fueltech/region table is rebuilt from unit_intervals FINAL over the same window (#763)
+    await rebuild_agg_range(start_date, end_date)
 
 
 async def process_unit_intervals_backlog_streaming(
@@ -920,6 +926,11 @@ async def process_unit_intervals_backlog_streaming(
         except Exception as e:
             logger.error(f"Error processing chunk {current_start} to {chunk_end}: {e}")
             failed_chunks.append((current_start, chunk_end, str(e)))
+
+        # batch boundaries can split an (interval, region, fueltech) group, so the additive table is
+        # rebuilt from unit_intervals FINAL per finished chunk instead of per batch (#763)
+        if chunk_processed > 0:
+            await rebuild_agg_range(current_start, chunk_end, inclusive_end=False)
 
         if chunk_processed > 0:
             logger.info(f"Processed {chunk_processed} records from {current_start} to {chunk_end}")
@@ -995,6 +1006,8 @@ async def run_unit_intervals_aggregate_to_now() -> int:
         """,
         prepared_data,
     )
+    # same rows, same version; flag-gated and failure-isolated (#763)
+    await write_agg_rows(prepared_data)
 
     # newest bucket actually written: lets prod logs show ch keeping up with scada (#726)
     # NEM rows only: rooftop locf rows can extend to the end bucket before any NEM scada does
@@ -1036,6 +1049,7 @@ async def run_unit_intervals_aggregate_for_last_intervals(num_intervals: int) ->
         """,
         prepared_data,
     )
+    await write_agg_rows(prepared_data)
 
     logger.info(f"Processed {len(prepared_data)} records from {start_date} to {end_date}")
 

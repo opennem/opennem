@@ -69,6 +69,23 @@ class OpennemSettings(BaseSettings):
         description="Only route windows starting within this many days to fueltech_intervals_mv (older history stays raw).",
     )
 
+    # Additive per (interval, network, region, fueltech) table fed from the unit_intervals write path (#763).
+    # Both flags default OFF: enable WRITE on an environment (CLICKHOUSE_AGG_TABLE_WRITE=true) once migration 0006 is
+    # applied and the table is backfilled, then ROUTING after bin/sweep_agg_table.py is clean.
+    clickhouse_agg_table_write: bool = Field(
+        False,
+        description="Also write fueltech_region_intervals alongside unit_intervals (never blocks that write).",
+    )
+    clickhouse_agg_table_routing: bool = Field(
+        False,
+        description="Serve eligible sub-daily data queries from fueltech_region_intervals.",
+    )
+    clickhouse_agg_table_max_age_days: int = Field(
+        60,
+        ge=1,
+        description="Only route windows starting within this many days (the verified/backfilled range of the table).",
+    )
+
     redis_url: RedisDsn = Field(
         RedisDsn("redis://127.0.0.1"),
         validation_alias=AliasChoices("REDIS_HOST_URL", "cache_url"),
