@@ -38,7 +38,7 @@ from opennem.db.clickhouse.schema import optimize_clickhouse_tables
 from opennem.exporter.facilities import export_facilities_static
 
 # from opennem.exporter.historic import export_historic_intervals
-from opennem.monitors.energy_quality_flag import run_energy_quality_flag_check
+from opennem.monitors.energy_quality_flag import run_energy_mismatch_check, run_energy_quality_flag_check
 from opennem.monitors.frozen_telemetry import run_frozen_telemetry_check
 from opennem.monitors.unmapped_codes import run_unmapped_code_check
 from opennem.pipelines.export import run_export_power_latest_for_network
@@ -181,6 +181,11 @@ async def task_nem_per_day_check(ctx) -> None:
         interval_max=next_day_dispatch.interval_max if next_day_dispatch else None,
         now=now,
     )
+
+    # The meter file (actual gen) upserts a changed value over rows live scada already delivered and the worker already
+    # processed, and resets their flag, so its span has to be reprocessed too (#767)
+    if dispatch_actuals and dispatch_actuals.interval_min is not None:
+        start = min(start, dispatch_actuals.interval_min.replace(tzinfo=None))
     await reprocess_energy_window(date_start=start, date_end=end)
 
 
@@ -512,11 +517,17 @@ async def task_check_energy_quality_flag(ctx: dict) -> None:
     Args:
         ctx (dict): Task context
     """
-    try:
-        await run_energy_quality_flag_check()
-    except Exception as e:
-        logger.error(f"Error checking energy quality flag: {str(e)}")
-        raise
+    errors: list[Exception] = []
+
+    for check in (run_energy_quality_flag_check, run_energy_mismatch_check):
+        try:
+            await check()
+        except Exception as e:
+            logger.error(f"Error checking energy quality flag ({check.__name__}): {str(e)}")
+            errors.append(e)
+
+    if errors:
+        raise errors[0]
 
 
 async def task_check_agg_table(ctx: dict) -> None:
