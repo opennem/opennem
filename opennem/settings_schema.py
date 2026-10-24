@@ -7,6 +7,7 @@ Everything that can be changed is set here and can be overwritten with ENV setti
 from datetime import UTC
 from datetime import timezone as pytimezone
 from pathlib import Path
+from typing import Literal
 
 from pydantic import AliasChoices, AnyUrl, Field, RedisDsn, SecretStr, field_validator
 from pydantic_settings import BaseSettings
@@ -82,6 +83,14 @@ class OpennemSettings(BaseSettings):
     cache_warm_budget_seconds: int = Field(200, ge=10)
     cache_warm_include_30d: bool = False
     cache_warm_ahead: bool = True  # also pre-build the next slot's entries each cycle (#752)
+    # #759: "http" (default) replays the calls over http against the API; "worker" runs the real route functions in
+    # the worker process and writes the same redis entries (no API CPU). Worker mode needs no cache_warm_api_url and is
+    # enabled by either cache_warm_user_plan (explicit tier: COMMUNITY, PRO, ACADEMIC or ENTERPRISE) or cache_warm_api_key
+    # (the real user behind it is resolved through the normal auth path). The plan MUST equal the frontend key's plan.
+    # To flip: set CACHE_WARM_MODE=worker plus one of those on the worker; flip back by unsetting it.
+    cache_warm_mode: Literal["http", "worker"] = "http"
+    cache_warm_user_plan: str | None = None
+    cache_warm_user_admin: bool = False
 
     # if we're doing a dry run
     dry_run: bool = False

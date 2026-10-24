@@ -97,8 +97,21 @@ async def startup(ctx: dict) -> None:
     start_loop_monitor("worker")
 
     redis = await get_redis_pool()
-    await redis.flushdb()
-    logger.info("Redis queue flushed on startup")
+    from opennem.tasks.cache_warmer import flush_non_api_cache, is_enabled, is_worker_mode
+
+    if is_worker_mode() and is_enabled():
+        # worker-side warmer (#759): keep the API response cache (api-cache:*) across restarts, clear everything else
+        deleted = await flush_non_api_cache(redis)
+        logger.info(f"Redis flushed on startup, api cache kept ({deleted} keys deleted)")
+    else:
+        await redis.flushdb()
+        logger.info("Redis queue flushed on startup")
+    if is_enabled():
+        # refill right away (entries may be gone or stale after the downtime); job id dedupes against an interval-check enqueue
+        try:
+            await redis.enqueue_job("task_warm_tracker_cache", _job_id="tracker-cache-warm", _defer_by=20)
+        except Exception:
+            logger.exception("could not enqueue startup tracker cache warm")
 
     # warm the S3 service model + aiofiles imports so the first export doesn't stall the loop
     from opennem.exporter.storage_bucket import warm_s3_client
