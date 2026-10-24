@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import re
 from collections.abc import Awaitable, Callable
 from typing import Any
 
@@ -61,6 +62,10 @@ class NetworkNotFound(OpennemBaseHttpException):
     detail = "Network not found"
 
 
+# facility codes: letters, digits, `_`, `-`, `.` (ASCII only, bounded)
+STATION_CODE_RE = re.compile(r"[A-Za-z0-9_.\-]{1,64}")
+
+
 class StationNotFound(OpennemBaseHttpException):
     detail = "Station not found"
 
@@ -99,6 +104,10 @@ async def get_facility(
 ) -> APIV4ResponseSchema:
     if network_id.upper() not in ["NEM", "WEM"]:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Network not found")
+
+    # path param accepts slashes and anything else: reject non-code input before the CMS (#749)
+    if not STATION_CODE_RE.fullmatch(station_code):
+        raise StationNotFound()
 
     async def build() -> APIV4ResponseSchema:
         facilities = await get_cms_facilities(facility_code=station_code)
