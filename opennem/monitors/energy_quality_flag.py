@@ -4,6 +4,9 @@ The energy worker replaces the fallback energy with the trapezoid value and sets
 Anything older than a few days that is still below 2 means a reprocess window missed a write that reset the flag
 (that is exactly how #764 happened: the next-day dispatch upsert reset it for days the worker never revisited).
 
+A second, sampled check (#767) catches the opposite failure: rows at flag 2 whose energy is the generated / 12 fallback
+instead of the trapezoid, left by a re-delivery that overwrote energy without touching the flag.
+
 A handful of rows legitimately stay below 2 (the first interval a unit ever reports has no previous value for the
 formula), so the alert has a small threshold rather than firing on > 0.
 """
@@ -19,6 +22,7 @@ from opennem import settings
 from opennem.db import get_read_session
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_last_completed_interval_for_network
+from opennem.workers.energy import count_energy_mismatches
 
 logger = logging.getLogger("opennem.monitors.energy_quality_flag")
 
@@ -96,5 +100,60 @@ async def run_energy_quality_flag_check(now: datetime | None = None) -> Unproces
         scope.set_tag("rows", str(result.total))
         scope.set_context("energy_quality_flag", {"total": result.total, "by_day": result.by_day})
         scope.capture_message(f"energy not reprocessed: {result}", level="warning")
+
+    return result
+
+
+# sampled mismatch check: one whole day somewhere in this range of days back, rotating by date so every day in the
+# range is sampled within a week without scanning more than ~200k rows per run
+MISMATCH_SAMPLE_MIN_DAYS_BACK = 4
+MISMATCH_SAMPLE_MAX_DAYS_BACK = 10
+
+
+@dataclass(frozen=True, slots=True)
+class EnergyMismatch:
+    day: str
+    total: int
+
+    def __str__(self) -> str:
+        return (
+            f"{self.total:,} NEM facility_scada rows on {self.day} have energy_quality_flag = 2 but energy is not the trapezoid"
+        )
+
+
+def get_mismatch_sample_day(now: datetime) -> tuple[datetime, datetime]:
+    """(start, end) naive NEM-time bounds of the whole day sampled today: between 4 and 10 days back, rotating daily."""
+    span = MISMATCH_SAMPLE_MAX_DAYS_BACK - MISMATCH_SAMPLE_MIN_DAYS_BACK + 1
+    days_back = MISMATCH_SAMPLE_MIN_DAYS_BACK + now.toordinal() % span
+    day = (now - timedelta(days=days_back)).replace(hour=0, minute=0, second=0, microsecond=0)
+    return day, day + timedelta(days=1) - timedelta(minutes=5)
+
+
+async def run_energy_mismatch_check(now: datetime | None = None) -> EnergyMismatch | None:
+    """Count flag 2 rows of one sampled day whose energy is not the trapezoid. Sentry message above the threshold."""
+    if not settings.energy_flag_guard_enabled:
+        return None
+
+    if now is None:
+        now = get_last_completed_interval_for_network(network=NetworkNEM, tz_aware=False).replace(tzinfo=None)
+
+    start, end = get_mismatch_sample_day(now)
+
+    async with get_read_session() as session:
+        total = await count_energy_mismatches(session, start, end)
+
+    result = EnergyMismatch(day=str(start)[:10], total=total)
+
+    if not exceeds_threshold(total, settings.energy_flag_guard_mismatch_threshold):
+        logger.info(f"energy mismatch guard clean: {total} flag 2 rows off the trapezoid on {result.day}")
+        return result
+
+    logger.warning(f"{result} (threshold {settings.energy_flag_guard_mismatch_threshold})")
+
+    with sentry_sdk.new_scope() as scope:
+        scope.fingerprint = ["energy-quality-flag-mismatch"]
+        scope.set_tag("rows", str(total))
+        scope.set_context("energy_mismatch", {"day": result.day, "total": total})
+        scope.capture_message(f"energy not trapezoid: {result}", level="warning")
 
     return result

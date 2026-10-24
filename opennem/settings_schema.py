@@ -115,6 +115,8 @@ class OpennemSettings(BaseSettings):
     # daily guard: alert when NEM facility_scada rows older than 3 days still have energy_quality_flag < 2 (#764)
     energy_flag_guard_enabled: bool = True
     energy_flag_guard_threshold: int = 500
+    # sampled check: flag 2 NEM rows of one day 4-10 days back whose energy is not the trapezoid (#767)
+    energy_flag_guard_mismatch_threshold: int = 200
 
     # API server settings
     api_server_host: str = "0.0.0.0"

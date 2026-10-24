@@ -47,12 +47,33 @@ _BULK_INSERT_CONFLICT_UPDATE = """
 """
 
 
+def _update_assignment(table_name: str, column: str, keep_processed_energy: bool) -> str:
+    """One `col = value` assignment of the ON CONFLICT DO UPDATE clause."""
+    if keep_processed_energy and column in _ENERGY_GUARD_COLUMNS:
+        return (
+            f"{column} = CASE WHEN {table_name}.generated IS NOT DISTINCT FROM EXCLUDED.generated "
+            f"THEN {table_name}.{column} ELSE EXCLUDED.{column} END"
+        )
+    return f"{column} = EXCLUDED.{column}"
+
+
+# columns that hold the derived energy and its processed marker; see keep_processed_energy below
+_ENERGY_GUARD_COLUMNS = ("energy", "energy_quality_flag")
+
+
 def build_insert_query(
     table: Table,
     update_cols: list[str | Column] = None,
+    keep_processed_energy: bool = False,
 ) -> tuple[str, list[str]]:
     """
     Builds the bulk insert query
+
+    keep_processed_energy: on conflict, only overwrite `energy` and `energy_quality_flag` when `generated` actually
+    changed. The incoming records carry the live-ingest fallback energy (generated / interval) and flag 0, so an
+    unconditional overwrite of an already-processed row (flag 2, trapezoid energy) leaves the fallback energy under
+    flag 2 and the energy worker never revisits it (#767). With the guard an unchanged re-delivery is a no-op for
+    those columns and a changed value behaves like a fresh row (fallback energy, flag 0, reprocessed by the worker).
     """
     on_conflict = "DO NOTHING"
 
@@ -71,11 +92,12 @@ def build_insert_query(
     update_col_names = list(filter(lambda c: c, update_col_names))
 
     primary_key_columns = [c.name for c in table.__table__.primary_key.columns.values()]  # type: ignore
+    table_name: str = getattr(table, "__tablename__", "")
 
     if len(update_col_names):
         on_conflict = _BULK_INSERT_CONFLICT_UPDATE.format(
             pk_columns=",".join(primary_key_columns),
-            update_values=", ".join([f"{n} = EXCLUDED.{n}" for n in update_col_names]),
+            update_values=", ".join(_update_assignment(table_name, n, keep_processed_energy) for n in update_col_names),
         )
 
     # Table schema
@@ -158,9 +180,12 @@ async def _bulkinsert_mms_items_inner[ORMTableType: Table](
     table: type[ORMTableType],
     records: list[dict],
     update_fields: list[str | Column[Any]] | None = None,
+    keep_processed_energy: bool = False,
 ) -> int:
     """Execute bulk insert in a single transaction. Caller handles retries."""
-    tmp_table_name, sql_queries = build_insert_query(table=table, update_cols=update_fields)
+    tmp_table_name, sql_queries = build_insert_query(
+        table=table, update_cols=update_fields, keep_processed_energy=keep_processed_energy
+    )
 
     pool = await get_pool()
     async with pool.acquire() as conn:
@@ -205,6 +230,7 @@ async def bulkinsert_mms_items[ORMTableType: Table](
     table: type[ORMTableType],
     records: list[dict],
     update_fields: list[str | Column[Any]] | None = None,
+    keep_processed_energy: bool = False,
 ) -> int:
     if not records:
         return 0
@@ -213,7 +239,7 @@ async def bulkinsert_mms_items[ORMTableType: Table](
 
     for attempt in range(_DEADLOCK_MAX_RETRIES):
         try:
-            return await _bulkinsert_mms_items_inner(table, records, update_fields)
+            return await _bulkinsert_mms_items_inner(table, records, update_fields, keep_processed_energy)
         except asyncpg.exceptions.DeadlockDetectedError:
             if attempt == _DEADLOCK_MAX_RETRIES - 1:
                 logger.error(f"Deadlock on {table_name} after {_DEADLOCK_MAX_RETRIES} retries, raising")

@@ -1,9 +1,14 @@
-"""Backfill energy for rows stuck on the generated/12 fallback (#764). Dry run unless --apply.
+"""Backfill energy for rows stuck on the generated/12 fallback (#764, #767). Dry run unless --apply.
 
 Usage: PYTHONPATH=$PWD uv run --no-sync python bin/energy_backfill.py --start 2026-03-24 --end 2026-10-22 [--apply]
+       PYTHONPATH=$PWD uv run --no-sync python bin/energy_backfill.py --repair --start 2026-03-14 --end 2026-10-23 [--apply]
 
-For each chunk (default 3 days) prints how many NEM facility_scada rows have energy_quality_flag < 2 (read-only
-SELECT count). With --apply it runs `run_energy_backlog` on the chunk, sequentially, with --max-workers day-chunks
+Default mode: for each chunk (default 3 days) prints how many NEM facility_scada rows have energy_quality_flag < 2.
+--repair (#767): prints how many NEM rows are flag 2 but hold something other than the trapezoid energy (tolerance
+0.0005 MWh), counted with the same window / lag logic the worker's update uses. Both modes write via
+`run_energy_backlog`, whose update handles both row kinds, so they are idempotent and interchangeable.
+
+Counts are read-only SELECTs. With --apply it runs `run_energy_backlog` on the chunk, sequentially, with --max-workers day-chunks
 in flight. If the resolved database host contains "prod" it refuses to write unless --i-know-this-writes is also
 passed. Never prints credentials, only the host and database name.
 """
@@ -32,6 +37,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--end", required=True, type=datetime.fromisoformat, help="naive NEM time, exclusive")
     p.add_argument("--chunk-days", type=int, default=DEFAULT_CHUNK_DAYS)
     p.add_argument("--max-workers", type=int, default=DEFAULT_MAX_WORKERS)
+    p.add_argument("--repair", action="store_true", help="count / fix flag 2 rows whose energy is not the trapezoid (#767)")
     p.add_argument("--apply", action="store_true", help="write; default is a read-only dry run")
     p.add_argument("--i-know-this-writes", action="store_true", help="required with --apply when the host contains 'prod'")
     return p.parse_args(argv)
@@ -92,15 +98,21 @@ async def main(argv: list[str] | None = None) -> int:
     print(f"target: {host}/{dbname}  mode: {'APPLY' if args.apply else 'dry run'}  max_workers={args.max_workers}")
 
     from opennem.db import get_read_session
-    from opennem.workers.energy import run_energy_backlog
+    from opennem.workers.energy import count_energy_mismatches, run_energy_backlog
+
+    label = "flag 2 rows off the trapezoid" if args.repair else "rows with flag < 2"
 
     chunks = plan_chunks(args.start, args.end, args.chunk_days)
     total = 0
     for start, end in chunks:
         async with get_read_session() as session:
-            pending = (await session.execute(_COUNT_QUERY, {"start": start, "end": end})).scalar_one()
+            if args.repair:
+                # the worker window is inclusive of both ends, keep this chunk's end exclusive like the flag count
+                pending = await count_energy_mismatches(session, start, end - timedelta(minutes=5))
+            else:
+                pending = (await session.execute(_COUNT_QUERY, {"start": start, "end": end})).scalar_one()
         total += pending
-        print(f"{start} -> {end}: {pending:,} rows with flag < 2")
+        print(f"{start} -> {end}: {pending:,} {label}")
 
         if args.apply:
             updated = await run_energy_backlog(
@@ -108,7 +120,12 @@ async def main(argv: list[str] | None = None) -> int:
             )
             print(f"  applied: {updated:,} rows updated")
 
-    print(f"{len(chunks)} chunks, {total:,} rows with flag < 2 before run")
+            if args.repair:
+                async with get_read_session() as session:
+                    left = await count_energy_mismatches(session, start, end - timedelta(minutes=5))
+                print(f"  after: {left:,} {label}")
+
+    print(f"{len(chunks)} chunks, {total:,} {label} before run")
     if not args.apply:
         print("dry run: nothing written. re-run with --apply to write.")
     return 0
