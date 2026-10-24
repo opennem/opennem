@@ -517,7 +517,11 @@ async def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
     cr.inserted_records = await bulkinsert_mms_items(
         FacilityScada, records, ["generated", "energy", "energy_storage", "energy_quality_flag"]
     )
-    cr.server_latest = max([i["interval"] for i in records if i["interval"]])
+    intervals = [i["interval"] for i in records if i["interval"]]
+    cr.server_latest = max(intervals)
+    # this upsert resets energy_quality_flag on every row, record the span so the energy worker can redo it (#764)
+    cr.interval_min = min(intervals)
+    cr.interval_max = max(intervals)
 
     return cr
 
@@ -658,6 +662,7 @@ async def store_aemo_tableset(tableset: AEMOTableSet) -> ControllerReturn:
             cr.errors += record_item.errors
             cr.error_detail += record_item.error_detail
             cr.server_latest = record_item.server_latest
+            cr.merge_interval_span(record_item)
 
     logger.info(f"Stored {cr.inserted_records} records of {cr.total_records} in {len(tableset.tables)} tables")
 

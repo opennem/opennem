@@ -141,29 +141,69 @@ async def _process_date_range(
 
     semaphore = asyncio.Semaphore(max_workers)
 
-    async def process_chunk(chunk: tuple[datetime, datetime]):
+    async def process_chunk(chunk: tuple[datetime, datetime]) -> int:
         async with semaphore:
             start, end = chunk
             async with get_write_session() as session:
                 if settings.dry_run:
                     logger.debug(f"Dry run: Skipping calculation for {start} to {end}")
-                    return
+                    return 0
 
                 rows_updated = await _calculate_energy_for_interval(session, start, end)
                 logger.info(f"Processed chunk {start} to {end}. Rows updated: {rows_updated}")
+                return rows_updated
 
     tasks = [process_chunk(chunk) for chunk in chunks]
-    await asyncio.gather(*tasks)
+    return sum(await asyncio.gather(*tasks))
 
 
-async def run_energy_backlog(date_start: datetime, date_end: datetime) -> None:
+# a next-day dispatch crawl with limit=3 can touch up to 3 trading days plus the day the first one starts in
+MIN_DISPATCH_REPROCESS_WINDOW = timedelta(days=4)
+
+
+def get_dispatch_reprocess_window(
+    interval_min: datetime | None,
+    interval_max: datetime | None,
+    now: datetime,
+    min_window: timedelta = MIN_DISPATCH_REPROCESS_WINDOW,
+) -> tuple[datetime, datetime]:
+    """Window the energy worker must redo after a next-day dispatch crawl reset energy_quality_flag (#764).
+
+    The dispatch upsert resets flag and energy to the fallback on every row in the files it loads, so the worker has
+    to redo exactly that span. When the crawl reports the span of the rows it wrote we use it (the lag interval the
+    formula needs is added by `_calculate_energy_for_interval`); with no span (nothing reported) fall back to the
+    conservative `min_window`. The window always ends at `now` (the last completed interval) so rows landed since
+    are covered too. All datetimes are naive NEM time.
     """
-    Run energy calculation for all historical data that hasn't been processed yet.
+    if interval_min is None:
+        return now - min_window, now
+
+    interval_min = interval_min.replace(tzinfo=None)
+    start = interval_min if interval_min < now else now - min_window
+    end = max(now, interval_max.replace(tzinfo=None)) if interval_max else now
+    return start, end
+
+
+async def reprocess_energy_window(
+    date_start: datetime, date_end: datetime, chunk_size: timedelta = timedelta(days=1), max_workers: int = 2
+) -> int:
+    """Reprocess energy for an explicit window in day chunks and log how many rows were reprocessed."""
+    logger.info(f"Reprocessing energy from {date_start} to {date_end}")
+    rows = await _process_date_range(date_start=date_start, date_end=date_end, chunk_size=chunk_size, max_workers=max_workers)
+    logger.info(f"Reprocessed energy from {date_start} to {date_end}: {rows} rows updated")
+    return rows
+
+
+async def run_energy_backlog(
+    date_start: datetime, date_end: datetime, chunk_size: timedelta = timedelta(days=10), max_workers: int = 4
+) -> int:
+    """
+    Run energy calculation for all historical data that hasn't been processed yet. Returns rows updated.
     """
 
     logger.info(f"Processing backlog from {date_start} to {date_end}")
 
-    await _process_date_range(date_start=date_start, date_end=date_end, chunk_size=timedelta(days=10), max_workers=4)
+    return await _process_date_range(date_start=date_start, date_end=date_end, chunk_size=chunk_size, max_workers=max_workers)
 
 
 # Example usage

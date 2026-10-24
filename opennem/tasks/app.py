@@ -39,6 +39,7 @@ from opennem.tasks.tasks import (
     task_catchup_aggregates,
     task_catchup_check,
     task_catchup_days,
+    task_check_energy_quality_flag,
     task_check_frozen_telemetry,
     task_check_unmapped_facility_codes,
     task_check_unsplit_batteries,
@@ -389,6 +390,15 @@ class WorkerSettings:
             task_check_frozen_telemetry,
             hour=10,
             minute=20,
+            second=0,
+            timeout=None,
+            unique=True,
+        ),
+        # Check for NEM energy stuck on the generated/12 fallback (#764)
+        cron(
+            task_check_energy_quality_flag,
+            hour=10,
+            minute=25,
             second=0,
             timeout=None,
             unique=True,
