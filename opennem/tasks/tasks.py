@@ -519,6 +519,16 @@ async def task_check_energy_quality_flag(ctx: dict) -> None:
         raise
 
 
+async def task_check_agg_table(ctx: dict) -> None:
+    """Compare fueltech_region_intervals to unit_intervals FINAL for the last 2 days (#763).
+
+    No-op unless CLICKHOUSE_AGG_TABLE_WRITE is on; sends a sentry message on any mismatch.
+    """
+    from opennem.aggregates.fueltech_region_intervals import check_recent
+
+    await check_recent(days=2)
+
+
 async def task_optimize_clickhouse_tables(ctx: dict) -> None:
     """
     Optimize the unit_intervals and market_summary tables to force merges and deduplication.

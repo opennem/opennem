@@ -14,7 +14,7 @@ from fastapi_versionizer import api_version
 from opennem.api.cache_keys import tiered_key_builder
 from opennem.api.data.utils import validate_date_range
 from opennem.api.intervals import cap_date_end_to_settled_interval
-from opennem.api.queries import QueryType, columnar_supported, get_timeseries_query
+from opennem.api.queries import AGG_TABLE, QueryType, columnar_supported, get_timeseries_query
 from opennem.api.response_cache import cached_json
 from opennem.api.schema import std_error_responses
 from opennem.api.security import authenticated_user, optional_user
@@ -148,7 +148,18 @@ async def get_network_data(
     if columnar:
         try:
             query, params, column_names = get_timeseries_query(**query_kwargs, columnar=True)
-            results = await execute_async(client, query, params)
+            results = None
+            if f" {AGG_TABLE} FINAL" in query:
+                # routed to the additive table (#763): any error or empty answer re-runs on unit_intervals
+                try:
+                    results = await execute_async(client, query, params)
+                except Exception as e:
+                    logger.warning(f"agg table path failed, using unit_intervals: {e}")
+                if not results:
+                    results = None
+                    query, params, column_names = get_timeseries_query(**query_kwargs, columnar=True, use_agg_table=False)
+            if results is None:
+                results = await execute_async(client, query, params)
             if not results:
                 raise HTTPException(
                     status_code=404,
@@ -160,7 +171,7 @@ async def get_network_data(
         except Exception as e:
             logger.warning(f"columnar timeseries path failed, using row path: {e}")
 
-    query, params, column_names = get_timeseries_query(**query_kwargs)
+    query, params, column_names = get_timeseries_query(**query_kwargs, use_agg_table=False)
 
     start_time = time.time()
     try:

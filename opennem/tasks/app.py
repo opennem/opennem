@@ -39,6 +39,7 @@ from opennem.tasks.tasks import (
     task_catchup_aggregates,
     task_catchup_check,
     task_catchup_days,
+    task_check_agg_table,
     task_check_energy_quality_flag,
     task_check_frozen_telemetry,
     task_check_unmapped_facility_codes,
@@ -401,6 +402,14 @@ class WorkerSettings:
             minute=25,
             second=0,
             timeout=None,
+            unique=True,
+        ),
+        # fueltech_region_intervals vs unit_intervals FINAL, last 2 days (#763; no-op unless the write flag is on)
+        cron(
+            task_check_agg_table,
+            minute={25},
+            second=0,
+            timeout=600,
             unique=True,
         ),
         # Check for unsplit batteries
