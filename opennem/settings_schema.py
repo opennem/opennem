@@ -95,6 +95,10 @@ class OpennemSettings(BaseSettings):
     # if we're doing a dry run
     dry_run: bool = False
 
+    # daily guard: alert when NEM facility_scada rows older than 3 days still have energy_quality_flag < 2 (#764)
+    energy_flag_guard_enabled: bool = True
+    energy_flag_guard_threshold: int = 500
+
     # API server settings
     api_server_host: str = "0.0.0.0"
     api_server_port: int = 8000

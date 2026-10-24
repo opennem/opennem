@@ -184,6 +184,7 @@ async def run_nemweb_aemo_crawl(
                     controller_return.inserted_records += task_result.inserted_records
                     controller_return.processed_records += task_result.processed_records
                     controller_return.total_records += task_result.total_records
+                    controller_return.merge_interval_span(task_result)
                 # None means process_nemweb_entry already logged the parse error with correct URL
 
             tasks = []
@@ -197,6 +198,7 @@ async def run_nemweb_aemo_crawl(
                 controller_return.inserted_records += task_result.inserted_records
                 controller_return.processed_records += task_result.processed_records
                 controller_return.total_records += task_result.total_records
+                controller_return.merge_interval_span(task_result)
 
     if controller_return:
         controller_return.crawls_run = len(entries_to_fetch)

@@ -38,13 +38,18 @@ from opennem.db.clickhouse.schema import optimize_clickhouse_tables
 from opennem.exporter.facilities import export_facilities_static
 
 # from opennem.exporter.historic import export_historic_intervals
+from opennem.monitors.energy_quality_flag import run_energy_quality_flag_check
 from opennem.monitors.frozen_telemetry import run_frozen_telemetry_check
 from opennem.monitors.unmapped_codes import run_unmapped_code_check
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
 from opennem.workers.catchup import catchup_aggregates, catchup_last_days, run_catchup_check
-from opennem.workers.energy import process_energy_last_intervals
+from opennem.workers.energy import (
+    get_dispatch_reprocess_window,
+    process_energy_last_intervals,
+    reprocess_energy_window,
+)
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
 from opennem.workers.generation_max import update_max_generation_for_units
@@ -163,14 +168,20 @@ async def task_nem_interval_check(ctx) -> None:
 async def task_nem_per_day_check(ctx) -> None:
     """This task is run daily for NEM"""
     dispatch_actuals = await run_crawl(AEMONEMDispatchActualGEN, latest=True, limit=3)
-    await run_crawl(AEMONEMNextDayDispatch, latest=True, limit=3)
+    next_day_dispatch = await run_crawl(AEMONEMNextDayDispatch, latest=True, limit=3)
 
     if not dispatch_actuals or not dispatch_actuals.inserted_records:
         raise Retry(defer=ctx["job_try"] * 15)
 
-    # Next-day dispatch resets energy_quality_flag via upsert, so reprocess
-    # energy for the last 48h to cover the dispatch window
-    await process_energy_last_intervals(num_intervals=12 * 48)
+    # Next-day dispatch resets energy_quality_flag via upsert on every row in the (up to 3) day files, so redo
+    # energy for exactly the span the crawl wrote, not a fixed 48h (#764)
+    now = get_last_completed_interval_for_network(network=NetworkNEM, tz_aware=False).replace(tzinfo=None)
+    start, end = get_dispatch_reprocess_window(
+        interval_min=next_day_dispatch.interval_min if next_day_dispatch else None,
+        interval_max=next_day_dispatch.interval_max if next_day_dispatch else None,
+        now=now,
+    )
+    await reprocess_energy_window(date_start=start, date_end=end)
 
 
 async def task_nem_rooftop_crawl(ctx) -> None:
@@ -492,6 +503,19 @@ async def task_check_frozen_telemetry(ctx: dict) -> None:
         await run_frozen_telemetry_check()
     except Exception as e:
         logger.error(f"Error checking frozen telemetry: {str(e)}")
+        raise
+
+
+async def task_check_energy_quality_flag(ctx: dict) -> None:
+    """Task to check for NEM rows older than 3 days that never got their energy reprocessed (#764).
+
+    Args:
+        ctx (dict): Task context
+    """
+    try:
+        await run_energy_quality_flag_check()
+    except Exception as e:
+        logger.error(f"Error checking energy quality flag: {str(e)}")
         raise
 
 

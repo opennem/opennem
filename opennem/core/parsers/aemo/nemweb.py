@@ -52,6 +52,7 @@ async def parse_aemo_url_optimized(
         if persist_to_db:
             controller_returns = await store_aemo_tableset(table_set)
             cr.inserted_records += controller_returns.inserted_records
+            cr.merge_interval_span(controller_returns)
 
             if cr.last_modified and controller_returns.last_modified and cr.last_modified < controller_returns.last_modified:
                 cr.last_modified = controller_returns.last_modified
@@ -104,6 +105,7 @@ async def parse_aemo_url_optimized_bulk(
 
     controller_returns = await store_aemo_tableset(ts)
     cr.inserted_records += controller_returns.inserted_records
+    cr.merge_interval_span(controller_returns)
 
     if cr.last_modified and controller_returns.last_modified and cr.last_modified < controller_returns.last_modified:
         cr.last_modified = controller_returns.last_modified
