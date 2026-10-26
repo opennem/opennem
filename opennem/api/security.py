@@ -54,6 +54,8 @@ _user_cache: TTLCache[str, tuple[OpenNEMUser, float]] = TTLCache(
 )
 _invalid_key_cache: TTLCache[str, bool] = TTLCache(maxsize=10000, ttl=NEGATIVE_CACHE_TTL_S, timer=lambda: _now())
 _inflight: dict[str, asyncio.Task[OpenNEMUser]] = {}
+# one stale-while-revalidate refresh per key; the dict also holds the strong ref so tasks aren't GC'd
+_background_refreshes: dict[str, asyncio.Task[None]] = {}
 
 # Default internal user for development
 _OPENNEM_INTERNAL_USER = OpenNEMUser(
@@ -164,8 +166,67 @@ async def _fetch_user_single_flight(key: str, ckey: str) -> OpenNEMUser:
     return await asyncio.shield(task)
 
 
+def _store_user(ckey: str, user: OpenNEMUser) -> None:
+    _user_cache[ckey] = (user.model_copy(deep=True), _now())
+
+
+def _reject_invalid(ckey: str) -> None:
+    """Unkey answered: key is invalid. Drop any cached user and remember the rejection."""
+    _user_cache.pop(ckey, None)
+    _invalid_key_cache[ckey] = True
+
+
+async def _refresh_in_background(key: str, ckey: str) -> None:
+    """SWR refresh: shares the single-flight fetch; failure keeps serving the stale entry."""
+    try:
+        user = await _fetch_user_single_flight(key, ckey)
+    except UnkeyUnavailableException as e:  # subclass of Invalid: must come first, an outage never evicts
+        logger.warning(f"Background auth refresh failed for key {key_fingerprint(key)}: {e}; serving stale")
+    except UnkeyInvalidUserException:
+        _reject_invalid(ckey)
+    except asyncio.CancelledError:
+        raise
+    except HTTPException as e:
+        # Clerk user gone / similar definitive rejection is not an outage: keep behaviour of the blocking path (no evict)
+        logger.warning(f"Background auth refresh failed for key {key_fingerprint(key)}: {e.detail}; serving stale")
+    except Exception as e:
+        logger.warning(f"Background auth refresh failed for key {key_fingerprint(key)}: {e}; serving stale")
+    else:
+        _store_user(ckey, user)
+
+
+def _schedule_background_refresh(key: str, ckey: str) -> None:
+    """Start at most one background refresh per key (per running loop)."""
+    loop = asyncio.get_running_loop()
+    existing = _background_refreshes.get(ckey)
+    if existing is not None and not existing.done() and existing.get_loop() is loop:
+        return
+
+    task = asyncio.create_task(_refresh_in_background(key, ckey))
+    _background_refreshes[ckey] = task
+
+    def _done(t: "asyncio.Task[None]") -> None:
+        if _background_refreshes.get(ckey) is t:
+            _background_refreshes.pop(ckey, None)
+
+    task.add_done_callback(_done)
+
+
+async def cancel_background_refreshes() -> None:
+    """Cancel in-flight SWR refreshes (app shutdown / test teardown)."""
+    tasks = list(_background_refreshes.values())
+    _background_refreshes.clear()
+    for t in tasks:
+        t.cancel()
+    await asyncio.gather(*tasks, return_exceptions=True)
+
+
 def is_key_known_valid(key: str) -> bool:
-    """True when the key is a bypass key or already sits in the fresh user cache. In-memory only, never calls Unkey/Clerk."""
+    """True when the key is a bypass key or sits in the user cache within USER_CACHE_TTL_S (in-memory only).
+
+    A stale-but-servable (SWR) entry is deliberately NOT known-valid: the caller falls through
+    to normal auth, which serves it and refreshes.
+    """
     if _is_bypass_key(key):
         return True
     cached = _user_cache.get(_cache_key(key))
@@ -180,7 +241,9 @@ async def _resolve_user_from_key(key: str, *, fresh: bool = False) -> OpenNEMUse
     optional auth) share these semantics, so the error handling lives here only.
 
     The enriched user is cached per key (5 min), concurrent misses share one upstream
-    call, and on an upstream error a cached user up to 5 min past expiry is served.
+    call. Past the TTL (up to 5 min) the cached user is served immediately while one background
+    refresh runs (stale-while-revalidate; invalid-key evicts); beyond that, callers block, and on an
+    upstream error a cached user within the stale window is still served.
     ``fresh=True`` skips the fresh-cache read (always Unkey + Clerk, still single-flight and
     stale-if-error) and refreshes the cache entry with the result.
     """
@@ -204,7 +267,12 @@ async def _resolve_user_from_key(key: str, *, fresh: bool = False) -> OpenNEMUse
         cached = _user_cache.get(ckey)
         if cached is not None:
             cached_user, stored_at = cached
-            if not fresh and _now() - stored_at < USER_CACHE_TTL_S:
+            age = _now() - stored_at
+            if not fresh and age < USER_CACHE_TTL_S:
+                return cached_user.model_copy(deep=True)
+            if not fresh and age < USER_CACHE_TTL_S + USER_CACHE_MAX_STALE_S:
+                # stale-while-revalidate: serve now, refresh once in the background
+                _schedule_background_refresh(key, ckey)
                 return cached_user.model_copy(deep=True)
 
         try:
@@ -214,14 +282,12 @@ async def _resolve_user_from_key(key: str, *, fresh: bool = False) -> OpenNEMUse
         except UnkeyUnavailableException as e:
             return _serve_stale_or_raise(ckey, cached, e)
         except UnkeyInvalidUserException as e:
-            # Unkey answered: key is invalid. Drop any cached user and remember the rejection.
-            _user_cache.pop(ckey, None)
-            _invalid_key_cache[ckey] = True
+            _reject_invalid(ckey)
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key") from e
         except Exception as e:
             return _serve_stale_or_raise(ckey, cached, e)
 
-        _user_cache[ckey] = (user.model_copy(deep=True), _now())
+        _store_user(ckey, user)
         return user.model_copy(deep=True)
 
     except HTTPException:

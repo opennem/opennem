@@ -9,6 +9,7 @@ from datetime import timedelta
 from typing import Any
 
 import pandas as pd
+from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.aggregates.forecast import insert_new_forecast_runs, rooftop_forecast_rows
@@ -38,6 +39,11 @@ FACILITY_SCADA_COLUMN_NAMES = [
     "energy",
     "energy_storage",
 ]
+
+# on-conflict update columns per FacilityScada upsert (#767). energy and energy_quality_flag are only overwritten
+# when generated changed (keep_processed_energy), so a re-delivery never leaves fallback energy under flag 2
+SCADA_UPDATE_COLUMNS: list[str | Column[Any]] = ["generated", "energy", "energy_quality_flag"]
+UNIT_SOLUTION_UPDATE_COLUMNS: list[str | Column[Any]] = ["generated", "energy", "energy_storage", "energy_quality_flag"]
 
 # Helpers
 
@@ -496,7 +502,7 @@ async def process_unit_scada_optimized(table: AEMOTableSchema) -> ControllerRetu
     )
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy"])  # type: ignore
+    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, SCADA_UPDATE_COLUMNS, keep_processed_energy=True)  # type: ignore
     cr.server_latest = max([i["interval"] for i in records if i["interval"]])
 
     return cr
@@ -515,9 +521,13 @@ async def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
 
     cr.processed_records = len(records)
     cr.inserted_records = await bulkinsert_mms_items(
-        FacilityScada, records, ["generated", "energy", "energy_storage", "energy_quality_flag"]
+        FacilityScada, records, UNIT_SOLUTION_UPDATE_COLUMNS, keep_processed_energy=True
     )
-    cr.server_latest = max([i["interval"] for i in records if i["interval"]])
+    intervals = [i["interval"] for i in records if i["interval"]]
+    cr.server_latest = max(intervals)
+    # this upsert resets energy_quality_flag on every row, record the span so the energy worker can redo it (#764)
+    cr.interval_min = min(intervals)
+    cr.interval_max = max(intervals)
 
     return cr
 
@@ -533,8 +543,13 @@ async def process_meter_data_gen_duid(table: AEMOTableSchema) -> ControllerRetur
     )
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy"])
-    cr.server_latest = max([i["interval"] for i in records])
+    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, SCADA_UPDATE_COLUMNS, keep_processed_energy=True)
+    intervals = [i["interval"] for i in records if i["interval"]]
+    cr.server_latest = max(intervals)
+    # the meter file lands a day late for units dispatch_scada already delivered and the worker already processed,
+    # a changed value resets their flag, record the span so the energy worker can redo it (#767)
+    cr.interval_min = min(intervals)
+    cr.interval_max = max(intervals)
 
     return cr
 
@@ -575,7 +590,7 @@ async def process_rooftop_actual(table: AEMOTableSchema) -> ControllerReturn:
     records = [i for i in records if i]
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy"])
+    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, SCADA_UPDATE_COLUMNS, keep_processed_energy=True)
     cr.server_latest = max([i["interval"] for i in records])
 
     return cr
@@ -597,7 +612,7 @@ async def process_rooftop_forecast(table: AEMOTableSchema) -> ControllerReturn:
     records = [i for i in records if i]
 
     cr.processed_records = len(records)
-    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, ["generated", "energy"])  # type: ignore
+    cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, SCADA_UPDATE_COLUMNS, keep_processed_energy=True)  # type: ignore
     cr.server_latest = max([i["interval"] for i in records]) if records else None
 
     # the api's solar_rooftop_forecast metric reads clickhouse, with the run time pg never kept
@@ -658,6 +673,7 @@ async def store_aemo_tableset(tableset: AEMOTableSet) -> ControllerReturn:
             cr.errors += record_item.errors
             cr.error_detail += record_item.error_detail
             cr.server_latest = record_item.server_latest
+            cr.merge_interval_span(record_item)
 
     logger.info(f"Stored {cr.inserted_records} records of {cr.total_records} in {len(tableset.tables)} tables")
 

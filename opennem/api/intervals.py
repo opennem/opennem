@@ -15,6 +15,7 @@ left untouched. Falls back to the caller's `date_end` on empty table / CH error 
 endpoints never break.
 """
 
+import asyncio
 import logging
 import time
 from datetime import datetime
@@ -30,6 +31,9 @@ logger = logging.getLogger("opennem.api.intervals")
 # round-trip on every (cache-missed) request without serving a meaningfully stale bound.
 _CACHE_TTL_SECONDS = 30
 _latest_interval_cache: dict[tuple[str, str], tuple[float, datetime | None]] = {}
+# concurrent cache misses share one in-flight query (single-flight): N parallel cold requests used to fire N identical
+# max(interval) queries because the TTL cache is only filled once the first one returns (#736)
+_inflight: dict[tuple[str, str], "asyncio.Task[datetime | None]"] = {}
 
 
 async def _get_latest_interval(client: Any, network: NetworkSchema, base_table: str) -> datetime | None:
@@ -47,6 +51,18 @@ async def _get_latest_interval(client: Any, network: NetworkSchema, base_table: 
     if cached is not None and cached[0] > monotonic_now:
         return cached[1]
 
+    task = _inflight.get(cache_key)
+    if task is None:
+        task = asyncio.ensure_future(_fetch_latest_interval(client, network, base_table, cache_key))
+        _inflight[cache_key] = task
+        task.add_done_callback(lambda _t, k=cache_key: _inflight.pop(k, None))
+    # shield: one cancelled waiter (client disconnect) must not cancel the query the others share
+    return await asyncio.shield(task)
+
+
+async def _fetch_latest_interval(
+    client: Any, network: NetworkSchema, base_table: str, cache_key: tuple[str, str]
+) -> datetime | None:
     query = (
         f"SELECT max(interval) FROM {base_table} "  # noqa: S608 — base_table is an internal enum-derived constant
         "WHERE network_id IN %(network)s AND interval > now() - INTERVAL 7 DAY"
@@ -63,7 +79,7 @@ async def _get_latest_interval(client: Any, network: NetworkSchema, base_table: 
     if latest is not None and latest.tzinfo is not None:
         latest = latest.replace(tzinfo=None)
 
-    _latest_interval_cache[cache_key] = (monotonic_now + _CACHE_TTL_SECONDS, latest)
+    _latest_interval_cache[cache_key] = (time.monotonic() + _CACHE_TTL_SECONDS, latest)
     return latest
 
 

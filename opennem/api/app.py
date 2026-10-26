@@ -30,6 +30,7 @@ from opennem.api.admin.router import admin_router
 from opennem.api.data.router import router as data_router
 from opennem.api.early_reject import EarlyRejectMiddleware
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
+from opennem.api.executor import install_api_executor
 from opennem.api.facilities.router import router as facilities_router
 from opennem.api.feedback.router import router as feedback_router
 from opennem.api.known_codes import start_known_codes_refresher, stop_known_codes_refresher
@@ -39,7 +40,7 @@ from opennem.api.openapi_extra import custom_openapi
 from opennem.api.plans.router import router as plans_router
 from opennem.api.pollution.router import router as pollution_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
-from opennem.api.security import fresh_authenticated_user
+from opennem.api.security import cancel_background_refreshes, fresh_authenticated_user
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
 from opennem.api.webhooks.router import router as webhooks_router
@@ -71,14 +72,15 @@ async def lifespan(app: FastAPI):
 
     logger.info(f"OpenElectricity API starting up on {settings.env}: v{get_version()} on host {get_hostname()}")
 
-    if settings.is_dev:
-        logger.info("Cache disabled")
-        FastAPICache.init(backend=InMemoryBackend())
-    else:
+    if settings.uses_shared_api_cache:
         redis = await aioredis.from_url(str(settings.redis_url))
         FastAPICache.init(RedisBackend(redis), prefix="api-cache")
-        logger.info("Enabled API cache")
+        logger.info("Enabled API cache (redis)")
+    else:
+        logger.info("API cache in-memory (local/test)")
+        FastAPICache.init(backend=InMemoryBackend())
 
+    api_executor = install_api_executor()
     start_loop_monitor("api")
     known_codes_task = start_known_codes_refresher()
 
@@ -87,6 +89,8 @@ async def lifespan(app: FastAPI):
     # Shutdown logic
     await stop_known_codes_refresher(known_codes_task)
     await stop_loop_monitor()
+    await cancel_background_refreshes()
+    api_executor.shutdown(wait=False, cancel_futures=True)
 
 
 app = FastAPI(

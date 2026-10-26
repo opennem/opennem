@@ -78,7 +78,7 @@ def test_daily_intervals_cover_every_day_or_coarser_bucket():
 
 @pytest.mark.parametrize("interval", [Interval.INTERVAL, Interval.HOUR])
 def test_sub_daily_reads_raw_tables(interval):
-    sql, params, _ = _data(interval)
+    sql, params, _ = _data(interval, use_subday_mv=False)
     assert "FROM unit_intervals FINAL" in sql
     assert "_daily_mv" not in sql
     assert "UNION ALL" not in sql

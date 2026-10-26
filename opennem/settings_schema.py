@@ -7,8 +7,9 @@ Everything that can be changed is set here and can be overwritten with ENV setti
 from datetime import UTC
 from datetime import timezone as pytimezone
 from pathlib import Path
+from typing import Literal
 
-from pydantic import AliasChoices, AnyUrl, Field, RedisDsn, field_validator
+from pydantic import AliasChoices, AnyUrl, Field, RedisDsn, SecretStr, field_validator
 from pydantic_settings import BaseSettings
 
 from opennem.schema.field_types import URLNoPath
@@ -55,13 +56,67 @@ class OpennemSettings(BaseSettings):
         description="ClickHouse max_execution_time (seconds) for serving-path queries. 0 = unset.",
     )
 
+    # Route eligible sub-daily /v4/data queries to the 5m fueltech_intervals_mv instead of
+    # unit_intervals (#742). Env CLICKHOUSE_SUBDAY_MV_ROUTING=true turns it on without a code deploy.
+    # Default OFF: the dev equivalence matrix had one unreproduced transient diff and prod view state is unverified.
+    clickhouse_subday_mv_routing: bool = Field(
+        False,
+        description="Serve eligible sub-daily data queries from fueltech_intervals_mv.",
+    )
+    clickhouse_subday_mv_max_age_days: int = Field(
+        45,
+        ge=1,
+        description="Only route windows starting within this many days to fueltech_intervals_mv (older history stays raw).",
+    )
+
+    # Additive per (interval, network, region, fueltech) table fed from the unit_intervals write path (#763).
+    # Both flags default OFF: enable WRITE on an environment (CLICKHOUSE_AGG_TABLE_WRITE=true) once migration 0006 is
+    # applied and the table is backfilled, then ROUTING after bin/sweep_agg_table.py is clean.
+    clickhouse_agg_table_write: bool = Field(
+        False,
+        description="Also write fueltech_region_intervals alongside unit_intervals (never blocks that write).",
+    )
+    clickhouse_agg_table_routing: bool = Field(
+        False,
+        description="Serve eligible sub-daily data queries from fueltech_region_intervals.",
+    )
+    clickhouse_agg_table_max_age_days: int = Field(
+        60,
+        ge=1,
+        description="Only route windows starting within this many days (the verified/backfilled range of the table).",
+    )
+
     redis_url: RedisDsn = Field(
         RedisDsn("redis://127.0.0.1"),
         validation_alias=AliasChoices("REDIS_HOST_URL", "cache_url"),
     )
 
+    # tracker cache warmer (#737): worker calls the API over http after each NEM interval lands.
+    # Disabled when cache_warm_api_url or cache_warm_api_key is unset. The key MUST be the same plan
+    # tier as the frontend's public key (PUBLIC_OE_API_KEY): the response cache key includes the tier.
+    cache_warm_api_url: str | None = None  # e.g. https://api.openelectricity.org.au
+    cache_warm_api_key: SecretStr | None = None
+    cache_warm_concurrency: int = Field(2, ge=1, le=16)
+    cache_warm_budget_seconds: int = Field(200, ge=10)
+    cache_warm_include_30d: bool = False
+    cache_warm_ahead: bool = True  # also pre-build the next slot's entries each cycle (#752)
+    # #759: "http" (default) replays the calls over http against the API; "worker" runs the real route functions in
+    # the worker process and writes the same redis entries (no API CPU). Worker mode needs no cache_warm_api_url and is
+    # enabled by either cache_warm_user_plan (explicit tier: COMMUNITY, PRO, ACADEMIC or ENTERPRISE) or cache_warm_api_key
+    # (the real user behind it is resolved through the normal auth path). The plan MUST equal the frontend key's plan.
+    # To flip: set CACHE_WARM_MODE=worker plus one of those on the worker; flip back by unsetting it.
+    cache_warm_mode: Literal["http", "worker"] = "http"
+    cache_warm_user_plan: str | None = None
+    cache_warm_user_admin: bool = False
+
     # if we're doing a dry run
     dry_run: bool = False
+
+    # daily guard: alert when NEM facility_scada rows older than 3 days still have energy_quality_flag < 2 (#764)
+    energy_flag_guard_enabled: bool = True
+    energy_flag_guard_threshold: int = 500
+    # sampled check: flag 2 NEM rows of one day 4-10 days back whose energy is not the trapezoid (#767)
+    energy_flag_guard_mismatch_threshold: int = 200
 
     # API server settings
     api_server_host: str = "0.0.0.0"
@@ -276,6 +331,11 @@ class OpennemSettings(BaseSettings):
     @property
     def is_dev(self) -> bool:
         return self.env.lower() in ("local", "dev", "development", "staging")
+
+    @property
+    def uses_shared_api_cache(self) -> bool:
+        """Deployed envs (dev, staging, prod) use the redis API cache; local/test use in-memory."""
+        return self.env.lower() not in ("local", "test", "testing")
 
     @property
     def is_local(self) -> bool:

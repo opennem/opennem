@@ -31,9 +31,10 @@ monthly fuel-tech query drops from ~70s to under 100ms on the views.
 import logging
 from collections.abc import Sequence
 from dataclasses import dataclass
-from datetime import date, datetime, time, timedelta
+from datetime import UTC, date, datetime, time, timedelta
 from enum import StrEnum
 
+from opennem import settings
 from opennem.api.data.schema import DataMetric
 from opennem.api.market.schema import MarketMetric
 from opennem.core.grouping import PrimaryGrouping, SecondaryGrouping
@@ -423,6 +424,148 @@ def _daily_table_for(
     return config.daily_table
 
 
+_COLUMNAR_KEY_ALIAS = {"fueltech_id": "fueltech", "fueltech_group_id": "fueltech_group"}
+_COLUMNAR_SECONDARY = {None, SecondaryGrouping.FUELTECH, SecondaryGrouping.FUELTECH_GROUP}
+
+
+def columnar_supported(
+    query_type: QueryType,
+    primary_grouping: PrimaryGrouping,
+    secondary_groupings: Sequence[SecondaryGrouping] | None,
+    facility_code: Sequence[str] | None = None,
+    unit_code: Sequence[str] | None = None,
+) -> bool:
+    """True for the tracker shapes the columnar fast path is proven equivalent for (#740).
+
+    DATA/MARKET at network or network_region level, with no secondary grouping or a single
+    fueltech / fueltech_group one. Everything else (facility/unit, status, renewable) keeps
+    the row path.
+    """
+    if query_type not in (QueryType.DATA, QueryType.MARKET) or facility_code or unit_code:
+        return False
+    if primary_grouping not in (PrimaryGrouping.NETWORK, PrimaryGrouping.NETWORK_REGION):
+        return False
+    if query_type == QueryType.MARKET:
+        return not secondary_groupings
+    if not secondary_groupings:
+        return True
+    return len(secondary_groupings) == 1 and secondary_groupings[0] in _COLUMNAR_SECONDARY
+
+
+SUBDAY_MV_TABLE = "fueltech_intervals_mv"
+_SUBDAY_MV_INTERVALS = frozenset({Interval.INTERVAL, Interval.HALF_HOUR, Interval.HOUR})
+# metrics the 5m fueltech view carries as plain per-(interval, region, fueltech) sums
+_SUBDAY_MV_METRICS = frozenset({DataMetric.POWER, DataMetric.ENERGY, DataMetric.EMISSIONS, DataMetric.MARKET_VALUE})
+
+
+def subday_mv_supported(
+    query_type: QueryType,
+    interval: Interval,
+    metrics: Sequence[MetricType],
+    secondary_groupings: Sequence[SecondaryGrouping] | None,
+    facility_code: Sequence[str] | None = None,
+    unit_code: Sequence[str] | None = None,
+    date_start: datetime | None = None,
+    now: datetime | None = None,
+) -> bool:
+    """True when a sub-daily DATA query can read `fueltech_intervals_mv` instead of `unit_intervals` (#742).
+
+    The view holds per (interval, network, region, fueltech) sums of generated / energy /
+    emissions / market_value, so it serves only queries that need no unit-level dimension and
+    only those four metrics (storage_battery averages a per-unit column the view pre-averages).
+    Renewable and status groupings, facility/unit filters, MARKET and FACILITY queries stay on
+    the raw table.
+
+    Recency guard: the view is only proven equal to the raw table for recent history (on dev it
+    drifts before July 2026: battery rows, and one missing 00:00 interval roughly every 30 days),
+    so windows starting more than `clickhouse_subday_mv_max_age_days` ago stay on the raw table.
+    `date_start` is naive network-local time, compared against UTC now plus a 10h margin.
+    """
+    if query_type != QueryType.DATA or interval not in _SUBDAY_MV_INTERVALS or facility_code or unit_code:
+        return False
+    if date_start is not None:
+        ref = now or datetime.now(UTC).replace(tzinfo=None)
+        if date_start.replace(tzinfo=None) < ref - timedelta(days=settings.clickhouse_subday_mv_max_age_days, hours=10):
+            return False
+    if secondary_groupings and not set(secondary_groupings) <= _COLUMNAR_SECONDARY:
+        return False
+    return bool(metrics) and all(m in _SUBDAY_MV_METRICS for m in metrics)
+
+
+AGG_TABLE = "fueltech_region_intervals"
+_AGG_PRIMARY = frozenset({PrimaryGrouping.NETWORK, PrimaryGrouping.NETWORK_REGION})
+
+
+def agg_table_supported(
+    query_type: QueryType,
+    primary_grouping: PrimaryGrouping,
+    interval: Interval,
+    metrics: Sequence[MetricType],
+    secondary_groupings: Sequence[SecondaryGrouping] | None,
+    facility_code: Sequence[str] | None = None,
+    unit_code: Sequence[str] | None = None,
+    date_start: datetime | None = None,
+    now: datetime | None = None,
+) -> bool:
+    """True when a sub-daily DATA query can read `fueltech_region_intervals` instead of `unit_intervals` (#763).
+
+    The table holds per (interval, network, region, fueltech) sums of generated / energy / emissions /
+    market_value written from the unit_intervals write path, so it serves the tracker shapes only:
+    DATA, 5m/30m/1h, network or region primary grouping, no secondary grouping or one fueltech /
+    fueltech_group grouping, the four additive metrics, no facility/unit filter. Everything else
+    (storage_battery, renewable/status groupings, daily buckets, MARKET, FACILITY) falls back.
+
+    Recency guard: only windows starting within `clickhouse_agg_table_max_age_days` (the backfilled,
+    swept range) are served. `date_start` is naive network-local time, compared against UTC now + 10h.
+    """
+    if query_type != QueryType.DATA or interval not in _SUBDAY_MV_INTERVALS or facility_code or unit_code:
+        return False
+    if primary_grouping not in _AGG_PRIMARY:
+        return False
+    if date_start is not None:
+        ref = now or datetime.now(UTC).replace(tzinfo=None)
+        if date_start.replace(tzinfo=None) < ref - timedelta(days=settings.clickhouse_agg_table_max_age_days, hours=10):
+            return False
+    if secondary_groupings and (len(secondary_groupings) != 1 or secondary_groupings[0] not in _COLUMNAR_SECONDARY):
+        return False
+    return bool(metrics) and all(m in _SUBDAY_MV_METRICS for m in metrics)
+
+
+def _wrap_columnar(sql: str, key_cols: list[str], metric_cols: list[str], tz_suffix: str) -> str:
+    """Group the per-interval rows of `sql` into one row of arrays per series.
+
+    Series come back in the order the row path first sees them: newest last-interval first
+    (rows are `ORDER BY interval DESC`), ties broken by the key columns ascending. Timestamp
+    strings are fixed-width so the tuple sort is chronological; `ts` is unique per series,
+    so the metric values never take part in the comparison. `tz_suffix` (e.g. `+10:00`) is
+    appended in SQL so each timestamp is already the final `isoformat()` string.
+    """
+    keys = ", ".join(key_cols)
+    tup = ", ".join(["ts", *metric_cols])
+    arrays = ", ".join(
+        [
+            "arrayMap(x -> x.1, s) AS ts_arr",
+            *(f"arrayMap(x -> x.{i + 2}, s) AS v{i}" for i in range(len(metric_cols))),
+        ]
+    )
+    select_keys = f"{keys}, " if keys else ""
+    group_by = f"GROUP BY {keys}" if keys else ""
+    order_by = f"ORDER BY max(iv) DESC{', ' + keys if keys else ''}"
+    return f"""
+    WITH arraySort(groupArray(({tup}))) AS s
+    SELECT {select_keys}{arrays}
+    FROM (
+        SELECT
+            interval AS iv,
+            concat(formatDateTime(interval, '%%Y-%%m-%%dT%%H:%%i:%%S'), '{tz_suffix}') AS ts,
+            {select_keys}{", ".join(metric_cols)}
+        FROM ({sql})
+    )
+    {group_by}
+    {order_by}
+    """
+
+
 def get_timeseries_query(
     query_type: QueryType,
     network: NetworkSchema,
@@ -438,10 +581,22 @@ def get_timeseries_query(
     network_region: str | None = None,
     fueltech: list[str] | None = None,
     fueltech_group: list[str] | None = None,
+    columnar: bool = False,
+    use_subday_mv: bool | None = None,
+    use_agg_table: bool | None = None,
 ) -> tuple[str, dict, list[str]]:
     """Build a CTE-based time-series query for the given parameters.
 
     See module docstring for the structural design.
+
+    `use_subday_mv` (default: the `clickhouse_subday_mv_routing` setting) routes eligible sub-daily
+    DATA queries to the 5m fueltech view, see `subday_mv_supported`. `use_agg_table` (default: the
+    `clickhouse_agg_table_routing` setting) routes the tracker shapes to `fueltech_region_intervals`
+    (#763, see `agg_table_supported`); it wins over the view when both apply.
+
+    With `columnar=True` (see `columnar_supported`) the query is wrapped so clickhouse groups
+    the rows into one row per series: the returned column names are the series key columns,
+    then `ts` (sorted ISO-ish timestamp strings, array) and one array per metric.
     """
     config = QUERY_CONFIGS[query_type]
 
@@ -452,10 +607,28 @@ def get_timeseries_query(
     if secondary_groupings and SecondaryGrouping.STATUS in secondary_groupings:
         split = None
     use_daily = split is not None
+    if use_subday_mv is None:
+        use_subday_mv = settings.clickhouse_subday_mv_routing
+    if use_agg_table is None:
+        use_agg_table = settings.clickhouse_agg_table_routing
+    if (
+        use_agg_table
+        and not use_daily
+        and agg_table_supported(
+            query_type, primary_grouping, interval, metrics, secondary_groupings, facility_code, unit_code, date_start
+        )
+    ):
+        raw_table = AGG_TABLE
+    elif (
+        use_subday_mv
+        and not use_daily
+        and subday_mv_supported(query_type, interval, metrics, secondary_groupings, facility_code, unit_code, date_start)
+    ):
+        raw_table = SUBDAY_MV_TABLE
+    else:
+        raw_table = config.base_table
     plans = config.daily_plans if use_daily else config.plans
-    base_table = (
-        _daily_table_for(config, query_type, secondary_groupings, facility_code, unit_code) if use_daily else config.base_table
-    )
+    base_table = _daily_table_for(config, query_type, secondary_groupings, facility_code, unit_code) if use_daily else raw_table
 
     # ---- collect required inner columns (dedup by alias) ----
     inner_aliases: dict[str, str] = {}
@@ -594,6 +767,8 @@ def get_timeseries_query(
     outer_select_groups = [f"'{network.code}' AS network", *aliased_outer_groups]
 
     outer_group_by = ["interval", *outer_extra_groups] if outer_extra_groups else ["interval"]
+    if columnar and not columnar_supported(query_type, primary_grouping, secondary_groupings, facility_code, unit_code):
+        raise ValueError("columnar query not supported for this shape")
     order_by_extra = [", " + ", ".join(outer_extra_groups)] if outer_extra_groups else [""]
 
     sql = f"""
@@ -610,8 +785,13 @@ def get_timeseries_query(
         {", ".join(outer_select_metrics)}
     FROM inner_agg
     GROUP BY {", ".join(outer_group_by)}
-    ORDER BY interval DESC{order_by_extra[0]}
+    {"" if columnar else f"ORDER BY interval DESC{order_by_extra[0]}"}
     """
+
+    if columnar:
+        key_cols = [_COLUMNAR_KEY_ALIAS.get(c, c) for c in outer_extra_groups]
+        metric_cols = list(dict.fromkeys(m.value.lower() for m in metrics))  # repeated metrics share one array
+        return _wrap_columnar(sql, key_cols, metric_cols, network.get_offset_string()), params, [*key_cols, "ts", *metric_cols]
 
     # ---- column-name order (used by callers to zip with row tuples) ----
     column_names: list[str] = ["interval", "network"]

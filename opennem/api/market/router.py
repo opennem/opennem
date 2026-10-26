@@ -2,6 +2,7 @@
 Market data router for OpenNEM API.
 """
 
+import asyncio
 import logging
 import time
 from datetime import datetime, timedelta
@@ -20,11 +21,11 @@ from opennem.api.forecast import (
     is_forecast_metric,
 )
 from opennem.api.intervals import cap_date_end_to_settled_interval
-from opennem.api.queries import QueryType, get_timeseries_query
+from opennem.api.queries import QueryType, columnar_supported, get_timeseries_query
 from opennem.api.response_cache import cached_json
 from opennem.api.schema import std_error_responses
 from opennem.api.security import optional_user
-from opennem.api.timeseries import build_timeseries_response, format_timeseries_response
+from opennem.api.timeseries import build_timeseries_response, format_timeseries_columnar, rows_to_timeseries_list
 from opennem.api.utils import get_api_network_from_code, validate_metrics
 from opennem.core.grouping import PrimaryGrouping
 from opennem.core.metric import Metric
@@ -67,7 +68,7 @@ _SUPPORTED_METRICS = [
 
 @api_version(4)
 @router.get("/network/{network_code}", responses=std_error_responses())
-@cached_json(expire=60 * 5, key_builder=tiered_key_builder)
+@cached_json(expire=60 * 5, live_expire=60, key_builder=tiered_key_builder)
 async def get_network_data(
     network_code: Annotated[
         str,
@@ -153,13 +154,15 @@ async def get_network_data(
     return build_timeseries_response(timeseries_list)
 
 
-async def _run_query(client: Any, query: str, params: dict[str, Any]) -> list[Any]:
+async def _run_query(client: Any, query: str, params: dict[str, Any], *, raise_http: bool = True) -> list[Any]:
     start_time = time.time()
     try:
         logger.debug(query, params)
         results = await execute_async(client, query, params)
         logger.debug(f"Query execution time: {(time.time() - start_time) * 1000:.2f} ms")
     except Exception as e:
+        if not raise_http:
+            raise
         logger.error(f"Error executing query: {e}")
         raise HTTPException(status_code=500, detail="Error executing query") from e
     return results or []
@@ -191,31 +194,44 @@ async def _actual_timeseries(
             client=client, network=network, query_type=QueryType.MARKET, date_end=date_end
         )
 
-    query, params, column_names = get_timeseries_query(
-        query_type=QueryType.MARKET,
-        network=network,
-        metrics=metrics,
-        interval=interval,
-        date_start=date_start,
-        date_end=date_end,
-        primary_grouping=primary_grouping,
-        network_region=network_region,
-    )
+    query_kwargs: dict[str, Any] = {
+        "query_type": QueryType.MARKET,
+        "network": network,
+        "metrics": metrics,
+        "interval": interval,
+        "date_start": date_start,
+        "date_end": date_end,
+        "primary_grouping": primary_grouping,
+        "network_region": network_region,
+    }
+    format_kwargs: dict[str, Any] = {
+        "network": network.code,
+        "metrics": metrics,
+        "interval": interval,
+        "primary_grouping": primary_grouping,
+        "secondary_groupings": None,
+    }
+
+    # Tracker shapes: clickhouse groups rows into series arrays (#740). Any failure in the
+    # columnar path falls through to the row path below, which is the reference behaviour.
+    if columnar_supported(QueryType.MARKET, primary_grouping, None):
+        try:
+            query, params, column_names = get_timeseries_query(**query_kwargs, columnar=True)
+            results = await _run_query(client, query, params, raise_http=False)
+            if not results:
+                return [], False
+            timeseries_list = await asyncio.to_thread(format_timeseries_columnar, column_names, results, **format_kwargs)
+            return timeseries_list, True
+        except Exception as e:
+            logger.warning(f"columnar timeseries path failed, using row path: {e}")
+
+    query, params, column_names = get_timeseries_query(**query_kwargs)
 
     results = await _run_query(client, query, params)
     if not results:
         return [], False
 
-    result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
-
-    timeseries_list = format_timeseries_response(
-        network=network.code,
-        metrics=metrics,
-        interval=interval,
-        primary_grouping=primary_grouping,
-        secondary_groupings=None,
-        results=result_dicts,
-    )
+    timeseries_list = await asyncio.to_thread(rows_to_timeseries_list, column_names, results, **format_kwargs)
     return timeseries_list, True
 
 
@@ -272,15 +288,15 @@ async def _forecast_timeseries(
     if not results:
         return [], False
 
-    result_dicts = [dict(zip(column_names, row, strict=True)) for row in results]
-
-    timeseries_list = format_timeseries_response(
+    timeseries_list = await asyncio.to_thread(
+        rows_to_timeseries_list,
+        column_names,
+        results,
         network=network.code,
         metrics=metrics,
         interval=interval,
         primary_grouping=primary_grouping,
         secondary_groupings=None,
-        results=result_dicts,
     )
 
     run_times = await get_forecast_run_times(client, network, metrics, date_start, date_end, network_region)

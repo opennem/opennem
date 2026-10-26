@@ -149,7 +149,7 @@ def get_cms_unit(unit_code: str) -> UnitSchema:
         CMSQueryError: If the unit is not found or if there's an error querying the CMS
         ValidationError: If the unit data doesn't match the expected schema
     """
-    query = f"""*[_type == "unit" && code == '{unit_code}' && !(_id in path("drafts.**"))] {{
+    query = """*[_type == "unit" && code == $code && !(_id in path("drafts.**"))] {
         _id,
         _createdAt,
         _updatedAt,
@@ -163,9 +163,10 @@ def get_cms_unit(unit_code: str) -> UnitSchema:
         expected_operation_date,
         closure_date,
         expected_closure_date
-    }}"""
+    }"""
 
-    res = sanity_client.query(query)
+    # POST so the code travels as a JSON param (the GET path quotes strings without escaping)
+    res = sanity_client.query(query, variables={"code": unit_code}, method="POST")
 
     logger.debug(res)
 
@@ -321,13 +322,17 @@ async def get_cms_facilities(facility_code: str | None = None, cms_id: str | Non
         The function will retry on CMSQueryError and ValidationError, but will
         re-raise the error if all retries fail.
     """
+    # caller input only ever travels as GROQ params (#749), never interpolated into the query
     filter_query = ""
+    variables: dict[str, str] = {}
 
     if facility_code:
-        filter_query += f" && code == '{facility_code}'"
+        filter_query += " && code == $code"
+        variables["code"] = facility_code
 
     if cms_id:
-        filter_query += f" && _id == '{cms_id}'"
+        filter_query += " && _id == $cms_id"
+        variables["cms_id"] = cms_id
 
     query = f"""*[_type == "facility"{filter_query} && !(_id in path("drafts.**"))] {{
         _id,
@@ -385,7 +390,8 @@ async def get_cms_facilities(facility_code: str | None = None, cms_id: str | Non
     }}"""
 
     async with SanityAsyncClient(project_id=settings.sanity_project_id, token=settings.sanity_api_key) as client:
-        res = await client.query(query)
+        # POST so params are sent as JSON (the GET path quotes strings without escaping)
+        res = await client.query(query, variables=variables or None, method="POST")
 
     if not res or not isinstance(res, dict) or "result" not in res or not res["result"]:
         logger.info("No facilities found")

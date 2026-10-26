@@ -38,13 +38,18 @@ from opennem.db.clickhouse.schema import optimize_clickhouse_tables
 from opennem.exporter.facilities import export_facilities_static
 
 # from opennem.exporter.historic import export_historic_intervals
+from opennem.monitors.energy_quality_flag import run_energy_mismatch_check, run_energy_quality_flag_check
 from opennem.monitors.frozen_telemetry import run_frozen_telemetry_check
 from opennem.monitors.unmapped_codes import run_unmapped_code_check
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
 from opennem.workers.catchup import catchup_aggregates, catchup_last_days, run_catchup_check
-from opennem.workers.energy import process_energy_last_intervals
+from opennem.workers.energy import (
+    get_dispatch_reprocess_window,
+    process_energy_last_intervals,
+    reprocess_energy_window,
+)
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
 from opennem.workers.generation_max import update_max_generation_for_units
@@ -58,6 +63,47 @@ logger = logging.getLogger("opennem.pipelines.nem")
 # the SCADA poll stops here so a slow fetch can't run the 270s job out before prices,
 # aggregates and exports (a hung proxy did exactly that)
 NEM_SCADA_POLL_BUDGET_SECONDS = 120
+# the aggregate now gates the exports: cap it so a stuck query can't run the 270s job out before they start
+NEM_AGGREGATE_BUDGET_SECONDS = 60
+
+
+async def _crawl_nem_prices() -> int:
+    """DispatchIS then TradingIS, sequential (both write balancing_summary, concurrent upserts deadlock).
+
+    Runs alongside the SCADA poll (#726). A failure here must not kill the SCADA path or the
+    exports, so it is logged (error logs reach Sentry) and swallowed; market_summary then runs
+    on whatever prices landed, and the catchup tasks repair the rest.
+
+    Returns the DispatchIS inserted record count (0 on no new file or failure).
+    """
+    try:
+        dispatch = await run_crawl(AEMONemwebDispatchIS, latest=True)
+        await run_crawl(AEMONemwebTradingIS, latest=True)
+        return dispatch.inserted_records or 0 if dispatch else 0
+    except Exception:
+        logger.exception("NEM price crawl (DispatchIS/TradingIS) failed")
+        return 0
+
+
+async def _enqueue_cache_warm(ctx: dict) -> None:
+    """Queue the tracker cache warm; never fails the interval check. No-op when the warmer is unset."""
+    from opennem.tasks.cache_warmer import is_enabled
+
+    redis = ctx.get("redis")
+    if redis is None or not is_enabled():
+        return
+    try:
+        # fixed job id: arq drops a repeat while one is queued or running (keep_result=0 on the func)
+        await redis.enqueue_job("task_warm_tracker_cache", _job_id="tracker-cache-warm")
+    except Exception:
+        logger.exception("could not enqueue tracker cache warm")
+
+
+async def task_warm_tracker_cache(ctx: dict) -> None:
+    """Replay the browser tracker's standard calls against the API so the shared response cache is warm."""
+    from opennem.tasks.cache_warmer import run_cache_warm
+
+    await run_cache_warm()
 
 
 async def task_nem_interval_check(ctx) -> None:
@@ -66,45 +112,81 @@ async def task_nem_interval_check(ctx) -> None:
     scada_result = None
     poll_deadline = time.monotonic() + NEM_SCADA_POLL_BUDGET_SECONDS
 
-    for attempt, wait in enumerate(backoff):
-        scada_result = await run_crawl(AEMONNemwebDispatchScada, latest=True)
-        if scada_result and scada_result.inserted_records > 0:
-            logger.info(f"SCADA data received on poll attempt {attempt + 1}")
-            break
-        if time.monotonic() + wait > poll_deadline:
-            logger.warning(f"Poll attempt {attempt + 1}: no new SCADA data, poll budget spent, moving on")
-            break
-        logger.info(f"Poll attempt {attempt + 1}: no new SCADA data, waiting {wait}s")
-        await asyncio.sleep(wait)
+    # prices don't depend on the SCADA poll: start them now instead of after it
+    prices_task = asyncio.create_task(_crawl_nem_prices())
 
-    # Run sequentially — both write to balancing_summary and concurrent upserts deadlock
-    await run_crawl(AEMONemwebDispatchIS, latest=True)
-    await run_crawl(AEMONemwebTradingIS, latest=True)
+    try:
+        for attempt, wait in enumerate(backoff):
+            scada_result = await run_crawl(AEMONNemwebDispatchScada, latest=True)
+            if scada_result and scada_result.inserted_records > 0:
+                logger.info(f"SCADA data received on poll attempt {attempt + 1}")
+                break
+            if time.monotonic() + wait > poll_deadline:
+                logger.warning(f"Poll attempt {attempt + 1}: no new SCADA data, poll budget spent, moving on")
+                break
+            logger.info(f"Poll attempt {attempt + 1}: no new SCADA data, waiting {wait}s")
+            await asyncio.sleep(wait)
+    except BaseException:
+        # poll raised or the job was cancelled: don't leave the side crawl orphaned or delay the cancel
+        prices_task.cancel()
+        raise
+
+    # market_summary needs the prices
+    early_dispatch_records = await prices_task
+
+    # DispatchIS can publish a little after the crawl started: if SCADA landed but the early crawl
+    # found nothing new, go again now so this interval's demand/price isn't a cycle late.
+    if scada_result and scada_result.inserted_records > 0 and not early_dispatch_records:
+        await _crawl_nem_prices()
 
     # energy + market_summary — use last_intervals to always recompute with flows
     await process_energy_last_intervals(num_intervals=12)
     await run_market_summary_aggregate_for_last_intervals(num_intervals=12)
 
-    # unit_intervals aggregate doesn't block exports — run concurrently with ONE export chain.
-    # NEM and AU exports run back to back, not gathered (peak memory, #677).
-    async def _exports() -> None:
-        await run_export_power_latest_for_network(network=NetworkNEM)
-        await run_export_power_latest_for_network(network=NetworkAU)
+    # unit_intervals must land in CH BEFORE the exports start: power_week derives its end
+    # boundary from max(interval) in CH, so a concurrent aggregate publishes one interval late (#726).
+    # A failed aggregate must not stop the exports (stale data is the worst outcome): run them, then re-raise.
+    aggregate_error: Exception | None = None
+    try:
+        await asyncio.wait_for(run_unit_intervals_aggregate_to_now(), timeout=NEM_AGGREGATE_BUDGET_SECONDS)
+    except Exception as e:
+        logger.exception("unit_intervals aggregate failed, exporting anyway")
+        aggregate_error = e
 
-    await asyncio.gather(run_unit_intervals_aggregate_to_now(), _exports())
+    # data is queryable now: refill the tracker response cache before users arrive (#737)
+    if aggregate_error is None:
+        await _enqueue_cache_warm(ctx)
+
+    # NEM and AU exports run back to back, not gathered (peak memory, #677).
+    await run_export_power_latest_for_network(network=NetworkNEM)
+    await run_export_power_latest_for_network(network=NetworkAU)
+
+    if aggregate_error:
+        raise aggregate_error
 
 
 async def task_nem_per_day_check(ctx) -> None:
     """This task is run daily for NEM"""
     dispatch_actuals = await run_crawl(AEMONEMDispatchActualGEN, latest=True, limit=3)
-    await run_crawl(AEMONEMNextDayDispatch, latest=True, limit=3)
+    next_day_dispatch = await run_crawl(AEMONEMNextDayDispatch, latest=True, limit=3)
 
     if not dispatch_actuals or not dispatch_actuals.inserted_records:
         raise Retry(defer=ctx["job_try"] * 15)
 
-    # Next-day dispatch resets energy_quality_flag via upsert, so reprocess
-    # energy for the last 48h to cover the dispatch window
-    await process_energy_last_intervals(num_intervals=12 * 48)
+    # Next-day dispatch resets energy_quality_flag via upsert on every row in the (up to 3) day files, so redo
+    # energy for exactly the span the crawl wrote, not a fixed 48h (#764)
+    now = get_last_completed_interval_for_network(network=NetworkNEM, tz_aware=False).replace(tzinfo=None)
+    start, end = get_dispatch_reprocess_window(
+        interval_min=next_day_dispatch.interval_min if next_day_dispatch else None,
+        interval_max=next_day_dispatch.interval_max if next_day_dispatch else None,
+        now=now,
+    )
+
+    # The meter file (actual gen) upserts a changed value over rows live scada already delivered and the worker already
+    # processed, and resets their flag, so its span has to be reprocessed too (#767)
+    if dispatch_actuals and dispatch_actuals.interval_min is not None:
+        start = min(start, dispatch_actuals.interval_min.replace(tzinfo=None))
+    await reprocess_energy_window(date_start=start, date_end=end)
 
 
 async def task_nem_rooftop_crawl(ctx) -> None:
@@ -117,8 +199,11 @@ async def task_nem_rooftop_crawl(ctx) -> None:
 
     rooftop = await asyncio.gather(*tasks)
 
+    # Nothing new is the normal case for a 30 min feed polled every 5 min. This used to raise
+    # Retry, but cron jobs have max_tries=1 so the deferred retry was dropped with "max retries 1
+    # exceeded" after a 15s wait, never re-crawling. The next cron tick is the retry (#726).
     if not rooftop or not any(r.inserted_records for r in rooftop if r):
-        raise Retry(defer=ctx["job_try"] * 15)
+        logger.info("rooftop crawl: no new files this tick")
 
 
 async def task_update_max_generation_for_units(ctx) -> None:
@@ -424,6 +509,35 @@ async def task_check_frozen_telemetry(ctx: dict) -> None:
     except Exception as e:
         logger.error(f"Error checking frozen telemetry: {str(e)}")
         raise
+
+
+async def task_check_energy_quality_flag(ctx: dict) -> None:
+    """Task to check for NEM rows older than 3 days that never got their energy reprocessed (#764).
+
+    Args:
+        ctx (dict): Task context
+    """
+    errors: list[Exception] = []
+
+    for check in (run_energy_quality_flag_check, run_energy_mismatch_check):
+        try:
+            await check()
+        except Exception as e:
+            logger.error(f"Error checking energy quality flag ({check.__name__}): {str(e)}")
+            errors.append(e)
+
+    if errors:
+        raise errors[0]
+
+
+async def task_check_agg_table(ctx: dict) -> None:
+    """Compare fueltech_region_intervals to unit_intervals FINAL for the last 2 days (#763).
+
+    No-op unless CLICKHOUSE_AGG_TABLE_WRITE is on; sends a sentry message on any mismatch.
+    """
+    from opennem.aggregates.fueltech_region_intervals import check_recent
+
+    await check_recent(days=2)
 
 
 async def task_optimize_clickhouse_tables(ctx: dict) -> None:

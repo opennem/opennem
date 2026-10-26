@@ -118,7 +118,7 @@ async def map_with_llm(opennem_facility, npi_facilities_in_state):
                 {
                     "role": "system",
                     "content": (
-                        "You are an expert at matching electricity generation facilities. " "Always respond with valid JSON only."
+                        "You are an expert at matching electricity generation facilities. Always respond with valid JSON only."
                     ),
                 },
                 {"role": "user", "content": prompt},

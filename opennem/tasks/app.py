@@ -39,6 +39,8 @@ from opennem.tasks.tasks import (
     task_catchup_aggregates,
     task_catchup_check,
     task_catchup_days,
+    task_check_agg_table,
+    task_check_energy_quality_flag,
     task_check_frozen_telemetry,
     task_check_unmapped_facility_codes,
     task_check_unsplit_batteries,
@@ -63,6 +65,7 @@ from opennem.tasks.tasks import (
     task_update_facility_seen_range,
     task_update_max_generation_for_units,
     task_update_milestones,
+    task_warm_tracker_cache,
     task_weekly_summary_nem,
     task_weekly_summary_wem,
     task_wem_day_crawl,
@@ -96,8 +99,21 @@ async def startup(ctx: dict) -> None:
     start_loop_monitor("worker")
 
     redis = await get_redis_pool()
-    await redis.flushdb()
-    logger.info("Redis queue flushed on startup")
+    from opennem.tasks.cache_warmer import flush_non_api_cache, is_enabled, is_worker_mode
+
+    if is_worker_mode() and is_enabled():
+        # worker-side warmer (#759): keep the API response cache (api-cache:*) across restarts, clear everything else
+        deleted = await flush_non_api_cache(redis)
+        logger.info(f"Redis flushed on startup, api cache kept ({deleted} keys deleted)")
+    else:
+        await redis.flushdb()
+        logger.info("Redis queue flushed on startup")
+    if is_enabled():
+        # refill right away (entries may be gone or stale after the downtime); job id dedupes against an interval-check enqueue
+        try:
+            await redis.enqueue_job("task_warm_tracker_cache", _job_id="tracker-cache-warm", _defer_by=20)
+        except Exception:
+            logger.exception("could not enqueue startup tracker cache warm")
 
     # warm the S3 service model + aiofiles imports so the first export doesn't stall the loop
     from opennem.exporter.storage_bucket import warm_s3_client
@@ -132,6 +148,8 @@ class WorkerSettings:
     # to seed its running extremes (#654) and takes minutes.
     functions = [
         func(task_milestone_gap_backfill, timeout=None),
+        # enqueued by task_nem_interval_check once data lands; keep_result=0 so the fixed _job_id only dedupes live jobs
+        func(task_warm_tracker_cache, timeout=300, max_tries=1, keep_result=0),
         # keep_result=0: arq refuses a repeat _job_id while the result key lives (1h default), which
         # would drop later edits to the same doc. Dedupe only while queued/running.
         func(task_sanity_webhook, timeout=600, max_tries=3, keep_result=0),
@@ -375,6 +393,23 @@ class WorkerSettings:
             minute=20,
             second=0,
             timeout=None,
+            unique=True,
+        ),
+        # Check for NEM energy stuck on the generated/12 fallback (#764)
+        cron(
+            task_check_energy_quality_flag,
+            hour=10,
+            minute=25,
+            second=0,
+            timeout=None,
+            unique=True,
+        ),
+        # fueltech_region_intervals vs unit_intervals FINAL, last 2 days (#763; no-op unless the write flag is on)
+        cron(
+            task_check_agg_table,
+            minute={25},
+            second=0,
+            timeout=600,
             unique=True,
         ),
         # Check for unsplit batteries
