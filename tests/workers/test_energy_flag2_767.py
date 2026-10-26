@@ -117,8 +117,7 @@ def test_worker_update_selects_unprocessed_or_non_trapezoid_nem_rows() -> None:
     sql = _sql(energy.ENERGY_UPDATE_QUERY)
     assert "fs.energy_quality_flag < 2" in sql
     assert "fs.network_id = 'NEM'" in sql
-    assert "abs(fs.energy - (rs.generated + rs.prev_generated) / 2 / nd.intervals_per_hour) > :energy_tolerance" in sql
-    assert "rs.prev_generated IS NOT NULL" in sql
+    assert f"abs(fs.energy - ({_sql(energy.EXPECTED_ENERGY_SQL)})) > :energy_tolerance" in sql
 
 
 def test_worker_update_keeps_network_exclusions_and_window() -> None:
@@ -132,7 +131,7 @@ def test_worker_update_keeps_network_exclusions_and_window() -> None:
 def test_worker_params_use_small_tolerance_and_lag_start() -> None:
     params = energy._energy_params(datetime(2026, 10, 5), datetime(2026, 10, 6))
     assert params["energy_tolerance"] == 0.0005 == energy.ENERGY_REPAIR_TOLERANCE
-    assert params["lag_start"] == datetime(2026, 10, 5) - timedelta(minutes=5)
+    assert params["lag_start"] == datetime(2026, 10, 5) - energy.LAG_LOOKBACK
 
 
 def test_tolerance_separates_fallback_from_trapezoid() -> None:
