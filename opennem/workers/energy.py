@@ -21,6 +21,20 @@ ENERGY_REPAIR_TOLERANCE = 0.0005
 # networks whose energy the worker never touches, they have their own energy calculations
 _EXCLUDED_NETWORKS = "('WEM', 'WEMDE', 'AEMO_ROOFTOP_BACKFILL')"
 
+# trapezoid only between ADJACENT intervals (#771). Sparse units (batteries, loads) omit zero rows, so the previous row can
+# be hours earlier and must not feed the trapezoid. Without an adjacent previous row the energy is the fallback
+# generated / intervals_per_hour. Single definition shared by the worker update, the repair count and the monitor.
+# Needs `rs` (ranked_scada) and `nd` (network_data) in scope.
+EXPECTED_ENERGY_SQL = """CASE
+            WHEN rs.prev_interval = rs.interval - nd.interval_size * interval '1 minute'
+                THEN (rs.generated + rs.prev_generated) / 2 / nd.intervals_per_hour
+            ELSE rs.generated / nd.intervals_per_hour
+        END"""
+
+# lookback for the lag row: the longest network interval (30 min) so a row at the window start still finds its
+# adjacent previous row. Anything further back is a gap by definition.
+LAG_LOOKBACK = timedelta(minutes=30)
+
 _RANKED_SCADA_CTE = f"""
     network_data AS (
         SELECT
@@ -38,7 +52,11 @@ _RANKED_SCADA_CTE = f"""
             LAG(generated, 1) OVER (
                 PARTITION BY network_id, facility_code
                 ORDER BY interval
-            ) AS prev_generated
+            ) AS prev_generated,
+            LAG(interval, 1) OVER (
+                PARTITION BY network_id, facility_code
+                ORDER BY interval
+            ) AS prev_interval
         FROM facility_scada
         WHERE
             interval BETWEEN :lag_start AND :end_time
@@ -51,15 +69,14 @@ _RANKED_SCADA_CTE = f"""
 # NEM only because rooftop / APVI mix forecast and actual rows and 30 / 15 minute intervals in one lag partition,
 # so their stored energy is not comparable to this formula. The predicate only runs on rows already restricted to
 # the window by the interval range, it never widens the scan.
-_NEEDS_ENERGY_UPDATE = """
-      AND rs.prev_generated IS NOT NULL
+_NEEDS_ENERGY_UPDATE = f"""
       AND (
           fs.energy_quality_flag < 2
           OR (
               fs.network_id = 'NEM'
               AND (
                   fs.energy IS NULL
-                  OR abs(fs.energy - (rs.generated + rs.prev_generated) / 2 / nd.intervals_per_hour) > :energy_tolerance
+                  OR abs(fs.energy - ({EXPECTED_ENERGY_SQL})) > :energy_tolerance
               )
           )
       )
@@ -70,7 +87,7 @@ ENERGY_UPDATE_QUERY = text(
     WITH {_RANKED_SCADA_CTE}
     UPDATE facility_scada fs
     SET
-        energy = (rs.generated + rs.prev_generated) / 2 / nd.intervals_per_hour,
+        energy = {EXPECTED_ENERGY_SQL},
         energy_quality_flag = 2
     FROM ranked_scada rs
     JOIN network_data nd ON nd.code = rs.network_id
@@ -82,7 +99,7 @@ ENERGY_UPDATE_QUERY = text(
     """
 )
 
-# read-only: flag 2 NEM rows in the window whose energy is not the trapezoid, i.e. what the update above repairs
+# read-only: flag 2 NEM rows in the window whose energy is not the expected value (#771), what the update repairs
 ENERGY_MISMATCH_COUNT_QUERY = text(
     f"""
     WITH {_RANKED_SCADA_CTE}
@@ -94,10 +111,9 @@ ENERGY_MISMATCH_COUNT_QUERY = text(
     WHERE fs.network_id = 'NEM'
       AND fs.interval BETWEEN :start_time AND :end_time
       AND fs.energy_quality_flag = 2
-      AND rs.prev_generated IS NOT NULL
       AND (
           fs.energy IS NULL
-          OR abs(fs.energy - (rs.generated + rs.prev_generated) / 2 / nd.intervals_per_hour) > :energy_tolerance
+          OR abs(fs.energy - ({EXPECTED_ENERGY_SQL})) > :energy_tolerance
       )
     """
 )
@@ -107,7 +123,7 @@ def _energy_params(start_time: datetime, end_time: datetime) -> dict[str, object
     return {
         "start_time": start_time,
         "end_time": end_time,
-        "lag_start": start_time - timedelta(minutes=5),
+        "lag_start": start_time - LAG_LOOKBACK,
         "energy_tolerance": ENERGY_REPAIR_TOLERANCE,
     }
 
@@ -116,9 +132,9 @@ async def _calculate_energy_for_interval(session: AsyncSession, start_time: date
     """
     Calculate energy for a an interval range and update the energy column in the facility_scada table.
 
-    The energy calculation requires both the current and previous interval's generated values
-    to compute the average power over the interval. We explicitly exclude the first interval
-    in each facility's range since we won't have access to its previous value.
+    The trapezoid needs the generated value of the immediately previous interval. When the previous row is not exactly
+    one interval earlier (sparse units, first row ever) the row gets the fallback generated / intervals_per_hour and
+    flag 2 (#771), so it is considered processed and the self-heal below fixes it if the missing row arrives later.
 
     We also exclude WEM, WEMDE and AEMO_ROOFTOP_BACKFILL since they have their own energy calculations
 
