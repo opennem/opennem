@@ -53,6 +53,13 @@ from opennem.workers.energy import (
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
 from opennem.workers.generation_max import update_max_generation_for_units
+from opennem.workers.next_day_heal import (
+    HealResult,
+    alert_still_short,
+    extend_window_start,
+    heal_next_day_units,
+    reaggregate_nem_window,
+)
 from opennem.workers.system import clean_tmp_dir
 from opennem.workers.weekly_summary import run_weekly_summary
 
@@ -170,12 +177,21 @@ async def task_nem_per_day_check(ctx) -> None:
     dispatch_actuals = await run_crawl(AEMONEMDispatchActualGEN, latest=True, limit=3)
     next_day_dispatch = await run_crawl(AEMONEMNextDayDispatch, latest=True, limit=3)
 
+    # cron jobs have max_tries=1, so a Retry here was dropped and also skipped the energy redo and the heal below (#726)
     if not dispatch_actuals or not dispatch_actuals.inserted_records:
-        raise Retry(defer=ctx["job_try"] * 15)
+        logger.warning("nem per day check: no new actual gen records")
+
+    # units only in the next-day file miss whole days when a run is missed, re-crawl the short days (#773)
+    now = get_last_completed_interval_for_network(network=NetworkNEM, tz_aware=False).replace(tzinfo=None)
+    try:
+        heal = await heal_next_day_units(last_completed_interval=now)
+    except Exception as e:
+        # the heal must never block the energy redo for the files the regular crawl just wrote
+        logger.error(f"next-day heal failed: {e}")
+        heal = HealResult()
 
     # Next-day dispatch resets energy_quality_flag via upsert on every row in the (up to 3) day files, so redo
     # energy for exactly the span the crawl wrote, not a fixed 48h (#764)
-    now = get_last_completed_interval_for_network(network=NetworkNEM, tz_aware=False).replace(tzinfo=None)
     start, end = get_dispatch_reprocess_window(
         interval_min=next_day_dispatch.interval_min if next_day_dispatch else None,
         interval_max=next_day_dispatch.interval_max if next_day_dispatch else None,
@@ -186,7 +202,20 @@ async def task_nem_per_day_check(ctx) -> None:
     # processed, and resets their flag, so its span has to be reprocessed too (#767)
     if dispatch_actuals and dispatch_actuals.interval_min is not None:
         start = min(start, dispatch_actuals.interval_min.replace(tzinfo=None))
+
+    # the heal re-crawl resets the flag on its (older) days the same way
+    start = extend_window_start(start, heal.crawl.interval_min)
     await reprocess_energy_window(date_start=start, date_end=end)
+
+    _ = await alert_still_short(heal)
+
+    # healed rows only reach the api once clickhouse is re-aggregated over the days the re-crawl wrote
+    healed_min, healed_max = heal.crawl.interval_min, heal.crawl.interval_max
+    if healed_min is not None and healed_max is not None:
+        try:
+            await reaggregate_nem_window(healed_min.replace(tzinfo=None), healed_max.replace(tzinfo=None))
+        except Exception as e:
+            logger.error(f"next-day heal: clickhouse re-aggregation failed: {e}")
 
 
 async def task_nem_rooftop_crawl(ctx) -> None:
