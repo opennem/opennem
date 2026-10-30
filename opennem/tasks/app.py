@@ -219,11 +219,12 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
-        # APVI Rooftop 7-day re-fetch, re-aggregates only days that changed upstream (#780)
+        # APVI Rooftop 7-day re-fetch, re-aggregates only days that changed upstream (#780).
+        # :50 the hour before the full MV refresh (1/7/13/19 :30) so the two never overlap
         cron(
             task_apvi_latest_crawl,
-            hour={1, 7, 13, 19},
-            minute=10,
+            hour={0, 6, 12, 18},
+            minute=50,
             second=0,
             timeout=900,
             unique=True,

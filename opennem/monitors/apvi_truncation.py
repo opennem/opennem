@@ -70,9 +70,9 @@ def is_truncated(last_interval: datetime, last_generated: float | None) -> bool:
 def find_truncated_days(rows: list[tuple[date, datetime, float | None]]) -> list[TruncatedDay]:
     """Pick the truncated days out of (day, last_interval, last_generated) rows."""
     return [
-        TruncatedDay(day=day, last_interval=last_interval, last_generated=float(last_generated))
+        TruncatedDay(day=day, last_interval=last_interval, last_generated=float(last_generated or 0))
         for day, last_interval, last_generated in rows
-        if last_generated is not None and is_truncated(last_interval, last_generated)
+        if is_truncated(last_interval, last_generated)
     ]
 
 

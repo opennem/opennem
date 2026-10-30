@@ -129,7 +129,7 @@ def test_reaggregate_window() -> None:
 @pytest.mark.asyncio
 async def test_refresh_reaggregates_only_changed_days(monkeypatch: pytest.MonkeyPatch) -> None:
     fingerprints = iter([{date(2026, 10, 28): (13, 2.0)}, {date(2026, 10, 28): (62, 9.0)}])
-    monkeypatch.setattr(apvi_latest, "_fingerprint", AsyncMock(side_effect=lambda _start: next(fingerprints)))
+    monkeypatch.setattr(apvi_latest, "_fingerprint", AsyncMock(side_effect=lambda _start, _end: next(fingerprints)))
     crawl = AsyncMock()
     monkeypatch.setattr(apvi_latest, "run_crawl", crawl)
     backlog = AsyncMock()
@@ -141,8 +141,12 @@ async def test_refresh_reaggregates_only_changed_days(monkeypatch: pytest.Monkey
 
     monkeypatch.setattr(apvi_latest, "get_write_session", fake_session)
 
+    fingerprint = apvi_latest._fingerprint
     result = await apvi_latest.run_apvi_latest_refresh(now=datetime(2026, 10, 31, 9, 0))
 
+    # whole days only, today excluded
+    assert isinstance(fingerprint, AsyncMock) and fingerprint.await_args is not None
+    assert fingerprint.await_args.args == (datetime(2026, 10, 23), datetime(2026, 10, 31))
     crawl.assert_awaited_once_with(apvi_latest.APVIRooftopLatestCrawler)
     assert result.changed_days == [date(2026, 10, 28)]
     assert backlog.await_args is not None

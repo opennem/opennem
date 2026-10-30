@@ -37,6 +37,7 @@ _FINGERPRINT_QUERY = text("""
         network_id = 'APVI'
         and is_forecast is false
         and interval >= :window_start
+        and interval < :window_end
     group by 1
 """)
 
@@ -49,9 +50,9 @@ class ApviLatestResult:
     window: tuple[datetime, datetime] | None
 
 
-async def _fingerprint(window_start: datetime) -> DayFingerprint:
+async def _fingerprint(window_start: datetime, window_end: datetime) -> DayFingerprint:
     async with get_read_session() as session:
-        rows = (await session.execute(_FINGERPRINT_QUERY, {"window_start": window_start})).all()
+        rows = (await session.execute(_FINGERPRINT_QUERY, {"window_start": window_start, "window_end": window_end})).all()
 
     return {day: (int(row_count), float(generated_sum)) for day, row_count, generated_sum in rows}
 
@@ -84,11 +85,15 @@ async def run_apvi_latest_refresh(now: datetime | None = None) -> ApviLatestResu
     if now is None:
         now = get_last_completed_interval_for_network(network=NetworkWEM, tz_aware=False)
 
-    window_start = (now - timedelta(days=LOOKBACK_DAYS + 1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    # whole days only: today is still being filled by the 15-min apvi.today.data crawl and
+    # aggregated by the live path, so it would show as changed on nearly every run. The +1
+    # day of margin covers the crawler's 7 days counted back from today in NEM time.
+    today = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    window_start = today - timedelta(days=LOOKBACK_DAYS + 1)
 
-    before = await _fingerprint(window_start)
+    before = await _fingerprint(window_start, today)
     await run_crawl(APVIRooftopLatestCrawler)
-    after = await _fingerprint(window_start)
+    after = await _fingerprint(window_start, today)
 
     days = changed_days(before, after)
     window = reaggregate_window(days, now)
