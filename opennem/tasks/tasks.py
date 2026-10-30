@@ -38,12 +38,14 @@ from opennem.db.clickhouse.schema import optimize_clickhouse_tables
 from opennem.exporter.facilities import export_facilities_static
 
 # from opennem.exporter.historic import export_historic_intervals
+from opennem.monitors.apvi_truncation import run_apvi_truncation_check
 from opennem.monitors.energy_quality_flag import run_energy_mismatch_check, run_energy_quality_flag_check
 from opennem.monitors.frozen_telemetry import run_frozen_telemetry_check
 from opennem.monitors.unmapped_codes import run_unmapped_code_check
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
+from opennem.workers.apvi_latest import run_apvi_latest_refresh
 from opennem.workers.catchup import catchup_aggregates, catchup_last_days, run_catchup_check
 from opennem.workers.energy import (
     get_dispatch_reprocess_window,
@@ -298,6 +300,11 @@ async def task_apvi_crawl(ctx) -> None:
     await run_crawl(APVIRooftopTodayCrawler)
 
 
+async def task_apvi_latest_crawl(ctx) -> None:
+    """Re-fetch the last 7 days of APVI so late or completed days get repaired (#780)"""
+    await run_apvi_latest_refresh()
+
+
 async def task_bom_capitals_crawl(ctx) -> None:
     """Runs the BOM Capitals crawler every 10 minutes"""
     await run_crawl(BOMCapitals)
@@ -537,6 +544,19 @@ async def task_check_frozen_telemetry(ctx: dict) -> None:
         await run_frozen_telemetry_check()
     except Exception as e:
         logger.error(f"Error checking frozen telemetry: {str(e)}")
+        raise
+
+
+async def task_check_apvi_truncation(ctx: dict[str, object]) -> None:
+    """Task to flag APVI WA rooftop days cut off at the source mid-day (#780). Alert only.
+
+    Args:
+        ctx (dict): Task context
+    """
+    try:
+        await run_apvi_truncation_check()
+    except Exception as e:
+        logger.error(f"Error checking apvi truncation: {str(e)}")
         raise
 
 
