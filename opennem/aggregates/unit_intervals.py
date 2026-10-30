@@ -55,6 +55,29 @@ logger = logging.getLogger("opennem.aggregates.unit_intervals")
 # reading so we never fabricate a whole missing interval.
 _ROOFTOP_LOOKBACK = timedelta(minutes=35)
 
+# Interior staleness cap on the rooftop carry-forward (#780). The trailing bound above only
+# limits the fill past the LAST reading in the window; a source day that stops mid-morning
+# and resumes the next day was carried flat across the whole gap (APVI WA 2024-11-25: 17
+# intervals then a ~30h flat line at 1,076 MW). A carried reading older than this is stale.
+# One hour covers a single missed 30-min AEMO block or a few missed 15-min APVI ones.
+_ROOFTOP_MAX_STALENESS = timedelta(hours=1)
+
+# What a stale bucket becomes. APVI publishes daylight intervals only, so every night is a
+# carried value: a carried 0 stays 0 (unchanged). A dusk reading (at or after this
+# network-local time) that is still small when the feed stops is a sunset tail and goes to
+# 0 rather than being carried all night. Anything else (a truncated daytime source) is left
+# absent so the API serves NULL, not a flat line (NULL unless complete, #661).
+_ROOFTOP_DUSK_FROM = "16:00"
+_ROOFTOP_DUSK_MAX_MW = 100
+
+# Rendered SQL fragments, shared by both query builders. Constants only, never user input.
+_ROOFTOP_STALENESS_SQL = f"interval '{int(_ROOFTOP_MAX_STALENESS.total_seconds() // 60)} minutes'"
+_ROOFTOP_STALE_SQL = f"interval >= last_real_interval + {_ROOFTOP_STALENESS_SQL}"
+_ROOFTOP_KEEP_SQL = (
+    f"(NOT ({_ROOFTOP_STALE_SQL}) OR generated = 0 "
+    f"OR (CAST(last_real_interval AS time) >= time '{_ROOFTOP_DUSK_FROM}' AND generated < {_ROOFTOP_DUSK_MAX_MW}))"
+)
+
 # Fueltechs whose meter may legitimately read negative, because the unit really does
 # consume from the grid as part of normal operation. Everything else is a one-way
 # generator: a negative reading is site or auxiliary load measured at the same point,
@@ -186,6 +209,11 @@ async def _get_unit_interval_data(
         --     a full block (core edge = last_real + 30 min) the single freshest bucket
         --     is intentionally left absent rather than invented; the API serves
         --     NULL-not-0 at that settling edge (#575/#577) so it doesn't inflect.
+        --   * interior gaps are capped too (#780): a reading is carried at most
+        --     {_ROOFTOP_STALENESS_SQL} past the last real one. Past that a carried 0 stays 0
+        --     (APVI only reports daylight, so the night is a carried 0), a small carried
+        --     value from a dusk reading drops to 0 (sunset tail), and anything else is
+        --     left absent (NULL) instead of a flat line across a truncated source day.
         SELECT
             interval,
             network_id,
@@ -196,8 +224,8 @@ async def _get_unit_interval_data(
             fueltech_id,
             fueltech_group_id,
             renewable,
-            generated,
-            energy
+            CASE WHEN {_ROOFTOP_STALE_SQL} THEN 0 ELSE generated END as generated,
+            CASE WHEN {_ROOFTOP_STALE_SQL} THEN 0 ELSE energy END as energy
         FROM (
             SELECT
                 *,
@@ -216,7 +244,8 @@ async def _get_unit_interval_data(
                     TRUE as renewable,
                     locf(coalesce(round(sum(fs.generated), 4), 0)) as generated,
                     locf(coalesce(round(sum(fs.energy) / (12 / (60 / n.interval_size)), 4), 0)) as energy,
-                    max(fs.interval) as real_interval
+                    max(fs.interval) as real_interval,
+                    locf(max(fs.interval)) as last_real_interval
                 FROM
                     facility_scada fs
                 JOIN units u ON fs.facility_code = u.code
@@ -233,6 +262,7 @@ async def _get_unit_interval_data(
         ) solar_bounded
         WHERE interval >= min_real_interval
             AND interval <= max_real_interval + interval '25 minutes'
+            AND {_ROOFTOP_KEEP_SQL}
     ),
     facility_data as (
         SELECT
@@ -438,6 +468,11 @@ async def _stream_unit_interval_data(
         --     a full block (core edge = last_real + 30 min) the single freshest bucket
         --     is intentionally left absent rather than invented; the API serves
         --     NULL-not-0 at that settling edge (#575/#577) so it doesn't inflect.
+        --   * interior gaps are capped too (#780): a reading is carried at most
+        --     {_ROOFTOP_STALENESS_SQL} past the last real one. Past that a carried 0 stays 0
+        --     (APVI only reports daylight, so the night is a carried 0), a small carried
+        --     value from a dusk reading drops to 0 (sunset tail), and anything else is
+        --     left absent (NULL) instead of a flat line across a truncated source day.
         SELECT
             interval,
             network_id,
@@ -448,8 +483,8 @@ async def _stream_unit_interval_data(
             fueltech_id,
             fueltech_group_id,
             renewable,
-            generated,
-            energy
+            CASE WHEN {_ROOFTOP_STALE_SQL} THEN 0 ELSE generated END as generated,
+            CASE WHEN {_ROOFTOP_STALE_SQL} THEN 0 ELSE energy END as energy
         FROM (
             SELECT
                 *,
@@ -468,7 +503,8 @@ async def _stream_unit_interval_data(
                     TRUE as renewable,
                     locf(coalesce(round(sum(fs.generated), 4), 0)) as generated,
                     locf(coalesce(round(sum(fs.energy) / (12 / (60 / n.interval_size)), 4), 0)) as energy,
-                    max(fs.interval) as real_interval
+                    max(fs.interval) as real_interval,
+                    locf(max(fs.interval)) as last_real_interval
                 FROM
                     facility_scada fs
                 JOIN units u ON fs.facility_code = u.code
@@ -485,6 +521,7 @@ async def _stream_unit_interval_data(
         ) solar_bounded
         WHERE interval >= min_real_interval
             AND interval <= max_real_interval + interval '25 minutes'
+            AND {_ROOFTOP_KEEP_SQL}
     ),
     facility_data as (
         SELECT

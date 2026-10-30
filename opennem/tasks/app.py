@@ -35,11 +35,13 @@ from opennem.api.maintenance_app import run_maintenance_app
 from opennem.tasks.broker import REDIS_SETTINGS, get_redis_pool
 from opennem.tasks.tasks import (
     task_apvi_crawl,
+    task_apvi_latest_crawl,
     task_bom_capitals_crawl,
     task_catchup_aggregates,
     task_catchup_check,
     task_catchup_days,
     task_check_agg_table,
+    task_check_apvi_truncation,
     task_check_energy_quality_flag,
     task_check_frozen_telemetry,
     task_check_unmapped_facility_codes,
@@ -215,6 +217,16 @@ class WorkerSettings:
             minute=set(range(0, 60, 15)),
             second=58,
             timeout=None,
+            unique=True,
+        ),
+        # APVI Rooftop 7-day re-fetch, re-aggregates only days that changed upstream (#780).
+        # :50 the hour before the full MV refresh (1/7/13/19 :30) so the two never overlap
+        cron(
+            task_apvi_latest_crawl,
+            hour={0, 6, 12, 18},
+            minute=50,
+            second=0,
+            timeout=900,
             unique=True,
         ),
         # NEM Next Day Dispatch
@@ -393,6 +405,15 @@ class WorkerSettings:
             minute=20,
             second=0,
             timeout=None,
+            unique=True,
+        ),
+        # Check for APVI WA rooftop days cut off at the source mid-day (#780)
+        cron(
+            task_check_apvi_truncation,
+            hour=10,
+            minute=30,
+            second=0,
+            timeout=300,
             unique=True,
         ),
         # Check for NEM energy stuck on the generated/12 fallback (#764)
