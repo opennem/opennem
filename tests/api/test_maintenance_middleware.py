@@ -102,7 +102,10 @@ async def test_lifespan_not_gated(maintenance_on: None) -> None:
     "path",
     [
         "/health",
+        "/health/",
         "/v4/health",
+        "/v4/health/",
+        "/v4/admin",
         "/maintenance",
         "/v4/maintenance",
         "/docs",

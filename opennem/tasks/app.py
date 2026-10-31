@@ -118,13 +118,15 @@ async def startup(ctx: dict) -> None:
         await redis.flushdb()
         logger.info("Redis queue flushed on startup")
 
+    # re-set after the flush; a lost marker (redis wiped between boots) only loses the notice: `opennem maintenance notify`
+    await set_marker(redis)
+
     if transition:
         # background so a slow status hook can't hold up boot; ref kept in ctx so the task isn't collected
         ctx["maintenance_notify"] = asyncio.create_task(notify_status(transition, source="worker"))
 
     if settings.maintenance_mode:
         # crons/jobs are guarded (opennem/tasks/maintenance.py); skip the boot work that reads S3/CH or queues jobs
-        await set_marker(redis)
         logger.warning("Maintenance mode is ON: cron jobs and queued tasks will be skipped (#782)")
         return
 

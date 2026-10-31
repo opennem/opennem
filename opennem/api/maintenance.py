@@ -43,7 +43,7 @@ _EXEMPT_PREFIXES = ("/admin/", "/docs/", "/static/")
 
 def is_exempt_path(path: str) -> bool:
     """Routes that keep working in maintenance: health (DO must not restart the app), the state endpoint, docs, admin."""
-    normalised = _VERSION_PREFIX.sub("", path, count=1)
+    normalised = _VERSION_PREFIX.sub("", path, count=1).rstrip("/") or "/"
     if normalised in _EXEMPT_EXACT or normalised == "/admin":
         return True
     return normalised.startswith(_EXEMPT_PREFIXES)
