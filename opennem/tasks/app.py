@@ -24,6 +24,7 @@ Running the script:
     - Alternatively, it can be run through the Docker container using the `run_worker` command.
 """
 
+import asyncio
 import logging
 from datetime import timedelta, timezone
 
@@ -32,7 +33,9 @@ from arq.worker import create_worker
 
 from opennem import ENV, settings
 from opennem.api.maintenance_app import run_maintenance_app
+from opennem.core.maintenance import detect_transition, notify_status, set_marker
 from opennem.tasks.broker import REDIS_SETTINGS, get_redis_pool
+from opennem.tasks.maintenance import guard_jobs
 from opennem.tasks.tasks import (
     task_apvi_crawl,
     task_apvi_latest_crawl,
@@ -101,6 +104,10 @@ async def startup(ctx: dict) -> None:
     start_loop_monitor("worker")
 
     redis = await get_redis_pool()
+
+    # before the flush below, which would delete the marker
+    transition = await detect_transition(redis)
+
     from opennem.tasks.cache_warmer import flush_non_api_cache, is_enabled, is_worker_mode
 
     if is_worker_mode() and is_enabled():
@@ -110,6 +117,17 @@ async def startup(ctx: dict) -> None:
     else:
         await redis.flushdb()
         logger.info("Redis queue flushed on startup")
+
+    if transition:
+        # background so a slow status hook can't hold up boot; ref kept in ctx so the task isn't collected
+        ctx["maintenance_notify"] = asyncio.create_task(notify_status(transition, source="worker"))
+
+    if settings.maintenance_mode:
+        # crons/jobs are guarded (opennem/tasks/maintenance.py); skip the boot work that reads S3/CH or queues jobs
+        await set_marker(redis)
+        logger.warning("Maintenance mode is ON: cron jobs and queued tasks will be skipped (#782)")
+        return
+
     if is_enabled():
         # refill right away (entries may be gone or stale after the downtime); job id dedupes against an interval-check enqueue
         try:
@@ -471,11 +489,13 @@ class WorkerSettings:
     timezone = timezone(timedelta(hours=10))
 
 
+# maintenance mode (#782): every cron and on-demand job skips cleanly while MAINTENANCE_MODE is on
+WorkerSettings.cron_jobs = guard_jobs(WorkerSettings.cron_jobs)
+WorkerSettings.functions = guard_jobs(WorkerSettings.functions)
+
+
 def main() -> None:
     """Run the main worker"""
-    import asyncio
-
-    from opennem import settings
 
     if settings.run_worker:
         # Python 3.14 compatibility: ensure event loop exists before arq tries to get it
