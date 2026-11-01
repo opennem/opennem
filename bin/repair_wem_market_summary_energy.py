@@ -517,6 +517,10 @@ def repair_wem_market_summary_energy(apply: bool = False) -> None:
 
     logger.info("WEM market_summary energy repair complete")
 
+    from opennem.recordreactor.head_audit import head_audit_reminder
+
+    print(head_audit_reminder(mv_start))
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Divide the 6x WEM market_summary energy columns and drop WEMDE rows")

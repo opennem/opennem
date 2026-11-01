@@ -18,6 +18,7 @@ from opennem.aggregates.unit_intervals import process_unit_intervals_backlog
 from opennem.crawl import run_crawl
 from opennem.crawlers.apvi import APVIRooftopLatestCrawler
 from opennem.db import get_read_session, get_write_session
+from opennem.recordreactor.head_audit import head_audit_reminder
 from opennem.schema.network import NetworkAPVI, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network
 
@@ -111,5 +112,8 @@ async def run_apvi_latest_refresh(now: datetime | None = None) -> ApviLatestResu
             end_date=window[1],
             network=NetworkAPVI,
         )
+
+    # WEM records minted on the old values are not re-checked here; the daily head audit catches them (#786)
+    logger.info(f"apvi latest refresh: {head_audit_reminder(window[0])}")
 
     return ApviLatestResult(changed_days=days, window=window)

@@ -42,6 +42,10 @@ def main() -> int:
     start = end - timedelta(days=args.days + 1)
     rows = rebuild_range_sync(start, end, chunk_days=1, sleep_s=args.sleep, client=client)
     print(f"backfilled {start:%Y-%m-%d} to {end:%Y-%m-%d}: {rows} rows")
+
+    from opennem.recordreactor.head_audit import head_audit_reminder
+
+    print(head_audit_reminder(start))
     return 0
 
 

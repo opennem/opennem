@@ -128,6 +128,11 @@ async def main(argv: list[str] | None = None) -> int:
     print(f"{len(chunks)} chunks, {total:,} {label} before run")
     if not args.apply:
         print("dry run: nothing written. re-run with --apply to write.")
+    else:
+        from opennem.recordreactor.head_audit import head_audit_reminder
+
+        print("after the clickhouse re-aggregation and daily MV rebuild over this window:")
+        print(head_audit_reminder(args.start))
     return 0
 
 
