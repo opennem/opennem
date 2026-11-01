@@ -23,7 +23,6 @@ from redis import asyncio as aioredis
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
-from starlette.types import ASGIApp, Receive, Scope, Send
 
 from opennem import settings
 from opennem.api.admin.router import admin_router
@@ -34,6 +33,8 @@ from opennem.api.executor import install_api_executor
 from opennem.api.facilities.router import router as facilities_router
 from opennem.api.feedback.router import router as feedback_router
 from opennem.api.known_codes import start_known_codes_refresher, stop_known_codes_refresher
+from opennem.api.maintenance import MaintenanceModeMiddleware
+from opennem.api.maintenance import router as maintenance_router
 from opennem.api.market.router import router as market_router
 from opennem.api.milestones.router import milestones_router
 from opennem.api.openapi_extra import custom_openapi
@@ -82,12 +83,16 @@ async def lifespan(app: FastAPI):
 
     api_executor = install_api_executor()
     start_loop_monitor("api")
-    known_codes_task = start_known_codes_refresher()
+    # the refresher reads PG/CH: keep it off in maintenance so it can't log failures (or hit a db mid-upgrade)
+    known_codes_task = None if settings.maintenance_mode else start_known_codes_refresher()
+    if settings.maintenance_mode:
+        logger.warning("Maintenance mode is ON: data routes return 503 (#782)")
 
     yield
 
     # Shutdown logic
-    await stop_known_codes_refresher(known_codes_task)
+    if known_codes_task is not None:
+        await stop_known_codes_refresher(known_codes_task)
     await stop_loop_monitor()
     await cancel_background_refreshes()
     api_executor.shutdown(wait=False, cancel_futures=True)
@@ -113,6 +118,8 @@ if settings.is_dev:
 
 # added before CORS so it sits inside it: early rejections still carry CORS headers (#646/#649)
 app.add_middleware(EarlyRejectMiddleware)
+# maintenance gate (#782): outside early reject, inside CORS so browsers can read the 503 body
+app.add_middleware(MaintenanceModeMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
@@ -122,27 +129,6 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["X-Process-Time", "X-ONAU", "X-ONAA"],
 )
-
-
-class MaintenanceModeMiddleware:
-    """Pure ASGI maintenance gate: no per-request task/stream wrapping like BaseHTTPMiddleware."""
-
-    def __init__(self, app: ASGIApp) -> None:
-        self.app = app
-
-    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        if scope["type"] == "http" and settings.maintenance_mode:
-            logger.debug("Maintenance mode")
-            resp = OpennemExceptionResponse(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE, response_class=OpennemErrorSchema(error="Maintenance Mode")
-            )
-            await resp(scope, receive, send)
-            return
-
-        await self.app(scope, receive, send)
-
-
-app.add_middleware(MaintenanceModeMiddleware)
 
 
 # Custom exception handler
@@ -269,6 +255,7 @@ app.include_router(webhooks_router, tags=["Webhooks"], prefix="/webhooks", inclu
 app.include_router(data_router, tags=["Data"], prefix="/data")
 app.include_router(market_router, tags=["Market"], prefix="/market")
 app.include_router(plans_router, tags=["Plans"], prefix="/plans")
+app.include_router(maintenance_router)
 # admin routes: clerk-admin only, never in any openapi doc (see opennem/api/admin/router.py)
 app.include_router(admin_router, prefix="/admin", include_in_schema=False)
 

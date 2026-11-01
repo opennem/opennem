@@ -38,12 +38,14 @@ from opennem.db.clickhouse.schema import optimize_clickhouse_tables
 from opennem.exporter.facilities import export_facilities_static
 
 # from opennem.exporter.historic import export_historic_intervals
+from opennem.monitors.apvi_truncation import run_apvi_truncation_check
 from opennem.monitors.energy_quality_flag import run_energy_mismatch_check, run_energy_quality_flag_check
 from opennem.monitors.frozen_telemetry import run_frozen_telemetry_check
 from opennem.monitors.unmapped_codes import run_unmapped_code_check
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
+from opennem.workers.apvi_latest import run_apvi_latest_refresh
 from opennem.workers.catchup import catchup_aggregates, catchup_last_days, run_catchup_check
 from opennem.workers.energy import (
     get_dispatch_reprocess_window,
@@ -53,6 +55,13 @@ from opennem.workers.energy import (
 from opennem.workers.facility_data_seen import update_facility_seen_range
 from opennem.workers.facility_first_seen import facility_first_seen_check
 from opennem.workers.generation_max import update_max_generation_for_units
+from opennem.workers.next_day_heal import (
+    HealResult,
+    alert_still_short,
+    extend_window_start,
+    heal_next_day_units,
+    reaggregate_nem_window,
+)
 from opennem.workers.system import clean_tmp_dir
 from opennem.workers.weekly_summary import run_weekly_summary
 
@@ -170,12 +179,21 @@ async def task_nem_per_day_check(ctx) -> None:
     dispatch_actuals = await run_crawl(AEMONEMDispatchActualGEN, latest=True, limit=3)
     next_day_dispatch = await run_crawl(AEMONEMNextDayDispatch, latest=True, limit=3)
 
+    # cron jobs have max_tries=1, so a Retry here was dropped and also skipped the energy redo and the heal below (#726)
     if not dispatch_actuals or not dispatch_actuals.inserted_records:
-        raise Retry(defer=ctx["job_try"] * 15)
+        logger.warning("nem per day check: no new actual gen records")
+
+    # units only in the next-day file miss whole days when a run is missed, re-crawl the short days (#773)
+    now = get_last_completed_interval_for_network(network=NetworkNEM, tz_aware=False).replace(tzinfo=None)
+    try:
+        heal = await heal_next_day_units(last_completed_interval=now)
+    except Exception as e:
+        # the heal must never block the energy redo for the files the regular crawl just wrote
+        logger.error(f"next-day heal failed: {e}")
+        heal = HealResult()
 
     # Next-day dispatch resets energy_quality_flag via upsert on every row in the (up to 3) day files, so redo
     # energy for exactly the span the crawl wrote, not a fixed 48h (#764)
-    now = get_last_completed_interval_for_network(network=NetworkNEM, tz_aware=False).replace(tzinfo=None)
     start, end = get_dispatch_reprocess_window(
         interval_min=next_day_dispatch.interval_min if next_day_dispatch else None,
         interval_max=next_day_dispatch.interval_max if next_day_dispatch else None,
@@ -186,7 +204,20 @@ async def task_nem_per_day_check(ctx) -> None:
     # processed, and resets their flag, so its span has to be reprocessed too (#767)
     if dispatch_actuals and dispatch_actuals.interval_min is not None:
         start = min(start, dispatch_actuals.interval_min.replace(tzinfo=None))
+
+    # the heal re-crawl resets the flag on its (older) days the same way
+    start = extend_window_start(start, heal.crawl.interval_min)
     await reprocess_energy_window(date_start=start, date_end=end)
+
+    _ = await alert_still_short(heal)
+
+    # healed rows only reach the api once clickhouse is re-aggregated over the days the re-crawl wrote
+    healed_min, healed_max = heal.crawl.interval_min, heal.crawl.interval_max
+    if healed_min is not None and healed_max is not None:
+        try:
+            await reaggregate_nem_window(healed_min.replace(tzinfo=None), healed_max.replace(tzinfo=None))
+        except Exception as e:
+            logger.error(f"next-day heal: clickhouse re-aggregation failed: {e}")
 
 
 async def task_nem_rooftop_crawl(ctx) -> None:
@@ -267,6 +298,11 @@ async def task_wem_interval_check(ctx) -> None:
 async def task_apvi_crawl(ctx) -> None:
     """Runs the APVI crawler every 10 minutes"""
     await run_crawl(APVIRooftopTodayCrawler)
+
+
+async def task_apvi_latest_crawl(ctx) -> None:
+    """Re-fetch the last 7 days of APVI so late or completed days get repaired (#780)"""
+    await run_apvi_latest_refresh()
 
 
 async def task_bom_capitals_crawl(ctx) -> None:
@@ -508,6 +544,19 @@ async def task_check_frozen_telemetry(ctx: dict) -> None:
         await run_frozen_telemetry_check()
     except Exception as e:
         logger.error(f"Error checking frozen telemetry: {str(e)}")
+        raise
+
+
+async def task_check_apvi_truncation(ctx: dict[str, object]) -> None:
+    """Task to flag APVI WA rooftop days cut off at the source mid-day (#780). Alert only.
+
+    Args:
+        ctx (dict): Task context
+    """
+    try:
+        await run_apvi_truncation_check()
+    except Exception as e:
+        logger.error(f"Error checking apvi truncation: {str(e)}")
         raise
 
 

@@ -6,20 +6,10 @@ response for all routes. Used when the main application needs to be taken offlin
 for maintenance.
 """
 
-from datetime import UTC, datetime
-
 from fastapi import FastAPI, status
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from fastapi.responses import JSONResponse, PlainTextResponse
 
-
-class MaintenanceResponse(BaseModel):
-    """Maintenance mode response model."""
-
-    status: str = "maintenance"
-    message: str
-    estimated_return: str | None = None
-
+from opennem.core.maintenance import NO_STORE_HEADERS, maintenance_error_body, retry_after_seconds
 
 app = FastAPI(
     title="OpenNEM API - Maintenance Mode",
@@ -28,25 +18,20 @@ app = FastAPI(
 )
 
 
-@app.get("/", response_model=MaintenanceResponse)
-@app.get("/{path:path}", response_model=MaintenanceResponse)
+@app.get("/health", include_in_schema=False)
+async def health() -> PlainTextResponse:
+    """Stay healthy so the platform does not restart the app."""
+    return PlainTextResponse("OK")
+
+
+@app.get("/")
+@app.get("/{path:path}")
 async def maintenance_response() -> JSONResponse:
-    """
-    Return a maintenance mode response for all routes.
-
-    Returns:
-        JSONResponse: A 503 status code with maintenance information
-    """
-    current_time = datetime.now(UTC)
-    estimated_return = current_time.replace(hour=current_time.hour + 2).isoformat()
-
+    """503 for every other route, same body and headers as the main API's maintenance gate (#782)."""
     return JSONResponse(
         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-        content={
-            "status": "maintenance",
-            "message": "OpenNEM API is currently undergoing scheduled maintenance. Please try again later.",
-            "estimated_return": estimated_return,
-        },
+        content=maintenance_error_body(),
+        headers={**NO_STORE_HEADERS, "Retry-After": str(retry_after_seconds())},
     )
 
 

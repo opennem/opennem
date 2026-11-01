@@ -28,8 +28,16 @@ class OpennemSettings(BaseSettings):
 
     timezone: pytimezone | str = UTC
 
-    # Set maintenance mode - workers won't run and API will return a MaintenanceMode response
+    # Maintenance mode (#782): API data routes return 503, worker crons/crawlers skip. Env flag, read at boot:
+    # set MAINTENANCE_MODE=true on the api and worker apps and redeploy/restart. See opennem/core/maintenance.py
     maintenance_mode: bool = False
+    # shown to API clients and the frontend banner; a default is used when unset
+    maintenance_message: str | None = None
+    # expected end, ISO 8601 with offset (e.g. 2026-11-02T14:00:00+10:00); drives Retry-After when parseable
+    maintenance_eta: str | None = None
+    # optional status hook: JSON POST on maintenance start/end (see opennem/core/maintenance.py)
+    status_webhook_url: str | None = None
+    status_webhook_token: SecretStr | None = None
 
     db_url: str = Field("postgresql://user:pass@127.0.0.1:15444/opennem", validation_alias=AliasChoices("DATABASE_HOST_URL"))
 

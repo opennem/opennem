@@ -29,6 +29,7 @@ db_app = typer.Typer(help="Database management commands")
 import_app = typer.Typer(help="Data import commands")
 export_app = typer.Typer(help="Data export commands")
 task_app = typer.Typer(help="Task management commands")
+maintenance_app = typer.Typer(help="Maintenance mode (#782): the flag itself is the MAINTENANCE_MODE env on each app")
 
 # Add sub-applications
 app.add_typer(db_app, name="db")
@@ -37,6 +38,7 @@ app.add_typer(export_app, name="export")
 app.add_typer(task_app, name="task")
 app.add_typer(crawl_app, name="crawl")
 app.add_typer(ch_app, name="ch")
+app.add_typer(maintenance_app, name="maintenance")
 
 # Setup logging
 logger = logging.getLogger("opennem.cli")
@@ -288,6 +290,32 @@ async def inspect_command(url: str) -> None:
     except Exception as e:
         logger.error(f"Failed to inspect JSON: {e}")
         raise typer.Exit(1) from e
+
+
+@maintenance_app.command("status")
+def maintenance_status_command() -> None:
+    """Show the maintenance state this process sees (from env)."""
+    from opennem.core.maintenance import maintenance_state, retry_after_seconds
+
+    state = maintenance_state()
+    console.print(state)
+    if state["maintenance"]:
+        console.print(f"Retry-After: {retry_after_seconds()}s")
+
+
+@maintenance_app.command("notify")
+@async_to_sync
+async def maintenance_notify_command(
+    event: str = typer.Argument(..., help="start or end"),
+) -> None:
+    """Post a maintenance start/end to STATUS_WEBHOOK_URL and Slack monitoring by hand. Does not change the flag."""
+    from opennem.core.maintenance import notify_status
+
+    if event not in ("start", "end"):
+        console.print("[red]event must be start or end[/red]")
+        raise typer.Exit(2)
+    sent = await notify_status("maintenance.start" if event == "start" else "maintenance.end", source="cli")
+    console.print("[green]posted to status webhook[/green]" if sent else "[yellow]status webhook not posted[/yellow]")
 
 
 # Add the crawl command from core.crawlers.cli
