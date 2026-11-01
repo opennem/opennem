@@ -47,6 +47,7 @@ from opennem.tasks.tasks import (
     task_check_apvi_truncation,
     task_check_energy_quality_flag,
     task_check_frozen_telemetry,
+    task_check_milestone_heads,
     task_check_unmapped_facility_codes,
     task_check_unsplit_batteries,
     task_clean_tmp_dir,
@@ -434,6 +435,16 @@ class WorkerSettings:
             minute=30,
             second=0,
             timeout=300,
+            unique=True,
+        ),
+        # Re-check milestone chain heads against the settled series, alert only (#786). 11:10: after the
+        # 10:xx monitors and the 07:30 full MV refresh, clear of the 13:30 one
+        cron(
+            task_check_milestone_heads,
+            hour=11,
+            minute=10,
+            second=0,
+            timeout=900,
             unique=True,
         ),
         # Check for NEM energy stuck on the generated/12 fallback (#764)

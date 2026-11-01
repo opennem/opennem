@@ -41,6 +41,7 @@ from opennem.exporter.facilities import export_facilities_static
 from opennem.monitors.apvi_truncation import run_apvi_truncation_check
 from opennem.monitors.energy_quality_flag import run_energy_mismatch_check, run_energy_quality_flag_check
 from opennem.monitors.frozen_telemetry import run_frozen_telemetry_check
+from opennem.monitors.milestone_head_audit import run_milestone_head_audit_check
 from opennem.monitors.unmapped_codes import run_unmapped_code_check
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
@@ -557,6 +558,19 @@ async def task_check_apvi_truncation(ctx: dict[str, object]) -> None:
         await run_apvi_truncation_check()
     except Exception as e:
         logger.error(f"Error checking apvi truncation: {str(e)}")
+        raise
+
+
+async def task_check_milestone_heads(ctx: dict[str, object]) -> None:
+    """Task to re-check milestone chain heads against the settled series (#786). Alert only.
+
+    Args:
+        ctx (dict): Task context
+    """
+    try:
+        await run_milestone_head_audit_check()
+    except Exception as e:
+        logger.error(f"Error running milestone head audit: {str(e)}")
         raise
 
 

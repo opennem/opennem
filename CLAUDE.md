@@ -473,3 +473,15 @@ asyncio.run(run_milestone_analysis_backlog(refresh=True))
 from opennem.recordreactor.backlog import run_update_milestone_analysis_to_now
 asyncio.run(run_update_milestone_analysis_to_now())
 ```
+
+### Milestone Head Audit (run after any data repair, #786)
+Milestones are derived data: a repair or re-aggregation after a record was minted can leave a chain head on numbers that no longer exist. Repair checklist: base tables → MVs (incl. daily MVs) → **head audit** → scoped chain rebuild if BAD → exports.
+```bash
+# read only; exits 1 when any head is BAD (no longer the record)
+opennem milestones audit-heads --since 2026-10-27            # repair start, network time
+opennem milestones audit-heads --network WEM --min-significance 5 --all
+```
+- Audits every chain head with significance >= 7 plus all month heads (~1 min). Day+ heads are rebuilt from the daily MVs (`FINAL`) with the backlog's rules (cutoffs, low completeness guard) and must still be rank 1; interval heads are recomputed at their interval and must still beat their predecessor.
+- `OK` / `SUSPECT` (value drifted, or head bucket no longer complete, still the record) / `BAD` (beaten by another bucket, or no longer beats its predecessor).
+- Daily alert-only cron `task_check_milestone_heads` (11:10 AEST): Sentry warning + Slack (deduped on the BAD set, re-posted weekly). Logic: `opennem/recordreactor/head_audit.py`; monitor: `opennem/monitors/milestone_head_audit.py`.
+- Repair scripts (`bin/energy_backfill.py`, `bin/backfill_agg_table.py`, `bin/repair_wem_market_summary_energy.py`, APVI latest refresh) print/log the reminder line.

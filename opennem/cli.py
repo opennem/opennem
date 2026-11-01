@@ -30,6 +30,7 @@ import_app = typer.Typer(help="Data import commands")
 export_app = typer.Typer(help="Data export commands")
 task_app = typer.Typer(help="Task management commands")
 maintenance_app = typer.Typer(help="Maintenance mode (#782): the flag itself is the MAINTENANCE_MODE env on each app")
+milestones_app = typer.Typer(help="Milestone (records) commands")
 
 # Add sub-applications
 app.add_typer(db_app, name="db")
@@ -39,6 +40,7 @@ app.add_typer(task_app, name="task")
 app.add_typer(crawl_app, name="crawl")
 app.add_typer(ch_app, name="ch")
 app.add_typer(maintenance_app, name="maintenance")
+app.add_typer(milestones_app, name="milestones")
 
 # Setup logging
 logger = logging.getLogger("opennem.cli")
@@ -316,6 +318,58 @@ async def maintenance_notify_command(
         raise typer.Exit(2)
     sent = await notify_status("maintenance.start" if event == "start" else "maintenance.end", source="cli")
     console.print("[green]posted to status webhook[/green]" if sent else "[yellow]status webhook not posted[/yellow]")
+
+
+@milestones_app.command("audit-heads")
+@async_to_sync
+async def milestones_audit_heads_command(
+    since: str = typer.Option(None, "--since", help="repair start (YYYY-MM-DD, network time): report heads touched since"),
+    min_significance: int = typer.Option(7, "--min-significance", help="significance floor; month heads always included"),
+    network: list[str] = typer.Option(None, "--network", "-n", help="NEM or WEM, repeatable; default both"),
+    value_tolerance: float = typer.Option(0.5, "--value-tolerance", help="stored vs recomputed drift, percent"),
+    rank_tolerance: float = typer.Option(0.01, "--rank-tolerance", help="margin to count as beaten, percent"),
+    show_all: bool = typer.Option(False, "--all", help="also list OK heads"),
+) -> None:
+    """Re-check milestone chain heads against the settled series (#786). Read only, never writes.
+
+    Exits 1 when any head is BAD (no longer the record). Run after any data repair or re-aggregation:
+
+        opennem milestones audit-heads --since 2026-10-27
+    """
+    from datetime import datetime
+
+    from opennem.recordreactor.head_audit import AuditStatus, Tolerances, audit_heads, summarise
+
+    since_dt = datetime.fromisoformat(since) if since else None
+    findings = await audit_heads(
+        since=since_dt,
+        min_significance=min_significance,
+        networks=network or None,
+        tolerances=Tolerances(value_pct=value_tolerance, rank_pct=rank_tolerance),
+    )
+
+    shown = [f for f in findings if show_all or f.status != AuditStatus.ok]
+    style = {AuditStatus.bad: "red", AuditStatus.suspect: "yellow", AuditStatus.ok: "green"}
+    for f in shown:
+        drift = f.drift_pct
+        now = f"{f.recomputed:,.2f}" if f.recomputed is not None else "-"
+        best = f"{f.best_interval:%Y-%m-%d %H:%M} {f.best_value:,.2f}" if f.best_interval and f.best_value is not None else "-"
+        line = (
+            f"{f.status.value:<7} {f.record_id:<52} {f.interval:%Y-%m-%d %H:%M}  sig {f.significance:<2} "
+            f"stored {f.stored:>14,.2f}  now {now:>14}  {f'{drift:+.2f}%' if drift is not None else '-':>8}  "
+            f"ref {best:<30} {f.reason}"
+        )
+        # one finding per line, never wrapped, so the output greps and diffs cleanly
+        console.print(f"[{style[f.status]}]{line}[/{style[f.status]}]", soft_wrap=True, highlight=False, markup=True)
+
+    counts = summarise(findings)
+    console.print(
+        f"{len(findings)} heads: BAD {counts[AuditStatus.bad]}  "
+        f"SUSPECT {counts[AuditStatus.suspect]}  OK {counts[AuditStatus.ok]}"
+    )
+    if counts[AuditStatus.bad]:
+        console.print("BAD heads are no longer the record: rebuild the affected chains (alert only, nothing was written)")
+        raise typer.Exit(1)
 
 
 # Add the crawl command from core.crawlers.cli
