@@ -144,3 +144,27 @@ async def test_failed_post_is_retried_and_clean_run_resets(wired: dict[str, Any]
     wired["findings"] = [_finding("a")]
     await monitor.run_milestone_head_audit_check()
     assert len(wired["slack"]) == 3  # fixed then back: news again
+
+
+def test_cli_exits_1_on_bad_and_0_when_clean(monkeypatch: pytest.MonkeyPatch) -> None:
+    from typer.testing import CliRunner
+
+    from opennem import cli
+    from opennem.recordreactor import head_audit
+
+    findings: list[HeadFinding] = [_finding("au.nem.vic1.battery_discharging.energy.month.high")]
+
+    async def fake_audit_heads(**_: Any) -> list[HeadFinding]:
+        return findings
+
+    monkeypatch.setattr(head_audit, "audit_heads", fake_audit_heads)
+    runner = CliRunner()
+
+    result = runner.invoke(cli.app, ["milestones", "audit-heads", "--since", "2026-10-27"])
+    assert result.exit_code == 1
+    assert "au.nem.vic1.battery_discharging.energy.month.high" in result.output
+
+    findings[:] = [_finding("ok", AuditStatus.ok)]
+    result = runner.invoke(cli.app, ["milestones", "audit-heads"])
+    assert result.exit_code == 0
+    assert "BAD 0" in result.output

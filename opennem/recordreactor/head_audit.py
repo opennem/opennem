@@ -675,7 +675,11 @@ def _generation_tables(grouping: GroupingConfig) -> tuple[str, str]:
 
 
 def build_daily_generation_query(network: NetworkSchema, metric: MilestoneType, grouping: GroupingConfig, end: datetime) -> str:
-    """Daily (date, group..., value) for a generation metric, from the daily MV FINAL."""
+    """Daily (date, group..., value) for a generation metric, from the daily MV FINAL.
+
+    The FINAL is deliberately unscoped by date: rank 1 needs the chain's full history. It reads the
+    daily MV (one row per day/region/fueltech), not an interval table, and runs off the event loop.
+    """
     daily_table, _ = _generation_tables(grouping)
     column = {MilestoneType.energy: "energy", MilestoneType.emissions: "emissions"}[metric]
     group_select = "".join(f", {f}" for f in grouping.group_by_fields)
@@ -722,7 +726,11 @@ def attach_interval_counts(
 
 
 def build_daily_market_query(network: NetworkSchema, grouping: GroupingConfig, end: datetime) -> str:
-    """Daily demand energy and proportion inputs per group, from market_summary FINAL."""
+    """Daily demand energy and proportion inputs per group, from market_summary FINAL.
+
+    Deliberately unscoped FINAL, like the backlog's own market queries: rank 1 needs full history,
+    and market_summary is one row per (interval, region), so this is a few million rows a network.
+    """
     group_select = "".join(f", {f}" for f in grouping.group_by_fields)
     regions = list_to_case(network.regions or [network.code])
     return f"""
@@ -843,6 +851,10 @@ async def audit_heads(
         market = spec.metric in (MilestoneType.demand, MilestoneType.proportion)
         source = "market" if market else spec.metric.value
         daily_key = (network.code, source, grouping.name)
+
+        if bucket_start(head.interval, period) >= bucket_start(end, period):
+            # head sits in the current, incomplete bucket: nothing settled to compare yet
+            continue
 
         if daily_key not in daily_cache:
             if market:

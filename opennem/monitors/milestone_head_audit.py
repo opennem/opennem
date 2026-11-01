@@ -87,6 +87,7 @@ async def run_milestone_head_audit_check() -> list[HeadFinding]:
         scope.capture_message(f"milestone head audit: {len(bad)} heads are no longer the record", level="warning")
 
     digest = bad_digest(findings)
+    # fails open: with redis down the same BAD set re-posts daily (sentry still groups on the fingerprint)
     if await _redis_call("get") != digest:
         shown = "\n".join(f"• {line}" for line in lines[:SLACK_MAX_LINES])
         more = f"\n…and {len(lines) - SLACK_MAX_LINES} more" if len(lines) > SLACK_MAX_LINES else ""
