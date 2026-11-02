@@ -15,6 +15,7 @@ import deprecation
 from asyncpg.connection import Connection as AsyncConnection
 from asyncpg.exceptions import DeadlockDetectedError
 from sqlalchemy import Engine, create_engine
+from sqlalchemy.ext.asyncio import AsyncConnection as SAAsyncConnection
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.pool import NullPool
@@ -58,6 +59,50 @@ retry_on_deadlock = retry(
     wait=wait_random_exponential(multiplier=0.2, max=5),
     reraise=True,
 )
+
+# Postgres lock_not_available SQLSTATE (lock_timeout fired) and query_canceled (statement_timeout fired)
+_PG_LOCK_NOT_AVAILABLE_SQLSTATE = "55P03"
+_PG_QUERY_CANCELED_SQLSTATE = "57014"
+
+
+def _has_sqlstate(exc: BaseException, sqlstate: str) -> bool:
+    seen: set[int] = set()
+    cur: BaseException | None = exc
+    while cur is not None and id(cur) not in seen:
+        seen.add(id(cur))
+        if getattr(cur, "sqlstate", None) == sqlstate or getattr(cur, "pgcode", None) == sqlstate:
+            return True
+        cur = cur.__cause__ or getattr(cur, "orig", None)
+    return False
+
+
+def is_lock_timeout_error(exc: BaseException) -> bool:
+    """True if exc (or its cause chain) is a lock_timeout (55P03) or statement_timeout (57014) cancellation."""
+    return _has_sqlstate(exc, _PG_LOCK_NOT_AVAILABLE_SQLSTATE) or _has_sqlstate(exc, _PG_QUERY_CANCELED_SQLSTATE)
+
+
+async def apply_txn_guards(
+    conn: SAAsyncConnection | AsyncSession,
+    lock_timeout_s: int = 10,
+    statement_timeout_s: int | None = 120,
+    idle_in_transaction_s: int = 60,
+) -> None:
+    """Bound the current transaction so it can never hold row locks indefinitely.
+
+    SET LOCAL is transaction-scoped (safe through pgbouncer). Call first inside the txn.
+    A txn that stays idle past idle_in_transaction_s is terminated by Postgres, releasing its locks.
+    """
+    from sqlalchemy import text
+
+    stmts = [
+        f"SET LOCAL lock_timeout = '{int(lock_timeout_s)}s'",
+        f"SET LOCAL idle_in_transaction_session_timeout = '{int(idle_in_transaction_s)}s'",
+    ]
+    if statement_timeout_s:
+        stmts.append(f"SET LOCAL statement_timeout = '{int(statement_timeout_s)}s'")
+    for stmt in stmts:
+        await conn.execute(text(stmt))
+
 
 _engine = None
 _engine_sync = None
