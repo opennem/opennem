@@ -7,17 +7,25 @@ for most recent this is the last active date
 @TODO move the utility functions into core/facility use this as only the worker
 """
 
+import asyncio
 import logging
 from datetime import datetime, timedelta
 from textwrap import dedent
 
 from sqlalchemy import TextClause, text
 
-from opennem.db import db_connect, retry_on_deadlock
+from opennem.db import apply_txn_guards, db_connect, is_lock_timeout_error, retry_on_deadlock
 from opennem.queries.utils import duid_to_case
 from opennem.utils.dates import get_today_opennem
 
 logger = logging.getLogger("opennem.workers.facility_data_ranges")
+
+# hard ceiling for one run: the txn guards below should fire first, this catches a hung connection
+SEEN_RANGE_RUN_TIMEOUT_SECONDS = 150
+SEEN_RANGE_STATEMENT_TIMEOUT_SECONDS = 120
+# include_first_seen scans all of facility_scada (daily 01:32 cron), give it far more room
+FIRST_SEEN_RUN_TIMEOUT_SECONDS = 1200
+FIRST_SEEN_STATEMENT_TIMEOUT_SECONDS = 1000
 
 
 def get_update_seen_query(
@@ -91,11 +99,37 @@ async def update_facility_seen_range(
         interval_window_days=interval_window_days,
     )
 
-    async with engine.begin() as conn:
-        logger.debug(__query)
-        await conn.execute(__query)
+    # a 2h `idle in transaction` session holding units row locks wedged the worker (2026-11-03):
+    # bound lock wait, statement time and idle-in-txn so it self-releases; skip + retry next cycle
+    try:
+        async with engine.begin() as conn:
+            await apply_txn_guards(
+                conn,
+                statement_timeout_s=FIRST_SEEN_STATEMENT_TIMEOUT_SECONDS
+                if include_first_seen
+                else SEEN_RANGE_STATEMENT_TIMEOUT_SECONDS,
+            )
+            logger.debug(__query)
+            await conn.execute(__query)
+    except Exception as exc:
+        if is_lock_timeout_error(exc):
+            logger.warning(
+                f"update_facility_seen_range skipped: lock/statement timeout ({exc.__class__.__name__}), retry next cycle"
+            )
+            return False
+        raise
 
     return True
+
+
+async def update_facility_seen_range_bounded(**kwargs) -> bool:
+    """update_facility_seen_range under a hard asyncio timeout; a timeout logs and skips (cron retries next cycle)."""
+    run_timeout = FIRST_SEEN_RUN_TIMEOUT_SECONDS if kwargs.get("include_first_seen") else SEEN_RANGE_RUN_TIMEOUT_SECONDS
+    try:
+        return await asyncio.wait_for(update_facility_seen_range(**kwargs), timeout=run_timeout)
+    except TimeoutError:
+        logger.error(f"update_facility_seen_range timed out after {run_timeout}s, skipped")
+        return False
 
 
 if __name__ == "__main__":

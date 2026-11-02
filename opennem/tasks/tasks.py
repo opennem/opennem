@@ -53,7 +53,7 @@ from opennem.workers.energy import (
     process_energy_last_intervals,
     reprocess_energy_window,
 )
-from opennem.workers.facility_data_seen import update_facility_seen_range
+from opennem.workers.facility_data_seen import update_facility_seen_range_bounded
 from opennem.workers.facility_first_seen import facility_first_seen_check
 from opennem.workers.generation_max import update_max_generation_for_units
 from opennem.workers.next_day_heal import (
@@ -326,12 +326,12 @@ async def task_facility_first_seen_check(ctx) -> None:
 
 async def task_update_facility_seen_range(ctx) -> None:
     """Updates the facility seen range"""
-    await update_facility_seen_range(interval_window_days=7)
+    await update_facility_seen_range_bounded(interval_window_days=7)
 
 
 async def task_update_facility_first_seen(ctx) -> None:
     """Updates the facility first seen"""
-    await update_facility_seen_range(include_first_seen=True, interval_window_days=7)
+    await update_facility_seen_range_bounded(include_first_seen=True, interval_window_days=7)
 
 
 # Output tasks
