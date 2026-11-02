@@ -1,0 +1,40 @@
+name: Data freshness
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: data-freshness
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+      - name: Restore alert state
+        uses: actions/cache/restore@v4
+        with:
+          path: .freshness-state.json
+          key: freshness-state-${{ github.run_id }}
+          restore-keys: freshness-state-
+      - uses: astral-sh/setup-uv@v5
+      - name: Check freshness
+        env:
+          OE_API_KEY: ${{ secrets.OE_API_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: uv run --no-project python .github/scripts/data_freshness.py
+      - name: Save alert state
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .freshness-state.json
+          key: freshness-state-${{ github.run_id }}
