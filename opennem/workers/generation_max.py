@@ -11,7 +11,7 @@ from datetime import timedelta
 
 from sqlalchemy import text
 
-from opennem.db import get_write_session
+from opennem.db import apply_txn_guards, get_write_session
 from opennem.schema import network
 from opennem.utils.dates import get_last_completed_interval_for_network
 
@@ -51,6 +51,7 @@ async def _backfill_max_generation_for_units() -> int:
     """)
 
     async with get_write_session() as session:
+        await apply_txn_guards(session, statement_timeout_s=None)
         result = await session.execute(max_generation_query)
         max_gen_records = result.fetchall()
 
@@ -137,6 +138,7 @@ async def update_max_generation_for_units(days_since: int | None = 7) -> int:
     """)
 
     async with get_write_session() as session:
+        await apply_txn_guards(session, statement_timeout_s=None)
         # Get recent maximums
         recent_result = await session.execute(recent_max_query, {"start_interval": start_interval})
         recent_max_records = {row.facility_code: row for row in recent_result.fetchall()}
