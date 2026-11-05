@@ -499,7 +499,11 @@ async def process_unit_scada_optimized(table: AEMOTableSchema) -> ControllerRetu
 
     cr.processed_records = len(records)
     cr.inserted_records = await bulkinsert_mms_items(FacilityScada, records, SCADA_UPDATE_COLUMNS, keep_processed_energy=True)  # type: ignore
-    cr.server_latest = max([i["interval"] for i in records if i["interval"]])
+    intervals = [i["interval"] for i in records if i["interval"]]
+    cr.server_latest = max(intervals)
+    # the early poll confirms the (still future) stamp landed from the span, not from the listing
+    cr.interval_min = min(intervals)
+    cr.interval_max = max(intervals)
 
     return cr
 

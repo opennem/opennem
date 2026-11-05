@@ -24,6 +24,7 @@ from opennem.db.clickhouse.views import (
 )
 from opennem.schema.network import NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network
+from opennem.utils.nem_early import clamp_end_bound
 
 # Flow solver imports (lazy — only used when flows_v4 is enabled)
 _flow_solver_loaded = False
@@ -1047,11 +1048,14 @@ async def run_market_summary_aggregate_to_now() -> int:
     return len(prepared_data)
 
 
-async def run_market_summary_aggregate_for_last_intervals(num_intervals: int) -> int:
+async def run_market_summary_aggregate_for_last_intervals(num_intervals: int, end_date: datetime | None = None) -> int:
     """
     Run the market summary aggregation for the last num_intervals
+
+    end_date: early path only, a stamp SCADA/prices already hold that the clock hasn't reached; clamped to at most one
+    interval past the last completed interval.
     """
-    end_date = get_last_completed_interval_for_network(network=NetworkNEM)
+    end_date = clamp_end_bound(end_date, get_last_completed_interval_for_network(network=NetworkNEM))
     start_date = end_date - timedelta(minutes=num_intervals * 5)
 
     async with get_write_session() as session:

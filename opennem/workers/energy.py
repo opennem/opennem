@@ -10,6 +10,7 @@ from opennem import settings
 from opennem.db import get_write_session
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_last_completed_interval_for_network
+from opennem.utils.nem_early import clamp_end_bound
 
 logger = logging.getLogger("opennem.workers.energy")
 
@@ -167,7 +168,7 @@ async def run_energy_calculation_for_interval(interval: datetime) -> int:
         return await _calculate_energy_for_interval(session, start_time, end_time)
 
 
-async def process_energy_last_intervals(num_intervals: int = 6) -> None:
+async def process_energy_last_intervals(num_intervals: int = 6, end_time: datetime | None = None) -> None:
     """
     Process energy calculations for the last num_intervals intervals.
 
@@ -175,12 +176,14 @@ async def process_energy_last_intervals(num_intervals: int = 6) -> None:
 
     params:
         num_intervals: int = 6 - the number of 5 minute intervals to process back from the last completed interval
+        end_time: early path only - a stamp SCADA already holds that the clock hasn't reached (clamped to one interval ahead)
 
     returns:
         None
     """
 
-    end_time = get_last_completed_interval_for_network(network=NetworkNEM, tz_aware=False).replace(tzinfo=None)
+    last_completed = get_last_completed_interval_for_network(network=NetworkNEM, tz_aware=False).replace(tzinfo=None)
+    end_time = clamp_end_bound(end_time, last_completed)
     start_time = end_time - timedelta(minutes=5 * num_intervals)
 
     logger.info(f"Processing energy calculations from {start_time} to {end_time}")

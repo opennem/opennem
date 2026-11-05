@@ -3,6 +3,7 @@
 import asyncio
 import inspect
 import logging
+from datetime import datetime
 from typing import Any
 
 from pydantic import ValidationError
@@ -152,9 +153,10 @@ async def run_crawl(
     latest: bool = True,
     date_range: CrawlDateRange | None = None,
     reverse: bool = True,
+    extra_intervals: list[datetime] | None = None,
 ) -> ControllerReturn:
     """Runs a crawl from the crawl definition with ability to overwrite last crawled and obey the defined
-    limit"""
+    limit. extra_intervals: early-ingest stamps ahead of the wall clock (nemweb processors only)"""
 
     if not settings.run_crawlers:
         logger.info(f"Crawlers are disabled. Skipping {crawler.name}")
@@ -193,6 +195,9 @@ async def run_crawl(
 
     if "latest" in inspect.signature(crawler.processor).parameters:
         params["latest"] = latest
+
+    if extra_intervals and "extra_intervals" in inspect.signature(crawler.processor).parameters:
+        params["extra_intervals"] = extra_intervals
 
     # run the crawl processor
     try:
