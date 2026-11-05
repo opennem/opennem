@@ -14,8 +14,8 @@ logger = logging.getLogger("opennem.pipelines.nem")
 NEM_INTERVAL_SECONDS = 300
 # nemweb CSV `C,` header times are AEST (UTC+10, no DST)
 _NEM_TZ = timezone(timedelta(hours=10))
-# a plausible file generation time relative to the boundary; anything else is a stale or odd file
-_GENERATED_MIN, _GENERATED_MAX = -30.0, 240.0
+# the file for the interval ending at the boundary is generated ~5 min before it (dispatch run time), not at publish
+_GENERATED_MIN, _GENERATED_MAX = -330.0, 240.0
 
 
 class IngestTrace:

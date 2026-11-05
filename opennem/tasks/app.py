@@ -163,9 +163,11 @@ async def shutdown(ctx: dict[str, object]) -> None:
     await stop_loop_monitor()
 
 
-# AEMO generates PUBLIC_DISPATCHSCADA ~17-19s past each 5 min mark (measured on prod, #perf/nem-poll-latency).
-# Start just before that; the cheap listing poll runs every ~1.5s from here so the first hit is at publish.
-NEM_SCADA_CRON_SECOND = 14
+# AEMO lists the PUBLIC_DISPATCHSCADA file for the interval ending at the mark somewhere before +14s (dev: the first
+# poll at +14.3s already found it; the CSV `C,` time is the generation time ~5 min earlier, NOT the publish time).
+# Start early, the cheap listing poll (~0.1s, every ~1.5s) pins the real publish time in `nem_ingest_latency listed=`.
+# Tune up once a few cycles show where `listed` lands.
+NEM_SCADA_CRON_SECOND = 8
 
 
 class WorkerSettings:
