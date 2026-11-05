@@ -3,6 +3,7 @@ Parse AEMO MMS CSV format which can have multiple tables and definitions per CSV
 
 """
 
+import asyncio
 import csv
 import logging
 from datetime import datetime
@@ -243,10 +244,10 @@ def parse_aemo_mms_csv(
 
                 record = dict(zip(table_current.fieldnames, values, strict=True))
 
-                for field, fieldvalue in record.items():
-                    if field in MMS_DUID_FIELDS:
-                        fieldvalue_parsed = normalize_duid(fieldvalue)
-                        record[field] = fieldvalue_parsed
+                # only the duid columns are normalized, look them up rather than scan every cell
+                for field in MMS_DUID_FIELDS:
+                    if field in record:
+                        record[field] = normalize_duid(record[field])
 
                 table_current.add_record(record, values_only=values_only)
 
@@ -254,6 +255,12 @@ def parse_aemo_mms_csv(
                 logger.error(f"Invalid AEMO record type: {record_type}")
 
     return table_set
+
+
+def _decode_and_parse_mms_csv(
+    content: bytes, table_set: AEMOTableSet, skip_records: bool = False, url: str | None = None, values_only: bool = False
+) -> AEMOTableSet:
+    return parse_aemo_mms_csv(content.decode("utf-8"), table_set, skip_records=skip_records, url=url, values_only=values_only)
 
 
 async def parse_aemo_url(
@@ -272,8 +279,10 @@ async def parse_aemo_url(
     if not csv_content:
         raise Exception(f"Could not parse URL: {url}")
 
-    csv_content_decoded = csv_content.decode("utf-8")
-    table_set = parse_aemo_mms_csv(csv_content_decoded, table_set, skip_records=skip_records, url=url, values_only=values_only)
+    # decode + parse is pure CPU (seconds on a large file), keep it off the event loop
+    table_set = await asyncio.to_thread(
+        _decode_and_parse_mms_csv, csv_content, table_set, skip_records=skip_records, url=url, values_only=values_only
+    )
 
     # Count number of records
     total_records = 0
@@ -313,7 +322,5 @@ if __name__ == "__main__":
     async def test_parse_aemo_url():
         table_set = await parse_aemo_url(url)
         print(table_set)
-
-    import asyncio
 
     asyncio.run(test_parse_aemo_url())

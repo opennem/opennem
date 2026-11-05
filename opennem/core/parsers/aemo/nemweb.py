@@ -1,5 +1,6 @@
 """NEMWeb optimized parsers"""
 
+import asyncio
 import logging
 from shutil import rmtree
 
@@ -47,7 +48,10 @@ async def parse_aemo_url_optimized(
         if csv_file_to_process.suffix.lower() != ".csv":
             continue
 
-        table_set = parse_aemo_file(str(csv_file_to_process), table_set=table_set, values_only=values_only)
+        # parse is sync CPU (no loop use), run it off the event loop
+        table_set = await asyncio.to_thread(
+            parse_aemo_file, str(csv_file_to_process), table_set=table_set, values_only=values_only
+        )
 
         if persist_to_db:
             controller_returns = await store_aemo_tableset(table_set)
@@ -98,7 +102,7 @@ async def parse_aemo_url_optimized_bulk(
         if f.suffix.lower() != ".csv":
             continue
 
-        ts = parse_aemo_file(str(f), table_set=ts)
+        ts = await asyncio.to_thread(parse_aemo_file, str(f), table_set=ts)
 
         if not persist_to_db:
             return ts
@@ -124,7 +128,6 @@ if __name__ == "__main__":
     # @TODO parse into MMS schema
     url = "https://nemweb.com.au/Reports/ARCHIVE/TradingIS_Reports/PUBLIC_TRADINGIS_20231231_20240106.zip"
     # parse_aemo_url_optimized(url)
-    import asyncio
 
     asyncio.run(parse_aemo_url_optimized(url))
 

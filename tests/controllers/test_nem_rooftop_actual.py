@@ -36,7 +36,7 @@ def _record(interval: str, region: str, power: str, qi: str) -> dict:
 
 
 async def _run(records: list[dict]) -> tuple[list[dict], AsyncMock]:
-    bulk_insert = AsyncMock(side_effect=lambda _table, rows, _fields: len(rows))
+    bulk_insert = AsyncMock(side_effect=lambda _table, rows, _fields, **_kw: len(rows))
 
     with (
         patch("opennem.controllers.nem.get_battery_unit_map", new=AsyncMock(return_value={})),
