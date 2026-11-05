@@ -6,6 +6,7 @@ in data from various sources.
 
 """
 
+import functools
 import logging
 import re
 from decimal import Decimal
@@ -116,22 +117,24 @@ def snake_to_camel(string: str) -> str:
 # OpenNEM specific normalizers
 
 
-def normalize_duid(duid: str | None) -> str | None:
-    """Take what is supposed to be a DUID and clean it up so we always return a string, even if its blank"""
-    duid = duid or ""
+# @NOTE this only matches the literal run <non-word char>_-# (then more #), kept as-is for identical output
+_DUID_PUNCT_RUN = re.compile(r"\W\_\-\#+")
+# excel style escaped control chars, ie. _x000D_
+_DUID_CONTROL_CHAR = re.compile(r"\_[xX][0-9A-F]{4}\_")
 
-    if not duid:
-        return None
 
+def _normalize_duid_value(duid: str) -> str:
     # strip out non-ascii characters
-    duid_ascii = duid.encode("ascii", "ignore").decode("utf-8")
+    duid_ascii = duid if duid.isascii() else duid.encode("ascii", "ignore").decode("utf-8")
 
-    # strip out non-alpha num
+    # strip out non-alpha num, skipped when the literal it needs is absent
     # @TODO also pass to validator
-    duid_ascii = re.sub(r"\W\_\-\#+", "", duid_ascii)
+    if "_-#" in duid_ascii:
+        duid_ascii = _DUID_PUNCT_RUN.sub("", duid_ascii)
 
     # strip out control chars
-    duid_ascii = re.sub(r"\_[xX][0-9A-F]{4}\_", "", duid_ascii)
+    if "_" in duid_ascii:
+        duid_ascii = _DUID_CONTROL_CHAR.sub("", duid_ascii)
 
     # normalize
     duid_ascii = duid_ascii.strip().upper()
@@ -140,6 +143,24 @@ def normalize_duid(duid: str | None) -> str | None:
         return ""
 
     return duid_ascii
+
+
+# called per duid cell when parsing MMS csvs (millions of calls) over a few hundred distinct values
+_normalize_duid_cached = functools.lru_cache(maxsize=4096)(_normalize_duid_value)
+
+
+def normalize_duid(duid: str | None) -> str | None:
+    """Take what is supposed to be a DUID and clean it up so we always return a string, even if its blank"""
+    duid = duid or ""
+
+    if not duid:
+        return None
+
+    if type(duid) is str:
+        return _normalize_duid_cached(duid)
+
+    # str subclasses and other odd inputs skip the cache (non-str raises as before)
+    return _normalize_duid_value(duid.encode("ascii", "ignore").decode("utf-8"))
 
 
 def cast_float_or_none(value: float | None) -> float | None:
