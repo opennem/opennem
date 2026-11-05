@@ -3,18 +3,20 @@
 Parses MMS tables into OpenNEM derived database
 """
 
+import asyncio
 import logging
 from collections.abc import Hashable
 from datetime import timedelta
-from typing import Any
+from typing import Any, cast
 
+import numpy as np
 import pandas as pd
 from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.aggregates.forecast import insert_new_forecast_runs, rooftop_forecast_rows
 from opennem.controllers.schema import ControllerReturn
-from opennem.core.battery import HISTORIC_UNIT_ALIASES, get_battery_unit_map
+from opennem.core.battery import HISTORIC_UNIT_ALIASES, BatteryUnitMap, get_battery_unit_map
 from opennem.core.networks import NetworkNEM
 from opennem.core.normalizers import clean_float
 from opennem.core.parsers.aemo.mms import AEMOTableSchema, AEMOTableSet
@@ -58,7 +60,39 @@ async def generate_facility_scada(
     energy_storage_field: str | None = None,
     is_forecast: bool = False,
 ) -> list[dict[Hashable, Any]]:
-    """Optimized facility scada generator"""
+    """Optimized facility scada generator
+
+    The frame build is pure CPU (hundreds of thousands of rows for a next-day dispatch file), so it runs
+    off the event loop. The battery map is fetched first, on the loop, since it may hit the database.
+    """
+    battery_unit_map = await get_battery_unit_map()
+
+    return await asyncio.to_thread(
+        build_facility_scada_records,
+        records,
+        battery_unit_map,
+        network=network,
+        interval_field=interval_field,
+        facility_code_field=facility_code_field,
+        power_field=power_field,
+        energy_field=energy_field,
+        energy_storage_field=energy_storage_field,
+        is_forecast=is_forecast,
+    )
+
+
+def build_facility_scada_records(
+    records: list[dict[str, Any]],
+    battery_unit_map: dict[str, BatteryUnitMap],
+    network: NetworkSchema = NetworkNEM,
+    interval_field: str = "settlementdate",
+    facility_code_field: str = "duid",
+    power_field: str = "scadavalue",
+    energy_field: str | None = None,
+    energy_storage_field: str | None = None,
+    is_forecast: bool = False,
+) -> list[dict[Hashable, Any]]:
+    """Build facility_scada records from parsed MMS rows (sync, pure CPU, no loop or db use)"""
 
     df = pd.DataFrame().from_records(records)
 
@@ -91,71 +125,33 @@ async def generate_facility_scada(
     df.generated = pd.to_numeric(df.generated)
     df["generated"] = df["generated"].fillna(0)
 
-    df = df[FACILITY_SCADA_COLUMN_NAMES]
+    df = cast(pd.DataFrame, df[FACILITY_SCADA_COLUMN_NAMES])
 
-    # Get battery unit mappings
-    battery_unit_map = await get_battery_unit_map()
+    # Bidirectional battery rows are kept and also copied, the copy re-coded to the charge unit
+    # (generated < 0, stored as abs) or the discharge unit. Vectorised: a row-wise apply here
+    # held the event loop for seconds on a next-day dispatch file.
+    battery_copies = df.loc[df["facility_code"].isin(list(battery_unit_map))].copy()
 
-    def is_battery_unit(row) -> bool:
-        facility_code = row["facility_code"]
-        return facility_code in battery_unit_map
-
-    # Create copies of battery records for splitting
-    battery_mask = df.apply(is_battery_unit, axis=1)
-    battery_copies = df.loc[battery_mask].copy()
-    battery_copies["battery_copy"] = True
-
-    # Add battery_copy field to original data (False for all)
-    df["battery_copy"] = False
-
-    # Combine original data with battery copies
     if len(battery_copies) > 0:
+        source_codes = battery_copies["facility_code"]
+        charge_codes = source_codes.map({code: m.charge_unit for code, m in battery_unit_map.items()})
+        discharge_codes = source_codes.map({code: m.discharge_unit for code, m in battery_unit_map.items()})
+        battery_copies["facility_code"] = np.where(battery_copies["generated"] < 0, charge_codes, discharge_codes)
+
+        # any copy landing on a charge unit (of any map) is stored as a positive load
+        charge_units = {m.charge_unit for m in battery_unit_map.values()}
+        is_charge = battery_copies["facility_code"].isin(list(charge_units))
+        battery_copies["generated"] = battery_copies["generated"].where(~is_charge, battery_copies["generated"].abs())
+
         df = pd.concat([df, battery_copies], ignore_index=True)
-
-    # Define the original mapping functions
-    def map_battery_code(row):
-        facility_code = row["facility_code"]
-        generated = row["generated"]
-
-        if facility_code in battery_unit_map:
-            battery_map = battery_unit_map[facility_code]
-            if generated < 0:
-                return battery_map.charge_unit
-            else:
-                return battery_map.discharge_unit
-        return facility_code
-
-    def map_battery_generation(row):
-        facility_code = row["facility_code"]
-        generated = row["generated"]
-
-        for _, battery_map in battery_unit_map.items():
-            if facility_code == battery_map.charge_unit:
-                return abs(generated)
-
-        return generated
-
-    # Apply the mapping functions only to the battery copies
-    battery_copy_mask = df["battery_copy"]
-    df.loc[battery_copy_mask, "facility_code"] = df.loc[battery_copy_mask].apply(map_battery_code, axis=1)
-    df.loc[battery_copy_mask, "generated"] = df.loc[battery_copy_mask].apply(map_battery_generation, axis=1)
-
-    # Drop the battery_copy field
-    df = df.drop(columns=["battery_copy"])
 
     # Retired single-direction duids are carried forward under the paired gen/load codes
     # we model as units. Emit a copy rather than renaming, so the original aemo code stays
     # in facility_scada and a re-crawl of pre-2026-02 data heals the derived series (#603).
-    def is_alias_unit(row) -> bool:
-        return row["facility_code"] in HISTORIC_UNIT_ALIASES
-
-    def map_alias_code(row) -> str:
-        return HISTORIC_UNIT_ALIASES[row["facility_code"]]
-
-    alias_copies = df.loc[df.apply(is_alias_unit, axis=1)].copy()
+    alias_copies = df.loc[df["facility_code"].isin(list(HISTORIC_UNIT_ALIASES))].copy()
 
     if len(alias_copies) > 0:
-        alias_copies["facility_code"] = alias_copies.apply(map_alias_code, axis=1)
+        alias_copies["facility_code"] = alias_copies["facility_code"].map(HISTORIC_UNIT_ALIASES)
         df = pd.concat([df, alias_copies], ignore_index=True)
 
     # fill in energies
@@ -181,7 +177,7 @@ async def generate_facility_scada(
 async def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerReturn:
     cr = ControllerReturn(total_records=len(table.records))
     records_to_store = []
-    primary_keys = []
+    primary_keys: set[frozenset[Any]] = set()  # O(1) membership, a list scan is quadratic on month files
 
     for record in table.records:
         interval = parse_date(record["settlementdate"])
@@ -196,12 +192,12 @@ async def process_dispatch_interconnectorres(table: AEMOTableSchema) -> Controll
             logger.warning(f"No interconnector id for record: {record}")
             continue
 
-        primary_key = {interval, interconnector_id}
+        primary_key = frozenset((interval, interconnector_id))
 
         if primary_key in primary_keys:
             continue
 
-        primary_keys.append(primary_key)
+        primary_keys.add(primary_key)
 
         if "meteredmwflow" not in record:
             raise Exception(f"No meteredmwflow in record: {record}")
@@ -246,7 +242,7 @@ async def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
 
     cr = ControllerReturn(total_records=len(table.records))
     records_to_store = []
-    primary_keys = []
+    primary_keys: set[frozenset[Any]] = set()  # O(1) membership, a list scan is quadratic on month files
 
     price_field = "price"
 
@@ -256,7 +252,7 @@ async def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
     for record in table.records:
         interval = parse_date(record["settlementdate"])
 
-        primary_key = {interval, record["regionid"]}
+        primary_key = frozenset((interval, record["regionid"]))
 
         if primary_key in primary_keys:
             continue
@@ -267,7 +263,7 @@ async def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
             logger.warning(f"No price for {interval} {record['regionid']}")
             continue
 
-        primary_keys.append(primary_key)
+        primary_keys.add(primary_key)
 
         records_to_store.append(
             {
@@ -316,7 +312,7 @@ async def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn
     cr = ControllerReturn(total_records=len(table.records))
     records_to_store = []
     curtailment_records_to_store = []
-    primary_keys = []
+    primary_keys: set[frozenset[Any]] = set()  # O(1) membership, a list scan is quadratic on month files
 
     for record in table.records:
         if not isinstance(record, dict):
@@ -330,12 +326,12 @@ async def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn
         # get the next interval
         interval_next = interval + timedelta(minutes=5)
 
-        primary_key = {interval, record["regionid"]}
+        primary_key = frozenset((interval, record["regionid"]))
 
         if primary_key in primary_keys:
             continue
 
-        primary_keys.append(primary_key)
+        primary_keys.add(primary_key)
 
         if "demand_and_nonschedgen" not in record:
             raise Exception("bad value in dispatch_regionsum")
@@ -422,7 +418,7 @@ async def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
     limit = None
     records_to_store = []
     records_processed = 0
-    primary_keys = []
+    primary_keys: set[frozenset[Any]] = set()  # O(1) membership, a list scan is quadratic on month files
 
     for record in table.records:
         if not isinstance(record, dict):
@@ -437,12 +433,12 @@ async def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
         if not interval:
             continue
 
-        _pk = {interval, record["regionid"]}
+        _pk = frozenset((interval, record["regionid"]))
 
         if _pk in primary_keys:
             continue
 
-        primary_keys.append(_pk)
+        primary_keys.add(_pk)
 
         net_interchange = None
 
