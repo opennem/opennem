@@ -55,3 +55,11 @@ async def test_first_seen_runs_in_chunks_and_retries_lost_connection(monkeypatch
     assert calls["n"] == 3
     assert len(ran) == 2
     assert "'U000'" in ran[0] and "'U044'" in ran[1]
+
+
+def test_unit_code_allowlist_rejects_quotes() -> None:
+    from opennem.workers.facility_data_seen import _SAFE_UNIT_CODE
+
+    assert _SAFE_UNIT_CODE.fullmatch("BANGOWF1")
+    assert _SAFE_UNIT_CODE.fullmatch("0WNSF1")
+    assert not _SAFE_UNIT_CODE.fullmatch("X'); drop table units;--")

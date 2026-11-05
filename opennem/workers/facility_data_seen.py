@@ -9,6 +9,7 @@ for most recent this is the last active date
 
 import asyncio
 import logging
+import re
 from datetime import datetime, timedelta
 from textwrap import dedent
 
@@ -107,12 +108,21 @@ async def _run_seen_update_retrying(query: TextClause, statement_timeout_s: int)
             await asyncio.sleep(2 * attempt)
 
 
+# unit codes are interpolated into the chunk's SQL text (duid_to_case does not escape), so only plain DUID-shaped codes pass
+_SAFE_UNIT_CODE = re.compile(r"[A-Za-z0-9_.\-]+")
+
+
 async def _get_unit_codes() -> list[str]:
     engine = db_connect()
 
     async with engine.begin() as conn:
         result = await conn.execute(text("select code from units order by code"))
-        return [r[0] for r in result]
+        codes = [r[0] for r in result]
+
+    safe = [c for c in codes if _SAFE_UNIT_CODE.fullmatch(c)]
+    if len(safe) != len(codes):
+        logger.warning(f"update_facility_seen_range skipped {len(codes) - len(safe)} unit codes with unexpected characters")
+    return safe
 
 
 # @profile_task(send_slack=True)
