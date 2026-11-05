@@ -61,8 +61,10 @@ def test_ttl_respects_lower_ceiling() -> None:
     [
         ([Metric.POWER], True),
         ([Metric.POWER, Metric.POWER], True),
-        ([Metric.POWER, Metric.ENERGY], False),
-        ([Metric.ENERGY], False),
+        ([Metric.POWER, Metric.ENERGY], True),
+        ([Metric.ENERGY], True),
+        ([Metric.ENERGY, Metric.EMISSIONS], False),
+        ([Metric.ENERGY, Metric.MARKET_VALUE], False),
         ([Metric.EMISSIONS], False),
         ([], False),
     ],
@@ -99,12 +101,13 @@ async def _call_live(monkeypatch: pytest.MonkeyPatch, metrics: list[Metric]) -> 
 
 
 @pytest.mark.asyncio
-async def test_route_skips_cap_for_power_only(monkeypatch: pytest.MonkeyPatch) -> None:
-    assert await _call_live(monkeypatch, [Metric.POWER]) == []
+@pytest.mark.parametrize("metrics", [[Metric.POWER], [Metric.ENERGY], [Metric.POWER, Metric.ENERGY]])
+async def test_route_skips_cap_for_final_on_write_metrics(monkeypatch: pytest.MonkeyPatch, metrics: list[Metric]) -> None:
+    assert await _call_live(monkeypatch, metrics) == []
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("metrics", [[Metric.POWER, Metric.ENERGY], [Metric.ENERGY]])
+@pytest.mark.parametrize("metrics", [[Metric.ENERGY, Metric.EMISSIONS], [Metric.EMISSIONS], [Metric.ENERGY, Metric.MARKET_VALUE]])
 async def test_route_keeps_cap_for_other_metrics(monkeypatch: pytest.MonkeyPatch, metrics: list[Metric]) -> None:
     assert await _call_live(monkeypatch, metrics) == [True]
 
@@ -158,5 +161,6 @@ def test_skips_settled_cap_final_on_write_metrics():
     assert skips_settled_cap([Metric.POWER])
     assert skips_settled_cap([Metric.PRICE, Metric.DEMAND])
     assert not skips_settled_cap([Metric.PRICE, Metric.RENEWABLE_PROPORTION])
-    assert not skips_settled_cap([Metric.ENERGY])
+    assert skips_settled_cap([Metric.ENERGY])
+    assert not skips_settled_cap([Metric.ENERGY, Metric.EMISSIONS])
     assert not skips_settled_cap([])
