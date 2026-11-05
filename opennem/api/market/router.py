@@ -20,7 +20,7 @@ from opennem.api.forecast import (
     get_latest_forecast_interval,
     is_forecast_metric,
 )
-from opennem.api.intervals import cap_date_end_to_settled_interval
+from opennem.api.intervals import cap_date_end_to_settled_interval, inclusive_live_date_end, skips_settled_cap
 from opennem.api.queries import QueryType, columnar_supported, get_timeseries_query
 from opennem.api.response_cache import cached_json
 from opennem.api.schema import std_error_responses
@@ -188,11 +188,15 @@ async def _actual_timeseries(
     if date_start > date_end:
         raise HTTPException(status_code=400, detail="Date start must be before date end")
 
-    # Live request: don't serve the provisional bleeding-edge interval (#575).
+    # Live request: don't serve the provisional bleeding-edge interval (#575), unless every metric is final on write,
+    # then include the last complete interval (stamped 17:00:00, written ~17:00:25) instead of waiting for the next.
     if live_query:
-        date_end = await cap_date_end_to_settled_interval(
-            client=client, network=network, query_type=QueryType.MARKET, date_end=date_end
-        )
+        if skips_settled_cap(metrics):
+            date_end = inclusive_live_date_end(date_end, interval, network)
+        else:
+            date_end = await cap_date_end_to_settled_interval(
+                client=client, network=network, query_type=QueryType.MARKET, date_end=date_end
+            )
 
     query_kwargs: dict[str, Any] = {
         "query_type": QueryType.MARKET,

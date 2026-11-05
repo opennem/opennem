@@ -126,3 +126,37 @@ async def test_latest_interval_cache_expires_at_landing(monkeypatch: pytest.Monk
     expiry = intervals._latest_interval_cache[("unit_intervals", NetworkNEM.code)][0]
     assert 6 < expiry - t0 < 8
     intervals._latest_interval_cache.clear()
+
+
+def test_inclusive_live_date_end_native_interval_includes_last_complete():
+    from datetime import datetime
+
+    from opennem.api.intervals import inclusive_live_date_end
+    from opennem.core.time_interval import Interval
+    from opennem.schema.network import NetworkNEM
+
+    # live date_end 17:00 is exclusive in the query, so bump one step to include the 17:00 bucket
+    assert inclusive_live_date_end(datetime(2026, 11, 5, 17, 0), Interval.INTERVAL, NetworkNEM) == datetime(2026, 11, 5, 17, 5)
+
+
+def test_inclusive_live_date_end_coarse_interval_unchanged():
+    from datetime import datetime
+
+    from opennem.api.intervals import inclusive_live_date_end
+    from opennem.core.time_interval import Interval
+    from opennem.schema.network import NetworkNEM
+
+    end = datetime(2026, 11, 5, 17, 0)
+    assert inclusive_live_date_end(end, Interval.HOUR, NetworkNEM) == end
+    assert inclusive_live_date_end(end, Interval.DAY, NetworkNEM) == end
+
+
+def test_skips_settled_cap_final_on_write_metrics():
+    from opennem.api.intervals import skips_settled_cap
+    from opennem.core.metric import Metric
+
+    assert skips_settled_cap([Metric.POWER])
+    assert skips_settled_cap([Metric.PRICE, Metric.DEMAND])
+    assert not skips_settled_cap([Metric.PRICE, Metric.RENEWABLE_PROPORTION])
+    assert not skips_settled_cap([Metric.ENERGY])
+    assert not skips_settled_cap([])
