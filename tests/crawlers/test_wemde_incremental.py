@@ -281,3 +281,10 @@ async def test_catchup_missing_slots_not_published_are_skipped(monkeypatch: pyte
     assert result.unpublished == result.missing_before - 13
     assert result.healed == set(available)
     assert sorted(fake.fetched) == sorted(available)
+
+
+def test_dispatch_http_timeout_is_int():
+    # rnet.Client rejects float timeouts ("'float' object cannot be interpreted as an integer"), mocks hide it
+    from opennem.crawlers.wemde_incremental import DISPATCH_HTTP_TIMEOUT
+
+    assert isinstance(DISPATCH_HTTP_TIMEOUT, int)

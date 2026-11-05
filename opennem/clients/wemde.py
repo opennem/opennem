@@ -30,7 +30,7 @@ class WEMDEDownloadException(Exception):
     pass
 
 
-async def _wemde_download_dataset(url: str, timeout: float | None = None) -> list[dict]:
+async def _wemde_download_dataset(url: str, timeout: int | None = None) -> list[dict]:
     json_response = []
 
     try:
@@ -141,7 +141,7 @@ async def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
     return models
 
 
-async def wemde_parse_dispatch(url: str, timeout: float | None = None) -> list[FacilityScadaSchema | BalancingSummarySchema]:
+async def wemde_parse_dispatch(url: str, timeout: int | None = None) -> list[FacilityScadaSchema | BalancingSummarySchema]:
     """Parses a WEMDE dispatch solution file.
 
     Uses the cleared `energy` market dispatch quantity (MW) per facility as the WEM

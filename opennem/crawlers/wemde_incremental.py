@@ -47,7 +47,7 @@ COVERAGE_WINDOW = timedelta(hours=24)
 CATCHUP_BATCH_SIZE = 24
 CATCHUP_MAX_FILES = 288
 # files are ~30 MB, the default 20s http timeout is too tight when several download at once
-DISPATCH_HTTP_TIMEOUT = 90.0
+DISPATCH_HTTP_TIMEOUT = 90  # int: rnet rejects float timeouts
 # poll the listing for the newest file this long before moving on with what is there
 POLL_BUDGET_SECONDS = 90.0
 POLL_INTERVAL_SECONDS = 5.0
