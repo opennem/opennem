@@ -22,6 +22,8 @@ MAX_LAG = 0.25
 
 BODY_SMALL = b'{"data": [1, 2, 3]}'
 BODY_LARGE = b'{"data": "' + b"x" * (CHUNK * 20) + b'"}'
+# a small body whose upstream stalls between headers and body (BACKEND-65F)
+SLOW_SMALL_DELAY = 0.6
 
 
 class _Handler(BaseHTTPRequestHandler):
@@ -48,6 +50,9 @@ class _Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Encoding", "gzip")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
+        if path.startswith("small-slow"):
+            self.wfile.flush()
+            time.sleep(SLOW_SMALL_DELAY)
         for i in range(0, len(body), CHUNK):
             self.wfile.write(body[i : i + CHUNK])
             self.wfile.flush()
@@ -107,6 +112,18 @@ async def test_gzip_body_read_keeps_loop_ticking(base_url: str) -> None:
 
     assert resp.content == BODY_LARGE
     assert max_lag < MAX_LAG, f"event loop stalled {max_lag:.2f}s during body read"
+
+
+@pytest.mark.asyncio
+async def test_small_body_from_slow_upstream_keeps_loop_ticking(base_url: str) -> None:
+    """A tiny Content-Length is no guarantee of a fast read: the upstream can stall after the headers."""
+    client = http_factory(proxy=False, debug=False)
+
+    resp, max_lag = await _max_lag_during(client.get(f"{base_url}/small-slow"))
+
+    assert resp.content == BODY_SMALL
+    assert resp.text == BODY_SMALL.decode()
+    assert max_lag < MAX_LAG, f"event loop stalled {max_lag:.2f}s during small body read"
 
 
 @pytest.mark.asyncio
