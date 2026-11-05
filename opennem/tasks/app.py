@@ -162,6 +162,11 @@ async def shutdown(ctx: dict[str, object]) -> None:
     await stop_loop_monitor()
 
 
+# AEMO generates PUBLIC_DISPATCHSCADA ~17-19s past each 5 min mark (measured on prod, #perf/nem-poll-latency).
+# Start just before that; the cheap listing poll runs every ~1.5s from here so the first hit is at publish.
+NEM_SCADA_CRON_SECOND = 14
+
+
 class WorkerSettings:
     # queue_name = "opennem"
     on_startup = startup
@@ -182,7 +187,7 @@ class WorkerSettings:
         cron(
             task_nem_interval_check,
             minute=set(range(0, 60, 5)),
-            second=10,
+            second=NEM_SCADA_CRON_SECOND,
             timeout=270,
             unique=True,
         ),

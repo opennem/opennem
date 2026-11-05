@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import re
 from datetime import datetime, timedelta
 
 from opennem.controllers.nem import ControllerReturn, store_aemo_tableset
@@ -14,6 +15,8 @@ from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
 from opennem.crawlers.utils import get_time_interval_for_crawler
 from opennem.schema.date_range import CrawlDateRange
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
+from opennem.utils.http import http
+from opennem.utils.ingest_latency import IngestTrace, current_trace
 
 logger = logging.getLogger("opennem.crawler.nemweb")
 
@@ -45,6 +48,29 @@ async def _handle_fetch_error(crawler: CrawlerDefinition, entry: DirlistingEntry
         logger.error(f"Error recording age-out history for {entry.link}: {e}")
 
 
+SCADA_CRAWLER_NAME = "au.nemweb.current.dispatch_scada"
+
+_LISTED_FILE_INTERVAL_RE = re.compile(r"_(\d{12})_\d+\.zip", re.IGNORECASE)
+
+
+def _mark_downloaded(trace: IngestTrace, content: bytes) -> None:
+    trace.mark("downloaded")
+    trace.set_file_generated(content)
+
+
+async def get_newest_listed_interval(url: str) -> datetime | None:
+    """Newest AEMO interval in a nemweb dir listing without building DirlistingEntry models.
+
+    A plain GET on the shared client plus one regex over the page (sub-millisecond), cheap enough to poll
+    every second or two. Returns None when no file name matched. Naive AEST like the file names.
+    """
+    resp = await http.get(url)
+    intervals = _LISTED_FILE_INTERVAL_RE.findall(resp.text or "")
+    if not intervals:
+        return None
+    return datetime.strptime(max(intervals), "%Y%m%d%H%M")
+
+
 async def process_nemweb_entry(crawler: CrawlerDefinition, entry: DirlistingEntry, max_date: datetime) -> ControllerReturn:
     controller_return: ControllerReturn | None = None
 
@@ -57,8 +83,17 @@ async def process_nemweb_entry(crawler: CrawlerDefinition, entry: DirlistingEntr
             controller_return = await parse_aemo_url_optimized(entry.link)  # type: ignore
         else:
             try:
-                ts = await parse_aemo_url(entry.link)
+                # only the live SCADA crawl is traced (the prices crawl shares the same context)
+                trace = current_trace() if crawler.name == SCADA_CRAWLER_NAME else None
+                if trace:
+                    trace.mark("fetching")
+                    ts = await parse_aemo_url(entry.link, on_download=lambda content: _mark_downloaded(trace, content))
+                    trace.mark("parsed")
+                else:
+                    ts = await parse_aemo_url(entry.link)
                 controller_return = await store_aemo_tableset(ts)
+                if trace:
+                    trace.mark("pg_stored")
             except Exception as e:
                 await _handle_fetch_error(crawler=crawler, entry=entry, error=e)
                 return None

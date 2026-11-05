@@ -6,6 +6,7 @@ Parse AEMO MMS CSV format which can have multiple tables and definitions per CSV
 import asyncio
 import csv
 import logging
+from collections.abc import Callable
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -264,7 +265,11 @@ def _decode_and_parse_mms_csv(
 
 
 async def parse_aemo_url(
-    url: str, table_set: AEMOTableSet | None = None, skip_records: bool = False, values_only: bool = False
+    url: str,
+    table_set: AEMOTableSet | None = None,
+    skip_records: bool = False,
+    values_only: bool = False,
+    on_download: Callable[[bytes], None] | None = None,
 ) -> AEMOTableSet:
     """Parse a single AEMO URL into an AEMOTableSet"""
 
@@ -278,6 +283,9 @@ async def parse_aemo_url(
 
     if not csv_content:
         raise Exception(f"Could not parse URL: {url}")
+
+    if on_download:
+        on_download(csv_content)
 
     # decode + parse is pure CPU (seconds on a large file), keep it off the event loop
     table_set = await asyncio.to_thread(
