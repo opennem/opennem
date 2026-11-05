@@ -21,6 +21,7 @@ def test_poll_budget_leaves_time_for_the_rest_of_the_pipeline() -> None:
 
     crawl = AsyncMock(side_effect=_crawl)
     with (
+        patch.object(tasks, "get_newest_listed_interval", AsyncMock(return_value=None)),  # doubt: full crawl
         patch.object(tasks, "run_crawl", crawl),
         patch.object(tasks.asyncio, "sleep", _sleep),
         patch.object(tasks.time, "monotonic", lambda: clock[0]),

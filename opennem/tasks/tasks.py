@@ -3,7 +3,7 @@
 import asyncio
 import logging
 import time
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from arq import Retry
 from sanity.exceptions import SanityConnectionError, SanityRateLimitError, SanityServerError, SanityTimeoutError
@@ -31,6 +31,7 @@ from opennem.crawlers.nemweb import (
     AEMONemwebRooftopForecast,
     AEMONemwebTradingIS,
     AEMONNemwebDispatchScada,
+    get_newest_listed_interval,
 )
 from opennem.crawlers.wemde import AEMOWEMDEDispatch, run_all_wem_crawlers, run_wemde_crawl
 from opennem.db import get_write_session
@@ -46,6 +47,7 @@ from opennem.monitors.unmapped_codes import run_unmapped_code_check
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
+from opennem.utils.ingest_latency import IngestTrace, start_trace
 from opennem.workers.apvi_latest import run_apvi_latest_refresh
 from opennem.workers.catchup import catchup_aggregates, catchup_last_days, run_catchup_check
 from opennem.workers.energy import (
@@ -75,6 +77,56 @@ logger = logging.getLogger("opennem.pipelines.nem")
 NEM_SCADA_POLL_BUDGET_SECONDS = 120
 # the aggregate now gates the exports: cap it so a stuck query can't run the 270s job out before they start
 NEM_AGGREGATE_BUDGET_SECONDS = 60
+# AEMO publishes the file ~17-19s past the boundary; poll fast for the first stretch of the job, then back off
+NEM_SCADA_FAST_POLL_SECONDS = 1.5
+NEM_SCADA_FAST_POLL_WINDOW_SECONDS = 30
+NEM_SCADA_SLOW_BACKOFF = [5, 10, 15, 20, 20, 20, 20]
+
+# newest dispatch interval this process has ingested (naive AEST). None = unknown, so poll with a full crawl
+_last_scada_interval: datetime | None = None
+
+
+def _naive(dt: datetime) -> datetime:
+    return dt.replace(tzinfo=None)
+
+
+async def _scada_new_file_listed(trace: IngestTrace) -> tuple[bool, datetime | None]:
+    """Cheap poll: is the newest listed SCADA file newer than the last ingested interval?
+
+    Any doubt (no baseline yet, listing failed or unparsable) answers True so the full crawl decides.
+    """
+    try:
+        newest = await get_newest_listed_interval(AEMONNemwebDispatchScada.url)
+    except Exception as e:
+        logger.warning(f"SCADA listing check failed, falling back to full crawl: {e}")
+        return True, None
+
+    if newest is None or _last_scada_interval is None or newest > _last_scada_interval:
+        trace.mark("listed")
+        return True, newest
+
+    return False, newest
+
+
+async def _poll_scada_once(trace: IngestTrace):
+    """One poll: full crawl only when the listing shows a file we haven't ingested. Returns the crawl result or None."""
+    global _last_scada_interval
+
+    trace.polls += 1
+    trace.mark("first_poll")
+
+    new_file, newest = await _scada_new_file_listed(trace)
+    if not new_file:
+        return None
+
+    result = await run_crawl(AEMONNemwebDispatchScada, latest=True)
+
+    if result and result.inserted_records > 0:
+        landed = getattr(result, "interval_max", None) or newest
+        if landed is not None:
+            _last_scada_interval = _naive(landed)
+
+    return result
 
 
 async def _crawl_nem_prices() -> int:
@@ -118,23 +170,38 @@ async def task_warm_tracker_cache(ctx: dict) -> None:
 
 async def task_nem_interval_check(ctx) -> None:
     """Poll AEMO until new dispatch_scada data arrives, then run full pipeline."""
-    backoff = [5, 10, 15, 20, 20, 20, 20]
+    trace = start_trace()
+    trace.mark("cron_start")
     scada_result = None
-    poll_deadline = time.monotonic() + NEM_SCADA_POLL_BUDGET_SECONDS
+    started = time.monotonic()
+    poll_deadline = started + NEM_SCADA_POLL_BUDGET_SECONDS
+    slow_polls = 0
 
     # prices don't depend on the SCADA poll: start them now instead of after it
     prices_task = asyncio.create_task(_crawl_nem_prices())
 
     try:
-        for attempt, wait in enumerate(backoff):
-            scada_result = await run_crawl(AEMONNemwebDispatchScada, latest=True)
+        attempt = 0
+        while True:
+            attempt += 1
+            scada_result = await _poll_scada_once(trace)
             if scada_result and scada_result.inserted_records > 0:
-                logger.info(f"SCADA data received on poll attempt {attempt + 1}")
+                logger.info(f"SCADA data received on poll attempt {attempt}")
                 break
+
+            if time.monotonic() - started < NEM_SCADA_FAST_POLL_WINDOW_SECONDS:
+                wait = NEM_SCADA_FAST_POLL_SECONDS
+            elif slow_polls < len(NEM_SCADA_SLOW_BACKOFF):
+                wait = NEM_SCADA_SLOW_BACKOFF[slow_polls]
+                slow_polls += 1
+            else:
+                break
+
             if time.monotonic() + wait > poll_deadline:
-                logger.warning(f"Poll attempt {attempt + 1}: no new SCADA data, poll budget spent, moving on")
+                logger.warning(f"Poll attempt {attempt}: no new SCADA data, poll budget spent, moving on")
                 break
-            logger.info(f"Poll attempt {attempt + 1}: no new SCADA data, waiting {wait}s")
+            if wait != NEM_SCADA_FAST_POLL_SECONDS:
+                logger.info(f"Poll attempt {attempt}: no new SCADA data, waiting {wait}s")
             await asyncio.sleep(wait)
     except BaseException:
         # poll raised or the job was cancelled: don't leave the side crawl orphaned or delay the cancel
@@ -162,6 +229,9 @@ async def task_nem_interval_check(ctx) -> None:
     except Exception as e:
         logger.exception("unit_intervals aggregate failed, exporting anyway")
         aggregate_error = e
+
+    trace.mark("ch_aggregate")
+    trace.log()
 
     # data is queryable now: refill the tracker response cache before users arrive (#737)
     if aggregate_error is None:

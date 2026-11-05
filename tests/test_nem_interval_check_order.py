@@ -28,6 +28,7 @@ def _run(crawl_fn, aggregate=None, export=None, events=None):
         return None
 
     with (
+        patch.object(tasks, "get_newest_listed_interval", AsyncMock(return_value=None)),  # doubt: full crawl
         patch.object(tasks, "run_crawl", AsyncMock(side_effect=crawl_fn)),
         patch.object(tasks.asyncio, "sleep", _sleep),
         patch.object(tasks, "process_energy_last_intervals", AsyncMock(side_effect=lambda **_: events.append("energy"))),

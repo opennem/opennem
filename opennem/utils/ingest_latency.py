@@ -1,0 +1,65 @@
+"""Per-cycle ingest latency trace for the NEM SCADA poll.
+
+One `IngestTrace` is active per `task_nem_interval_check` run (contextvar, so the crawl code can
+mark stages without plumbing). Every time is seconds past the 5 minute dispatch boundary.
+"""
+
+import logging
+import time
+from contextvars import ContextVar
+from datetime import datetime, timedelta, timezone
+
+logger = logging.getLogger("opennem.pipelines.nem")
+
+NEM_INTERVAL_SECONDS = 300
+# nemweb CSV `C,` header times are AEST (UTC+10, no DST)
+_NEM_TZ = timezone(timedelta(hours=10))
+# a plausible file generation time relative to the boundary; anything else is a stale or odd file
+_GENERATED_MIN, _GENERATED_MAX = -30.0, 240.0
+
+
+class IngestTrace:
+    """Stage timestamps (first mark wins) relative to the 5 min boundary"""
+
+    def __init__(self) -> None:
+        now = time.time()
+        self.boundary = now - (now % NEM_INTERVAL_SECONDS)
+        self.marks: dict[str, float] = {}
+        self.file_generated: float | None = None
+        self.polls = 0
+
+    def mark(self, stage: str) -> None:
+        self.marks.setdefault(stage, round(time.time() - self.boundary, 2))
+
+    def set_file_generated(self, csv_content: bytes) -> None:
+        """Parse the AEMO generation time from the CSV `C,` header row (already in memory, no extra work)"""
+        if self.file_generated is not None:
+            return
+        try:
+            fields = csv_content[:300].decode("utf-8", errors="ignore").split("\n", 1)[0].split(",")
+            generated = datetime.strptime(f"{fields[5]} {fields[6]}", "%Y/%m/%d %H:%M:%S").replace(tzinfo=_NEM_TZ)
+        except (IndexError, ValueError):
+            return
+        rel = generated.timestamp() - self.boundary
+        if _GENERATED_MIN <= rel <= _GENERATED_MAX:
+            self.file_generated = round(rel, 2)
+
+    def log(self) -> None:
+        stages = ("cron_start", "first_poll", "listed", "downloaded", "parsed", "pg_stored", "ch_aggregate")
+        parts = [f"{s}={self.marks.get(s, '-')}" for s in stages]
+        parts.append(f"file_generated={self.file_generated if self.file_generated is not None else '-'}")
+        parts.append(f"polls={self.polls}")
+        logger.info("nem_ingest_latency " + " ".join(parts))
+
+
+_current_trace: ContextVar[IngestTrace | None] = ContextVar("nem_ingest_trace", default=None)
+
+
+def start_trace() -> IngestTrace:
+    trace = IngestTrace()
+    _current_trace.set(trace)
+    return trace
+
+
+def current_trace() -> IngestTrace | None:
+    return _current_trace.get()
