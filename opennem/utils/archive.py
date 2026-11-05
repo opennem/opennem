@@ -148,6 +148,30 @@ def fix_central_directory_file(zip_file_path: Path) -> Path:
     return zip_file_path
 
 
+def _write_and_extract_zip(content: bytes, save_path: Path, dest_dir: Path) -> None:
+    """Blocking half of `download_and_unzip`: write the zip, extract it (and any nested zips) into dest_dir"""
+    with save_path.open("wb+") as fh:
+        fh.write(content)
+
+    with ZipFile(save_path) as zf:
+        try:
+            zf.extractall(dest_dir)
+        except Exception as e:
+            logger.error(e)
+            fix_central_directory_file(save_path)
+            zf.extractall(dest_dir)
+
+    os.remove(save_path)
+
+    for _, _, files in os.walk(dest_dir):
+        for file in files:
+            file_path = Path(dest_dir) / file
+            if file_path.suffix.lower() == ".zip":
+                with ZipFile(file_path) as zf:
+                    zf.extractall(dest_dir)
+                os.remove(file_path)
+
+
 async def download_and_unzip(url: str) -> Path:
     """Download and unzip a multi-zip file into a temporary directory"""
 
@@ -171,28 +195,10 @@ async def download_and_unzip(url: str) -> Path:
 
     save_path = Path(dest_dir) / filename
 
-    with save_path.open("wb+") as fh:
-        fh.write(response.content)
+    # write + unzip are blocking disk/CPU (multi-MB nemweb zips stalled the loop 1-3s), run off the loop
+    await asyncio.to_thread(_write_and_extract_zip, response.content, save_path, dest_dir)
 
-    logger.info(f"Wrote file to {save_path}")
-
-    with ZipFile(save_path) as zf:
-        try:
-            zf.extractall(dest_dir)
-        except Exception as e:
-            logger.error(e)
-            fix_central_directory_file(save_path)
-            zf.extractall(dest_dir)
-
-    os.remove(save_path)
-
-    for _, _, files in os.walk(dest_dir):
-        for file in files:
-            file_path = Path(dest_dir) / file
-            if file_path.suffix.lower() == ".zip":
-                with ZipFile(file_path) as zf:
-                    zf.extractall(dest_dir)
-                os.remove(file_path)
+    logger.info(f"Wrote and extracted {save_path}")
 
     return dest_dir
 
