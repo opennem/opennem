@@ -49,7 +49,7 @@ def _make_dispatch_json(
 def _patched_parser(monkeypatch):
     """Patch the network downloader + battery map so wemde_parse_dispatch is pure-fn."""
 
-    async def _fake_dl(_url: str) -> list[dict]:
+    async def _fake_dl(_url: str, timeout: float | None = None) -> list[dict]:
         return [_make_dispatch_json()]
 
     async def _fake_battery_map():
@@ -86,7 +86,7 @@ async def test_wemde_dispatch_emits_facility_and_price(_patched_parser):
 async def test_wemde_dispatch_no_price_field(monkeypatch):
     """Missing prices.energy → FS rows still emitted, no BS row."""
 
-    async def _fake_dl(_url: str) -> list[dict]:
+    async def _fake_dl(_url: str, timeout: float | None = None) -> list[dict]:
         return [_make_dispatch_json(energy_price=None)]
 
     async def _fake_battery_map():
@@ -105,7 +105,7 @@ async def test_wemde_dispatch_no_price_field(monkeypatch):
 async def test_wemde_dispatch_malformed_price_keeps_generation(monkeypatch):
     """Non-numeric prices.energy must not discard the file's FS records."""
 
-    async def _fake_dl(_url: str) -> list[dict]:
+    async def _fake_dl(_url: str, timeout: float | None = None) -> list[dict]:
         # energy price is a non-numeric string — float() will raise ValueError.
         # The parser must swallow this, emit no BS row, and still return the
         # FacilityScada records for the binding interval.

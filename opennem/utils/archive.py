@@ -233,13 +233,14 @@ def _extract_and_parse_json(content: bytes, is_zip: bool, temp_dir: Path, url: s
     return response_jsons
 
 
-async def download_and_parse_json_zip(url: str, indent: int | None = None) -> list[Any]:
+async def download_and_parse_json_zip(url: str, indent: int | None = None, timeout: float | None = None) -> list[Any]:
     """
     Downloads a file from the given URL. If the file is a ZIP archive, it is unzipped.
     The function then attempts to parse the contained or downloaded file as JSON.
 
     Args:
     url (str): The URL of the file to be downloaded.
+    timeout (float | None): request timeout in seconds, the default http timeout when None.
 
     Returns:
     Any: The parsed JSON data.
@@ -253,7 +254,7 @@ async def download_and_parse_json_zip(url: str, indent: int | None = None) -> li
 
     response_jsons = []
 
-    http = http_factory(proxy=False, debug=True)
+    http = http_factory(proxy=False, debug=True, timeout=timeout) if timeout else http_factory(proxy=False, debug=True)
 
     try:
         # Download the file
