@@ -14,6 +14,7 @@ import asyncio
 import functools
 import json
 import logging
+import math
 from collections.abc import Awaitable, Callable, Mapping
 from datetime import datetime, timedelta, timezone
 from typing import Any, ParamSpec, TypeVar
@@ -129,6 +130,27 @@ def slot_live_ttl(slot_end: datetime, floor: int, now: datetime | None = None) -
         return floor  # past slot or further ahead than the next one: keep the short TTL
     ttl = -(-int(remaining + SLOT_TTL_SLACK) // _TTL_BUCKET) * _TTL_BUCKET
     return max(floor, min(SLOT_TTL_CAP, ttl))
+
+
+# NEM interval N lands in ClickHouse ~24 s after the 5-min mark; ~28 s leaves a few seconds for the write to be visible
+LANDING_OFFSET_SECONDS = 28
+LANDING_TTL_FLOOR = 5
+
+
+def landing_aligned_ttl(ceiling: int, now: datetime | None = None, floor: int = LANDING_TTL_FLOOR) -> int:
+    """Live TTL that never outlives the next expected data landing (next 5-min boundary + LANDING_OFFSET_SECONDS).
+
+    A flat 60 s TTL (and the matching Cache-Control max-age that Cloudflare honours) can hold a body for up to 60 s past
+    the moment a new interval lands. Here the TTL is the time left until the next landing, clamped to [floor, ceiling]:
+    most of the 5-min cycle it is just `ceiling`, and in the last `ceiling` seconds before a landing (including the
+    first 28 s after the boundary, before the interval is written) it shrinks so the entry expires as the data arrives.
+    """
+    now_local = (now or datetime.now(_NEM_TZ)).astimezone(_NEM_TZ).replace(tzinfo=None)
+    into_slot = (now_local.minute % 5) * 60 + now_local.second + now_local.microsecond / 1e6
+    remaining = LANDING_OFFSET_SECONDS - into_slot
+    if remaining <= 0:  # this slot's landing has passed: the next one is a cycle on
+        remaining += SLOT_SECONDS
+    return max(floor, min(ceiling, math.ceil(remaining)))
 
 
 class PreEncoded:
@@ -254,6 +276,11 @@ def cached_json(
             chosen = inner_live if use_live else inner
             if use_live and live_expire is not None and (slot_end := grid_slot_end(kwargs)) is not None:
                 ttl = slot_live_ttl(slot_end, live_expire)
+                if ttl != live_expire:
+                    chosen = slot_variant(ttl)
+            elif use_live and live_expire is not None:
+                # not slot-keyed: expire at the next expected landing instead of a flat live_expire (max-age follows)
+                ttl = landing_aligned_ttl(live_expire)
                 if ttl != live_expire:
                     chosen = slot_variant(ttl)
             result = await chosen(*args, **kwargs)

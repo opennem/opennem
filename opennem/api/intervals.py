@@ -18,17 +18,21 @@ endpoints never break.
 import asyncio
 import logging
 import time
+from collections.abc import Iterable
 from datetime import datetime
 from typing import Any
 
 from opennem.api.queries import QUERY_CONFIGS, QueryType
+from opennem.api.response_cache import landing_aligned_ttl
+from opennem.core.metric import Metric
 from opennem.db.clickhouse import execute_async
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.api.intervals")
 
 # max(interval) only advances once per interval_size minutes, so a short TTL spares a CH
-# round-trip on every (cache-missed) request without serving a meaningfully stale bound.
+# round-trip on every (cache-missed) request. The TTL is aligned to the next expected landing
+# (`landing_aligned_ttl`) so a freshly written interval is never hidden for the full 30 s.
 _CACHE_TTL_SECONDS = 30
 _latest_interval_cache: dict[tuple[str, str], tuple[float, datetime | None]] = {}
 # concurrent cache misses share one in-flight query (single-flight): N parallel cold requests used to fire N identical
@@ -79,7 +83,7 @@ async def _fetch_latest_interval(
     if latest is not None and latest.tzinfo is not None:
         latest = latest.replace(tzinfo=None)
 
-    _latest_interval_cache[cache_key] = (time.monotonic() + _CACHE_TTL_SECONDS, latest)
+    _latest_interval_cache[cache_key] = (time.monotonic() + landing_aligned_ttl(_CACHE_TTL_SECONDS), latest)
     return latest
 
 
@@ -103,3 +107,16 @@ async def cap_date_end_to_settled_interval(
     if latest is None:
         return date_end
     return min(date_end, latest)
+
+
+def skips_settled_cap(metrics: Iterable[Metric]) -> bool:
+    """True when a live request's metrics are power only, so the settled-interval cap (#575) can be skipped.
+
+    #575 was about energy-derived values (energy is a trapezoid needing the adjacent interval, emissions and
+    market_value derive from energy) and market ratios that are provisional on first write. `power` is
+    `unit_intervals.generated`, written straight from dispatch SCADA, so it is final on first write and the newest
+    interval can be served as soon as it lands instead of ~5 min later. Any other metric in the request, even
+    alongside power, keeps the cap so the whole response stays on one consistent edge.
+    """
+    wanted = set(metrics)
+    return bool(wanted) and wanted <= {Metric.POWER}

@@ -13,7 +13,7 @@ from fastapi_versionizer import api_version
 
 from opennem.api.cache_keys import tiered_key_builder
 from opennem.api.data.utils import validate_date_range
-from opennem.api.intervals import cap_date_end_to_settled_interval
+from opennem.api.intervals import cap_date_end_to_settled_interval, skips_settled_cap
 from opennem.api.queries import AGG_TABLE, QueryType, columnar_supported, get_timeseries_query
 from opennem.api.response_cache import cached_json
 from opennem.api.schema import std_error_responses
@@ -104,8 +104,8 @@ async def get_network_data(
     if date_start > date_end:
         raise HTTPException(status_code=400, detail="Date start must be before date end")
 
-    # Live request: don't serve the provisional bleeding-edge interval (#575).
-    if live_query:
+    # Live request: don't serve the provisional bleeding-edge interval (#575), unless power only (final on first write).
+    if live_query and not skips_settled_cap(metrics):
         date_end = await cap_date_end_to_settled_interval(
             client=client, network=network, query_type=QueryType.DATA, date_end=date_end
         )
@@ -249,8 +249,8 @@ async def get_facility_data(
         network=network, user=user, interval=interval, date_start=date_start, date_end=date_end
     )
 
-    # Live request: don't serve the provisional bleeding-edge interval (#575).
-    if live_query:
+    # Live request: don't serve the provisional bleeding-edge interval (#575), unless power only (final on first write).
+    if live_query and not skips_settled_cap(metrics):
         date_end = await cap_date_end_to_settled_interval(
             client=client, network=network, query_type=QueryType.FACILITY, date_end=date_end
         )
