@@ -87,3 +87,13 @@ def xlsx_file(load_file: Callable) -> BinaryIO:
 def aemo_nemweb_dispatch_scada(load_file: Callable) -> str | bytes:
     zip_file = load_fixture_file_binary("PUBLIC_DISPATCHSCADA_202109021255_0000000348376188.zip")
     return load_data_zip(zip_file).content
+
+
+@pytest.fixture(autouse=True)
+def _reset_nem_early_state():
+    """The early-ingest state is process-global: keep tests from leaking handled stamps into each other"""
+    from opennem.utils.nem_early import state
+
+    state.reset()
+    yield
+    state.reset()

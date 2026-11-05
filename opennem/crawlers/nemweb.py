@@ -49,13 +49,17 @@ async def _handle_fetch_error(crawler: CrawlerDefinition, entry: DirlistingEntry
 
 
 SCADA_CRAWLER_NAME = "au.nemweb.current.dispatch_scada"
+DISPATCH_IS_CRAWLER_NAME = "au.nemweb.current.dispatch_is"
+# crawlers whose stages go into the ingest latency trace -> trace feed prefix (None = the SCADA stages)
+_TRACED_CRAWLERS: dict[str, str | None] = {SCADA_CRAWLER_NAME: None, DISPATCH_IS_CRAWLER_NAME: "prices"}
 
 _LISTED_FILE_INTERVAL_RE = re.compile(r"_(\d{12})_\d+\.zip", re.IGNORECASE)
 
 
-def _mark_downloaded(trace: IngestTrace, content: bytes) -> None:
-    trace.mark("downloaded")
-    trace.set_file_generated(content)
+def _mark_downloaded(trace: IngestTrace, content: bytes, feed: str | None) -> None:
+    trace.mark("downloaded", feed)
+    if feed is None:
+        trace.set_file_generated(content)
 
 
 async def get_newest_listed_interval(url: str) -> datetime | None:
@@ -83,17 +87,19 @@ async def process_nemweb_entry(crawler: CrawlerDefinition, entry: DirlistingEntr
             controller_return = await parse_aemo_url_optimized(entry.link)  # type: ignore
         else:
             try:
-                # only the live SCADA crawl is traced (the prices crawl shares the same context)
-                trace = current_trace() if crawler.name == SCADA_CRAWLER_NAME else None
+                # only the live SCADA and DispatchIS crawls are traced (they share the run's context)
+                traced = crawler.name in _TRACED_CRAWLERS
+                trace = current_trace() if traced else None
+                feed = _TRACED_CRAWLERS.get(crawler.name)
                 if trace:
-                    trace.mark("fetching")
-                    ts = await parse_aemo_url(entry.link, on_download=lambda content: _mark_downloaded(trace, content))
-                    trace.mark("parsed")
+                    trace.mark("fetching", feed)
+                    ts = await parse_aemo_url(entry.link, on_download=lambda content: _mark_downloaded(trace, content, feed))
+                    trace.mark("parsed", feed)
                 else:
                     ts = await parse_aemo_url(entry.link)
                 controller_return = await store_aemo_tableset(ts)
                 if trace:
-                    trace.mark("pg_stored")
+                    trace.mark("pg_stored", feed)
             except Exception as e:
                 await _handle_fetch_error(crawler=crawler, entry=entry, error=e)
                 return None
@@ -130,8 +136,13 @@ async def run_nemweb_aemo_crawl(
     reverse: bool = True,
     latest: bool = True,
     date_range: CrawlDateRange | None = None,
+    extra_intervals: list[datetime] | None = None,
 ) -> ControllerReturn:
-    """Runs the AEMO MMS crawlers"""
+    """Runs the AEMO MMS crawlers
+
+    extra_intervals: early-ingest stamps still in the future. The missing-interval grid ends at the wall clock's
+    interval so it never contains them; they are fetched when listed.
+    """
     if not crawler.url and not crawler.urls:
         raise Exception("Require a URL to run AEMO MMS crawlers")
 
@@ -181,6 +192,9 @@ async def run_nemweb_aemo_crawl(
         except Exception as e:
             logger.warning(f"Failed to get missing intervals for {crawler.name}, fetching latest entries: {e}")
             missing_intervals = None
+
+        if missing_intervals is not None and extra_intervals:
+            missing_intervals = [*missing_intervals, *(i for i in extra_intervals if i not in missing_intervals)]
 
         if missing_intervals is not None:
             logger.debug(f"Have {len(missing_intervals)} missing intervals for {crawler.name} since {time_interval}")

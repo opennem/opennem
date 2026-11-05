@@ -59,6 +59,7 @@ from opennem.tasks.tasks import (
     task_facility_first_seen_check,
     task_milestone_gap_backfill,
     task_milestone_reconciliation,
+    task_nem_early_poll,
     task_nem_interval_check,
     task_nem_per_day_check,
     task_nem_rooftop_crawl,
@@ -186,7 +187,17 @@ class WorkerSettings:
         func(task_sanity_webhook, timeout=600, max_tries=3, keep_result=0),
     ]
     cron_jobs = [
-        # NEM Interval Check — fires early, polls AEMO with backoff until data arrives
+        # NEM early poll — starts 4 min before each stamp T (minutes 1, 6, 11, ...), polls the SCADA + DispatchIS listings
+        # every 2s and ingests + aggregates T as soon as AEMO lists it (~T-2:40). Polls to T+30s (270s) + pipeline: 420s
+        cron(
+            task_nem_early_poll,
+            minute=set(range(1, 60, 5)),
+            second=0,
+            timeout=420,
+            unique=True,
+        ),
+        # NEM Interval Check — the safety net at the stamp (+8s): skips to cache warm + exports when the early poll did
+        # the work, otherwise polls AEMO with backoff until data arrives
         cron(
             task_nem_interval_check,
             minute=set(range(0, 60, 5)),

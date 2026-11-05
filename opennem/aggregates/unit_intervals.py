@@ -45,6 +45,7 @@ from opennem.db.clickhouse.views import (
 )
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.dates import get_last_completed_interval_for_network
+from opennem.utils.nem_early import clamp_end_bound
 
 logger = logging.getLogger("opennem.aggregates.unit_intervals")
 
@@ -989,9 +990,13 @@ async def process_unit_intervals_backlog_streaming(
     return total_processed
 
 
-async def run_unit_intervals_aggregate_to_now() -> int:
+async def run_unit_intervals_aggregate_to_now(end_date: datetime | None = None) -> int:
     """
     Run the unit intervals aggregation from the last processed interval to now.
+
+    Args:
+        end_date: early path only. A stamp that SCADA already holds but the clock hasn't reached; clamped to at
+            most one interval past the last completed interval (see clamp_end_bound).
 
     Returns:
         int: Number of records processed
@@ -1013,7 +1018,7 @@ async def run_unit_intervals_aggregate_to_now() -> int:
     min_max_interval = result[0][0]
 
     date_from = min_max_interval + timedelta(minutes=5)
-    date_to = get_last_completed_interval_for_network(network=NetworkNEM)
+    date_to = clamp_end_bound(end_date, get_last_completed_interval_for_network(network=NetworkNEM))
 
     if date_from > date_to:
         logger.info("No new data to process")

@@ -3,7 +3,8 @@
 import asyncio
 import logging
 import time
-from datetime import datetime, timedelta
+from collections.abc import Awaitable, Callable
+from datetime import datetime, timedelta, timezone
 
 from arq import Retry
 from sanity.exceptions import SanityConnectionError, SanityRateLimitError, SanityServerError, SanityTimeoutError
@@ -49,6 +50,8 @@ from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_opennem
 from opennem.utils.ingest_latency import IngestTrace, start_trace
+from opennem.utils.nem_early import get_lock, next_stamp
+from opennem.utils.nem_early import state as early_state
 from opennem.workers.apvi_latest import run_apvi_latest_refresh
 from opennem.workers.catchup import catchup_aggregates, catchup_last_days, run_catchup_check
 from opennem.workers.energy import (
@@ -83,8 +86,25 @@ NEM_SCADA_FAST_POLL_SECONDS = 1.5
 NEM_SCADA_FAST_POLL_WINDOW_SECONDS = 30
 NEM_SCADA_SLOW_BACKOFF = [5, 10, 15, 20, 20, 20, 20]
 
+# Early poll (#797 follow-up): AEMO lists the file stamped T about 2-3 min BEFORE T. The early cron starts 4 min before
+# each stamp, polls both listings every 2s (one outstanding request per feed) and runs the pipeline as soon as the files
+# are listed, so ClickHouse holds T before the clock reaches it.
+NEM_EARLY_POLL_INTERVAL_SECONDS = 2.0
+# hard cap on one early job (starts at T-4:00, polls to T+30s = 270s)
+NEM_EARLY_POLL_MAX_SECONDS = 300
+# give up quietly this long after the stamp: the T+8s cron is the safety net from there
+NEM_EARLY_POLL_AFTER_STAMP_SECONDS = 30
+# once SCADA landed, wait this long for DispatchIS before leaving the pipeline to the safety net (market_summary and
+# unit_intervals market_value need the price for T)
+NEM_EARLY_PRICES_GRACE_SECONDS = 20
+# a listed file whose crawl keeps landing nothing (404 while the listing is ahead of the file store) is retried this often
+NEM_EARLY_INGEST_MAX_ATTEMPTS = 5
+
 # newest dispatch interval this process has ingested (naive AEST). None = unknown, so poll with a full crawl
 _last_scada_interval: datetime | None = None
+
+
+_AEST = timezone(timedelta(hours=10))  # NEM time, no DST
 
 
 def _naive(dt: datetime) -> datetime:
@@ -120,29 +140,47 @@ async def _poll_scada_once(trace: IngestTrace):
     if not new_file:
         return None
 
-    result = await run_crawl(AEMONNemwebDispatchScada, latest=True)
+    # the early poll may be mid-crawl on this very file: wait for it, then re-check instead of crawling twice
+    async with get_lock("scada"):
+        if newest is not None and _last_scada_interval is not None and _last_scada_interval >= _naive(newest):
+            return None
 
-    if result and result.inserted_records > 0:
-        landed = getattr(result, "interval_max", None) or newest
-        if landed is not None:
-            _last_scada_interval = _naive(landed)
+        result = await run_crawl(AEMONNemwebDispatchScada, latest=True)
+
+        if result and result.inserted_records > 0:
+            landed = getattr(result, "interval_max", None) or newest
+            if landed is not None:
+                _last_scada_interval = _naive(landed)
 
     return result
 
 
-async def _crawl_nem_prices() -> int:
+async def _crawl_nem_prices(extra_intervals: list[datetime] | None = None, stamp: datetime | None = None) -> int:
     """DispatchIS then TradingIS, sequential (both write balancing_summary, concurrent upserts deadlock).
 
     Runs alongside the SCADA poll (#726). A failure here must not kill the SCADA path or the
     exports, so it is logged (error logs reach Sentry) and swallowed; market_summary then runs
     on whatever prices landed, and the catchup tasks repair the rest.
 
+    extra_intervals: early-poll stamps still ahead of the clock (see run_nemweb_aemo_crawl).
+    stamp: the safety net passes its stamp; if the early poll already stored prices for it (possibly while this
+    call waited on the lock) there is nothing to crawl and the answer is "landed" (1).
+
     Returns the DispatchIS inserted record count (0 on no new file or failure).
     """
     try:
-        dispatch = await run_crawl(AEMONemwebDispatchIS, latest=True)
-        await run_crawl(AEMONemwebTradingIS, latest=True)
-        return dispatch.inserted_records or 0 if dispatch else 0
+        async with get_lock("prices"):
+            if stamp is not None and early_state.prices_landed(stamp):
+                return 1
+            kwargs = {"extra_intervals": extra_intervals} if extra_intervals else {}
+            dispatch = await run_crawl(AEMONemwebDispatchIS, latest=True, **kwargs)
+            await run_crawl(AEMONemwebTradingIS, latest=True)
+
+            inserted = dispatch.inserted_records or 0 if dispatch else 0
+            landed = getattr(dispatch, "interval_max", None) if inserted else None
+            if landed is not None and (early_state.prices is None or _naive(landed) > early_state.prices):
+                early_state.prices = _naive(landed)
+            return inserted
     except Exception:
         logger.exception("NEM price crawl (DispatchIS/TradingIS) failed")
         return 0
@@ -169,25 +207,52 @@ async def task_warm_tracker_cache(ctx: dict) -> None:
     await run_cache_warm()
 
 
+async def _run_exports() -> None:
+    """NEM and AU exports run back to back, not gathered (peak memory, #677)."""
+    await run_export_power_latest_for_network(network=NetworkNEM)
+    await run_export_power_latest_for_network(network=NetworkAU)
+
+
 async def task_nem_interval_check(ctx) -> None:
-    """Poll AEMO until new dispatch_scada data arrives, then run full pipeline."""
+    """Safety net at the stamp (+8s): poll AEMO until new dispatch_scada data arrives, then run the full pipeline.
+
+    The early poll (task_nem_early_poll) normally ingested and aggregated this stamp already. Then only the steps that
+    belong AT the mark remain: cache warm (the API serves the stamp now) and the exports.
+    """
     trace = start_trace()
     trace.mark("cron_start")
     scada_result = None
     started = time.monotonic()
     poll_deadline = started + NEM_SCADA_POLL_BUDGET_SECONDS
     slow_polls = 0
+    stamp = get_last_completed_interval_for_network(network=NetworkNEM)
+
+    # waits out an early pipeline that is mid-flight, so the check below sees its result
+    async with get_lock("pipeline"):
+        early_done = early_state.aggregated_through(stamp)
+    if early_done:
+        logger.info(f"nem interval check: {stamp} already ingested and aggregated by the early poll, cache warm + exports")
+        await _enqueue_cache_warm(ctx)
+        await _run_exports()
+        return
 
     # prices don't depend on the SCADA poll: start them now instead of after it
-    prices_task = asyncio.create_task(_crawl_nem_prices())
+    prices_task = asyncio.create_task(_crawl_nem_prices(stamp=stamp))
 
     try:
         attempt = 0
         while True:
             attempt += 1
+            if _last_scada_interval is not None and _last_scada_interval >= stamp:
+                # the early poll stored this stamp's SCADA (its pipeline did not complete): nothing to poll for
+                logger.info(f"SCADA for {stamp} already stored by the early poll")
+                scada_landed = True
+                break
+
             scada_result = await _poll_scada_once(trace)
             if scada_result and scada_result.inserted_records > 0:
                 logger.info(f"SCADA data received on poll attempt {attempt}")
+                scada_landed = True
                 break
 
             if time.monotonic() - started < NEM_SCADA_FAST_POLL_WINDOW_SECONDS:
@@ -196,10 +261,12 @@ async def task_nem_interval_check(ctx) -> None:
                 wait = NEM_SCADA_SLOW_BACKOFF[slow_polls]
                 slow_polls += 1
             else:
+                scada_landed = False
                 break
 
             if time.monotonic() + wait > poll_deadline:
                 logger.warning(f"Poll attempt {attempt}: no new SCADA data, poll budget spent, moving on")
+                scada_landed = False
                 break
             if wait != NEM_SCADA_FAST_POLL_SECONDS:
                 logger.info(f"Poll attempt {attempt}: no new SCADA data, waiting {wait}s")
@@ -214,36 +281,158 @@ async def task_nem_interval_check(ctx) -> None:
 
     # DispatchIS can publish a little after the crawl started: if SCADA landed but the early crawl
     # found nothing new, go again now so this interval's demand/price isn't a cycle late.
-    if scada_result and scada_result.inserted_records > 0 and not early_dispatch_records:
-        await _crawl_nem_prices()
+    if scada_landed and not early_dispatch_records:
+        await _crawl_nem_prices(stamp=stamp)
 
-    # energy + market_summary — use last_intervals to always recompute with flows
-    await process_energy_last_intervals(num_intervals=12)
-    await run_market_summary_aggregate_for_last_intervals(num_intervals=12)
-
-    # unit_intervals must land in CH BEFORE the exports start: power_week derives its end
-    # boundary from max(interval) in CH, so a concurrent aggregate publishes one interval late (#726).
-    # A failed aggregate must not stop the exports (stale data is the worst outcome): run them, then re-raise.
     aggregate_error: Exception | None = None
-    try:
-        await asyncio.wait_for(run_unit_intervals_aggregate_to_now(), timeout=NEM_AGGREGATE_BUDGET_SECONDS)
-    except Exception as e:
-        logger.exception("unit_intervals aggregate failed, exporting anyway")
-        aggregate_error = e
+    async with get_lock("pipeline"):
+        # the early poll may have finished the pipeline while this run was polling
+        if early_state.aggregated_through(stamp):
+            logger.info(f"nem interval check: {stamp} aggregated by the early poll while polling, skipping pipeline")
+        else:
+            # energy + market_summary — use last_intervals to always recompute with flows
+            await process_energy_last_intervals(num_intervals=12)
+            await run_market_summary_aggregate_for_last_intervals(num_intervals=12)
 
-    trace.mark("ch_aggregate")
+            # unit_intervals must land in CH BEFORE the exports start: power_week derives its end
+            # boundary from max(interval) in CH, so a concurrent aggregate publishes one interval late (#726).
+            # A failed aggregate must not stop the exports (stale data is the worst outcome): run them, then re-raise.
+            try:
+                await asyncio.wait_for(run_unit_intervals_aggregate_to_now(), timeout=NEM_AGGREGATE_BUDGET_SECONDS)
+            except Exception as e:
+                logger.exception("unit_intervals aggregate failed, exporting anyway")
+                aggregate_error = e
+
+            trace.mark("ch_aggregate")
+
     trace.log()
 
     # data is queryable now: refill the tracker response cache before users arrive (#737)
     if aggregate_error is None:
         await _enqueue_cache_warm(ctx)
 
-    # NEM and AU exports run back to back, not gathered (peak memory, #677).
-    await run_export_power_latest_for_network(network=NetworkNEM)
-    await run_export_power_latest_for_network(network=NetworkAU)
+    await _run_exports()
 
     if aggregate_error:
         raise aggregate_error
+
+
+async def _early_ingest_scada(stamp: datetime) -> bool:
+    """Crawl SCADA for a listed, still-future stamp. True once it is stored."""
+    global _last_scada_interval
+
+    async with get_lock("scada"):
+        if _last_scada_interval is not None and _last_scada_interval >= stamp:
+            return True  # the safety net got there first
+        result = await run_crawl(AEMONNemwebDispatchScada, latest=True, extra_intervals=[stamp])
+        landed = getattr(result, "interval_max", None) if result and result.inserted_records > 0 else None
+        if landed is None or _naive(landed) < stamp:
+            return False
+        _last_scada_interval = _naive(landed)
+        return True
+
+
+async def _early_ingest_prices(stamp: datetime) -> bool:
+    """Crawl DispatchIS (+ TradingIS) for a listed, still-future stamp. True once DispatchIS is stored."""
+    await _crawl_nem_prices(extra_intervals=[stamp], stamp=stamp)
+    return early_state.prices_landed(stamp)
+
+
+async def _early_poll_feed(
+    feed: str | None,
+    url: str,
+    stamp: datetime,
+    ingest: Callable[[datetime], Awaitable[bool]],
+    budget_seconds: float,
+    trace: IngestTrace,
+) -> bool:
+    """Poll one listing until a file for `stamp` (or newer) is listed, then ingest it. True once ingested.
+
+    Cheap listing check only (gzip + regex), one request outstanding, sequential. A listing that shows an older newest
+    file is the Azure backend flap: noise, ignored. A listing error is noise too: the safety net does the doubt-fallback.
+    """
+    deadline = time.monotonic() + budget_seconds
+    attempts = 0
+    while True:
+        try:
+            newest = await get_newest_listed_interval(url)
+        except Exception as e:
+            logger.debug(f"early poll {feed or 'scada'}: listing failed: {e}")
+            newest = None
+
+        if newest is not None and newest >= stamp:
+            trace.mark("listed", feed)
+            attempts += 1
+            try:
+                if await ingest(stamp):
+                    return True
+            except Exception:
+                logger.exception(f"early poll {feed or 'scada'}: ingest of {stamp} failed")
+            if attempts >= NEM_EARLY_INGEST_MAX_ATTEMPTS:
+                logger.warning(f"early poll {feed or 'scada'}: {stamp} listed but not ingested after {attempts} tries")
+                return False
+
+        if time.monotonic() + NEM_EARLY_POLL_INTERVAL_SECONDS > deadline:
+            return False
+        await asyncio.sleep(NEM_EARLY_POLL_INTERVAL_SECONDS)
+
+
+async def _early_pipeline(stamp: datetime, trace: IngestTrace) -> None:
+    """energy -> market_summary -> unit_intervals (CH) through the early-landed stamp. Same steps and order as the
+    safety net, with the end bound moved from the clock's last completed interval to `stamp` (clamped to one
+    interval ahead). Any failure leaves `aggregated` unset so the safety net redoes everything."""
+    async with get_lock("pipeline"):
+        if early_state.aggregated_through(stamp):
+            return
+        try:
+            await process_energy_last_intervals(num_intervals=12, end_time=stamp)
+            await run_market_summary_aggregate_for_last_intervals(num_intervals=12, end_date=stamp)
+            await asyncio.wait_for(run_unit_intervals_aggregate_to_now(end_date=stamp), timeout=NEM_AGGREGATE_BUDGET_SECONDS)
+        except Exception:
+            logger.exception(f"early pipeline for {stamp} failed, leaving it to the safety net")
+            return
+        early_state.aggregated = stamp
+        trace.mark("ch_aggregate")
+
+
+async def run_nem_early_poll(stamp: datetime, budget_seconds: float) -> None:
+    """Ingest the files for `stamp` as soon as AEMO lists them, then aggregate ahead of the clock."""
+    trace = start_trace(stamp)
+    trace.mark("cron_start")
+
+    scada = asyncio.create_task(
+        _early_poll_feed(None, AEMONNemwebDispatchScada.url, stamp, _early_ingest_scada, budget_seconds, trace)
+    )
+    prices = asyncio.create_task(
+        _early_poll_feed("prices", AEMONemwebDispatchIS.url, stamp, _early_ingest_prices, budget_seconds, trace)
+    )
+    try:
+        scada_ok = await scada
+        # SCADA is the gate. Give DispatchIS a short grace after it, but don't hold SCADA hostage to it
+        if scada_ok and not prices.done():
+            await asyncio.wait({prices}, timeout=NEM_EARLY_PRICES_GRACE_SECONDS)
+    except BaseException:
+        scada.cancel()
+        prices.cancel()
+        raise
+    finally:
+        if not prices.done():
+            prices.cancel()
+    prices_ok = prices.done() and not prices.cancelled() and prices.exception() is None and prices.result()
+
+    if scada_ok and prices_ok:
+        await _early_pipeline(stamp, trace)
+    else:
+        logger.info(f"early poll {stamp}: scada={scada_ok} prices={prices_ok}, leaving the pipeline to the safety net")
+    trace.log()
+
+
+async def task_nem_early_poll(ctx) -> None:
+    """Starts ~4 min before each NEM stamp T: see run_nem_early_poll."""
+    stamp = next_stamp(get_last_completed_interval_for_network(network=NetworkNEM))
+    trace_boundary = stamp.replace(tzinfo=_AEST).timestamp()
+    budget = trace_boundary + NEM_EARLY_POLL_AFTER_STAMP_SECONDS - time.time()
+    await run_nem_early_poll(stamp, budget_seconds=min(budget, NEM_EARLY_POLL_MAX_SECONDS))
 
 
 async def task_nem_per_day_check(ctx) -> None:
