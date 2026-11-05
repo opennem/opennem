@@ -225,10 +225,12 @@ async def poll_for_slot(
 
 
 async def _fetch_one(
-    file: DispatchFile, semaphore: asyncio.Semaphore
+    file: DispatchFile, semaphore: asyncio.Semaphore, on_downloaded: Callable[[], None] | None = None
 ) -> list[FacilityScadaSchema | BalancingSummarySchema] | None:
     async with semaphore:
         try:
+            if on_downloaded:
+                return await wemde_parse_dispatch(file.link, timeout=DISPATCH_HTTP_TIMEOUT, on_downloaded=on_downloaded)
             return await wemde_parse_dispatch(file.link, timeout=DISPATCH_HTTP_TIMEOUT)
         except Exception as e:
             # isolated: one bad or late file must not drop the others
@@ -236,13 +238,32 @@ async def _fetch_one(
             return None
 
 
-async def fetch_and_persist(files: Sequence[DispatchFile], concurrency: int = FETCH_CONCURRENCY) -> set[datetime]:
-    """Fetch and parse files concurrently (newest first order kept), persist, return persisted facility_scada slots."""
+async def fetch_and_persist(
+    files: Sequence[DispatchFile], concurrency: int = FETCH_CONCURRENCY, trace: LatencyTrace | None = None
+) -> set[datetime]:
+    """Fetch and parse files concurrently (newest first order kept), persist, return persisted facility_scada slots.
+
+    With a `trace`, marks `newest_downloaded` (last file in the group downloaded), `newest_parsed` and `newest_stored`.
+    """
     if not files:
         return set()
 
+    on_downloaded: Callable[[], None] | None = None
+    if trace:
+        remaining = len(files)
+
+        def _count_downloaded() -> None:
+            nonlocal remaining
+            remaining -= 1
+            if remaining <= 0:
+                trace.mark("newest_downloaded")
+
+        on_downloaded = _count_downloaded
+
     semaphore = asyncio.Semaphore(concurrency)
-    results = await asyncio.gather(*(_fetch_one(f, semaphore) for f in files))
+    results = await asyncio.gather(*(_fetch_one(f, semaphore, on_downloaded) for f in files))
+    if trace:
+        trace.mark("newest_parsed")
 
     records: list[FacilityScadaSchema | BalancingSummarySchema] = []
     for result in results:
@@ -253,6 +274,8 @@ async def fetch_and_persist(files: Sequence[DispatchFile], concurrency: int = FE
         return set()
 
     persisted = await persist_wemde_records(AEMOWEMDEDispatch, records)
+    if trace:
+        trace.mark("newest_stored")
     return fs_intervals(persisted)
 
 
@@ -297,7 +320,7 @@ async def run_wem_dispatch_incremental(trace: LatencyTrace | None = None, now_aw
     logger.info(f"wem dispatch incremental: {len(files)} files, {len(missing)} missing slots, newest {newest}")
 
     for i, group in enumerate(persist_groups(files)):
-        slots = await fetch_and_persist(group)
+        slots = await fetch_and_persist(group, trace=trace if i == 0 else None)
         result.persisted |= slots
         if i == 0:
             trace.mark("fetched_persisted_newest")

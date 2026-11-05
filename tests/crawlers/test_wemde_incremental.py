@@ -1,5 +1,6 @@
 """WEM dispatch incremental fetch + gap healing (#795)."""
 
+from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 
 import pytest
@@ -153,11 +154,15 @@ class _Fake:
     async def _covered(self, start: datetime, end: datetime) -> set[datetime]:
         return {s for s in self.covered if start <= s <= end}
 
-    async def _parse(self, url: str, timeout: float | None = None) -> list[FacilityScadaSchema]:
+    async def _parse(
+        self, url: str, timeout: float | None = None, on_downloaded: Callable[[], None] | None = None
+    ) -> list[FacilityScadaSchema]:
         interval = wi.parse_dispatch_interval(url)
         assert interval is not None
         if interval in self.fail:
             raise Exception("boom")
+        if on_downloaded:
+            on_downloaded()
         self.fetched.append(interval)
         return [_record(interval)]
 
@@ -181,7 +186,14 @@ async def test_incremental_steady_state_fetches_two(monkeypatch: pytest.MonkeyPa
     assert sorted(fake.fetched) == [_slot(-1), _slot(0)]
     assert result.persisted == {_slot(-1), _slot(0)}
     assert fake.persisted_batches == [{_slot(-1), _slot(0)}]
-    assert list(trace.marks) == ["listing", "fetched_persisted_newest", "persisted"]
+    assert list(trace.marks) == [
+        "listing",
+        "newest_downloaded",
+        "newest_parsed",
+        "newest_stored",
+        "fetched_persisted_newest",
+        "persisted",
+    ]
 
 
 @pytest.mark.asyncio

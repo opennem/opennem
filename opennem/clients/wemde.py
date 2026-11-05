@@ -11,6 +11,7 @@ See the URL constants for sources and unit tests
 """
 
 import logging
+from collections.abc import Callable
 from datetime import datetime
 
 from pydantic import ValidationError
@@ -141,7 +142,9 @@ async def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
     return models
 
 
-async def wemde_parse_dispatch(url: str, timeout: int | None = None) -> list[FacilityScadaSchema | BalancingSummarySchema]:
+async def wemde_parse_dispatch(
+    url: str, timeout: int | None = None, on_downloaded: Callable[[], None] | None = None
+) -> list[FacilityScadaSchema | BalancingSummarySchema]:
     """Parses a WEMDE dispatch solution file.
 
     Uses the cleared `energy` market dispatch quantity (MW) per facility as the WEM
@@ -159,6 +162,8 @@ async def wemde_parse_dispatch(url: str, timeout: int | None = None) -> list[Fac
     """
 
     download_jsons = await _wemde_download_dataset(url, timeout=timeout)
+    if on_downloaded:
+        on_downloaded()
 
     # Get battery unit mappings
     battery_unit_map = await get_battery_unit_map()
