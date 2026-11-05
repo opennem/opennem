@@ -21,6 +21,45 @@ from opennem.utils.dates import get_today_opennem
 logger = logging.getLogger("opennem.crawlers.wemde")
 
 
+async def persist_wemde_records(
+    crawler: CrawlerDefinition, data: list[FacilityScadaSchema | BalancingSummarySchema]
+) -> list[FacilityScadaSchema | BalancingSummarySchema]:
+    """De-duplicate and persist parsed WEMDE records, returns the de-duplicated records."""
+    # de-duplicate on the upsert key — overlapping dispatch files repeat intervals,
+    # which a single ON CONFLICT batch rejects. Entries are newest-first, so keeping
+    # the first occurrence keeps the freshest dispatch solution per interval.
+    deduped: dict[tuple, FacilityScadaSchema | BalancingSummarySchema] = {}
+    for record in data:
+        if isinstance(record, BalancingSummarySchema):
+            key = (record.interval, record.network_id, record.network_region, record.is_forecast)
+        else:
+            key = (record.interval, record.network_id, record.facility_code, record.is_forecast)
+        deduped.setdefault(key, record)
+    data = list(deduped.values())
+
+    # persist — split by schema since FacilityScada and BalancingSummary go to
+    # different tables. The dispatch parser now emits both: facility scada (gen)
+    # plus a per-interval BalancingSummary carrying price_dispatch (5-min price).
+    # Update-field sets are declared on the CrawlerDefinition so this runner
+    # stays parser-agnostic — dispatch crawlers set bs_update_fields=["price_dispatch"]
+    # and trading-price crawlers set ["price"].
+    fs_records = [r for r in data if isinstance(r, FacilityScadaSchema)]
+    bs_records = [r for r in data if isinstance(r, BalancingSummarySchema)]
+
+    if fs_records:
+        fs_update_fields = crawler.fs_update_fields or ["generated", "energy"]
+        await persist_facility_scada_bulk(records=fs_records, update_fields=fs_update_fields)
+
+    if bs_records:
+        if not crawler.bs_update_fields:
+            raise Exception(f"Crawler {crawler.name} produced BalancingSummary records but has no bs_update_fields configured")
+        await persist_facility_scada_bulk(records=bs_records, update_fields=crawler.bs_update_fields)
+
+    logger.info(f"Persisted {len(fs_records)} facility_scada + {len(bs_records)} balancing_summary records")
+
+    return data
+
+
 async def run_wemde_crawl(
     crawler: CrawlerDefinition,
     latest: bool = True,
@@ -106,37 +145,7 @@ async def run_wemde_crawl(
             logger.error(f"Error parsing data with {crawler.parser}: {e}")
             continue
 
-    # de-duplicate on the upsert key — overlapping dispatch files repeat intervals,
-    # which a single ON CONFLICT batch rejects. Entries are newest-first, so keeping
-    # the first occurrence keeps the freshest dispatch solution per interval.
-    deduped: dict[tuple, FacilityScadaSchema | BalancingSummarySchema] = {}
-    for record in data:
-        if isinstance(record, BalancingSummarySchema):
-            key = (record.interval, record.network_id, record.network_region, record.is_forecast)
-        else:
-            key = (record.interval, record.network_id, record.facility_code, record.is_forecast)
-        deduped.setdefault(key, record)
-    data = list(deduped.values())
-
-    # persist — split by schema since FacilityScada and BalancingSummary go to
-    # different tables. The dispatch parser now emits both: facility scada (gen)
-    # plus a per-interval BalancingSummary carrying price_dispatch (5-min price).
-    # Update-field sets are declared on the CrawlerDefinition so this runner
-    # stays parser-agnostic — dispatch crawlers set bs_update_fields=["price_dispatch"]
-    # and trading-price crawlers set ["price"].
-    fs_records = [r for r in data if isinstance(r, FacilityScadaSchema)]
-    bs_records = [r for r in data if isinstance(r, BalancingSummarySchema)]
-
-    if fs_records:
-        fs_update_fields = crawler.fs_update_fields or ["generated", "energy"]
-        await persist_facility_scada_bulk(records=fs_records, update_fields=fs_update_fields)
-
-    if bs_records:
-        if not crawler.bs_update_fields:
-            raise Exception(f"Crawler {crawler.name} produced BalancingSummary records but has no bs_update_fields configured")
-        await persist_facility_scada_bulk(records=bs_records, update_fields=crawler.bs_update_fields)
-
-    logger.info(f"Persisted {len(fs_records)} facility_scada + {len(bs_records)} balancing_summary records")
+    data = await persist_wemde_records(crawler, data)
 
     # track latest interal and update metadata
     recent_latest_interval = max([i.interval for i in data if i.interval])

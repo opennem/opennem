@@ -74,6 +74,7 @@ from opennem.tasks.tasks import (
     task_warm_tracker_cache,
     task_weekly_summary_nem,
     task_weekly_summary_wem,
+    task_wem_catchup_check,
     task_wem_day_crawl,
     task_wem_interval_check,
 )
@@ -224,12 +225,21 @@ class WorkerSettings:
             timeout=None,
             unique=True,
         ),
-        # WEM near-real-time dispatch feed + aggregates — every 5 min
+        # WEM near-real-time dispatch feed + aggregates — every 5 min. AEMO publishes the file for
+        # interval N at N+3min (listing modified time), so fire at :x3 and poll for it (#795)
         cron(
             task_wem_interval_check,
-            minute=set(range(0, 60, 5)),
-            second=50,
+            minute=set(range(3, 60, 5)),
+            second=5,
             timeout=270,
+            unique=True,
+        ),
+        # WEM gap healing — missing 5-min slots in the last 24h, every 15 min (#795)
+        cron(
+            task_wem_catchup_check,
+            minute={1, 16, 31, 46},
+            second=20,
+            timeout=1800,
             unique=True,
         ),
         # APVI Rooftop

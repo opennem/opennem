@@ -134,7 +134,7 @@ The application uses environment variables for configuration. These are loaded a
 - CH stores AEST-naive timestamps — UTC-based date ranges miss today's data when it's morning AEST
 
 **WEM 24h lag:**
-- WEM data publishes daily, ~24h behind. Never use `MIN(MAX(interval))` across all networks as a baseline — WEM will block NEM processing
+- WEM facilityScada publishes daily, ~24h behind (dispatch feed is ~5 min, gaps healed by `task_wem_catchup_check`). Never use `MIN(MAX(interval))` across all networks as a baseline — WEM will block NEM processing
 - Use NEM's max interval directly for incremental aggregation
 
 **Market summary flow computation:**
@@ -206,7 +206,7 @@ backfill_market_summary_views(refresh_views=True)
 |---------|----------|--------------|
 | NEM | 5 min | Near real-time |
 | AEMO_ROOFTOP | 30 min | ~30 minutes max |
-| WEM | 5 min | ~24 hours (publishes daily) |
+| WEM | 5 min | ~5 min (dispatch feed); facilityScada ~24h |
 | APVI | 5 min | Follows AEMO_ROOFTOP |
 
 ### unit_intervals Aggregation

@@ -32,7 +32,8 @@ from opennem.crawlers.nemweb import (
     AEMONemwebTradingIS,
     AEMONNemwebDispatchScada,
 )
-from opennem.crawlers.wemde import AEMOWEMDEDispatch, run_all_wem_crawlers, run_wemde_crawl
+from opennem.crawlers.wemde import run_all_wem_crawlers
+from opennem.crawlers.wemde_incremental import LatencyTrace, run_wem_catchup, run_wem_dispatch_incremental
 from opennem.db import get_write_session
 from opennem.db.clickhouse.schema import optimize_clickhouse_tables
 from opennem.exporter.facilities import export_facilities_static
@@ -272,24 +273,54 @@ async def task_wem_day_crawl(ctx) -> None:
 
 
 async def task_wem_interval_check(ctx) -> None:
-    """Every 5 min: crawl the WEMDE dispatch feed and run the WEM aggregates.
+    """Every 5 min: ingest new WEMDE dispatch files and run the WEM aggregates.
 
-    Near-real-time WEM via the dispatch-solution feed (~5-10 min lag). The hourly
-    task_wem_day_crawl remains the full catch-up pass (all WEM crawlers, 2-day window).
+    Near-real-time WEM via the dispatch-solution feed. AEMO publishes each file 3 min after its
+    interval, so the cron fires at :x3 and polls the listing for the newest file. Only files not
+    yet in facility_scada (plus the newest two for revisions) are fetched, concurrently (#795).
+    The hourly task_wem_day_crawl remains the full catch-up pass (all WEM crawlers, 2-day window).
     """
-    await run_wemde_crawl(AEMOWEMDEDispatch, latest=True, limit=AEMOWEMDEDispatch.limit)
+    trace = LatencyTrace("wem_ingest_latency")
+    trace.mark("start")
+    try:
+        ingest = await run_wem_dispatch_incremental(trace)
 
-    # aggregate WEM facility_scada -> CH unit_intervals over a recent window
-    end_date = get_last_completed_interval_for_network(network=NetworkNEM)
-    start_date = end_date - timedelta(hours=6)
+        # aggregate WEM facility_scada -> CH unit_intervals over a recent window
+        end_date = get_last_completed_interval_for_network(network=NetworkNEM)
+        start_date = end_date - timedelta(hours=6)
+        if ingest.persisted:
+            # slots healed further back than the window still need aggregating
+            start_date = min(start_date, min(ingest.persisted))
+        async with get_write_session() as session:
+            await process_unit_intervals_backlog(
+                session=session,
+                start_date=start_date,
+                end_date=end_date,
+                network=NetworkWEM,
+                # runs every few minutes over a recent window — the daily views are rebuilt by
+                # the catchup pass instead, which covers the same days once per day (#592)
+                rebuild_daily_views=False,
+            )
+        trace.mark("aggregated")
+
+        await run_export_power_latest_for_network(network=NetworkWEM)
+        trace.mark("exported")
+    finally:
+        trace.log()
+
+
+async def task_wem_catchup_check(ctx) -> None:
+    """Every 15 min: heal missing WEM 5-min slots in the last 24h (outages over ~30 min, #795)."""
+    result = await run_wem_catchup()
+    if not result.healed:
+        return
+
     async with get_write_session() as session:
         await process_unit_intervals_backlog(
             session=session,
-            start_date=start_date,
-            end_date=end_date,
+            start_date=min(result.healed),
+            end_date=max(result.healed),
             network=NetworkWEM,
-            # runs every few minutes over a recent window — the daily views are rebuilt by
-            # the catchup pass instead, which covers the same days once per day (#592)
             rebuild_daily_views=False,
         )
 

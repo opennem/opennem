@@ -30,11 +30,11 @@ class WEMDEDownloadException(Exception):
     pass
 
 
-async def _wemde_download_dataset(url: str) -> list[dict]:
+async def _wemde_download_dataset(url: str, timeout: float | None = None) -> list[dict]:
     json_response = []
 
     try:
-        json_dicts = await download_and_parse_json_zip(url)
+        json_dicts = await download_and_parse_json_zip(url, timeout=timeout)
 
         if len(json_dicts) == 0:
             raise Exception("No data in JSON")
@@ -141,7 +141,7 @@ async def wemde_parse_facilityscada(url: str) -> list[FacilityScadaSchema]:
     return models
 
 
-async def wemde_parse_dispatch(url: str) -> list[FacilityScadaSchema | BalancingSummarySchema]:
+async def wemde_parse_dispatch(url: str, timeout: float | None = None) -> list[FacilityScadaSchema | BalancingSummarySchema]:
     """Parses a WEMDE dispatch solution file.
 
     Uses the cleared `energy` market dispatch quantity (MW) per facility as the WEM
@@ -158,7 +158,7 @@ async def wemde_parse_dispatch(url: str) -> list[FacilityScadaSchema | Balancing
     actual, and would otherwise land in facility_scada as future-dated rows.
     """
 
-    download_jsons = await _wemde_download_dataset(url)
+    download_jsons = await _wemde_download_dataset(url, timeout=timeout)
 
     # Get battery unit mappings
     battery_unit_map = await get_battery_unit_map()
