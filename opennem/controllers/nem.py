@@ -305,6 +305,12 @@ async def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
 
     cr.server_latest = max([r["interval"] for r in records_to_store]) if records_to_store else None
 
+    # span of what was stored: the early poll confirms a still-future stamp landed from this, not from the listing
+    if records_to_store and cr.inserted_records:
+        stored_intervals = [r["interval"] for r in records_to_store]
+        cr.interval_min = min(stored_intervals)
+        cr.interval_max = max(stored_intervals)
+
     return cr
 
 

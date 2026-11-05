@@ -382,3 +382,35 @@ def test_safety_net_runs_normally_when_early_poll_did_nothing() -> None:
     events, _ = _run_cron(listing=T)
     assert f"crawl:{tasks.AEMONNemwebDispatchScada.name}" in events
     assert events.count("pipeline") == 3
+
+
+def test_process_nem_price_sets_interval_span(monkeypatch):
+    """The early poll confirms a future stamp landed from the DispatchIS span; prices used to return none"""
+    import asyncio
+    from contextlib import asynccontextmanager
+    from datetime import datetime
+    from unittest.mock import AsyncMock, MagicMock
+
+    from opennem.controllers import nem as nem_ctrl
+
+    class _Table:
+        full_name = "dispatch_price"
+        records = [
+            {"settlementdate": "2026/11/05 18:15:00", "regionid": "NSW1", "rrp": 50.0},
+            {"settlementdate": "2026/11/05 18:15:00", "regionid": "QLD1", "rrp": 40.0},
+        ]
+
+    session = MagicMock()
+    session.execute = AsyncMock()
+    session.commit = AsyncMock()
+    session.close = AsyncMock()
+
+    @asynccontextmanager
+    async def _fake_session():
+        yield session
+
+    monkeypatch.setattr(nem_ctrl, "get_write_session", _fake_session)
+    cr = asyncio.run(nem_ctrl.process_nem_price(_Table()))  # type: ignore[arg-type]
+
+    assert cr.inserted_records == 2
+    assert cr.interval_min == cr.interval_max == datetime(2026, 11, 5, 18, 15)
