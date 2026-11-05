@@ -229,3 +229,70 @@ async def test_watchdog_sentry_failure_never_raises(monkeypatch: pytest.MonkeyPa
     monkeypatch.setattr(loop_monitor.sentry_sdk.Scope, "capture_event", boom)
     mon = _watch_mon()
     mon._report_stall(1500.0, 1, [{"filename": "a.py", "lineno": 1, "function": "f"}])
+
+
+# idle selector filter (BACKEND-64S/66S: innermost frame selectors.select = late wake, not a blocker)
+
+_IDLE_FRAMES = [
+    {"filename": "/app/.venv/bin/worker", "lineno": 10, "function": "<module>"},
+    {"filename": "opennem/tasks/app.py", "lineno": 524, "function": "main"},
+    {"filename": "arq/worker.py", "lineno": 313, "function": "run"},
+    {"filename": "/usr/local/lib/python3.12/selectors.py", "lineno": 468, "function": "select"},
+]
+
+
+async def test_is_idle_select() -> None:
+    assert loop_monitor.is_idle_select(_IDLE_FRAMES)
+    assert not loop_monitor.is_idle_select(_IDLE_FRAMES[:-1])
+    assert not loop_monitor.is_idle_select([])
+    assert not loop_monitor.is_idle_select([{"filename": "opennem/x.py", "lineno": 1, "function": "select"}])
+
+
+async def test_watchdog_skips_idle_select_real_stack(captured: list[dict[str, Any]]) -> None:
+    """A thread parked in selector.select() is sampled but not reported."""
+    import selectors
+    import socket
+
+    a, b = socket.socketpair()
+    sel = selectors.DefaultSelector()
+    sel.register(a, selectors.EVENT_READ)
+    ready = threading.Event()
+    tid: list[int] = []
+
+    def park() -> None:
+        tid.append(threading.get_ident())
+        ready.set()
+        sel.select(timeout=5.0)
+
+    t = threading.Thread(target=park, daemon=True)
+    t.start()
+    ready.wait(1.0)
+    time.sleep(0.2)  # let it enter select
+    mon = _watch_mon()
+    mon._loop_thread_id = tid[0]
+    mon._last_tick = 0.0
+    mon._watch_once(2.0)
+    b.send(b"x")  # wake it
+    t.join(2.0)
+    sel.close()
+    a.close()
+    b.close()
+    assert mon.idle_select_skips == 1
+    assert mon.stack_captures == 0 and captured == []
+
+
+async def test_watchdog_idle_select_keeps_budget_for_real_blocker(
+    captured: list[dict[str, Any]], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    mon = _watch_mon()
+    mon._loop_thread_id = threading.get_ident()
+    mon._last_tick = 0.0
+    monkeypatch.setattr(loop_monitor, "extract_frames", lambda frame: list(_IDLE_FRAMES))
+    for i in range(10):
+        mon._watch_once(2.0 + i * 0.25)
+    assert mon.idle_select_skips == 10 and mon.stack_captures == 0 and captured == []
+    real = [*_IDLE_FRAMES[:-1], {"filename": "opennem/x.py", "lineno": 1, "function": "blocker"}]
+    monkeypatch.setattr(loop_monitor, "extract_frames", lambda frame: list(real))
+    mon._watch_once(5.0)  # same stall, now a real blocker: still captured
+    assert mon.stack_captures == 1
+    assert captured[0]["fingerprint"] == ["event-loop-stall", "opennem/x.py:blocker"]

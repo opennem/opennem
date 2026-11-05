@@ -83,6 +83,19 @@ def extract_frames(frame: Any, max_frames: int = STACK_MAX_FRAMES) -> list[dict[
     return out[-max_frames:]
 
 
+def is_idle_select(frames: list[dict[str, Any]]) -> bool:
+    """True when the innermost frame is the selector poll: the loop thread is idle in epoll/kqueue, not blocked.
+
+    A stall sampled there means the loop woke late (GIL held by another thread, CPU throttling, pod
+    suspend), not that loop code blocked; reporting it names `arq/worker.py run` / `selectors.select`
+    as the culprit, which is noise (BACKEND-64S/66S).
+    """
+    if not frames:
+        return False
+    top = frames[-1]
+    return top["function"] == "select" and top["filename"].rsplit("/", 1)[-1] == "selectors.py"
+
+
 def format_frames(frames: list[dict[str, Any]]) -> str:
     return "\n".join(f"{f['filename']}:{f['lineno']} {f['function']}" for f in frames)
 
@@ -147,6 +160,7 @@ class LoopMonitor:
         self._episode_last_sample = 0.0
         self._capture_times: deque[float] = deque()
         self.stack_captures = 0
+        self.idle_select_skips = 0
 
     # stats
 
@@ -228,6 +242,12 @@ class LoopMonitor:
             return
         frames = extract_frames(frame)
         del frame
+        if is_idle_select(frames):
+            # loop thread is parked in the selector: a late wake, not a blocker. Not counted against the
+            # sample/rate budget so a real blocker later in the same stall is still captured.
+            self.idle_select_skips += 1
+            logger.debug(f"event loop late wake {stalled_ms:.0f}ms in selector (idle), not reported service={self.service}")
+            return
         self._episode_samples += 1
         self._episode_last_sample = now
         self._capture_times.append(now)
