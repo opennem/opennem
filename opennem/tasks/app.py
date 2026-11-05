@@ -520,7 +520,9 @@ def main() -> None:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
 
-        worker = create_worker(WorkerSettings)  # type: ignore
+        # pool built here (not by arq) so it carries keepalive/socket timeout/health checks (BACKEND-69S)
+        redis_pool = loop.run_until_complete(get_redis_pool())
+        worker = create_worker(WorkerSettings, redis_pool=redis_pool)  # type: ignore
         worker.run()
     else:
         print(" * Worker not enabled - waiting for worker to restart")
