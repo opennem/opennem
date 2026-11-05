@@ -30,11 +30,11 @@ import asyncio
 import logging
 import uuid
 from collections import defaultdict
-from collections.abc import Iterable, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from enum import StrEnum
-from typing import Any
+from typing import Any, cast
 
 from sqlalchemy import text
 
@@ -294,6 +294,23 @@ def bucket_start(day: date | datetime, period: MilestonePeriod) -> datetime:
     return datetime(start.year, start.month, start.day)
 
 
+def _bucket_lookup(period: MilestonePeriod) -> Callable[[date | datetime], datetime]:
+    """`bucket_start` memoised per day for one rollup: daily rows repeat each day once per group.
+
+    A full-history region x fueltech series is hundreds of thousands of rows over ~10k distinct days,
+    and the per-row date arithmetic was most of the rollup's CPU (BACKEND-6A6/6B3).
+    """
+    cache: dict[date | datetime, datetime] = {}
+
+    def lookup(day: date | datetime) -> datetime:
+        bucket = cache.get(day)
+        if bucket is None:
+            bucket = cache[day] = bucket_start(day, period)
+        return bucket
+
+    return lookup
+
+
 def bucket_end(start: datetime, period: MilestonePeriod) -> datetime:
     """Exclusive end of the bucket starting at `start`."""
     if period == MilestonePeriod.day:
@@ -337,9 +354,10 @@ def rollup_sum(
     """
     values: dict[tuple[Any, ...], dict[datetime, float | None]] = defaultdict(dict)
     counts: dict[tuple[Any, ...], dict[datetime, int]] = defaultdict(lambda: defaultdict(int))
+    bucket_of = _bucket_lookup(period)
 
     for day, key, value, interval_count in rows:
-        bucket = bucket_start(day, period)
+        bucket = bucket_of(day)
         if value is not None:
             values[key][bucket] = (values[key].get(bucket) or 0.0) + float(value)
         else:
@@ -374,9 +392,10 @@ def rollup_proportion(
     exempt and count as complete.
     """
     sums: dict[tuple[Any, ...], dict[datetime, list[float]]] = defaultdict(lambda: defaultdict(lambda: [0.0, 0.0, 0.0]))
+    bucket_of = _bucket_lookup(period)
 
     for day, key, gen, demand_gross, pairs in rows:
-        acc = sums[key][bucket_start(day, period)]
+        acc = sums[key][bucket_of(day)]
         acc[0] += float(gen or 0)
         acc[1] += float(demand_gross or 0)
         acc[2] += int(pairs or 0)
@@ -396,6 +415,29 @@ def rollup_proportion(
             )
 
     return out
+
+
+def rollup_series(
+    rows: Sequence[Sequence[Any]],
+    metric: MilestoneType,
+    period: MilestonePeriod,
+    network: NetworkSchema,
+    fields: Sequence[str],
+) -> dict[tuple[Any, ...], dict[datetime, BucketValue]]:
+    """Roll a cached daily source (market rows, or joined generation rows) up into one series."""
+    n = len(fields)
+    if metric == MilestoneType.proportion:
+        # (date, group..., demand_energy, intervals, generation_renewable, demand_gross, complete_pairs)
+        return rollup_proportion(
+            ((r[0], normalise_key(fields, r[1 : 1 + n]), r[n + 3], r[n + 4], r[n + 5]) for r in rows),
+            period,
+            network,
+            by_region="network_region" in fields,
+        )
+    if metric == MilestoneType.demand:
+        return rollup_sum(((r[0], normalise_key(fields, r[1 : 1 + n]), r[n + 1], r[n + 2]) for r in rows), period)
+    # generation rows are already (date, key, value, intervals)
+    return rollup_sum(cast(Iterable[tuple[date, tuple[Any, ...], float | None, int]], rows), period)
 
 
 def drifted(stored: float, recomputed: float, metric: MilestoneType, tolerances: Tolerances) -> bool:
@@ -864,28 +906,15 @@ async def audit_heads(
                 if count_key not in daily_cache:
                     daily_cache[count_key] = await _execute(client, build_daily_interval_count_query(network, grouping, end))
                 values = await _execute(client, build_daily_generation_query(network, spec.metric, grouping, end))
-                daily_cache[daily_key] = attach_interval_counts(values, daily_cache[count_key], fields)
+                daily_cache[daily_key] = await asyncio.to_thread(attach_interval_counts, values, daily_cache[count_key], fields)
             logger.info(f"head audit: {network.code} {source} {grouping.name}: {len(daily_cache[daily_key])} daily rows")
 
         series_key = (*daily_key, spec.metric.value, period.value)
         if series_key not in series_cache:
-            rows = daily_cache[daily_key]
-            n = len(fields)
-            if spec.metric == MilestoneType.proportion:
-                # (date, group..., demand_energy, intervals, generation_renewable, demand_gross, complete_pairs)
-                series_cache[series_key] = rollup_proportion(
-                    ((r[0], normalise_key(fields, r[1 : 1 + n]), r[n + 3], r[n + 4], r[n + 5]) for r in rows),
-                    period,
-                    network,
-                    by_region="network_region" in fields,
-                )
-            elif spec.metric == MilestoneType.demand:
-                series_cache[series_key] = rollup_sum(
-                    ((r[0], normalise_key(fields, r[1 : 1 + n]), r[n + 1], r[n + 2]) for r in rows), period
-                )
-            else:
-                # already (date, key, value, intervals)
-                series_cache[series_key] = rollup_sum(rows, period)
+            # pure python over the full daily history: off the loop, it held it ~1s (BACKEND-6A6/6B3)
+            series_cache[series_key] = await asyncio.to_thread(
+                rollup_series, daily_cache[daily_key], spec.metric, period, network, fields
+            )
 
         findings.append(
             evaluate_period_head(head, spec, series_cache[series_key].get(spec.key), bucket_start(end, period), tolerances)
@@ -930,5 +959,6 @@ __all__ = [
     "head_audit_reminder",
     "head_spec",
     "rollup_proportion",
+    "rollup_series",
     "rollup_sum",
 ]

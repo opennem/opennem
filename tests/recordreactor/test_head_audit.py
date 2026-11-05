@@ -5,6 +5,9 @@ ClickHouse client that answers the daily-series, interval-count and point querie
 The cases are the five false heads found in the 2026-11-02 validation.
 """
 
+import random
+import threading
+from collections import defaultdict
 from datetime import date, datetime, timedelta
 from typing import Any
 
@@ -20,12 +23,14 @@ from opennem.recordreactor.head_audit import (
     audit_heads,
     bucket_end,
     bucket_start,
+    clamp_proportion,
     evaluate_interval_head,
     evaluate_period_head,
     filter_since,
     head_audit_reminder,
     head_spec,
     rollup_proportion,
+    rollup_series,
     rollup_sum,
     select_heads,
     series_cutoff,
@@ -514,6 +519,127 @@ async def test_audit_heads_end_to_end_with_fake_clickhouse() -> None:
     assert sum("MARKET_SUMMARY FINAL" in q.upper() for q in client.queries) == 1
     # the region filter keeps the NT1 backfill rooftop rows out of NEM totals, like the backlog
     assert all("network_region IN" in q for q in client.queries if "NEM" in q)
+
+
+# --- memoised bucket lookup: identical to the per-row bucket_start rollups (BACKEND-6A6/6B3) -------
+
+
+def _old_rollup_sum(rows: list[tuple[Any, ...]], period: MilestonePeriod) -> dict[tuple[Any, ...], dict[datetime, BucketValue]]:
+    """rollup_sum as it was before the memoised lookup: bucket_start per row."""
+    values: dict[tuple[Any, ...], dict[datetime, float | None]] = defaultdict(dict)
+    counts: dict[tuple[Any, ...], dict[datetime, int]] = defaultdict(lambda: defaultdict(int))
+    for day, key, value, interval_count in rows:
+        bucket = bucket_start(day, period)
+        if value is not None:
+            values[key][bucket] = (values[key].get(bucket) or 0.0) + float(value)
+        else:
+            values[key].setdefault(bucket, None)
+        counts[key][bucket] += int(interval_count or 0)
+    return {
+        key: {bucket: BucketValue(value=v, interval_count=counts[key][bucket]) for bucket, v in buckets.items()}
+        for key, buckets in values.items()
+    }
+
+
+def _old_rollup_proportion(
+    rows: list[tuple[Any, ...]], period: MilestonePeriod, network: Any, by_region: bool
+) -> dict[tuple[Any, ...], dict[datetime, BucketValue]]:
+    """rollup_proportion as it was: same body, bucket_start per row."""
+    sums: dict[tuple[Any, ...], dict[datetime, list[float]]] = defaultdict(lambda: defaultdict(lambda: [0.0, 0.0, 0.0]))
+    for day, key, gen, demand_gross, pairs in rows:
+        acc = sums[key][bucket_start(day, period)]
+        acc[0] += float(gen or 0)
+        acc[1] += float(demand_gross or 0)
+        acc[2] += int(pairs or 0)
+    required_regions = 1 if by_region else len(network.regions or [network.code])
+    out: dict[tuple[Any, ...], dict[datetime, BucketValue]] = {}
+    for key, buckets in sums.items():
+        out[key] = {}
+        for bucket, (gen, demand_gross, pairs) in buckets.items():
+            expected = int((bucket_end(bucket, period) - bucket).total_seconds() // 60) // network.interval_size
+            exempt = network == NetworkWEM and bucket < datetime(2023, 10, 1, 8, 0)
+            complete = exempt or int(pairs) == expected * required_regions
+            out[key][bucket] = BucketValue(
+                value=clamp_proportion(gen, demand_gross) if complete else None,
+                interval_count=expected if exempt else int(pairs) // required_regions,
+            )
+    return out
+
+
+def _synthetic_rows(seed: int) -> list[tuple[Any, ...]]:
+    """Several years of daily rows over a few keys, with NULLs, gaps and a few datetime days."""
+    rng = random.Random(seed)
+    keys = [("NSW1", "coal_black"), ("VIC1", "battery_discharging"), ("QLD1", "solar_utility")]
+    rows: list[tuple[Any, ...]] = []
+    for i in range(3 * 366):
+        day: Any = date(2019, 11, 1) + timedelta(days=i)
+        if i % 97 == 0:
+            day = datetime(day.year, day.month, day.day, 13, 5)
+        for key in keys:
+            if rng.random() < 0.05:
+                continue  # gap: no row for this day/key
+            value = None if rng.random() < 0.05 else rng.uniform(0, 5000)
+            rows.append((day, key, value, rng.choice([0, 287, 288, None]), rng.choice([0, 1440, 288, None])))
+    rng.shuffle(rows)
+    return rows
+
+
+@pytest.mark.parametrize("period", [MilestonePeriod.day, MilestonePeriod.month, MilestonePeriod.quarter, MilestonePeriod.year])
+def test_rollup_sum_memoised_matches_per_row_bucket_start(period: MilestonePeriod) -> None:
+    rows = [(d, k, v, c) for d, k, v, c, _ in _synthetic_rows(1)]
+    assert rollup_sum(rows, period) == _old_rollup_sum(rows, period)
+
+
+@pytest.mark.parametrize("period", [MilestonePeriod.day, MilestonePeriod.month, MilestonePeriod.quarter, MilestonePeriod.year])
+@pytest.mark.parametrize("network", [NetworkNEM, NetworkWEM])
+def test_rollup_proportion_memoised_matches_per_row_bucket_start(period: MilestonePeriod, network: Any) -> None:
+    rows = [(d, k, v, (v or 0) * 2, p) for d, k, v, _, p in _synthetic_rows(2)]
+    assert rollup_proportion(rows, period, network, by_region=True) == _old_rollup_proportion(rows, period, network, True)
+    assert rollup_proportion(rows, period, network, by_region=False) == _old_rollup_proportion(rows, period, network, False)
+
+
+def test_rollup_series_dispatches_like_the_inline_rollups() -> None:
+    fields = ["network_region"]
+    # market rows: (date, region, demand_energy, intervals, generation_renewable, demand_gross, complete_pairs)
+    market = [(date(2026, 7, 1) + timedelta(days=i), "VIC1", 100.0 + i, 288, 40.0, 100.0, 288) for i in range(62)]
+    demand = rollup_series(market, MilestoneType.demand, MilestonePeriod.month, NetworkNEM, fields)
+    assert demand == rollup_sum([(r[0], (r[1],), r[2], r[3]) for r in market], MilestonePeriod.month)
+    proportion = rollup_series(market, MilestoneType.proportion, MilestonePeriod.month, NetworkNEM, fields)
+    assert proportion == rollup_proportion(
+        [(r[0], (r[1],), r[4], r[5], r[6]) for r in market], MilestonePeriod.month, NetworkNEM, by_region=True
+    )
+    generation = [(r[0], (r[1],), r[2], r[3]) for r in market]
+    assert rollup_series(generation, MilestoneType.energy, MilestonePeriod.month, NetworkNEM, fields) == rollup_sum(
+        generation, MilestonePeriod.month
+    )
+
+
+@pytest.mark.asyncio
+async def test_audit_heads_rolls_up_off_the_event_loop(monkeypatch: pytest.MonkeyPatch) -> None:
+    import opennem.recordreactor.head_audit as head_audit
+
+    loop_thread = threading.get_ident()
+    rollup_threads: list[int] = []
+    real_rollup_sum = head_audit.rollup_sum
+
+    def spy(*args: Any, **kwargs: Any) -> Any:
+        rollup_threads.append(threading.get_ident())
+        return real_rollup_sum(*args, **kwargs)
+
+    monkeypatch.setattr(head_audit, "rollup_sum", spy)
+    head = _head(
+        "au.nem.vic1.battery_discharging.energy.month.high",
+        datetime(2026, 10, 1),
+        124_943,
+        network_region="VIC1",
+        fueltech_id="battery_discharging",
+        significance=9,
+    )
+    findings = await audit_heads(
+        heads=[head], client=_FakeClickHouse(), now={"NEM": datetime(2026, 11, 2, 10), "WEM": datetime(2026, 11, 2, 8)}
+    )
+    assert findings[0].status == AuditStatus.bad
+    assert rollup_threads and loop_thread not in rollup_threads
 
 
 @pytest.mark.asyncio
