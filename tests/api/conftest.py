@@ -12,6 +12,12 @@ from opennem.db import get_database_engine
 from opennem.db.models.opennem import Base
 
 
+@pytest.fixture(autouse=True)
+def _flat_live_ttl(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Pin the landing-aligned live TTL to its ceiling so tests asserting max-age=60 don't depend on wall-clock time."""
+    monkeypatch.setattr("opennem.api.response_cache.landing_aligned_ttl", lambda ceiling, *a, **k: ceiling)
+
+
 def start_application() -> FastAPI:
     app = FastAPI()
     app.include_router(api_router)
