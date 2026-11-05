@@ -111,9 +111,10 @@ async def cap_date_end_to_settled_interval(
 
 
 # Final on first write: `power` is unit_intervals.generated straight from dispatch SCADA, `price` and `demand` come from the
-# same DispatchIS write. Everything else (energy trapezoid, emissions, market_value, renewable proportions) is provisional
-# until the next interval lands, which is what #575 held back.
-FINAL_ON_WRITE_METRICS = frozenset({Metric.POWER, Metric.PRICE, Metric.DEMAND})
+# same DispatchIS write. `energy` is the trapezoid over T-1 and T, both present when T lands, with a generated/12 flat top
+# for a unit missing its neighbour that is recalculated when the neighbour arrives. Emissions, market_value and renewable
+# proportions stay capped: those were the spurious zeros behind #575.
+FINAL_ON_WRITE_METRICS = frozenset({Metric.POWER, Metric.PRICE, Metric.DEMAND, Metric.ENERGY})
 
 
 def skips_settled_cap(metrics: Iterable[Metric]) -> bool:
