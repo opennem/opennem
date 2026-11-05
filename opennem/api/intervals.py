@@ -19,12 +19,13 @@ import asyncio
 import logging
 import time
 from collections.abc import Iterable
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 
 from opennem.api.queries import QUERY_CONFIGS, QueryType
 from opennem.api.response_cache import landing_aligned_ttl
 from opennem.core.metric import Metric
+from opennem.core.time_interval import Interval
 from opennem.db.clickhouse import execute_async
 from opennem.schema.network import NetworkSchema
 
@@ -109,14 +110,28 @@ async def cap_date_end_to_settled_interval(
     return min(date_end, latest)
 
 
-def skips_settled_cap(metrics: Iterable[Metric]) -> bool:
-    """True when a live request's metrics are power only, so the settled-interval cap (#575) can be skipped.
+# Final on first write: `power` is unit_intervals.generated straight from dispatch SCADA, `price` and `demand` come from the
+# same DispatchIS write. Everything else (energy trapezoid, emissions, market_value, renewable proportions) is provisional
+# until the next interval lands, which is what #575 held back.
+FINAL_ON_WRITE_METRICS = frozenset({Metric.POWER, Metric.PRICE, Metric.DEMAND})
 
-    #575 was about energy-derived values (energy is a trapezoid needing the adjacent interval, emissions and
-    market_value derive from energy) and market ratios that are provisional on first write. `power` is
-    `unit_intervals.generated`, written straight from dispatch SCADA, so it is final on first write and the newest
-    interval can be served as soon as it lands instead of ~5 min later. Any other metric in the request, even
-    alongside power, keeps the cap so the whole response stays on one consistent edge.
+
+def skips_settled_cap(metrics: Iterable[Metric]) -> bool:
+    """True when every requested metric is final on first write, so a live request skips the settled cap (#575).
+
+    Any other metric in the request, even alongside these, keeps the cap so the whole response stays on one edge.
     """
     wanted = set(metrics)
-    return bool(wanted) and wanted <= {Metric.POWER}
+    return bool(wanted) and wanted <= FINAL_ON_WRITE_METRICS
+
+
+def inclusive_live_date_end(date_end: datetime, interval: Interval, network: NetworkSchema) -> datetime:
+    """Make a live request's exclusive `interval < date_end` bound include the last complete interval.
+
+    Intervals are stamped by settlement time: the 17:00:00 bucket is written ~17:00:25 and is complete for 17:00.
+    A live `date_end` is the last complete interval (17:00:00) and queries are exclusive, which hid that bucket for
+    5 min. Only the native interval: coarser buckets (1h, 1d) would show a part-filled bucket.
+    """
+    if interval != Interval.INTERVAL:
+        return date_end
+    return date_end + timedelta(minutes=network.interval_size)
